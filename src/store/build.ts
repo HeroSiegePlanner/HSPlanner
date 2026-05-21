@@ -23,16 +23,26 @@ import {
   commitProfileSnapshot as storeCommitProfile,
   createBuild as storeCreateBuild,
   deleteBuild as storeDeleteBuild,
+  duplicateBuild as storeDuplicateBuild,
   duplicateProfile as storeDuplicateProfile,
   getSavedBuild,
   loadProfileSnapshot,
+  moveBuildToFolder as storeMoveBuildToFolder,
   removeProfile as storeRemoveProfile,
   renameProfile as storeRenameProfile,
   renameBuild as storeRenameBuild,
   setActiveProfile as storeSetActiveProfile,
+  setBuildFavorite as storeSetBuildFavorite,
   setBuildNotes as storeSetBuildNotes,
+  setBuildTags as storeSetBuildTags,
+  type Folder,
   type SavedBuild,
 } from '../utils/savedBuilds'
+import {
+  createFolder as storeCreateFolder,
+  deleteFolder as storeDeleteFolder,
+  renameFolder as storeRenameFolder,
+} from '../utils/savedFolders'
 import { guardStorage } from './storageError'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
@@ -143,10 +153,25 @@ interface BuildActions {
   renameActiveProfile: (profileId: string, name: string) => boolean
   removeActiveProfile: (profileId: string) => boolean
   detachFromBuild: () => void
+  resetBuild: () => void
   bindToBuild: (buildId: string, profileId: string) => void
   deleteSavedBuild: (buildId: string) => void
   renameSavedBuild: (buildId: string, name: string) => boolean
-  saveCurrentAsNewBuild: (name: string, notes?: string) => SavedBuild | null
+  saveCurrentAsNewBuild: (
+    name: string,
+    notes?: string,
+    folderId?: string | null,
+  ) => SavedBuild | null
+  duplicateSavedBuild: (buildId: string) => SavedBuild | null
+  setSavedBuildFavorite: (buildId: string, favorite: boolean) => boolean
+  setSavedBuildTags: (buildId: string, tags: string[]) => boolean
+  moveSavedBuildToFolder: (
+    buildId: string,
+    folderId: string | null,
+  ) => boolean
+  createSavedFolder: (name: string, parentId: string | null) => Folder | null
+  renameSavedFolder: (folderId: string, name: string) => boolean
+  deleteSavedFolder: (folderId: string, cascade: boolean) => boolean
   dismissStorageError: () => void
 }
 
@@ -664,6 +689,34 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
     set(() => ({ activeBuildId: null, activeProfileId: null })),
   // Detaches the live state from any saved build/profile so further edits are not auto-committed. Used when the user explicitly leaves a saved build.
 
+  resetBuild: () =>
+    set(() => ({
+      // Resets the live state to a brand-new blank build (default class, level 1,
+      // nothing allocated) and detaches from any saved build. Used by the Build
+      // Select "New" action so the planner opens on a clean slate.
+      classId: classes[0]?.id ?? null,
+      level: 1,
+      allocated: emptyAllocation(),
+      inventory: {},
+      skillRanks: {},
+      allocatedTreeNodes: new Set<number>(),
+      treeSocketed: {},
+      mainSkillId: null,
+      activeAuraId: null,
+      procToggles: {},
+      killsPerSec: 1,
+      activeBuffs: {},
+      enemyConditions: {},
+      playerConditions: {},
+      skillProjectiles: {},
+      enemyResistances: defaultEnemyResistances(),
+      subskillRanks: {},
+      activeBuildId: null,
+      activeProfileId: null,
+      notes: '',
+      customStats: [],
+    })),
+
   deleteSavedBuild: (buildId) =>
     guardStorage<void>(
       (m) => set({ storageError: m }),
@@ -1120,20 +1173,110 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
   dismissStorageError: () => set({ storageError: null }),
   // Clears the recorded storage-write error, e.g. after the user dismisses the storage-full banner.
 
-  saveCurrentAsNewBuild: (name, notes = '') =>
+  saveCurrentAsNewBuild: (name, notes = '', folderId = null) =>
     guardStorage<SavedBuild | null>(
       (m) => set({ storageError: m }),
       null,
       () => {
-        // Saves the live in-memory state as a brand-new SavedBuild with a single profile and binds the store to it. Returns the new record, or null (with storageError set) when localStorage rejects the write. Used by the "Save as new" flow.
+        // Saves the live in-memory state as a brand-new SavedBuild with a single profile and binds the store to it, optionally filing it under `folderId`. Returns the new record, or null (with storageError set) when localStorage rejects the write. Used by the "Save as new" flow.
         const snapshot = get().exportBuildSnapshot()
-        const record = storeCreateBuild(name, snapshot, undefined, notes)
+        const record = storeCreateBuild(
+          name,
+          snapshot,
+          undefined,
+          notes,
+          folderId,
+        )
         set((cur) => ({
           activeBuildId: record.id,
           activeProfileId: record.activeProfileId,
           savedBuildsVersion: cur.savedBuildsVersion + 1,
         }))
         return record
+      },
+    ),
+
+  duplicateSavedBuild: (buildId) =>
+    guardStorage<SavedBuild | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Deep-clones a SavedBuild on disk (new ids, "(copy)" name) and bumps the savedBuilds version. Returns the new record, or null when the source build is missing. Used by the build library's "Copy" action.
+        const record = storeDuplicateBuild(buildId)
+        if (record) bumpSavedBuilds(set)
+        return record
+      },
+    ),
+
+  setSavedBuildFavorite: (buildId, favorite) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Toggles the `favorite` flag on a SavedBuild and bumps the savedBuilds version. Used by the build library's star toggle.
+        const ok = storeSetBuildFavorite(buildId, favorite) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  setSavedBuildTags: (buildId, tags) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Replaces a SavedBuild's tag list on disk and bumps the savedBuilds version. Used by the build library's tag editor.
+        const ok = storeSetBuildTags(buildId, tags) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  moveSavedBuildToFolder: (buildId, folderId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Moves a SavedBuild into a folder (or unfiles it) on disk and bumps the savedBuilds version. Used by the build library's "Move to folder" action.
+        const ok = storeMoveBuildToFolder(buildId, folderId) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  createSavedFolder: (name, parentId) =>
+    guardStorage<Folder | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Creates a new folder on disk and bumps the savedBuilds version. Used by the build library's "New folder" action.
+        const folder = storeCreateFolder(name, parentId)
+        bumpSavedBuilds(set)
+        return folder
+      },
+    ),
+
+  renameSavedFolder: (folderId, name) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Renames a folder on disk and bumps the savedBuilds version. Used by the build library's folder rename action.
+        const ok = storeRenameFolder(folderId, name) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  deleteSavedFolder: (folderId, cascade) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Deletes a folder on disk (cascade removes its subtree + builds, otherwise reparents children and unfiles builds) and bumps the savedBuilds version. Used by the build library's folder delete action.
+        storeDeleteFolder(folderId, { cascade })
+        bumpSavedBuilds(set)
+        return true
       },
     ),
 }))
