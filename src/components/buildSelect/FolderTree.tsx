@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import type { Folder } from '../../utils/savedBuilds'
+import type { Folder } from '../../utils/build/savedBuilds'
 import { CaretIcon, PlusIcon } from './icons'
 
 /** Which group of builds the centre table is showing. */

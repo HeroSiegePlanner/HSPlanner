@@ -6,9 +6,9 @@ import {
   listSavedBuilds,
   type Folder,
   type SavedBuild,
-} from '../../utils/savedBuilds'
-import { listFolders } from '../../utils/savedFolders'
-import { decodeShareToBuild } from '../../utils/shareBuild'
+} from '../../utils/build/savedBuilds'
+import { listFolders } from '../../utils/build/savedFolders'
+import { decodeShareToBuild } from '../../utils/build/shareBuild'
 
 export interface BuildMeta {
   /** Character level from the active profile snapshot. */

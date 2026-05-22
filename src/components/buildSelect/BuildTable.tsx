@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { getClassIcon } from '../../data'
 import { listContainerVariants, listItemVariants } from '../../lib/motion'
-import type { SavedBuild } from '../../utils/savedBuilds'
+import type { SavedBuild } from '../../utils/build/savedBuilds'
 import type { BuildMeta } from './useBuildLibrary'
 import { classColor, classInitial, formatTimestamp, tagTone } from './helpers'
 

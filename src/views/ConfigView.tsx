@@ -1,16 +1,17 @@
 import { useMemo, type ReactNode } from 'react'
+import { CornerMarks } from '../components/CornerMarks'
 import SearchableSelect from '../components/SearchableSelect'
 import { SkillIconImage } from '../components/SkillIconImage'
 import { resolveSkillIcon } from '../data'
 import { gameConfig, skills } from '../data'
 import { subskillKey, useBuild } from '../store/build'
-import { parseCustomStatValue } from '../utils/parseCustomStat'
-import { formatValue, normalizeSkillName, statDef } from '../utils/stats'
+import { parseCustomStatValue } from '../utils/item/parseCustomStat'
+import { formatValue, normalizeSkillName, statDef } from '../utils/item/stats'
 import type { Skill, SubskillNode } from '../types'
 import {
   SELF_CONDITION_KEYS,
   SELF_CONDITION_LABELS,
-} from '../utils/treeStats'
+} from '../utils/tree/treeStats'
 
 const ENEMY_CONDITIONS: { key: string; label: string }[] = [
   { key: 'burning', label: 'Enemy is Burning' },
@@ -842,7 +843,7 @@ function Panel({
           'inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.35)',
       }}
     >
-      <PanelCornerMarks />
+      <CornerMarks size={8} opacity={0.45} />
       <div className="mb-3 flex items-center justify-between gap-3 border-b border-accent-deep/20 pb-2">
         <div className="flex items-center gap-2">
           <span
@@ -864,54 +865,3 @@ function Panel({
   )
 }
 
-function PanelCornerMarks() {
-  // Renders the four small accent-deep L-marks at the panel's corners, matching PickerModal's chrome.
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 8,
-    height: 8,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.45,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: 'none',
-          borderTop: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderTop: 'none',
-        }}
-      />
-    </>
-  )
-}

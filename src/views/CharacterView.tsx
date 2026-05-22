@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { CornerMarks } from '../components/CornerMarks'
 import { classes, gameConfig, getClass } from '../data'
 import { attrPointsFor, finalAttributes, useBuild } from '../store/build'
 
@@ -330,7 +331,7 @@ function Panel({
           'inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.35)',
       }}
     >
-      <PanelCornerMarks />
+      <CornerMarks size={8} opacity={0.45} />
       <div className="mb-3 flex items-center justify-between gap-3 border-b border-accent-deep/20 pb-2">
         <div className="flex items-center gap-2">
           <span
@@ -349,54 +350,3 @@ function Panel({
   )
 }
 
-function PanelCornerMarks() {
-  // Renders the four small accent-deep L-marks at the panel's corners, matching PickerModal's chrome at a smaller scale. Used by Panel inside CharacterView.
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 8,
-    height: 8,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.45,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: 'none',
-          borderTop: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderTop: 'none',
-        }}
-      />
-    </>
-  )
-}

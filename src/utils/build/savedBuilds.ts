@@ -3,7 +3,7 @@ import {
   decodeShareToBuild,
   encodeBuildToShare,
 } from './shareBuild'
-import { readStorageWithLegacy, writeStorage } from './storage'
+import { readStorageWithLegacy, writeStorage } from '../storage'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
 const STORAGE_KEY_V2 = 'hsplanner.savedBuilds.v2'

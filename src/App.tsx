@@ -11,7 +11,7 @@ import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
 import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
-import { listSavedBuilds } from "./utils/savedBuilds";
+import { listSavedBuilds } from "./utils/build/savedBuilds";
 import { preloadSprites } from "./utils/preloadAssets";
 import { readStorage, readStorageWithLegacy, writeStorage } from "./utils/storage";
 import CharacterView from "./views/CharacterView";

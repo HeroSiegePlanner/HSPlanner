@@ -8,7 +8,8 @@ import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
 import type { EquippedItem, Inventory, SlotKey, SocketType } from '../../types'
 import { type BuildSummaryDeps } from './lib/diff'
 import { pickerItemsForSlot } from './pickerItems'
-import { ConfigEmptyState, ConfigSectionHeader, PickerCornerMarks, SectionCard } from './SectionCard'
+import { CornerMarks } from '../../components/CornerMarks'
+import { ConfigEmptyState, ConfigSectionHeader, SectionCard } from './SectionCard'
 import { CompareColumn } from './CompareColumn'
 import { GearItemRow } from './GearItemRow'
 import { AffixesSection } from './sections/AffixesSection'
@@ -164,7 +165,7 @@ export function GearSlotModal({
             'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
         }}
       >
-        <PickerCornerMarks />
+        <CornerMarks />
 
         <header
           className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"

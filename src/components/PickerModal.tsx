@@ -5,6 +5,7 @@ import { backdropVariants, panelVariants } from '../lib/motion'
 import type { ItemRarity } from '../types'
 import Tooltip from './Tooltip'
 import type { TooltipTone } from './tooltip-tones'
+import { CornerMarks } from './CornerMarks'
 
 const RARITY_TEXT: Record<ItemRarity, string> = {
   common: 'text-white',
@@ -495,53 +496,3 @@ function FallbackIcon({
   )
 }
 
-export function CornerMarks() {
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 10,
-    height: 10,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.55,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: 'none',
-          borderTop: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderTop: 'none',
-        }}
-      />
-    </>
-  )
-}

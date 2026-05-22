@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { motion } from 'motion/react'
-import { backdropVariants, panelVariants } from '../lib/motion'
 import type { EquippedItem, ItemBase, SlotKey } from '../types'
 import {
   parseItemText,
   serializeEquippedItem,
   type ParseError,
   type ParseResult,
-} from '../utils/itemTextFormat'
-import { CornerMarks } from './PickerModal'
+} from '../utils/item/itemTextFormat'
+import { Modal } from './Modal'
 
 interface Props {
   slot: SlotKey
@@ -67,66 +64,13 @@ export default function ItemTextEditorModal({
     onClose()
   }
 
-  return createPortal(
-    <motion.div
-      role="presentation"
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onMouseDown={onClose}
-      variants={backdropVariants}
-      initial="initial"
-      animate="animate"
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
-      }}
+  return (
+    <Modal
+      onClose={onClose}
+      panelClassName="h-[88vh] w-[1100px] max-w-[96vw]"
+      eyebrow={<>Edit Item · {slotName}</>}
+      title={base.name}
     >
-      <motion.div
-        role="dialog"
-        aria-modal="true"
-        onMouseDown={(e) => e.stopPropagation()}
-        variants={panelVariants}
-        initial="initial"
-        animate="animate"
-        className="relative flex h-[88vh] w-[1100px] max-w-[96vw] flex-col overflow-hidden rounded-[6px] border border-border"
-        style={{
-          background:
-            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
-        }}
-      >
-        <CornerMarks />
-
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
-          }}
-        >
-          <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-              <span
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
-              />
-              Edit Item · {slotName}
-            </div>
-            <h2
-              className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-              style={{ textShadow: '0 0 16px rgba(224,184,100,0.15)' }}
-            >
-              {base.name}
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Close
-          </button>
-        </header>
-
         <div className="flex min-h-0 flex-1 flex-row">
           <div className="flex min-w-0 flex-[3] flex-col border-r border-border">
             <div className="flex items-center gap-2 border-b border-border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
@@ -232,9 +176,7 @@ export default function ItemTextEditorModal({
             </button>
           </div>
         </footer>
-      </motion.div>
-    </motion.div>,
-    document.body,
+    </Modal>
   )
 }
 

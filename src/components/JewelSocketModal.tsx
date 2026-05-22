@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { motion } from 'motion/react'
-import { backdropVariants, panelVariants } from '../lib/motion'
 import { gems, getAffix, runes } from '../data'
 import {
   JEWEL_AFFIX_POOL,
   JEWEL_AFFIX_POOL_BY_GROUP,
-} from '../utils/jewelAffixes'
+} from '../utils/item/jewelAffixes'
 import type { Affix, EquippedAffix, Gem, Rune, TreeSocketContent } from '../types'
 import { UNCUT_JEWEL_MAX_AFFIXES } from '../types'
+import { CornerMarks } from './CornerMarks'
+import { Modal } from './Modal'
 
 const SOCKETABLE_ICONS = import.meta.glob<string>(
   '../assets/socketable/*.png',
@@ -76,70 +75,17 @@ export default function JewelSocketModal({
       : describeItem(pending.id)
     : 'Empty socket'
 
-  return createPortal(
-    <motion.div
-      role="presentation"
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 backdrop-blur-sm"
-      onMouseDown={onClose}
-      variants={backdropVariants}
-      initial="initial"
-      animate="animate"
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
-      }}
+  return (
+    <Modal
+      onClose={onClose}
+      panelClassName="h-[88vh] w-[640px] max-w-[94vw]"
+      eyebrow={
+        <>
+          Jewelry Socket <span className="text-accent-hot">#{nodeId}</span>
+        </>
+      }
+      title="Insert Socketable"
     >
-      <motion.div
-        role="dialog"
-        aria-modal="true"
-        onMouseDown={(e) => e.stopPropagation()}
-        variants={panelVariants}
-        initial="initial"
-        animate="animate"
-        className="relative flex h-[88vh] w-[640px] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
-        style={{
-          background:
-            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
-        }}
-      >
-        <CornerMarks />
-
-        {/* Header */}
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
-          }}
-        >
-          <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-              <span
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
-              />
-              Jewelry Socket{' '}
-              <span className="text-accent-hot">#{nodeId}</span>
-            </div>
-            <h2
-              className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-              style={{
-                textShadow: '0 0 16px rgba(224,184,100,0.15)',
-              }}
-            >
-              Insert Socketable
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Close
-          </button>
-        </header>
-
         {/* Tabs */}
         <div className="grid grid-cols-2 border-b border-border bg-[#0d0e12]">
           {(
@@ -241,9 +187,7 @@ export default function JewelSocketModal({
             </button>
           </div>
         </footer>
-      </motion.div>
-    </motion.div>,
-    document.body,
+    </Modal>
   )
 }
 
@@ -273,57 +217,6 @@ function describeItem(id: string): string {
   const r = runes.find((x) => x.id === id)
   if (r) return `${r.name} · T${r.tier}`
   return id
-}
-
-function CornerMarks() {
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 10,
-    height: 10,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.55,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: 'none',
-          borderTop: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderTop: 'none',
-        }}
-      />
-    </>
-  )
 }
 
 function fmtStats(stats: Record<string, number>): string {

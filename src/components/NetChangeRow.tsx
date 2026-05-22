@@ -1,4 +1,4 @@
-import type { BuildStatDiff } from '../utils/buildPerformance'
+import type { BuildStatDiff } from '../utils/build/buildPerformance'
 
 export default function NetChangeRow({ diff }: { diff: BuildStatDiff }) {
   const fmtScalar = (v: number) => {

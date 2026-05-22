@@ -1,4 +1,4 @@
-import treeNodeInfo from '../data/tree-nodes.json'
+import treeNodeInfo from '../../data/tree-nodes.json'
 
 export interface TreeNodeInfo {
   t: string

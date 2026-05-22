@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../../lib/motion'
-import type { Folder } from '../../utils/savedBuilds'
+import type { Folder } from '../../utils/build/savedBuilds'
 import { CaretIcon } from './icons'
+import { CornerMarks } from '../CornerMarks'
 
 const PANEL_BG =
   'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))'
@@ -21,27 +22,6 @@ const INPUT_STYLE = {
   background: 'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
   boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
 } as const
-
-function CornerMarks() {
-  // Decorative 12px L-shaped corner marks — the project's modal/panel motif
-  // (matches PickerModal and the old build picker).
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 12,
-    height: 12,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.6,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span style={{ ...base, top: -1, left: -1, borderRight: 'none', borderBottom: 'none' }} />
-      <span style={{ ...base, top: -1, right: -1, borderLeft: 'none', borderBottom: 'none' }} />
-      <span style={{ ...base, bottom: -1, left: -1, borderRight: 'none', borderTop: 'none' }} />
-      <span style={{ ...base, bottom: -1, right: -1, borderLeft: 'none', borderTop: 'none' }} />
-    </>
-  )
-}
 
 function OverlayShell({
   section,
@@ -94,7 +74,7 @@ function OverlayShell({
           boxShadow: '0 24px 64px rgba(0,0,0,0.7)',
         }}
       >
-        <CornerMarks />
+        <CornerMarks size={12} opacity={0.6} />
         <header
           className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"
           style={{ background: HEADER_BG }}

@@ -37,19 +37,19 @@ import {
   setBuildTags as storeSetBuildTags,
   type Folder,
   type SavedBuild,
-} from '../utils/savedBuilds'
+} from '../utils/build/savedBuilds'
 import {
   createFolder as storeCreateFolder,
   deleteFolder as storeDeleteFolder,
   renameFolder as storeRenameFolder,
-} from '../utils/savedFolders'
+} from '../utils/build/savedFolders'
 import { guardStorage } from './storageError'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
   defaultEnemyResistances,
   type BuildSnapshot,
-} from '../utils/shareBuild'
-import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
+} from '../utils/build/shareBuild'
+import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/tree/treeGraph'
 
 type AttrMap = Record<AttributeKey, number>
 

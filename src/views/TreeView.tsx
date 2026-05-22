@@ -18,13 +18,13 @@ import {
   reachableFromAny,
   START_IDS,
   START_SET,
-} from '../utils/treeGraph'
-import { formatValue, rolledAffixValue, statName } from '../utils/stats'
+} from '../utils/tree/treeGraph'
+import { formatValue, rolledAffixValue, statName } from '../utils/item/stats'
 import {
   diffPerformanceDps,
   diffPerformanceStats,
   type BuildPerformance,
-} from '../utils/buildPerformance'
+} from '../utils/build/buildPerformance'
 import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import NetChangeRow from '../components/NetChangeRow'
@@ -46,7 +46,7 @@ import {
   TREE_NODE_INFO,
   TREE_WARP_IDS,
   type TreeNodeInfo,
-} from '../utils/treeStats'
+} from '../utils/tree/treeStats'
 
 type RawNode = [id: number, x: number, y: number, r: number]
 type RawEdge = [x1: number, y1: number, x2: number, y2: number]

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { computeBuildPerformanceAsync } from '../../lib/calc/bridge'
-import type { BuildPerformance, BuildPerformanceDeps } from '../../utils/buildPerformance'
-import { getActiveProfile, type SavedBuild } from '../../utils/savedBuilds'
-import { type BuildSnapshot, decodeShareToBuild } from '../../utils/shareBuild'
+import type { BuildPerformance, BuildPerformanceDeps } from '../../utils/build/buildPerformance'
+import { getActiveProfile, type SavedBuild } from '../../utils/build/savedBuilds'
+import { type BuildSnapshot, decodeShareToBuild } from '../../utils/build/shareBuild'
 
 /** Debounce before the (potentially expensive) Rust calc fires, so arrow-key
  * navigation through the build table does not spawn a calc per row. */

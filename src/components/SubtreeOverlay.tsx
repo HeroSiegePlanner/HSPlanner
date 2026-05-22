@@ -2,22 +2,23 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../lib/motion'
 import { resolveSkillIcon } from '../data'
-import { SUBTREE_TEMPLATE, getTemplateEdges } from '../data/subtree-template'
+import { SUBTREE_TEMPLATE, getTemplateEdges } from '../utils/tree/subtreeTemplate'
 import {
   subskillKey,
   subskillPointsFor,
   useBuild,
 } from '../store/build'
 import type { Skill, SubskillNode } from '../types'
-import { statDef, statName } from '../utils/stats'
+import { statDef, statName } from '../utils/item/stats'
 import {
   diffPerformanceDps,
   diffPerformanceStats,
   type BuildPerformance,
-} from '../utils/buildPerformance'
+} from '../utils/build/buildPerformance'
 import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import NetChangeRow from './NetChangeRow'
+import { CornerMarks } from './CornerMarks'
 
 const VIEWBOX = 600
 const NODE_R: Record<string, number> = {
@@ -487,57 +488,6 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
         />
       )}
     </motion.div>
-  )
-}
-
-function CornerMarks() {
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 10,
-    height: 10,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.55,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: 'none',
-          borderTop: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderTop: 'none',
-        }}
-      />
-    </>
   )
 }
 

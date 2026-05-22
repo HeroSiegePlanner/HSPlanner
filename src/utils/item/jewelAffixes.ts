@@ -1,5 +1,5 @@
-import { affixes } from '../data'
-import type { Affix } from '../types'
+import { affixes } from '../../data'
+import type { Affix } from '../../types'
 
 const SKILL_MULTIPLIER_KEYS = new Set([
   'all_skills',

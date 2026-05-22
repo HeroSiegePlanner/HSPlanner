@@ -5,7 +5,7 @@ import {
   inTauriRuntime,
   installUpdateOnQuit,
 } from '../utils/installUpdate'
-import { getSavedBuild } from '../utils/savedBuilds'
+import { getSavedBuild } from '../utils/build/savedBuilds'
 import { readStorage } from '../utils/storage'
 import {
   APP_VERSION,

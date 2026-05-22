@@ -1,14 +1,14 @@
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
-import { gameConfig, getSkillsByClass, getClass } from '../data'
-import type { Skill } from '../types'
+import { gameConfig, getSkillsByClass, getClass } from '../../data'
+import type { Skill } from '../../types'
 import {
   aggregateItemSkillBonuses,
   normalizeSkillName,
   rangedMax,
   rangedMin,
-} from './stats'
-import { computeBuildStatsAsync } from '../lib/calc/bridge'
+} from '../item/stats'
+import { computeBuildStatsAsync } from '../../lib/calc/bridge'
 import { ADJ, START_IDS } from './treeGraph'
 import {
   TREE_JEWELRY_IDS,
@@ -17,8 +17,8 @@ import {
   type TreeNodeInfo,
 } from './treeStats'
 import { VALUABLE_NODE_IDS } from './treeSuggest'
-import type { BuildPerformanceDeps } from './buildPerformance'
-import type { RangedValue } from '../types'
+import type { BuildPerformanceDeps } from '../build/buildPerformance'
+import type { RangedValue } from '../../types'
 
 type Ranged = [number, number]
 

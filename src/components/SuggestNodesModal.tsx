@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { motion } from 'motion/react'
-import { backdropVariants, panelVariants } from '../lib/motion'
-import type { BuildPerformanceDeps } from '../utils/buildPerformance'
-import { suggestNodesNative } from '../utils/nativeSuggest'
-import { TREE_NODE_INFO } from '../utils/treeStats'
+import type { BuildPerformanceDeps } from '../utils/build/buildPerformance'
+import { suggestNodesNative } from '../utils/tree/nativeSuggest'
+import { TREE_NODE_INFO } from '../utils/tree/treeStats'
+import { Modal } from './Modal'
 
 interface SuggestStep {
   nodeId: number
@@ -182,66 +180,13 @@ export default function SuggestNodesModal({
       ? Math.min(100, Math.round((progress.current / progress.total) * 100))
       : 0
 
-  return createPortal(
-    <motion.div
-      role="presentation"
-      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
-      onMouseDown={handleClose}
-      variants={backdropVariants}
-      initial="initial"
-      animate="animate"
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
-      }}
+  return (
+    <Modal
+      onClose={handleClose}
+      panelClassName="max-h-[88vh] w-[540px] max-w-[94vw]"
+      eyebrow="Talent Tree Optimizer"
+      title="Suggest Nodes"
     >
-      <motion.div
-        role="dialog"
-        aria-modal="true"
-        onMouseDown={(e) => e.stopPropagation()}
-        variants={panelVariants}
-        initial="initial"
-        animate="animate"
-        className="relative flex max-h-[88vh] w-[540px] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
-        style={{
-          background:
-            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
-        }}
-      >
-        <CornerMarks />
-
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
-          }}
-        >
-          <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-              <span
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
-              />
-              Talent Tree Optimizer
-            </div>
-            <h2
-              className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-              style={{ textShadow: '0 0 16px rgba(224,184,100,0.15)' }}
-            >
-              Suggest Nodes
-            </h2>
-          </div>
-          <button
-            onClick={handleClose}
-            className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Close
-          </button>
-        </header>
-
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <section className="border-b border-border bg-black/20 px-5 py-4">
             <div className="mb-3 flex items-center justify-between">
@@ -480,7 +425,6 @@ export default function SuggestNodesModal({
             </button>
           </div>
         </footer>
-      </motion.div>
 
       <style>{`
         .suggest-range {
@@ -522,8 +466,7 @@ export default function SuggestNodesModal({
           cursor: not-allowed;
         }
       `}</style>
-    </motion.div>,
-    document.body,
+    </Modal>
   )
 }
 
@@ -700,33 +643,3 @@ function SequenceRow({ step, index }: { step: SuggestStep; index: number }) {
   )
 }
 
-const CORNER_OFFSETS: Array<[string, string, string, string]> = [
-  ['top', 'left', 'borderRight', 'borderBottom'],
-  ['top', 'right', 'borderLeft', 'borderBottom'],
-  ['bottom', 'left', 'borderRight', 'borderTop'],
-  ['bottom', 'right', 'borderLeft', 'borderTop'],
-]
-
-function CornerMarks() {
-  return (
-    <>
-      {CORNER_OFFSETS.map(([v, h, skipA, skipB], i) => (
-        <span
-          key={i}
-          style={{
-            position: 'absolute',
-            width: 10,
-            height: 10,
-            border: '1px solid var(--color-accent-deep)',
-            opacity: 0.55,
-            pointerEvents: 'none',
-            [v]: -1,
-            [h]: -1,
-            [skipA]: 'none',
-            [skipB]: 'none',
-          }}
-        />
-      ))}
-    </>
-  )
-}

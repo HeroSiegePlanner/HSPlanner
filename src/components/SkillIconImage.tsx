@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { isImageUrl } from '../utils/icon'
+import { isImageUrl } from '../utils/imageUrl'
 
 const DEFAULT_ICON = '✦'
 

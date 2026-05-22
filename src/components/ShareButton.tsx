@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBuild } from "../store/build";
-import { encodeBuildToShare } from "../utils/shareBuild";
+import { encodeBuildToShare } from "../utils/build/shareBuild";
+import { CornerMarks } from "./CornerMarks";
 
 type Status = "idle" | "copied" | "error";
 
@@ -251,54 +252,3 @@ function ShareDialog({
   );
 }
 
-function CornerMarks() {
-  // Renders the four small accent-deep L-marks at the dialog's corners, matching PickerModal's chrome.
-  const base: React.CSSProperties = {
-    position: "absolute",
-    width: 10,
-    height: 10,
-    border: "1px solid var(--color-accent-deep)",
-    opacity: 0.55,
-    pointerEvents: "none",
-  };
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: "none",
-          borderBottom: "none",
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: "none",
-          borderBottom: "none",
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: "none",
-          borderTop: "none",
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: "none",
-          borderTop: "none",
-        }}
-      />
-    </>
-  );
-}

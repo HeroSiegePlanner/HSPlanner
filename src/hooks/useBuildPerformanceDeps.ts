@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useBuild } from '../store/build'
-import type { BuildPerformanceDeps } from '../utils/buildPerformance'
+import type { BuildPerformanceDeps } from '../utils/build/buildPerformance'
 
 export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const classId = useBuild((s) => s.classId)

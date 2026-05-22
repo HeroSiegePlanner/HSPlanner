@@ -12,9 +12,9 @@ import {
   getItem,
   getRune,
   runes,
-} from '../data'
-import { MAX_STARS } from '../store/build'
-import { AUGMENT_MAX_LEVEL } from '../types'
+} from '../../data'
+import { MAX_STARS } from '../../store/build'
+import { AUGMENT_MAX_LEVEL } from '../../types'
 import type {
   Affix,
   EquippedAffix,
@@ -22,7 +22,7 @@ import type {
   ItemBase,
   ItemRarity,
   SocketType,
-} from '../types'
+} from '../../types'
 import {
   applyStarsToRangedValue,
   formatAffixRange,

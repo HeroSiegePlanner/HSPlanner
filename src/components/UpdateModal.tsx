@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "motion/react";
-import { backdropVariants, panelVariants } from "../lib/motion";
 import {
   installUpdate,
   type InstallProgress,
 } from "../utils/installUpdate";
 import { readStorage, writeStorage } from "../utils/storage";
+import { Modal } from "./Modal";
 import {
   BUILD_CHANNEL,
   formatBytes,
@@ -141,91 +140,40 @@ export default function UpdateModal({
         };
 
   return (
-    <motion.div
-      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
-      role="presentation"
-      onMouseDown={safeClose}
-      variants={backdropVariants}
-      initial="initial"
-      animate="animate"
-      style={{
-        background:
-          "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)",
-      }}
-    >
-      <motion.div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="update-modal-title"
-        onMouseDown={(e) => e.stopPropagation()}
-        variants={panelVariants}
-        initial="initial"
-        animate="animate"
-        className="relative flex max-h-[88vh] w-160 max-w-[92vw] flex-col overflow-hidden rounded-[6px] border border-border"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)",
-        }}
-      >
-        <CornerMarks />
-
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
-          }}
-        >
-          <div className="min-w-0">
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-              <span
-                aria-hidden
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
-              />
-              {isChangelog ? "Changelog" : "Update"}
-              {isChangelog && (
-                <span
-                  title={
-                    BUILD_CHANNEL === "dev"
-                      ? "Development build"
-                      : "Stable build"
-                  }
-                  className={`ml-1 rounded-[3px] border px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.18em] ${channelTone.color}`}
-                  style={{ background: channelTone.bg }}
-                >
-                  {channelLabel}
-                </span>
-              )}
-            </div>
-            <h2
-              id="update-modal-title"
-              className="m-0 truncate text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-              style={{ textShadow: "0 0 16px rgba(224,184,100,0.15)" }}
+    <Modal
+      portal={false}
+      onClose={safeClose}
+      closeDisabled={isBusy}
+      panelClassName="max-h-[88vh] w-160 max-w-[92vw]"
+      titleId="update-modal-title"
+      titleClassName="truncate"
+      eyebrow={
+        <>
+          {isChangelog ? "Changelog" : "Update"}
+          {isChangelog && (
+            <span
+              title={
+                BUILD_CHANNEL === "dev"
+                  ? "Development build"
+                  : "Stable build"
+              }
+              className={`ml-1 rounded-[3px] border px-1.5 py-px font-mono text-[9px] uppercase tracking-[0.18em] ${channelTone.color}`}
+              style={{ background: channelTone.bg }}
             >
-              {isChangelog
-                ? `HSPlanner v${info.current}`
-                : "Update Available"}
-            </h2>
-            <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-              {isChangelog
-                ? "What's new in this version"
-                : "A newer version of HSPlanner is ready"}
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={safeClose}
-            disabled={isBusy}
-            aria-label="Close"
-            className="shrink-0 rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Close
-          </button>
-        </header>
-
+              {channelLabel}
+            </span>
+          )}
+        </>
+      }
+      title={
+        isChangelog ? `HSPlanner v${info.current}` : "Update Available"
+      }
+      subtitle={
+        isChangelog
+          ? "What's new in this version"
+          : "A newer version of HSPlanner is ready"
+      }
+    >
         {!isChangelog && (
           <section
             className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-border px-5 py-4"
@@ -354,8 +302,7 @@ export default function UpdateModal({
             </div>
           </footer>
         )}
-      </motion.div>
-    </motion.div>
+    </Modal>
   );
 }
 
@@ -575,54 +522,3 @@ function phaseLabel(phase: InstallProgress["phase"]): string {
   }
 }
 
-function CornerMarks() {
-  // Renders the four small accent-deep L-marks at the dialog's corners, matching PickerModal's chrome. Used by UpdateModal so its frame is consistent with the rest of the panel system.
-  const base: React.CSSProperties = {
-    position: "absolute",
-    width: 10,
-    height: 10,
-    border: "1px solid var(--color-accent-deep)",
-    opacity: 0.55,
-    pointerEvents: "none",
-  };
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: "none",
-          borderBottom: "none",
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: "none",
-          borderBottom: "none",
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: "none",
-          borderTop: "none",
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: "none",
-          borderTop: "none",
-        }}
-      />
-    </>
-  );
-}

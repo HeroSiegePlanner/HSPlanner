@@ -1,5 +1,5 @@
 import { getItemImage, items } from '../../data'
-import { formatValue, statName } from '../../utils/stats'
+import { formatValue, statName } from '../../utils/item/stats'
 import type { PickerRow } from '../../components/PickerModal'
 import type { ItemBase, SlotKey } from '../../types'
 import { RARITY_LABEL, RARITY_ORDER } from './lib/rarity'

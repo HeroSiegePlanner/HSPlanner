@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { StorageWriteError } from '../utils/savedBuilds'
+import { StorageWriteError } from '../utils/build/savedBuilds'
 import { guardStorage } from './storageError'
 
 describe('guardStorage', () => {

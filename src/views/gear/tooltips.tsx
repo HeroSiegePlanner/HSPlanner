@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import type { ReactNode } from 'react'
 import { TooltipFooter, TooltipHeader, TooltipSection, TooltipStat, TooltipText } from '../../components/Tooltip'
-import { formatValue, statName } from '../../utils/stats'
+import { formatValue, statName } from '../../utils/item/stats'
 import type { Affix } from '../../types'
 import { socketableIconForName } from './lib/icons'
 

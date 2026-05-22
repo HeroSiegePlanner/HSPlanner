@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { CornerMarks } from '../components/CornerMarks'
 import { motion } from 'motion/react'
 import FlashOnChange from '../components/FlashOnChange'
 import { SkillIconImage } from '../components/SkillIconImage'
@@ -17,9 +18,9 @@ import {
   rangedMax,
   rangedMin,
   statName,
-} from '../utils/stats'
-import type { ComputedStats } from '../utils/stats'
-import { aggregateSubskillStats } from '../utils/subtree'
+} from '../utils/item/stats'
+import type { ComputedStats } from '../utils/item/stats'
+import { aggregateSubskillStats } from '../utils/tree/subtree'
 import type {
   AttributeKey,
   DamageType,
@@ -293,7 +294,7 @@ function SkillTree({
           'inset 0 1px 0 rgba(255,255,255,0.02), 0 8px 24px rgba(0,0,0,0.35)',
       }}
     >
-      <SkillTreeCornerMarks />
+      <CornerMarks size={8} opacity={0.45} />
       <div className="mb-3 flex items-center justify-center gap-2 border-b border-accent-deep/20 pb-2">
         <span
           aria-hidden
@@ -484,58 +485,6 @@ function SkillIcon({
         </button>
       )}
     </motion.div>
-  )
-}
-
-function SkillTreeCornerMarks() {
-  // Renders the four small accent-deep L-marks at the skill-tree panel's corners, matching PickerModal's chrome at a smaller scale.
-  const base: React.CSSProperties = {
-    position: 'absolute',
-    width: 8,
-    height: 8,
-    border: '1px solid var(--color-accent-deep)',
-    opacity: 0.45,
-    pointerEvents: 'none',
-  }
-  return (
-    <>
-      <span
-        style={{
-          ...base,
-          top: -1,
-          left: -1,
-          borderRight: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          top: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderBottom: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          left: -1,
-          borderRight: 'none',
-          borderTop: 'none',
-        }}
-      />
-      <span
-        style={{
-          ...base,
-          bottom: -1,
-          right: -1,
-          borderLeft: 'none',
-          borderTop: 'none',
-        }}
-      />
-    </>
   )
 }
 

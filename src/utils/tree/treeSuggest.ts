@@ -1,4 +1,4 @@
-import treeData from '../data/hero-siege-tree.json'
+import treeData from '../../data/hero-siege-tree.json'
 import { TREE_NODE_INFO, TREE_WARP_IDS } from './treeStats'
 
 type RawNode = [id: number, x: number, y: number, r: number]

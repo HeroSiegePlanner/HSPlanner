@@ -10,9 +10,9 @@ import type {
   SlotKey,
   SocketType,
   TreeSocketContent,
-} from '../types'
-import { AUGMENT_MAX_LEVEL } from '../types'
-import { sanitizeHtml } from './sanitizeHtml'
+} from '../../types'
+import { AUGMENT_MAX_LEVEL } from '../../types'
+import { sanitizeHtml } from '../sanitizeHtml'
 
 const SCHEMA_VERSION = 1
 

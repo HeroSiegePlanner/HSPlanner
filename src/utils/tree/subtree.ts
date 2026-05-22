@@ -1,5 +1,5 @@
-import { subskillKey } from '../store/build'
-import type { Skill, SubskillEffect } from '../types'
+import { subskillKey } from '../../store/build'
+import type { Skill, SubskillEffect } from '../../types'
 
 type StatMap = Record<string, number>
 

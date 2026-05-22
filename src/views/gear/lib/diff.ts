@@ -1,6 +1,6 @@
 import { computeBuildPerformanceAsync } from '../../../lib/calc/bridge'
 import { gameConfig, getItem } from '../../../data'
-import { rangedBounds, type BuildPerformance, type BuildPerformanceDeps } from '../../../utils/buildPerformance'
+import { rangedBounds, type BuildPerformance, type BuildPerformanceDeps } from '../../../utils/build/buildPerformance'
 import type { EquippedItem, Inventory, ItemRarity, SlotKey } from '../../../types'
 
 export interface BuildSummary extends BuildPerformance {

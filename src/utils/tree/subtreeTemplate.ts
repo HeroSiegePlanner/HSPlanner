@@ -1,4 +1,4 @@
-import type { SubskillRole } from '../types'
+import type { SubskillRole } from '../../types'
 
 export interface TemplateNode {
   index: number

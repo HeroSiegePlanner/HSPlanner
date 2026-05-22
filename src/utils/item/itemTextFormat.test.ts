@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { affixes, items } from '../data'
-import type { EquippedItem, ItemBase } from '../types'
+import { affixes, items } from '../../data'
+import type { EquippedItem, ItemBase } from '../../types'
 import { parseItemText, serializeEquippedItem } from './itemTextFormat'
 
 function findItemWithAffixSlot(): ItemBase | undefined {

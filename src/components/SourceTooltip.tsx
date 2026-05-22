@@ -2,8 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 're
 import { createPortal } from 'react-dom'
 import { FORGE_KIND_LABEL } from '../data'
 import type { ForgeKind } from '../data'
-import { formatValue } from '../utils/stats'
-import type { SourceContribution, SourceType } from '../utils/stats'
+import { formatValue } from '../utils/item/stats'
+import type { SourceContribution, SourceType } from '../utils/item/stats'
 
 const SOURCE_COLOR: Record<SourceType, string> = {
   class: 'text-text/70',

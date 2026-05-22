@@ -3,16 +3,16 @@
 import { invoke } from '@tauri-apps/api/core'
 
 import type { CustomStat, Inventory, RangedValue, TreeSocketContent } from '../../types'
-import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../../utils/stats'
+import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../../utils/item/stats'
 import type {
   BuildPerformance,
   BuildPerformanceDeps,
-} from '../../utils/buildPerformance'
+} from '../../utils/build/buildPerformance'
 import type {
   ComputedStats,
   SourceContribution,
   SourceType,
-} from '../../utils/stats'
+} from '../../utils/item/stats'
 import type { ForgeKind } from '../../data'
 
 // ---------- compute_build_performance ----------
@@ -108,16 +108,22 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   }
 }
 
+// Converts a Rust [min, max] record into the legacy "number | [number, number]"
+// map that the rest of the TS code expects.
+function toRangedMap(
+  rec: Record<string, RustRanged>,
+): Record<string, RangedValue> {
+  return Object.fromEntries(
+    Object.entries(rec).map(([k, v]) => [k, asRangedValue(v)]),
+  )
+}
+
 function toLegacyBuildPerformance(
   raw: BuildPerformanceOutput,
 ): BuildPerformance {
   return {
-    attributes: Object.fromEntries(
-      Object.entries(raw.attributes).map(([k, v]) => [k, asRangedValue(v)]),
-    ),
-    stats: Object.fromEntries(
-      Object.entries(raw.stats).map(([k, v]) => [k, asRangedValue(v)]),
-    ),
+    attributes: toRangedMap(raw.attributes),
+    stats: toRangedMap(raw.stats),
     damage: raw.damage,
     attackDamage: raw.attackDamage,
     hitDpsMin: raw.hitDpsMin ?? undefined,
@@ -187,12 +193,8 @@ function convertSourceMap(
 
 function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
   return {
-    attributes: Object.fromEntries(
-      Object.entries(raw.attributes).map(([k, v]) => [k, asRangedValue(v)]),
-    ),
-    stats: Object.fromEntries(
-      Object.entries(raw.stats).map(([k, v]) => [k, asRangedValue(v)]),
-    ),
+    attributes: toRangedMap(raw.attributes),
+    stats: toRangedMap(raw.stats),
     attributeSources: convertSourceMap(raw.attributeSources),
     statSources: convertSourceMap(raw.statSources),
   }

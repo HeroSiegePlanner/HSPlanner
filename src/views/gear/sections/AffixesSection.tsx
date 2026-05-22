@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react'
 import PickerModal, { type PickerRow } from '../../../components/PickerModal'
 import { affixes, getAffix } from '../../../data'
-import { formatValue, rolledAffixValueWithStars } from '../../../utils/stats'
+import { formatValue, rolledAffixValueWithStars } from '../../../utils/item/stats'
 import type { Affix, EquippedItem, ItemBase } from '../../../types'
 import { buildAffixTooltip } from '../tooltips'
 import { SectionCard } from '../SectionCard'

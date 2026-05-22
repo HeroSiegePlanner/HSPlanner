@@ -1,5 +1,5 @@
-import { gameConfig, getItem, isGearSlot } from '../data'
-import type { ForgeKind } from '../data'
+import { gameConfig, getItem, isGearSlot } from '../../data'
+import type { ForgeKind } from '../../data'
 import {
   itemGrantedSkillRankFlatBonus,
   statStarFlatBonus,
@@ -12,8 +12,8 @@ import type {
   RangedValue,
   Skill,
   StatDef,
-} from '../types'
-import { ELEMENTS } from './treeStats'
+} from '../../types'
+import { ELEMENTS } from '../tree/treeStats'
 
 export type SourceType =
   | 'class'

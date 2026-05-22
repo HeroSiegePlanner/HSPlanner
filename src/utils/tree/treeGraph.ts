@@ -1,4 +1,4 @@
-import treeData from '../data/hero-siege-tree.json'
+import treeData from '../../data/hero-siege-tree.json'
 
 type RawNode = [id: number, x: number, y: number, r: number]
 type RawEdge = [x1: number, y1: number, x2: number, y2: number]

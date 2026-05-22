@@ -1,4 +1,4 @@
-import type { RangedValue } from '../types'
+import type { RangedValue } from '../../types'
 
 export function parseCustomStatValue(raw: string): RangedValue | null {
   // Parses a free-text user-entered stat value (such as "100", "+12", "12-18", "[12-18]", "100%") into a RangedValue (number or [min, max] tuple), returning null if the input cannot be parsed. Used by the custom-stat input UI to translate user text into the numeric form consumed by the stat-aggregation pipeline.

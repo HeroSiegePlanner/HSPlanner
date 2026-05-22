@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
-import { isImageUrl } from "../utils/icon";
+import { isImageUrl } from "../utils/imageUrl";
 import {
   attrPointsFor,
   skillPointsFor,
@@ -17,9 +17,9 @@ import {
   rangedMax,
   rangedMin,
   statDef,
-} from "../utils/stats";
+} from "../utils/item/stats";
 import { computeBuildPerformanceAsync } from "../lib/calc/bridge";
-import type { BuildPerformance } from "../utils/buildPerformance";
+import type { BuildPerformance } from "../utils/build/buildPerformance";
 import { useBuildPerformanceDeps } from "../hooks/useBuildPerformanceDeps";
 import type { RangedValue } from "../types";
 

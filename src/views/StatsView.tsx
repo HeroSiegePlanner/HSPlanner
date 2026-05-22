@@ -18,13 +18,13 @@ import {
   rangedMin,
   statDef,
   statName,
-} from '../utils/stats'
+} from '../utils/item/stats'
 import type {
   ComputedStats,
   SkillDamageBreakdown,
   SourceContribution,
   WeaponDamageBreakdown,
-} from '../utils/stats'
+} from '../utils/item/stats'
 import type {
   AttributeKey,
   DamageType,
