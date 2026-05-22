@@ -3,14 +3,28 @@ import { rangedMax, rangedMin } from '../../utils/stats'
 import type { RangedValue } from '../../types'
 import type { SavedBuild } from '../../utils/savedBuilds'
 import type { BuildMeta } from './useBuildLibrary'
+import { motion } from 'motion/react'
+import { T_FAST } from '../../lib/motion'
+import { sanitizeHtml } from '../../utils/sanitizeHtml'
 import { classColor, classInitial, stripHtml, tagTone } from './helpers'
 import { usePreviewStats } from './usePreviewStats'
+import { CopyIcon, DeleteIcon, PlayIcon, PlusIcon, RenameIcon } from './icons'
 
 interface BuildPreviewProps {
   build: SavedBuild | null
   meta: BuildMeta | undefined
   onOpen: (id: string) => void
   onCopy: (id: string) => void
+  /** Make `profileId` the active profile of `buildId`. */
+  onSwitchProfile: (buildId: string, profileId: string) => void
+  /** Open the "new profile" dialog for `buildId`. */
+  onAddProfile: (buildId: string) => void
+  /** Open the rename dialog for a profile, pre-filled with `current`. */
+  onRenameProfile: (buildId: string, profileId: string, current: string) => void
+  /** Duplicate a profile within `buildId`. */
+  onDuplicateProfile: (buildId: string, profileId: string) => void
+  /** Open the delete-confirmation dialog for a profile. */
+  onRemoveProfile: (buildId: string, profileId: string, name: string) => void
 }
 
 function compact(n: number): string {
@@ -58,7 +72,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps) {
+export function BuildPreview({
+  build,
+  meta,
+  onOpen,
+  onCopy,
+  onSwitchProfile,
+  onAddProfile,
+  onRenameProfile,
+  onDuplicateProfile,
+  onRemoveProfile,
+}: BuildPreviewProps) {
   // Right pane: hero + tags + live-computed stats + main skill + notes + CTA.
   const preview = usePreviewStats(build)
 
@@ -69,14 +93,19 @@ export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps)
         style={{ background: 'var(--color-panel-2)' }}
       >
         <PaneHeader />
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={T_FAST}
+          className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center"
+        >
           <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
             No build selected
           </div>
           <div className="text-[11px] text-muted">
             Pick a build from the list to preview it.
           </div>
-        </div>
+        </motion.div>
       </aside>
     )
   }
@@ -111,7 +140,11 @@ export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps)
     })
     .join('/')
 
-  const notesText = stripHtml(build.notes)
+  // Notes are HTML authored in the Notes tab. They are sanitised on write, but
+  // the value here is read straight from storage (external data) so it is
+  // re-sanitised before rendering. `hasNotes` ignores empty markup like <p></p>.
+  const notesHtml = sanitizeHtml(build.notes)
+  const hasNotes = stripHtml(notesHtml).length > 0
 
   return (
     <aside
@@ -120,7 +153,13 @@ export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps)
     >
       <PaneHeader />
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <motion.div
+        key={build.id}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={T_FAST}
+        className="min-h-0 flex-1 overflow-y-auto"
+      >
         {/* Hero */}
         <div
           className="grid grid-cols-[54px_1fr] items-center gap-3.5 border-b border-border px-[18px] py-4"
@@ -225,16 +264,103 @@ export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps)
           </div>
         )}
 
+        {/* Profiles */}
+        <Section title={`Profiles · ${build.profiles.length}`}>
+          <div className="flex flex-col gap-1">
+            {build.profiles.map((p) => {
+              const active = p.id === build.activeProfileId
+              return (
+                <div
+                  key={p.id}
+                  className={`flex items-center gap-2 rounded-[3px] border px-2 py-1.5 transition-colors ${
+                    active
+                      ? 'border-accent-deep bg-accent-hot/5'
+                      : 'border-border bg-panel-3 hover:border-accent-deep'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!active) onSwitchProfile(build.id, p.id)
+                    }}
+                    title={
+                      active ? 'Active profile' : 'Switch to this profile'
+                    }
+                    className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                  >
+                    <span
+                      aria-hidden
+                      className={`h-1.5 w-1.5 shrink-0 rotate-45 ${
+                        active ? 'bg-accent-hot' : 'bg-faint'
+                      }`}
+                      style={
+                        active
+                          ? { boxShadow: '0 0 6px rgba(224,184,100,0.6)' }
+                          : undefined
+                      }
+                    />
+                    <span
+                      className={`truncate text-[11.5px] ${
+                        active ? 'text-accent-hot' : 'text-text'
+                      }`}
+                    >
+                      {p.name}
+                    </span>
+                    {active && (
+                      <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-accent-deep">
+                        Active
+                      </span>
+                    )}
+                  </button>
+                  <div className="flex shrink-0 items-center gap-0.5">
+                    <ProfileAction
+                      label="Rename profile"
+                      onClick={() => onRenameProfile(build.id, p.id, p.name)}
+                    >
+                      <RenameIcon className="h-3 w-3" />
+                    </ProfileAction>
+                    <ProfileAction
+                      label="Duplicate profile"
+                      onClick={() => onDuplicateProfile(build.id, p.id)}
+                    >
+                      <CopyIcon className="h-3 w-3" />
+                    </ProfileAction>
+                    <ProfileAction
+                      label="Remove profile"
+                      danger
+                      disabled={build.profiles.length <= 1}
+                      onClick={() => onRemoveProfile(build.id, p.id, p.name)}
+                    >
+                      <DeleteIcon className="h-3 w-3" />
+                    </ProfileAction>
+                  </div>
+                </div>
+              )
+            })}
+            <button
+              type="button"
+              onClick={() => onAddProfile(build.id)}
+              className="flex items-center justify-center gap-1.5 rounded-[3px] border border-dashed border-border-2 px-2 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+            >
+              <PlusIcon className="h-3 w-3" />
+              Add profile
+            </button>
+          </div>
+        </Section>
+
         {/* Main skill */}
         {mainSkillName && (
           <Section title="Main Skill">
             <div className="flex items-center gap-2.5 rounded-[3px] border border-border bg-panel-3 px-2 py-1.5">
               <span
-                className="flex h-6 w-6 items-center justify-center rounded-[2px] border border-accent-deep font-mono text-[12px] text-accent-hot"
+                className="flex h-6 w-6 items-center justify-center rounded-[2px] border border-accent-deep"
                 style={{ background: 'linear-gradient(135deg,#2a2418,#15110a)' }}
                 aria-hidden
               >
-                ◆
+                <span
+                  className="h-2 w-2 rotate-45 bg-accent-hot"
+                  style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
+                />
               </span>
               <span className="truncate text-[11.5px] text-text">
                 {mainSkillName}
@@ -244,15 +370,19 @@ export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps)
         )}
 
         {/* Notes */}
-        {notesText && (
-          <Section title="Notes">
-            <p className="m-0 text-[11.5px] italic leading-relaxed text-muted">
-              {notesText.slice(0, 400)}
-              {notesText.length > 400 ? '…' : ''}
+        <Section title="Notes">
+          {hasNotes ? (
+            <div
+              className="notes-editor text-[12px] leading-relaxed text-text"
+              dangerouslySetInnerHTML={{ __html: notesHtml }}
+            />
+          ) : (
+            <p className="m-0 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              No notes
             </p>
-          </Section>
-        )}
-      </div>
+          )}
+        </Section>
+      </motion.div>
 
       {/* CTA */}
       <div
@@ -273,14 +403,46 @@ export function BuildPreview({ build, meta, onOpen, onCopy }: BuildPreviewProps)
           onClick={() => onOpen(build.id)}
           className="flex h-[34px] flex-1 items-center justify-center gap-1.5 rounded-[3px] border border-accent-deep font-mono text-[11px] uppercase tracking-[0.06em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
           style={{
-            background: 'linear-gradient(180deg, #3a2f1a, #241e10)',
+            background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
             boxShadow: '0 0 10px rgba(224,184,100,0.18)',
           }}
         >
-          ▶ Open Build
+          <PlayIcon className="h-3 w-3" />
+          Open Build
         </button>
       </div>
     </aside>
+  )
+}
+
+function ProfileAction({
+  label,
+  danger,
+  disabled,
+  onClick,
+  children,
+}: {
+  label: string
+  danger?: boolean
+  disabled?: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+      onClick={onClick}
+      className={`flex h-6 w-6 items-center justify-center rounded-[2px] text-faint transition-colors disabled:cursor-not-allowed disabled:opacity-25 ${
+        danger
+          ? 'hover:bg-stat-red/10 hover:text-stat-red'
+          : 'hover:bg-accent-hot/10 hover:text-accent-hot'
+      }`}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -292,7 +454,11 @@ function PaneHeader() {
         background: 'linear-gradient(180deg, rgba(201,165,90,0.04), transparent)',
       }}
     >
-      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent-deep">
+      <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-deep">
+        <span
+          aria-hidden
+          className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+        />
         Preview
       </span>
     </div>

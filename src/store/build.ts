@@ -169,6 +169,18 @@ interface BuildActions {
     buildId: string,
     folderId: string | null,
   ) => boolean
+  switchSavedBuildProfile: (buildId: string, profileId: string) => boolean
+  addSavedBuildProfile: (buildId: string, name: string) => string | null
+  renameSavedBuildProfile: (
+    buildId: string,
+    profileId: string,
+    name: string,
+  ) => boolean
+  duplicateSavedBuildProfile: (
+    buildId: string,
+    profileId: string,
+  ) => string | null
+  removeSavedBuildProfile: (buildId: string, profileId: string) => boolean
   createSavedFolder: (name: string, parentId: string | null) => Folder | null
   renameSavedFolder: (folderId: string, name: string) => boolean
   deleteSavedFolder: (folderId: string, cascade: boolean) => boolean
@@ -1239,6 +1251,84 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
       () => {
         // Moves a SavedBuild into a folder (or unfiles it) on disk and bumps the savedBuilds version. Used by the build library's "Move to folder" action.
         const ok = storeMoveBuildToFolder(buildId, folderId) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  switchSavedBuildProfile: (buildId, profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Switches a SavedBuild's active profile from the Build Select library. When the build is the one currently loaded in the planner this delegates to switchActiveProfile so the live editor re-hydrates and stays in sync; otherwise it just updates the stored activeProfileId.
+        const s = get()
+        if (buildId === s.activeBuildId) return s.switchActiveProfile(profileId)
+        const ok = storeSetActiveProfile(buildId, profileId) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  addSavedBuildProfile: (buildId, name) =>
+    guardStorage<string | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Appends a new profile to a SavedBuild from the Build Select library, seeded from the build's current active profile. When the build is loaded in the planner its live profile is committed first so the seed is fresh. The new profile is NOT activated — the build keeps its current active profile. Returns the new profile id, or null when the build is missing or its code cannot be decoded.
+        const s = get()
+        if (buildId === s.activeBuildId && s.activeProfileId) {
+          storeCommitProfile(buildId, s.activeProfileId, s.exportBuildSnapshot())
+        }
+        const build = getSavedBuild(buildId)
+        if (!build) return null
+        const seed = loadProfileSnapshot(buildId, build.activeProfileId)
+        if (!seed) return null
+        const result = storeAddProfile(buildId, name, seed, {
+          activate: false,
+        })
+        if (!result) return null
+        bumpSavedBuilds(set)
+        return result.profile.id
+      },
+    ),
+
+  renameSavedBuildProfile: (buildId, profileId, name) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Renames a profile inside any SavedBuild from the Build Select library. Rename never touches live editor state, so no planner-sync delegation is needed.
+        const ok = storeRenameProfile(buildId, profileId, name) !== null
+        if (ok) bumpSavedBuilds(set)
+        return ok
+      },
+    ),
+
+  duplicateSavedBuildProfile: (buildId, profileId) =>
+    guardStorage<string | null>(
+      (m) => set({ storageError: m }),
+      null,
+      () => {
+        // Duplicates a profile inside any SavedBuild from the Build Select library without changing the build's active profile. Returns the new profile id, or null when the source is missing.
+        const result = storeDuplicateProfile(buildId, profileId, {
+          activate: false,
+        })
+        if (!result) return null
+        bumpSavedBuilds(set)
+        return result.profile.id
+      },
+    ),
+
+  removeSavedBuildProfile: (buildId, profileId) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      false,
+      () => {
+        // Removes a profile from a SavedBuild via the Build Select library. When the build is loaded in the planner this delegates to removeActiveProfile so the live editor re-hydrates from the surviving active profile; otherwise it removes the profile directly. Refuses to remove the last surviving profile.
+        const s = get()
+        if (buildId === s.activeBuildId) return s.removeActiveProfile(profileId)
+        const ok = storeRemoveProfile(buildId, profileId) !== null
         if (ok) bumpSavedBuilds(set)
         return ok
       },

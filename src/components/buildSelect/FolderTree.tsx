@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import type { Folder } from '../../utils/savedBuilds'
+import { CaretIcon, PlusIcon } from './icons'
 
 /** Which group of builds the centre table is showing. */
 export type Scope =
@@ -105,10 +106,10 @@ function Row({
             e.stopPropagation()
             onTwist?.()
           }}
-          className="flex h-3 w-3 shrink-0 items-center justify-center text-[8px] text-faint transition-transform"
+          className="flex h-3 w-3 shrink-0 items-center justify-center text-faint transition-transform"
           style={{ transform: twist === 'open' ? 'rotate(90deg)' : undefined }}
         >
-          ▶
+          <CaretIcon className="h-2.5 w-2.5" />
         </span>
       ) : (
         <span className="w-3 shrink-0" />
@@ -191,16 +192,20 @@ export function FolderTree({
             'linear-gradient(180deg, rgba(201,165,90,0.04), transparent)',
         }}
       >
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent-deep">
+        <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-deep">
+          <span
+            aria-hidden
+            className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
+          />
           Library
         </span>
         <button
           type="button"
           onClick={onNewFolder}
           title="New folder"
-          className="flex h-5 w-5 items-center justify-center rounded-[2px] text-[13px] text-faint transition-colors hover:bg-panel-3 hover:text-accent-hot"
+          className="flex h-5 w-5 items-center justify-center rounded-[2px] text-faint transition-colors hover:bg-panel-3 hover:text-accent-hot"
         >
-          ＋
+          <PlusIcon className="h-3 w-3" />
         </button>
       </div>
 

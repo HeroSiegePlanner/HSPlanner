@@ -64,6 +64,13 @@ export const skillIconVariants: Variants = {
   animate: { opacity: 1, transition: T_FAST },
 };
 
+// Generic staggered list item (pair with listContainerVariants). Opacity plus a
+// 3px lift — small enough not to jitter a dense list such as the build table.
+export const listItemVariants: Variants = {
+  initial: { opacity: 0, y: 3 },
+  animate: { opacity: 1, y: 0, transition: T_FAST },
+};
+
 // Micro-interaction preset for headline buttons. Spread onto a motion element:
 //   <motion.button {...hoverTap} />
 export const hoverTap = {

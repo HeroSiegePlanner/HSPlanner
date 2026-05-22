@@ -1,4 +1,6 @@
+import { motion } from 'motion/react'
 import { getClassIcon } from '../../data'
+import { listContainerVariants, listItemVariants } from '../../lib/motion'
 import type { SavedBuild } from '../../utils/savedBuilds'
 import type { BuildMeta } from './useBuildLibrary'
 import { classColor, classInitial, formatTimestamp, tagTone } from './helpers'
@@ -28,6 +30,8 @@ interface BuildTableProps {
   onToggleLevelFilter: () => void
   onClearFilters: () => void
   totalCount: number
+  /** Animation key — re-staggers the row list when the scope/folder changes. */
+  listKey: string
 }
 
 function Chip({
@@ -145,6 +149,7 @@ export function BuildTable({
   onToggleLevelFilter,
   onClearFilters,
   totalCount,
+  listKey,
 }: BuildTableProps) {
   // Centre column: the filter-chip row, the sortable table header, and the
   // scrolling list of build rows.
@@ -186,7 +191,13 @@ export function BuildTable({
       </div>
 
       {/* Body */}
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <motion.div
+        key={listKey}
+        variants={listContainerVariants}
+        initial="initial"
+        animate="animate"
+        className="min-h-0 flex-1 overflow-y-auto"
+      >
         {builds.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-1.5 px-6 text-center">
             <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
@@ -202,8 +213,9 @@ export function BuildTable({
             const selected = b.id === selectedId
             const isActive = b.id === activeBuildId
             return (
-              <div
+              <motion.div
                 key={b.id}
+                variants={listItemVariants}
                 onClick={() => onSelect(b.id)}
                 onDoubleClick={() => onOpen(b.id)}
                 onContextMenu={(e) => onContextMenu(e, b.id)}
@@ -290,11 +302,11 @@ export function BuildTable({
                 <div className="px-1.5 text-right font-mono text-[10.5px] tracking-[0.04em] text-faint">
                   {formatTimestamp(b.updatedAt)}
                 </div>
-              </div>
+              </motion.div>
             )
           })
         )}
-      </div>
+      </motion.div>
     </section>
   )
 }

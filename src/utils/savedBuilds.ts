@@ -595,8 +595,9 @@ export function addProfile(
 export function duplicateProfile(
   buildId: string,
   profileId: string,
+  options: { activate?: boolean } = { activate: true },
 ): { build: SavedBuild; profile: SavedProfile } | null {
-  // Clones an existing profile, picking a non-colliding "(copy)" name and activating the duplicate. Used by ProfileSwitcher's duplicate action so the user can fork a profile to experiment.
+  // Clones an existing profile, picking a non-colliding "(copy)" name. When `options.activate` is set (the default) the duplicate becomes the active profile — ProfileSwitcher relies on this so the live editor follows the fork; the Build Select library passes `activate: false` so duplicating never changes which profile a non-loaded build opens with.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -613,7 +614,7 @@ export function duplicateProfile(
     updatedAt: now,
   }
   build.profiles.push(profile)
-  build.activeProfileId = profile.id
+  if (options.activate ?? true) build.activeProfileId = profile.id
   build.updatedAt = now
   writeLibrary(library)
   return { build, profile }

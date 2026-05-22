@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { motion } from 'motion/react'
 import Logo from '../Logo'
 import { useBuild } from '../../store/build'
 import { getActiveProfile, type Folder } from '../../utils/savedBuilds'
@@ -18,6 +19,17 @@ import {
   TagsOverlay,
   TextPromptOverlay,
 } from './overlays'
+import {
+  CopyIcon,
+  DeleteIcon,
+  ImportIcon,
+  NewFolderIcon,
+  PlusIcon,
+  RenameIcon,
+  SaveIcon,
+  SearchIcon,
+} from './icons'
+import { T_VIEW } from '../../lib/motion'
 
 /** localStorage flag — when set, boot skips the library and opens the most recent build. */
 export const AUTO_OPEN_KEY = 'hsplanner.autoOpenLastBuild.v1'
@@ -45,6 +57,14 @@ type Overlay =
   | { kind: 'renameFolder'; folderId: string; current: string }
   | { kind: 'deleteBuild'; buildId: string; name: string }
   | { kind: 'deleteFolder'; folderId: string; name: string; count: number }
+  | { kind: 'addProfile'; buildId: string }
+  | {
+      kind: 'renameProfile'
+      buildId: string
+      profileId: string
+      current: string
+    }
+  | { kind: 'deleteProfile'; buildId: string; profileId: string; name: string }
 
 interface CtxState {
   x: number
@@ -82,6 +102,13 @@ export default function BuildSelect({
   const setSavedBuildFavorite = useBuild((s) => s.setSavedBuildFavorite)
   const setSavedBuildTags = useBuild((s) => s.setSavedBuildTags)
   const moveSavedBuildToFolder = useBuild((s) => s.moveSavedBuildToFolder)
+  const switchSavedBuildProfile = useBuild((s) => s.switchSavedBuildProfile)
+  const addSavedBuildProfile = useBuild((s) => s.addSavedBuildProfile)
+  const renameSavedBuildProfile = useBuild((s) => s.renameSavedBuildProfile)
+  const duplicateSavedBuildProfile = useBuild(
+    (s) => s.duplicateSavedBuildProfile,
+  )
+  const removeSavedBuildProfile = useBuild((s) => s.removeSavedBuildProfile)
   const createSavedFolder = useBuild((s) => s.createSavedFolder)
   const renameSavedFolder = useBuild((s) => s.renameSavedFolder)
   const deleteSavedFolder = useBuild((s) => s.deleteSavedFolder)
@@ -449,14 +476,22 @@ export default function BuildSelect({
       : SCOPE_LABEL[scope.kind]
 
   return (
-    <div
-      className="grid h-screen w-screen grid-rows-[2.75rem_38px_1fr_26px] overflow-hidden text-text"
+    <motion.div
+      className="grid h-screen w-screen grid-rows-[2.75rem_38px_1fr_2.25rem] overflow-hidden text-text"
       style={{ background: 'var(--color-bg)' }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={T_VIEW}
     >
       {/* Titlebar */}
       <header
-        className="flex items-center gap-3.5 border-b border-border px-3.5"
-        style={{ background: 'var(--color-panel-2)' }}
+        className="relative flex items-center gap-3.5 border-b border-border px-3.5"
+        style={{
+          background:
+            'linear-gradient(180deg, var(--color-panel-2), var(--color-panel))',
+          boxShadow:
+            'inset 0 -1px 0 rgba(201,165,90,0.08), 0 1px 0 rgba(0,0,0,0.4)',
+        }}
       >
         <div className="flex items-center gap-2">
           <Logo size={22} glow title="HSPlanner" />
@@ -491,34 +526,30 @@ export default function BuildSelect({
         style={{ background: 'var(--color-panel-2)' }}
       >
         <ToolButton
-          primary
-          label="Open Build"
-          icon="▶"
-          disabled={!selectedBuild}
-          onClick={() => effectiveSelectedId && onOpenBuild(effectiveSelectedId)}
+          label="New"
+          icon={<PlusIcon className="h-3.5 w-3.5" />}
+          onClick={onNewBuild}
         />
-        <ToolSep />
-        <ToolButton label="New" icon="＋" onClick={onNewBuild} />
         <ToolButton
           label="Import…"
-          icon="⇪"
+          icon={<ImportIcon className="h-3.5 w-3.5" />}
           onClick={() => setOverlay({ kind: 'import' })}
         />
         <ToolButton
           label="Save…"
-          icon="⇫"
+          icon={<SaveIcon className="h-3.5 w-3.5" />}
           onClick={() => setOverlay({ kind: 'save' })}
         />
         <ToolSep />
         <ToolButton
           label="Copy"
-          icon="⎘"
+          icon={<CopyIcon className="h-3.5 w-3.5" />}
           disabled={!selectedBuild}
           onClick={() => selectedBuild && handleCopy(selectedBuild.id)}
         />
         <ToolButton
           label="Rename"
-          icon="✎"
+          icon={<RenameIcon className="h-3.5 w-3.5" />}
           disabled={!selectedBuild}
           onClick={() =>
             selectedBuild &&
@@ -531,7 +562,7 @@ export default function BuildSelect({
         />
         <ToolButton
           label="Delete"
-          icon="✕"
+          icon={<DeleteIcon className="h-3.5 w-3.5" />}
           disabled={!selectedBuild}
           onClick={() =>
             selectedBuild &&
@@ -545,7 +576,7 @@ export default function BuildSelect({
         <ToolSep />
         <ToolButton
           label="New Folder"
-          icon="▢"
+          icon={<NewFolderIcon className="h-3.5 w-3.5" />}
           onClick={() =>
             setOverlay({
               kind: 'newFolder',
@@ -555,10 +586,14 @@ export default function BuildSelect({
         />
         <div className="flex-1" />
         <div
-          className="flex h-7 w-60 items-center gap-1.5 rounded-[3px] border border-border px-2.5"
-          style={{ background: 'var(--color-panel-3)' }}
+          className="flex h-7 w-60 items-center gap-1.5 rounded-[3px] border border-border-2 px-2.5 transition-colors focus-within:border-accent-hot"
+          style={{
+            background:
+              'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+          }}
         >
-          <span className="text-[13px] text-faint">⌕</span>
+          <SearchIcon className="h-3.5 w-3.5 shrink-0 text-faint" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -621,6 +656,9 @@ export default function BuildSelect({
             setLevelFilter(false)
           }}
           totalCount={totalCount}
+          listKey={
+            scope.kind === 'folder' ? `folder:${scope.id}` : scope.kind
+          }
         />
 
         <BuildPreview
@@ -628,13 +666,33 @@ export default function BuildSelect({
           meta={selectedBuild ? lib.meta[selectedBuild.id] : undefined}
           onOpen={onOpenBuild}
           onCopy={handleExport}
+          onSwitchProfile={(buildId, profileId) => {
+            if (switchSavedBuildProfile(buildId, profileId))
+              flash('Profile switched')
+          }}
+          onAddProfile={(buildId) => setOverlay({ kind: 'addProfile', buildId })}
+          onRenameProfile={(buildId, profileId, current) =>
+            setOverlay({ kind: 'renameProfile', buildId, profileId, current })
+          }
+          onDuplicateProfile={(buildId, profileId) => {
+            if (duplicateSavedBuildProfile(buildId, profileId))
+              flash('Profile duplicated')
+          }}
+          onRemoveProfile={(buildId, profileId, name) =>
+            setOverlay({ kind: 'deleteProfile', buildId, profileId, name })
+          }
         />
       </main>
 
       {/* Status bar */}
       <footer
         className="flex items-center gap-3 border-t border-border px-3 font-mono text-[10px] uppercase tracking-[0.1em] text-faint"
-        style={{ background: 'var(--color-panel-2)' }}
+        style={{
+          background:
+            'linear-gradient(180deg, var(--color-panel), var(--color-panel-2))',
+          boxShadow:
+            'inset 0 1px 0 rgba(201,165,90,0.08), 0 -1px 0 rgba(0,0,0,0.4)',
+        }}
       >
         <span
           aria-hidden
@@ -828,7 +886,65 @@ export default function BuildSelect({
           onClose={() => setOverlay(null)}
         />
       )}
-    </div>
+
+      {/* Profile overlays */}
+      {overlay?.kind === 'addProfile' && (
+        <TextPromptOverlay
+          section="Profiles"
+          title="New profile"
+          label="Profile name"
+          placeholder="e.g. Boss setup"
+          submitLabel="Create"
+          hint="Seeded from this build's active profile."
+          onSubmit={(name) => {
+            const id = addSavedBuildProfile(overlay.buildId, name)
+            setOverlay(null)
+            flash(
+              id
+                ? 'Profile added'
+                : 'Could not add profile — build code unreadable',
+            )
+          }}
+          onClose={() => setOverlay(null)}
+        />
+      )}
+      {overlay?.kind === 'renameProfile' && (
+        <TextPromptOverlay
+          section="Profiles"
+          title="Rename profile"
+          label="New name"
+          initial={overlay.current}
+          submitLabel="Save"
+          onSubmit={(name) => {
+            renameSavedBuildProfile(overlay.buildId, overlay.profileId, name)
+            setOverlay(null)
+            flash('Profile renamed')
+          }}
+          onClose={() => setOverlay(null)}
+        />
+      )}
+      {overlay?.kind === 'deleteProfile' && (
+        <ConfirmOverlay
+          section="Delete"
+          title="Delete profile"
+          danger
+          confirmLabel="Delete profile"
+          message={
+            <>
+              Permanently delete profile{' '}
+              <span className="text-accent-hot">{overlay.name}</span>? This
+              cannot be undone.
+            </>
+          }
+          onConfirm={() => {
+            removeSavedBuildProfile(overlay.buildId, overlay.profileId)
+            setOverlay(null)
+            flash('Profile deleted')
+          }}
+          onClose={() => setOverlay(null)}
+        />
+      )}
+    </motion.div>
   )
 }
 
@@ -839,13 +955,11 @@ function ToolSep() {
 function ToolButton({
   label,
   icon,
-  primary,
   disabled,
   onClick,
 }: {
   label: string
-  icon: string
-  primary?: boolean
+  icon: ReactNode
   disabled?: boolean
   onClick: () => void
 }) {
@@ -854,21 +968,9 @@ function ToolButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`inline-flex h-7 items-center gap-1.5 rounded-[3px] border px-2.5 text-[12px] transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-        primary
-          ? 'border-accent-deep text-accent-hot hover:border-accent-hot'
-          : 'border-transparent text-muted hover:border-border hover:bg-panel-3 hover:text-text'
-      }`}
-      style={
-        primary
-          ? { background: 'linear-gradient(180deg,#3a2f1a,#241e10)' }
-          : undefined
-      }
+      className="inline-flex h-7 items-center gap-1.5 rounded-[3px] border border-transparent px-2.5 text-[12px] text-muted transition-colors hover:border-border hover:bg-panel-3 hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <span
-        aria-hidden
-        className={primary ? 'text-accent-hot' : 'text-accent-deep'}
-      >
+      <span aria-hidden className="flex items-center text-accent-deep">
         {icon}
       </span>
       {label}

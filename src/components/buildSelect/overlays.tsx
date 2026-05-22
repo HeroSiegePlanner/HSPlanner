@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../../lib/motion'
 import type { Folder } from '../../utils/savedBuilds'
+import { CaretIcon } from './icons'
 
 const PANEL_BG =
   'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))'
@@ -479,9 +480,7 @@ function FolderChoice({
       }`}
       style={{ paddingLeft: 10 + indent * 16 }}
     >
-      <span aria-hidden className="text-accent-deep">
-        ▸
-      </span>
+      <CaretIcon className="h-2.5 w-2.5 shrink-0 text-accent-deep" />
       <span className="truncate">{label}</span>
     </button>
   )
@@ -508,6 +507,18 @@ export function TagsOverlay({
     }
     setDraft('')
   }
+
+  const save = () => {
+    // Fold any text still sitting in the input into the tag list before
+    // saving — otherwise a tag the user typed but never pressed Enter on is
+    // silently dropped, which reads as "tags don't work".
+    const t = draft.trim()
+    const finalTags =
+      t && !tags.some((x) => x.toLowerCase() === t.toLowerCase())
+        ? [...tags, t]
+        : tags
+    onSave(finalTags)
+  }
   return (
     <OverlayShell
       section="Organise"
@@ -520,7 +531,7 @@ export function TagsOverlay({
           </button>
           <button
             type="button"
-            onClick={() => onSave(tags)}
+            onClick={save}
             className={BTN_GOLD}
             style={{ background: GOLD_BTN }}
           >

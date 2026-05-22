@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { motion } from 'motion/react'
+import { panelVariants } from '../../lib/motion'
 
 export interface ContextMenuItem {
   label: string
@@ -44,9 +46,12 @@ export function ContextMenu({ x, y, header, items, onClose }: ContextMenuProps) 
   const top = Math.min(y, window.innerHeight - estHeight - 8)
 
   return createPortal(
-    <div
+    <motion.div
       role="menu"
       onMouseDown={(e) => e.stopPropagation()}
+      variants={panelVariants}
+      initial="initial"
+      animate="animate"
       className="fixed z-200 flex flex-col overflow-hidden rounded-sm border border-accent-deep/60 py-1"
       style={{
         left,
@@ -87,7 +92,7 @@ export function ContextMenu({ x, y, header, items, onClose }: ContextMenuProps) 
           </button>
         </div>
       ))}
-    </div>,
+    </motion.div>,
     document.body,
   )
 }
