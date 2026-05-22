@@ -450,7 +450,7 @@ export default function BuildSelect({
 
   return (
     <div
-      className="grid h-screen w-screen grid-rows-[40px_38px_1fr_26px] overflow-hidden text-text"
+      className="grid h-screen w-screen grid-rows-[2.75rem_38px_1fr_26px] overflow-hidden text-text"
       style={{ background: 'var(--color-bg)' }}
     >
       {/* Titlebar */}
