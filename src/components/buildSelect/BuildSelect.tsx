@@ -459,8 +459,11 @@ export default function BuildSelect({
         style={{ background: 'var(--color-panel-2)' }}
       >
         <div className="flex items-center gap-2">
-          <Logo size={20} glow title="HSPlanner" />
-          <span className="font-mono text-[12px] uppercase tracking-[0.22em] text-accent-hot">
+          <Logo size={22} glow title="HSPlanner" />
+          <span
+            className="select-none font-mono text-[11px] uppercase tracking-[0.18em] text-accent-hot"
+            style={{ textShadow: '0 0 10px rgba(224,184,100,0.25)' }}
+          >
             HSPlanner
           </span>
         </div>
