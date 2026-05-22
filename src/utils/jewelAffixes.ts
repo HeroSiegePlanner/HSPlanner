@@ -13,7 +13,7 @@ const SKILL_MULTIPLIER_KEYS = new Set([
   'summon_skills',
 ])
 
-export function isJewelEligibleAffix(a: Affix): boolean {
+function isJewelEligibleAffix(a: Affix): boolean {
   if (!a.statKey) return false
   if (SKILL_MULTIPLIER_KEYS.has(a.statKey)) return false
   return true

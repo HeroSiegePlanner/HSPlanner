@@ -1878,7 +1878,7 @@ const DISABLE_RULES: DisableRule[] = [
 
 const META_CACHE = new Map<string, ParsedMeta | null>()
 
-export function parseTreeNodeMeta(line: string): ParsedMeta | null {
+function parseTreeNodeMeta(line: string): ParsedMeta | null {
   const trimmed = line.trim()
   const cached = META_CACHE.get(trimmed)
   if (cached !== undefined) return cached
@@ -1906,7 +1906,7 @@ export function parseTreeNodeMeta(line: string): ParsedMeta | null {
 const PARSE_CACHE = new Map<string, ParsedMod | null>()
 const RECOGNIZED_NO_STAT = new Set<string>()
 
-export function parseTreeNodeMod(line: string): ParsedMod | null {
+function parseTreeNodeMod(line: string): ParsedMod | null {
   const trimmed = line.trim()
   const cached = PARSE_CACHE.get(trimmed)
   if (cached !== undefined) return cached
@@ -1938,7 +1938,7 @@ export function parseTreeNodeMod(line: string): ParsedMod | null {
   return null
 }
 
-export function isRecognizedTreeLine(line: string): boolean {
+function isRecognizedTreeLine(line: string): boolean {
   const trimmed = line.trim()
   if (RECOGNIZED_NO_STAT.has(trimmed)) return true
   parseTreeNodeMod(trimmed)
@@ -1968,22 +1968,4 @@ export function classifyNodeLines(lines: string[]): NodeModBreakdown {
     unsupported.push(line)
   }
   return { parsed, unsupported }
-}
-
-export function aggregateTreeStats(
-  allocated: Set<number>,
-  playerConditions?: Record<string, boolean>,
-): Record<string, number> {
-  const out: Record<string, number> = {}
-  for (const id of allocated) {
-    const info = TREE_NODE_INFO[String(id)]
-    if (!info?.l) continue
-    for (const line of info.l) {
-      const mod = parseTreeNodeMod(line)
-      if (!mod) continue
-      if (mod.selfCondition && !playerConditions?.[mod.selfCondition]) continue
-      out[mod.key] = (out[mod.key] ?? 0) + mod.value
-    }
-  }
-  return out
 }

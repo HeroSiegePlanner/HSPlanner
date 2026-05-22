@@ -53,7 +53,7 @@ const ALLOWED_STYLE_PROPS = new Set([
   'text-decoration',
 ])
 
-export const SAFE_URL_RE = /^(https?:|mailto:|#|\/)/i
+const SAFE_URL_RE = /^(https?:|mailto:|#|\/)/i
 
 export function isSafeUrl(url: string): boolean {
   // Returns true when a URL passes the SAFE_URL_RE allowlist (http(s), mailto, anchor, or root-relative). Used by sanitizeUrl and any caller that needs a quick safety check before rendering a user-supplied link.

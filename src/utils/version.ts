@@ -12,7 +12,7 @@ export const BUILD_CHANNEL: BuildChannel = import.meta.env.DEV
 
 export const GITHUB_REPO = "zium1337/HSPlanner";
 
-export const MOCK_KEY = "hsplanner.update.mock";
+const MOCK_KEY = "hsplanner.update.mock";
 
 const MOCK_FIXTURE: GithubRelease = {
   tag_name: "v2137.0.0",

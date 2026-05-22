@@ -988,4 +988,4 @@ function collectSocketStats(
   return Object.entries(stats).filter(([, v]) => v !== 0)
 }
 
-export { RARITY_TONE, RARITY_LABEL }
+export { RARITY_TONE }

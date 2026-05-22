@@ -6,7 +6,7 @@ interface HoverPortalProps {
   children: ReactNode
 }
 
-export function HoverPortal({ anchorRef, children }: HoverPortalProps) {
+function HoverPortal({ anchorRef, children }: HoverPortalProps) {
   const [pos, setPos] = useState<{ left: number; top: number; maxWidth: number } | null>(null)
 
   useLayoutEffect(() => {

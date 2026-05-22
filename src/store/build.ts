@@ -47,11 +47,8 @@ import { guardStorage } from './storageError'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
   defaultEnemyResistances,
-  DEFAULT_ENEMY_RESISTANCE_PCT,
   type BuildSnapshot,
 } from '../utils/shareBuild'
-
-export { defaultEnemyResistances, DEFAULT_ENEMY_RESISTANCE_PCT }
 import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/treeGraph'
 
 type AttrMap = Record<AttributeKey, number>
@@ -187,9 +184,6 @@ interface BuildActions {
   dismissStorageError: () => void
 }
 
-export { START_IDS as TREE_START_IDS, START_SET as TREE_START_SET } from '../utils/treeGraph'
-export { findPath as findTreePath } from '../utils/treeGraph'
-
 function emptyAllocation(): AttrMap {
   // Returns an attribute map with every game-defined attribute initialised to zero. Used to seed the build store and to reset attribute allocations.
   return gameConfig.attributes.reduce<AttrMap>((acc, a) => {
@@ -233,7 +227,7 @@ function snapshotPatch(snap: BuildSnapshot) {
 const HARD_SOCKET_CAP = 6
 export const BONUS_SOCKET_MOD_ID = 'crystal_add_socket'
 
-export function hasBonusSocketMod(
+function hasBonusSocketMod(
   forgedMods?: { affixId: string }[] | null,
 ): boolean {
   // Returns true when the supplied forged-mod list contains the BONUS_SOCKET_MOD_ID crystal mod. Used by maxSocketsFor (and gear UI) to decide whether to extend an item's socket cap by one.

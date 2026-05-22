@@ -50,8 +50,6 @@ const SPRITE_URLS: string[] = [
   ),
 ]
 
-export const TOTAL_SPRITE_COUNT = SPRITE_URLS.length
-
 // Resolves once every sprite has loaded (or errored — a broken sprite
 // shouldn't block the whole app, so we treat onerror as "done" too).
 export function preloadSprites(

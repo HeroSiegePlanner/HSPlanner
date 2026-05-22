@@ -16,7 +16,7 @@ const DEFAULT_PERCENT_PER_STAR = 0
 // Documented in listamodow-2.txt header:
 //   "ITEM SPECIFIC 2* = +1 | 4* = +2 | 5* = +3"
 // Used by item-granted skill ranks (`item_granted_skill_rank` / skillBonuses).
-export const ITEM_SPECIFIC_STAIRCASE: Record<number, number> = {
+const ITEM_SPECIFIC_STAIRCASE: Record<number, number> = {
   0: 0,
   1: 0,
   2: 1,
@@ -27,7 +27,7 @@ export const ITEM_SPECIFIC_STAIRCASE: Record<number, number> = {
 
 // Documented in listamodow-2.txt for affixes such as fire_skills / cold_skills:
 //   "na trzech * +1 na pieciu * +2"
-export const FLAT_SKILL_STAIRCASE: Record<number, number> = {
+const FLAT_SKILL_STAIRCASE: Record<number, number> = {
   0: 0,
   1: 0,
   2: 0,
@@ -203,15 +203,9 @@ const STAR_SCALE_MAP: Readonly<Record<string, StarScaleConfig>> = {
   poison_length_reduced: { kind: 'none' },
 }
 
-export function getStarScaleConfig(statKey: string | null): StarScaleConfig {
+function getStarScaleConfig(statKey: string | null): StarScaleConfig {
   if (!statKey) return { kind: 'none' }
   return STAR_SCALE_MAP[statKey] ?? { kind: 'none' }
-}
-
-export function isStatStarImmune(statKey: string | null): boolean {
-  // Returns true when stars must not affect this stat at all (no %, no flat).
-  const cfg = getStarScaleConfig(statKey)
-  return cfg.kind === 'none' || cfg.kind === 'unknown' || cfg.kind === 'glitch'
 }
 
 export function statStarPercentMultiplier(

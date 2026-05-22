@@ -13,7 +13,7 @@ const LEGACY_STORAGE_KEY_V1 = 'heroplanner.savedBuilds.v1'
 const LEGACY_STORAGE_KEY_V2 = 'heroplanner.savedBuilds.v2'
 const LEGACY_STORAGE_KEY = 'heroplanner.savedBuilds.v3'
 
-export const DEFAULT_PROFILE_NAME = 'Default'
+const DEFAULT_PROFILE_NAME = 'Default'
 
 export class StorageWriteError extends Error {
   // Thrown by `writeLibrary` when persisting the saved-builds library to

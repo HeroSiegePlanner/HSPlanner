@@ -60,14 +60,14 @@ export interface BuildPerformanceOutput {
   activeSkillName: string | null
 }
 
-export function computeBuildPerformanceNative(
+function computeBuildPerformanceNative(
   input: BuildPerformanceInput,
 ): Promise<BuildPerformanceOutput> {
   return invoke<BuildPerformanceOutput>('calc_build_performance', { input })
 }
 
 // Collapse [n, n] back to just n, so the rest of the TS code stays the same.
-export function asRangedValue([min, max]: RustRanged): RangedValue {
+function asRangedValue([min, max]: RustRanged): RangedValue {
   return min === max ? min : [min, max]
 }
 
@@ -207,12 +207,4 @@ export async function computeBuildStatsAsync(
     input: depsToInput(deps),
   })
   return toLegacyBuildStats(raw)
-}
-
-// Plain pass-through for any future commands we haven't wrapped yet.
-export function invokeCalc<TResult>(
-  cmd: string,
-  args: Record<string, unknown> = {},
-): Promise<TResult> {
-  return invoke<TResult>(cmd, args)
 }

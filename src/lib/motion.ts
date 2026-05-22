@@ -14,10 +14,9 @@ export { useReducedMotion };
 
 // Cubic-bezier easings. EASE_OUT is a calm decelerate with no overshoot.
 export const EASE_OUT = [0.22, 0.61, 0.36, 1] as const;
-export const EASE_IN_OUT = [0.4, 0, 0.2, 1] as const;
 
 // Durations in seconds (motion uses seconds, not milliseconds).
-export const DURATION = {
+const DURATION = {
   fast: 0.12,
   base: 0.16,
   view: 0.2,

@@ -66,7 +66,7 @@ export function rangedBounds(v: RangedValue | undefined): {
   return { min: rangedMin(v), max: rangedMax(v) }
 }
 
-export function diffRangePair(
+function diffRangePair(
   key: string,
   label: string,
   beforeMin: number,
