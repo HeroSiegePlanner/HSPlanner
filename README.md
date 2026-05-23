@@ -21,7 +21,7 @@ A desktop build planner for **Hero Siege** — a calculator for the talent tree,
 - [x] **Share** — export the entire build to a compressed URL (lz-string)
 - [x] **Update check** — opt-in update check via GitHub Releases
 
-<img width="1277" height="800" alt="{139CD596-7ABD-4699-B268-81E259A94519}" src="https://github.com/user-attachments/assets/d2f51f6e-0a1d-46a6-a26d-3214916ffb37" />
+<img width="1710" height="1041" alt="image" src="https://github.com/user-attachments/assets/1bed9cf0-fbff-4231-b7bd-42ae25968938" />
 
 ---
 
