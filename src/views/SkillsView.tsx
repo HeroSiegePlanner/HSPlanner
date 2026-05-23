@@ -55,17 +55,15 @@ const GAP = 18
 
 export default function SkillsView() {
   // Top-level Skills view: lays out the active class's skill tree as a clickable grid, lets the user spend skill points (with prerequisite cascades), and renders a per-skill details side panel showing the current/next-rank stats, damage breakdown, mana cost, subtree bonuses, and the "Open subtree" entry point. Used as one of the main app tabs.
-  const {
-    classId,
-    level,
-    inventory,
-    skillRanks,
-    subskillRanks,
-    enemyConditions,
-    incSkillRank,
-    decSkillRank,
-    resetSkillRanks,
-  } = useBuild()
+  const classId = useBuild((s) => s.classId)
+  const level = useBuild((s) => s.level)
+  const inventory = useBuild((s) => s.inventory)
+  const skillRanks = useBuild((s) => s.skillRanks)
+  const subskillRanks = useBuild((s) => s.subskillRanks)
+  const enemyConditions = useBuild((s) => s.enemyConditions)
+  const incSkillRank = useBuild((s) => s.incSkillRank)
+  const decSkillRank = useBuild((s) => s.decSkillRank)
+  const resetSkillRanks = useBuild((s) => s.resetSkillRanks)
   const [hovered, setHovered] = useState<string | null>(null)
   const [pinned, setPinned] = useState<string | null>(null)
   const [openSubtree, setOpenSubtree] = useState<string | null>(null)

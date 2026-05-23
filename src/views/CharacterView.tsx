@@ -11,8 +11,14 @@ function attrStep(e: React.MouseEvent, cap: number): number {
 
 export default function CharacterView() {
   // View that lets the user pick a class, set the character level (with a synced slider/number input), and allocate attribute points (with +/- steppers honouring `attrStep`'s shift/ctrl shortcuts). Shows the available point budget and a reset action.
-  const { classId, level, allocated, setClass, setLevel, incAttr, decAttr, resetAttrs } =
-    useBuild()
+  const classId = useBuild((s) => s.classId)
+  const level = useBuild((s) => s.level)
+  const allocated = useBuild((s) => s.allocated)
+  const setClass = useBuild((s) => s.setClass)
+  const setLevel = useBuild((s) => s.setLevel)
+  const incAttr = useBuild((s) => s.incAttr)
+  const decAttr = useBuild((s) => s.decAttr)
+  const resetAttrs = useBuild((s) => s.resetAttrs)
 
   const cls = classId ? getClass(classId) : undefined
   const finals = finalAttributes(classId, allocated)

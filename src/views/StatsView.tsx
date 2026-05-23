@@ -166,15 +166,13 @@ const WORLD_LOOT_KEYS = [
 
 export default function StatsView() {
   // Stats tab matching the "Stats View Mockup": page head with filter chips, hero build summary, search box, attributes strip, weapon damage hero with breakdown, per-skill cards (main skill highlighted in gold), and a 2-column Defensive / Resources grid. All stat math reuses computeBuildStats / computeWeaponDamage / computeSkillDamage from utils.
-  const {
-    classId,
-    inventory,
-    skillRanks,
-    enemyConditions,
-    skillProjectiles,
-    enemyResistances,
-    mainSkillId: storeMainSkillId,
-  } = useBuild()
+  const classId = useBuild((s) => s.classId)
+  const inventory = useBuild((s) => s.inventory)
+  const skillRanks = useBuild((s) => s.skillRanks)
+  const enemyConditions = useBuild((s) => s.enemyConditions)
+  const skillProjectiles = useBuild((s) => s.skillProjectiles)
+  const enemyResistances = useBuild((s) => s.enemyResistances)
+  const storeMainSkillId = useBuild((s) => s.mainSkillId)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterTab>('all')
   const normalizedQuery = query.trim().toLowerCase()

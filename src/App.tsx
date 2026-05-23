@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
@@ -13,13 +13,13 @@ import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
 import { preloadSprites } from "./utils/preloadAssets";
 import { readStorageWithLegacy, writeStorage } from "./utils/storage";
-import CharacterView from "./views/CharacterView";
-import ConfigView from "./views/ConfigView";
-import GearView from "./views/gear/GearView";
-import NotesView from "./views/NotesView";
-import SkillsView from "./views/SkillsView";
-import StatsView from "./views/StatsView";
-import TreeView from "./views/TreeView";
+const CharacterView = lazy(() => import("./views/CharacterView"));
+const ConfigView = lazy(() => import("./views/ConfigView"));
+const GearView = lazy(() => import("./views/gear/GearView"));
+const NotesView = lazy(() => import("./views/NotesView"));
+const SkillsView = lazy(() => import("./views/SkillsView"));
+const StatsView = lazy(() => import("./views/StatsView"));
+const TreeView = lazy(() => import("./views/TreeView"));
 
 declare global {
   interface Window {
@@ -55,6 +55,21 @@ function readInitialSection(): Section {
 // the sprite fetches. Roughly matches how long each phase actually takes.
 const WARMUP_WEIGHT = 0.5;
 const SPRITES_WEIGHT = 0.5;
+
+function ViewLoadingFallback() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot animate-pulse"
+          style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
+        />
+        Loading
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const [section, setSection] = useState<Section>(readInitialSection);
@@ -298,7 +313,9 @@ function App() {
               exit="exit"
               className="h-full"
             >
-              <ActiveView />
+              <Suspense fallback={<ViewLoadingFallback />}>
+                <ActiveView />
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </main>
