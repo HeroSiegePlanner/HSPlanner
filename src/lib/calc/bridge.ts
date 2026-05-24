@@ -222,9 +222,13 @@ export interface StatBreakdown {
   statName: string
   isPercent: boolean
   hasMore: boolean
+  hasIncreased: boolean
   additiveSum: RangedValue
   additiveSources: SourceContribution[]
   additiveByType: StatTypeSubtotal[]
+  increasedSum: RangedValue
+  increasedSources: SourceContribution[]
+  increasedByType: StatTypeSubtotal[]
   moreSum: RangedValue
   moreSources: SourceContribution[]
   moreByType: StatTypeSubtotal[]
@@ -244,9 +248,13 @@ interface RustStatBreakdown {
   statName: string
   isPercent: boolean
   hasMore: boolean
+  hasIncreased: boolean
   additiveSum: RustRanged
   additiveSources: RustSourceContribution[]
   additiveByType: RustStatTypeSubtotal[]
+  increasedSum: RustRanged
+  increasedSources: RustSourceContribution[]
+  increasedByType: RustStatTypeSubtotal[]
   moreSum: RustRanged
   moreSources: RustSourceContribution[]
   moreByType: RustStatTypeSubtotal[]
@@ -267,9 +275,13 @@ function toLegacyStatBreakdown(raw: RustStatBreakdown): StatBreakdown {
     statName: raw.statName,
     isPercent: raw.isPercent,
     hasMore: raw.hasMore,
+    hasIncreased: raw.hasIncreased,
     additiveSum: asRangedValue(raw.additiveSum),
     additiveSources: raw.additiveSources.map(convertContribution),
     additiveByType: raw.additiveByType.map(convertSubtotal),
+    increasedSum: asRangedValue(raw.increasedSum),
+    increasedSources: raw.increasedSources.map(convertContribution),
+    increasedByType: raw.increasedByType.map(convertSubtotal),
     moreSum: asRangedValue(raw.moreSum),
     moreSources: raw.moreSources.map(convertContribution),
     moreByType: raw.moreByType.map(convertSubtotal),

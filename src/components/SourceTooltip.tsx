@@ -348,9 +348,26 @@ function isZeroRanged(v: RangedValue): boolean {
 }
 
 function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
-  // PoB-style "how this number was derived" panel. For stats with a `_more` companion (e.g. `increased_life` + `increased_life_more`), shows Additive, More, Combined lines. For pure-additive stats, just shows a single Total line. Numbers come from Rust; this component only renders.
-  const { hasMore, additiveSum, moreSum, combined, isPercent } = breakdown
-  if (!hasMore) {
+  // PoB-style "how this number was derived" panel. Three shapes:
+  //   1. Multiplied-flat stats (life, mana, replenishes): the engine does
+  //      `flat × (1 + sum(increased)/100) × (1 + sum(more)/100)`. We show
+  //      Additive (flat), Increased (%), More (×), and Combined.
+  //   2. Percent stats with _more (e.g. increased_fire_damage): the engine
+  //      does `(1 + add/100) × (1 + more/100) − 1`. We show Additive (+),
+  //      Multiplicative (×), and Combined.
+  //   3. Plain percent or flat stats with no multipliers: single Total line.
+  // Numbers come from Rust; this component only renders.
+  const {
+    hasMore,
+    hasIncreased,
+    additiveSum,
+    increasedSum,
+    moreSum,
+    combined,
+    isPercent,
+  } = breakdown
+  const hasAnyMultiplier = hasIncreased || hasMore
+  if (!hasAnyMultiplier) {
     if (isZeroRanged(combined)) return null
     return (
       <div className="border-b border-border/40">
@@ -366,6 +383,49 @@ function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
       </div>
     )
   }
+  // Multiplied-flat stat path (life / mana / replenishes). isPercent is false
+  // — the additive sum is a flat unit and the combined value is too.
+  if (hasIncreased || !isPercent) {
+    return (
+      <div className="border-b border-border/40">
+        {sectionLabel('Calculation', fmtFlatRange(combined))}
+        <div className="space-y-1 px-3 py-2 text-[11px]">
+          <div className="flex items-baseline justify-between gap-2 text-text/70">
+            <span>Additive (flat)</span>
+            <span className="font-mono tabular-nums text-text/85">
+              {fmtFlatRange(additiveSum)}
+            </span>
+          </div>
+          {hasIncreased && (
+            <div className="flex items-baseline justify-between gap-2 text-text/70">
+              <span>Increased (+%)</span>
+              <span className="font-mono tabular-nums text-text/85">
+                {fmtPctRange(increasedSum)}
+              </span>
+            </div>
+          )}
+          {hasMore && (
+            <div className="flex items-baseline justify-between gap-2 text-text/70">
+              <span>More (×)</span>
+              <span className="font-mono tabular-nums text-text/85">
+                {fmtMultRange(moreSum)}
+              </span>
+            </div>
+          )}
+          <div className="border-t border-dashed border-border/60 pt-1 text-text/40 font-mono text-[10px] leading-tight">
+            flat × (1 + inc/100) × (1 + more/100)
+          </div>
+          <div className="flex items-baseline justify-between gap-2 border-t border-border/40 pt-1">
+            <span className="font-semibold text-accent-hot/90">Combined</span>
+            <span className="font-mono tabular-nums text-accent-hot">
+              {fmtFlatRange(combined)}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  // Percent stat with _more companion (e.g. increased_fire_damage).
   return (
     <div className="border-b border-border/40">
       {sectionLabel('Calculation', fmtPctRange(combined))}
@@ -397,12 +457,37 @@ function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
 }
 
 function BySourceTypeSection({ breakdown }: { breakdown: StatBreakdown }) {
-  // Per-source-type subtotals, sorted by magnitude (Rust does the sort). Shows the additive bucket always; when `hasMore`, follows with the multiplicative bucket. Counts are appended in parentheses so the user knows how many contributors hide behind each subtotal.
-  const { additiveByType, moreByType, hasMore, isPercent } = breakdown
-  if (additiveByType.length === 0 && moreByType.length === 0) return null
-  const renderRow = (sub: StatTypeSubtotal, asMult: boolean) => (
+  // Per-source-type subtotals, sorted by magnitude (Rust does the sort).
+  // Renders three optional buckets, divider-separated:
+  //   - Additive (flat for multiplied stats, or +% for percent stats)
+  //   - Increased (only present on multiplied-flat stats — life, mana, etc.)
+  //   - Multiplicative (more%, when present)
+  // Bucket order matches CalculationSection's row order so the eye can map
+  // each subtotal back to its formula component.
+  const {
+    additiveByType,
+    increasedByType,
+    moreByType,
+    hasIncreased,
+    hasMore,
+    isPercent,
+  } = breakdown
+  if (
+    additiveByType.length === 0 &&
+    increasedByType.length === 0 &&
+    moreByType.length === 0
+  ) {
+    return null
+  }
+  // For multiplied-flat stats, the Additive bucket carries flat units; for
+  // percent stats it carries percentages. fmtBreakdownValue handles both.
+  const additiveAsPercent = isPercent && !hasIncreased
+  const renderRow = (
+    sub: StatTypeSubtotal,
+    kind: 'additive' | 'increased' | 'more',
+  ) => (
     <div
-      key={`${sub.sourceType}-${asMult ? 'm' : 'a'}`}
+      key={`${sub.sourceType}-${kind}`}
       className="flex items-baseline justify-between gap-2 px-3 py-0.5 text-[11px]"
     >
       <span className="flex items-baseline gap-1.5 min-w-0">
@@ -416,7 +501,11 @@ function BySourceTypeSection({ breakdown }: { breakdown: StatBreakdown }) {
         </span>
       </span>
       <span className="font-mono tabular-nums text-accent-hot">
-        {asMult ? fmtMultRange(sub.sum) : fmtBreakdownValue(sub.sum, isPercent)}
+        {kind === 'more'
+          ? fmtMultRange(sub.sum)
+          : kind === 'increased'
+            ? fmtPctRange(sub.sum)
+            : fmtBreakdownValue(sub.sum, additiveAsPercent)}
       </span>
     </div>
   )
@@ -424,14 +513,23 @@ function BySourceTypeSection({ breakdown }: { breakdown: StatBreakdown }) {
     <div className="border-b border-border/40">
       {sectionLabel('By source')}
       <div className="py-1">
-        {additiveByType.map((s) => renderRow(s, false))}
+        {additiveByType.map((s) => renderRow(s, 'additive'))}
+        {hasIncreased && increasedByType.length > 0 && (
+          <>
+            <div className="my-1 mx-3 border-t border-dashed border-border/40" />
+            <div className="px-3 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text/40">
+              Increased
+            </div>
+            {increasedByType.map((s) => renderRow(s, 'increased'))}
+          </>
+        )}
         {hasMore && moreByType.length > 0 && (
           <>
             <div className="my-1 mx-3 border-t border-dashed border-border/40" />
             <div className="px-3 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text/40">
               Multiplicative
             </div>
-            {moreByType.map((s) => renderRow(s, true))}
+            {moreByType.map((s) => renderRow(s, 'more'))}
           </>
         )}
       </div>
@@ -526,6 +624,14 @@ export default function SourceTooltip({
   const [pinned, setPinned] = useState(false)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
   const breakdownRequestedRef = useRef(false)
+  // Reset the "already requested" latch when the cached breakdown drops back
+  // to null — that happens when StatsView invalidates its cache after the
+  // user edits the build. Without this reset the modal would never re-fetch.
+  useEffect(() => {
+    if (breakdown == null) {
+      breakdownRequestedRef.current = false
+    }
+  }, [breakdown])
   const inventory = useBuild((s) => s.inventory)
   const itemByName = useMemo(() => {
     // Reverse-lookup map populated from the build's current inventory. Used by

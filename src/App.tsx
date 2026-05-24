@@ -5,6 +5,7 @@ import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
 import BottomBar from "./components/BottomBar";
 import BuildsMenu from "./components/BuildsMenu";
 import LeftStatsPanel from "./components/LeftStatsPanel";
+import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
 import StartupBuildModal from "./components/StartupBuildModal";
@@ -160,6 +161,7 @@ function App() {
   const needsScroll = section !== "tree" && section !== "skills";
 
   return (
+    <HoverProvider>
     <div className="flex h-screen w-screen flex-col bg-bg text-text">
       <header
         className="relative flex h-11 shrink-0 items-center gap-0 border-b border-border pl-3 pr-3"
@@ -330,6 +332,7 @@ function App() {
 
       <StorageErrorBanner />
     </div>
+    </HoverProvider>
   );
 }
 
