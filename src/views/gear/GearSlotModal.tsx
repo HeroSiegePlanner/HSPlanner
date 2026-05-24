@@ -6,6 +6,7 @@ import { detectRuneword, forgeKindFor, getItem, getItemSet, isGearSlot } from '.
 import { maxSocketsFor, useBuild } from '../../store/build'
 import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
 import type { EquippedItem, Inventory, SlotKey, SocketType } from '../../types'
+import { useSetHoverPreview } from '../../contexts/HoverContext'
 import { type BuildSummaryDeps } from './lib/diff'
 import { pickerItemsForSlot } from './pickerItems'
 import { ConfigEmptyState, ConfigSectionHeader, PickerCornerMarks, SectionCard } from './SectionCard'
@@ -65,6 +66,12 @@ export function GearSlotModal({
   const replaceEquippedItem = useBuild((s) => s.replaceEquippedItem)
   const rows = useMemo(() => pickerItemsForSlot(slot), [slot])
   const inv = useBuild((s) => s.inventory)
+  // Phase A hover wiring: report which picker row the cursor is over so
+  // the LeftStatsPanel (phase B) can paint a live delta against the build.
+  // Clears on unmount so the sidebar doesn't stay stuck on the last hover
+  // after the modal closes.
+  const setHover = useSetHoverPreview()
+  useEffect(() => () => setHover(null), [setHover])
 
   // Frozen at modal open so the compare column diffs live edits against the original equipped state.
   const [baselineEquipped] = useState<EquippedItem | null>(() =>
@@ -260,7 +267,10 @@ export function GearSlotModal({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div
+              className="min-h-0 flex-1 overflow-y-auto"
+              onMouseLeave={() => setHover(null)}
+            >
               {isOffhandLocked ? (
                 <div className="m-4 rounded border border-amber-500/30 bg-amber-500/5 px-3 py-3 text-[11px] text-amber-200">
                   Offhand is locked while a Two-Handed weapon is in the main
@@ -293,7 +303,9 @@ export function GearSlotModal({
                         row={r}
                         selected={r.id === equipped?.baseId}
                         onSelect={() => onEquip(r.id)}
-                        onHover={() => {}}
+                        onHover={() =>
+                          setHover({ kind: 'gear', slot, baseId: r.id })
+                        }
                       />
                     ))}
                   </div>

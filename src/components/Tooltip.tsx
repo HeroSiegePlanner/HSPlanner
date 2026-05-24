@@ -12,6 +12,10 @@ interface TooltipProps {
   className?: string
   disabled?: boolean
   placement?: 'right' | 'left' | 'top' | 'bottom'
+  // Override the default 1000 stacking level. Needed when the tooltip lives
+  // inside a higher-z-index modal (e.g. the pinned breakdown at 1100) and
+  // would otherwise render under the modal's backdrop blur.
+  zIndex?: number
 }
 
 export default function Tooltip({
@@ -22,6 +26,7 @@ export default function Tooltip({
   className,
   disabled,
   placement = 'right',
+  zIndex = 1000,
 }: TooltipProps) {
   // Wrapping component that shows a portalled, viewport-clamped tooltip after a small hover/focus delay, picking the best placement (right, left, top, bottom) when the preferred one would overflow. Used as the universal hover popup wrapper for items, skills, sources and any other surface needing rich popovers.
   const [visible, setVisible] = useState(false)
@@ -112,11 +117,12 @@ export default function Tooltip({
           <div
             ref={tooltipRef}
             role="tooltip"
-            className={`fixed z-[1000] min-w-[220px] max-w-[360px] bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] overflow-hidden pointer-events-none select-none shadow-[0_8px_32px_rgba(0,0,0,0.8)]`}
+            className={`fixed min-w-[220px] max-w-[360px] bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] overflow-hidden pointer-events-none select-none shadow-[0_8px_32px_rgba(0,0,0,0.8)]`}
             style={{
               left: pos?.left ?? -9999,
               top: pos?.top ?? -9999,
               opacity: pos ? 1 : 0,
+              zIndex,
               transition: 'opacity 80ms ease-out',
             }}
           >

@@ -209,6 +209,105 @@ export async function computeBuildStatsAsync(
   return toLegacyBuildStats(raw)
 }
 
+// ---------- calc_stat_breakdown (per-key explainability) ----------
+
+export interface StatTypeSubtotal {
+  sourceType: SourceType
+  sum: RangedValue
+  count: number
+}
+
+export interface StatBreakdown {
+  statKey: string
+  statName: string
+  isPercent: boolean
+  hasMore: boolean
+  hasIncreased: boolean
+  additiveSum: RangedValue
+  additiveSources: SourceContribution[]
+  additiveByType: StatTypeSubtotal[]
+  increasedSum: RangedValue
+  increasedSources: SourceContribution[]
+  increasedByType: StatTypeSubtotal[]
+  moreSum: RangedValue
+  moreSources: SourceContribution[]
+  moreByType: StatTypeSubtotal[]
+  combined: RangedValue
+}
+
+export type StatBreakdownKind = 'stat' | 'attribute'
+
+interface RustStatTypeSubtotal {
+  sourceType: SourceType
+  sum: RustRanged
+  count: number
+}
+
+interface RustStatBreakdown {
+  statKey: string
+  statName: string
+  isPercent: boolean
+  hasMore: boolean
+  hasIncreased: boolean
+  additiveSum: RustRanged
+  additiveSources: RustSourceContribution[]
+  additiveByType: RustStatTypeSubtotal[]
+  increasedSum: RustRanged
+  increasedSources: RustSourceContribution[]
+  increasedByType: RustStatTypeSubtotal[]
+  moreSum: RustRanged
+  moreSources: RustSourceContribution[]
+  moreByType: RustStatTypeSubtotal[]
+  combined: RustRanged
+}
+
+function convertSubtotal(raw: RustStatTypeSubtotal): StatTypeSubtotal {
+  return {
+    sourceType: raw.sourceType,
+    sum: asRangedValue(raw.sum),
+    count: raw.count,
+  }
+}
+
+function toLegacyStatBreakdown(raw: RustStatBreakdown): StatBreakdown {
+  return {
+    statKey: raw.statKey,
+    statName: raw.statName,
+    isPercent: raw.isPercent,
+    hasMore: raw.hasMore,
+    hasIncreased: raw.hasIncreased,
+    additiveSum: asRangedValue(raw.additiveSum),
+    additiveSources: raw.additiveSources.map(convertContribution),
+    additiveByType: raw.additiveByType.map(convertSubtotal),
+    increasedSum: asRangedValue(raw.increasedSum),
+    increasedSources: raw.increasedSources.map(convertContribution),
+    increasedByType: raw.increasedByType.map(convertSubtotal),
+    moreSum: asRangedValue(raw.moreSum),
+    moreSources: raw.moreSources.map(convertContribution),
+    moreByType: raw.moreByType.map(convertSubtotal),
+    combined: asRangedValue(raw.combined),
+  }
+}
+
+// Fetches a fully populated breakdown for one stat or attribute. The Rust
+// side re-runs the same stat pipeline `computeBuildStatsAsync` does (so the
+// numbers are guaranteed identical), then collapses one key's source list
+// into per-source-type subtotals and a final combined value.
+export async function computeStatBreakdownAsync(
+  deps: BuildPerformanceDeps,
+  statKey: string,
+  kind: StatBreakdownKind = 'stat',
+): Promise<StatBreakdown> {
+  const raw = await invoke<RustStatBreakdown>('calc_stat_breakdown', {
+    input: {
+      ...depsToInput(deps),
+      statKey,
+      kind,
+    },
+  })
+  return toLegacyStatBreakdown(raw)
+}
+
 // Plain pass-through for any future commands we haven't wrapped yet.
 export function invokeCalc<TResult>(
   cmd: string,

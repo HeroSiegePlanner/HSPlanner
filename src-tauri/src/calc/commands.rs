@@ -3,7 +3,9 @@ use std::collections::{HashMap, HashSet};
 
 use super::build::{BuildPerformance, BuildPerformanceDeps, compute_build_performance};
 use super::skills as calc;
-use super::stats::{BuildStatsInput, ComputedStats, compute_build_stats};
+use super::stats::{
+    BuildStatsInput, ComputedStats, StatBreakdown, compute_build_stats, compute_stat_breakdown,
+};
 use super::types::{CustomStat, Inventory, TreeSocketContent};
 
 #[derive(Deserialize)]
@@ -473,4 +475,52 @@ pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
         enemy_conditions: &input.enemy_conditions,
     };
     compute_build_stats(&stats_input)
+}
+
+// Re-runs the full stat pipeline for a build, then returns a per-key breakdown
+// for a single stat (or attribute) — additive + more contribution lists,
+// per-source-type subtotals, and the combined final value. Called by the
+// frontend's StatBreakdownModal on left-click. Caller passes `kind` to
+// disambiguate between a stat-sources lookup and an attribute-sources lookup.
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatBreakdownInput {
+    #[serde(flatten)]
+    pub deps: BuildPerformanceInput,
+    pub stat_key: String,
+    #[serde(default)]
+    pub kind: StatBreakdownKind,
+}
+
+#[derive(Deserialize, Default, Clone, Copy)]
+#[serde(rename_all = "lowercase")]
+pub enum StatBreakdownKind {
+    #[default]
+    Stat,
+    Attribute,
+}
+
+#[tauri::command]
+pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
+    let stats_input = BuildStatsInput {
+        class_id: input.deps.class_id.as_deref(),
+        level: input.deps.level,
+        allocated_attrs: &input.deps.allocated_attrs,
+        inventory: &input.deps.inventory,
+        skill_ranks: &input.deps.skill_ranks,
+        active_aura_id: input.deps.active_aura_id.as_deref(),
+        active_buffs: &input.deps.active_buffs,
+        custom_stats: &input.deps.custom_stats,
+        allocated_tree_nodes: &input.deps.allocated_tree_nodes,
+        tree_socketed: &input.deps.tree_socketed,
+        player_conditions: &input.deps.player_conditions,
+        subskill_ranks: &input.deps.subskill_ranks,
+        enemy_conditions: &input.deps.enemy_conditions,
+    };
+    let computed = compute_build_stats(&stats_input);
+    let sources = match input.kind {
+        StatBreakdownKind::Stat => &computed.stat_sources,
+        StatBreakdownKind::Attribute => &computed.attribute_sources,
+    };
+    compute_stat_breakdown(sources, &input.stat_key)
 }

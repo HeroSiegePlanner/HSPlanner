@@ -24,6 +24,7 @@ pub fn run() {
       calc::commands::compute_weapon_damage,
       calc::commands::calc_build_performance,
       calc::commands::calc_build_stats,
+      calc::commands::calc_stat_breakdown,
       calc::commands::calc_warmup,
       suggest_engine::command::suggest_tree_nodes,
     ])

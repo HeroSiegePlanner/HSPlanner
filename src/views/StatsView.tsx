@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import SourceTooltip from '../components/SourceTooltip'
 import { classes, gameConfig, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
-import { computeBuildStatsAsync } from '../lib/calc/bridge'
+import {
+  computeBuildStatsAsync,
+  computeStatBreakdownAsync,
+} from '../lib/calc/bridge'
+import type { StatBreakdown, StatBreakdownKind } from '../lib/calc/bridge'
 import { useBuild } from '../store/build'
 import {
   aggregateItemSkillBonuses,
@@ -190,6 +194,72 @@ export default function StatsView() {
       cancelled = true
     }
   }, [buildDeps])
+
+  // Per-stat breakdown cache. Keyed `${kind}:${statKey}` so attributes and
+  // stats sharing a key (e.g. `strength`) don't collide. The state object
+  // carries the buildDeps it was filled for, so when buildDeps swap we just
+  // read an empty cache without a `setState`-in-effect — a fresh fetch will
+  // commit a new bucket. `inFlight` lives in state too (not in a ref) so the
+  // request callback doesn't read a ref during render.
+  const [breakdownState, setBreakdownState] = useState<{
+    depsKey: unknown
+    cache: Record<string, StatBreakdown>
+    inFlight: Record<string, true>
+  }>(() => ({ depsKey: null, cache: {}, inFlight: {} }))
+  const stale = breakdownState.depsKey !== buildDeps
+  const activeCache = useMemo(
+    () => (stale ? {} : breakdownState.cache),
+    [stale, breakdownState.cache],
+  )
+  const activeInFlight = useMemo(
+    () => (stale ? {} : breakdownState.inFlight),
+    [stale, breakdownState.inFlight],
+  )
+  const requestBreakdown = useCallback(
+    (statKey: string, kind: StatBreakdownKind) => {
+      const key = `${kind}:${statKey}`
+      if (activeCache[key] || activeInFlight[key]) return
+      const depsAtRequest = buildDeps
+      setBreakdownState((prev) => {
+        const carry = prev.depsKey === depsAtRequest ? prev : {
+          depsKey: depsAtRequest,
+          cache: {},
+          inFlight: {},
+        }
+        return {
+          ...carry,
+          inFlight: { ...carry.inFlight, [key]: true },
+        }
+      })
+      computeStatBreakdownAsync(buildDeps, statKey, kind)
+        .then((result) => {
+          setBreakdownState((prev) => {
+            if (prev.depsKey !== depsAtRequest) return prev
+            const { [key]: _drop, ...restInFlight } = prev.inFlight
+            void _drop
+            return {
+              depsKey: prev.depsKey,
+              cache: { ...prev.cache, [key]: result },
+              inFlight: restInFlight,
+            }
+          })
+        })
+        .catch(() => {
+          setBreakdownState((prev) => {
+            if (prev.depsKey !== depsAtRequest) return prev
+            const { [key]: _drop, ...restInFlight } = prev.inFlight
+            void _drop
+            return { ...prev, inFlight: restInFlight }
+          })
+        })
+    },
+    [buildDeps, activeCache, activeInFlight],
+  )
+  const getBreakdown = (
+    statKey: string,
+    kind: StatBreakdownKind,
+  ): StatBreakdown | null =>
+    activeCache[`${kind}:${statKey}`] ?? null
   // Memoise the fallback so downstream useMemo deps don't see a fresh {} each render.
   const attributes = useMemo(() => computed?.attributes ?? {}, [computed])
   const stats = useMemo(() => computed?.stats ?? {}, [computed])
@@ -450,6 +520,8 @@ export default function StatsView() {
                 attributes={attributes}
                 attributeSources={attributeSources}
                 matches={matches}
+                getBreakdown={getBreakdown}
+                requestBreakdown={requestBreakdown}
               />
             </Panel>
           )
@@ -535,6 +607,8 @@ export default function StatsView() {
                   moreSources={statSources[`${key}_more`]}
                   highlighted={matches(statName(key))}
                   stats={stats}
+                  breakdown={getBreakdown(key, 'stat')}
+                  onRequestBreakdown={() => requestBreakdown(key, 'stat')}
                 />
               ))}
             </ul>
@@ -869,13 +943,17 @@ function AttributesStrip({
   attributes,
   attributeSources,
   matches,
+  getBreakdown,
+  requestBreakdown,
 }: {
   attrs: Array<{ key: string; name: string }>
   attributes: Record<AttributeKey, RangedValue>
   attributeSources: Record<string, SourceContribution[]>
   matches: (label: string) => boolean
+  getBreakdown: (statKey: string, kind: StatBreakdownKind) => StatBreakdown | null
+  requestBreakdown: (statKey: string, kind: StatBreakdownKind) => void
 }) {
-  // Compact 6-column attribute strip (collapses to 3 / 2 on smaller widths). Uses 1px gap on the parent so the inner cells share borders like a table.
+  // Compact 6-column attribute strip (collapses to 3 / 2 on smaller widths). Uses 1px gap on the parent so the inner cells share borders like a table. Each cell opens the Rust-fetched breakdown on left- or right-click.
   return (
     <div
       className="grid grid-cols-2 overflow-hidden rounded-[3px] border border-border sm:grid-cols-3 lg:grid-cols-6"
@@ -892,6 +970,9 @@ function AttributesStrip({
             key={attr.key}
             statKey={attr.key}
             sources={sources}
+            breakdown={getBreakdown(attr.key, 'attribute')}
+            onRequestBreakdown={() => requestBreakdown(attr.key, 'attribute')}
+            title={attr.name}
           >
             <div
               className={`flex flex-col gap-1 px-3 py-2.5 transition-colors ${
@@ -1291,6 +1372,8 @@ function StatRow({
   moreSources,
   highlighted,
   stats,
+  breakdown,
+  onRequestBreakdown,
 }: {
   statKey: string
   value: RangedValue
@@ -1299,8 +1382,10 @@ function StatRow({
   moreSources?: SourceContribution[]
   highlighted: boolean
   stats: RangedStatMap
+  breakdown: StatBreakdown | null
+  onRequestBreakdown: () => void
 }) {
-  // Single label/value row used in Defensive and Resources panels (and in Offense / Utility extras). Hover surfaces the SourceTooltip with breakdown.
+  // Single label/value row used in Defensive and Resources panels (and in Offense / Utility extras). Hover surfaces the SourceTooltip with breakdown; left- or right-click pins it.
   const hasMore = !!moreSources && moreSources.length > 0
   const displayValue: RangedValue = hasMore
     ? combineAdditiveAndMore(value, moreValue)
@@ -1320,6 +1405,8 @@ function StatRow({
         statKey={statKey}
         sources={sources}
         moreSources={moreSources}
+        breakdown={breakdown}
+        onRequestBreakdown={onRequestBreakdown}
       >
         <div
           className={`-mx-2 flex items-baseline justify-between gap-2 rounded-xs px-2 py-1 text-[13px] transition-colors ${

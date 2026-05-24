@@ -615,10 +615,14 @@ pub fn apply_tree_contributions(
                         continue;
                     }
                 }
+                // Embed the node_id in the label so the TS side can look up
+                // the *exact* allocated node, not just the first one with a
+                // matching name (the same display title repeats across the
+                // tree, e.g. "+3% Movement Speed").
                 let label = if parsed.self_condition.is_some() {
-                    format!("Tree: {} (conditional)", info.t)
+                    format!("Tree: {} #{} (conditional)", info.t, node_id)
                 } else {
-                    format!("Tree: {}", info.t)
+                    format!("Tree: {} #{}", info.t, node_id)
                 };
                 apply_contribution(
                     attr_sources,
@@ -634,7 +638,8 @@ pub fn apply_tree_contributions(
             if let Some(meta) = parse_tree_node_meta(line) {
                 match meta {
                     ParsedMeta::Convert(c) => {
-                        agg.conversions.push((c, format!("Tree: {}", info.t)));
+                        agg.conversions
+                            .push((c, format!("Tree: {} #{}", info.t, node_id)));
                     }
                     ParsedMeta::Disable(d) => {
                         agg.disables.insert(d.target);
@@ -1812,6 +1817,210 @@ pub fn compute_build_stats(input: &BuildStatsInput) -> ComputedStats {
         }
     }
     baseline
+}
+
+// ---------- per-stat breakdown ----------
+//
+// PoB-style explainability for a single stat key. Surfaces the additive and
+// multiplicative contribution lists already produced by the main pipeline,
+// plus the same numbers regrouped by source type so the UI can render
+// "Tree +20%, Items +15%, Skills +10%" subtotals without re-summing on the
+// TS side. The combined value mirrors what compute_final_stats produces for
+// the stat (additive only) or what apply_multiplier produces for stats that
+// also carry a `_more` companion (life, mana, replenishes).
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatTypeSubtotal {
+    pub source_type: SourceType,
+    pub sum: Ranged,
+    pub count: u32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatBreakdown {
+    pub stat_key: String,
+    pub stat_name: String,
+    pub is_percent: bool,
+    pub has_more: bool,
+    /// True when the stat is one of the apply_multipliers_pass targets
+    /// (life / mana / replenishes) and its percent-additive multiplier (e.g.
+    /// `increased_life`) has contributions. Tells the UI to show a separate
+    /// Increased section before the More section so the formula stays honest.
+    pub has_increased: bool,
+
+    /// "Additive" here means the *flat-units* sources at `stat_key`. For
+    /// life/mana/replenishes the engine's final value is
+    /// `flat × (1 + sum(increased)/100) × (1 + sum(more)/100)`. For percent
+    /// stats (e.g. `increased_fire_damage`) `additive` is the percent sources
+    /// at `stat_key`, `increased` is empty, and `more` is `stat_key + "_more"`.
+    pub additive_sum: Ranged,
+    pub additive_sources: Vec<SourceContribution>,
+    pub additive_by_type: Vec<StatTypeSubtotal>,
+
+    pub increased_sum: Ranged,
+    pub increased_sources: Vec<SourceContribution>,
+    pub increased_by_type: Vec<StatTypeSubtotal>,
+
+    pub more_sum: Ranged,
+    pub more_sources: Vec<SourceContribution>,
+    pub more_by_type: Vec<StatTypeSubtotal>,
+
+    pub combined: Ranged,
+}
+
+// Stats that apply_multipliers_pass operates on — for these, the percent
+// multipliers live under different keys than the flat base. Mirrors the calls
+// at the top of apply_multipliers_pass so the breakdown shows the exact
+// numbers the engine actually applies.
+fn multiplier_keys_for(stat_key: &str) -> (Option<&'static str>, Option<&'static str>) {
+    match stat_key {
+        "life" => (Some("increased_life"), Some("increased_life_more")),
+        "mana" => (Some("increased_mana"), Some("increased_mana_more")),
+        "mana_replenish" => (None, Some("mana_replenish_more")),
+        "life_replenish" => (None, Some("life_replenish_more")),
+        _ => (None, None),
+    }
+}
+
+// Resolves the display name with the same `_more → "Total X"` synthesis that
+// statName() does on the TS side, falling back to the raw key when no def
+// exists.
+fn resolved_stat_name(stat_key: &str) -> String {
+    if let Some(def) = STAT_DEFS_MAP.get(stat_key) {
+        return def.name.clone();
+    }
+    if let Some(base) = stat_key.strip_suffix("_more") {
+        if let Some(def) = STAT_DEFS_MAP.get(base) {
+            return format!("Total {}", def.name);
+        }
+    }
+    stat_key.to_string()
+}
+
+// Groups a flat source list into per-SourceType subtotals, sorted by absolute
+// magnitude descending so the strongest contributors land at the top of the
+// UI section.
+fn group_by_source_type(sources: &[SourceContribution]) -> Vec<StatTypeSubtotal> {
+    let mut map: HashMap<SourceType, (Ranged, u32)> = HashMap::new();
+    for s in sources.iter() {
+        let entry = map
+            .entry(s.source_type)
+            .or_insert(((0.0, 0.0), 0));
+        entry.0 .0 += s.value.0;
+        entry.0 .1 += s.value.1;
+        entry.1 += 1;
+    }
+    let mut out: Vec<StatTypeSubtotal> = map
+        .into_iter()
+        .map(|(source_type, (sum, count))| StatTypeSubtotal {
+            source_type,
+            sum,
+            count,
+        })
+        .collect();
+    out.sort_by(|a, b| {
+        let a_mag = a.sum.0.abs().max(a.sum.1.abs());
+        let b_mag = b.sum.0.abs().max(b.sum.1.abs());
+        b_mag
+            .partial_cmp(&a_mag)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+    out
+}
+
+// Produces a fully populated StatBreakdown for `stat_key`, pulling sources
+// from `stat_sources` (the same map that ComputedStats.stat_sources exposes
+// to the UI). Caller decides whether to feed this from the attribute map
+// instead.
+//
+// Two stat shapes need different math here:
+//   1. apply_multipliers_pass targets (life, mana, replenishes): the engine
+//      computes `flat × (1 + sum(increased_X)/100) × (1 + sum(increased_X_more)/100)`.
+//      The "increased" and "more" sources live under DIFFERENT keys
+//      (increased_life, increased_life_more), so we look them up via
+//      multiplier_keys_for instead of `${stat_key}_more`.
+//   2. Plain percent stats (e.g. `increased_fire_damage`): the engine sums
+//      additive% from `stat_key` and combines with multiplicative% from
+//      `${stat_key}_more`, as before.
+pub fn compute_stat_breakdown(
+    stat_sources: &SourceMap,
+    stat_key: &str,
+) -> StatBreakdown {
+    let additive_sources: Vec<SourceContribution> = stat_sources
+        .get(stat_key)
+        .cloned()
+        .unwrap_or_default();
+
+    let (inc_key_opt, more_key_owned) = match multiplier_keys_for(stat_key) {
+        // Multiplied-flat stat: pull the increased / more sources from the
+        // explicit `increased_X` and `increased_X_more` keys.
+        (inc, more) => (inc, more.map(|s| s.to_string())),
+    };
+    // Fallback for non-multiplied stats: the convention `${stat_key}_more` is
+    // still where percent stats keep their multiplicative bucket.
+    let more_key = more_key_owned.unwrap_or_else(|| format!("{stat_key}_more"));
+
+    let increased_sources: Vec<SourceContribution> = inc_key_opt
+        .and_then(|k| stat_sources.get(k))
+        .cloned()
+        .unwrap_or_default();
+    let more_sources: Vec<SourceContribution> = stat_sources
+        .get(&more_key)
+        .cloned()
+        .unwrap_or_default();
+
+    let additive_sum = sum_contributions(&additive_sources);
+    let increased_sum = sum_contributions(&increased_sources);
+    let more_sum = sum_contributions(&more_sources);
+    let has_more = !more_sources.is_empty();
+    let has_increased = !increased_sources.is_empty();
+
+    // Combined matches what the engine renders in the StatRow above the
+    // modal. For multiplied flats we apply `flat × (1+inc/100) × (1+more/100)`
+    // exactly like apply_multiplier does; for percent stats we keep the
+    // pre-existing combine_additive_and_more behaviour.
+    let combined: Ranged = if inc_key_opt.is_some() || matches!(stat_key, "mana_replenish" | "life_replenish") {
+        let min = additive_sum.0
+            * (1.0 + increased_sum.0 / 100.0)
+            * (1.0 + more_sum.0 / 100.0);
+        let max = additive_sum.1
+            * (1.0 + increased_sum.1 / 100.0)
+            * (1.0 + more_sum.1 / 100.0);
+        (min, max)
+    } else if has_more {
+        combine_additive_and_more(additive_sum, more_sum)
+    } else {
+        additive_sum
+    };
+
+    let additive_by_type = group_by_source_type(&additive_sources);
+    let increased_by_type = group_by_source_type(&increased_sources);
+    let more_by_type = group_by_source_type(&more_sources);
+
+    let is_percent = stat_def(stat_key)
+        .and_then(|d| d.format.as_deref())
+        .map(|f| f == "percent")
+        .unwrap_or(false);
+
+    StatBreakdown {
+        stat_key: stat_key.to_string(),
+        stat_name: resolved_stat_name(stat_key),
+        is_percent,
+        has_more,
+        has_increased,
+        additive_sum,
+        additive_sources,
+        additive_by_type,
+        increased_sum,
+        increased_sources,
+        increased_by_type,
+        more_sum,
+        more_sources,
+        more_by_type,
+        combined,
+    }
 }
 
 #[cfg(test)]

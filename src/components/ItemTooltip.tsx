@@ -91,6 +91,9 @@ interface Props {
   children: ReactNode
   placement?: 'right' | 'left' | 'top' | 'bottom'
   className?: string
+  // Optional z-index override forwarded to the underlying Tooltip. Useful when
+  // the trigger sits inside a modal that paints a higher-stacked backdrop.
+  zIndex?: number
 }
 
 export default function ItemTooltip({
@@ -98,6 +101,7 @@ export default function ItemTooltip({
   children,
   placement = 'right',
   className,
+  zIndex,
 }: Props) {
   // Hover-tooltip wrapper that renders the rich item details (header, base stats, implicits, affixes, sockets, set bonuses, procs, flavour) for an equipped item, picking the rarity-appropriate tone (and runeword override). Used by GearView's slot tiles and any other surface that wants to expose an item's full info on hover.
   const base = getItem(equipped.baseId)
@@ -111,6 +115,7 @@ export default function ItemTooltip({
       tone={tone}
       placement={placement}
       className={className}
+      zIndex={zIndex}
       content={<ItemTooltipBody equipped={equipped} base={base} />}
     >
       {children}
