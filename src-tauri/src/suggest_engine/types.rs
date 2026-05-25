@@ -174,12 +174,8 @@ pub struct PrecomputedInput {
     pub level: u32,
     #[serde(default)]
     pub allocated_attributes: HashMap<String, f64>,
-    // Raw per-key contribution lists from the TS-side `computeBuildStats(empty
-    // tree)`. Each map value is the unaggregated list of (min, max) contributions
-    // from class/items/sets/skills/etc. The engine sums them, adds the tree's
-    // raw contributions, then applies fan-outs / Increased-Attribute scaling /
-    // per-attribute stats / multipliers / conversions / disables exactly once —
-    // mirroring TS `computeBuildStatsCore` so DPS matches the Stats panel.
+    // Unaggregated per-key (min,max) contributions; engine must aggregate once
+    // to match TS `computeBuildStatsCore`.
     #[serde(default)]
     pub stat_contributions: HashMap<String, Vec<Ranged>>,
     #[serde(default)]

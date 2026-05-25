@@ -1,7 +1,4 @@
-// Per-statKey star scaling configuration.
-// Source: research dump in `listamodow-2.txt`. Each star adds the listed % bonus
-// (multiplicative on top of base rolled value), or a flat staircase bonus for
-// skill-rank affixes that follow the documented (3*=+1, 5*=+2) pattern.
+// Source: listamodow-2.txt. Per-star = % multiplier on base, or flat staircase for skill-rank affixes.
 
 export type StarScaleConfig =
   | { kind: 'percent'; perStar: number }
@@ -13,9 +10,7 @@ export type StarScaleConfig =
 
 const DEFAULT_PERCENT_PER_STAR = 0
 
-// Documented in listamodow-2.txt header:
-//   "ITEM SPECIFIC 2* = +1 | 4* = +2 | 5* = +3"
-// Used by item-granted skill ranks (`item_granted_skill_rank` / skillBonuses).
+// listamodow-2.txt: "ITEM SPECIFIC 2* = +1 | 4* = +2 | 5* = +3".
 export const ITEM_SPECIFIC_STAIRCASE: Record<number, number> = {
   0: 0,
   1: 0,
@@ -25,8 +20,7 @@ export const ITEM_SPECIFIC_STAIRCASE: Record<number, number> = {
   5: 3,
 }
 
-// Documented in listamodow-2.txt for affixes such as fire_skills / cold_skills:
-//   "na trzech * +1 na pieciu * +2"
+// listamodow-2.txt for fire_skills/cold_skills/etc: "na trzech * +1 na pieciu * +2".
 export const FLAT_SKILL_STAIRCASE: Record<number, number> = {
   0: 0,
   1: 0,
@@ -36,9 +30,7 @@ export const FLAT_SKILL_STAIRCASE: Record<number, number> = {
   5: 2,
 }
 
-// Map of statKey -> star scaling rule. Anything not listed defaults to "none"
-// (no scaling) so additions to the affix system are explicit, not silently
-// inheriting the old global 8% per-star bonus.
+// Unlisted keys default to "none" — new affixes are explicit, not silently inheriting the old global 8% rule.
 const STAR_SCALE_MAP: Readonly<Record<string, StarScaleConfig>> = {
   // ----- attributes (flat) -----
   to_strength: { kind: 'percent', perStar: 5 },
@@ -209,7 +201,6 @@ export function getStarScaleConfig(statKey: string | null): StarScaleConfig {
 }
 
 export function isStatStarImmune(statKey: string | null): boolean {
-  // Returns true when stars must not affect this stat at all (no %, no flat).
   const cfg = getStarScaleConfig(statKey)
   return cfg.kind === 'none' || cfg.kind === 'unknown' || cfg.kind === 'glitch'
 }
@@ -218,8 +209,6 @@ export function statStarPercentMultiplier(
   statKey: string | null,
   stars: number | undefined,
 ): number {
-  // Returns 1 + stars*perStar/100 for percent-scaled stats, or 1 for stats that
-  // do not scale percentually (flat-skill staircase / none / unknown / glitch).
   if (!stars || stars <= 0) return 1
   const cfg = getStarScaleConfig(statKey)
   if (cfg.kind !== 'percent') return 1
@@ -231,8 +220,6 @@ export function statStarFlatBonus(
   statKey: string | null,
   stars: number | undefined,
 ): number {
-  // Returns the flat staircase bonus (in raw stat units) added by stars for
-  // skill-rank affixes / item-granted skill ranks, or 0 otherwise.
   if (!stars || stars <= 0) return 0
   const cfg = getStarScaleConfig(statKey)
   if (cfg.kind === 'flat-skill-staircase') {
@@ -244,9 +231,7 @@ export function statStarFlatBonus(
   return 0
 }
 
-// `item_granted_skill_rank` is the synthetic key used by skillBonuses. Treat it
-// as item-specific staircase so the rank map gets the documented (2*=+1,
-// 4*=+2, 5*=+3) progression.
+// Synthetic key used by skillBonuses; follows item-specific staircase (2*=+1, 4*=+2, 5*=+3).
 export function itemGrantedSkillRankFlatBonus(stars: number | undefined): number {
   if (!stars || stars <= 0) return 0
   return ITEM_SPECIFIC_STAIRCASE[stars] ?? 0

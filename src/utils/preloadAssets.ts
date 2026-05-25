@@ -1,12 +1,8 @@
-// Vite gives us the sprite URLs at build time with import.meta.glob, but the
-// actual PNG bytes aren't fetched until something sets an <img src>. This
-// module just fires those fetches up front (during the loading screen) so the
-// first time the user opens Gear/Tree/Skills, the sprites are already cached.
+// Vite glob returns URLs at build time but does not fetch bytes; we kick off fetches during the loading screen so first-open of Gear/Tree/Skills is warm.
 
 const collectUrls = (map: Record<string, string>): string[] => Object.values(map)
 
-// All the directories that contain sprites. Adding a new asset folder?
-// Add a glob here so it gets preloaded too.
+// Add a glob here for any new asset folder.
 const SPRITE_URLS: string[] = [
   ...collectUrls(
     import.meta.glob<string>('../assets/items/*.{png,webp,jpg,jpeg}', {
@@ -52,8 +48,7 @@ const SPRITE_URLS: string[] = [
 
 export const TOTAL_SPRITE_COUNT = SPRITE_URLS.length
 
-// Resolves once every sprite has loaded (or errored — a broken sprite
-// shouldn't block the whole app, so we treat onerror as "done" too).
+// onerror counts as "done" so a broken sprite cannot block the app.
 export function preloadSprites(
   onProgress?: (loaded: number, total: number) => void,
 ): Promise<void> {

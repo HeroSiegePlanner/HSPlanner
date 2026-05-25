@@ -59,7 +59,6 @@ interface Props {
 const RECENT_LIMIT = 12;
 
 export default function StartupBuildModal({ isOpen, onClose }: Props) {
-  // Self-contained build library modal. Renders the same screen used at app boot, but also serves as the "Builds" picker reachable from the header — supports loading, saving (overwrite or save-as-new), importing, renaming/deleting builds, and full profile management (activate/add/duplicate/rename/delete) via right-click context menus.
   const activeBuildId = useBuild((s) => s.activeBuildId);
   const activeProfileId = useBuild((s) => s.activeProfileId);
   const importBuildSnapshot = useBuild((s) => s.importBuildSnapshot);
@@ -150,10 +149,10 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Reset transient UI state when the modal is closed; ensures next open is clean.
+  // Reset transient UI on close so the next open is clean.
   useEffect(() => {
     if (isOpen) return;
-    // One-shot reset keyed to the isOpen close transition, not a render loop.
+    // One-shot reset keyed to close transition, not a render loop.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMode("menu");
     setSearch("");
@@ -167,10 +166,9 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
     setRenameProfileTarget(null);
   }, [isOpen]);
 
-  // On open, prefer the active build if present, otherwise the first build.
   useEffect(() => {
     if (!isOpen) return;
-    // One-shot init keyed to the isOpen open transition, not a render loop.
+    // One-shot init keyed to open transition, not a render loop.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPreferredId((cur) => cur ?? activeBuildId ?? builds[0]?.id ?? null);
     setScope((cur) => {
@@ -179,9 +177,6 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
     });
   }, [isOpen, activeBuildId, builds]);
 
-  // Auto-dismiss the transient footer notice 2s after it changes. An effect
-  // (not a ref + manual setTimeout) keeps all timer handling out of render —
-  // which is what cleared the 5 react-hooks/refs errors on doLoad/doDelete/etc.
   useEffect(() => {
     if (!notice) return;
     const t = window.setTimeout(() => setNotice(null), 2000);
@@ -189,7 +184,6 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
   }, [notice]);
 
   const flash = (msg: string) => {
-    // Shows a transient footer notice; the effect above clears it after 2s.
     setNotice(msg);
   };
 
@@ -258,9 +252,7 @@ export default function StartupBuildModal({ isOpen, onClose }: Props) {
     const name = saveName.trim() || "Untitled build";
     const notes = useBuild.getState().notes;
     const rec = saveCurrentAsNewBuild(name, notes);
-    // saveCurrentAsNewBuild returns null when the write was rejected (e.g.
-    // localStorage is full); the global StorageErrorBanner already explains
-    // why, so keep the dialog open rather than flash a false "Saved".
+    // Null means write rejected (e.g. localStorage full); keep dialog open since StorageErrorBanner explains.
     if (!rec) return;
     flash(`Saved "${rec.name}"`);
     setSaveName("");

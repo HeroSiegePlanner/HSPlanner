@@ -433,11 +433,8 @@ pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance 
     compute_build_performance(&deps)
 }
 
-// Pre-loads the game data and pre-parses every tree node's mod lines so the
-// first real calc isn't slow. Without this, loading a build for the first
-// time after launch froze the UI for a second or two while ~300 regexes got
-// compiled and the parser cache got filled on demand. Now that all happens
-// during the loading screen instead.
+/// Warms the data Lazy and the tree-mod parser caches so the first real calc
+/// after launch isn't stuck compiling ~300 regexes on the UI thread.
 #[tauri::command]
 pub fn calc_warmup() -> bool {
     let d = super::data::data();
@@ -453,10 +450,8 @@ pub fn calc_warmup() -> bool {
     true
 }
 
-// Same input DTO as calc_build_performance — the damage/proc fields just
-// aren't used here. Returns the stats plus the per-stat source breakdown
-// (where each contribution came from), which is what StatsView and the
-// SkillsView/ItemTooltip source tooltips render.
+/// Returns full stats plus per-stat source breakdown rendered by StatsView and
+/// the tooltips. Reuses `BuildPerformanceInput`; damage/proc fields are unused here.
 #[tauri::command]
 pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
     let stats_input = BuildStatsInput {
@@ -477,11 +472,9 @@ pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
     compute_build_stats(&stats_input)
 }
 
-// Re-runs the full stat pipeline for a build, then returns a per-key breakdown
-// for a single stat (or attribute) — additive + more contribution lists,
-// per-source-type subtotals, and the combined final value. Called by the
-// frontend's StatBreakdownModal on left-click. Caller passes `kind` to
-// disambiguate between a stat-sources lookup and an attribute-sources lookup.
+/// Backs the frontend StatBreakdownModal: re-runs stats and slices out one
+/// key's additive/more contributions, per-source subtotals, and final value.
+/// `kind` selects stat-sources vs attribute-sources.
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct StatBreakdownInput {

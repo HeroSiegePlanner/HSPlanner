@@ -62,19 +62,13 @@ pub fn compute_final_state(inputs: &EngineInputs) -> FinalState {
         inputs.game_config.attribute_keys.clone()
     };
 
-    // ===== Phases 1-7: gather raw contributions =====
-    // Start with the TS-precomputed contributions (class / items / sets /
-    // skills / customStats / item-granted skills, all from `computeBuildStats`
-    // with an empty tree). Then layer the tree mods we just parsed on top.
     let mut attrs: AttrMap = sum_contributions(inputs.attr_contributions);
     let mut stats: StatMap = sum_contributions(inputs.stat_contributions);
 
-    // Make sure every attribute key exists so subsequent phases can read it.
     for ak in &attribute_keys {
         attrs.entry(ak.clone()).or_insert((0.0, 0.0));
     }
 
-    // Tree attribute mods: `all_attributes` distributes across every attr.
     for (k, v) in &tree.attr_contributions {
         if k == "all_attributes" {
             for ak in &attribute_keys {
@@ -84,15 +78,12 @@ pub fn compute_final_state(inputs: &EngineInputs) -> FinalState {
             add_into(&mut attrs, k, *v);
         }
     }
-    // Tree stat mods.
     for (k, v) in &tree.stat_contributions {
         add_into(&mut stats, k, *v);
     }
 
-    // ===== Phase 8: Increased All Attributes + per-attribute Increased X =====
     apply_attribute_increased(&mut attrs, &stats, &attribute_keys);
 
-    // ===== Phases 9-10: per-attribute stat contributions (use final attrs) =====
     apply_per_attribute_stats(
         &mut stats,
         &attrs,
@@ -104,10 +95,8 @@ pub fn compute_final_state(inputs: &EngineInputs) -> FinalState {
         &inputs.game_config.attribute_divided_stats,
     );
 
-    // ===== Phase 12: fan-outs (all_resistances → individual, etc.) =====
     apply_fan_outs(&mut stats);
 
-    // ===== Phase 13: multipliers (life, mana, replenish) =====
     apply_multiplier(
         &mut stats,
         "life",
@@ -125,13 +114,10 @@ pub fn compute_final_state(inputs: &EngineInputs) -> FinalState {
     apply_multiplier(&mut stats, "mana_replenish", None, Some("mana_replenish_more"), false);
     apply_multiplier(&mut stats, "life_replenish", None, Some("life_replenish_more"), false);
 
-    // ===== Phase 15: tree conversions =====
     apply_tree_conversions(&mut attrs, &mut stats, &tree.conversions);
 
-    // ===== Phase 16: disables =====
     apply_disables(&mut stats, &tree.disables);
 
-    // Zero-out negligible floating-point noise.
     for v in stats.values_mut() {
         if v.0.abs() < 1e-9 && v.1.abs() < 1e-9 {
             *v = (0.0, 0.0);

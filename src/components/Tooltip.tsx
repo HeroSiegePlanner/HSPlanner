@@ -12,9 +12,7 @@ interface TooltipProps {
   className?: string
   disabled?: boolean
   placement?: 'right' | 'left' | 'top' | 'bottom'
-  // Override the default 1000 stacking level. Needed when the tooltip lives
-  // inside a higher-z-index modal (e.g. the pinned breakdown at 1100) and
-  // would otherwise render under the modal's backdrop blur.
+  // Override the default 1000 stacking level so tooltips inside higher-z modals (e.g. pinned breakdown at 1100) layer above the backdrop blur.
   zIndex?: number
 }
 
@@ -28,7 +26,6 @@ export default function Tooltip({
   placement = 'right',
   zIndex = 1000,
 }: TooltipProps) {
-  // Wrapping component that shows a portalled, viewport-clamped tooltip after a small hover/focus delay, picking the best placement (right, left, top, bottom) when the preferred one would overflow. Used as the universal hover popup wrapper for items, skills, sources and any other surface needing rich popovers.
   const [visible, setVisible] = useState(false)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -36,13 +33,11 @@ export default function Tooltip({
   const timer = useRef<number | null>(null)
 
   const show = () => {
-    // Schedules the tooltip to become visible after the configured delay, cancelling any previous pending timer. Used as the mouseenter/focus handler on the trigger.
     if (disabled) return
     if (timer.current) clearTimeout(timer.current)
     timer.current = window.setTimeout(() => setVisible(true), delay)
   }
   const hide = () => {
-    // Cancels any pending show timer and immediately hides the tooltip plus its computed position. Used as the mouseleave/blur handler.
     if (timer.current) clearTimeout(timer.current)
     setVisible(false)
     setPos(null)
@@ -64,7 +59,6 @@ export default function Tooltip({
     const vh = window.innerHeight
 
     const compute = (p: 'right' | 'left' | 'top' | 'bottom') => {
-      // Returns the (left, top) viewport coordinates for placing the tooltip on the requested side of the trigger with the standard margin. Used by the layout effect to evaluate the preferred and fallback placements.
       if (p === 'right') return { left: trigger.right + margin, top: trigger.top }
       if (p === 'left') return { left: trigger.left - t.width - margin, top: trigger.top }
       if (p === 'top') return { left: trigger.left, top: trigger.top - t.height - margin }
@@ -72,7 +66,6 @@ export default function Tooltip({
     }
 
     const fits = (l: number, tp: number) =>
-      // Returns true when a tooltip placed at (l, tp) is fully inside the viewport with the standard margin on every side. Used to pick the first non-overflowing placement.
       l >= margin &&
       l + t.width <= vw - margin &&
       tp >= margin &&
@@ -166,7 +159,6 @@ export function TooltipHeader({
   tone?: TooltipTone
   image?: string
 }) {
-  // Renders a tooltip's title/subtitle band with a tone-coloured gradient background, optional pixelated thumbnail, and a glowy text shadow. Used as the standard heading for item, skill, and source tooltips.
   const rgb = TONE_RGB[tone]
   return (
     <div
@@ -212,7 +204,6 @@ export function TooltipSection({
   children: ReactNode
   className?: string
 }) {
-  // Renders a separator-bordered tooltip section block with the standard padding. Used to stack distinct tooltip body groups vertically.
   return (
     <div className={`px-3 py-2 border-t border-border/70 first:border-t-0 ${className ?? ''}`}>
       {children}
@@ -248,7 +239,6 @@ export function TooltipSectionHeader({
   trailing?: ReactNode
   tone?: TooltipSectionTone
 }) {
-  // Renders a full-width coloured bar that acts as a sub-heading inside a TooltipSection, optionally with right-aligned trailing content (e.g. a "3/5 pieces" counter). Used by SourceTooltip and the item/skill tooltips for grouped sub-sections.
   return (
     <div
       className={`-mx-3 -mt-2 mb-2 px-3 py-1 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.12em] border-b border-border/40 ${TOOLTIP_SECTION_HEADER_TONE[tone]}`}
@@ -264,7 +254,6 @@ export function TooltipSectionHeader({
 }
 
 export function TooltipFooter({ children }: { children: ReactNode }) {
-  // Renders a small, uppercase footer band inside a tooltip (e.g. flavour text, item-level requirement). Used by item tooltips for source/footer info.
   return (
     <div className="px-3 py-1.5 border-t border-border/70 bg-panel-2 text-[10px] font-medium uppercase tracking-[0.12em] text-faint">
       {children}
@@ -281,7 +270,6 @@ export function TooltipStat({
   value: ReactNode
   variant?: 'default' | 'muted' | 'red' | 'blue' | 'green'
 }) {
-  // Renders a single label/value row used inside tooltips, picking a value colour from the variant. Used to display per-stat lines in the item, skill and source tooltips.
   const valueColor = {
     default: 'text-accent-hot',
     muted: 'text-faint',
@@ -298,12 +286,10 @@ export function TooltipStat({
 }
 
 export function TooltipText({ children }: { children: ReactNode }) {
-  // Renders a paragraph of body text inside a tooltip with the standard typography. Used for descriptions, flavour text, and any other prose content.
   return <div className="text-[12px] leading-[1.55] text-text/90">{children}</div>
 }
 
 export function UnsupportedModsList({ lines }: { lines: ReactNode[] }) {
-  // Renders the "Not Yet Supported" section inside a tooltip, listing tree-node mod lines the parser couldn't classify so the user can still see what the node would do. Used by TreeView's tooltip when a node has unsupported lines.
   return (
     <>
       <div className="mb-1 text-[10px] uppercase tracking-[0.12em] text-muted">

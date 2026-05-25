@@ -58,7 +58,6 @@ pub fn apply_fan_outs(stats: &mut StatMap) {
     }
 }
 
-/// Apply "flat * (1 + pct/100) * (1 + more/100)" multiplier in-place.
 pub fn apply_multiplier(
     stats: &mut StatMap,
     flat_key: &str,
@@ -87,9 +86,7 @@ pub fn apply_multiplier(
     stats.insert(flat_key.to_string(), (min_v, max_v));
 }
 
-/// Apply "Increased <Attribute>" multipliers to each attribute, scaling its raw additive sum.
 pub fn apply_attribute_increased(attrs: &mut AttrMap, stats: &StatMap, attribute_keys: &[String]) {
-    // First pass: all_attributes scaling distributes to each individual attribute
     let all_pct = stats
         .get("increased_all_attributes")
         .copied()
@@ -112,7 +109,6 @@ pub fn apply_attribute_increased(attrs: &mut AttrMap, stats: &StatMap, attribute
     }
 }
 
-/// Add per-attribute stat contributions ("Strength gives N% enhanced damage", etc.).
 pub fn apply_per_attribute_stats(
     stats: &mut StatMap,
     attrs: &AttrMap,
@@ -134,7 +130,7 @@ pub fn apply_per_attribute_stats(
     }
 }
 
-/// Add attribute-divided stats (floor(attr / divisor) added to stat).
+/// floor(attr / divisor) added to stat; floor is intentional to match TS.
 pub fn apply_attribute_divided_stats(
     stats: &mut StatMap,
     attrs: &AttrMap,
@@ -180,8 +176,6 @@ fn looks_like_attribute(key: &str) -> bool {
     } else { key == "all_attributes" }
 }
 
-/// Parse all tree node lines in `allocated_tree_nodes` and aggregate raw mods.
-/// Returns separate stat / attribute contributions plus conversions/disables.
 pub fn aggregate_tree_mods(
     allocated_tree_nodes: &[u32],
     tree_node_info: &HashMap<u32, TreeNodeInfo>,
@@ -241,14 +235,12 @@ pub fn aggregate_tree_mods(
                 }
                 continue;
             }
-            // Unsupported line — record so the modal can warn.
             out.unsupported_lines.push(format!("#{}: {}", node_id, line));
         }
     }
     out
 }
 
-/// Apply tree conversions: take percentage of source stat/attr and add it to target stat/attr.
 pub fn apply_tree_conversions(
     attrs: &mut AttrMap,
     stats: &mut StatMap,

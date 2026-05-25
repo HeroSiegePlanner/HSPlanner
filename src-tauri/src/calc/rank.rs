@@ -1,7 +1,3 @@
-// Mirror of the rank helpers in src/utils/stats.ts (normalizeSkillName,
-// aggregateItemSkillBonuses, effectiveRankRangeFor). Behaviour must stay in
-// lockstep with the TS source until Phase 2 step 4 deletes those exports.
-
 use std::collections::HashMap;
 
 use super::affix::apply_stars_to_ranged_value;
@@ -61,10 +57,8 @@ pub fn aggregate_item_skill_bonuses(
                 "item_granted_skill_rank",
                 stars,
             );
-            // TS uses Math.round per endpoint. `scaled` is already floor-rounded
-            // when stars are active (apply_stars_to_ranged_value handles that),
-            // so .round() is a no-op for the hot path; on the fallback path it
-            // collapses any fractional values that came from item data.
+            // No-op on the hot starred path (already floored); rounds away
+            // fractional item-data fallback values.
             let min = r_min(scaled).round();
             let max = r_max(scaled).round();
             let key = normalize_skill_name(skill_name);

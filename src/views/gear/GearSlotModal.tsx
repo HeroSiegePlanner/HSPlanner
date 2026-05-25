@@ -59,17 +59,13 @@ export function GearSlotModal({
   onApplyRuneword,
   onClose,
 }: GearSlotModalProps) {
-  // Full-screen slot editor that replaces the old aside EditPanel. The left column lists every item that fits this slot (grouped by rarity, searchable by name AND affix/effect text); the right column shows the live configuration of the equipped item (sockets, stars, affixes, forge mods, augment, runeword presets) or — when hovering a different item — a side-by-side compare overlay.
   const [q, setQ] = useState('')
   const [showCompareCol, setShowCompareCol] = useState(true)
   const [textEditorOpen, setTextEditorOpen] = useState(false)
   const replaceEquippedItem = useBuild((s) => s.replaceEquippedItem)
   const rows = useMemo(() => pickerItemsForSlot(slot), [slot])
   const inv = useBuild((s) => s.inventory)
-  // Phase A hover wiring: report which picker row the cursor is over so
-  // the LeftStatsPanel (phase B) can paint a live delta against the build.
-  // Clears on unmount so the sidebar doesn't stay stuck on the last hover
-  // after the modal closes.
+  // Report hovered picker row so the LeftStatsPanel paints a live delta; clear on unmount.
   const setHover = useSetHoverPreview()
   useEffect(() => () => setHover(null), [setHover])
 
@@ -449,7 +445,6 @@ function SetSummary({
   set: NonNullable<ReturnType<typeof getItemSet>>
   count: number
 }) {
-  // Renders a compact summary card for an item set inside the GearSlotModal right column showing the set name, equipped-count badge, and each tier with its description coloured by activation state. Wrapped in the shared SectionCard so its visual language matches the rest of the popup. Used when the equipped item belongs to a set.
   return (
     <SectionCard
       label={set.name}

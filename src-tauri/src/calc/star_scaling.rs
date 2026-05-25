@@ -1,7 +1,3 @@
-// Mirror of src/utils/starScaling.ts. Entries must stay in lockstep — if you
-// change one, change the other and re-run the parity fixture dump.
-// Source: listamodow-2.txt research dump.
-
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
@@ -15,9 +11,9 @@ pub enum StarScaleConfig {
     Glitch,
 }
 
-// ITEM SPECIFIC 2* = +1 | 4* = +2 | 5* = +3
+// Item-specific stairs: 2*=+1, 4*=+2, 5*=+3.
 const ITEM_SPECIFIC_STAIRCASE: [f64; 6] = [0.0, 0.0, 1.0, 1.0, 2.0, 3.0];
-// na trzech * +1 na pieciu * +2
+// Flat-skill stairs: 3*=+1, 5*=+2.
 const FLAT_SKILL_STAIRCASE: [f64; 6] = [0.0, 0.0, 0.0, 1.0, 1.0, 2.0];
 
 #[inline]

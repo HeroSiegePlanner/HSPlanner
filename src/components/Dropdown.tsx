@@ -35,12 +35,10 @@ export interface DropdownProps {
 }
 
 function escapeRegExp(s: string): string {
-  // Escapes every character in `s` that has special meaning in a regular expression so it can be safely embedded inside one. Used by Highlight to build a per-query case-insensitive matching regex.
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 function Highlight({ text, query }: { text: string; query: string }) {
-  // Renders `text` with every case-insensitive occurrence of `query` wrapped in `<mark>` tags. Used by Dropdown to highlight the matching substring inside item names and meta chips.
   if (!query) return <>{text}</>
   // Capture-group split: every odd-indexed part is the matched substring.
   const re = new RegExp(`(${escapeRegExp(query)})`, 'i')
@@ -63,7 +61,6 @@ export function Dropdown({
   className = '',
   sidePanel,
 }: DropdownProps) {
-  // Searchable dropdown that filters items by name/type/grade, supports keyboard navigation, optional grouping, an optional "(none)" entry, and an optional left-anchored side panel that previews the hovered item. Used wherever the gear/build UIs need to pick from a long list (items, runewords, augments, etc.).
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [kb, setKb] = useState(-1)
@@ -111,14 +108,12 @@ export function Dropdown({
   }, [kb])
 
   function pick(id: string | null) {
-    // Resolves the id back to the source item (or null) and notifies the parent via `onChange`, then closes the menu. Used by both mouse clicks and keyboard Enter.
     const it = id === null ? null : items.find((x) => x.id === id) ?? null
     onChange?.(id, it)
     setOpen(false)
   }
 
   function onKey(e: KeyboardEvent<HTMLInputElement>) {
-    // Handles arrow-up/down for keyboard navigation, Enter to commit the highlighted entry, and Escape to close the menu. Used as the search input's keydown handler.
     const els =
       listRef.current?.querySelectorAll<HTMLElement>('.hs-dd-item') ?? []
     if (e.key === 'ArrowDown') {

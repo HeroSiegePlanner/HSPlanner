@@ -1,7 +1,3 @@
-// Mirror of src/utils/subtree.ts (aggregateSubskillStats, sumSubskillRanks,
-// hasAllocatedSubskill, subskillKey). File-local types — Phase 1
-// super::skills::Skill stays untouched.
-
 use std::collections::HashMap;
 
 pub type StatMap = HashMap<String, f64>;
@@ -18,9 +14,6 @@ pub struct AmountSpec {
     pub per_rank: f64,
 }
 
-// TS allows `appliesStates: (string | AppliedState)[]`. The string form is just
-// a state name with no amount; the object form carries the optional amount
-// formula. The Rust enum mirrors both shapes directly.
 #[derive(Debug, Clone)]
 pub enum AppliedStateSpec {
     Name(String),
@@ -67,10 +60,9 @@ pub struct SubtreeAggregation {
     pub applied_states: Vec<AppliedStateInfo>,
 }
 
+/// Public contract: matches src/store/build.ts:subskillKey; share-link encoder
+/// depends on the colon delimiter.
 pub fn subskill_key(skill_id: &str, subskill_id: &str) -> String {
-    // Must stay identical to src/store/build.ts:subskillKey ("{skillId}:{subskillId}")
-    // — these keys are also referenced by the share-link encoder so the
-    // delimiter is part of the public contract.
     format!("{}:{}", skill_id, subskill_id)
 }
 
@@ -189,7 +181,6 @@ pub fn aggregate_subskill_stats(
                     }
                     AppliedStateSpec::Full { state, amount } => {
                         let amt = amount.as_ref().map(|a| a.base + a.per_rank * rank_f);
-                        // TS: `amount: amount || undefined` — falsy 0.0 collapses to None.
                         let amt_normalized = amt.filter(|v| *v != 0.0);
                         applied_states.push(AppliedStateInfo {
                             state: state.clone(),
@@ -203,7 +194,6 @@ pub fn aggregate_subskill_stats(
         }
     }
 
-    // Combined stats = stats + proc_stats (proc adds on top, matching TS spread+merge).
     let mut combined = stats.clone();
     for (k, v) in &proc_stats {
         *combined.entry(k.clone()).or_insert(0.0) += v;
@@ -241,8 +231,8 @@ const CONDITION_SUFFIXES: &[&str] = &[
     "low_life",
 ];
 
+/// Matches TS regex `/_<suffix>$/`: leading `_` required, suffix must end string.
 fn matches_suffix(key: &str, suffix: &str) -> bool {
-    // TS regex: /_(suffix)$/ — must be preceded by '_' and end the string.
     key.len() > suffix.len()
         && key.ends_with(suffix)
         && key.as_bytes()[key.len() - suffix.len() - 1] == b'_'

@@ -59,12 +59,8 @@ const RARITY_LABELS: Record<ItemRarity, string> = {
 
 const SEP = '--------'
 
+// Strips ONLY a leading numeric prefix — leaving value-less affixes ("Cannot Be Frozen") untouched so the fallback matcher does not collapse them to "" and false-positive.
 function descriptionWithoutValue(description: string): string {
-  // Strips ONLY a leading numeric prefix — either bracketed range like "+[10-25]%"
-  // or a plain number like "+99" or "-300%" — so the remainder is the stat text.
-  // Returns the description unchanged if it doesn't start with a numeric value
-  // (e.g. "Cannot Be Frozen"), otherwise the fallback matcher would collapse
-  // every value-less affix to "" and produce false positives.
   return description
     .replace(/^[+-]?(?:\[[^\]]*]|[0-9][0-9.]*)%?\s*/, '')
     .replace(/\s+/g, ' ')
@@ -294,8 +290,8 @@ function parseAffixLine(
   const content = work.slice(0, tierMatch.index).trim()
   const pool: Affix[] = source === 'affix' ? affixes : crystalMods
 
+  // wantUnholy=true requires random_unholy; false rejects it.
   const candidates = pool.filter(
-    // wantUnholy === true means it MUST be a random_unholy affix; false means it MUST NOT be.
     (a) =>
       a.tier === tier && (a.groupId === 'random_unholy') === wantUnholy,
   )
@@ -389,9 +385,8 @@ function parseValuePrefix(content: string): number | null {
   return v
 }
 
+// True for leading [min-max] ranges — used to detect untouched implicit lines and skip overriding.
 function valueLooksLikeRange(content: string): boolean {
-  // True when the leading numeric prefix is a [min-max] range — used by the
-  // Implicit-section parser to recognize "untouched" lines and skip overriding.
   return /^[+-]?\s*\[\s*[+-]?[0-9.]+\s*-\s*[+-]?[0-9.]+\s*]/.test(content)
 }
 
@@ -403,11 +398,8 @@ const STAT_NAME_TO_KEY: Map<string, string> = (() => {
   return m
 })()
 
+// Falls back to the global stat registry so users can ADD a new implicit not on the base item.
 function lookupImplicitKey(base: ItemBase, displayName: string): string | null {
-  // Resolves a human-readable stat name (as written in the editor) to the
-  // canonical stat key. Prefers an exact match against the item's existing
-  // implicit map, otherwise falls back to the global stat registry so users
-  // can ADD a new implicit that isn't on the base item.
   const norm = normalizeWhitespace(displayName).toLowerCase()
   if (base.implicit) {
     for (const k of Object.keys(base.implicit)) {

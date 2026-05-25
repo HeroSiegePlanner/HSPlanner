@@ -8,14 +8,11 @@ import {
   type TreeNodeEntry,
 } from '../utils/treeNodes'
 
-// Tight zoom window in tree-coordinate space. 16:9 aspect matches the SVG
-// container below so the background image and the sprite atlas line up.
+// 16:9 zoom window — must match the SVG container so background and atlas align.
 const ZOOM_VB_W = 600
 const ZOOM_VB_H = 340
 const ZOOM_MARGIN = 60
 
-// Edge / node colours mirroring TreeView so the mini-map reads as a literal
-// snapshot of the Tree tab.
 const EDGE_DEFAULT = '#2a2f3a'
 const EDGE_ALLOCATED = '#c48a3a'
 
@@ -26,9 +23,6 @@ interface Props {
 
 export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
   const allocated = useBuild((s) => s.allocatedTreeNodes)
-  // Recompute the visible slice + allocated-edge set whenever the target node
-  // or allocation changes. Allocated edges are pairs of allocated nodes that
-  // are adjacent in the tree's edge graph (same rule TreeView uses).
   const view = useMemo(() => {
     const vbX = node.x - ZOOM_VB_W / 2
     const vbY = node.y - ZOOM_VB_H / 2
@@ -58,8 +52,7 @@ export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
     }
     return keys
   }, [allocated])
-  // Lookup map for resolving edge endpoints to node ids — needed because
-  // edges in the JSON are coordinate pairs, not id pairs.
+  // Edges in the JSON are coordinate pairs, not id pairs, so we need a position→id lookup.
   const POS_TO_ID = useMemo(() => {
     const m = new Map<string, number>()
     for (const n of ALL_TREE_NODES) {
@@ -93,8 +86,6 @@ export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
           #{node.id} · {node.kind || 'normal'}
         </div>
       </div>
-      {/* Background image lives on the outer DIV with CSS cover so the
-          star-field looks like the real Tree tab regardless of zoom level. */}
       <div
         style={{
           backgroundColor: '#0a0b0f',
@@ -109,8 +100,6 @@ export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
           className="block w-full h-full"
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Edges first so sprites layer on top. Allocated edges use the
-              same gold tone as the live tree. */}
           <g>
             {view.edges.map(([x1, y1, x2, y2], i) => {
               const ka = `${Math.round(x1 * 10)}_${Math.round(y1 * 10)}`
@@ -139,7 +128,6 @@ export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
               )
             })}
           </g>
-          {/* Sprites + dot fallbacks for every node in the zoom window. */}
           <g>
             {view.nodes.map((n) => {
               const size = n.r * 2.4
@@ -188,7 +176,6 @@ export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
               )
             })}
           </g>
-          {/* Red highlight ring around the selected node, like PoB. */}
           <g pointerEvents="none">
             <circle
               cx={node.x}

@@ -88,7 +88,7 @@ const RESISTANCE_KEYS = [
   'arcane_absorption',
 ]
 
-// Project's gameConfig keeps life/mana under category="base", so we hard-list the keys that conceptually belong in the Resources panel. Also covers leech / regen / interplay (mana<->life) stats so they don't end up duplicated under defense or hidden.
+// gameConfig keeps life/mana under category="base"; hard-list to route them into Resources and avoid duplication.
 const RESOURCE_KEYS = [
   'life',
   'mana',
@@ -118,7 +118,6 @@ const RESOURCE_KEYS = [
   'damage_mitigated_flask',
 ]
 
-// Defensive mitigation — explicit list (resistances handled separately).
 const MITIGATION_KEYS = [
   'defense',
   'enhanced_defense',
@@ -143,7 +142,7 @@ const MITIGATION_KEYS = [
   'max_combat_mitigation_stacks',
 ]
 
-// Skill-bonus keys (live in category="base" but conceptually belong with skills, not life/mana).
+// Live in category="base" but belong with skills.
 const SKILL_BONUS_KEYS = [
   'all_skills',
   'physical_skills',
@@ -156,7 +155,6 @@ const SKILL_BONUS_KEYS = [
   'summon_skills',
 ]
 
-// World / loot / movement (also from category="base") — magic find, gold find, movement speed, etc.
 const WORLD_LOOT_KEYS = [
   'movement_speed',
   'jumping_power',
@@ -169,7 +167,6 @@ const WORLD_LOOT_KEYS = [
 ]
 
 export default function StatsView() {
-  // Stats tab matching the "Stats View Mockup": page head with filter chips, hero build summary, search box, attributes strip, weapon damage hero with breakdown, per-skill cards (main skill highlighted in gold), and a 2-column Defensive / Resources grid. All stat math reuses computeBuildStats / computeWeaponDamage / computeSkillDamage from utils.
   const classId = useBuild((s) => s.classId)
   const inventory = useBuild((s) => s.inventory)
   const skillRanks = useBuild((s) => s.skillRanks)
@@ -195,12 +192,8 @@ export default function StatsView() {
     }
   }, [buildDeps])
 
-  // Per-stat breakdown cache. Keyed `${kind}:${statKey}` so attributes and
-  // stats sharing a key (e.g. `strength`) don't collide. The state object
-  // carries the buildDeps it was filled for, so when buildDeps swap we just
-  // read an empty cache without a `setState`-in-effect — a fresh fetch will
-  // commit a new bucket. `inFlight` lives in state too (not in a ref) so the
-  // request callback doesn't read a ref during render.
+  // Keyed `${kind}:${statKey}` to avoid collisions between attributes and stats sharing a key.
+  // `depsKey` lets stale buckets be discarded on buildDeps swap without a setState-in-effect.
   const [breakdownState, setBreakdownState] = useState<{
     depsKey: unknown
     cache: Record<string, StatBreakdown>
@@ -279,7 +272,6 @@ export default function StatsView() {
     [inventory, stats, enemyConditions],
   )
 
-  // Map each gameConfig category into a list of base stat keys (filters out skill-scoped, item-only and pure-attribute modifiers).
   const grouped = useMemo(() => {
     const out: Record<string, string[]> = {
       base: [],
@@ -298,7 +290,6 @@ export default function StatsView() {
     return out
   }, [])
 
-  // Filter the canonical lists to whatever gameConfig actually exposes — this lets us keep stable ordering while staying robust to config changes.
   const knownStatKeys = useMemo(() => {
     const out = new Set<string>()
     for (const def of gameConfig.stats) {
@@ -329,12 +320,11 @@ export default function StatsView() {
     () => WORLD_LOOT_KEYS.filter((k) => knownStatKeys.has(k)),
     [knownStatKeys],
   )
-  // Offense = whole offense category; subtract anything we already classified into Resources (e.g. life_steal lives under offense in gameConfig but reads better under Resources).
+  // Subtract anything already classified into Resources (e.g. life_steal lives under offense in gameConfig).
   const offenseKeys = useMemo(() => {
     const claimed = new Set<string>([...resourceKeys])
     return (grouped.offense ?? []).filter((k) => !claimed.has(k))
   }, [grouped, resourceKeys])
-  // Catch-all: anything in known keys we haven't put into a section above. Keeps the panel exhaustive even if a key gets added without classifying it explicitly.
   const otherKeys = useMemo(() => {
     const claimed = new Set<string>([
       ...mitigationKeys,
@@ -368,7 +358,7 @@ export default function StatsView() {
     [allClassSkills],
   )
 
-  // Effective "main skill": prefer the user's explicit pick from the build store; fall back to the highest-rank active skill so the headline panel still has something to show on a fresh build.
+  // Fall back to highest-rank active skill when user hasn't picked one explicitly.
   const mainSkillId = useMemo(() => {
     if (
       storeMainSkillId &&
@@ -413,7 +403,6 @@ export default function StatsView() {
       ? skillsForClass
       : skillsForClass.filter((s) => matches(s.name))
 
-  // Tab visibility: each tab whitelists which top-level panels and which sections inside the All-Stats panel show. Search applies *within* whatever panels are visible.
   const showAttributes = filter === 'all' || filter === 'stats'
   const showMainSkill = filter === 'all' || filter === 'damage'
   const showSkills = filter === 'all' || filter === 'damage' || filter === 'skills'
@@ -430,7 +419,6 @@ export default function StatsView() {
 
   return (
     <div className="w-full space-y-3.5">
-      {/* PAGE HEAD: eyebrow + title + filter chips */}
       <header className="flex items-end justify-between gap-3">
         <div>
           <h2
@@ -467,7 +455,6 @@ export default function StatsView() {
         </div>
       </header>
 
-      {/* SEARCH */}
       <div className="relative">
         <svg
           aria-hidden
@@ -504,7 +491,6 @@ export default function StatsView() {
         )}
       </div>
 
-      {/* ATTRIBUTES STRIP */}
       {showAttributes &&
         (() => {
           const visibleAttrs = gameConfig.attributes.filter(
@@ -527,7 +513,6 @@ export default function StatsView() {
           )
         })()}
 
-      {/* MAIN SKILL HERO — headline damage breakdown for the build store's `mainSkillId` (with a highest-rank fallback). Replaces the old Weapon Damage panel. */}
       {showMainSkill && (
         <MainSkillSection
           mainSkill={mainSkill}
@@ -546,7 +531,6 @@ export default function StatsView() {
         />
       )}
 
-      {/* PER-SKILL DAMAGE */}
       {showSkills && (
         <>
           <SectionHeading>Per-Skill Damage</SectionHeading>
@@ -588,7 +572,6 @@ export default function StatsView() {
         </>
       )}
 
-      {/* ALL STATS — single big panel at the bottom of the page that lays out every base stat the build can have, grouped into 6 sub-sections so nothing slips through. The active filter chip narrows which sections render. */}
       {showAllStats &&
         (() => {
           const filterKeys = (keys: string[]) =>
@@ -613,7 +596,6 @@ export default function StatsView() {
               ))}
             </ul>
           )
-          // Build the section list lazily so empty-after-filter sections collapse cleanly.
           type SectionId = keyof typeof sectionVisible
           type SectionDef = { id: SectionId; label: string; keys: string[] }
           const rawSections: SectionDef[] = [
@@ -648,7 +630,6 @@ export default function StatsView() {
           const allSections = rawSections.filter(
             (s) => sectionVisible[s.id] && s.keys.length > 0,
           )
-          // Two-column auto-balanced layout: long sections (Offense, Mitigation) tend to land on the left; shorter ones on the right. CSS columns gives near-balanced heights without manual splitting.
           if (allSections.length === 0) {
             return (
               <Panel title="All Stats">
@@ -687,8 +668,6 @@ export default function StatsView() {
   )
 }
 
-/* ===== SUB-COMPONENTS ===== */
-
 function MainSkillSection({
   mainSkill,
   mainSkillRank,
@@ -718,7 +697,6 @@ function MainSkillSection({
   mcrRange: RangedValue
   weaponDamage: WeaponDamageBreakdown
 }) {
-  // Headline damage panel — always visible at the top of the Stats tab. Shows the *currently selected* main skill (from the build store, with a highest-rank fallback) so the player doesn't have to scroll down to check the headline number. If the main skill has no damage formula or hasn't been ranked, falls back to the weapon damage hero (or an "equip a weapon" message).
   const hasSkillDamage =
     !!mainSkill &&
     mainSkillRank > 0 &&
@@ -765,7 +743,6 @@ function MainSkillSection({
     )
   }
 
-  // Fallbacks — main skill not picked / not ranked / has no damage. Still useful to show *something* so the panel slot doesn't go empty.
   if (weaponDamage.hasWeapon) {
     return (
       <Panel
@@ -802,7 +779,6 @@ function SkillDamageHero({
   fcrRange: RangedValue
   mcrRange: RangedValue
 }) {
-  // Hero tile for the chosen main skill. Same 1.2fr / 1fr layout as the weapon DamageHero — big "Average hit" on the left + DPS-ish metadata, 2x2 cells on the right (Hit / Crit damage / Crit chance / Crit multi). Adds the skill's tag pills + cast/mana meta below the hero so the user doesn't need a separate row.
   const hasCrit = breakdown.critChance > 0
   const baseMana = skill.ranks[0]?.manaCost
   const mcrMin = rangedMin(mcrRange)
@@ -918,7 +894,6 @@ function SkillDamageHero({
 }
 
 function skillHeroBg(type: DamageType): string {
-  // Picks a tinted hero gradient that matches the damage type — keeps the panel feeling alive rather than gold-on-gold for every skill.
   const map: Record<DamageType, string> = {
     physical:
       'linear-gradient(135deg, rgba(212,207,191,0.06), transparent 60%)',
@@ -953,7 +928,6 @@ function AttributesStrip({
   getBreakdown: (statKey: string, kind: StatBreakdownKind) => StatBreakdown | null
   requestBreakdown: (statKey: string, kind: StatBreakdownKind) => void
 }) {
-  // Compact 6-column attribute strip (collapses to 3 / 2 on smaller widths). Uses 1px gap on the parent so the inner cells share borders like a table. Each cell opens the Rust-fetched breakdown on left- or right-click.
   return (
     <div
       className="grid grid-cols-2 overflow-hidden rounded-[3px] border border-border sm:grid-cols-3 lg:grid-cols-6"
@@ -1003,7 +977,6 @@ function AttributesStrip({
 }
 
 function DamageHero({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
-  // The "big number" weapon-damage hero panel: average hit on the left (large gold), DPS + APS underneath, then a 2x2 grid on the right with hit damage / crit damage / crit chance / crit multi.
   const b = breakdown
   return (
     <div
@@ -1062,7 +1035,6 @@ function DamageHero({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
 }
 
 function HeroStat({ k, v }: { k: string; v: string }) {
-  // One key/value cell of the DamageHero side grid.
   return (
     <div className="flex flex-col gap-0.5">
       <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-faint">
@@ -1076,7 +1048,6 @@ function HeroStat({ k, v }: { k: string; v: string }) {
 }
 
 function DamageBuildup({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
-  // Build-up section under DamageHero: weapon damage → enhanced damage → additive physical → attack damage % → extra damage → Hit damage total.
   const b = breakdown
   const edRange =
     b.enhancedDamageMinPct === b.enhancedDamageMaxPct
@@ -1177,7 +1148,6 @@ function SkillCard({
   skillProjectiles: Record<string, number>
   isMain: boolean
 }) {
-  // Per-skill row: name + rank, computed damage range with damage-type colour, a tag strip (damage type + skill tags), mana / cast-rate meta, and the full DamageBreakdown when the skill has damage. The "main" skill (highest current rank) gets the gold border + left-bar treatment from the mockup.
   const rank1 = skill.ranks[0]
   const baseMana = rank1?.manaCost
   const mcrMin = rangedMin(mcrRange)
@@ -1385,7 +1355,6 @@ function StatRow({
   breakdown: StatBreakdown | null
   onRequestBreakdown: () => void
 }) {
-  // Single label/value row used in Defensive and Resources panels (and in Offense / Utility extras). Hover surfaces the SourceTooltip with breakdown; left- or right-click pins it.
   const hasMore = !!moreSources && moreSources.length > 0
   const displayValue: RangedValue = hasMore
     ? combineAdditiveAndMore(value, moreValue)
@@ -1461,7 +1430,6 @@ function DamageBreakdown({
   stats: RangedStatMap
   itemSkillBonuses: Record<string, [number, number]>
 }) {
-  // Renders the line-by-line skill damage breakdown: Base → Synergies → Multipliers → Hit / Crit / Average. Mirrors the .bd block in Stats View Mockup.
   const synergyLines: Array<{ label: string; pctMin: number; pctMax: number }> =
     []
   for (const b of skill.bonusSources ?? []) {
@@ -1697,7 +1665,6 @@ function BDLine({
   value: React.ReactNode
   indent?: boolean
 }) {
-  // One label/value row inside a damage breakdown section. `indent` shifts label by 14px to nest sub-contributors.
   return (
     <div className="flex items-baseline justify-between gap-3 py-0.5 tabular-nums">
       <span className={`text-faint ${indent ? 'pl-3.5 text-muted' : ''}`}>
@@ -1715,7 +1682,6 @@ function BDSection({
   title: string
   children: React.ReactNode
 }) {
-  // Subsection inside a breakdown — gold-deep heading with a line that fills remaining width.
   return (
     <div className="mt-2 first:mt-0">
       <div className="mb-1 flex items-center gap-2">
@@ -1736,7 +1702,6 @@ function SubSectionLabel({
   children: React.ReactNode
   first?: boolean
 }) {
-  // Small gold-deep section label inside a stat panel (e.g. "Mitigation", "Resistances"). Doubles as a divider line.
   return (
     <div className={`mb-1 flex items-center gap-2 ${first ? 'mt-0' : 'mt-3'}`}>
       <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-accent-deep">
@@ -1748,7 +1713,6 @@ function SubSectionLabel({
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
-  // The "ph" page-section heading from the mockup — small gold-deep dash + uppercase mono label. Plays nicely with the parent `space-y-*` so each heading gets the same vertical breathing room as the panels around it.
   return (
     <div className="flex items-center gap-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted">
       <span className="h-px w-3.5 bg-accent-deep" />
@@ -1768,7 +1732,6 @@ function Panel({
   children: React.ReactNode
   padded?: boolean
 }) {
-  // Titled section card with PickerModal-style chrome (gradient, accent corners, JetBrains Mono header). When `title` is omitted (e.g. Per-Skill panel) the head is hidden but the chrome stays.
   return (
     <div
       className={`relative overflow-hidden rounded-md border border-border ${padded ? 'px-4 pb-3.5 pt-3.5' : 'px-4 pb-3.5 pt-4'}`}
@@ -1804,7 +1767,6 @@ function Panel({
 }
 
 function CornerMark({ pos }: { pos: 'tl' | 'br' }) {
-  // One of the two corner accent marks on a Panel — gold-deep L pinned to the top-left or bottom-right.
   const base: React.CSSProperties = {
     position: 'absolute',
     width: 8,
@@ -1840,25 +1802,21 @@ function CornerMark({ pos }: { pos: 'tl' | 'br' }) {
 }
 
 function formatDecimal(v: number): string {
-  // Renders a number as an integer when it is one, otherwise as a fixed-2 decimal.
   if (Number.isInteger(v)) return String(v)
   return v.toFixed(2)
 }
 
 function formatRange(min: number, max: number): string {
-  // Renders a numeric range as either a single decimal or "min-max" with two decimals each.
   if (min === max) return formatDecimal(min)
   return `${formatDecimal(min)}-${formatDecimal(max)}`
 }
 
 function formatRangeInt(min: number, max: number): string {
-  // Renders a numeric range as a hyphen-separated integer string, collapsing identical ends.
   if (min === max) return String(min)
   return `${min}-${max}`
 }
 
 function displayRange(min: number, max: number): string {
-  // Renders a numeric range using an en-dash for visual variety. Used inside the AttributesStrip cell.
   if (min === max) return String(min)
   return `${min}–${max}`
 }

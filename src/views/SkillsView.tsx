@@ -54,7 +54,6 @@ const CELL = 84
 const GAP = 18
 
 export default function SkillsView() {
-  // Top-level Skills view: lays out the active class's skill tree as a clickable grid, lets the user spend skill points (with prerequisite cascades), and renders a per-skill details side panel showing the current/next-rank stats, damage breakdown, mana cost, subtree bonuses, and the "Open subtree" entry point. Used as one of the main app tabs.
   const classId = useBuild((s) => s.classId)
   const level = useBuild((s) => s.level)
   const inventory = useBuild((s) => s.inventory)
@@ -266,7 +265,6 @@ function SkillTree({
   onDec: (id: string) => void
   onOpenSubtree: (id: string | null) => void
 }) {
-  // Renders one named tree of skills as a fixed-cell grid: draws prerequisite arrow lines, places each skill icon at its (row, col) position, and wires hover/inc/dec/open-subtree callbacks. Used by SkillsView once per tree (e.g. main tree, secondary tree).
   const maxRow = list.reduce((m, s) => Math.max(m, s.position?.row ?? 0), 0)
   const maxCol = list.reduce((m, s) => Math.max(m, s.position?.col ?? 0), 0)
   const cols = Math.max(maxCol + 1, 3)
@@ -396,7 +394,6 @@ function SkillIcon({
   onDec: () => void
   onOpenSubtree: () => void
 }) {
-  // Renders a single clickable skill cell inside the SkillTree grid: shows the icon, current rank, locked state, hover ring, damage-type border colour, and exposes the small subtree button when the skill has subskills. Used by SkillTree for every skill in the grid.
   const allocated = rank > 0
   const border = skill.damageType
     ? DAMAGE_BORDER[skill.damageType]
@@ -486,7 +483,6 @@ function SkillIcon({
 }
 
 function SkillTreeCornerMarks() {
-  // Renders the four small accent-deep L-marks at the skill-tree panel's corners, matching PickerModal's chrome at a smaller scale.
   const base: React.CSSProperties = {
     position: 'absolute',
     width: 8,
@@ -564,7 +560,6 @@ function SkillDetailsPanel({
   stats: Record<string, RangedValue>
   itemSkillBonuses: Record<string, [number, number]>
 }) {
-  // Renders the right-hand details panel for the hovered/selected skill: header, current vs next rank, mana cost, cooldown, damage breakdown (with synergies, total multipliers, crit, resistance), passive stats, subskill bonuses, and the "Open subtree" CTA. Falls back to a help message when no skill is selected.
   if (!skill) {
     return (
       <aside
@@ -835,7 +830,6 @@ function PropertyRow({
   suffix?: string
   valueClass?: string
 }) {
-  // Renders a single label/value row inside the skill properties section. Used by SkillDetailsPanel for cast rate, range, cooldown, etc.
   return (
     <div className="flex items-baseline justify-between gap-2 py-0.75 text-xs">
       <span className="text-muted">{label}</span>
@@ -856,7 +850,6 @@ function DetailBlock({
   trailing?: ReactNode
   children: ReactNode
 }) {
-  // Wraps a labelled section inside SkillDetailsPanel with the panel-system gradient frame, an accent-hot section header (with optional trailing slot for rank/aux info), and a divider. Used by Skill bonuses, Effects/Preview, and Subtree bonuses.
   return (
     <div
       className="mb-3 rounded-[3px] border border-border-2 p-2.5"
@@ -882,7 +875,6 @@ function DetailBlock({
 }
 
 function ControlsRow({ keys, label }: { keys: string; label: string }) {
-  // Renders a single keyboard/mouse-shortcut row inside the empty SkillDetailsPanel: a small mono-cap key chip on the left, label on the right.
   return (
     <li className="flex items-center justify-between gap-2">
       <span
@@ -897,7 +889,6 @@ function ControlsRow({ keys, label }: { keys: string; label: string }) {
 }
 
 function DamageLegend({ type }: { type: DamageType }) {
-  // Renders one cell of the damage-type legend inside the empty SkillDetailsPanel: a coloured dot in the type's accent + the uppercase name.
   return (
     <li className="flex items-center gap-1.5">
       <span
@@ -910,7 +901,6 @@ function DamageLegend({ type }: { type: DamageType }) {
 }
 
 function formatPair(pair: [number, number]): string {
-  // Renders a `[min, max]` integer tuple as either a single number ("12") or a "min-max" range ("12-18"). Used by SkillDetailsPanel to show effective rank ranges.
   return pair[0] === pair[1] ? String(pair[0]) : `${pair[0]}-${pair[1]}`
 }
 
@@ -923,7 +913,6 @@ function SubtreeBonusBlock({
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
 }) {
-  // Renders the "Subtree bonuses" block inside SkillDetailsPanel: aggregates allocated subskill stats via `aggregateSubskillStats` (gated on enemy conditions) and lists them, plus a per-proc breakdown showing chance, trigger, effects and applied states. Shown only when at least one allocated subskill contributes.
   const agg = useMemo(
     () => aggregateSubskillStats(skill, subskillRanks, enemyConditions),
     [skill, subskillRanks, enemyConditions],
@@ -1038,12 +1027,10 @@ function SkillEffectsBlock({
   stats: Record<string, RangedValue>
   itemSkillBonuses: Record<string, [number, number]>
 }) {
-  // Renders the per-skill numeric breakdown inside SkillDetailsPanel: damage tables / formulas, mana cost, area of effect, cast time, applied states, and the synergy contributions from other skills + attributes that scale this skill. Used by SkillDetailsPanel.
   const allocated = currentRank > 0
   const curMin = allocated ? effRankMin : 1
   const curMax = allocated ? effRankMax : 1
-  // Cap is on allocated rank (player-pointable), not effective rank
-  // (which can exceed maxRank via +all_skills / +element_skills bonuses).
+  // Cap on allocated rank, not effective rank (effective can exceed maxRank via +all_skills bonuses).
   const canIncrement = allocated && currentRank < skill.maxRank
   const nextMin = canIncrement ? curMin + 1 : null
   const nextMax = canIncrement ? curMax + 1 : null
@@ -1360,13 +1347,11 @@ function SkillEffectsBlock({
 }
 
 function formatStatPair(key: string, min: number, max: number): string {
-  // Renders a `[min, max]` stat range as either a single signed value or "min-max" with the per-stat unit suffix. Used by SkillEffectsBlock.
   if (min === max) return formatValue(min, key)
   return `${formatValue(min, key)}-${formatValue(max, key).replace(/^[+-]/, '')}`
 }
 
-// Clamp to >= 0: linear formulas can extrapolate negative at low ranks,
-// but UI never shows negative skill scaling.
+// Linear formulas can extrapolate negative at low ranks; UI never shows negative scaling.
 function evalFormulaClamped(f: { base: number; perLevel: number }, rank: number): number {
   return Math.max(0, f.base + f.perLevel * rank)
 }
@@ -1393,13 +1378,11 @@ function formatFlatPhys(
 }
 
 function formatDmgRange(min: [number, number], max: [number, number]): string {
-  // Renders a damage range that itself has min/max bounds. Collapses to a single tuple when both endpoints match. Used by SkillEffectsBlock for hit ranges.
   if (min[0] === max[0] && min[1] === max[1]) return formatRangeTuple(min)
   return `${formatRangeTuple(min)} … ${formatRangeTuple(max)}`
 }
 
 function formatRangeTuple([min, max]: [number, number]): string {
-  // Renders a single `[min, max]` tuple as "min-max" (or just "min" when both ends match), rounding each end to two decimals. Used by formatDmgRange.
   const m = Math.round(min * 100) / 100
   const mx = Math.round(max * 100) / 100
   if (m === mx) return String(m)
@@ -1417,7 +1400,6 @@ function EffRow({
   next?: string
   color: string
 }) {
-  // Renders a single label / current → next-rank value row inside SkillEffectsBlock. Used for every numeric line that benefits from showing the user the impact of taking the next rank.
   return (
     <div className="flex items-baseline justify-between gap-2 min-w-0">
       <span className="text-text/80 truncate" title={label}>
@@ -1437,7 +1419,6 @@ function EffRow({
 }
 
 function EmptyState({ message }: { message: string }) {
-  // Renders the centred "nothing to show" placeholder used by SkillsView when the active class has no skills (or no class is selected).
   return (
     <div className="flex h-full items-center justify-center p-8 text-center text-sm text-muted">
       {message}

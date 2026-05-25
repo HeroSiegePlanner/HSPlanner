@@ -12,14 +12,12 @@ const FOOTER_BTN_PRIMARY_CLASS =
   "rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]";
 
 export default function ShareButton() {
-  // Top-bar primary action that opens a PickerModal-styled dialog with the encoded build code, copy-to-clipboard control, and a transient status hint. The code is generated lazily the first time the dialog opens.
   const exportSnapshot = useBuild((s) => s.exportBuildSnapshot);
   const [status, setStatus] = useState<Status>("idle");
   const [code, setCode] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   const generate = (): string => {
-    // Encodes the current build snapshot + notes into a fresh share code, stashes it in component state, opens the dialog, and resets the copy status. Returns the code so callers (Open and Copy) can use it without an extra render round-trip.
     const { notes } = useBuild.getState();
     const next = encodeBuildToShare(exportSnapshot(), notes);
     setCode(next);
@@ -29,7 +27,6 @@ export default function ShareButton() {
   };
 
   const onOpen = () => {
-    // Toggles the share dialog. Generates a code on first open, otherwise simply re-uses the cached code.
     if (open) {
       setOpen(false);
       return;
@@ -38,7 +35,6 @@ export default function ShareButton() {
   };
 
   const onCopy = async () => {
-    // Copies the code to the clipboard and toggles a transient "Copied!" / "Copy failed" status for 2.5 seconds. Used by the Copy button.
     const next = code ?? generate();
     try {
       await navigator.clipboard.writeText(next);
@@ -101,7 +97,6 @@ function ShareDialog({
   onClose: () => void;
   onCopy: () => void;
 }) {
-  // Modal-style dialog that mirrors PickerModal's chrome (corners, gradient, header, footer) and exposes the build code in a read-only textarea plus a Copy button. Used by ShareButton to replace the legacy popover.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -252,7 +247,6 @@ function ShareDialog({
 }
 
 function CornerMarks() {
-  // Renders the four small accent-deep L-marks at the dialog's corners, matching PickerModal's chrome.
   const base: React.CSSProperties = {
     position: "absolute",
     width: 10,

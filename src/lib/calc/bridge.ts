@@ -1,4 +1,4 @@
-// All the TS calls to the Rust calc go through here.
+// TS-to-Rust calc bridge.
 
 import { invoke } from '@tauri-apps/api/core'
 
@@ -27,9 +27,9 @@ export interface BuildPerformanceInput {
   activeAuraId?: string | null
   activeBuffs?: Record<string, boolean>
   customStats?: CustomStat[]
-  // Rust deserialises this array into a HashSet on its side.
+  // Rust deserialises into HashSet.
   allocatedTreeNodes?: number[]
-  // JSON object keys must be strings, so node ids are stringified here.
+  // Node ids stringified because JSON keys must be strings.
   treeSocketed?: Record<string, TreeSocketContent>
   mainSkillId?: string | null
   enemyConditions?: Record<string, boolean>
@@ -40,8 +40,7 @@ export interface BuildPerformanceInput {
   killsPerSec?: number
 }
 
-// Rust always returns ranges as [min, max] tuples. TS code mostly expects
-// "number | [number, number]" — see asRangedValue() below for the conversion.
+// Rust returns [min, max]; TS expects `number | [number, number]` — see asRangedValue.
 export type RustRanged = [number, number]
 
 export interface BuildPerformanceOutput {
@@ -66,7 +65,7 @@ export function computeBuildPerformanceNative(
   return invoke<BuildPerformanceOutput>('calc_build_performance', { input })
 }
 
-// Collapse [n, n] back to just n, so the rest of the TS code stays the same.
+// Collapse [n, n] to n so legacy TS callers see the same shape.
 export function asRangedValue([min, max]: RustRanged): RangedValue {
   return min === max ? min : [min, max]
 }
@@ -83,8 +82,7 @@ function filterTreeSocketed(
   return out
 }
 
-// The TS UI uses Set<number> / Record<number, ...>; Rust wants plain arrays
-// and string-keyed objects, so we convert here before sending.
+// TS Set<number>/Record<number,...> -> Rust arrays/string-keyed objects.
 function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   return {
     classId: deps.classId,
@@ -132,8 +130,6 @@ function toLegacyBuildPerformance(
   }
 }
 
-// Async replacement for the old TS computeBuildPerformance — same input/output
-// shape, just goes through Rust.
 export async function computeBuildPerformanceAsync(
   deps: BuildPerformanceDeps,
 ): Promise<BuildPerformance> {
@@ -198,8 +194,7 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
   }
 }
 
-// Same as computeBuildPerformanceAsync but also returns the per-stat source
-// breakdown that StatsView / SkillsView / ItemTooltip render.
+// Adds per-stat source breakdown on top of computeBuildPerformanceAsync.
 export async function computeBuildStatsAsync(
   deps: BuildPerformanceDeps,
 ): Promise<ComputedStats> {
@@ -289,10 +284,7 @@ function toLegacyStatBreakdown(raw: RustStatBreakdown): StatBreakdown {
   }
 }
 
-// Fetches a fully populated breakdown for one stat or attribute. The Rust
-// side re-runs the same stat pipeline `computeBuildStatsAsync` does (so the
-// numbers are guaranteed identical), then collapses one key's source list
-// into per-source-type subtotals and a final combined value.
+// Re-runs the same pipeline as computeBuildStatsAsync to guarantee identical numbers, then collapses one key into per-source-type subtotals + combined.
 export async function computeStatBreakdownAsync(
   deps: BuildPerformanceDeps,
   statKey: string,
@@ -308,7 +300,7 @@ export async function computeStatBreakdownAsync(
   return toLegacyStatBreakdown(raw)
 }
 
-// Plain pass-through for any future commands we haven't wrapped yet.
+// Escape hatch for unwrapped commands.
 export function invokeCalc<TResult>(
   cmd: string,
   args: Record<string, unknown> = {},

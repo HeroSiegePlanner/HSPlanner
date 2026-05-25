@@ -83,11 +83,11 @@ const GOLD_OFFENSE = new Set(["enhanced_damage", "crit_chance", "crit_damage"]);
 const GOLD_DEFENSE = new Set(["life"]);
 const BLUE_DEFENSE = new Set(["mana", "mana_replenish"]);
 
+// Fold `<key>_more` Total multiplier into the additive sum so display matches engine output.
 function effectiveStatValue(
   stats: Record<string, RangedValue>,
   key: string,
 ): RangedValue {
-  // Returns the EFFECTIVE additive-equivalent value for a stat key by folding any `<key>_more` Total multiplier into the additive sum via combineAdditiveAndMore. For keys with no `_more` variant or for already-flat stats (life, mana, etc.) returns the additive value unchanged. Used by the Offense/Defense rows so the displayed percent matches what the engine actually applies (e.g. Faster Cast Rate shows the post-multiplier number, not just the additive sum).
   const additive = stats[key];
   const more = stats[`${key}_more`];
   if (more === undefined) return additive ?? 0;
@@ -95,7 +95,6 @@ function effectiveStatValue(
 }
 
 export default function LeftStatsPanel() {
-  // Persistent left sidebar that summarises the build at a glance: header, attribute totals, derived offense/defense/resistance stats, the main-skill damage breakdown, the active aura/buff selectors, the proc toggles, and the combined-DPS estimate. Used as the always-visible status panel in the app shell.
   const classId = useBuild((s) => s.classId);
   const level = useBuild((s) => s.level);
   const allocated = useBuild((s) => s.allocated);
@@ -601,7 +600,6 @@ function StatLine({
   value: RangedValue;
   highlight?: "gold" | "blue";
 }) {
-  // Renders a single label/value row inside the LeftStatsPanel sections, dimming both sides when the value is zero and applying optional gold/blue highlights for headline stats. Used by the offense/defense/resistance lists.
   const zero = isZero(value);
   const def = statDef(statKey);
   const label = def?.name ?? statKey;
@@ -638,7 +636,6 @@ function Section({
   title: string;
   children: React.ReactNode;
 }) {
-  // Renders a titled section block inside the LeftStatsPanel with a PickerModal-style header (rotated diamond + uppercase mono label + accent rule) and a body with subtle dashed-row separators.
   return (
     <div className="border-b border-border/70 px-4 py-3">
       <div className="mb-2 flex items-center gap-2 border-b border-accent-deep/20 pb-1.5">
@@ -656,7 +653,6 @@ function Section({
 }
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
-  // Renders a generic label/value row used by sections that show ad-hoc strings or React nodes (rather than RangedValues). Used by the LeftStatsPanel sub-sections that display custom-formatted values like attribute totals.
   return (
     <div className="flex items-baseline justify-between gap-2 py-0.75">
       <span className="text-muted flex-1 min-w-0 leading-tight">{label}</span>
@@ -672,7 +668,6 @@ function PanelSelect({
   children,
   ...rest
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  // Wraps a native <select> in the panel's gold-bordered gradient frame so the dropdown matches the TopBar Class/Level selectors and PickerModal inputs.
   return (
     <div
       className={`inline-flex w-full items-center rounded-[3px] border border-border-2 px-2 py-1.5 transition-colors hover:border-accent-deep focus-within:border-accent-hot ${className ?? ""}`}
@@ -693,9 +688,7 @@ function PanelSelect({
 }
 
 function formatNumRange(min: number, max: number): string {
-  // Formats a [min, max] number range for display, collapsing identical bounds and stripping trailing zeros from fractional values. Used by the headline DPS / damage rows.
   const fmt = (v: number) =>
-    // Renders a single number with up to two decimals and no trailing zeros, used inside formatNumRange for both endpoints.
     Number.isInteger(v) ? String(v) : v.toFixed(2).replace(/\.?0+$/, "");
   if (Math.abs(min - max) < 0.005) return fmt(min);
   return `${fmt(min)}–${fmt(max)}`;
