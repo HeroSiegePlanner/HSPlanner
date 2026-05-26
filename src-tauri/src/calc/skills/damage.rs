@@ -230,8 +230,9 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let skill_more_min = (1.0 + r_min(magic_more) / 100.0) * (1.0 + r_min(elem_more) / 100.0);
     let skill_more_max = (1.0 + r_max(magic_more) / 100.0) * (1.0 + r_max(elem_more) / 100.0);
 
-    let (extra_pct, extra_sources) = collect_extra_damage(input.stats, input.enemy_conditions);
-    let extra_mult = 1.0 + extra_pct / 100.0;
+    let (extra_mult, extra_sources) =
+        collect_extra_damage(input.stats, input.enemy_conditions);
+    let extra_pct = (extra_mult - 1.0) * 100.0;
 
     let is_spell = s.tags.iter().any(|t| t == "Spell");
     let crit = crit_factors(input.stats, is_spell);

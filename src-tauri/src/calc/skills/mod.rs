@@ -196,12 +196,15 @@ pub fn r_max(v: Ranged) -> f64 {
     v.1
 }
 
+// Returns (multiplier, sources) where multiplier = Π(1 + pct_i / 100) over
+// all active ailment-gated extra-damage sources. Stacks multiplicatively to
+// match the HeroSiCalc reference formula.
 pub(crate) fn collect_extra_damage(
     stats: &StatMap,
     enemy_conditions: &ConditionMap,
 ) -> (f64, Vec<ExtraSource>) {
     let mut sources: Vec<ExtraSource> = Vec::new();
-    let mut total = 0.0;
+    let mut mult = 1.0;
     let mut any_ailment = false;
     for (stat_key, cond, label) in EXTRA_DAMAGE_CONDITIONS {
         if !*enemy_conditions.get(*cond).unwrap_or(&false) {
@@ -214,7 +217,7 @@ pub(crate) fn collect_extra_damage(
             continue;
         }
         sources.push(ExtraSource { label, pct: avg });
-        total += avg;
+        mult *= 1.0 + avg / 100.0;
     }
     if any_ailment {
         let v = rg(stats, "extra_damage_ailments");
@@ -224,10 +227,10 @@ pub(crate) fn collect_extra_damage(
                 label: "Afflicted with Ailments",
                 pct: avg,
             });
-            total += avg;
+            mult *= 1.0 + avg / 100.0;
         }
     }
-    (total, sources)
+    (mult, sources)
 }
 
 pub(crate) struct CritFactors {
@@ -259,5 +262,79 @@ pub(crate) fn crit_factors(stats: &StatMap, is_spell: bool) -> CritFactors {
         damage_pct,
         on_crit_mult,
         avg_mult,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn cond(active: &[&str]) -> ConditionMap {
+        let mut m = ConditionMap::new();
+        for c in active {
+            m.insert((*c).to_string(), true);
+        }
+        m
+    }
+
+    fn stat(key: &str, pct: f64) -> StatMap {
+        let mut m = StatMap::new();
+        m.insert(key.to_string(), (pct, pct));
+        m
+    }
+
+    fn merge(maps: &[StatMap]) -> StatMap {
+        let mut out = StatMap::new();
+        for m in maps {
+            for (k, v) in m {
+                out.insert(k.clone(), *v);
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn returns_unit_multiplier_when_no_ailment_active() {
+        let stats = stat("extra_damage_bleeding", 50.0);
+        let conds = cond(&[]);
+        let (mult, sources) = collect_extra_damage(&stats, &conds);
+        assert_eq!(mult, 1.0);
+        assert!(sources.is_empty());
+    }
+
+    #[test]
+    fn stacks_two_ailments_multiplicatively() {
+        // Bleeding +20% and Burning +20% must yield 1.2 * 1.2 = 1.44,
+        // NOT 1 + (0.20 + 0.20) = 1.40 (the old additive behavior).
+        let stats = merge(&[
+            stat("extra_damage_bleeding", 20.0),
+            stat("extra_damage_burning", 20.0),
+        ]);
+        let conds = cond(&["bleeding", "burning"]);
+        let (mult, sources) = collect_extra_damage(&stats, &conds);
+        assert!((mult - 1.44).abs() < 1e-9, "expected 1.44, got {mult}");
+        assert_eq!(sources.len(), 2);
+    }
+
+    #[test]
+    fn afflicted_with_ailments_stacks_multiplicatively_over_others() {
+        // Bleeding +50% and a generic +30% "Afflicted with Ailments" bonus:
+        // 1.5 * 1.3 = 1.95
+        let stats = merge(&[
+            stat("extra_damage_bleeding", 50.0),
+            stat("extra_damage_ailments", 30.0),
+        ]);
+        let conds = cond(&["bleeding"]);
+        let (mult, _) = collect_extra_damage(&stats, &conds);
+        assert!((mult - 1.95).abs() < 1e-9, "expected 1.95, got {mult}");
+    }
+
+    #[test]
+    fn ailment_with_zero_bonus_does_not_contribute() {
+        let stats = stat("extra_damage_bleeding", 0.0);
+        let conds = cond(&["bleeding"]);
+        let (mult, sources) = collect_extra_damage(&stats, &conds);
+        assert_eq!(mult, 1.0);
+        assert!(sources.is_empty());
     }
 }

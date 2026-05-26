@@ -5,8 +5,6 @@ import {
 } from '../utils/nativeDamage'
 import type { SkillDamageBreakdown } from '../utils/stats'
 
-// Hook expects `input` to be memoized by the caller (e.g. useMemo) so the
-// effect does not re-fire on every render.
 export function useSkillDamage(
   input: NativeSkillDamageInput | null,
 ): SkillDamageBreakdown | null {
@@ -15,9 +13,16 @@ export function useSkillDamage(
   useEffect(() => {
     if (!input) return
     let cancelled = false
-    computeSkillDamageNative(input).then((value) => {
-      if (!cancelled) setResult(value)
-    })
+    computeSkillDamageNative(input)
+      .then((value) => {
+        if (!cancelled) setResult(value)
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error('computeSkillDamageNative failed', err)
+          setResult(null)
+        }
+      })
     return () => {
       cancelled = true
     }

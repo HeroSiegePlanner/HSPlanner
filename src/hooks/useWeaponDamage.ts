@@ -5,8 +5,6 @@ import {
 } from '../utils/nativeDamage'
 import type { WeaponDamageBreakdown } from '../utils/stats'
 
-// Hook expects `input` to be memoized by the caller (e.g. useMemo) so the
-// effect does not re-fire on every render.
 export function useWeaponDamage(
   input: NativeWeaponDamageInput,
 ): WeaponDamageBreakdown | null {
@@ -14,9 +12,16 @@ export function useWeaponDamage(
 
   useEffect(() => {
     let cancelled = false
-    computeWeaponDamageNative(input).then((value) => {
-      if (!cancelled) setResult(value)
-    })
+    computeWeaponDamageNative(input)
+      .then((value) => {
+        if (!cancelled) setResult(value)
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error('computeWeaponDamageNative failed', err)
+          setResult(null)
+        }
+      })
     return () => {
       cancelled = true
     }

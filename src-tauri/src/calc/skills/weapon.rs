@@ -19,8 +19,8 @@ pub fn compute_weapon_damage(
     let add_phys = rg(stats, "additive_physical_damage");
     let atk = rg(stats, "attack_damage");
 
-    let (extra_pct, extra_sources) = collect_extra_damage(stats, enemy_conditions);
-    let extra_mult = 1.0 + extra_pct / 100.0;
+    let (extra_mult, extra_sources) = collect_extra_damage(stats, enemy_conditions);
+    let extra_pct = (extra_mult - 1.0) * 100.0;
 
     let crit = crit_factors(stats, false);
 

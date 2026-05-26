@@ -64,8 +64,8 @@ pub fn compute_attack_skill_damage(
     let add_phys = rg(input.stats, "additive_physical_damage");
     let atk = rg(input.stats, "attack_damage");
 
-    let (extra_pct, _extra_sources) = collect_extra_damage(input.stats, input.enemy_conditions);
-    let extra_mult = 1.0 + extra_pct / 100.0;
+    let (extra_mult, _extra_sources) =
+        collect_extra_damage(input.stats, input.enemy_conditions);
 
     let crit = crit_factors(input.stats, false);
 
