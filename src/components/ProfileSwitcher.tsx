@@ -15,7 +15,11 @@ export default function ProfileSwitcher() {
   const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const build = useMemo(
-    () => (activeBuildId ? getSavedBuild(activeBuildId) : null),
+    () => {
+      // savedBuildsVersion bumps when storage changes; referenced here so the lint rule sees the dep.
+      void savedBuildsVersion
+      return activeBuildId ? getSavedBuild(activeBuildId) : null
+    },
     [activeBuildId, savedBuildsVersion],
   )
 

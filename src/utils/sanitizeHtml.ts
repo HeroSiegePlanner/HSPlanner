@@ -115,7 +115,13 @@ function sanitizeNode(node: Element): void {
     }
   }
   if (node.tagName === 'A' && node.getAttribute('href')) {
-    node.setAttribute('target', '_blank')
+    const href = node.getAttribute('href')!.trim()
+    // Force _blank only on external schemes; in-page (#…) and same-origin
+    // relative URLs should stay in the current tab.
+    const isExternal = /^https?:/i.test(href) || /^mailto:/i.test(href)
+    if (isExternal) {
+      node.setAttribute('target', '_blank')
+    }
     node.setAttribute('rel', 'noopener noreferrer nofollow')
   }
 }

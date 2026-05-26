@@ -402,8 +402,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         }
     }
 
-    let combined_dps_min = avg_hit_dps_min.map(|h| h + proc_dps_min);
-    let combined_dps_max = avg_hit_dps_max.map(|h| h + proc_dps_max);
+    // Proc-only builds (no active skill) should still report combined DPS.
+    let combined_dps_min = if avg_hit_dps_min.is_some() || proc_dps_min > 0.0 {
+        Some(avg_hit_dps_min.unwrap_or(0.0) + proc_dps_min)
+    } else {
+        None
+    };
+    let combined_dps_max = if avg_hit_dps_max.is_some() || proc_dps_max > 0.0 {
+        Some(avg_hit_dps_max.unwrap_or(0.0) + proc_dps_max)
+    } else {
+        None
+    };
 
     BuildPerformance {
         attributes: computed.attributes,

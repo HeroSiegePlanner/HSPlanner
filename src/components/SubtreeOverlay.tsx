@@ -110,7 +110,6 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     const key = subskillKey(skill.id, hover.sub.id)
     const currentRank = subskillRanks[key] ?? 0
     if (currentRank >= hover.sub.maxRank) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviewPerformance(null)
       return
     }

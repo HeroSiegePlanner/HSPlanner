@@ -1004,10 +1004,6 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'all_resistances', value: num(m[1]!) }),
   },
   {
-    test: /^([+-]?\d+(?:\.\d+)?)%\s+Increased\s+Sentry\s+Duration$/i,
-    build: (m) => ({ key: 'sentry_duration', value: num(m[1]!) }),
-  },
-  {
     test: /^([+-]?\d+(?:\.\d+)?)%\s+Attack\s+Speed\s+at\s+Full\s+Life$/i,
     build: (m) => ({ key: 'attack_speed_full_life', value: num(m[1]!) }),
   },
