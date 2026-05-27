@@ -45,29 +45,30 @@
       ],
       "enhanced_defense": [
         250,
-        300
+        350
       ],
       "all_skills": [
-        1,
-        3
+        3,
+        5
       ],
       "all_attributes": [
-        15,
-        35
-      ],
-      "damage_return": [
-        500,
-        750
+        25,
+        45
       ],
       "physical_damage_reduction": [
-        5,
+        10,
         15
-      ]
+      ],
+      "magic_damage_reduction": [
+        10,
+        15
+      ],
+      "all_resistances": 25
     },
+    "sockets": 2,
+    "maxSockets": 3,
     "uniqueEffects": [
-      "Chance When Struck: Valors Defender",
-      "Grant Spell: Shield Wall",
-      "Potion Cooldown Recovery"
+      "Incoming Damage Over Time 25%"
     ]
   }
 ]

@@ -72,7 +72,13 @@
         25,
         40
       ],
-      "faster_hit_recovery": 40
+      "faster_hit_recovery": 150
+    },
+    "skillBonuses": {
+      "Burst of Speed": [
+        25,
+        45
+      ]
     }
   },
   {
@@ -92,28 +98,39 @@
         120,
         140
       ],
+      "all_skills": 2,
       "cold_skills": [
         2,
-        4
+        5
       ],
       "increased_frost_bite_damage": [
-        20,
+        25,
+        40
+      ],
+      "extra_damage_frozen": [
+        15,
         30
       ],
-      "to_energy": 20,
-      "to_intelligence": 20,
+      "to_energy": 40,
+      "to_intelligence": 40,
       "cold_skill_damage": [
-        15,
-        25
+        25,
+        35
       ],
       "cold_absorption": [
         10,
         15
       ]
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 16,
+        "description": "cast Frozen Boulder Level 60"
+      }
+    ],
     "uniqueEffects": [
-      "Chance When Casting: Frozen Boulder",
-      "Cannot Be Frozen None"
+      "Cannot Be Frozen"
     ]
   },
   {
@@ -207,7 +224,7 @@
   },
   {
     "id": "belt_heroic_soulburn_belt",
-    "name": "Soulburn Belt",
+    "name": "Soulborn Belt",
     "baseType": "Belt",
     "slot": "belt",
     "rarity": "heroic",
@@ -231,15 +248,15 @@
         25
       ],
       "extra_damage_burning": [
-        5,
-        15
+        15,
+        25
       ],
       "to_intelligence": 30,
       "fire_skill_damage": [
         15,
         25
       ],
-      "ignore_lightning_res": [
+      "ignore_fire_res": [
         15,
         30
       ],
@@ -248,8 +265,208 @@
         15
       ]
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Soulborn Level 22"
+      }
+    ]
+  },
+  {
+    "id": "belt_heroic_girdle_of_eternal_war",
+    "name": "Girdle of Eternal War",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        75,
+        100
+      ],
+      "enhanced_defense": [
+        120,
+        140
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "increased_attack_speed": 15,
+      "crushing_blow_chance": 25,
+      "crit_damage": [
+        40,
+        50
+      ],
+      "to_vitality": [
+        30,
+        40
+      ],
+      "life": [
+        500,
+        750
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 2,
     "uniqueEffects": [
-      "Chance When Casting: Soulburn"
+      "Random Skill Element +3",
+      "Movement Phasing"
+    ]
+  },
+  {
+    "id": "belt_heroic_gladiator_king_s_belt",
+    "name": "Gladiator King's Belt",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        65,
+        100
+      ],
+      "all_skills": 2,
+      "ailment_damage_all": [
+        15,
+        20
+      ],
+      "extra_damage_bleeding": [
+        40,
+        50
+      ],
+      "all_attributes": [
+        10,
+        20
+      ],
+      "all_resistances": 15
+    }
+  },
+  {
+    "id": "belt_heroic_komodo_s_bloodstrap",
+    "name": "Komodo's Bloodstrap",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "life_replenish_pct": 15,
+      "increased_life": [
+        10,
+        18
+      ],
+      "physical_damage_reduction": [
+        8,
+        14
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 5,
+        "description": "cast Defunct Surgeon Level 27"
+      }
+    ],
+    "uniqueEffects": [
+      "Random Skill Element +2",
+      "Life On Level 520"
+    ]
+  },
+  {
+    "id": "belt_heroic_sash_of_eternal_hatred",
+    "name": "Sash of Eternal Hatred",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "to_vitality": [
+        15,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "maxAffixes": 2,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "belt_heroic_trophy_hunter",
+    "name": "Trophy Hunter",
+    "baseType": "Belt",
+    "slot": "belt",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "defense": [
+        52,
+        68
+      ],
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "movement_speed": [
+        15,
+        35
+      ],
+      "attack_rating_pct": 20,
+      "all_attributes": [
+        5,
+        20
+      ],
+      "life_per_kill": [
+        10,
+        25
+      ],
+      "mana_per_kill": [
+        10,
+        25
+      ],
+      "experience_gain": [
+        5,
+        8
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 0.03,
+        "description": "cast Collector Level 1"
+      }
     ]
   }
 ]
