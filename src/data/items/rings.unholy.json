@@ -17,15 +17,18 @@
         35
       ],
       "increased_attack_speed": [
-        27,
+        25,
         35
       ],
-      "cold_resistance": -66
+      "physical_to_cold": [
+        15,
+        25
+      ],
+      "cold_resistance": -66,
+      "max_cold_resistance": -5
     },
     "uniqueEffects": [
-      "Grant Spell: Freezing Touch",
-      "Phys Dmg Taken As Cold",
-      "Max Cold Resist"
+      "Grant Spell: Freezing Touch"
     ]
   }
 ]

@@ -12,23 +12,16 @@
         45,
         65
       ],
-      "all_skills": [
-        2,
-        3
-      ],
       "physical_skills": [
         3,
         5
       ],
-      "crushing_blow_chance": [
-        15,
-        25
-      ],
-      "attack_rating": [
-        750,
-        1
-      ]
-    }
+      "crushing_blow_chance": 25,
+      "defense_ignored": 25
+    },
+    "uniqueEffects": [
+      "Max Crushing Blow Stacks"
+    ]
   },
   {
     "id": "ring_angelic_st_aaron_s_eternal_rage",
@@ -43,18 +36,36 @@
         3,
         4
       ],
+      "ignore_fire_res": [
+        15,
+        25
+      ],
+      "ignore_cold_res": [
+        15,
+        25
+      ],
+      "ignore_lightning_res": [
+        15,
+        25
+      ],
+      "ignore_poison_res": [
+        15,
+        25
+      ],
+      "ignore_arcane_res": [
+        15,
+        25
+      ],
       "magic_skill_damage": [
         40,
         50
       ],
       "mana_replenish_pct": 30,
+      "life": 350,
       "magic_find": [
         40,
         65
       ]
-    },
-    "uniqueEffects": [
-      "Enemy All Resist"
-    ]
+    }
   }
 ]
