@@ -54,18 +54,33 @@ function StatCell({
   tone?: string
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-2 text-[11.5px]">
+    <div className="flex min-w-0 items-baseline justify-between gap-2 text-[12px]">
       <span className="text-muted">{label}</span>
-      <span className={`font-mono ${tone ?? 'text-text'}`}>{value}</span>
+      <span
+        className={`truncate text-right font-mono ${tone ?? 'text-text'}`}
+      >
+        {value}
+      </span>
     </div>
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  count,
+  children,
+}: {
+  title: string
+  count?: number
+  children: React.ReactNode
+}) {
   return (
-    <div className="border-t border-border/60 px-[18px] py-3">
-      <h5 className="m-0 mb-2 font-mono text-[9.5px] uppercase tracking-[0.2em] text-faint">
-        {title}
+    <div className="border-b border-border py-3.5 last:border-b-0">
+      <h5 className="m-0 mb-2 flex items-center justify-between font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-faint">
+        <span>{title}</span>
+        {count !== undefined && (
+          <span className="text-accent-deep">· {count}</span>
+        )}
       </h5>
       {children}
     </div>
@@ -90,16 +105,16 @@ export function BuildPreview({
     return (
       <aside
         className="flex min-h-0 flex-col border-l border-border"
-        style={{ background: 'var(--color-panel-2)' }}
+        style={{ background: 'var(--color-panel)' }}
       >
         <PaneHeader />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={T_FAST}
-          className="flex flex-1 flex-col items-center justify-center gap-2 px-8 text-center"
+          className="flex flex-1 flex-col items-center justify-center gap-2 px-5 text-center"
         >
-          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
+          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
             No build selected
           </div>
           <div className="text-[11px] text-muted">
@@ -149,7 +164,7 @@ export function BuildPreview({
   return (
     <aside
       className="flex min-h-0 flex-col border-l border-border"
-      style={{ background: 'var(--color-panel-2)' }}
+      style={{ background: 'var(--color-panel)' }}
     >
       <PaneHeader />
 
@@ -158,65 +173,65 @@ export function BuildPreview({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={T_FAST}
-        className="min-h-0 flex-1 overflow-y-auto"
+        className="min-h-0 flex-1 overflow-y-auto px-4 pb-3.5"
       >
         {/* Hero */}
-        <div
-          className="grid grid-cols-[54px_1fr] items-center gap-3.5 border-b border-border px-[18px] py-4"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(201,165,90,0.06), transparent 80%)',
-          }}
-        >
+        <div className="flex items-center gap-3.5 border-b border-border py-2 pb-3.5">
           {icon ? (
-            <img
-              src={icon}
-              alt=""
+            <span
               aria-hidden
-              className="h-[54px] w-[54px] object-contain"
-              style={{ filter: `drop-shadow(0 0 10px ${color}aa)` }}
-            />
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[4px] border"
+              style={{
+                borderColor: `${color}aa`,
+                background: `radial-gradient(circle at 40% 35%, ${color}40, transparent 60%), linear-gradient(135deg, ${color}26, ${color}0d)`,
+              }}
+            >
+              <img
+                src={icon}
+                alt=""
+                aria-hidden
+                className="h-10 w-10 object-contain"
+                style={{ filter: `drop-shadow(0 0 6px ${color}aa)` }}
+              />
+            </span>
           ) : (
             <span
               aria-hidden
-              className="flex h-[54px] w-[54px] items-center justify-center rounded-[4px] border font-mono text-[24px] font-bold"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[4px] border font-mono text-[18px] font-bold"
               style={{
                 color,
-                borderColor: `${color}55`,
-                background: `linear-gradient(180deg, ${color}1a, ${color}05)`,
+                borderColor: `${color}aa`,
+                background: `radial-gradient(circle at 40% 35%, ${color}40, transparent 60%), linear-gradient(135deg, ${color}26, ${color}0d)`,
               }}
             >
               {classInitial(className)}
             </span>
           )}
-          <div className="min-w-0">
-            <div className="font-mono text-[14px] leading-tight break-words text-accent-hot">
+          <div className="min-w-0 flex-1">
+            <div className="truncate font-mono text-[15px] tracking-[0.02em] text-text">
               {build.name}
             </div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-faint">
-              <span className="text-muted">{className}</span> · Lv{' '}
-              <span className="text-muted">{level}</span> ·{' '}
-              <span className="text-muted">{build.profiles.length}P</span>
+            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              <span style={{ color }}>{className}</span> · Lv {level} ·{' '}
+              {build.profiles.length}P
             </div>
+            {build.tags.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {build.tags.map((t) => (
+                  <span
+                    key={t}
+                    className={`rounded-[2px] border border-border bg-panel-2 px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-[0.12em] ${tagTone(t)}`}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Tags */}
-        {build.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 px-[18px] pt-2.5">
-            {build.tags.map((t) => (
-              <span
-                key={t}
-                className={`rounded-[2px] border border-border bg-panel-2 px-1.5 py-0.5 text-[9.5px] uppercase tracking-[0.1em] ${tagTone(t)}`}
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-        )}
-
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-x-3.5 gap-y-1.5 px-[18px] py-3">
+        <div className="grid grid-cols-2 gap-x-[18px] gap-y-1.5 border-b border-border py-3.5">
           <StatCell label="DPS" value={dps} tone="text-accent-hot" />
           <StatCell
             label="Life"
@@ -249,33 +264,33 @@ export function BuildPreview({
         </div>
 
         {preview.loading && (
-          <div className="px-[18px] pb-1 font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
+          <div className="pt-2 font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
             Computing…
           </div>
         )}
         {!preview.loading && !preview.available && !undecodable && (
-          <div className="px-[18px] pb-1 font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
+          <div className="pt-2 font-mono text-[9.5px] uppercase tracking-[0.16em] text-faint">
             Stats unavailable — calc engine offline
           </div>
         )}
         {undecodable && (
-          <div className="px-[18px] pb-1 font-mono text-[9.5px] uppercase tracking-[0.16em] text-stat-red">
+          <div className="pt-2 font-mono text-[9.5px] uppercase tracking-[0.16em] text-stat-red">
             Build data could not be read
           </div>
         )}
 
         {/* Profiles */}
-        <Section title={`Profiles · ${build.profiles.length}`}>
-          <div className="flex flex-col gap-1">
+        <Section title="Profiles" count={build.profiles.length}>
+          <div className="flex flex-col gap-[5px]">
             {build.profiles.map((p) => {
               const active = p.id === build.activeProfileId
               return (
                 <div
                   key={p.id}
-                  className={`flex items-center gap-2 rounded-[3px] border px-2 py-1.5 transition-colors ${
+                  className={`flex cursor-pointer items-center gap-2 rounded-[3px] border px-2.5 py-[7px] text-[12px] transition-colors ${
                     active
-                      ? 'border-accent-deep bg-accent-hot/5'
-                      : 'border-border bg-panel-3 hover:border-accent-deep'
+                      ? 'border-accent-deep bg-accent-hot/5 text-accent-hot'
+                      : 'border-border bg-panel-2 text-muted hover:border-border-2 hover:text-text'
                   }`}
                 >
                   <button
@@ -340,7 +355,7 @@ export function BuildPreview({
             <button
               type="button"
               onClick={() => onAddProfile(build.id)}
-              className="flex items-center justify-center gap-1.5 rounded-[3px] border border-dashed border-border-2 px-2 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              className="mt-[3px] flex items-center justify-center gap-1.5 rounded-[3px] border border-dashed border-border-2 px-2.5 py-[7px] text-[11px] tracking-[0.04em] text-faint transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               <PlusIcon className="h-3 w-3" />
               Add profile
@@ -351,60 +366,48 @@ export function BuildPreview({
         {/* Main skill */}
         {mainSkillName && (
           <Section title="Main Skill">
-            <div className="flex items-center gap-2.5 rounded-[3px] border border-border bg-panel-3 px-2 py-1.5">
-              <span
-                className="flex h-6 w-6 items-center justify-center rounded-[2px] border border-accent-deep"
-                style={{ background: 'linear-gradient(135deg,#2a2418,#15110a)' }}
-                aria-hidden
-              >
-                <span
-                  className="h-2 w-2 rotate-45 bg-accent-hot"
-                  style={{ boxShadow: '0 0 6px rgba(224,184,100,0.5)' }}
-                />
+            <div className="flex items-center gap-2 rounded-[3px] border border-border bg-panel-2 px-2.5 py-[7px] font-mono text-[12px] text-text">
+              <span aria-hidden className="text-[10px] text-accent">
+                ◆
               </span>
-              <span className="truncate text-[11.5px] text-text">
-                {mainSkillName}
-              </span>
+              <span className="truncate">{mainSkillName}</span>
             </div>
           </Section>
         )}
 
         {/* Notes */}
-        <Section title="Notes">
-          {hasNotes ? (
+        {hasNotes && (
+          <Section title="Notes">
             <div
-              className="notes-editor text-[12px] leading-relaxed text-text"
+              className="notes-editor rounded-[3px] border border-border bg-panel-2 px-2.5 py-2 font-mono text-[12px] leading-relaxed text-muted"
               dangerouslySetInnerHTML={{ __html: notesHtml }}
             />
-          ) : (
-            <p className="m-0 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-              No notes
-            </p>
-          )}
-        </Section>
+          </Section>
+        )}
       </motion.div>
 
       {/* CTA */}
-      <div
-        className="flex shrink-0 gap-2 border-t border-border px-[18px] py-3"
-        style={{
-          background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.4))',
-        }}
-      >
+      <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-border px-3.5 py-2.5">
         <button
           type="button"
           onClick={() => onCopy(build.id)}
-          className="flex h-[34px] flex-1 items-center justify-center gap-1.5 rounded-[3px] border border-border-2 bg-panel-2 font-mono text-[11px] uppercase tracking-[0.06em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          className="flex h-[30px] items-center justify-center gap-1.5 rounded-[3px] border border-border bg-panel-2 text-[11px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
         >
           Copy code
         </button>
         <button
           type="button"
           onClick={() => onOpen(build.id)}
-          className="flex h-[34px] flex-1 items-center justify-center gap-1.5 rounded-[3px] border border-accent-deep font-mono text-[11px] uppercase tracking-[0.06em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+          className="flex h-[30px] items-center justify-center gap-1.5 rounded-[3px] border border-accent-deep text-[11px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot"
           style={{
             background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
-            boxShadow: '0 0 10px rgba(224,184,100,0.18)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow =
+              '0 0 10px rgba(232,217,107,0.18)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = ''
           }}
         >
           <PlayIcon className="h-3 w-3" />
@@ -448,17 +451,9 @@ function ProfileAction({
 
 function PaneHeader() {
   return (
-    <div
-      className="flex h-[30px] shrink-0 items-center border-b border-border px-3"
-      style={{
-        background: 'linear-gradient(180deg, rgba(201,165,90,0.04), transparent)',
-      }}
-    >
-      <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-deep">
-        <span
-          aria-hidden
-          className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
-        />
+    <div className="flex shrink-0 items-center px-4 pb-2 pt-3">
+      <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-accent-hot">
+        <span className="text-[10px] text-accent">◆</span>
         Preview
       </span>
     </div>

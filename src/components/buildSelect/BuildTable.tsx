@@ -8,7 +8,7 @@ import { classColor, classInitial, formatTimestamp, tagTone } from './helpers'
 export type SortCol = 'favorite' | 'name' | 'class' | 'level' | 'date'
 export type SortDir = 'asc' | 'desc'
 
-const GRID = 'grid-cols-[30px_36px_minmax(200px,1fr)_120px_70px_110px]'
+const GRID = 'grid-cols-[32px_minmax(0,1fr)_160px_80px_130px]'
 
 interface BuildTableProps {
   /** Builds after filtering + sorting. */
@@ -47,14 +47,14 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-[3px] text-[11px] transition-colors ${
+      className={`inline-flex h-[22px] shrink-0 items-center gap-1.5 rounded-[11px] border px-2.5 text-[11px] tracking-[0.04em] transition-colors ${
         on
           ? 'border-accent-deep bg-accent-hot/10 text-accent-hot'
-          : 'border-border bg-panel-3 text-muted hover:border-accent-deep hover:text-text'
+          : 'border-border bg-panel-2 text-muted hover:border-border-2 hover:text-text'
       }`}
     >
       {label}
-      {on && <span className="text-accent-deep">×</span>}
+      {on && <span className="leading-none text-accent-hot">✕</span>}
     </button>
   )
 }
@@ -65,28 +65,26 @@ function HeaderCell({
   sortCol,
   sortDir,
   onSort,
-  align = 'left',
 }: {
   label: string
   col: SortCol
   sortCol: SortCol
   sortDir: SortDir
   onSort: (col: SortCol) => void
-  align?: 'left' | 'right'
 }) {
   const sorted = sortCol === col
   return (
     <button
       type="button"
       onClick={() => onSort(col)}
-      className={`flex h-full items-center gap-1 px-1.5 transition-colors hover:text-text ${
+      className={`flex items-center gap-1 text-left transition-colors hover:text-muted ${
         sorted ? 'text-accent-hot' : 'text-faint'
-      } ${align === 'right' ? 'justify-end' : ''}`}
+      }`}
     >
       {label}
-      <span className={`text-[8px] ${sorted ? 'opacity-100' : 'opacity-0'}`}>
-        {sortDir === 'asc' ? '▲' : '▼'}
-      </span>
+      {sorted && (
+        <span className="text-[9px]">{sortDir === 'asc' ? '▴' : '▾'}</span>
+      )}
     </button>
   )
 }
@@ -104,25 +102,35 @@ function ClassGlyph({
   const color = classColor(classId)
   if (icon) {
     return (
-      <img
-        src={icon}
-        alt=""
+      <span
         aria-hidden
-        className="h-6 w-6 object-contain"
+        className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[3px] border"
         style={{
-          filter: selected ? `drop-shadow(0 0 8px ${color}aa)` : undefined,
+          borderColor: `${color}55`,
+          background: `linear-gradient(135deg, ${color}1f, ${color}08)`,
+          boxShadow: selected ? `0 0 8px ${color}55` : undefined,
         }}
-      />
+      >
+        <img
+          src={icon}
+          alt=""
+          aria-hidden
+          className="h-[18px] w-[18px] object-contain"
+          style={{
+            filter: selected ? `drop-shadow(0 0 6px ${color}aa)` : undefined,
+          }}
+        />
+      </span>
     )
   }
   return (
     <span
       aria-hidden
-      className="flex h-6 w-6 items-center justify-center rounded-[3px] border font-mono text-[12px] font-bold"
+      className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[3px] border font-mono text-[11px] font-bold"
       style={{
         color,
         borderColor: `${color}55`,
-        background: `linear-gradient(180deg, ${color}1a, ${color}05)`,
+        background: `linear-gradient(135deg, ${color}1f, ${color}08)`,
       }}
     >
       {classInitial(className)}
@@ -158,8 +166,11 @@ export function BuildTable({
   return (
     <section className="flex min-w-0 flex-col" style={{ background: 'var(--color-bg)' }}>
       {/* Filter chips */}
-      <div className="flex h-[30px] shrink-0 items-center gap-2 overflow-x-auto border-b border-border bg-panel-2 px-3.5">
-        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+      <div
+        className="flex shrink-0 items-center gap-2 overflow-x-auto border-b border-border px-4 py-2.5"
+        style={{ background: 'rgba(255,255,255,0.005)' }}
+      >
+        <span className="mr-0.5 shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
           Filter
         </span>
         <Chip label="All" on={!filtersActive} onClick={onClearFilters} />
@@ -173,21 +184,22 @@ export function BuildTable({
         ))}
         <Chip label="Lv 90+" on={levelFilter} onClick={onToggleLevelFilter} />
         <div className="flex-1" />
-        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">
-          {builds.length} of {totalCount}
+        <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+          <b className="font-medium text-accent-hot">{builds.length}</b> of{' '}
+          <b className="font-medium text-accent-hot">{totalCount}</b>
         </span>
       </div>
 
       {/* Header */}
       <div
-        className={`grid ${GRID} h-[30px] shrink-0 items-center border-b border-border bg-panel-2 pl-3 pr-2 font-mono text-[10px] uppercase tracking-[0.14em]`}
+        className={`grid ${GRID} shrink-0 items-center border-b border-border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em]`}
+        style={{ background: 'rgba(255,255,255,0.008)' }}
       >
         <HeaderCell label="★" col="favorite" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
-        <span />
         <HeaderCell label="Name" col="name" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
         <HeaderCell label="Class" col="class" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
-        <HeaderCell label="Lv" col="level" sortCol={sortCol} sortDir={sortDir} onSort={onSort} align="right" />
-        <HeaderCell label="Modified" col="date" sortCol={sortCol} sortDir={sortDir} onSort={onSort} align="right" />
+        <HeaderCell label="Lv" col="level" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
+        <HeaderCell label="Modified" col="date" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
       </div>
 
       {/* Body */}
@@ -212,6 +224,8 @@ export function BuildTable({
             const m = meta[b.id]
             const selected = b.id === selectedId
             const isActive = b.id === activeBuildId
+            const modified = formatTimestamp(b.updatedAt)
+            const isToday = /^Today/i.test(modified)
             return (
               <motion.div
                 key={b.id}
@@ -219,21 +233,22 @@ export function BuildTable({
                 onClick={() => onSelect(b.id)}
                 onDoubleClick={() => onOpen(b.id)}
                 onContextMenu={(e) => onContextMenu(e, b.id)}
-                className={`grid ${GRID} relative h-[42px] cursor-pointer items-center border-b border-border/50 pl-3 pr-2 transition-colors ${
-                  selected ? '' : 'hover:bg-panel-2/60'
+                className={`grid ${GRID} relative cursor-pointer items-center border-b border-border px-4 py-2.5 transition-colors ${
+                  selected ? '' : 'hover:bg-white/[0.022]'
                 }`}
                 style={
-                  selected ? { background: 'var(--color-panel-3)' } : undefined
+                  selected
+                    ? {
+                        background:
+                          'linear-gradient(90deg, rgba(201,165,90,0.08) 0%, rgba(201,165,90,0.02) 60%, transparent 100%)',
+                      }
+                    : undefined
                 }
               >
                 {selected && (
                   <span
                     aria-hidden
-                    className="absolute left-0 top-0 bottom-0 w-0.5"
-                    style={{
-                      background:
-                        'linear-gradient(180deg, var(--color-accent-hot), var(--color-accent-deep))',
-                    }}
+                    className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent-hot"
                   />
                 )}
                 <button
@@ -242,23 +257,21 @@ export function BuildTable({
                     e.stopPropagation()
                     onToggleFavorite(b.id)
                   }}
-                  className={`flex h-[18px] w-[18px] items-center justify-center rounded-[2px] text-[13px] transition-colors ${
+                  className={`flex h-[18px] w-[18px] items-center justify-center text-[14px] leading-none transition-colors ${
                     b.favorite
                       ? 'text-accent-hot'
-                      : 'text-faint hover:text-accent-hot'
+                      : 'text-faint hover:text-muted'
                   }`}
                   title={b.favorite ? 'Unfavorite' : 'Favorite'}
                 >
                   ★
                 </button>
-                <div className="flex items-center justify-center">
+                <div className="flex min-w-0 items-center gap-2.5 overflow-hidden pr-2">
                   <ClassGlyph
                     classId={b.classId}
                     className={m?.className ?? 'Unknown'}
                     selected={selected}
                   />
-                </div>
-                <div className="flex min-w-0 items-center gap-2 pr-2">
                   <span
                     className={`truncate font-mono text-[12.5px] ${
                       selected ? 'text-accent-hot' : 'text-text'
@@ -266,41 +279,47 @@ export function BuildTable({
                   >
                     {b.name}
                   </span>
-                  {isActive && (
-                    <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] text-accent-deep">
-                      Active
-                    </span>
-                  )}
-                  {b.profiles.length > 1 && (
-                    <span
-                      className="shrink-0 rounded-[2px] border border-border px-1 font-mono text-[9px] text-muted"
-                      title={`${b.profiles.length} profiles`}
-                    >
-                      {b.profiles.length}P
-                    </span>
-                  )}
-                  {b.tags.slice(0, 3).map((t) => (
-                    <span
-                      key={t}
-                      className={`shrink-0 rounded-[2px] border border-border bg-panel-2 px-1 text-[9px] uppercase tracking-[0.08em] ${tagTone(t)}`}
-                    >
-                      {t}
-                    </span>
-                  ))}
-                  {!m?.decoded && (
-                    <span className="shrink-0 text-[10px] text-stat-red/80">
-                      unreadable
-                    </span>
-                  )}
+                  <div className="ml-1 flex shrink-0 items-center gap-1 overflow-hidden">
+                    {isActive && (
+                      <span className="rounded-[2px] border border-accent-deep bg-accent-hot/10 px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-[0.12em] text-accent-hot">
+                        Active
+                      </span>
+                    )}
+                    {b.profiles.length > 1 && (
+                      <span
+                        className="rounded-[2px] border border-accent-deep bg-accent-hot/10 px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-[0.12em] text-accent-hot"
+                        title={`${b.profiles.length} profiles`}
+                      >
+                        {b.profiles.length}P
+                      </span>
+                    )}
+                    {b.tags.slice(0, 3).map((t) => (
+                      <span
+                        key={t}
+                        className={`rounded-[2px] border border-border bg-panel-2 px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-[0.12em] ${tagTone(t)}`}
+                      >
+                        {t}
+                      </span>
+                    ))}
+                    {!m?.decoded && (
+                      <span className="text-[10px] text-stat-red/80">
+                        unreadable
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="truncate px-1.5 text-[10.5px] uppercase tracking-[0.08em] text-muted">
+                <div className="truncate font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">
                   {m?.className ?? '—'}
                 </div>
-                <div className="px-1.5 text-right font-mono text-[12px] text-text">
+                <div className="font-mono text-[12px] text-text">
                   {m?.level ?? '—'}
                 </div>
-                <div className="px-1.5 text-right font-mono text-[10.5px] tracking-[0.04em] text-faint">
-                  {formatTimestamp(b.updatedAt)}
+                <div
+                  className={`font-mono text-[11px] tracking-[0.02em] ${
+                    isToday ? 'text-muted' : 'text-faint'
+                  }`}
+                >
+                  {modified}
                 </div>
               </motion.div>
             )

@@ -80,61 +80,64 @@ function Row({
   onContextMenu?: (e: React.MouseEvent) => void
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      onContextMenu={onContextMenu}
-      className={`group relative flex w-full items-center gap-1.5 py-1 pr-3 text-left transition-colors ${
-        active
-          ? 'text-accent-hot'
-          : 'text-muted hover:bg-white/2 hover:text-text'
-      }`}
-      style={{ paddingLeft: 8 + indent * 16 }}
-    >
-      {active && (
-        <span
-          aria-hidden
-          className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent-hot"
-          style={{ boxShadow: '0 0 8px rgba(224,184,100,0.55)' }}
-        />
-      )}
-      {twist ? (
-        <span
-          role="button"
-          tabIndex={-1}
-          onClick={(e) => {
-            e.stopPropagation()
-            onTwist?.()
-          }}
-          className="flex h-3 w-3 shrink-0 items-center justify-center text-faint transition-transform"
-          style={{ transform: twist === 'open' ? 'rotate(90deg)' : undefined }}
-        >
-          <CaretIcon className="h-2.5 w-2.5" />
-        </span>
-      ) : (
-        <span className="w-3 shrink-0" />
-      )}
-      <span
-        className={active ? 'text-accent-hot' : 'text-accent-deep'}
-        aria-hidden
-      >
-        {icon}
-      </span>
-      <span className="flex-1 truncate text-[12px]">{label}</span>
-      <span
-        className={`font-mono text-[10px] tabular-nums ${
-          active ? 'text-accent-deep' : 'text-faint'
+    <div className="px-1.5">
+      <button
+        type="button"
+        onClick={onClick}
+        onContextMenu={onContextMenu}
+        className={`group relative flex w-full items-center gap-2 rounded-[3px] py-[5px] pr-2 text-left text-[12px] transition-colors ${
+          active
+            ? 'text-accent-hot'
+            : 'text-muted hover:bg-white/[0.025] hover:text-text'
         }`}
+        style={{
+          paddingLeft: 8 + indent * 16,
+          background: active
+            ? 'linear-gradient(90deg, rgba(201,165,90,0.10), transparent)'
+            : undefined,
+          borderLeft: active
+            ? '2px solid var(--color-accent-hot)'
+            : '2px solid transparent',
+        }}
       >
-        {count}
-      </span>
-    </button>
+        {twist ? (
+          <span
+            role="button"
+            tabIndex={-1}
+            onClick={(e) => {
+              e.stopPropagation()
+              onTwist?.()
+            }}
+            className="flex h-3 w-3 shrink-0 items-center justify-center text-faint transition-transform"
+            style={{ transform: twist === 'open' ? 'rotate(90deg)' : undefined }}
+          >
+            <CaretIcon className="h-2.5 w-2.5" />
+          </span>
+        ) : (
+          <span className="w-3 shrink-0" />
+        )}
+        <span
+          className={active ? 'text-accent' : 'text-faint'}
+          aria-hidden
+        >
+          {icon}
+        </span>
+        <span className="flex-1 truncate">{label}</span>
+        <span
+          className={`font-mono text-[10px] tracking-[0.04em] tabular-nums ${
+            active ? 'text-accent-deep' : 'text-faint'
+          }`}
+        >
+          {count}
+        </span>
+      </button>
+    </div>
   )
 }
 
 function GroupLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="px-3 pt-3 pb-1 font-mono text-[9px] uppercase tracking-[0.22em] text-faint">
+    <div className="px-3.5 pb-1 pt-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-faint">
       {children}
     </div>
   )
@@ -183,27 +186,18 @@ export function FolderTree({
   return (
     <aside
       className="flex min-h-0 flex-col border-r border-border"
-      style={{ background: 'var(--color-panel-2)' }}
+      style={{ background: 'var(--color-panel)' }}
     >
-      <div
-        className="flex h-[30px] shrink-0 items-center justify-between border-b border-border px-3"
-        style={{
-          background:
-            'linear-gradient(180deg, rgba(201,165,90,0.04), transparent)',
-        }}
-      >
-        <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-deep">
-          <span
-            aria-hidden
-            className="inline-block h-1 w-1 rotate-45 bg-accent-deep"
-          />
+      <div className="flex shrink-0 items-center justify-between px-3.5 pb-2 pt-3">
+        <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-accent-hot">
+          <span className="text-[10px] text-accent">◆</span>
           Library
         </span>
         <button
           type="button"
           onClick={onNewFolder}
           title="New folder"
-          className="flex h-5 w-5 items-center justify-center rounded-[2px] text-faint transition-colors hover:bg-panel-3 hover:text-accent-hot"
+          className="flex h-[18px] w-[18px] items-center justify-center rounded-[2px] text-faint transition-colors hover:bg-panel-2 hover:text-accent-hot"
         >
           <PlusIcon className="h-3 w-3" />
         </button>
@@ -250,7 +244,7 @@ export function FolderTree({
         )}
       </div>
 
-      <div className="shrink-0 border-t border-border px-3 py-2.5 font-mono text-[10px] leading-relaxed tracking-[0.04em] text-faint">
+      <div className="shrink-0 border-t border-border px-3.5 py-2.5 font-mono text-[10px] leading-relaxed tracking-[0.04em] text-muted">
         {footer}
       </div>
     </aside>

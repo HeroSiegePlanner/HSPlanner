@@ -477,23 +477,22 @@ export default function BuildSelect({
 
   return (
     <motion.div
-      className="grid h-screen w-screen grid-rows-[2.75rem_38px_1fr_2.25rem] overflow-hidden text-text"
-      style={{ background: 'var(--color-bg)' }}
+      className="grid h-screen w-screen grid-rows-[44px_38px_1fr_28px] overflow-hidden text-text"
+      style={{ background: 'var(--color-panel)' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={T_VIEW}
     >
       {/* Titlebar */}
       <header
-        className="relative flex items-center gap-3.5 border-b border-border px-3.5"
+        className="relative flex h-11 shrink-0 items-center gap-0 pl-3 pr-3"
         style={{
           background:
             'linear-gradient(180deg, var(--color-panel-2), var(--color-panel))',
-          boxShadow:
-            'inset 0 -1px 0 rgba(201,165,90,0.08), 0 1px 0 rgba(0,0,0,0.4)',
+          boxShadow: 'inset 0 -1px 0 rgba(201,165,90,0.08)',
         }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 border-r border-border pr-3">
           <Logo size={22} glow title="HSPlanner" />
           <span
             className="select-none font-mono text-[11px] uppercase tracking-[0.18em] text-accent-hot"
@@ -502,28 +501,36 @@ export default function BuildSelect({
             HSPlanner
           </span>
         </div>
-        <span aria-hidden className="h-[18px] w-px bg-border" />
-        <div className="flex items-center gap-1.5 font-mono text-[11px] text-faint">
-          <span>Builds</span>
+        <div className="ml-2.5 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+          <span className="text-faint">Builds</span>
           <span className="text-faint">/</span>
-          <span className="text-muted">{breadcrumb}</span>
+          <span className="text-accent-hot">{breadcrumb}</span>
         </div>
-        <div className="flex-1" />
-        {canClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-[3px] border border-border-2 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            ← Planner
-          </button>
-        )}
+        <div className="ml-auto flex items-center gap-2.5">
+          {canClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-1.5 rounded-[3px] border border-border-2 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              style={{
+                background:
+                  'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+                boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+              }}
+            >
+              <span aria-hidden className="font-mono">
+                ←
+              </span>
+              <span>Planner</span>
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Toolbar */}
       <nav
-        className="flex items-center gap-0.5 border-b border-border px-1.5"
-        style={{ background: 'var(--color-panel-2)' }}
+        className="flex h-full items-center gap-[2px] px-3"
+        style={{ background: 'var(--color-panel)' }}
       >
         <ToolButton
           label="New"
@@ -563,6 +570,7 @@ export default function BuildSelect({
         <ToolButton
           label="Delete"
           icon={<DeleteIcon className="h-3.5 w-3.5" />}
+          danger
           disabled={!selectedBuild}
           onClick={() =>
             selectedBuild &&
@@ -585,14 +593,7 @@ export default function BuildSelect({
           }
         />
         <div className="flex-1" />
-        <div
-          className="flex h-7 w-60 items-center gap-1.5 rounded-[3px] border border-border-2 px-2.5 transition-colors focus-within:border-accent-hot"
-          style={{
-            background:
-              'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
-            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
-          }}
-        >
+        <div className="flex h-[26px] w-[280px] items-center gap-2 rounded-[3px] border border-border bg-panel-2 px-2.5 transition-colors focus-within:border-accent-deep">
           <SearchIcon className="h-3.5 w-3.5 shrink-0 text-faint" />
           <input
             value={search}
@@ -604,7 +605,7 @@ export default function BuildSelect({
       </nav>
 
       {/* Body */}
-      <main className="grid min-h-0 grid-cols-[240px_1fr_320px]">
+      <main className="grid min-h-0 grid-cols-[240px_1fr_360px] border-t border-border">
         <FolderTree
           childFolders={lib.childFolders}
           scope={scope}
@@ -622,11 +623,13 @@ export default function BuildSelect({
           onFolderContextMenu={openContextForFolder}
           footer={
             <>
-              <span className="block font-semibold uppercase tracking-[0.2em]">
+              <span className="mb-1 block text-[9px] font-semibold uppercase tracking-[0.18em] text-faint">
                 Local Library
               </span>
-              {lib.builds.length} builds ·{' '}
-              {approxKB({ builds: lib.builds, folders: lib.folders })}
+              <span className="text-muted">{lib.builds.length}</span> builds ·{' '}
+              <span className="text-muted">
+                {approxKB({ builds: lib.builds, folders: lib.folders })}
+              </span>
             </>
           }
         />
@@ -686,31 +689,27 @@ export default function BuildSelect({
 
       {/* Status bar */}
       <footer
-        className="flex items-center gap-3 border-t border-border px-3 font-mono text-[10px] uppercase tracking-[0.1em] text-faint"
-        style={{
-          background:
-            'linear-gradient(180deg, var(--color-panel), var(--color-panel-2))',
-          boxShadow:
-            'inset 0 1px 0 rgba(201,165,90,0.08), 0 -1px 0 rgba(0,0,0,0.4)',
-        }}
+        className="flex items-center gap-3.5 border-t border-border px-3 font-mono text-[11px] tracking-[0.06em] text-muted"
+        style={{ background: 'var(--color-panel)' }}
       >
         <span
           aria-hidden
-          className="h-1.5 w-1.5 rounded-full bg-stat-green"
+          className="h-1.5 w-1.5 shrink-0 rounded-full bg-stat-green"
           style={{ boxShadow: '0 0 6px rgba(116,201,138,0.6)' }}
         />
-        <span>
+        <span className="flex items-center gap-1.5">
           {notice ? (
             <span className="text-accent-hot">{notice}</span>
           ) : (
             <>
-              <span className="text-muted">{lib.builds.length}</span> builds ·{' '}
-              <span className="text-muted">{lib.folders.length}</span> folders
+              <b className="font-medium text-text">{lib.builds.length}</b> Builds
+              · <b className="font-medium text-text">{lib.folders.length}</b>{' '}
+              Folders
             </>
           )}
         </span>
-        <span aria-hidden className="h-3 w-px bg-border" />
-        <label className="flex cursor-pointer items-center gap-1.5">
+        <span aria-hidden className="h-3.5 w-px bg-border" />
+        <label className="flex cursor-pointer items-center gap-1.5 select-none text-muted">
           <input
             type="checkbox"
             checked={autoOpen}
@@ -722,11 +721,32 @@ export default function BuildSelect({
           <span>Auto-open last build</span>
         </label>
         <div className="flex-1" />
-        <span>
-          ↵ <b className="text-muted">Open</b> · ⌫{' '}
-          <b className="text-muted">Delete</b> · F2{' '}
-          <b className="text-muted">Rename</b> · Ctrl+N{' '}
-          <b className="text-muted">New</b>
+        <span className="inline-flex items-center gap-1.5 text-faint">
+          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
+            ↵
+          </span>
+          Open
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-faint">
+          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
+            Del
+          </span>
+          Delete
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-faint">
+          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
+            F2
+          </span>
+          Rename
+        </span>
+        <span className="inline-flex items-center gap-1.5 text-faint">
+          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
+            Ctrl
+          </span>
+          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
+            N
+          </span>
+          New
         </span>
       </footer>
 
@@ -949,18 +969,20 @@ export default function BuildSelect({
 }
 
 function ToolSep() {
-  return <span aria-hidden className="mx-1 h-5 w-px bg-border" />
+  return <span aria-hidden className="mx-1 h-4 w-px bg-border" />
 }
 
 function ToolButton({
   label,
   icon,
   disabled,
+  danger,
   onClick,
 }: {
   label: string
   icon: ReactNode
   disabled?: boolean
+  danger?: boolean
   onClick: () => void
 }) {
   return (
@@ -968,9 +990,18 @@ function ToolButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex h-7 items-center gap-1.5 rounded-[3px] border border-transparent px-2.5 text-[12px] text-muted transition-colors hover:border-border hover:bg-panel-3 hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
+      className={`group inline-flex h-7 items-center gap-1.5 rounded-[3px] border border-transparent px-2.5 text-[12px] text-muted transition-colors hover:border-border hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+        danger ? 'hover:text-stat-red' : 'hover:text-accent-hot'
+      }`}
     >
-      <span aria-hidden className="flex items-center text-accent-deep">
+      <span
+        aria-hidden
+        className={`flex w-3.5 items-center justify-center transition-colors ${
+          danger
+            ? 'text-accent group-hover:text-stat-red'
+            : 'text-accent'
+        }`}
+      >
         {icon}
       </span>
       {label}
