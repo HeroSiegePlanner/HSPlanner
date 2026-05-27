@@ -58,7 +58,6 @@ pub fn apply_fan_outs(stats: &mut StatMap) {
     }
 }
 
-/// Apply "flat * (1 + pct/100) * (1 + more/100)" multiplier in-place.
 pub fn apply_multiplier(
     stats: &mut StatMap,
     flat_key: &str,
@@ -87,9 +86,7 @@ pub fn apply_multiplier(
     stats.insert(flat_key.to_string(), (min_v, max_v));
 }
 
-/// Apply "Increased <Attribute>" multipliers to each attribute, scaling its raw additive sum.
 pub fn apply_attribute_increased(attrs: &mut AttrMap, stats: &StatMap, attribute_keys: &[String]) {
-    // First pass: all_attributes scaling distributes to each individual attribute
     let all_pct = stats
         .get("increased_all_attributes")
         .copied()
@@ -104,15 +101,16 @@ pub fn apply_attribute_increased(attrs: &mut AttrMap, stats: &StatMap, attribute
         let key_more = format!("increased_{}_more", key);
         let pct = *stats.get(&key_pct).unwrap_or(&(0.0, 0.0));
         let more = *stats.get(&key_more).unwrap_or(&(0.0, 0.0));
-        let combined_pct_min = pct.0 + all_pct.0;
-        let combined_pct_max = pct.1 + all_pct.1;
-        let final_min = flat.0 * (1.0 + combined_pct_min / 100.0) * (1.0 + more.0 / 100.0);
-        let final_max = flat.1 * (1.0 + combined_pct_max / 100.0) * (1.0 + more.1 / 100.0);
+        let after_all_min = flat.0 + (flat.0 * all_pct.0 / 100.0).floor();
+        let after_all_max = flat.1 + (flat.1 * all_pct.1 / 100.0).floor();
+        let final_min =
+            (after_all_min * (1.0 + pct.0 / 100.0) * (1.0 + more.0 / 100.0)).floor();
+        let final_max =
+            (after_all_max * (1.0 + pct.1 / 100.0) * (1.0 + more.1 / 100.0)).floor();
         attrs.insert(key.clone(), (final_min, final_max));
     }
 }
 
-/// Add per-attribute stat contributions ("Strength gives N% enhanced damage", etc.).
 pub fn apply_per_attribute_stats(
     stats: &mut StatMap,
     attrs: &AttrMap,
@@ -134,7 +132,7 @@ pub fn apply_per_attribute_stats(
     }
 }
 
-/// Add attribute-divided stats (floor(attr / divisor) added to stat).
+/// floor(attr / divisor) added to stat; floor is intentional to match TS.
 pub fn apply_attribute_divided_stats(
     stats: &mut StatMap,
     attrs: &AttrMap,
@@ -180,8 +178,6 @@ fn looks_like_attribute(key: &str) -> bool {
     } else { key == "all_attributes" }
 }
 
-/// Parse all tree node lines in `allocated_tree_nodes` and aggregate raw mods.
-/// Returns separate stat / attribute contributions plus conversions/disables.
 pub fn aggregate_tree_mods(
     allocated_tree_nodes: &[u32],
     tree_node_info: &HashMap<u32, TreeNodeInfo>,
@@ -241,14 +237,12 @@ pub fn aggregate_tree_mods(
                 }
                 continue;
             }
-            // Unsupported line — record so the modal can warn.
             out.unsupported_lines.push(format!("#{}: {}", node_id, line));
         }
     }
     out
 }
 
-/// Apply tree conversions: take percentage of source stat/attr and add it to target stat/attr.
 pub fn apply_tree_conversions(
     attrs: &mut AttrMap,
     stats: &mut StatMap,

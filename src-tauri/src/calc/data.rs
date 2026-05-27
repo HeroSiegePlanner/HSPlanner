@@ -1,9 +1,5 @@
-// Game-data layer. Pattern B from MIGRATION_PLAN: build.rs enumerates
-// src/data/**/*.json at compile time and emits `$OUT_DIR/data_includes.rs`
-// with `include_str!` macros for every file. The constants below are pulled
-// in and parsed lazily into GameData on first access.
-//
-// Mirror of src/data/index.ts.
+// JSON blobs from src/data/ are inlined at compile time via build.rs into
+// `$OUT_DIR/data_includes.rs`, then lazily parsed into GameData on first access.
 
 use std::collections::{HashMap, HashSet};
 
@@ -113,7 +109,6 @@ fn load() -> GameData {
     let game_config: GameConfig = parse(GAME_CONFIG_JSON, "game-config.json");
     let tree_nodes: HashMap<String, TreeNodeInfo> = parse(TREE_NODES_JSON, "tree-nodes.json");
 
-    // Derive id sets, mirroring src/utils/treeStats.ts:12-22.
     let mut tree_warp_ids: HashSet<u32> = HashSet::new();
     let mut tree_jewelry_ids: HashSet<u32> = HashSet::new();
     for (id_str, info) in tree_nodes.iter() {
@@ -243,9 +238,6 @@ pub fn get_tree_node(id: u32) -> Option<&'static TreeNodeInfo> {
     data().tree_nodes.get(&id.to_string())
 }
 
-// Returns Some(rune-or-gem) — TS getSocketableById equivalent. The calc layer
-// only needs to know whether the id resolves and what its stats are, so we
-// expose a thin enum for type-safe downstream consumption.
 pub enum Socketable<'a> {
     Gem(&'a Gem),
     Rune(&'a Rune),
@@ -261,9 +253,7 @@ pub fn get_socketable_by_id(id: &str) -> Option<Socketable<'static>> {
     None
 }
 
-// Mirror of src/data/index.ts:detectRuneword.
-// `socketed` is a slice of optional rune ids, in socket order. Returns the
-// runeword that exactly matches all sockets, or None.
+/// Returns the runeword that exactly matches every socket in order, or None.
 pub fn detect_runeword(
     base: &ItemBase,
     socketed: &[Option<&str>],
@@ -295,8 +285,6 @@ pub fn detect_runeword(
     None
 }
 
-// Lowercased-name lookup for item-granted skills, matching TS
-// getItemGrantedSkillByName (uses trim+lowercase).
 static ITEM_GRANTED_SKILLS_BY_NAME: Lazy<HashMap<String, &'static ItemGrantedSkill>> =
     Lazy::new(|| {
         let mut m: HashMap<String, &'static ItemGrantedSkill> = HashMap::new();

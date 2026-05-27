@@ -1,9 +1,16 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { FORGE_KIND_LABEL } from '../data'
+import { FORGE_KIND_LABEL, getItem } from '../data'
 import type { ForgeKind } from '../data'
-import { formatValue } from '../utils/item/stats'
+import { useBuild } from '../store/build'
+import { formatValue, statName } from '../utils/item/stats'
 import type { SourceContribution, SourceType } from '../utils/item/stats'
+import type { StatBreakdown, StatTypeSubtotal } from '../lib/calc/bridge'
+import type { EquippedItem, RangedValue } from '../types'
+import ItemTooltip from './ItemTooltip'
+import Tooltip from './Tooltip'
+import TreeNodeMiniMap from './TreeNodeMiniMap'
+import { findTreeNodeById, findTreeNodeByName } from '../utils/treeNodes'
 
 const SOURCE_COLOR: Record<SourceType, string> = {
   class: 'text-text/70',
@@ -35,15 +42,63 @@ const FORGE_COLOR: Record<ForgeKind, string> = {
   satanic_crystal: 'text-red-300',
 }
 
+// Socket-in-item form checked first so Rainbow/Transform trailing parens
+// don't get mistaken for the item name by the generic parens fallback.
+function extractItemName(label: string): string | null {
+  const trimmed = label.trim()
+  if (!trimmed) return null
+  const socketInItem = trimmed.match(
+    /\bin (.+?) #\d+(?:\s*\((?:Rainbow|Transform)\))?\s*$/,
+  )
+  if (socketInItem?.[1]) return socketInItem[1].trim()
+  const parens = trimmed.match(/\(([^()]+)\)\s*$/)
+  const inner = parens?.[1]
+  if (inner) return inner.trim()
+  return trimmed
+}
+
+// Parses a tree label into a node id (preferred) or display name. Handles
+// modern "Tree: X #N" labels, "Tree Socket #N" gem labels, and a legacy
+// pre-#N fallback that stops capture at the first ":" / "(".
+function extractTreeRef(label: string): { id?: number; name?: string } | null {
+  const trimmed = label.trim()
+  const socketMatch = trimmed.match(/\(Tree Socket #(\d+)\)\s*$/)
+  if (socketMatch?.[1]) {
+    return { id: Number(socketMatch[1]) }
+  }
+  if (!trimmed.startsWith('Tree:')) return null
+  const idMatch = trimmed.match(/^Tree:\s*(.+?)\s+#(\d+)\b/)
+  const idName = idMatch?.[1]
+  const idStr = idMatch?.[2]
+  if (idName && idStr) {
+    return { id: Number(idStr), name: idName.trim() }
+  }
+  const legacy = trimmed.match(/^Tree:\s*([^:(]+?)(?:\s*\(conditional\)|:|$)/)
+  const name = legacy?.[1]?.trim()
+  return name ? { name } : null
+}
+
 interface Props {
   statKey: string
   sources: SourceContribution[]
   moreSources?: SourceContribution[]
   children: ReactNode
+  breakdown?: StatBreakdown | null
+  onRequestBreakdown?: () => void
+  title?: string
 }
 
+function magnitudeOf(value: RangedValue): number {
+  if (typeof value === 'number') return Math.abs(value)
+  return Math.max(Math.abs(value[0]), Math.abs(value[1]))
+}
+
+function sortByMagnitude(sources: SourceContribution[]): SourceContribution[] {
+  return [...sources].sort((a, b) => magnitudeOf(b.value) - magnitudeOf(a.value))
+}
+
+// Groups each forged-crystal child directly under its parent item-source.
 function orderSources(sources: SourceContribution[]): SourceContribution[] {
-  // Reorders a flat list of source contributions so each item-source is immediately followed by its forged crystal mod children, with any orphaned forged mods appended at the end. Used by SourceTooltip to render the parent/child indented layout.
   const forgedByParent = new Map<string, SourceContribution[]>()
   for (const s of sources) {
     if (!s.forge) continue
@@ -77,19 +132,18 @@ function SourceItem({
   s,
   statKey,
   index,
+  itemByName,
 }: {
   s: SourceContribution
   statKey: string
   index: number
+  itemByName?: Map<string, EquippedItem>
 }) {
-  // Renders a single contribution row inside the tooltip: an indented "Forged modifier" entry when the source carries forge metadata, or a normal "tag · label · value" row for everything else. Used by SourceTooltip's list rendering.
   if (s.forge) {
     const color = FORGE_COLOR[s.forge.kind]
-    return (
-      <li
-        key={index}
-        className="flex items-baseline justify-between gap-2 leading-[1.5] pl-3"
-      >
+    const equipped = itemByName?.get(s.forge.itemName)
+    const forgedRow = (
+      <div className="flex items-baseline justify-between gap-2 leading-[1.5] pl-3 -mx-1 px-1 rounded-[2px] hover:bg-accent-hot/8 transition-colors">
         <span className="flex items-baseline gap-1 min-w-0">
           <span className="text-text/40 shrink-0">⤷</span>
           <span className={`shrink-0 italic ${color}`}>Forged modifier</span>
@@ -100,31 +154,79 @@ function SourceItem({
         <span className="font-mono tabular-nums shrink-0 text-accent-hot">
           {formatValue(s.value, statKey)}
         </span>
-      </li>
+      </div>
     )
+    if (equipped) {
+      return (
+        <li key={index}>
+          <ItemTooltip equipped={equipped} placement="left" zIndex={1200}>
+            {forgedRow}
+          </ItemTooltip>
+        </li>
+      )
+    }
+    return <li key={index}>{forgedRow}</li>
   }
-  return (
-    <li
-      key={index}
-      className="flex items-baseline justify-between gap-2 leading-[1.5]"
-    >
+  // Strip the `#N` node id from the display string; parsers read s.label.
+  const displayLabel =
+    s.sourceType === 'tree'
+      ? s.label.replace(/\s+#\d+/, '')
+      : s.label
+  const labelRow = (
+    <div className="flex items-baseline justify-between gap-2 leading-[1.5] -mx-1 px-1 rounded-[2px] hover:bg-accent-hot/8 transition-colors">
       <span className="flex items-baseline gap-1.5 min-w-0">
         <span
           className={`text-[9px] uppercase tracking-wider shrink-0 ${SOURCE_COLOR[s.sourceType]}`}
         >
           {SOURCE_LABEL[s.sourceType]}
         </span>
-        <span className="text-text/80 truncate">{s.label}</span>
+        <span className="text-text/80 truncate">{displayLabel}</span>
       </span>
       <span className="font-mono tabular-nums shrink-0 text-accent-hot">
         {formatValue(s.value, statKey)}
       </span>
-    </li>
+    </div>
   )
+  if (
+    itemByName &&
+    (s.sourceType === 'item' || s.sourceType === 'socket')
+  ) {
+    const itemName = extractItemName(s.label)
+    const equipped = itemName ? itemByName.get(itemName) : undefined
+    if (equipped) {
+      return (
+        <li key={index}>
+          <ItemTooltip equipped={equipped} placement="left" zIndex={1200}>
+            {labelRow}
+          </ItemTooltip>
+        </li>
+      )
+    }
+  }
+  if (s.sourceType === 'tree') {
+    const ref = extractTreeRef(s.label)
+    let treeNode = ref?.id != null ? findTreeNodeById(ref.id) : undefined
+    if (!treeNode && ref?.name) {
+      treeNode = findTreeNodeByName(ref.name)
+    }
+    if (treeNode) {
+      return (
+        <li key={index}>
+          <Tooltip
+            placement="left"
+            zIndex={1200}
+            content={<TreeNodeMiniMap node={treeNode} />}
+          >
+            {labelRow}
+          </Tooltip>
+        </li>
+      )
+    }
+  }
+  return <li key={index}>{labelRow}</li>
 }
 
 function sectionLabel(text: string, trailing?: string) {
-  // Renders the gold sub-section bar inside the tooltip with an optional right-aligned trailing string (e.g. a subtotal). Used by SourceTooltip to separate the "Additive" and "Multiplicative (Total)" groups.
   return (
     <div className="flex items-center justify-between px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-accent-hot/80 bg-accent-deep/10 border-b border-border/40">
       <span>{text}</span>
@@ -138,7 +240,6 @@ function sectionLabel(text: string, trailing?: string) {
 }
 
 function sumRangePct(sources: SourceContribution[]): [number, number] {
-  // Sums a list of source contributions into a single `[min, max]` percentage range. Used to compute the additive and multiplicative subtotals shown in the tooltip's section bars.
   let min = 0
   let max = 0
   for (const s of sources) {
@@ -151,7 +252,6 @@ function sumRangePct(sources: SourceContribution[]): [number, number] {
 }
 
 function fmtSubtotal([min, max]: [number, number]): string {
-  // Formats an additive subtotal range as a signed percentage (e.g. "+12%" or "+12–18%"). Used by SourceTooltip's "Additive" section header.
   const round = (n: number) =>
     Number.isInteger(n) ? n : Math.round(n * 100) / 100
   if (min === max) return `${min >= 0 ? '+' : ''}${round(min)}%`
@@ -159,7 +259,6 @@ function fmtSubtotal([min, max]: [number, number]): string {
 }
 
 function fmtMult([min, max]: [number, number]): string {
-  // Formats a Total / multiplicative range as a `×N` (or `×A–B`) multiplier string. Used by SourceTooltip's "Multiplicative" section header so the user can see the effective multiplier at a glance.
   const round = (n: number) => Math.round(n * 1000) / 1000
   const a = round(1 + min / 100)
   const b = round(1 + max / 100)
@@ -171,52 +270,296 @@ const TOOLTIP_WIDTH = 320
 const TOOLTIP_GAP = 6
 const VIEWPORT_PADDING = 8
 
+// --- breakdown-mode renderers (pinned modal only) ---
+
+function rangedToPair(v: RangedValue): [number, number] {
+  return typeof v === 'number' ? [v, v] : v
+}
+
+function fmtPctRange(v: RangedValue, signed: boolean = true): string {
+  const round = (n: number) =>
+    Number.isInteger(n) ? n : Math.round(n * 100) / 100
+  const [min, max] = rangedToPair(v)
+  const sign = (n: number) => (signed && n >= 0 ? '+' : '')
+  if (min === max) return `${sign(min)}${round(min)}%`
+  return `${sign(min)}${round(min)}–${round(max)}%`
+}
+
+function fmtMultRange(v: RangedValue): string {
+  const round = (n: number) => Math.round(n * 1000) / 1000
+  const [min, max] = rangedToPair(v)
+  const a = round(1 + min / 100)
+  const b = round(1 + max / 100)
+  if (a === b) return `×${a}`
+  return `×${a}–${b}`
+}
+
+function fmtFlatRange(v: RangedValue): string {
+  const round = (n: number) =>
+    Number.isInteger(n) ? n : Math.round(n * 100) / 100
+  const [min, max] = rangedToPair(v)
+  const sign = (n: number) => (n >= 0 ? '+' : '')
+  if (min === max) return `${sign(min)}${round(min)}`
+  return `${sign(min)}${round(min)}–${round(max)}`
+}
+
+function fmtBreakdownValue(v: RangedValue, isPercent: boolean): string {
+  return isPercent ? fmtPctRange(v) : fmtFlatRange(v)
+}
+
+function isZeroRanged(v: RangedValue): boolean {
+  const [min, max] = rangedToPair(v)
+  return min === 0 && max === 0
+}
+
+// Fallback Title-Case rendering when statName returns the raw snake_case key.
+function humanizeStatKey(key: string): string {
+  return key
+    .split('_')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+}
+
+function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
+  const {
+    hasMore,
+    hasIncreased,
+    additiveSum,
+    increasedSum,
+    moreSum,
+    combined,
+    isPercent,
+  } = breakdown
+  const hasAnyMultiplier = hasIncreased || hasMore
+  if (!hasAnyMultiplier) {
+    if (isZeroRanged(combined)) return null
+    return (
+      <div className="border-b border-border/40">
+        {sectionLabel('Calculation', fmtBreakdownValue(combined, isPercent))}
+        <div className="px-3 py-2 text-[11px]">
+          <div className="flex items-baseline justify-between gap-2 text-text/70">
+            <span>Total</span>
+            <span className="font-mono tabular-nums text-accent-hot">
+              {fmtBreakdownValue(combined, isPercent)}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  // Multiplied-flat stats (life / mana / replenishes) — additive is flat.
+  if (hasIncreased || !isPercent) {
+    return (
+      <div className="border-b border-border/40">
+        {sectionLabel('Calculation', fmtFlatRange(combined))}
+        <div className="space-y-1 px-3 py-2 text-[11px]">
+          <div className="flex items-baseline justify-between gap-2 text-text/70">
+            <span>Additive (flat)</span>
+            <span className="font-mono tabular-nums text-text/85">
+              {fmtFlatRange(additiveSum)}
+            </span>
+          </div>
+          {hasIncreased && (
+            <div className="flex items-baseline justify-between gap-2 text-text/70">
+              <span>Increased (+%)</span>
+              <span className="font-mono tabular-nums text-text/85">
+                {fmtPctRange(increasedSum)}
+              </span>
+            </div>
+          )}
+          {hasMore && (
+            <div className="flex items-baseline justify-between gap-2 text-text/70">
+              <span>More (×)</span>
+              <span className="font-mono tabular-nums text-text/85">
+                {fmtMultRange(moreSum)}
+              </span>
+            </div>
+          )}
+          <div className="border-t border-dashed border-border/60 pt-1 text-text/40 font-mono text-[10px] leading-tight">
+            flat × (1 + inc/100) × (1 + more/100)
+          </div>
+          <div className="flex items-baseline justify-between gap-2 border-t border-border/40 pt-1">
+            <span className="font-semibold text-accent-hot/90">Combined</span>
+            <span className="font-mono tabular-nums text-accent-hot">
+              {fmtFlatRange(combined)}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="border-b border-border/40">
+      {sectionLabel('Calculation', fmtPctRange(combined))}
+      <div className="space-y-1 px-3 py-2 text-[11px]">
+        <div className="flex items-baseline justify-between gap-2 text-text/70">
+          <span>Additive (+)</span>
+          <span className="font-mono tabular-nums text-text/85">
+            {fmtPctRange(additiveSum)}
+          </span>
+        </div>
+        <div className="flex items-baseline justify-between gap-2 text-text/70">
+          <span>Multiplicative (×)</span>
+          <span className="font-mono tabular-nums text-text/85">
+            {fmtMultRange(moreSum)}
+          </span>
+        </div>
+        <div className="border-t border-dashed border-border/60 pt-1 text-text/40 font-mono text-[10px] leading-tight">
+          (1 + add/100) × (1 + more/100) − 1
+        </div>
+        <div className="flex items-baseline justify-between gap-2 border-t border-border/40 pt-1">
+          <span className="font-semibold text-accent-hot/90">Combined</span>
+          <span className="font-mono tabular-nums text-accent-hot">
+            {fmtPctRange(combined)}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function BySourceTypeSection({ breakdown }: { breakdown: StatBreakdown }) {
+  const {
+    additiveByType,
+    increasedByType,
+    moreByType,
+    hasIncreased,
+    hasMore,
+    isPercent,
+  } = breakdown
+  if (
+    additiveByType.length === 0 &&
+    increasedByType.length === 0 &&
+    moreByType.length === 0
+  ) {
+    return null
+  }
+  const additiveAsPercent = isPercent && !hasIncreased
+  const renderRow = (
+    sub: StatTypeSubtotal,
+    kind: 'additive' | 'increased' | 'more',
+  ) => (
+    <div
+      key={`${sub.sourceType}-${kind}`}
+      className="flex items-baseline justify-between gap-2 px-3 py-0.5 text-[11px]"
+    >
+      <span className="flex items-baseline gap-1.5 min-w-0">
+        <span
+          className={`text-[9px] uppercase tracking-wider shrink-0 ${SOURCE_COLOR[sub.sourceType]}`}
+        >
+          {SOURCE_LABEL[sub.sourceType]}
+        </span>
+        <span className="text-text/60 font-mono text-[10px]">
+          ×{sub.count}
+        </span>
+      </span>
+      <span className="font-mono tabular-nums text-accent-hot">
+        {kind === 'more'
+          ? fmtMultRange(sub.sum)
+          : kind === 'increased'
+            ? fmtPctRange(sub.sum)
+            : fmtBreakdownValue(sub.sum, additiveAsPercent)}
+      </span>
+    </div>
+  )
+  return (
+    <div className="border-b border-border/40">
+      {sectionLabel('By source')}
+      <div className="py-1">
+        {additiveByType.map((s) => renderRow(s, 'additive'))}
+        {hasIncreased && increasedByType.length > 0 && (
+          <>
+            <div className="my-1 mx-3 border-t border-dashed border-border/40" />
+            <div className="px-3 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text/40">
+              Increased
+            </div>
+            {increasedByType.map((s) => renderRow(s, 'increased'))}
+          </>
+        )}
+        {hasMore && moreByType.length > 0 && (
+          <>
+            <div className="my-1 mx-3 border-t border-dashed border-border/40" />
+            <div className="px-3 py-0.5 text-[9px] uppercase tracking-[0.14em] text-text/40">
+              Multiplicative
+            </div>
+            {moreByType.map((s) => renderRow(s, 'more'))}
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function SourcesBody({
   statKey,
   sources,
   moreSources,
   hasMore,
+  extended,
+  breakdown,
+  itemByName,
 }: {
   statKey: string
   sources: SourceContribution[]
   moreSources?: SourceContribution[]
   hasMore: boolean
+  extended?: boolean
+  breakdown?: StatBreakdown | null
+  itemByName?: Map<string, EquippedItem>
 }) {
-  // Shared body of the source breakdown — used by both the hover tooltip and the pinned (right-click) modal so the rendering stays in one place.
-  const orderedAdd = orderSources(sources)
-  const orderedMore = hasMore ? orderSources(moreSources!) : []
+  const orderedAdd = orderSources(sortByMagnitude(sources))
+  const orderedMore = hasMore
+    ? orderSources(sortByMagnitude(moreSources!))
+    : []
   const addSubtotal = sumRangePct(sources)
   const moreSubtotal = hasMore
     ? sumRangePct(moreSources!)
     : ([0, 0] as [number, number])
+  const breakdownHead = extended ? (
+    breakdown ? (
+      <>
+        <CalculationSection breakdown={breakdown} />
+        <BySourceTypeSection breakdown={breakdown} />
+      </>
+    ) : (
+      <div className="border-b border-border/40 px-3 py-2 text-[11px] italic text-text/50">
+        Loading breakdown...
+      </div>
+    )
+  ) : null
   if (hasMore) {
     return (
       <>
+        {breakdownHead}
         {sectionLabel('Additive (+)', fmtSubtotal(addSubtotal))}
         <ul className="space-y-1 px-3 py-2">
           {orderedAdd.length === 0 ? (
             <li className="italic text-text/40">No additive sources</li>
           ) : (
             orderedAdd.map((s, i) => (
-              <SourceItem key={i} s={s} statKey={statKey} index={i} />
+              <SourceItem key={i} s={s} statKey={statKey} index={i} itemByName={itemByName} />
             ))
           )}
         </ul>
         {sectionLabel('Multiplicative (Total)', fmtMult(moreSubtotal))}
         <ul className="space-y-1 px-3 py-2">
           {orderedMore.map((s, i) => (
-            <SourceItem key={i} s={s} statKey={statKey} index={i} />
+            <SourceItem key={i} s={s} statKey={statKey} index={i} itemByName={itemByName} />
           ))}
         </ul>
       </>
     )
   }
   return (
-    <ul className="space-y-1 px-3 py-2">
-      {orderedAdd.map((s, i) => (
-        <SourceItem key={i} s={s} statKey={statKey} index={i} />
-      ))}
-    </ul>
+    <>
+      {breakdownHead}
+      <ul className="space-y-1 px-3 py-2">
+        {orderedAdd.map((s, i) => (
+          <SourceItem key={i} s={s} statKey={statKey} index={i} itemByName={itemByName} />
+        ))}
+      </ul>
+    </>
   )
 }
 
@@ -225,16 +568,40 @@ export default function SourceTooltip({
   sources,
   moreSources,
   children,
+  breakdown,
+  onRequestBreakdown,
+  title,
 }: Props) {
-  // Stat-source breakdown popover. Hover shows a small (~320px) anchored tooltip, right-click pins a larger modal (centered, scrollable up to 80vh) for stats with too many contributors to fit in the hover tooltip. Both render into document.body via portal so ancestor `overflow-hidden` doesn't clip them.
   const hasMore = !!moreSources && moreSources.length > 0
   const triggerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
   const [pinned, setPinned] = useState(false)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
+  // Stable ref so the refetch effect doesn't churn on fresh inline arrows.
+  const onRequestBreakdownRef = useRef(onRequestBreakdown)
+  useEffect(() => {
+    onRequestBreakdownRef.current = onRequestBreakdown
+  })
+  // Refetch whenever the modal is pinned without a cached breakdown: covers
+  // initial open, build-edit cache invalidation, and reopen after a failure.
+  useEffect(() => {
+    if (!pinned || breakdown != null) return
+    onRequestBreakdownRef.current?.()
+  }, [pinned, breakdown])
+  const inventory = useBuild((s) => s.inventory)
+  // First-match-wins for duplicates; copies carry identical stat ranges.
+  const itemByName = useMemo(() => {
+    const map = new Map<string, EquippedItem>()
+    for (const equipped of Object.values(inventory)) {
+      if (!equipped) continue
+      const base = getItem(equipped.baseId)
+      if (!base || !base.name) continue
+      if (!map.has(base.name)) map.set(base.name, equipped)
+    }
+    return map
+  }, [inventory])
 
-  // Position the hover tooltip relative to its trigger and clamp to the viewport. Re-runs after mount (so we can read tooltip's real height) and on scroll/resize while open.
   useLayoutEffect(() => {
     if (!open || pinned || !triggerRef.current) return
     const reposition = () => {
@@ -280,11 +647,20 @@ export default function SourceTooltip({
 
   if (sources.length === 0 && !hasMore) return <>{children}</>
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    // Right-click pins the breakdown into a centered, scrollable modal so dense stats (lots of contributors) can be browsed without going off-screen.
-    e.preventDefault()
+  const openPinned = () => {
     setPinned(true)
     setOpen(false)
+  }
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault()
+    openPinned()
+  }
+  // Skip when the user just drag-selected text — their intent was copy, not pin.
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.defaultPrevented) return
+    const selection = window.getSelection()
+    if (selection && selection.toString().length > 0) return
+    openPinned()
   }
 
   return (
@@ -296,6 +672,7 @@ export default function SourceTooltip({
         onMouseLeave={() => setOpen(false)}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
+        onClick={handleClick}
         onContextMenu={handleContextMenu}
       >
         {children}
@@ -333,6 +710,7 @@ export default function SourceTooltip({
               sources={sources}
               moreSources={moreSources}
               hasMore={hasMore}
+              itemByName={itemByName}
             />
           </div>,
           document.body,
@@ -341,9 +719,25 @@ export default function SourceTooltip({
         createPortal(
           <div
             className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 backdrop-blur-[2px]"
-            onClick={() => setPinned(false)}
+            onClick={(e) => {
+              // Skip dismissal when click lands on a portal-rendered tooltip
+              // (pointer-events-none lets the click bubble to the backdrop).
+              const tooltips = document.querySelectorAll('[role="tooltip"]')
+              for (const tt of tooltips) {
+                const rect = tt.getBoundingClientRect()
+                if (rect.width === 0 || rect.height === 0) continue
+                if (
+                  e.clientX >= rect.left &&
+                  e.clientX <= rect.right &&
+                  e.clientY >= rect.top &&
+                  e.clientY <= rect.bottom
+                ) {
+                  return
+                }
+              }
+              setPinned(false)
+            }}
             onContextMenu={(e) => {
-              // Right-click outside the modal (i.e. on the backdrop) also closes it; right-click on the modal itself stays open so links/text are still selectable.
               e.preventDefault()
               setPinned(false)
             }}
@@ -360,11 +754,16 @@ export default function SourceTooltip({
                     'linear-gradient(180deg, rgba(201,165,90,0.18), rgba(201,165,90,0.06))',
                 }}
               >
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-hot">
-                    Sources
+                <div className="flex items-baseline gap-2 min-w-0">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-hot truncate">
+                    {(() => {
+                      const resolved = title ?? statName(statKey)
+                      return resolved === statKey
+                        ? humanizeStatKey(statKey)
+                        : resolved
+                    })()}
                   </span>
-                  <span className="font-mono text-[10px] text-text/60">
+                  <span className="font-mono text-[10px] text-text/60 truncate">
                     {statKey}
                   </span>
                 </div>
@@ -384,6 +783,9 @@ export default function SourceTooltip({
                   sources={sources}
                   moreSources={moreSources}
                   hasMore={hasMore}
+                  extended
+                  breakdown={breakdown}
+                  itemByName={itemByName}
                 />
               </div>
               <div className="border-t border-border/70 bg-panel-2/50 px-4 py-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint">

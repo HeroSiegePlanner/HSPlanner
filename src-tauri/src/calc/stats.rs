@@ -1,7 +1,5 @@
-// Stat aggregation infrastructure. Mirrors the source-tracking machinery used
-// by computeBuildStats / computeBuildStatsCore in src/utils/stats.ts.
-// Phase 2 step 3b just builds the foundation (types, helpers, fan-outs); the
-// orchestration logic lands in steps 3c-3f.
+// Stat aggregation: source-tracking parity with TS computeBuildStats in
+// src/utils/stats.ts.
 
 use std::collections::{HashMap, HashSet};
 
@@ -20,12 +18,11 @@ use super::tree::parse::{
 };
 use super::types::{CustomStat, Inventory, SkillKind, SocketType, StatDef, TreeSocketContent};
 
-// Mirror of RAINBOW_MULTIPLIER in src/store/build.ts.
 pub const RAINBOW_MULTIPLIER: f64 = 1.5;
 
 // ---------- top-level types ----------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SourceType {
     Class,
@@ -42,9 +39,8 @@ pub enum SourceType {
 
 pub const CUSTOM_SOURCE_LABEL: &str = "Custom Config";
 
-// Stats whose total fans out to per-element variants (e.g. `all_resistances`
-// adds to each of the five elemental resistance buckets). Mirrors the
-// `STAT_FAN_OUTS` constant in src/utils/stats.ts.
+// Stats whose total fans out to per-element variants
+// (e.g. `all_resistances` → each elemental resistance bucket).
 pub const STAT_FAN_OUTS: &[(&str, &[&str])] = &[
     (
         "all_resistances",
@@ -114,11 +110,7 @@ static STAT_DEFS_MAP: Lazy<HashMap<&'static str, &'static StatDef>> = Lazy::new(
     m
 });
 
-// Returns the StatDef for `key`. If `key` ends in `_more` and no exact match
-// exists, falls back to the base key — matching TS `statDef()` behaviour. The
-// synthesized name/format overlay that TS adds for the `_more` variant is not
-// reproduced here because the calc layer only reads the structural flags
-// (`itemOnly`, `modifiesAttribute`); UI formatting stays in TS.
+// `_more` keys fall back to base key (UI formatting overlay stays in TS).
 pub fn stat_def(key: &str) -> Option<&'static StatDef> {
     if let Some(def) = STAT_DEFS_MAP.get(key) {
         return Some(*def);
@@ -201,9 +193,8 @@ pub fn apply_contribution(
 
 // ---------- compute_item_effective_defense ----------
 
-// Mirror of TS computeItemEffectiveDefense. Returns the Ranged defense after
-// applying enhanced_defense% (already star-scaled by the caller), or None when
-// the base item has no defense range.
+// Returns the Ranged defense after applying enhanced_defense% (caller
+// star-scales it), or None when the base has no defense range.
 pub fn compute_item_effective_defense(
     defense_min: Option<f64>,
     defense_max: Option<f64>,
@@ -220,11 +211,8 @@ pub fn compute_item_effective_defense(
 
 // ---------- multiplier helpers ----------
 
-// Mirror of TS combineAdditiveAndMore: collapses additive% and more% bonuses
-// into a single equivalent additive%, applying the multiplicative product and
-// rounding to 6 decimal places via JS-style Math.round semantics.
-//
-// js_round(x) = (x + 0.5).floor() matches JS Math.round on negative .5 ties.
+// Collapses additive% and more% into a single equivalent additive%,
+// rounded to 6 decimals via JS-style Math.round (`(x + 0.5).floor()`).
 pub fn combine_additive_and_more(additive: Ranged, more: Ranged) -> Ranged {
     let round = |n: f64| ((n * 1e6) + 0.5).floor() / 1e6;
     let min = round(((1.0 + additive.0 / 100.0) * (1.0 + more.0 / 100.0) - 1.0) * 100.0);
@@ -232,11 +220,7 @@ pub fn combine_additive_and_more(additive: Ranged, more: Ranged) -> Ranged {
     (min, max)
 }
 
-// Mirror of TS applyMultiplier — mutates `stats` so that the value at
-// `flat_key` is multiplied compoundly by additive (pct_key) and "more"
-// (more_pct_key) percentages. `floor` controls whether the result is
-// floor-rounded; the TS option default is true (used by life/mana), but
-// replenish stats opt out (floor: false).
+// `floor=false` for replenish stats (preserves fractional regen).
 pub fn apply_multiplier(
     stats: &mut HashMap<String, Ranged>,
     flat_key: &str,
@@ -268,14 +252,10 @@ pub fn apply_multiplier(
 
 // ---------- inventory loop ----------
 
-// Walks the player's equipped inventory and pushes every contribution from
-// items (implicits, affixes, forge mods, runewords, sockets, augments, set
-// pieces NOT included — those happen later in compute_build_stats) into the
-// supplied source maps. Returns `weapon_has_attack_speed` so the downstream
-// default-base-stats step can skip the default APS when a weapon already
-// supplies one.
-//
-// Mirror of the inventory iteration at src/utils/stats.ts:268-430.
+// Pushes contributions from implicits, affixes, forge mods, runewords,
+// sockets, and augments. Set bonuses are applied later in the pipeline.
+// Returns `weapon_has_attack_speed` so the baseline step can skip the
+// default APS when a weapon supplies one.
 pub fn apply_inventory(
     inventory: &Inventory,
     attr_sources: &mut SourceMap,
@@ -289,8 +269,7 @@ pub fn apply_inventory(
         };
         let item_name = base.name.clone();
 
-        // Runeword detection (used to suppress per-socket gem/rune contributions
-        // and to skip implicit star scaling, matching TS shouldScaleImplicit).
+        // Runeword suppresses per-socket gem contributions and implicit scaling.
         let socketed_refs: Vec<Option<&str>> =
             item.socketed.iter().map(|s| s.as_deref()).collect();
         let runeword = data::detect_runeword(base, &socketed_refs);
@@ -298,7 +277,6 @@ pub fn apply_inventory(
         let is_gear = data::is_gear_slot(slot_key);
         let effective_stars: Option<u32> = if is_gear { item.stars } else { None };
 
-        // `weaponHasAttackSpeed` flag uses the inventory slot key (TS parity).
         let aps_in_implicit = base
             .implicit
             .as_ref()
@@ -308,7 +286,6 @@ pub fn apply_inventory(
             weapon_has_attack_speed = true;
         }
 
-        // Effective defense (implicit enhanced_defense applied to base defense range).
         let ed_override = item.implicit_overrides.get("enhanced_defense").copied();
         let ed_raw = base
             .implicit
@@ -342,8 +319,6 @@ pub fn apply_inventory(
             }
         }
 
-        // Implicit stats (every key in base.implicit, with optional override
-        // and optional star scaling).
         if let Some(implicit) = base.implicit.as_ref() {
             for (stat_key, value) in implicit.iter() {
                 let override_val = item.implicit_overrides.get(stat_key).copied();
@@ -368,9 +343,7 @@ pub fn apply_inventory(
             }
         }
 
-        // Implicit overrides for keys NOT present in base.implicit (user-added
-        // stats). enhanced_defense is excluded — handled above as part of
-        // effective defense computation.
+        // User-added overrides for keys not in base.implicit; ED handled above.
         for (stat_key, &value) in item.implicit_overrides.iter() {
             if let Some(implicit) = base.implicit.as_ref() {
                 if implicit.contains_key(stat_key) {
@@ -391,8 +364,6 @@ pub fn apply_inventory(
             );
         }
 
-        // Weapon attack speed coming from base.attackSpeed (when not already
-        // covered by the implicit map). TS gates this on base.slot, not slotKey.
         if base.slot == "weapon" && !aps_in_implicit {
             if let Some(aps) = base.attack_speed {
                 apply_contribution(
@@ -407,7 +378,6 @@ pub fn apply_inventory(
             }
         }
 
-        // Affixes (rolled values with star scaling, or customValue override).
         for eq in item.affixes.iter() {
             let Some(affix) = data::get_affix(&eq.affix_id) else {
                 continue;
@@ -435,8 +405,6 @@ pub fn apply_inventory(
             );
         }
 
-        // Forge mods (satanic crystal etc.). Only applies to gear slots whose
-        // rarity supports forging.
         if is_gear {
             if let Some(forge_kind) = data::forge_kind_for(&base.rarity) {
                 for eq in item.forged_mods.iter() {
@@ -471,8 +439,7 @@ pub fn apply_inventory(
             }
         }
 
-        // Runeword OR socketed gems/runes (mutually exclusive — when a
-        // runeword is detected, individual socket contributions are skipped).
+        // Runeword XOR per-socket contributions.
         if let Some(rw) = runeword {
             let label = format!("{} ({})", rw.name, item_name);
             for (stat_key, &value) in rw.stats.iter() {
@@ -533,7 +500,6 @@ pub fn apply_inventory(
             }
         }
 
-        // Augment (only the selected level's stats).
         if let Some(aug_ref) = item.augment.as_ref() {
             if let Some(aug) = data::get_augment(&aug_ref.id) {
                 if !aug.levels.is_empty() {
@@ -565,21 +531,16 @@ pub fn apply_inventory(
 
 // ---------- tree contributions ----------
 
-// Output of the talent-tree pass — conversions and disables collected so the
-// downstream pipeline (3f) can apply them after stats are summed.
+// Conversions and disables collected during the tree pass; applied later
+// in the pipeline after stats are summed.
 #[derive(Debug, Default)]
 pub struct TreeAggregation {
     pub conversions: Vec<(ParsedConversion, String)>,
     pub disables: HashSet<DisableTarget>,
 }
 
-// Walks every allocated talent-tree node that ISN'T a jewelry socket, parses
-// each text line with parse_tree_node_mod, and pushes matching contributions
-// into the source maps. Conversions and disables (detected via
-// parse_tree_node_meta) are collected into TreeAggregation for the caller to
-// apply later in the pipeline.
-//
-// Mirror of src/utils/stats.ts:432-471.
+// Walks allocated non-jewelry tree nodes; pushes mod contributions and
+// collects conversions/disables for the caller to apply later.
 pub fn apply_tree_contributions(
     allocated_tree_nodes: &HashSet<u32>,
     player_conditions: &HashMap<String, bool>,
@@ -615,10 +576,12 @@ pub fn apply_tree_contributions(
                         continue;
                     }
                 }
+                // node_id embedded so TS resolves the exact allocated node
+                // (multiple nodes share the same display title).
                 let label = if parsed.self_condition.is_some() {
-                    format!("Tree: {} (conditional)", info.t)
+                    format!("Tree: {} #{} (conditional)", info.t, node_id)
                 } else {
-                    format!("Tree: {}", info.t)
+                    format!("Tree: {} #{}", info.t, node_id)
                 };
                 apply_contribution(
                     attr_sources,
@@ -634,7 +597,8 @@ pub fn apply_tree_contributions(
             if let Some(meta) = parse_tree_node_meta(line) {
                 match meta {
                     ParsedMeta::Convert(c) => {
-                        agg.conversions.push((c, format!("Tree: {}", info.t)));
+                        agg.conversions
+                            .push((c, format!("Tree: {} #{}", info.t, node_id)));
                     }
                     ParsedMeta::Disable(d) => {
                         agg.disables.insert(d.target);
@@ -646,13 +610,8 @@ pub fn apply_tree_contributions(
     agg
 }
 
-// Walks the allocated jewelry-socket nodes and pushes their contents'
-// contributions (either a gem/rune's `stats` map, or a user-defined uncut
-// jewel's affixes — rolled without stars since tree sockets don't carry
-// rarity). Source type is Tree because the bonus is anchored on the tree, not
-// on a worn item.
-//
-// Mirror of src/utils/stats.ts:473-513.
+// Tree-socket gem/rune/uncut affix contributions. Tagged Tree because the
+// bonus is anchored on the tree, not on a worn item.
 pub fn apply_tree_jewelry_sockets(
     allocated_tree_nodes: &HashSet<u32>,
     tree_socketed: &HashMap<u32, TreeSocketContent>,
@@ -727,14 +686,8 @@ pub fn apply_tree_jewelry_sockets(
 
 // ---------- base attributes + class baseline + per-level ----------
 
-// Seeds attribute sources from the three baseline contributors:
-// 1. game_config.default_base_attributes (e.g. starting vitality)
-// 2. class.base_attributes (per-class additions on top)
-// 3. user-allocated points (player chose to spend points on this attr)
-//
-// Mirror of src/utils/stats.ts:240-265 — this runs FIRST in TS, before the
-// inventory loop. The order matters because subsequent stages can compute
-// things derived from totalled attributes.
+// Seeds attribute sources: default base + class base + allocated points.
+// Runs FIRST so later stages can derive from totalled attributes.
 pub fn apply_base_attributes(
     class_id: Option<&str>,
     allocated_attrs: &HashMap<String, u32>,
@@ -799,9 +752,6 @@ pub fn apply_base_attributes(
 
 // ---------- set bonuses ----------
 
-// Walks the inventory counting how many pieces of each set are equipped, then
-// applies every bonus whose `pieces` threshold is met. Mirror of TS
-// src/utils/stats.ts:515-540.
 pub fn apply_set_bonuses(
     inventory: &Inventory,
     attr_sources: &mut SourceMap,
@@ -844,8 +794,6 @@ pub fn apply_set_bonuses(
 
 // ---------- class baseline + per-level ----------
 
-// Seeds stat sources from game-config defaults, per-class base stats, and
-// the per-level multiplier. Mirror of TS src/utils/stats.ts:542-578.
 pub fn apply_class_baseline(
     class_id: Option<&str>,
     level: u32,
@@ -863,7 +811,6 @@ pub fn apply_class_baseline(
             if value == 0.0 {
                 continue;
             }
-            // Suppress the default APS when a weapon supplies its own.
             if stat_key == "attacks_per_second" && weapon_has_attack_speed {
                 continue;
             }
@@ -917,9 +864,6 @@ pub fn apply_class_baseline(
 
 // ---------- custom stats ----------
 
-// Applies user-defined override values from the Config view. Each non-empty
-// stat key whose string value parses successfully is pushed as a Custom-typed
-// source. Mirror of TS src/utils/stats.ts:580-592.
 pub fn apply_custom_stats(
     custom_stats: &[CustomStat],
     attr_sources: &mut SourceMap,
@@ -946,17 +890,9 @@ pub fn apply_custom_stats(
 
 // ---------- skill ranks + passive stats ----------
 
-// For each class skill the player has allocated points into (and that grants
-// passive stats), compute the effective rank — base rank plus all_skills
-// bonus plus element-specific skill bonus plus item-granted bonuses — then
-// apply `base + per_rank * (rank - 1)` to each passive-stat key. Routing is
-// manual (not via stat_def) because the TS code matches attribute keys
-// directly against the gameConfig.attributes set.
-//
-// Skills with kind=aura need the active aura to match; skills with kind=buff
-// or `tags: ['Buff']` need to be flipped on in `active_buffs`.
-//
-// Mirror of TS src/utils/stats.ts:594-660.
+// Effective rank = base + all_skills + element bonus + item bonus.
+// Applies `base + per_rank * (rank - 1)` to each passive-stat key.
+// Aura skills need active_aura_id match; buff skills need active_buffs flag.
 #[allow(clippy::too_many_arguments)]
 pub fn apply_skill_ranks(
     class_id: Option<&str>,
@@ -985,11 +921,9 @@ pub fn apply_skill_ranks(
             continue;
         };
 
-        // Aura gating
         if skill.kind == SkillKind::Aura && active_aura_id != Some(skill.id.as_str()) {
             continue;
         }
-        // Buff gating (kind = buff OR tags contain "Buff")
         let is_buff = skill.kind == SkillKind::Buff
             || skill
                 .tags
@@ -1015,7 +949,6 @@ pub fn apply_skill_ranks(
         let eff_max =
             (base_rank as f64 + all_skills_bonus.1 + elem_bonus.1 + item_bonus.1).max(1.0);
 
-        // Combine passive base + per_rank scaled by (effective_rank - 1).
         let mut combined: HashMap<String, Ranged> = HashMap::new();
         if let Some(base) = passive.base.as_ref() {
             for (k, &v) in base.iter() {
@@ -1040,7 +973,7 @@ pub fn apply_skill_ranks(
             if is_zero(*value) {
                 continue;
             }
-            // Match TS Math.round to 3 decimal places (matters on .5 ties).
+            // JS Math.round semantics (.5 ties round up).
             let rounded = (round3(value.0), round3(value.1));
             let label = format!("{} (rank {})", skill.name, rank_label);
             let contrib = SourceContribution {
@@ -1065,9 +998,6 @@ fn round3(x: f64) -> f64 {
 
 // ---------- attribute pipelines ----------
 
-// Applies every `increased_all_attributes` percentage source as a per-attribute
-// bonus computed against the attribute's current flat sum, preserving the
-// source's original label/source_type. Mirror of TS src/utils/stats.ts:662-683.
 pub fn apply_increased_all_attributes(attr_sources: &mut SourceMap, stat_sources: &SourceMap) {
     let pct_sources = match stat_sources.get("increased_all_attributes") {
         Some(list) if !list.is_empty() => list.clone(),
@@ -1096,14 +1026,8 @@ pub fn apply_increased_all_attributes(attr_sources: &mut SourceMap, stat_sources
     }
 }
 
-// Applies per-attribute increased X / increased X_more multipliers. Reads the
-// attribute's current flat sum, computes the compound bonus from additive%
-// and more%, and pushes the *delta* (final - flat) into attr_sources with a
-// composite label that records both contributions.
-//
-// Mirror of TS src/utils/stats.ts:685-720. Note the hardcoded SourceType::Tree
-// — TS does the same; in practice these multipliers most often come from tree
-// nodes so the source-type label is accurate enough for the UI.
+// Per-attribute `increased_X` + `increased_X_more` compounded as a delta.
+// Hardcoded SourceType::Tree matches TS (these typically come from tree).
 pub fn apply_increased_per_attribute(attr_sources: &mut SourceMap, stat_sources: &SourceMap) {
     let cfg = data::game_config();
     for attr in cfg.attributes.iter() {
@@ -1128,7 +1052,6 @@ pub fn apply_increased_per_attribute(attr_sources: &mut SourceMap, stat_sources:
         if bonus_min == 0.0 && bonus_max == 0.0 {
             continue;
         }
-        // Compose label parts (only include sections that have nonzero values).
         let mut label_parts: Vec<String> = Vec::new();
         if add_sum.0 != 0.0 || add_sum.1 != 0.0 {
             if add_sum.0 == add_sum.1 {
@@ -1157,12 +1080,7 @@ pub fn apply_increased_per_attribute(attr_sources: &mut SourceMap, stat_sources:
     }
 }
 
-// Applies per-attribute scaling for every (attribute → stat → per_point) entry
-// in game_config.default_stats_per_attribute and class.stats_per_attribute.
-// Each attribute's TOTAL is multiplied by per_point and pushed as an
-// Attribute-typed contribution to stat_sources.
-//
-// Mirror of TS src/utils/stats.ts:722-757.
+// (attribute → stat → per_point) scaling from default + class config.
 pub fn apply_stats_per_attribute(
     class_id: Option<&str>,
     attr_sources: &SourceMap,
@@ -1182,7 +1100,6 @@ pub fn apply_stats_per_attribute(
         return;
     }
 
-    // Compute attribute totals once (TS uses sumContributions per attribute).
     let mut totals: HashMap<String, Ranged> = HashMap::new();
     for attr in cfg.attributes.iter() {
         let sum = sum_contributions(attr_sources.get(&attr.key).map(|v| v.as_slice()).unwrap_or(&[]));
@@ -1218,10 +1135,7 @@ pub fn apply_stats_per_attribute(
     }
 }
 
-// Converts a JSON-loaded SkillSpec into the calc-runtime SubskillOwner shape
-// that calc::subskill::aggregate_subskill_stats expects. Field-by-field; the
-// shape divergence is the price for keeping the subskill module decoupled
-// from the data layer (per user preference set in Phase 2).
+// SkillSpec → SubskillOwner adapter (keeps subskill module decoupled from data).
 pub(crate) fn skill_spec_to_subskill_owner(
     skill: &super::types::SkillSpec,
 ) -> super::subskill::SubskillOwner {
@@ -1281,13 +1195,7 @@ pub(crate) fn skill_spec_to_subskill_owner(
     }
 }
 
-// Aggregates subskill contributions for every class skill that has subskill
-// nodes. The aggregated `stats` map is pushed via applyContribution (which
-// honours stat_def.item_only and modifies_attribute), except keys flagged as
-// skill_scoped are filtered out — those stats stay inside the per-skill
-// damage calc and are NOT propagated to global stats.
-//
-// Mirror of TS src/utils/stats.ts:759-781.
+// Skill-scoped stats stay inside per-skill damage calc, not global stats.
 pub fn apply_subskill_aggregation(
     class_id: Option<&str>,
     subskill_ranks: &HashMap<String, u32>,
@@ -1328,11 +1236,7 @@ pub fn apply_subskill_aggregation(
     }
 }
 
-// Applies attribute-divided stats from game_config.attribute_divided_stats —
-// e.g. vitality/8 gives a life_replenish contribution.
-//
-// Mirror of TS src/utils/stats.ts:792-817 (runs AFTER attribute totals have
-// been computed, so it takes the final attribute map as input).
+// e.g. vitality/8 → life_replenish. Must run AFTER attribute totals.
 pub fn apply_attribute_divided_stats(
     attributes: &HashMap<String, Ranged>,
     stat_sources: &mut SourceMap,
@@ -1372,11 +1276,7 @@ pub fn apply_attribute_divided_stats(
     }
 }
 
-// Returns `(item_granted_ranks, ())` — a side effect of pushing per-skill
-// passive stats. The returned ranks map is reused later for the conversion
-// pass, so we expose it.
-//
-// Mirror of TS src/utils/stats.ts:819-846.
+// Side-effect: push passive stats. Returns ranks map for the conversion pass.
 pub fn apply_item_granted_passive_stats(
     inventory: &Inventory,
     attr_sources: &mut SourceMap,
@@ -1392,7 +1292,6 @@ pub fn apply_item_granted_passive_stats(
         let Some(passive) = granted.passive_stats.as_ref() else {
             continue;
         };
-        // Combine base + per_rank scaled by rank endpoints.
         let mut out: HashMap<String, Ranged> = HashMap::new();
         if let Some(base) = passive.base.as_ref() {
             for (k, &v) in base.iter() {
@@ -1431,9 +1330,8 @@ pub fn apply_item_granted_passive_stats(
     ranks
 }
 
-// Fans `all_resistances`/`max_all_resistances` (and their `_more` variants)
-// out to the per-element resistance buckets. Mirror of TS
-// src/utils/stats.ts:848-858.
+// Fans all_resistances / max_all_resistances (and `_more` variants) out
+// to per-element buckets.
 pub fn apply_stat_fan_outs(stat_sources: &mut SourceMap) {
     let variants: [&str; 2] = ["", "_more"];
     for (from, targets) in STAT_FAN_OUTS.iter() {
@@ -1455,9 +1353,7 @@ pub fn apply_stat_fan_outs(stat_sources: &mut SourceMap) {
 
 // ---------- finalization helpers ----------
 
-// Returns the display name for a stat key, prefixing "Total " for the
-// synthesised `_more` variant. Mirror of TS statName (UI-side function).
-// Used inside conversion labels.
+// Display name; `_more` variants are prefixed with "Total ".
 fn stat_name(key: &str) -> String {
     if let Some(def) = stat_def(key) {
         if key.ends_with("_more") && def.key != key {
@@ -1468,7 +1364,6 @@ fn stat_name(key: &str) -> String {
     key.to_string()
 }
 
-// Collapses every attribute's source list into a single Ranged total.
 fn compute_final_attributes(attr_sources: &SourceMap) -> HashMap<String, Ranged> {
     let mut attributes = HashMap::new();
     for attr in data::game_config().attributes.iter() {
@@ -1479,7 +1374,6 @@ fn compute_final_attributes(attr_sources: &SourceMap) -> HashMap<String, Ranged>
     attributes
 }
 
-// Collapses every stat key in stat_sources into a single Ranged total.
 fn compute_final_stats(stat_sources: &SourceMap) -> HashMap<String, Ranged> {
     let mut stats = HashMap::with_capacity(stat_sources.len());
     for (k, list) in stat_sources.iter() {
@@ -1488,11 +1382,7 @@ fn compute_final_stats(stat_sources: &SourceMap) -> HashMap<String, Ranged> {
     stats
 }
 
-// Applies the four compound multipliers on top of the summed-from-sources
-// stats map: life × increased_life × increased_life_more, mana likewise,
-// plus the two replenishes (with floor=false so fractional regen survives).
-//
-// Mirror of TS src/utils/stats.ts:867-870.
+// life/mana × increased × more; replenishes opt out of floor.
 pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     apply_multiplier(stats, "life", Some("increased_life"), Some("increased_life_more"), true);
     apply_multiplier(stats, "mana", Some("increased_mana"), Some("increased_mana_more"), true);
@@ -1512,12 +1402,7 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     );
 }
 
-// Applies item-granted skill conversions (e.g. "50% of attack damage converted
-// to increased life" coming from a unique item). Reads from the summed `stats`
-// map, pushes new contributions into `stat_sources`, returns the set of
-// touched stat keys so the orchestrator can re-sum them.
-//
-// Mirror of TS src/utils/stats.ts:872-903.
+// Item-granted skill conversions; returns touched keys for re-sum.
 pub fn apply_item_granted_conversions(
     item_granted_ranks: &HashMap<String, Ranged>,
     stats: &HashMap<String, Ranged>,
@@ -1571,11 +1456,8 @@ pub fn apply_item_granted_conversions(
     touched
 }
 
-// Applies tree conversions accumulated by apply_tree_contributions. Tree
-// conversions can target both attributes (re-summed in place) and stats
+// Tree conversions can target attributes (re-summed in place) or stats
 // (returned in `touched` for the orchestrator to re-sum).
-//
-// Mirror of TS src/utils/stats.ts:904-946.
 #[allow(clippy::too_many_arguments)]
 pub fn apply_tree_conversions(
     tree_conversions: &[(ParsedConversion, String)],
@@ -1633,11 +1515,7 @@ pub fn apply_tree_conversions(
     touched
 }
 
-// Applies post-pipeline disable flags collected during tree traversal.
-// Currently only `life_replenish` exists; setting both the flat replenish
-// value and its percentage to zero (TS parity).
-//
-// Mirror of TS src/utils/stats.ts:948-951.
+// Post-pipeline disable flags. Currently only zeros life_replenish/_pct.
 pub fn apply_tree_disables(disables: &HashSet<DisableTarget>, stats: &mut HashMap<String, Ranged>) {
     if disables.contains(&DisableTarget::LifeReplenish) {
         stats.insert("life_replenish".to_string(), (0.0, 0.0));
@@ -1647,8 +1525,6 @@ pub fn apply_tree_disables(disables: &HashSet<DisableTarget>, stats: &mut HashMa
 
 // ---------- orchestrator ----------
 
-// All inputs the calc layer needs to fully evaluate a build. Borrowed so the
-// caller (Phase 4 Tauri command) keeps ownership of build state.
 #[derive(Debug, Clone, Copy)]
 pub struct BuildStatsInput<'a> {
     pub class_id: Option<&'a str>,
@@ -1666,10 +1542,8 @@ pub struct BuildStatsInput<'a> {
     pub enemy_conditions: &'a HashMap<String, bool>,
 }
 
-// Runs the full stat-aggregation pipeline once. Mirror of TS
-// computeBuildStatsCore from src/utils/stats.ts:219-959. The top-level
-// compute_build_stats wrapper re-runs this with the crit-below-40 condition
-// auto-applied when needed.
+// Single pass of the full stat-aggregation pipeline; compute_build_stats
+// wraps it with an automatic crit-below-40 re-run when needed.
 pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     let mut attr_sources: SourceMap = HashMap::new();
     let mut stat_sources: SourceMap = HashMap::new();
@@ -1784,10 +1658,8 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     }
 }
 
-// Top-level wrapper. Runs compute_build_stats_core, then if the baseline crit
-// chance is below 40% and any tree nodes are allocated, re-runs with the
-// `crit_chance_below_40` player condition flipped on so conditional tree mods
-// activate. Mirror of TS computeBuildStats from src/utils/stats.ts:198-217.
+// Re-runs the pipeline with `crit_chance_below_40` flipped on when the
+// baseline crit < 40% and tree nodes are allocated.
 pub fn compute_build_stats(input: &BuildStatsInput) -> ComputedStats {
     let baseline = compute_build_stats_core(input);
     let already_set = input
@@ -1812,6 +1684,195 @@ pub fn compute_build_stats(input: &BuildStatsInput) -> ComputedStats {
         }
     }
     baseline
+}
+
+// ---------- per-stat breakdown ----------
+//
+// PoB-style explainability: surfaces additive/more lists per stat key and
+// regroups them by source type for the UI.
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatTypeSubtotal {
+    pub source_type: SourceType,
+    pub sum: Ranged,
+    pub count: u32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatBreakdown {
+    pub stat_key: String,
+    pub stat_name: String,
+    pub is_percent: bool,
+    pub has_more: bool,
+    /// Only set for apply_multipliers_pass targets (life/mana/replenishes)
+    /// when `increased_X` has contributions; UI uses it to split sections.
+    pub has_increased: bool,
+
+    /// Flat-units sources at `stat_key` for multiplied stats; percent
+    /// sources for non-multiplied percent stats.
+    pub additive_sum: Ranged,
+    pub additive_sources: Vec<SourceContribution>,
+    pub additive_by_type: Vec<StatTypeSubtotal>,
+
+    pub increased_sum: Ranged,
+    pub increased_sources: Vec<SourceContribution>,
+    pub increased_by_type: Vec<StatTypeSubtotal>,
+
+    pub more_sum: Ranged,
+    pub more_sources: Vec<SourceContribution>,
+    pub more_by_type: Vec<StatTypeSubtotal>,
+
+    pub combined: Ranged,
+}
+
+// For multiplied-flat stats the percent multipliers live under different
+// keys than the flat base; mirror apply_multipliers_pass calls.
+fn multiplier_keys_for(stat_key: &str) -> (Option<&'static str>, Option<&'static str>) {
+    match stat_key {
+        "life" => (Some("increased_life"), Some("increased_life_more")),
+        "mana" => (Some("increased_mana"), Some("increased_mana_more")),
+        "mana_replenish" => (None, Some("mana_replenish_more")),
+        "life_replenish" => (None, Some("life_replenish_more")),
+        _ => (None, None),
+    }
+}
+
+// `_more` → "Total X"; falls back to raw key when no def.
+fn resolved_stat_name(stat_key: &str) -> String {
+    if let Some(def) = STAT_DEFS_MAP.get(stat_key) {
+        return def.name.clone();
+    }
+    if let Some(base) = stat_key.strip_suffix("_more") {
+        if let Some(def) = STAT_DEFS_MAP.get(base) {
+            return format!("Total {}", def.name);
+        }
+    }
+    stat_key.to_string()
+}
+
+// Sorted by |magnitude| desc; NaN sinks; ties broken by SourceType for
+// stable ordering across runs (HashMap iteration is non-deterministic).
+fn group_by_source_type(sources: &[SourceContribution]) -> Vec<StatTypeSubtotal> {
+    let mut map: HashMap<SourceType, (Ranged, u32)> = HashMap::new();
+    for s in sources.iter() {
+        let entry = map
+            .entry(s.source_type)
+            .or_insert(((0.0, 0.0), 0));
+        entry.0 .0 += s.value.0;
+        entry.0 .1 += s.value.1;
+        entry.1 += 1;
+    }
+    let mut out: Vec<StatTypeSubtotal> = map
+        .into_iter()
+        .map(|(source_type, (sum, count))| StatTypeSubtotal {
+            source_type,
+            sum,
+            count,
+        })
+        .collect();
+    let safe_mag = |v: f64| if v.is_nan() { f64::NEG_INFINITY } else { v };
+    out.sort_by(|a, b| {
+        let a_mag = safe_mag(a.sum.0.abs().max(a.sum.1.abs()));
+        let b_mag = safe_mag(b.sum.0.abs().max(b.sum.1.abs()));
+        b_mag
+            .partial_cmp(&a_mag)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| a.source_type.cmp(&b.source_type))
+    });
+    out
+}
+
+// Builds a StatBreakdown for `stat_key`. `final_value` is the engine's
+// post-pipeline value; when provided it's used as `combined` so the modal
+// can't disagree with the StatRow. Pass `None` for attributes.
+//
+// Two stat shapes:
+//   1. Multiplied-flat (life/mana/replenishes): increased/more keys are
+//      `increased_X` / `increased_X_more` (resolved via multiplier_keys_for).
+//   2. Plain percent stats: more key is `${stat_key}_more`.
+pub fn compute_stat_breakdown(
+    stat_sources: &SourceMap,
+    stat_key: &str,
+    final_value: Option<Ranged>,
+) -> StatBreakdown {
+    let additive_sources: Vec<SourceContribution> = stat_sources
+        .get(stat_key)
+        .cloned()
+        .unwrap_or_default();
+
+    let (inc_key_opt, more_key_owned) = match multiplier_keys_for(stat_key) {
+        (inc, more) => (inc, more.map(|s| s.to_string())),
+    };
+    let more_key = more_key_owned.unwrap_or_else(|| format!("{stat_key}_more"));
+
+    let increased_sources: Vec<SourceContribution> = inc_key_opt
+        .and_then(|k| stat_sources.get(k))
+        .cloned()
+        .unwrap_or_default();
+    let more_sources: Vec<SourceContribution> = stat_sources
+        .get(&more_key)
+        .cloned()
+        .unwrap_or_default();
+
+    let additive_sum = sum_contributions(&additive_sources);
+    let increased_sum = sum_contributions(&increased_sources);
+    let more_sum = sum_contributions(&more_sources);
+    let has_more = !more_sources.is_empty();
+    let has_increased = !increased_sources.is_empty();
+
+    // Prefer the engine's final value so the modal can't diverge from the
+    // StatRow; reconstruct only when no final value is supplied.
+    let combined_raw: Ranged = if let Some(fv) = final_value {
+        fv
+    } else if inc_key_opt.is_some() || matches!(stat_key, "mana_replenish" | "life_replenish") {
+        let min = additive_sum.0
+            * (1.0 + increased_sum.0 / 100.0)
+            * (1.0 + more_sum.0 / 100.0);
+        let max = additive_sum.1
+            * (1.0 + increased_sum.1 / 100.0)
+            * (1.0 + more_sum.1 / 100.0);
+        (min, max)
+    } else if has_more {
+        combine_additive_and_more(additive_sum, more_sum)
+    } else {
+        additive_sum
+    };
+    // Normalise min/max — negative-spanning factor ranges can flip order
+    // (e.g. (-100,-50) × (-50,50)).
+    let combined: Ranged = if combined_raw.0 <= combined_raw.1 {
+        combined_raw
+    } else {
+        (combined_raw.1, combined_raw.0)
+    };
+
+    let additive_by_type = group_by_source_type(&additive_sources);
+    let increased_by_type = group_by_source_type(&increased_sources);
+    let more_by_type = group_by_source_type(&more_sources);
+
+    let is_percent = stat_def(stat_key)
+        .and_then(|d| d.format.as_deref())
+        .map(|f| f == "percent")
+        .unwrap_or(false);
+
+    StatBreakdown {
+        stat_key: stat_key.to_string(),
+        stat_name: resolved_stat_name(stat_key),
+        is_percent,
+        has_more,
+        has_increased,
+        additive_sum,
+        additive_sources,
+        additive_by_type,
+        increased_sum,
+        increased_sources,
+        increased_by_type,
+        more_sum,
+        more_sources,
+        more_by_type,
+        combined,
+    }
 }
 
 #[cfg(test)]

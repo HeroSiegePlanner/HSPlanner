@@ -302,7 +302,15 @@ export default function ConfigView() {
                   step={0.5}
                   value={killsPerSec}
                   onChange={(e) => {
-                    setKillsPerSec(Number(e.target.value))
+                    const raw = e.target.value
+                    if (raw === '') {
+                      setKillsPerSec(0)
+                      commitActiveProfile()
+                      return
+                    }
+                    const n = Number(raw)
+                    if (!Number.isFinite(n)) return
+                    setKillsPerSec(Math.max(0, n))
                     commitActiveProfile()
                   }}
                   className="w-full bg-transparent text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"
@@ -675,7 +683,8 @@ export default function ConfigView() {
                           }
                           const n = Number(raw)
                           if (!Number.isFinite(n)) return
-                          setSkillProjectiles(s.id, n)
+                          // HTML min/max aren't enforced for typed input — clamp here.
+                          setSkillProjectiles(s.id, Math.max(1, Math.min(99, Math.floor(n))))
                           commitActiveProfile()
                         }}
                         className="w-10 bg-transparent py-0.5 text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"

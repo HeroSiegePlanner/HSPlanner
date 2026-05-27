@@ -13,20 +13,18 @@ import { GearSlotModal } from './GearSlotModal'
 
 export default function GearView() {
   // Gear management view: shows every equipment slot, the relic/charm grid (with backtracking-based packing) and the per-slot edit panel for picking items, applying runewords, choosing sockets/gems/runes, setting stars, editing affix rolls, applying forge mods, and equipping angelic augments. The main inventory editor.
-  const {
-    inventory,
-    equipItem,
-    unequipItem,
-    setSocketCount,
-    setSocketed,
-    setSocketType,
-    setStars,
-    addAffix,
-    removeAffix,
-    addForgedMod,
-    removeForgedMod,
-    applyRuneword,
-  } = useBuild()
+  const inventory = useBuild((s) => s.inventory)
+  const equipItem = useBuild((s) => s.equipItem)
+  const unequipItem = useBuild((s) => s.unequipItem)
+  const setSocketCount = useBuild((s) => s.setSocketCount)
+  const setSocketed = useBuild((s) => s.setSocketed)
+  const setSocketType = useBuild((s) => s.setSocketType)
+  const setStars = useBuild((s) => s.setStars)
+  const addAffix = useBuild((s) => s.addAffix)
+  const removeAffix = useBuild((s) => s.removeAffix)
+  const addForgedMod = useBuild((s) => s.addForgedMod)
+  const removeForgedMod = useBuild((s) => s.removeForgedMod)
+  const applyRuneword = useBuild((s) => s.applyRuneword)
 
   const [activeSlot, setActiveSlot] = useState<SlotKey | null>(null)
   const [charmFitError, setCharmFitError] = useState<string | null>(null)

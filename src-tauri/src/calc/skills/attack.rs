@@ -11,9 +11,7 @@ pub struct AttackSkillInput<'a> {
     pub item_skill_bonuses: &'a ItemSkillBonuses,
     pub enemy_conditions: &'a ConditionMap,
     pub weapon: Option<&'a Weapon>,
-    /// Pre-computed poison/element breakdown from `compute_skill_damage`.
-    /// Passed in (rather than recomputed) so the caller can share one
-    /// breakdown between `damage` and the combined attack DPS.
+    /// Shared with caller's `damage` to avoid double-computing the element side.
     pub poison_breakdown: Option<&'a SkillDamageBreakdown>,
 }
 
@@ -56,7 +54,7 @@ pub fn compute_attack_skill_damage(
     let skill_arp_min = formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_min);
     let skill_arp_max = formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_max);
 
-    // Unarmed: every character has a 2-6 base physical damage when no weapon is equipped.
+    // Unarmed baseline is 2-6 physical for every character.
     let (w_min, w_max) = input
         .weapon
         .map(|w| (w.damage_min, w.damage_max))
@@ -66,8 +64,8 @@ pub fn compute_attack_skill_damage(
     let add_phys = rg(input.stats, "additive_physical_damage");
     let atk = rg(input.stats, "attack_damage");
 
-    let (extra_pct, _extra_sources) = collect_extra_damage(input.stats, input.enemy_conditions);
-    let extra_mult = 1.0 + extra_pct / 100.0;
+    let (extra_mult, _extra_sources) =
+        collect_extra_damage(input.stats, input.enemy_conditions);
 
     let crit = crit_factors(input.stats, false);
 

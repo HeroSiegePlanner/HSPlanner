@@ -27,6 +27,14 @@ export class StorageWriteError extends Error {
   }
 }
 
+// Subtypes StorageWriteError so existing instanceof catches still surface it.
+export class StorageCapacityError extends StorageWriteError {
+  constructor(message: string) {
+    super(message)
+    this.name = 'StorageCapacityError'
+  }
+}
+
 const MAX_BUILDS = 1_000
 const MAX_PROFILES_PER_BUILD = 100
 const MAX_FOLDERS = 500
@@ -392,6 +400,11 @@ export function createBuild(
 ): SavedBuild {
   // Creates a brand-new SavedBuild containing exactly one (active) profile encoded from `snapshot`, persists it, and returns the freshly built record. Optionally files it under `folderId`. Used when the user explicitly saves the current state as a new build.
   const library = readLibrary()
+  if (library.builds.length >= MAX_BUILDS) {
+    throw new StorageCapacityError(
+      `Saved-builds limit reached (${MAX_BUILDS}). Delete an existing build before saving a new one.`,
+    )
+  }
   const now = new Date().toISOString()
   const profileId = newId('p')
   const code = encodeBuildToShare(snapshot)
@@ -578,6 +591,11 @@ export function addProfile(
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
+  if (build.profiles.length >= MAX_PROFILES_PER_BUILD) {
+    throw new StorageCapacityError(
+      `Profile limit reached (${MAX_PROFILES_PER_BUILD}). Delete an existing profile first.`,
+    )
+  }
   const now = new Date().toISOString()
   const profile: SavedProfile = {
     id: newId('p'),
@@ -603,6 +621,11 @@ export function duplicateProfile(
   if (!build) return null
   const src = build.profiles.find((p) => p.id === profileId)
   if (!src) return null
+  if (build.profiles.length >= MAX_PROFILES_PER_BUILD) {
+    throw new StorageCapacityError(
+      `Profile limit reached (${MAX_PROFILES_PER_BUILD}). Delete an existing profile before duplicating.`,
+    )
+  }
   const now = new Date().toISOString()
   const profile: SavedProfile = {
     id: newId('p'),

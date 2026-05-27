@@ -1,10 +1,3 @@
-// Mirror of passiveStatsAtRank / manaCostAtRank from src/utils/stats.ts.
-// Phase 1 super::skills::Skill is intentionally left alone — passive helpers
-// take a file-local PassiveSkill type instead, so the damage path (which only
-// reads damage_* / bonus_sources fields) stays bit-identical to what already
-// ships. Phase 2 step 4 stats.rs will convert from its build-input DTO into
-// PassiveSkill at the call site.
-
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, Default)]
@@ -32,8 +25,8 @@ pub struct PassiveSkill {
     pub ranks: Vec<SkillRank>,
 }
 
-// Matches JS Math.round semantics (half rounds toward +∞), not Rust's
-// away-from-zero. Important when scaling per-rank values can land on a .5 tie.
+/// JS `Math.round` semantics (half rounds toward +∞); diverges from Rust's
+/// away-from-zero on .5 ties.
 #[inline]
 fn js_round(x: f64) -> f64 {
     (x + 0.5).floor()
@@ -55,7 +48,6 @@ pub fn passive_stats_at_rank(skill: &PassiveSkill, rank: u32) -> HashMap<String,
         let cur = out.get(k).copied().unwrap_or(0.0);
         out.insert(k.clone(), cur + v * factor);
     }
-    // Match TS `Math.round(out[k] * 1000) / 1000` — round to 3 decimal places.
     for v in out.values_mut() {
         *v = js_round(*v * 1000.0) / 1000.0;
     }

@@ -1,7 +1,7 @@
 <img width="1600" height="360" alt="wordmark-1600" src="https://github.com/user-attachments/assets/fe4fd4b3-a475-438a-a87e-53fd8080632d" />
 
 
-A desktop build planner for **Hero Siege** — a calculator for the talent tree, gear, stats, and skills, with optional read/write support for the game's save files.
+A desktop build planner for **Hero Siege** - a calculator for the talent tree, gear, stats, and skills.
 
 ![Python](https://img.shields.io/github/v/release/zium1337/HSPlanner)
 [![Download](https://img.shields.io/github/v/release/zium1337/HSPlanner?label=Download)](https://github.com/zium1337/HSPlanner/releases/latest)
@@ -21,7 +21,7 @@ A desktop build planner for **Hero Siege** — a calculator for the talent tree,
 - [x] **Share** — export the entire build to a compressed URL (lz-string)
 - [x] **Update check** — opt-in update check via GitHub Releases
 
-<img width="1277" height="800" alt="{139CD596-7ABD-4699-B268-81E259A94519}" src="https://github.com/user-attachments/assets/d2f51f6e-0a1d-46a6-a26d-3214916ffb37" />
+<img width="1710" height="1041" alt="image" src="https://github.com/user-attachments/assets/1bed9cf0-fbff-4231-b7bd-42ae25968938" />
 
 ---
 

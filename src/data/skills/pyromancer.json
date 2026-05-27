@@ -260,7 +260,7 @@
     "tree": "Arsonist",
     "position": {
       "row": 1,
-      "col": 1
+      "col": 0
     }
   },
   {
@@ -282,7 +282,7 @@
     "tree": "Arsonist",
     "position": {
       "row": 1,
-      "col": 2
+      "col": 1
     }
   },
   {
@@ -304,7 +304,7 @@
     "tree": "Arsonist",
     "position": {
       "row": 2,
-      "col": 1
+      "col": 0
     }
   },
   {

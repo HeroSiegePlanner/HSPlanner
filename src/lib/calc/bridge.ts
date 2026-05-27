@@ -1,4 +1,4 @@
-// All the TS calls to the Rust calc go through here.
+// TS-to-Rust calc bridge.
 
 import { invoke } from '@tauri-apps/api/core'
 
@@ -15,6 +15,26 @@ import type {
 } from '../../utils/item/stats'
 import type { ForgeKind } from '../../data'
 
+// Single subscriber so the build store can surface Rust rejections via storageError.
+type BridgeErrorListener = (err: Error) => void
+let bridgeErrorListener: BridgeErrorListener | null = null
+
+export function setBridgeErrorListener(fn: BridgeErrorListener | null): void {
+  bridgeErrorListener = fn
+}
+
+function notifyBridgeError(err: unknown): Error {
+  const wrapped = err instanceof Error ? err : new Error(String(err))
+  if (bridgeErrorListener) {
+    try {
+      bridgeErrorListener(wrapped)
+    } catch {
+      /* swallow listener faults */
+    }
+  }
+  return wrapped
+}
+
 // ---------- compute_build_performance ----------
 
 export interface BuildPerformanceInput {
@@ -27,9 +47,9 @@ export interface BuildPerformanceInput {
   activeAuraId?: string | null
   activeBuffs?: Record<string, boolean>
   customStats?: CustomStat[]
-  // Rust deserialises this array into a HashSet on its side.
+  // Rust deserialises into HashSet.
   allocatedTreeNodes?: number[]
-  // JSON object keys must be strings, so node ids are stringified here.
+  // Node ids stringified because JSON keys must be strings.
   treeSocketed?: Record<string, TreeSocketContent>
   mainSkillId?: string | null
   enemyConditions?: Record<string, boolean>
@@ -40,8 +60,7 @@ export interface BuildPerformanceInput {
   killsPerSec?: number
 }
 
-// Rust always returns ranges as [min, max] tuples. TS code mostly expects
-// "number | [number, number]" — see asRangedValue() below for the conversion.
+// Rust returns [min, max]; TS expects `number | [number, number]` — see asRangedValue.
 export type RustRanged = [number, number]
 
 export interface BuildPerformanceOutput {
@@ -60,13 +79,17 @@ export interface BuildPerformanceOutput {
   activeSkillName: string | null
 }
 
-function computeBuildPerformanceNative(
+async function computeBuildPerformanceNative(
   input: BuildPerformanceInput,
 ): Promise<BuildPerformanceOutput> {
-  return invoke<BuildPerformanceOutput>('calc_build_performance', { input })
+  try {
+    return await invoke<BuildPerformanceOutput>('calc_build_performance', { input })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
-// Collapse [n, n] back to just n, so the rest of the TS code stays the same.
+// Collapse [n, n] to n so legacy TS callers see the same shape.
 function asRangedValue([min, max]: RustRanged): RangedValue {
   return min === max ? min : [min, max]
 }
@@ -83,8 +106,7 @@ function filterTreeSocketed(
   return out
 }
 
-// The TS UI uses Set<number> / Record<number, ...>; Rust wants plain arrays
-// and string-keyed objects, so we convert here before sending.
+// TS Set<number>/Record<number,...> -> Rust arrays/string-keyed objects.
 function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   return {
     classId: deps.classId,
@@ -138,8 +160,6 @@ function toLegacyBuildPerformance(
   }
 }
 
-// Async replacement for the old TS computeBuildPerformance — same input/output
-// shape, just goes through Rust.
 export async function computeBuildPerformanceAsync(
   deps: BuildPerformanceDeps,
 ): Promise<BuildPerformance> {
@@ -200,13 +220,124 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
   }
 }
 
-// Same as computeBuildPerformanceAsync but also returns the per-stat source
-// breakdown that StatsView / SkillsView / ItemTooltip render.
+// Adds per-stat source breakdown on top of computeBuildPerformanceAsync.
 export async function computeBuildStatsAsync(
   deps: BuildPerformanceDeps,
 ): Promise<ComputedStats> {
-  const raw = await invoke<BuildStatsRustOutput>('calc_build_stats', {
-    input: depsToInput(deps),
-  })
-  return toLegacyBuildStats(raw)
+  try {
+    const raw = await invoke<BuildStatsRustOutput>('calc_build_stats', {
+      input: depsToInput(deps),
+    })
+    return toLegacyBuildStats(raw)
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// ---------- calc_stat_breakdown (per-key explainability) ----------
+
+export interface StatTypeSubtotal {
+  sourceType: SourceType
+  sum: RangedValue
+  count: number
+}
+
+export interface StatBreakdown {
+  statKey: string
+  statName: string
+  isPercent: boolean
+  hasMore: boolean
+  hasIncreased: boolean
+  additiveSum: RangedValue
+  additiveSources: SourceContribution[]
+  additiveByType: StatTypeSubtotal[]
+  increasedSum: RangedValue
+  increasedSources: SourceContribution[]
+  increasedByType: StatTypeSubtotal[]
+  moreSum: RangedValue
+  moreSources: SourceContribution[]
+  moreByType: StatTypeSubtotal[]
+  combined: RangedValue
+}
+
+export type StatBreakdownKind = 'stat' | 'attribute'
+
+interface RustStatTypeSubtotal {
+  sourceType: SourceType
+  sum: RustRanged
+  count: number
+}
+
+interface RustStatBreakdown {
+  statKey: string
+  statName: string
+  isPercent: boolean
+  hasMore: boolean
+  hasIncreased: boolean
+  additiveSum: RustRanged
+  additiveSources: RustSourceContribution[]
+  additiveByType: RustStatTypeSubtotal[]
+  increasedSum: RustRanged
+  increasedSources: RustSourceContribution[]
+  increasedByType: RustStatTypeSubtotal[]
+  moreSum: RustRanged
+  moreSources: RustSourceContribution[]
+  moreByType: RustStatTypeSubtotal[]
+  combined: RustRanged
+}
+
+function convertSubtotal(raw: RustStatTypeSubtotal): StatTypeSubtotal {
+  return {
+    sourceType: raw.sourceType,
+    sum: asRangedValue(raw.sum),
+    count: raw.count,
+  }
+}
+
+function toLegacyStatBreakdown(raw: RustStatBreakdown): StatBreakdown {
+  return {
+    statKey: raw.statKey,
+    statName: raw.statName,
+    isPercent: raw.isPercent,
+    hasMore: raw.hasMore,
+    hasIncreased: raw.hasIncreased,
+    additiveSum: asRangedValue(raw.additiveSum),
+    additiveSources: raw.additiveSources.map(convertContribution),
+    additiveByType: raw.additiveByType.map(convertSubtotal),
+    increasedSum: asRangedValue(raw.increasedSum),
+    increasedSources: raw.increasedSources.map(convertContribution),
+    increasedByType: raw.increasedByType.map(convertSubtotal),
+    moreSum: asRangedValue(raw.moreSum),
+    moreSources: raw.moreSources.map(convertContribution),
+    moreByType: raw.moreByType.map(convertSubtotal),
+    combined: asRangedValue(raw.combined),
+  }
+}
+
+// Re-runs the same pipeline as computeBuildStatsAsync to guarantee identical numbers, then collapses one key into per-source-type subtotals + combined.
+export async function computeStatBreakdownAsync(
+  deps: BuildPerformanceDeps,
+  statKey: string,
+  kind: StatBreakdownKind = 'stat',
+): Promise<StatBreakdown> {
+  try {
+    const raw = await invoke<RustStatBreakdown>('calc_stat_breakdown', {
+      input: {
+        ...depsToInput(deps),
+        statKey,
+        kind,
+      },
+    })
+    return toLegacyStatBreakdown(raw)
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// Escape hatch for unwrapped commands.
+export function invokeCalc<TResult>(
+  cmd: string,
+  args: Record<string, unknown> = {},
+): Promise<TResult> {
+  return invoke<TResult>(cmd, args)
 }

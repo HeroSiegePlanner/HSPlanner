@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
@@ -6,6 +6,7 @@ import BottomBar from "./components/BottomBar";
 import BuildsMenu from "./components/BuildsMenu";
 import { AUTO_OPEN_KEY, BuildSelect } from "./components/buildSelect";
 import LeftStatsPanel from "./components/LeftStatsPanel";
+import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
@@ -14,13 +15,13 @@ import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
 import { preloadSprites } from "./utils/preloadAssets";
 import { readStorage, readStorageWithLegacy, writeStorage } from "./utils/storage";
-import CharacterView from "./views/CharacterView";
-import ConfigView from "./views/ConfigView";
-import GearView from "./views/gear/GearView";
-import NotesView from "./views/NotesView";
-import SkillsView from "./views/SkillsView";
-import StatsView from "./views/StatsView";
-import TreeView from "./views/TreeView";
+const CharacterView = lazy(() => import("./views/CharacterView"));
+const ConfigView = lazy(() => import("./views/ConfigView"));
+const GearView = lazy(() => import("./views/gear/GearView"));
+const NotesView = lazy(() => import("./views/NotesView"));
+const SkillsView = lazy(() => import("./views/SkillsView"));
+const StatsView = lazy(() => import("./views/StatsView"));
+const TreeView = lazy(() => import("./views/TreeView"));
 
 declare global {
   interface Window {
@@ -49,16 +50,30 @@ const LEGACY_SECTION_KEY = "heroplanner.activeSection.v1";
 const SECTION_IDS = new Set<Section>(SECTIONS.map((s) => s.id));
 
 function readInitialSection(): Section {
-  // Try the new key first, then the old "heroplanner" one (renamed at 0.4.x).
+  // Legacy "heroplanner" key was renamed at 0.4.x.
   const stored = readStorageWithLegacy(SECTION_KEY, LEGACY_SECTION_KEY);
   if (stored && SECTION_IDS.has(stored as Section)) return stored as Section;
   return "tree";
 }
 
-// Splits the progress bar in half: 0–50% for the Rust warm-up, 50–100% for
-// the sprite fetches. Roughly matches how long each phase actually takes.
+// 0–50% Rust warm-up, 50–100% sprite fetches.
 const WARMUP_WEIGHT = 0.5;
 const SPRITES_WEIGHT = 0.5;
+
+function ViewLoadingFallback() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot animate-pulse"
+          style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
+        />
+        Loading
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const [section, setSection] = useState<Section>(readInitialSection);
@@ -66,12 +81,10 @@ function App() {
   // "Auto-open last build" is enabled.
   const [screen, setScreen] = useState<Screen>("library");
 
-  // Boot: warm up the Rust calc caches and preload every sprite while the
-  // HTML splash from index.html is visible. The splash listens for these
-  // updates via window.__bootProgress / window.__bootFinish.
+  // Boot: warm calc caches and preload sprites while the HTML splash from index.html is visible.
+  // Splash listens via window.__bootProgress / window.__bootFinish.
   useEffect(() => {
-    // Keep the splash up for at least this long even if everything finishes
-    // instantly (otherwise it looks like a quick flash on hot reload).
+    // Floor display time to avoid flashing the splash on hot reload.
     const MIN_DISPLAY_MS = 1200;
     let cancelled = false;
     const bootStart = performance.now();
@@ -83,11 +96,10 @@ function App() {
     (async () => {
       report(2, "Loading game data");
       try {
-        // Forces the Rust side to initialise its data + parser caches, so the
-        // first real calc isn't slow.
+        // Pre-initialise Rust data + parser caches so the first real calc isn't slow.
         await invoke<boolean>("calc_warmup");
       } catch {
-        // Probably running in a plain browser (no Tauri) — just keep going.
+        // No Tauri (plain browser) — keep going.
       }
       if (cancelled) return;
       report(WARMUP_WEIGHT * 100, "Loading sprites");
@@ -103,7 +115,6 @@ function App() {
       if (cancelled) return;
       report(100, "Ready");
 
-      // Wait out the rest of MIN_DISPLAY_MS so the splash isn't gone in 200 ms.
       const elapsed = performance.now() - bootStart;
       const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
       if (remaining > 0) {
@@ -159,7 +170,6 @@ function App() {
 
   const needsScroll = section !== "tree" && section !== "skills";
 
-  // --- screen transitions ------------------------------------------------
   const openBuild = (buildId: string) => {
     if (useBuild.getState().loadSavedBuild(buildId)) {
       setScreen("planner");
@@ -172,7 +182,7 @@ function App() {
 
   if (screen === "library") {
     return (
-      <>
+      <HoverProvider>
         <BuildSelect
           onOpenBuild={openBuild}
           onNewBuild={newBuild}
@@ -180,12 +190,12 @@ function App() {
           canClose={activeBuildId != null}
         />
         <StorageErrorBanner />
-      </>
+      </HoverProvider>
     );
   }
 
   return (
-    <>
+    <HoverProvider>
       <div className="flex h-screen w-screen flex-col bg-bg text-text">
         <header
           className="relative flex h-11 shrink-0 items-center gap-0 border-b border-border pl-3 pr-3"
@@ -339,7 +349,9 @@ function App() {
                 exit="exit"
                 className="h-full"
               >
-                <ActiveView />
+                <Suspense fallback={<ViewLoadingFallback />}>
+                  <ActiveView />
+                </Suspense>
               </motion.div>
             </AnimatePresence>
           </main>
@@ -349,7 +361,7 @@ function App() {
       </div>
 
       <StorageErrorBanner />
-    </>
+    </HoverProvider>
   );
 }
 

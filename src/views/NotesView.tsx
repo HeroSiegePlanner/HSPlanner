@@ -14,7 +14,6 @@ const PRESET_COLORS = [
 ]
 
 export default function NotesView() {
-  // Rich-text editor view powered by `contentEditable` + `document.execCommand` for the build's HTML notes. Provides bold/italic/underline/strikethrough, H2/H3/paragraph blocks, lists, a colour palette, links (sanitised + safety-prefixed), paste sanitisation, and an autosave-on-blur commit to the active SavedBuild.
   const notes = useBuild((s) => s.notes)
   const setNotes = useBuild((s) => s.setNotes)
   const commitBuildNotes = useBuild((s) => s.commitBuildNotes)
@@ -31,14 +30,12 @@ export default function NotesView() {
   }, [notes])
 
   const persist = () => {
-    // Reads the editor's current innerHTML and pushes it through the build store's setNotes (which sanitises). Used after every edit and toolbar action.
     const el = editorRef.current
     if (!el) return
     setNotes(el.innerHTML)
   }
 
   const exec = (command: string, value?: string) => {
-    // Refocuses the editor and runs a `document.execCommand` (the only cross-platform rich-text API) before persisting. Used by every formatting toolbar button.
     const el = editorRef.current
     if (!el) return
     el.focus()
@@ -47,13 +44,12 @@ export default function NotesView() {
   }
 
   const handleBlur = () => {
-    // Persists the current HTML and commits it to the active SavedBuild's notes on disk. Used as the editor's blur handler so edits survive a refresh.
     persist()
     commitBuildNotes()
   }
 
+  // Sanitise pasted HTML so the browser can't inject arbitrary markup.
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
-    // Intercepts clipboard paste to insert sanitised HTML (or plain text fallback) instead of letting the browser inject arbitrary markup. Used as the editor's paste handler.
     const html = e.clipboardData.getData('text/html')
     const text = e.clipboardData.getData('text/plain')
     if (html) {
@@ -67,8 +63,8 @@ export default function NotesView() {
     }
   }
 
+  // Save selection so it can be restored after losing focus to a popover (link URL input).
   const saveSelection = () => {
-    // Stores the current editor selection range in component state so it can be restored after losing focus to a popover (e.g. the link URL input). Used on every mouseup/keyup inside the editor.
     const sel = window.getSelection()
     if (!sel || sel.rangeCount === 0) return
     const range = sel.getRangeAt(0).cloneRange()
@@ -79,7 +75,6 @@ export default function NotesView() {
   }
 
   const restoreSelection = () => {
-    // Re-applies the previously-saved selection range so an execCommand action targets the original text. Used right before insertLink runs createLink.
     if (!savedRange) return
     const sel = window.getSelection()
     if (!sel) return
@@ -88,14 +83,13 @@ export default function NotesView() {
   }
 
   const openLinkPrompt = () => {
-    // Snapshots the current selection and opens the link URL input. Used by the link toolbar button.
     saveSelection()
     setLinkUrl('')
     setLinkOpen(true)
   }
 
+  // Prepend `https://` to bare URLs; re-sanitise so the new anchor picks up safe target/rel attributes.
   const insertLink = () => {
-    // Inserts an anchor over the saved selection, prepending `https://` when the user pasted a bare URL, then re-sanitises the editor HTML so the new anchor picks up the safe target/rel attributes. Used by the link popover's submit button.
     let url = linkUrl.trim()
     if (!url) {
       setLinkOpen(false)
@@ -116,12 +110,10 @@ export default function NotesView() {
   }
 
   const applyColor = (color: string) => {
-    // Applies the chosen text colour to the current selection via the foreColor execCommand. Used by ColorPalette.
     exec('foreColor', color)
   }
 
   const clearFormat = () => {
-    // Removes inline formatting and unlinks any anchors inside the current selection. Used by the "clear formatting" toolbar button.
     exec('removeFormat')
     exec('unlink')
   }
@@ -248,7 +240,7 @@ function ToolbarBtn({
   title: string
   label: React.ReactNode
 }) {
-  // Renders a single toolbar button that runs `onClick` on mousedown (with preventDefault) so the editor's text selection is preserved across the click. Used by every formatting button in NotesView's toolbar.
+  // mousedown + preventDefault preserves the editor's text selection across the click.
   return (
     <button
       onMouseDown={(e) => {
@@ -264,12 +256,10 @@ function ToolbarBtn({
 }
 
 function Divider() {
-  // Renders a tiny vertical separator between groups of toolbar buttons. Used by the NotesView toolbar.
   return <span className="mx-0.5 h-5 w-px bg-border" />
 }
 
 function ColorPalette({ onPick }: { onPick: (color: string) => void }) {
-  // Renders the toolbar's text-colour picker: a swatch grid of preset colours plus a native colour input for arbitrary picks. Used by NotesView's toolbar.
   const [pickerOpen, setPickerOpen] = useState(false)
   const [customColor, setCustomColor] = useState('#ffd166')
   return (

@@ -324,7 +324,7 @@
       "all_resistances": [10, 20]
     },
     "uniqueEffects": ["All Skills Class"],
-    "width": 2,
+    "width": 1,
     "height": 2
   }
 ]

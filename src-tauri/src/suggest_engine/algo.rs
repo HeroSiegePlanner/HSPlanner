@@ -55,9 +55,7 @@ fn normalize_keys<V: Clone>(map: &HashMap<String, V>) -> HashMap<String, V> {
         .collect()
 }
 
-/// Per-`suggest()` immutable lookup tables shared by every DPS computation. Built
-/// once before the search loops to avoid rebuilding ~50-skill HashMaps for every
-/// candidate probe.
+/// Immutable lookup tables built once per `suggest()` call; reused for every DPS probe.
 struct DpsContext<'a> {
     active: &'a SkillRef,
     active_calc: calc::Skill,
@@ -131,7 +129,6 @@ fn compute_dps(state: &FinalState, input: &PrecomputedInput, ctx: &DpsContext) -
         }
     }
 
-    // Sum proc DPS from every toggled proc skill that targets a rank>0 skill.
     let mut proc_min = 0.0;
     let mut proc_max = 0.0;
     for proc_skill in &input.all_skills {
@@ -194,8 +191,6 @@ fn compute_dps(state: &FinalState, input: &PrecomputedInput, ctx: &DpsContext) -
     (combined_min + combined_max) * 0.5
 }
 
-/// BFS reachability from `starts` restricted to `allowed`. Used by the
-/// local-search swap phase to check that removing a node would not orphan others.
 fn reachable_from_starts(
     starts: &HashSet<u32>,
     allowed: &HashSet<u32>,
@@ -225,11 +220,9 @@ fn reachable_from_starts(
     seen
 }
 
-/// BFS path-finder that treats `allocated` as the only "free" sources, but lets
-/// the search bootstrap from any `virtual_starts` (typically all class START_IDS).
-/// If the shortest path to `target` traverses a virtual start not already in
-/// `allocated`, that start is **included** in the returned path so it gets paid
-/// for from the budget rather than being a free entry point.
+/// Shortest path from `allocated ∪ virtual_starts` to `target`; any traversed
+/// virtual start not in `allocated` is included in the returned path so the
+/// caller pays for it from the budget.
 fn find_path_to(
     allocated: &HashSet<u32>,
     virtual_starts: &HashSet<u32>,
@@ -256,9 +249,6 @@ fn find_path_to(
             }
             parent.insert(nb, Some(cur));
             if nb == target {
-                // Walk back from target, including any traversed virtual starts
-                // that aren't already in `allocated`. Stop once we hit a real
-                // `allocated` node — that's the existing tree we're extending.
                 let mut path: Vec<u32> = Vec::new();
                 let mut node = target;
                 loop {
@@ -269,12 +259,7 @@ fn find_path_to(
                     }
                     match parent.get(&node).copied().flatten() {
                         Some(p) => node = p,
-                        None => {
-                            // Reached a virtual-start root with no parent.
-                            // `node` (top of chain) was already pushed above
-                            // because it wasn't in allocated.
-                            break;
-                        }
+                        None => break,
                     }
                 }
                 path.reverse();
@@ -289,9 +274,6 @@ fn find_path_to(
 pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResult {
     let jewelry_set: HashSet<u32> = input.graph.jewelry_ids.iter().copied().collect();
     let valuable_set: HashSet<u32> = input.graph.valuable_ids.iter().copied().collect();
-    // All START_IDS act as virtual BFS roots, but `find_path_to` includes any
-    // unallocated start in the returned path so it's paid for from the budget —
-    // starts aren't free entry points.
     let start_set: HashSet<u32> = input.graph.start_ids.iter().copied().collect();
 
     let mut allocated: HashSet<u32> = input.allocated_tree_nodes.iter().copied().collect();
@@ -326,11 +308,9 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
     let mut current_dps = base_dps;
     let mut sequence: Vec<SuggestStep> = Vec::new();
 
-    // Pre-compute the subset of valuable nodes that *actually* matter for this build.
-    // A notable / keystone counts only when allocating it alone over the baseline
-    // produces a positive DPS delta. Jewelry sockets always count (user may slot a
-    // jewel later). Without this filter, the path-distance tie-breaker would happily
-    // pick irrelevant notables (e.g. Poison Skill Damage on a Fire build).
+    // Filter out notables that don't change DPS for this build, otherwise the
+    // path-distance tie-breaker would pick irrelevant ones. Jewelry sockets pass
+    // unconditionally — user may slot a jewel later.
     let mut valuable_with_impact: HashSet<u32> = HashSet::new();
     for &v in &valuable_set {
         if allocated.contains(&v) {
@@ -364,11 +344,8 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
             break;
         }
 
-        // For each remaining impactful valuable, compute the cheapest path from
-        // the current allocation, then score by gain-per-node. This lets us walk
-        // 4-5 minor filler nodes to reach a big notable rather than greedily
-        // picking the locally-best 1-hop neighbor. Path cost includes any
-        // START_ID that gets traversed and isn't already allocated.
+        // Score targets by gain-per-node along their cheapest path so a notable
+        // 5 filler hops away beats a locally-best 1-hop pick.
         let mut best_target: Option<u32> = None;
         let mut best_score = f64::NEG_INFINITY;
         let mut best_path: Vec<u32> = Vec::new();
@@ -404,9 +381,7 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
 
         let Some(target) = best_target else { break };
 
-        // Walk the chosen path one node at a time so the sequence shows per-step
-        // DPS deltas (intermediate filler nodes appear with their tiny actual
-        // gain, and the destination notable carries the big jump).
+        // Walk path one node at a time so filler steps show their tiny per-step gain.
         let mut step_dps = current_dps;
         let mut step_alloc = allocated.clone();
         for &node in &best_path {
@@ -433,11 +408,7 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
     }
 
     // ====================== LOCAL SEARCH SWAP REFINEMENT ======================
-    // After the path-based greedy converges, try to improve by swapping any
-    // allocated node (added by the algorithm) for a different neighbour of the
-    // remaining set. Repeats until no single swap improves DPS — i.e. we sit
-    // at a 2-opt local optimum, which is typically very close to global optimum
-    // for this problem class.
+    // 2-opt: swap any allocated node for a frontier neighbour while DPS improves.
     const SWAP_MAX_PASSES: u32 = 60;
     for pass in 0..SWAP_MAX_PASSES {
         if let Some(app) = app {
@@ -461,7 +432,6 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
             let mut without = allocated.clone();
             without.remove(&rm);
 
-            // Effective set for connectivity check + frontier discovery.
             let mut without_with_starts = without.clone();
             for sid in &start_set {
                 without_with_starts.insert(*sid);
@@ -475,9 +445,7 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
                 continue;
             }
 
-            // Frontier candidates for the post-removal allocation. Warps are
-            // not filtered here — they are valid transit nodes and may be
-            // worth allocating purely to shortcut to a distant notable.
+            // Warps stay in the frontier — they are valid transit nodes.
             let mut frontier: HashSet<u32> = HashSet::new();
             for id in &without_with_starts {
                 if let Some(nbrs) = input.graph.adjacency.get(id) {
@@ -518,8 +486,6 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
                 allocated.remove(&rm);
                 allocated.insert(add);
                 current_dps = new_dps;
-                // Reflect the swap in the sequence: drop the removed node's
-                // entry, append the added node so the modal stays in sync.
                 sequence.retain(|s| s.node_id != rm);
                 sequence.push(SuggestStep {
                     node_id: add,

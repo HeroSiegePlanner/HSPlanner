@@ -113,7 +113,6 @@ fn build_rules() -> Vec<ParseRule> {
         "increased_all_attributes",
     ));
 
-    // "X% Increased (Total )? (Strength|Dex|Int|Energy|Vitality|Armor)" - custom build
     v.push(ParseRule {
         re: Regex::new(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?(Strength|Dexterity|Intelligence|Energy|Vitality|Armor)$",
@@ -207,7 +206,6 @@ fn build_rules() -> Vec<ParseRule> {
         "max_all_resistances",
     ));
 
-    // Per-element resistances
     let pat = format!(r"(?i)^([+\-\d.]+)%\s+to\s+({})\s+Resistance$", elem_re);
     v.push(ParseRule {
         re: Regex::new(&pat).unwrap(),
@@ -842,7 +840,6 @@ fn build_rules() -> Vec<ParseRule> {
         "colossus_damage",
     ));
 
-    // Ranged/additive physical per 500 mana — picks key based on whether "Ranged" appears in the line.
     v.push(ParseRule {
         re: Regex::new(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(Ranged\s+)?Physical\s+Damage\s+per\s+500\s+mana$",

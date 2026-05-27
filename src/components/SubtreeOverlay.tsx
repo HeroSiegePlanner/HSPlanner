@@ -39,7 +39,6 @@ for (const [p, url] of Object.entries(SUBSKILL_SPRITE_FILES)) {
 }
 
 function resolveSubskillIconUrl(icon?: string): string | undefined {
-  // Returns a usable URL when `icon` is either a remote http(s) link or a sprite key registered under src/assets/subskills/. Returns undefined for plain emoji/text icons so callers can render a glyph fallback.
   if (!icon) return undefined
   if (/^https?:\/\//i.test(icon)) return icon
   if (SUBSKILL_SPRITE_BY_KEY[icon]) return SUBSKILL_SPRITE_BY_KEY[icon]
@@ -52,7 +51,6 @@ interface Props {
 }
 
 export default function SubtreeOverlay({ skill, onClose }: Props) {
-  // Modal overlay that renders a skill's subtree as an SVG node graph laid out from the shared subtree template, with click-to-allocate / right-click-to-deallocate, hover tooltips showing current vs next-rank stats and proc breakdowns, and a points-spent counter. Used by SkillsView when the user opens a skill's subtree.
   const level = useBuild((s) => s.level)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const incSubskillRank = useBuild((s) => s.incSubskillRank)
@@ -113,7 +111,6 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     const key = subskillKey(skill.id, hover.sub.id)
     const currentRank = subskillRanks[key] ?? 0
     if (currentRank >= hover.sub.maxRank) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviewPerformance(null)
       return
     }
@@ -352,7 +349,6 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
 
                 return (
                   <g key={tn.index}>
-                    {/* outer subtle aura for outer/keystone */}
                     {(isRoot || (isOuter && allocated)) && (
                       <circle
                         cx={cx}
@@ -492,7 +488,6 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
 }
 
 function formatStatValue(key: string, value: number): string {
-  // Renders a numeric stat value with the stat's percent/flat suffix, rounded to two decimals when not an integer. Used by SubskillTooltip to format every per-rank stat row.
   const def = statDef(key)
   const suffix = def?.format === 'percent' ? '%' : ''
   const rounded = Number.isInteger(value)
@@ -518,7 +513,6 @@ function SubskillTooltip({
   currentPerformance: BuildPerformance
   previewPerformance: BuildPerformance | null
 }) {
-  // Renders the floating tooltip shown when hovering a subskill node, listing current and next-rank stat values, proc chance, proc effects, and any applied states. Used by SubtreeOverlay.
   const nextRank = Math.min(rank + 1, sub.maxRank)
   const hasNext = nextRank > rank
 

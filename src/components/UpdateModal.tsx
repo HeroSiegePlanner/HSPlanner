@@ -63,7 +63,6 @@ export default function UpdateModal({
   onSkipVersion,
   mode = "update",
 }: Props) {
-  // Modal dialog used for two flows: showing a discovered update (with changelog, asset metadata, install / skip / remind-later actions, an "auto-install on quit" toggle, and live download/install progress) or simply browsing the changelog of the currently-installed version. Used by BottomBar for both flows.
   const isChangelog = mode === "changelog";
   const sections: ChangelogSection[] = useMemo(
     () => (info.body ? parseChangelog(info.body) : []),
@@ -88,18 +87,15 @@ export default function UpdateModal({
   }, [onClose, isBusy]);
 
   const onAutoInstallChange = (v: boolean) => {
-    // Persists the "auto-install on quit" preference to localStorage and updates local state. Used by the checkbox in the modal footer.
     setAutoInstall(v);
     writeStorage(AUTO_INSTALL_KEY, v ? "1" : "0");
   };
 
   const onRemindLater = () => {
-    // Closes the modal without persisting a skip, so the next update check will offer the same version again. Used by the "Remind Me Later" button.
     if (!isBusy) onClose();
   };
 
   const onSkip = () => {
-    // Persists the latest version into the SKIP_KEY so the user is not prompted again for it, then closes the modal. Used by the "Skip This Version" button.
     if (isBusy) return;
     writeStorage(SKIP_KEY, info.latest);
     onSkipVersion?.(info.latest);
@@ -107,7 +103,6 @@ export default function UpdateModal({
   };
 
   const onDownload = async () => {
-    // Triggers the Tauri updater (or opens the asset URL in the browser fallback) and pipes phase/byte progress into local state to drive the progress bar. Used by the "Download & Install" CTA.
     if (isBusy) return;
     setProgress({ phase: "checking" });
     try {
@@ -118,8 +113,8 @@ export default function UpdateModal({
     }
   };
 
+  // Don't close mid-install so a backdrop click can't cancel a download.
   const safeClose = () => {
-    // Closes the modal only when no install is in flight, so the user cannot accidentally cancel a download mid-flight by clicking the backdrop or pressing Escape.
     if (!isBusy) onClose();
   };
 
@@ -317,7 +312,6 @@ function VersionCell({
   tone: "muted" | "hot";
   align?: "left" | "right";
 }) {
-  // Renders one side of the "Installed → Available" version compare in the update modal: a small mono label above a large version number, tinted gold-hot for the new version and neutral for the installed one.
   return (
     <div className={align === "right" ? "text-right" : "text-left"}>
       <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
@@ -346,7 +340,6 @@ function MetaCell({
   value: string;
   title?: string;
 }) {
-  // Renders one label/value pair inside the asset-metadata strip. Used by the update modal for size and short SHA.
   return (
     <span className="inline-flex items-center gap-1.5" title={title}>
       <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
@@ -358,7 +351,6 @@ function MetaCell({
 }
 
 function ChangelogBlock({ section }: { section: ChangelogSection }) {
-  // Renders one parsed changelog section as a tag-coloured pill plus a bullet list with minimal inline markdown rendering. Used by UpdateModal to display each `## Heading` group inside a release body.
   const label = TAG_LABEL[section.tag];
   const cls = TAG_CLASS[section.tag];
   const bg = TAG_BG[section.tag];
@@ -385,8 +377,8 @@ function ChangelogBlock({ section }: { section: ChangelogSection }) {
   );
 }
 
+// Escape HTML first to defang injection, then apply a tiny markdown subset.
 function renderInline(text: string): string {
-  // Renders a tiny subset of inline markdown (`**bold**` and backtick-`code`) as HTML, after first escaping any user-supplied HTML to defang injection attempts. Used by ChangelogBlock so release bullets can highlight phrases without enabling arbitrary HTML.
   const escaped = text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -400,7 +392,6 @@ function renderInline(text: string): string {
 }
 
 function formatReleaseDate(iso: string): string {
-  // Renders an ISO timestamp as an uppercase "MMM D, YYYY" string, returning empty when the input cannot be parsed. Used by UpdateModal next to the changelog heading.
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
   return d
@@ -413,7 +404,6 @@ function formatReleaseDate(iso: string): string {
 }
 
 function progressLabel(p: InstallProgress | null): string {
-  // Returns the user-facing label that should appear on the install button for the current progress phase ("Downloading 42%", "Installing…", "Retry", etc.). Used by UpdateModal to keep the CTA in sync with the underlying installer state.
   if (!p) return "↓ Download & Install";
   switch (p.phase) {
     case "checking":
@@ -437,7 +427,6 @@ function progressLabel(p: InstallProgress | null): string {
 }
 
 function ProgressBlock({ progress }: { progress: InstallProgress }) {
-  // Renders the live progress section between the changelog and the modal footer: a phase label, "X / Y" byte counter, and either an animated indeterminate bar or a percentage-filled accent bar. Used by UpdateModal during the install flow.
   const pct =
     progress.phase === "downloading" &&
     progress.bytesTotal &&
@@ -507,7 +496,6 @@ function ProgressBlock({ progress }: { progress: InstallProgress }) {
 }
 
 function phaseLabel(phase: InstallProgress["phase"]): string {
-  // Returns the user-facing label for the given install phase ("Checking for update", "Downloading", "Installing", "Done"). Used by ProgressBlock to render the section header.
   switch (phase) {
     case "checking":
       return "Checking for update";

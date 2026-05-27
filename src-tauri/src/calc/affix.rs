@@ -1,8 +1,3 @@
-// Mirror of the affix-roll helpers in src/utils/stats.ts (rolledAffixValue,
-// rolledAffixRange, rolledAffixValueWithStars, applyStarsToRangedValue,
-// affixStarMultiplier, isAffixStarImmune). Behaviour must stay in lockstep
-// with the TS source until Phase 2 step 4 deletes those exports.
-
 use super::skills::Ranged;
 use super::star_scaling::{
     is_stat_star_immune, item_granted_skill_rank_flat_bonus, stat_star_flat_bonus,
@@ -38,7 +33,6 @@ pub fn rolled_affix_range(affix: &Affix) -> Ranged {
     let lo = round(min);
     let hi = round(max);
     match affix.sign {
-        // TS: `min === max ? -max : [-max, -min]`. Collapses naturally when lo == hi.
         AffixSign::Minus => (-hi, -lo),
         AffixSign::Plus => (lo, hi),
     }

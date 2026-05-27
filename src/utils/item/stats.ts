@@ -1,6 +1,7 @@
 import { gameConfig, getItem, isGearSlot } from '../../data'
 import type { ForgeKind } from '../../data'
 import {
+  isStatStarImmune,
   itemGrantedSkillRankFlatBonus,
   statStarFlatBonus,
   statStarPercentMultiplier,
@@ -13,7 +14,6 @@ import type {
   Skill,
   StatDef,
 } from '../../types'
-import { ELEMENTS } from '../tree/treeStats'
 
 export type SourceType =
   | 'class'
@@ -222,77 +222,35 @@ export interface WeaponDamageBreakdown {
   enhancedDamageMaxPct: number
   additivePhysicalMin: number
   additivePhysicalMax: number
+  additiveElementalMin: number
+  additiveElementalMax: number
+  additiveElementalBreakdown: Array<{ label: string; pct: number }>
   attackDamageMinPct: number
   attackDamageMaxPct: number
   extraDamagePct: number
   extraDamageSources: Array<{ label: string; pct: number }>
+  crushingBlowModifier: number
+  armorBreakPct: number
+  deadlyBlowChance: number
+  hitChance: number
   critChance: number
   critDamagePct: number
   critMultiplierAvg: number
   attacksPerSecondMin: number
   attacksPerSecondMax: number
+  projectileCount: number
+  enemyPhysResPct: number
+  physResistanceIgnoredPct: number
   hitMin: number
   hitMax: number
   critMin: number
   critMax: number
   avgMin: number
   avgMax: number
+  openWoundsMin: number
+  openWoundsMax: number
   dpsMin: number
   dpsMax: number
-}
-
-const EXTRA_DAMAGE_CONDITIONS: Array<{
-  stat: string
-  condition: string
-  label: string
-}> = [
-  { stat: 'extra_damage_stunned', condition: 'stunned', label: 'Stunned' },
-  { stat: 'extra_damage_bleeding', condition: 'bleeding', label: 'Bleeding' },
-  { stat: 'extra_damage_frozen', condition: 'frozen', label: 'Frozen' },
-  { stat: 'extra_damage_poisoned', condition: 'poisoned', label: 'Poisoned' },
-  { stat: 'extra_damage_burning', condition: 'burning', label: 'Burning' },
-  { stat: 'extra_damage_stasis', condition: 'stasis', label: 'Stasis' },
-  {
-    stat: 'extra_damage_shadow_burning',
-    condition: 'shadow_burning',
-    label: 'Shadow Burning',
-  },
-  {
-    stat: 'extra_damage_frost_bitten',
-    condition: 'frost_bitten',
-    label: 'Frost Bitten',
-  },
-]
-
-function collectExtraDamage(
-  stats: RangedStatMap,
-  enemyConditions: Record<string, boolean> | undefined,
-): { pct: number; sources: Array<{ label: string; pct: number }> } {
-  const sources: Array<{ label: string; pct: number }> = []
-  let total = 0
-  if (!enemyConditions) return { pct: 0, sources }
-  let anyAilmentActive = false
-  for (const m of EXTRA_DAMAGE_CONDITIONS) {
-    if (!enemyConditions[m.condition]) continue
-    anyAilmentActive = true
-    const v = stats[m.stat]
-    if (v === undefined) continue
-    const avg = (rangedMin(v) + rangedMax(v)) / 2
-    if (avg === 0) continue
-    sources.push({ label: m.label, pct: avg })
-    total += avg
-  }
-  if (anyAilmentActive) {
-    const v = stats['extra_damage_ailments']
-    if (v !== undefined) {
-      const avg = (rangedMin(v) + rangedMax(v)) / 2
-      if (avg !== 0) {
-        sources.push({ label: 'Afflicted with Ailments', pct: avg })
-        total += avg
-      }
-    }
-  }
-  return { pct: total, sources }
 }
 
 export function rolledAffixValue(
@@ -318,6 +276,26 @@ function affixStarMultiplier(
   stars: number | undefined,
 ): number {
   return statStarPercentMultiplier(statKey, stars)
+}
+
+export function rolledAffixRange(affix: {
+  sign: '+' | '-'
+  format: 'flat' | 'percent'
+  valueMin: number | null
+  valueMax: number | null
+}): RangedValue {
+  if (affix.valueMin === null || affix.valueMax === null) return 0
+  const round = (n: number) => (affix.format === 'flat' ? Math.round(n) : n)
+  const min = round(affix.valueMin)
+  const max = round(affix.valueMax)
+  if (affix.sign === '-') {
+    return min === max ? -max : [-max, -min]
+  }
+  return min === max ? min : [min, max]
+}
+
+export function isAffixStarImmune(statKey: string | null): boolean {
+  return isStatStarImmune(statKey)
 }
 
 export function rolledAffixValueWithStars(
@@ -428,337 +406,6 @@ export function effectiveRankRangeFor(
     baseRank + rangedMin(all) + rangedMin(elem) + item[0],
     baseRank + rangedMax(all) + rangedMax(elem) + item[1],
   ]
-}
-
-export function computeSkillDamage(
-  skill: Skill,
-  allocatedRank: number,
-  attributes: Record<AttributeKey, RangedValue>,
-  stats: RangedStatMap,
-  skillRanksByName: Record<string, number>,
-  itemSkillBonuses: Record<string, [number, number]>,
-  enemyConditions?: Record<string, boolean>,
-  enemyResistances?: Record<string, number>,
-  skillsByNormalizedName?: Record<string, Skill>,
-  projectileCount?: number,
-): SkillDamageBreakdown | null {
-  if (allocatedRank === 0) return null
-  const hasFormula = !!skill.damageFormula
-  const hasTable =
-    !!skill.damagePerRank && skill.damagePerRank.length > 0
-  if (!hasFormula && !hasTable) return null
-
-  const allSkills = stats.all_skills ?? 0
-  const allSkillsMin = rangedMin(allSkills)
-  const allSkillsMax = rangedMax(allSkills)
-  let elementSkillsMin = 0
-  let elementSkillsMax = 0
-  if (skill.damageType) {
-    const es = stats[`${skill.damageType}_skills`] ?? 0
-    elementSkillsMin = rangedMin(es)
-    elementSkillsMax = rangedMax(es)
-  }
-  const itemBonus =
-    itemSkillBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
-  const effectiveRankMin =
-    allocatedRank + allSkillsMin + elementSkillsMin + itemBonus[0]
-  const effectiveRankMax =
-    allocatedRank + allSkillsMax + elementSkillsMax + itemBonus[1]
-
-  // Clamp to >= 0: linear formulas can extrapolate negative at low ranks,
-  // a skill never deals negative damage. Mirrors Rust damage.rs.
-  let baseMin: number
-  let baseMax: number
-  if (skill.damageFormula) {
-    baseMin = Math.max(
-      0,
-      skill.damageFormula.base + skill.damageFormula.perLevel * effectiveRankMin,
-    )
-    baseMax = Math.max(
-      0,
-      skill.damageFormula.base + skill.damageFormula.perLevel * effectiveRankMax,
-    )
-  } else {
-    const table = skill.damagePerRank!
-    const idxMin = Math.min(Math.max(effectiveRankMin, 1), table.length) - 1
-    const idxMax = Math.min(Math.max(effectiveRankMax, 1), table.length) - 1
-    baseMin = Math.max(0, table[idxMin]?.min ?? 0)
-    baseMax = Math.max(0, table[idxMax]?.max ?? 0)
-  }
-
-  const flatKeys: string[] = ['flat_skill_damage', 'flat_elemental_skill_damage']
-  if (skill.damageType) flatKeys.push(`flat_${skill.damageType}_skill_damage`)
-  let flatMin = 0
-  let flatMax = 0
-  for (const k of flatKeys) {
-    const v = stats[k] ?? 0
-    flatMin += rangedMin(v)
-    flatMax += rangedMax(v)
-  }
-
-  let synergyMinPct = 0
-  let synergyMaxPct = 0
-  for (const b of skill.bonusSources ?? []) {
-    const sourceKey = normalizeSkillName(b.source)
-    if (b.per === 'attribute_point') {
-      const attrKey = gameConfig.attributes.find(
-        (a) =>
-          a.name.toLowerCase() === sourceKey || a.key.toLowerCase() === sourceKey,
-      )?.key
-      if (attrKey) {
-        const attr = attributes[attrKey] ?? 0
-        synergyMinPct += rangedMin(attr) * b.value
-        synergyMaxPct += rangedMax(attr) * b.value
-      }
-    } else if (b.per === 'skill_level') {
-      const baseRank = skillRanksByName[sourceKey] ?? 0
-      if (baseRank > 0) {
-        const srcSkill = skillsByNormalizedName?.[sourceKey]
-        if (srcSkill) {
-          const [effMin, effMax] = effectiveRankRangeFor(
-            srcSkill,
-            baseRank,
-            stats,
-            itemSkillBonuses,
-          )
-          synergyMinPct += effMin * b.value
-          synergyMaxPct += effMax * b.value
-        } else {
-          synergyMinPct += baseRank * b.value
-          synergyMaxPct += baseRank * b.value
-        }
-      }
-    }
-  }
-
-  const magicDmg = stats.magic_skill_damage ?? 0
-  const elementKey = skill.damageType
-    ? (`${skill.damageType}_skill_damage` as const)
-    : null
-  const elementDmg = elementKey ? (stats[elementKey] ?? 0) : 0
-  const skillDamageMinPct = rangedMin(magicDmg) + rangedMin(elementDmg)
-  const skillDamageMaxPct = rangedMax(magicDmg) + rangedMax(elementDmg)
-
-  const magicMore = stats.magic_skill_damage_more ?? 0
-  const elementMoreKey = elementKey ? (`${elementKey}_more` as const) : null
-  const elementMore = elementMoreKey ? (stats[elementMoreKey] ?? 0) : 0
-  const skillMoreMultMin =
-    (1 + rangedMin(magicMore) / 100) * (1 + rangedMin(elementMore) / 100)
-  const skillMoreMultMax =
-    (1 + rangedMax(magicMore) / 100) * (1 + rangedMax(elementMore) / 100)
-
-  const extra = collectExtraDamage(stats, enemyConditions)
-  const extraMult = 1 + extra.pct / 100
-  const isSpell = !!skill.tags?.includes('Spell')
-  const critChance = isSpell
-    ? rangedMax(stats.spell_crit_chance ?? 0)
-    : rangedMax(stats.crit_chance ?? 0)
-  const critDamagePct = isSpell
-    ? rangedMax(stats.spell_crit_damage ?? 0)
-    : rangedMax(stats.crit_damage ?? 0)
-  const critDamageMore = isSpell ? 0 : rangedMax(stats.crit_damage_more ?? 0)
-  const critMoreMult = 1 + critDamageMore / 100
-  const critMultOnCrit = (1 + critDamagePct / 100) * critMoreMult
-  const critChanceClamped = Math.max(0, Math.min(95, critChance)) / 100
-  const critMultAvg =
-    1 - critChanceClamped + critChanceClamped * critMultOnCrit
-
-  const enemyResPct = skill.damageType
-    ? (enemyResistances?.[skill.damageType] ?? 0)
-    : 0
-  const rawIgnorePct = skill.damageType
-    ? rangedMax(stats[`ignore_${skill.damageType}_res`] ?? 0)
-    : 0
-  const ignoreResPct = Math.max(0, Math.min(100, rawIgnorePct))
-  const effectiveResPct = enemyResPct * (1 - ignoreResPct / 100)
-  const resistanceMult = 1 - effectiveResPct / 100
-
-  const isElementalSkill =
-    !!skill.damageType &&
-    (ELEMENTS as readonly string[]).includes(skill.damageType)
-  const elementalBreakPct = isElementalSkill
-    ? Math.max(
-        0,
-        rangedMax(stats.elemental_break ?? 0) +
-          (isSpell
-            ? rangedMax(stats.elemental_break_on_spell ?? 0)
-            : rangedMax(stats.elemental_break_on_strike ?? 0)),
-      )
-    : 0
-  const elementalBreakMultiplier = 1 + elementalBreakPct / 100
-
-  const lightningBreakPct =
-    skill.damageType === 'lightning' && enemyConditions?.lightning_break
-      ? Math.max(0, rangedMax(stats.lightning_break ?? 0))
-      : 0
-  const lightningBreakMultiplier = 1 + lightningBreakPct / 100
-
-  const hitMin =
-    (baseMin + flatMin) *
-    (1 + synergyMinPct / 100) *
-    (1 + skillDamageMinPct / 100) *
-    skillMoreMultMin *
-    extraMult *
-    elementalBreakMultiplier *
-    lightningBreakMultiplier *
-    resistanceMult
-  const hitMax =
-    (baseMax + flatMax) *
-    (1 + synergyMaxPct / 100) *
-    (1 + skillDamageMaxPct / 100) *
-    skillMoreMultMax *
-    extraMult *
-    elementalBreakMultiplier *
-    lightningBreakMultiplier *
-    resistanceMult
-
-  const critMin = hitMin * critMultOnCrit
-  const critMax = hitMax * critMultOnCrit
-  const multicastChancePct = isSpell
-    ? Math.max(0, rangedMax(stats.multicast_chance ?? 0))
-    : 0
-  const multicastMultiplier = 1 + multicastChancePct / 100
-  const projectiles = Math.max(1, Math.floor(projectileCount ?? 1))
-  const avgMin = hitMin * critMultAvg * multicastMultiplier * projectiles
-  const avgMax = hitMax * critMultAvg * multicastMultiplier * projectiles
-
-  const finalMin = Math.floor(hitMin)
-  const finalMax = Math.floor(hitMax)
-
-  return {
-    effectiveRankMin,
-    effectiveRankMax,
-    baseMin,
-    baseMax,
-    flatMin,
-    flatMax,
-    synergyMinPct,
-    synergyMaxPct,
-    skillDamageMinPct,
-    skillDamageMaxPct,
-    extraDamagePct: extra.pct,
-    extraDamageSources: extra.sources,
-    critChance,
-    critDamagePct,
-    critMultiplierAvg: critMultAvg,
-    multicastChancePct,
-    multicastMultiplier,
-    projectileCount: projectiles,
-    elementalBreakPct,
-    elementalBreakMultiplier,
-    enemyResistancePct: enemyResPct,
-    resistanceIgnoredPct: ignoreResPct,
-    effectiveResistancePct: effectiveResPct,
-    resistanceMultiplier: resistanceMult,
-    hitMin: Math.floor(hitMin),
-    hitMax: Math.floor(hitMax),
-    critMin: Math.floor(critMin),
-    critMax: Math.floor(critMax),
-    finalMin,
-    finalMax,
-    avgMin: Math.floor(avgMin),
-    avgMax: Math.floor(avgMax),
-  }
-}
-
-export function computeWeaponDamage(
-  inventory: Inventory,
-  stats: RangedStatMap,
-  enemyConditions?: Record<string, boolean>,
-): WeaponDamageBreakdown {
-  const weapon = inventory.weapon
-  const base = weapon ? getItem(weapon.baseId) : undefined
-  const hasWeapon =
-    !!base && base.damageMin !== undefined && base.damageMax !== undefined
-
-  // Unarmed: every character has a 2-6 base physical damage when no weapon is equipped.
-  const weaponDamageMin = hasWeapon ? base!.damageMin! : 2
-  const weaponDamageMax = hasWeapon ? base!.damageMax! : 6
-
-  const ed = stats.enhanced_damage ?? 0
-  const enhancedDamageMinPct = rangedMin(ed)
-  const enhancedDamageMaxPct = rangedMax(ed)
-  const edMore = stats.enhanced_damage_more ?? 0
-  const enhancedMoreMinMult = 1 + rangedMin(edMore) / 100
-  const enhancedMoreMaxMult = 1 + rangedMax(edMore) / 100
-
-  const addPhys = stats.additive_physical_damage ?? 0
-  const additivePhysicalMin = rangedMin(addPhys)
-  const additivePhysicalMax = rangedMax(addPhys)
-
-  const atkDmg = stats.attack_damage ?? 0
-  const attackDamageMinPct = rangedMin(atkDmg)
-  const attackDamageMaxPct = rangedMax(atkDmg)
-
-  const extra = collectExtraDamage(stats, enemyConditions)
-  const extraMult = 1 + extra.pct / 100
-
-  const critChance = rangedMax(stats.crit_chance ?? 0)
-  const critDamagePct = rangedMax(stats.crit_damage ?? 0)
-  const critDamageMore = rangedMax(stats.crit_damage_more ?? 0)
-  const critMoreMult = 1 + critDamageMore / 100
-  const critMultOnCrit = (1 + critDamagePct / 100) * critMoreMult
-  const critChanceClamped = Math.max(0, Math.min(95, critChance)) / 100
-  const critMultAvg =
-    1 - critChanceClamped + critChanceClamped * critMultOnCrit
-
-  const baseMin =
-    weaponDamageMin * (1 + enhancedDamageMinPct / 100) * enhancedMoreMinMult +
-    additivePhysicalMin
-  const baseMax =
-    weaponDamageMax * (1 + enhancedDamageMaxPct / 100) * enhancedMoreMaxMult +
-    additivePhysicalMax
-
-  const hitMinRaw =
-    baseMin * (1 + attackDamageMinPct / 100) * extraMult
-  const hitMaxRaw =
-    baseMax * (1 + attackDamageMaxPct / 100) * extraMult
-
-  const critMinRaw = hitMinRaw * critMultOnCrit
-  const critMaxRaw = hitMaxRaw * critMultOnCrit
-  const avgMinRaw = hitMinRaw * critMultAvg
-  const avgMaxRaw = hitMaxRaw * critMultAvg
-
-  const ias = stats.increased_attack_speed ?? 0
-  const iasMore = stats.increased_attack_speed_more ?? 0
-  const baseAps = rangedMax(stats.attacks_per_second ?? 0)
-  const iasMin = rangedMin(ias)
-  const iasMax = rangedMax(ias)
-  const iasMoreMinMult = 1 + rangedMin(iasMore) / 100
-  const iasMoreMaxMult = 1 + rangedMax(iasMore) / 100
-  const apsMin = baseAps * (1 + iasMin / 100) * iasMoreMinMult
-  const apsMax = baseAps * (1 + iasMax / 100) * iasMoreMaxMult
-
-  const dpsMinRaw = avgMinRaw * apsMin
-  const dpsMaxRaw = avgMaxRaw * apsMax
-
-  return {
-    hasWeapon,
-    weaponName: base?.name,
-    weaponDamageMin,
-    weaponDamageMax,
-    enhancedDamageMinPct,
-    enhancedDamageMaxPct,
-    additivePhysicalMin,
-    additivePhysicalMax,
-    attackDamageMinPct,
-    attackDamageMaxPct,
-    extraDamagePct: extra.pct,
-    extraDamageSources: extra.sources,
-    critChance,
-    critDamagePct,
-    critMultiplierAvg: critMultAvg,
-    attacksPerSecondMin: apsMin,
-    attacksPerSecondMax: apsMax,
-    hitMin: Math.floor(hitMinRaw),
-    hitMax: Math.floor(hitMaxRaw),
-    critMin: Math.floor(critMinRaw),
-    critMax: Math.floor(critMaxRaw),
-    avgMin: Math.floor(avgMinRaw),
-    avgMax: Math.floor(avgMaxRaw),
-    dpsMin: Math.floor(dpsMinRaw),
-    dpsMax: Math.floor(dpsMaxRaw),
-  }
 }
 
 export function passiveStatsAtRank(

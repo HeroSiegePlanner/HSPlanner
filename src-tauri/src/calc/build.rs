@@ -1,7 +1,3 @@
-// Top-level orchestrator. Mirror of computeBuildPerformance from
-// src/utils/buildPerformance.ts. Calls compute_build_stats, then layers
-// active-skill damage + proc DPS on top to produce a single BuildPerformance.
-
 use std::collections::{HashMap, HashSet};
 
 use serde::Serialize;
@@ -60,8 +56,6 @@ pub struct BuildPerformance {
     pub active_skill_name: Option<String>,
 }
 
-// Converts a JSON-loaded SkillSpec into the calc-runtime damage Skill.
-// (Subskill conversion lives in stats.rs as skill_spec_to_subskill_owner.)
 fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
     let to_formula = |f: super::types::DamageFormulaSpec| DamageFormula {
         base: f.base,
@@ -113,7 +107,6 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
     }
 }
 
-// Shared context shrinks the proc-loop signatures.
 struct ProcContext<'a> {
     computed: &'a ComputedStats,
     skill_ranks_by_name: &'a HashMap<String, f64>,
@@ -126,9 +119,6 @@ struct ProcContext<'a> {
     all_class_skills: &'a [SkillSpec],
 }
 
-// Resolves a proc target by normalised name → spec + calc skill, computes its
-// damage breakdown at the player-allocated rank. Returns None when the target
-// can't be resolved or has rank 0.
 fn proc_target_damage(
     ctx: &ProcContext<'_>,
     target_name_norm: &str,
@@ -162,7 +152,6 @@ fn proc_target_damage(
 }
 
 pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerformance {
-    // 1. Full stat aggregation (compute_build_stats handles conditional crit re-run).
     let stats_input = BuildStatsInput {
         class_id: deps.class_id,
         level: deps.level,
@@ -209,8 +198,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .map(|s| (normalize_skill_name(&s.name), skill_spec_to_calc_skill(s)))
         .collect();
 
-    // Skill-scoped stats are filtered out of computed.stats by apply_subskill_aggregation;
-    // re-aggregate just the active skill (without the filter) to pull projectile_count out.
+    // Re-aggregate the active skill alone to pull projectile_count out — the
+    // main stats path filters skill-scoped values.
     let active_projectile_boost: u32 = active_skill
         .map(|s| {
             let owner = skill_spec_to_subskill_owner(s);
@@ -228,7 +217,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         base + active_projectile_boost
     });
 
-    // Reuse the calc-skill already built into skills_by_name instead of re-converting.
     let active_calc_skill: Option<&CalcSkill> = active_skill
         .and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
     let is_attack_skill = active_calc_skill
@@ -270,11 +258,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         _ => None,
     };
 
-    // Attack-kind skills (e.g. Noxious Strike) combine weapon-based physical
-    // damage with a per-rank skill damage type (e.g. poison) and scale by
-    // attacks-per-second. The poison part is reused from `damage` above
-    // (computed once, consumed by both the spell-style breakdown and
-    // the combined attack DPS).
+    // Attack-kind skills reuse the elemental `damage` breakdown above and layer
+    // weapon physical + attacks-per-second on top.
     let attack_damage: Option<AttackSkillDamageBreakdown> =
         match (active_calc_skill, active_rank > 0, is_attack_skill) {
             (Some(calc_skill), true, true) => {
@@ -292,8 +277,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
             _ => None,
         };
 
-    // Hit DPS. Attack skills use attack-speed × combined (physical+element);
-    // spell skills use cast-rate × skill damage.
     let fcr = computed
         .stats
         .get("faster_cast_rate")
@@ -335,7 +318,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         )
     };
 
-    // 7. Proc DPS — top-level skill procs.
     let ctx = ProcContext {
         computed: &computed,
         skill_ranks_by_name: &skill_ranks_by_name,
@@ -379,7 +361,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         proc_dps_max += factor * target_dmg.avg_max as f64;
     }
 
-    // 8. Proc DPS — subskill procs.
     for owner_skill in all_class_skills.iter() {
         let Some(subskills) = owner_skill.subskills.as_ref() else {
             continue;
@@ -421,8 +402,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         }
     }
 
-    let combined_dps_min = avg_hit_dps_min.map(|h| h + proc_dps_min);
-    let combined_dps_max = avg_hit_dps_max.map(|h| h + proc_dps_max);
+    // Proc-only builds (no active skill) should still report combined DPS.
+    let combined_dps_min = if avg_hit_dps_min.is_some() || proc_dps_min > 0.0 {
+        Some(avg_hit_dps_min.unwrap_or(0.0) + proc_dps_min)
+    } else {
+        None
+    };
+    let combined_dps_max = if avg_hit_dps_max.is_some() || proc_dps_max > 0.0 {
+        Some(avg_hit_dps_max.unwrap_or(0.0) + proc_dps_max)
+    } else {
+        None
+    };
 
     BuildPerformance {
         attributes: computed.attributes,

@@ -42,12 +42,10 @@ const MOCK_FIXTURE: GithubRelease = {
 };
 
 export function isMockEnabled(): boolean {
-  // Returns true when the developer-only update mock flag has been set in localStorage. Used by checkForUpdate to short-circuit the GitHub fetch and exercise the update UI without an actual release.
   return readStorage(MOCK_KEY) !== null;
 }
 
 function isGithubRelease(p: unknown): p is GithubRelease {
-  // Type guard validating that an unknown value matches the partial shape of a GitHub release JSON payload. Used by the update checker to safely narrow `fetch().json()` results before mapping them to UpdateInfo.
   if (!p || typeof p !== "object") return false;
   const o = p as Record<string, unknown>;
   const optString = (v: unknown) => v === undefined || typeof v === "string";
@@ -60,8 +58,8 @@ function isGithubRelease(p: unknown): p is GithubRelease {
   return true;
 }
 
+// "1" sentinel yields the bundled fixture; otherwise parse as JSON GithubRelease.
 function readMockPayload(): GithubRelease | null {
-  // Reads the developer-only mock release from localStorage, accepting either the literal "1" sentinel (which yields the bundled fixture) or a JSON-encoded GithubRelease. Used by checkForUpdate to drive the update flow without contacting GitHub.
   const raw = readStorage(MOCK_KEY);
   if (!raw) return null;
   if (raw === "1") return MOCK_FIXTURE;
@@ -98,7 +96,6 @@ export interface ChangelogSection {
 export class UpdateCheckError extends Error {
   readonly cause?: unknown;
   constructor(message: string, cause?: unknown) {
-    // Constructs an UpdateCheckError with a user-facing message and an optional underlying cause. Used by checkForUpdate to wrap network/parse failures into a single typed error that the UI can render uniformly.
     super(message);
     this.name = "UpdateCheckError";
     this.cause = cause;
@@ -108,7 +105,6 @@ export class UpdateCheckError extends Error {
 export async function checkForUpdate(
   signal?: AbortSignal,
 ): Promise<UpdateInfo> {
-  // Asynchronously checks the configured GitHub repo for the latest release (or returns the mocked payload when the dev mock flag is set), translating the response into an UpdateInfo. Used by the UpdateModal flow to determine whether a newer build is available and to surface installer metadata.
   const mock = readMockPayload();
   if (mock) {
     await new Promise<void>((resolve, reject) => {
@@ -171,7 +167,6 @@ interface GithubRelease {
 }
 
 export function mapReleaseToUpdateInfo(payload: GithubRelease): UpdateInfo {
-  // Converts a raw GitHub release payload into the app-facing UpdateInfo, computing the hasUpdate flag via semver comparison and selecting the best installer asset. Used as the final translation step inside checkForUpdate.
   const rawTag = payload.tag_name?.trim() ?? "";
   if (!rawTag) {
     throw new UpdateCheckError("No tag in latest release");
@@ -193,8 +188,8 @@ export function mapReleaseToUpdateInfo(payload: GithubRelease): UpdateInfo {
   };
 }
 
+// Heuristic: drop sig/checksum/source files, pick the largest remaining binary as "the real installer".
 function pickAsset(assets?: GithubAsset[]): GithubAsset | undefined {
-  // Selects a single installer asset out of a release's asset list, filtering out signature/checksum/source-archive files and choosing the largest remaining binary as a heuristic for "the real installer". Used by mapReleaseToUpdateInfo to populate the download fields shown to the user.
   if (!assets || assets.length === 0) return undefined;
   const candidates = assets.filter((a) => {
     const name = (a.name ?? "").toLowerCase();
@@ -232,7 +227,6 @@ const TAG_ALIASES: Record<string, ChangelogTag> = {
 };
 
 export function parseChangelog(body: string): ChangelogSection[] {
-  // Parses a GitHub-flavoured markdown release body into ordered ChangelogSection entries, recognising H1-H3 headings as section breaks and `-`/`*` lines as bullet items. Used by the UpdateModal to render coloured "New / Improved / Balance / Fixes" buckets from a release description.
   const lines = body.replace(/\r\n/g, "\n").split("\n");
   const sections: ChangelogSection[] = [];
   let current: ChangelogSection | null = null;
@@ -263,13 +257,11 @@ export function parseChangelog(body: string): ChangelogSection[] {
 }
 
 function matchTag(title: string): ChangelogTag {
-  // Normalises a section title (lowercased, alphabetic only) and looks it up in TAG_ALIASES to map free-form headings like "Bug Fixes" or "Added" to a stable ChangelogTag. Used internally by parseChangelog to assign coloured tags to changelog sections.
   const key = title.toLowerCase().replace(/[^a-z]/g, "");
   return TAG_ALIASES[key] ?? "other";
 }
 
 export function formatBytes(n: number): string {
-  // Formats a byte count as a short human-readable string with adaptive precision (B/KB/MB/GB). Used in the update UI to render installer asset sizes.
   if (!Number.isFinite(n) || n <= 0) return "0 B";
   const units = ["B", "KB", "MB", "GB"];
   let i = 0;
@@ -283,14 +275,13 @@ export function formatBytes(n: number): string {
 }
 
 export function shortSha(sha: string, head = 4, tail = 4): string {
-  // Returns an abbreviated SHA in the form "abcd…1234", stripping any leading "sha256:" prefix. Used by the update UI to show installer hashes compactly.
   const clean = sha.replace(/^sha256:/i, "");
   if (clean.length <= head + tail + 1) return clean;
   return `${clean.slice(0, head)}…${clean.slice(-tail)}`;
 }
 
+// Ignores pre-release suffix.
 export function compareSemver(a: string, b: string): number {
-  // Compares two dotted-numeric version strings (ignoring any pre-release suffix) and returns 1 / -1 / 0. Used by mapReleaseToUpdateInfo to decide whether the remote release is newer than the running build.
   const parse = (v: string) =>
     v
       .split("-")[0]!

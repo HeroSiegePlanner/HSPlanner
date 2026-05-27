@@ -3,17 +3,22 @@ import { CornerMarks } from '../components/CornerMarks'
 import { classes, gameConfig, getClass } from '../data'
 import { attrPointsFor, finalAttributes, useBuild } from '../store/build'
 
+// 1 normally, 5 with Shift, all of `cap` with Ctrl/Cmd+Shift.
 function attrStep(e: React.MouseEvent, cap: number): number {
-  // Returns the number of attribute points a single +/- click should move: 1 normally, 5 with Shift, and `cap` (the remaining budget or current allocation) with Ctrl/Cmd+Shift, never overshooting `cap`. Used by both incAttr and decAttr handlers in CharacterView.
   if ((e.ctrlKey || e.metaKey) && e.shiftKey) return cap
   if (e.shiftKey) return Math.min(5, cap)
   return 1
 }
 
 export default function CharacterView() {
-  // View that lets the user pick a class, set the character level (with a synced slider/number input), and allocate attribute points (with +/- steppers honouring `attrStep`'s shift/ctrl shortcuts). Shows the available point budget and a reset action.
-  const { classId, level, allocated, setClass, setLevel, incAttr, decAttr, resetAttrs } =
-    useBuild()
+  const classId = useBuild((s) => s.classId)
+  const level = useBuild((s) => s.level)
+  const allocated = useBuild((s) => s.allocated)
+  const setClass = useBuild((s) => s.setClass)
+  const setLevel = useBuild((s) => s.setLevel)
+  const incAttr = useBuild((s) => s.incAttr)
+  const decAttr = useBuild((s) => s.decAttr)
+  const resetAttrs = useBuild((s) => s.resetAttrs)
 
   const cls = classId ? getClass(classId) : undefined
   const finals = finalAttributes(classId, allocated)
@@ -254,7 +259,6 @@ function StepperButton({
   title?: string
   label: string
 }) {
-  // Renders a single +/- attribute stepper button styled like the panel-system action buttons (gradient frame, gold-accent hover). Used by the attribute rows in CharacterView.
   return (
     <button
       onClick={onClick}
@@ -276,7 +280,6 @@ function PanelSelect({
   children,
   ...rest
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  // Wraps a native <select> in the panel-system gold-bordered gradient frame, mirroring the LeftStatsPanel and TopBar selectors.
   return (
     <div
       className={`inline-flex w-full items-center rounded-[3px] border border-border-2 px-3 py-2 transition-colors hover:border-accent-deep focus-within:border-accent-hot ${className ?? ''}`}
@@ -297,7 +300,6 @@ function PanelSelect({
 }
 
 function PanelInputWrap({ children }: { children: ReactNode }) {
-  // Wraps a native input in the panel-system gold-bordered gradient frame. Used by the level number input.
   return (
     <div
       className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1.5 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
@@ -320,7 +322,6 @@ function Panel({
   right?: ReactNode
   children: ReactNode
 }) {
-  // Renders a titled panel container with PickerModal-style chrome (gradient background, accent corners, sectionLabel header) plus an optional right-side slot for action controls. Used by CharacterView to group class / level / attribute sections.
   return (
     <div
       className="relative overflow-hidden rounded-md border border-border p-4"

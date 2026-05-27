@@ -74,13 +74,23 @@ async function runInstall(
   }
 }
 
+// Reject non-https URLs so a tampered manifest can't smuggle javascript:/data: payloads.
+function isSafeUpdateUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export async function installUpdate(
   fallbackAssetUrl: string | undefined,
   onProgress: ProgressCallback,
 ): Promise<void> {
   // Public entry point used by the UpdateModal "Install now" action: runs the Tauri update flow with relaunch-after-install when available, or opens the fallback browser download URL when running outside Tauri. Translates exceptions into an error-phase progress callback before re-throwing.
   if (!inTauriRuntime()) {
-    if (fallbackAssetUrl) {
+    if (fallbackAssetUrl && isSafeUpdateUrl(fallbackAssetUrl)) {
       window.open(fallbackAssetUrl, "_blank", "noopener,noreferrer");
     }
     onProgress({ phase: "done" });

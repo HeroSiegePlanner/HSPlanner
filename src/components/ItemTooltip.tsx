@@ -91,6 +91,8 @@ interface Props {
   children: ReactNode
   placement?: 'right' | 'left' | 'top' | 'bottom'
   className?: string
+  // Forwarded to the underlying Tooltip so triggers inside higher-stacked modals can layer above the backdrop.
+  zIndex?: number
 }
 
 export default function ItemTooltip({
@@ -98,8 +100,8 @@ export default function ItemTooltip({
   children,
   placement = 'right',
   className,
+  zIndex,
 }: Props) {
-  // Hover-tooltip wrapper that renders the rich item details (header, base stats, implicits, affixes, sockets, set bonuses, procs, flavour) for an equipped item, picking the rarity-appropriate tone (and runeword override). Used by GearView's slot tiles and any other surface that wants to expose an item's full info on hover.
   const base = getItem(equipped.baseId)
   if (!base) return <>{children}</>
 
@@ -111,6 +113,7 @@ export default function ItemTooltip({
       tone={tone}
       placement={placement}
       className={className}
+      zIndex={zIndex}
       content={<ItemTooltipBody equipped={equipped} base={base} />}
     >
       {children}
@@ -129,7 +132,6 @@ export function ItemTooltipBody({
   compareWith?: EquippedItem
   compareSlotKey?: SlotKey
 }) {
-  // Renders the entire body of an item tooltip / item card: header with name, base stats, implicits, granted-skill effects, runeword stats, standard and unholy affix lists, forged crystal mods, socket contributions, set bonuses, procs, unsupported unique effects, description/flavour, optional Net Change comparison block, and footer (level/iLvl/tier). Used both by ItemTooltip (popover) and ItemCard (panel).
   const inventory = useBuild((s) => s.inventory)
 
   const runeword = equipped ? detectRuneword(base, equipped.socketed) : undefined
@@ -584,10 +586,8 @@ function aggregateItemStats(
   base: ItemBase,
   equipped: EquippedItem | undefined,
 ): Record<string, number> {
-  // Lightweight aggregator that sums an item's implicits (averaged over the roll range), affixes (rolled & star-scaled), runeword stats, and socket contributions into a flat statKey→number map. Used by NetChangeSection to compute the diff between an equipped item and a hovered candidate without running the full computeBuildStats pipeline.
   const out: Record<string, number> = {}
   const add = (k: string, v: number) => {
-    // Increments the running total for a stat key, ignoring zero contributions. Used as the fold helper inside aggregateItemStats.
     if (v === 0) return
     out[k] = (out[k] ?? 0) + v
   }
@@ -620,10 +620,7 @@ function aggregateItemStats(
   for (const eq of equipped.affixes) {
     const affix = getAffix(eq.affixId)
     if (!affix?.statKey) continue
-    // Average over the affix range so Net Change shows a representative
-    // delta (the range mid-point) instead of locking to whatever roll was
-    // saved (the picker-modal default is `roll: 1`, which would otherwise
-    // bias every comparison toward the maximum end of the range).
+    // Use roll mid-point so Net Change isn't biased by the picker's default `roll: 1`.
     const value =
       eq.customValue !== undefined
         ? eq.customValue
@@ -669,7 +666,6 @@ function DiffRow({
   diff: number
   direction: 'up' | 'down'
 }) {
-  // Renders a single coloured up/down arrow stat-diff row inside NetChangeSection. Used to display per-stat upgrades and downgrades when comparing two items.
   const colorClass = direction === 'up' ? 'text-stat-green' : 'text-stat-red'
   const arrow = direction === 'up' ? '▲' : '▼'
   return (
@@ -697,8 +693,6 @@ function NetChangeSection({
   compareWith: EquippedItem
   slotKey?: SlotKey
 }) {
-  // Shows stat diffs (green up / red down) for the hovered vs equipped item,
-  // plus a DPS row if either is a weapon.
   const baseDeps = useBuildPerformanceDeps()
   const beforeBase = getItem(compareWith.baseId)
 
@@ -806,7 +800,6 @@ function NetChangeSection({
 }
 
 function formatDpsValue(n: number): string {
-  // Returns a human-friendly DPS number with thousands separators, defaulting to "0" for non-finite or zero inputs. Used by NetChangeSection to render the before/after DPS line.
   if (!Number.isFinite(n) || n === 0) return '0'
   const rounded = Math.round(n)
   return rounded.toLocaleString('en-US')
@@ -824,9 +817,7 @@ async function computeDpsDeltaAsync(
   slotKey: SlotKey,
   prospectBase: ItemBase,
 ): Promise<DpsRow | null> {
-  // Run two calcs in parallel: one for the current inventory, one for the
-  // inventory with the hovered item swapped into `slotKey`. The diff between
-  // the two hit-DPS numbers is what the tooltip's "DPS" row shows.
+  // Diff hit-DPS between current inventory and one with the hovered item swapped into `slotKey`.
   const synthetic: EquippedItem = {
     baseId: prospectBase.id,
     affixes: [],
@@ -882,7 +873,6 @@ export function ItemCard({
   compareSlotKey?: SlotKey
   className?: string
 }) {
-  // Renders the same body as ItemTooltip but as a static panel (with optional banner arc and compare highlight). Used by GearView's side-by-side compare picker so the user can see two items in full detail at once.
   const stateClass = state ? `compare-card is-${state}` : ''
 
   if (!base) {
@@ -925,7 +915,6 @@ export function ItemCard({
 }
 
 function arcStyle(tone: TooltipTone): CSSProperties {
-  // Returns the CSS custom-property bag (`--arc-text`, `--arc-border`, `--arc-bg`) used to style the rarity-coloured banner arc on item cards. Used by ItemCard's banner.
   const rgb = TONE_RGB[tone]
   return {
     '--arc-text': `rgb(${rgb})`,
@@ -935,7 +924,6 @@ function arcStyle(tone: TooltipTone): CSSProperties {
 }
 
 function BaseStats({ base }: { base: ItemBase }) {
-  // Renders the two-column "base stats" grid (defense, damage, block, attack speed) inside an item tooltip. Used by ItemTooltipBody when the base item carries any of those numbers.
   const rows: { label: string; value: string }[] = []
   if (base.defenseMin !== undefined && base.defenseMax !== undefined) {
     rows.push({
@@ -971,7 +959,6 @@ function collectSocketStats(
   equipped: EquippedItem,
   base?: ItemBase,
 ): [string, number][] {
-  // Walks the item's sockets and aggregates stat contributions from gems / runes (with rainbow multiplier and per-base socket transforms applied), returning a `[statKey, value][]` tuple for non-zero entries. Used by ItemTooltipBody to render the "From Sockets" section.
   const stats: StatMap = {}
   for (let i = 0; i < equipped.socketed.length; i++) {
     const id = equipped.socketed[i]

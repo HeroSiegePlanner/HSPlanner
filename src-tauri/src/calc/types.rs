@@ -1,11 +1,3 @@
-// Shared data types for the calc layer. Mirrors the relevant slice of
-// src/types/{item,build,skill,game}.ts and is what data.rs deserialises every
-// JSON file in src/data/ into.
-//
-// Fields that the calc consumer doesn't yet read are still declared so the
-// JSON deserialisation succeeds — adding a new field on the TS side won't
-// break Rust until the calc actively uses it.
-
 use std::collections::HashMap;
 
 use serde::Deserialize;
@@ -16,7 +8,7 @@ pub type SlotKey = String;
 pub type StatMap = HashMap<String, f64>;
 pub type RangedStatMap = HashMap<String, RangedValue>;
 
-// JSON shape `number | [number, number]`. Matches TS `RangedValue`.
+/// JSON shape `number | [number, number]`.
 #[derive(Debug, Clone, Copy, PartialEq, Deserialize)]
 #[serde(untagged)]
 pub enum RangedValue {
@@ -687,8 +679,7 @@ pub type Inventory = HashMap<SlotKey, EquippedItem>;
 
 // ---------- custom stats ----------
 
-// User-defined override entry from the Config view. The value is a free-text
-// string that parse_custom_stat_value parses into a Ranged.
+/// User-defined override; `value` is free text parsed by `parse_custom_stat_value`.
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomStat {
@@ -717,9 +708,6 @@ pub struct TreeNodeInfo {
     pub g: Option<Vec<String>>,
 }
 
-// Build-state content for a tree jewelry socket. Either references a gem/rune
-// by id, or carries an uncut jewel with a user-defined affix list. JSON shape
-// matches TS `TreeSocketEquipped | TreeSocketCrafted` discriminated by `kind`.
 #[derive(Debug, Clone, Deserialize)]
 #[serde(tag = "kind", rename_all = "lowercase")]
 pub enum TreeSocketContent {

@@ -6,6 +6,7 @@ import { detectRuneword, forgeKindFor, getItem, getItemSet, isGearSlot } from '.
 import { maxSocketsFor, useBuild } from '../../store/build'
 import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
 import type { EquippedItem, Inventory, SlotKey, SocketType } from '../../types'
+import { useSetHoverPreview } from '../../contexts/HoverContext'
 import { type BuildSummaryDeps } from './lib/diff'
 import { pickerItemsForSlot } from './pickerItems'
 import { CornerMarks } from '../../components/CornerMarks'
@@ -59,13 +60,15 @@ export function GearSlotModal({
   onApplyRuneword,
   onClose,
 }: GearSlotModalProps) {
-  // Full-screen slot editor that replaces the old aside EditPanel. The left column lists every item that fits this slot (grouped by rarity, searchable by name AND affix/effect text); the right column shows the live configuration of the equipped item (sockets, stars, affixes, forge mods, augment, runeword presets) or — when hovering a different item — a side-by-side compare overlay.
   const [q, setQ] = useState('')
   const [showCompareCol, setShowCompareCol] = useState(true)
   const [textEditorOpen, setTextEditorOpen] = useState(false)
   const replaceEquippedItem = useBuild((s) => s.replaceEquippedItem)
   const rows = useMemo(() => pickerItemsForSlot(slot), [slot])
   const inv = useBuild((s) => s.inventory)
+  // Report hovered picker row so the LeftStatsPanel paints a live delta; clear on unmount.
+  const setHover = useSetHoverPreview()
+  useEffect(() => () => setHover(null), [setHover])
 
   // Frozen at modal open so the compare column diffs live edits against the original equipped state.
   const [baselineEquipped] = useState<EquippedItem | null>(() =>
@@ -261,7 +264,10 @@ export function GearSlotModal({
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <div
+              className="min-h-0 flex-1 overflow-y-auto"
+              onMouseLeave={() => setHover(null)}
+            >
               {isOffhandLocked ? (
                 <div className="m-4 rounded border border-amber-500/30 bg-amber-500/5 px-3 py-3 text-[11px] text-amber-200">
                   Offhand is locked while a Two-Handed weapon is in the main
@@ -294,7 +300,9 @@ export function GearSlotModal({
                         row={r}
                         selected={r.id === equipped?.baseId}
                         onSelect={() => onEquip(r.id)}
-                        onHover={() => {}}
+                        onHover={() =>
+                          setHover({ kind: 'gear', slot, baseId: r.id })
+                        }
                       />
                     ))}
                   </div>
@@ -438,7 +446,6 @@ function SetSummary({
   set: NonNullable<ReturnType<typeof getItemSet>>
   count: number
 }) {
-  // Renders a compact summary card for an item set inside the GearSlotModal right column showing the set name, equipped-count badge, and each tier with its description coloured by activation state. Wrapped in the shared SectionCard so its visual language matches the rest of the popup. Used when the equipped item belongs to a set.
   return (
     <SectionCard
       label={set.name}

@@ -9,9 +9,12 @@ export function parseCustomStatValue(raw: string): RangedValue | null {
     /^([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)$/,
   )
   if (rangeMatch) {
-    const min = Number(rangeMatch[1])
-    const max = Number(rangeMatch[2])
-    if (!Number.isFinite(min) || !Number.isFinite(max)) return null
+    const a = Number(rangeMatch[1])
+    const b = Number(rangeMatch[2])
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return null
+    // Normalise so downstream Ranged consumers see min <= max even for "80-50".
+    const min = Math.min(a, b)
+    const max = Math.max(a, b)
     return min === max ? min : [min, max]
   }
 

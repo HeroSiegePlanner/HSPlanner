@@ -18,12 +18,13 @@ pub fn parse_custom_stat_value(raw: &str) -> Option<Ranged> {
     }
 
     if let Some(caps) = RANGE_RE.captures(trimmed) {
-        let min: f64 = caps[1].parse().ok()?;
-        let max: f64 = caps[2].parse().ok()?;
-        if !min.is_finite() || !max.is_finite() {
+        let a: f64 = caps[1].parse().ok()?;
+        let b: f64 = caps[2].parse().ok()?;
+        if !a.is_finite() || !b.is_finite() {
             return None;
         }
-        return Some((min, max));
+        // Normalise so the Ranged invariant (.0 <= .1) holds for "80-50".
+        return Some((a.min(b), a.max(b)));
     }
 
     let num: f64 = trimmed.parse().ok()?;
