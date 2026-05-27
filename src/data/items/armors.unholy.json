@@ -1,7 +1,7 @@
 [
   {
     "id": "body_armor_unholy_grand_arch_wizard_s_mantle",
-    "name": "Grand Arch Wizard´s Mantle",
+    "name": "Grand Arch Wizard's Mantle",
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "unholy",
@@ -14,7 +14,7 @@
       ],
       "enhanced_defense": [
         600,
-        1
+        1000
       ],
       "all_skills": [
         5,
@@ -29,17 +29,23 @@
         40,
         125
       ],
-      "damage_mitigation": -15,
+      "all_damage_taken_reduced_pct": -15,
       "all_resistances": [
         25,
         50
+      ],
+      "max_all_resistances": -10
+    },
+    "skillBonuses": {
+      "Radiant Power": [
+        5,
+        15
       ]
     },
     "uniqueEffects": [
       "Grant Spell: Radiant Power",
       "Manad On Level",
-      "Energyd On Level",
-      "Max All Resist"
+      "Energyd On Level"
     ],
     "sockets": 6,
     "maxSockets": 6
