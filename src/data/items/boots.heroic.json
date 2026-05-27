@@ -16,24 +16,34 @@
         130,
         160
       ],
+      "all_skills": [
+        2,
+        3
+      ],
       "movement_speed": [
-        80,
-        100
+        65,
+        85
       ],
       "increased_attack_speed": [
-        25,
-        40
+        20,
+        30
       ],
       "magic_skill_damage": [
         20,
         35
+      ],
+      "extra_guardian_chance": [
+        10,
+        15
+      ],
+      "summon_attack_radius": [
+        50,
+        75
       ]
     },
     "uniqueEffects": [
       "All Skills Class",
-      "Guardian Additional Attack",
-      "Guardian Attack Range",
-      "Movement Phasing None"
+      "Movement Phasing"
     ],
     "sockets": 2,
     "maxSockets": 2
@@ -91,41 +101,41 @@
     "requiresLevel": 97,
     "implicit": {
       "defense": [
-        52,
-        64
+        82,
+        114
       ],
       "enhanced_defense": [
-        110,
-        150
+        310,
+        350
       ],
       "movement_speed": [
-        40,
-        55
+        60,
+        85
       ],
       "jumping_power": [
-        30,
+        40,
         50
       ],
       "to_energy": [
-        15,
-        20
+        35,
+        50
       ],
       "magic_skill_damage": [
-        16,
-        25
+        27,
+        40
       ],
-      "faster_hit_recovery": 25,
+      "faster_hit_recovery": 75,
       "all_resistances": [
-        20,
-        30
+        25,
+        40
       ],
       "magic_find": [
-        15,
-        30
+        25,
+        40
       ]
     },
     "uniqueEffects": [
-      "Grant Aura: Holy Aura"
+      "Grant Aura: Holy Aura Level [20-30]"
     ]
   },
   {
@@ -150,12 +160,12 @@
         85
       ],
       "crit_chance": [
-        8,
-        17
+        15,
+        25
       ],
       "crit_damage": [
-        28,
-        50
+        35,
+        60
       ],
       "to_dexterity": 20,
       "all_attributes": [
@@ -163,15 +173,25 @@
         20
       ],
       "faster_hit_recovery": 40,
-      "light_radius": 3,
+      "defense_vs_missiles": [
+        50,
+        150
+      ],
+      "light_radius": 5,
       "fire_resistance": [
         40,
         75
       ]
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 7,
+        "description": "cast Blazing Trail Level 49"
+      }
+    ],
     "uniqueEffects": [
-      "Chance When Attacking: Blazing Trail",
-      "Defense Vs Missiles"
+      "Movement Phasing"
     ]
   },
   {
@@ -242,6 +262,480 @@
       "magic_skill_damage": [
         30,
         40
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_adamant_roamers",
+    "name": "Adamant Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        180,
+        260
+      ],
+      "enhanced_defense": [
+        200,
+        250
+      ],
+      "all_skills": 4,
+      "movement_speed": [
+        50,
+        65
+      ],
+      "to_armor": [
+        50,
+        75
+      ],
+      "increased_armor": [
+        4,
+        8
+      ],
+      "faster_hit_recovery": 75,
+      "all_damage_taken_reduced_pct": [
+        8,
+        16
+      ],
+      "all_resistances": 25
+    },
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_heroic_astral_roamers",
+    "name": "Astral Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_arcane_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_shadow_burning": [
+        15,
+        25
+      ],
+      "arcane_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_brutal_roamers",
+    "name": "Brutal Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "physical_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "additive_physical_damage": [
+        32,
+        60
+      ],
+      "extra_damage_bleeding": [
+        15,
+        25
+      ],
+      "attack_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_chilling_roamers",
+    "name": "Chilling Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "cold_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_cold_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_frost_bitten": [
+        15,
+        25
+      ],
+      "cold_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_grimbone_s_marchers",
+    "name": "Grimbone's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        82,
+        100
+      ],
+      "enhanced_defense": [
+        220,
+        250
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "movement_speed": [
+        25,
+        50
+      ],
+      "skill_haste": [
+        15,
+        25
+      ],
+      "sentry_attack_speed": [
+        10,
+        25
+      ],
+      "sentry_damage": [
+        25,
+        40
+      ],
+      "faster_hit_recovery": 100
+    },
+    "uniqueEffects": [
+      "Sentry Skills [2-3]",
+      "Sentry Amount +1",
+      "Cannot Be Frozen"
+    ],
+    "sockets": 2,
+    "maxSockets": 3
+  },
+  {
+    "id": "boots_heroic_rift_vectors",
+    "name": "Rift Vectors",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "movement_speed": [
+        45,
+        75
+      ],
+      "faster_cast_rate": [
+        15,
+        30
+      ],
+      "increased_attack_speed": [
+        15,
+        30
+      ],
+      "all_attributes": [
+        20,
+        30
+      ]
+    },
+    "skillBonuses": {
+      "Teleport": 1
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "boots_heroic_scorching_roamers",
+    "name": "Scorching Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "fire_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_fire_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_burning": [
+        15,
+        25
+      ],
+      "fire_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_soulflaming_marchers",
+    "name": "Soulflaming Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        52,
+        64
+      ],
+      "enhanced_defense": [
+        120,
+        150
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "faster_hit_recovery": 50
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "boots_heroic_stranded_boot",
+    "name": "Stranded Boot",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        100,
+        110
+      ],
+      "enhanced_defense": [
+        200,
+        240
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "cold_skills": [
+        6,
+        8
+      ],
+      "movement_speed": [
+        100,
+        110
+      ],
+      "flat_cold_skill_damage": [
+        22,
+        44
+      ],
+      "faster_hit_recovery": 75,
+      "all_resistances": 18
+    },
+    "skillBonuses": {
+      "Lost at Sea": 1,
+      "Walson's Aid": 1
+    },
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 4,
+        "description": "cast Set Sail Level 30"
+      },
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Anchor Swing"
+      }
+    ],
+    "uniqueEffects": [
+      "Cannot Be Frozen"
+    ]
+  },
+  {
+    "id": "boots_heroic_thunder_roamers",
+    "name": "Thunder Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "lightning_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_lightning_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_stasis": [
+        15,
+        25
+      ],
+      "lightning_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_venom_roamers",
+    "name": "Venom Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "defense": [
+        72,
+        90
+      ],
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "poison_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_poison_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_poisoned": [
+        15,
+        25
+      ],
+      "poison_skill_damage": [
+        22,
+        30
       ],
       "faster_hit_recovery": 75
     },
