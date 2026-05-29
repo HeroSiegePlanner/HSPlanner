@@ -24,16 +24,16 @@ function iconForName(name: string): string | undefined {
 
 const GEM_COLOR: Record<string, string> = {
   amethyst: '#c97acc',
-  diamond: '#d4cfbf',
-  emerald: '#74c98a',
-  ruby: '#d96b5a',
-  sapphire: '#5a8fc9',
-  topaz: '#e0b864',
+  diamond: 'var(--color-text)',
+  emerald: 'var(--color-stat-green)',
+  ruby: 'var(--color-stat-red)',
+  sapphire: 'var(--color-stat-blue)',
+  topaz: 'var(--color-accent-hot)',
   skull: '#7a6a5a',
 }
 function gemColorForName(name: string): string {
   const last = name.split(' ').slice(-1)[0]?.toLowerCase() ?? ''
-  return GEM_COLOR[last] ?? '#5a5448'
+  return GEM_COLOR[last] ?? 'var(--color-faint)'
 }
 
 type Tab = 'items' | 'uncut'

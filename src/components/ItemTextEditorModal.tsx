@@ -109,7 +109,7 @@ export default function ItemTextEditorModal({
                 </span>
               )}
               {errorCount === 0 && warnCount > 0 && (
-                <span className="ml-auto text-amber-300">
+                <span className="ml-auto text-stat-orange">
                   {warnCount} warning{warnCount !== 1 ? 's' : ''}
                 </span>
               )}
@@ -184,7 +184,7 @@ function ErrorRow({ err }: { err: ParseError }) {
   const isError = err.severity === 'error'
   const cls = isError
     ? 'border-stat-red/40 bg-stat-red/10 text-stat-red'
-    : 'border-amber-500/40 bg-amber-500/10 text-amber-200'
+    : 'border-stat-orange/40 bg-stat-orange/10 text-stat-orange'
   const tag = isError ? 'ERR' : 'WARN'
   return (
     <div

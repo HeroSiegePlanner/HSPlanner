@@ -118,10 +118,10 @@ export function CharmSection({
               type="button"
               onClick={() => onSelect(p.slotKey)}
               aria-label={base.name}
-              className={`relative w-full h-full rounded text-[10px] flex flex-col items-center justify-center text-center transition-colors overflow-hidden ${
+              className={`relative w-full h-full rounded-[3px] text-[10px] flex flex-col items-center justify-center text-center transition-colors overflow-hidden ${
                 isActive
                   ? 'border-2 border-accent bg-accent/10 ring-1 ring-accent'
-                  : `border border-[#846339] ${rarityBg} hover:opacity-90 cursor-pointer`
+                  : `border border-accent-deep ${rarityBg} hover:opacity-90 cursor-pointer`
               }`}
             >
               {sprite ? (
@@ -180,7 +180,7 @@ export function CharmSection({
             }}
             disabled={!nextEmptySlotKey}
             style={{ gridColumn: col + 1, gridRow: row + 1 }}
-            className="rounded text-[10px] flex items-center justify-center border border-[#5a4528] bg-[#120c08] hover:border-[#846339] text-transparent hover:text-accent/40 cursor-pointer disabled:cursor-not-allowed"
+            className="rounded-[3px] text-[10px] flex items-center justify-center border border-[#5a4528] bg-[#120c08] hover:border-accent-deep text-transparent hover:text-accent/40 cursor-pointer disabled:cursor-not-allowed"
             aria-label="Empty charm slot"
           >
             <span className="text-lg">+</span>

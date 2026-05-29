@@ -80,7 +80,7 @@ function affixToPickerRow(a: Affix, opts?: { useDescriptionAsName?: boolean }): 
     tier: a.tier,
     kindLabel: a.kind?.toUpperCase() ?? 'AFFIX',
     meta,
-    iconColor: isUnholy ? '#cf6db0' : '#c9a560',
+    iconColor: isUnholy ? '#cf6db0' : 'var(--color-accent)',
     iconNode: isUnholy ? <InvertedCrossIcon color="#cf6db0" /> : undefined,
     tooltip: buildAffixTooltip(a),
   }

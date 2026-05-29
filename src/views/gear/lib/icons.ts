@@ -17,17 +17,17 @@ export function socketableIconForName(name: string): string | undefined {
 
 const GEM_TINT: Record<string, string> = {
   amethyst: '#c97acc',
-  diamond: '#d4cfbf',
-  emerald: '#74c98a',
-  ruby: '#d96b5a',
-  sapphire: '#5a8fc9',
-  topaz: '#e0b864',
+  diamond: 'var(--color-text)',
+  emerald: 'var(--color-stat-green)',
+  ruby: 'var(--color-stat-red)',
+  sapphire: 'var(--color-stat-blue)',
+  topaz: 'var(--color-accent-hot)',
   skull: '#7a6a5a',
 }
 export function gemColorForName(name: string): string {
   // Picks a fallback diamond-tint colour for a gem/jewel based on the last word of its name (sapphire → blue, ruby → red, etc.). Used by the socket PickerRow when no PNG icon is bundled, so the row still reads as a colour-coded gem.
   const last = name.split(' ').slice(-1)[0]?.toLowerCase() ?? ''
-  return GEM_TINT[last] ?? '#5a5448'
+  return GEM_TINT[last] ?? 'var(--color-faint)'
 }
 
 export function gemTintForRarity(rarity: ItemRarity | undefined): string {

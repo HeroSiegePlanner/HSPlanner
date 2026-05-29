@@ -49,7 +49,7 @@ export function ForgedModsSection({
           tier: m.tier,
           kindLabel: 'CRYSTAL',
           meta: m.description,
-          iconColor: '#d96b5a',
+          iconColor: 'var(--color-stat-red)',
           tooltip: buildCrystalModTooltip(m, { previousStats }),
           tooltipTone: 'satanic' as const,
         })),

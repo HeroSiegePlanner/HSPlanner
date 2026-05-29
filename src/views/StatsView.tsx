@@ -465,7 +465,7 @@ export default function StatsView() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search stats, attributes, or skills…"
           data-search-input
-          className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 pr-9 text-text placeholder:italic placeholder:text-faint focus:border-accent-deep focus:outline-none"
+          className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 pr-9 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
           style={{
             background:
               'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',

@@ -179,7 +179,21 @@ export default function NotesView() {
         <ToolbarBtn
           onClick={openLinkPrompt}
           title="Insert link"
-          label="🔗"
+          label={
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-3.5 w-3.5"
+              aria-hidden
+            >
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+          }
         />
         <ToolbarBtn onClick={clearFormat} title="Clear formatting" label="⌫" />
       </div>
@@ -288,7 +302,16 @@ function ColorPalette({ onPick }: { onPick: (color: string) => void }) {
           className="h-2 w-4 rounded-[2px]"
           style={{ backgroundColor: customColor }}
         />
-        <span className="text-[10px]">▾</span>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={3}
+          className="h-2.5 w-2.5"
+          aria-hidden
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </button>
       {pickerOpen && (
         <div className="absolute left-0 top-full z-50 mt-1 flex flex-col gap-2 rounded-[3px] border border-accent-deep bg-panel p-2 shadow-[0_12px_40px_rgba(0,0,0,0.7)]">

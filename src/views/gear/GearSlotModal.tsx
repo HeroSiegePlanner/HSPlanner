@@ -217,7 +217,7 @@ export function GearSlotModal({
               onMouseLeave={() => setHover(null)}
             >
               {isOffhandLocked ? (
-                <div className="m-4 rounded border border-amber-500/30 bg-amber-500/5 px-3 py-3 text-[11px] text-amber-200">
+                <div className="m-4 rounded-[6px] border border-amber-500/30 bg-amber-500/5 px-3 py-3 text-[11px] text-amber-200">
                   Offhand is locked while a Two-Handed weapon is in the main
                   hand. Remove the weapon to free this slot.
                 </div>

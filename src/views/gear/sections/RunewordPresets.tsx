@@ -42,7 +42,7 @@ export function RunewordPresets({
           tier: rw.runes.length,
           kindLabel: 'RUNEWORD',
           meta: `${runeSeq}${reqLabel}`,
-          iconColor: '#e0b864',
+          iconColor: 'var(--color-accent-hot)',
           searchTerms: [
             rw.name,
             runeSeq,
