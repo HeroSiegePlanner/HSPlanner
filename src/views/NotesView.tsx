@@ -3,9 +3,9 @@ import { useBuild } from '../store/build'
 import { isSafeUrl, sanitizeHtml } from '../utils/sanitizeHtml'
 
 const PRESET_COLORS = [
-  '#e8e8ea',
+  '#d4cfbf',
   '#9b9ba1',
-  '#ffd166',
+  '#e0b864',
   '#ef476f',
   '#06d6a0',
   '#118ab2',
@@ -25,6 +25,11 @@ export default function NotesView() {
   useEffect(() => {
     const el = editorRef.current
     if (!el) return
+    // While the user is typing in the focused editor it is the source of truth;
+    // re-assigning innerHTML (e.g. because the store's sanitized value differs
+    // string-wise from the live DOM) would reset the caret mid-keystroke. Only
+    // sync external changes (switching builds) when the editor is not focused.
+    if (document.activeElement === el) return
     if (el.innerHTML === notes) return
     el.innerHTML = notes
   }, [notes])
@@ -120,7 +125,7 @@ export default function NotesView() {
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-1 rounded border border-border bg-panel p-2">
+      <div className="flex flex-wrap items-center gap-1 rounded-md border border-border bg-panel p-2">
         <ToolbarBtn
           onClick={() => exec('bold')}
           title="Bold (Ctrl+B)"
@@ -174,14 +179,28 @@ export default function NotesView() {
         <ToolbarBtn
           onClick={openLinkPrompt}
           title="Insert link"
-          label="🔗"
+          label={
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-3.5 w-3.5"
+              aria-hidden
+            >
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+          }
         />
         <ToolbarBtn onClick={clearFormat} title="Clear formatting" label="⌫" />
       </div>
 
       {linkOpen && (
-        <div className="flex items-center gap-2 rounded border border-border bg-panel-2 p-2">
-          <label className="text-[10px] uppercase tracking-wider text-muted">
+        <div className="flex items-center gap-2 rounded-md border border-border bg-panel-2 p-2">
+          <label className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
             URL
           </label>
           <input
@@ -193,17 +212,23 @@ export default function NotesView() {
               if (e.key === 'Escape') setLinkOpen(false)
             }}
             placeholder="https://..."
-            className="flex-1 rounded border border-border bg-panel px-2 py-1 text-xs"
+            className="flex-1 rounded-[3px] border border-border-2 px-2 py-1 text-xs text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+            style={{
+              background:
+                'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+            }}
           />
           <button
             onClick={insertLink}
-            className="rounded border border-accent/50 bg-accent/10 px-2 py-1 text-xs text-accent hover:bg-accent/20"
+            className="rounded-[3px] border border-accent-deep px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+            style={{ background: 'linear-gradient(180deg, #3a2f1a, #2a2418)' }}
           >
             Insert
           </button>
           <button
             onClick={() => setLinkOpen(false)}
-            className="rounded border border-border bg-panel px-2 py-1 text-xs text-muted hover:text-text"
+            className="rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
           >
             Cancel
           </button>
@@ -220,7 +245,7 @@ export default function NotesView() {
         onMouseUp={saveSelection}
         onKeyUp={saveSelection}
         spellCheck
-        className="min-h-[24rem] rounded border border-border bg-panel p-4 text-sm leading-relaxed text-text outline-none focus:border-accent notes-editor"
+        className="min-h-[24rem] rounded-md border border-border bg-panel p-4 text-sm leading-relaxed text-text outline-none focus:border-accent-deep notes-editor"
       />
 
       <div className="text-[10px] text-muted">
@@ -248,7 +273,7 @@ function ToolbarBtn({
         onClick()
       }}
       title={title}
-      className="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded border border-transparent px-1.5 text-xs text-text hover:border-border hover:bg-panel-2"
+      className="inline-flex h-7 min-w-[1.75rem] items-center justify-center rounded-[3px] border border-border-2 bg-panel-2 px-1.5 text-xs text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
     >
       {label}
     </button>
@@ -261,7 +286,7 @@ function Divider() {
 
 function ColorPalette({ onPick }: { onPick: (color: string) => void }) {
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [customColor, setCustomColor] = useState('#ffd166')
+  const [customColor, setCustomColor] = useState('#e0b864')
   return (
     <div className="relative">
       <button
@@ -270,17 +295,26 @@ function ColorPalette({ onPick }: { onPick: (color: string) => void }) {
           setPickerOpen((o) => !o)
         }}
         title="Text color"
-        className="inline-flex h-7 items-center gap-1 rounded border border-transparent px-1.5 text-xs text-text hover:border-border hover:bg-panel-2"
+        className="inline-flex h-7 items-center gap-1 rounded-[3px] border border-border-2 bg-panel-2 px-1.5 text-xs text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
       >
         <span>A</span>
         <span
-          className="h-2 w-4 rounded"
+          className="h-2 w-4 rounded-[2px]"
           style={{ backgroundColor: customColor }}
         />
-        <span className="text-[10px]">▾</span>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={3}
+          className="h-2.5 w-2.5"
+          aria-hidden
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
       </button>
       {pickerOpen && (
-        <div className="absolute left-0 top-full z-50 mt-1 flex flex-col gap-2 rounded border border-border bg-panel p-2 shadow-lg">
+        <div className="absolute left-0 top-full z-50 mt-1 flex flex-col gap-2 rounded-[3px] border border-accent-deep bg-panel p-2 shadow-[0_12px_40px_rgba(0,0,0,0.7)]">
           <div className="grid grid-cols-4 gap-1">
             {PRESET_COLORS.map((c) => (
               <button
@@ -291,7 +325,7 @@ function ColorPalette({ onPick }: { onPick: (color: string) => void }) {
                   onPick(c)
                   setPickerOpen(false)
                 }}
-                className="h-6 w-6 rounded border border-border hover:scale-110 transition-transform"
+                className="h-6 w-6 rounded-[3px] border border-border transition-colors hover:border-accent-hot"
                 style={{ backgroundColor: c }}
                 title={c}
               />
@@ -307,7 +341,7 @@ function ColorPalette({ onPick }: { onPick: (color: string) => void }) {
                 onPick(customColor)
                 setPickerOpen(false)
               }}
-              className="h-6 w-10 cursor-pointer rounded border border-border bg-panel-2"
+              className="h-6 w-10 cursor-pointer rounded-[3px] border border-border-2 bg-panel-2"
             />
           </label>
         </div>

@@ -116,10 +116,10 @@ function SocketPickerTrigger({
             className="block h-3 w-3 rotate-45 rounded-[1px]"
             style={{
               background: `linear-gradient(135deg, ${
-                current.iconColor ?? '#5a5448'
+                current.iconColor ?? 'var(--color-faint)'
               }, #0d0b07)`,
               border: `1px solid color-mix(in srgb, ${
-                current.iconColor ?? '#5a5448'
+                current.iconColor ?? 'var(--color-faint)'
               } 60%, #000)`,
             }}
             aria-hidden="true"

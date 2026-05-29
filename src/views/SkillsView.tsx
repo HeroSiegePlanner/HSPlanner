@@ -9,6 +9,7 @@ import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { computeBuildStatsAsync } from '../lib/calc/bridge'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
+import { DAMAGE_COLORS } from '../utils/damageColors'
 import {
   aggregateItemSkillBonuses,
   formatValue,
@@ -28,28 +29,6 @@ import type {
   Skill,
   SubskillNode,
 } from '../types'
-
-const DAMAGE_BORDER: Record<DamageType, string> = {
-  physical: 'border-white/60',
-  lightning: 'border-yellow-400',
-  cold: 'border-sky-400',
-  fire: 'border-red-400',
-  poison: 'border-green-400',
-  arcane: 'border-purple-400',
-  explosion: 'border-orange-400',
-  magic: 'border-pink-400',
-}
-
-const DAMAGE_GLOW: Record<DamageType, string> = {
-  physical: 'shadow-[0_0_12px_rgba(255,255,255,0.3)]',
-  lightning: 'shadow-[0_0_12px_rgba(250,204,21,0.45)]',
-  cold: 'shadow-[0_0_12px_rgba(56,189,248,0.45)]',
-  fire: 'shadow-[0_0_12px_rgba(248,113,113,0.45)]',
-  poison: 'shadow-[0_0_12px_rgba(74,222,128,0.45)]',
-  arcane: 'shadow-[0_0_12px_rgba(192,132,252,0.45)]',
-  explosion: 'shadow-[0_0_12px_rgba(251,146,60,0.45)]',
-  magic: 'shadow-[0_0_12px_rgba(244,114,182,0.45)]',
-}
 
 const CELL = 84
 const GAP = 18
@@ -337,7 +316,7 @@ function SkillTree({
                 y1={a.y}
                 x2={b.x}
                 y2={b.y}
-                stroke={satisfied ? '#c48a3a' : '#7c2d2d'}
+                style={{ stroke: satisfied ? 'var(--color-accent)' : 'var(--color-stat-red)' }}
                 strokeWidth={2.5}
               />
             )
@@ -406,9 +385,12 @@ function SkillIcon({
 }) {
   const allocated = rank > 0
   const border = skill.damageType
-    ? DAMAGE_BORDER[skill.damageType]
+    ? DAMAGE_COLORS[skill.damageType].border
     : 'border-accent'
-  const glow = allocated && skill.damageType ? DAMAGE_GLOW[skill.damageType] : ''
+  const glow =
+    allocated && skill.damageType
+      ? DAMAGE_COLORS[skill.damageType].glow
+      : ''
   const canInc = canIncrement && rank < skill.maxRank && !locked
 
   return (
@@ -493,7 +475,7 @@ function SkillIcon({
           aria-label={`Open ${skill.name} subtree`}
           title="Open subtree"
         >
-          ⚙
+          <GearIcon className="h-3 w-3" />
         </button>
       )}
     </motion.div>
@@ -564,7 +546,7 @@ function SkillDetailsPanel({
             <ControlsRow keys="L-CLICK" label="Add a point" />
             <ControlsRow keys="R-CLICK" label="Remove a point" />
             <ControlsRow keys="HOVER" label="Pin details panel" />
-            <ControlsRow keys="⚙" label="Open subtree" />
+            <ControlsRow keys={<GearIcon className="h-3 w-3" />} label="Open subtree" />
           </ul>
         </div>
 
@@ -841,7 +823,16 @@ function DetailBlock({
   )
 }
 
-function ControlsRow({ keys, label }: { keys: string; label: string }) {
+function GearIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className={className} aria-hidden>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  )
+}
+
+function ControlsRow({ keys, label }: { keys: ReactNode; label: string }) {
   return (
     <li className="flex items-center justify-between gap-2">
       <span
@@ -860,7 +851,7 @@ function DamageLegend({ type }: { type: DamageType }) {
     <li className="flex items-center gap-1.5">
       <span
         aria-hidden
-        className={`inline-block h-1.5 w-1.5 shrink-0 rotate-45 border ${DAMAGE_BORDER[type]}`}
+        className={`inline-block h-1.5 w-1.5 shrink-0 rotate-45 border ${DAMAGE_COLORS[type].border}`}
       />
       {type}
     </li>

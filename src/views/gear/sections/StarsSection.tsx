@@ -16,7 +16,7 @@ export function StarsSection({
       rightSlot={
         <span
           className={`font-mono text-[10px] tabular-nums tracking-[0.04em] ${
-            stars > 0 ? 'text-amber-300' : 'text-faint'
+            stars > 0 ? 'text-accent-hot' : 'text-faint'
           }`}
         >
           {stars > 0 ? `+${bonusPct}% to affixes` : 'no bonus'}
@@ -35,14 +35,14 @@ export function StarsSection({
               aria-label={`${target} star${target === 1 ? '' : 's'}`}
               className={`text-[20px] leading-none transition-all ${
                 filled
-                  ? 'text-amber-300 hover:text-amber-200'
-                  : 'text-muted/30 hover:text-amber-200/50'
+                  ? 'text-accent-hot hover:text-[#fff0c4]'
+                  : 'text-muted/30 hover:text-accent-hot/50'
               }`}
               style={
                 filled
                   ? {
                       textShadow:
-                        '0 0 10px rgba(252,211,77,0.45), 0 0 2px rgba(252,211,77,0.6)',
+                        '0 0 10px rgba(224,184,100,0.45), 0 0 2px rgba(224,184,100,0.6)',
                     }
                   : undefined
               }

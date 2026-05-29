@@ -132,8 +132,8 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
   return (
     <motion.div
       role="presentation"
-      className="fixed inset-0 z-50 flex items-center justify-center p-6 backdrop-blur-sm"
-      onClick={onClose}
+      className="fixed inset-0 z-100 flex items-center justify-center p-6 backdrop-blur-sm"
+      onMouseDown={onClose}
       variants={backdropVariants}
       initial="initial"
       animate="animate"
@@ -143,14 +143,17 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
       }}
     >
       <motion.div
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="subtree-overlay-title"
+        onMouseDown={(e) => e.stopPropagation()}
         variants={panelVariants}
         initial="initial"
         animate="animate"
-        className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-sm border border-border"
+        className="relative flex max-h-full w-full max-w-3xl flex-col overflow-hidden rounded-[6px] border border-border"
         style={{
           background:
-            'linear-gradient(180deg, var(--color-panel-2), var(--color-bg))',
+            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
         }}
@@ -171,6 +174,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
             />
             <div>
               <h2
+                id="subtree-overlay-title"
                 className="m-0 text-[18px] font-semibold tracking-[0.04em] text-accent-hot"
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -208,13 +212,13 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
             </div>
             <button
               onClick={() => resetSubskillsFor(skill.id)}
-              className="rounded-xs border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              className="rounded-[3px] border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
             >
               Reset
             </button>
             <button
               onClick={onClose}
-              className="rounded-xs border border-accent-deep px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot"
+              className="rounded-[3px] border border-accent-deep px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot"
               style={{
                 background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
               }}

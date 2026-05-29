@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../lib/motion'
@@ -21,6 +21,12 @@ interface ModalProps {
   subtitle?: ReactNode
   /** Disables the Close button (e.g. while a blocking action runs). */
   closeDisabled?: boolean
+  /** Optional controls rendered in the header, left of the Close button. */
+  headerActions?: ReactNode
+  /** Extra classes appended to the backdrop wrapper (e.g. 'p-6'). */
+  backdropClassName?: string
+  /** Extra inline styles merged into the panel (e.g. a dynamic width). */
+  panelStyle?: CSSProperties
   /** Render into document.body via a portal. Defaults to true. */
   portal?: boolean
   /** Panel body, rendered below the header. */
@@ -39,13 +45,16 @@ export function Modal({
   titleClassName,
   subtitle,
   closeDisabled,
+  headerActions,
+  backdropClassName,
+  panelStyle,
   portal = true,
   children,
 }: ModalProps) {
   const tree = (
     <motion.div
       role="presentation"
-      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
+      className={`fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm${backdropClassName ? ` ${backdropClassName}` : ''}`}
       onMouseDown={onClose}
       variants={backdropVariants}
       initial="initial"
@@ -69,6 +78,7 @@ export function Modal({
             'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
           boxShadow:
             'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
+          ...panelStyle,
         }}
       >
         <CornerMarks />
@@ -102,15 +112,18 @@ export function Modal({
               </div>
             )}
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={closeDisabled}
-            aria-label="Close"
-            className="shrink-0 rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Close
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            {headerActions}
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={closeDisabled}
+              aria-label="Close"
+              className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Close
+            </button>
+          </div>
         </header>
 
         {children}

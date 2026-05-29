@@ -54,7 +54,7 @@ export default function CharacterView() {
           {classes.length === 0 ? (
             <p className="font-mono text-[12px] tracking-[0.04em] text-muted italic">
               No classes found. Add a file in{' '}
-              <code className="rounded bg-panel-2 px-1 font-mono text-accent-hot">
+              <code className="rounded-[3px] bg-panel-2 px-1 font-mono text-accent-hot">
                 src/data/classes/*.json
               </code>
               .

@@ -80,7 +80,7 @@ function affixToPickerRow(a: Affix, opts?: { useDescriptionAsName?: boolean }): 
     tier: a.tier,
     kindLabel: a.kind?.toUpperCase() ?? 'AFFIX',
     meta,
-    iconColor: isUnholy ? '#cf6db0' : '#c9a560',
+    iconColor: isUnholy ? '#cf6db0' : 'var(--color-accent)',
     iconNode: isUnholy ? <InvertedCrossIcon color="#cf6db0" /> : undefined,
     tooltip: buildAffixTooltip(a),
   }
@@ -170,7 +170,7 @@ export function AffixesSection({
                 {idx + 1}
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
-                <span className="font-mono font-semibold tabular-nums text-amber-300">
+                <span className="font-mono font-semibold tabular-nums text-accent-hot">
                   {eq.customValue !== undefined && affix.statKey
                     ? formatValue(eq.customValue, affix.statKey)
                     : formatAffixRange(affix, equipped.stars)}

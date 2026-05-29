@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
 import ItemTextEditorModal from '../../components/ItemTextEditorModal'
 import type { PickerRow } from '../../components/PickerModal'
 import { detectRuneword, forgeKindFor, getItem, getItemSet, isGearSlot } from '../../data'
@@ -9,7 +8,7 @@ import type { EquippedItem, Inventory, SlotKey, SocketType } from '../../types'
 import { useSetHoverPreview } from '../../contexts/HoverContext'
 import { type BuildSummaryDeps } from './lib/diff'
 import { pickerItemsForSlot } from './pickerItems'
-import { CornerMarks } from '../../components/CornerMarks'
+import { Modal } from '../../components/Modal'
 import { ConfigEmptyState, ConfigSectionHeader, SectionCard } from './SectionCard'
 import { CompareColumn } from './CompareColumn'
 import { GearItemRow } from './GearItemRow'
@@ -146,59 +145,13 @@ export function GearSlotModal({
 
   return (
     <>
-      {createPortal(
-    <div
-      role="presentation"
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/70"
-      onMouseDown={onClose}
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
-      }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        onMouseDown={(e) => e.stopPropagation()}
-        className={`relative flex h-[88vh] ${showCompareCol && !isOffhandLocked ? 'w-390' : 'w-295'} max-w-[96vw] flex-col overflow-hidden rounded-md border border-border`}
-        style={{
-          background:
-            'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
-          boxShadow:
-            'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
-        }}
-      >
-        <CornerMarks />
-
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)',
-          }}
-        >
-          <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-              <span
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
-              />
-              Gear Slot
-            </div>
-            <h2
-              className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-              style={{ textShadow: '0 0 16px rgba(224,184,100,0.15)' }}
-            >
-              {equipped && base ? (
-                <>
-                  {slotName}
-                </>
-              ) : (
-                slotName
-              )}
-            </h2>
-          </div>
-          <div className="flex items-center gap-2">
+      <Modal
+        onClose={onClose}
+        eyebrow="Gear Slot"
+        title={slotName}
+        panelClassName={`h-[88vh] ${showCompareCol && !isOffhandLocked ? 'w-390' : 'w-295'} max-w-[96vw]`}
+        headerActions={
+          <>
             <button
               onClick={() => setShowCompareCol((v) => !v)}
               aria-pressed={showCompareCol}
@@ -226,14 +179,9 @@ export function GearSlotModal({
                 Remove
               </button>
             )}
-            <button
-              onClick={onClose}
-              className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-            >
-              Close
-            </button>
-          </div>
-        </header>
+          </>
+        }
+      >
 
         <div className="flex min-h-0 flex-1 flex-row">
           <div className="flex w-140 min-w-0 shrink-0 flex-col border-r border-border">
@@ -269,7 +217,7 @@ export function GearSlotModal({
               onMouseLeave={() => setHover(null)}
             >
               {isOffhandLocked ? (
-                <div className="m-4 rounded border border-amber-500/30 bg-amber-500/5 px-3 py-3 text-[11px] text-amber-200">
+                <div className="m-4 rounded-[6px] border border-amber-500/30 bg-amber-500/5 px-3 py-3 text-[11px] text-amber-200">
                   Offhand is locked while a Two-Handed weapon is in the main
                   hand. Remove the weapon to free this slot.
                 </div>
@@ -421,10 +369,7 @@ export function GearSlotModal({
             {filteredRows.length} item{filteredRows.length === 1 ? '' : 's'}
           </span>
         </footer>
-      </div>
-    </div>,
-        document.body,
-      )}
+      </Modal>
       {textEditorOpen && equipped && base && (
         <ItemTextEditorModal
           slot={slot}

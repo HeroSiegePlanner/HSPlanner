@@ -337,7 +337,7 @@ export default function LeftStatsPanel() {
                     effManaMin === undefined || effManaMax === undefined ? (
                       <span className="text-muted">—</span>
                     ) : (
-                      <span className="text-sky-300">
+                      <span className="text-stat-blue">
                         {formatNumRange(effManaMin, effManaMax)}
                       </span>
                     )
@@ -363,10 +363,10 @@ export default function LeftStatsPanel() {
                       <span
                         className={
                           sustainable
-                            ? "text-green-400"
+                            ? "text-stat-green"
                             : unsustainable
-                              ? "text-red-400"
-                              : "text-yellow-300"
+                              ? "text-stat-red"
+                              : "text-stat-orange"
                         }
                       >
                         {formatNumRange(manaPerSecMin, manaPerSecMax)}
@@ -379,7 +379,7 @@ export default function LeftStatsPanel() {
                 <Row
                   label="Mana regen"
                   value={
-                    <span className="text-sky-300">
+                    <span className="text-stat-blue">
                       {formatNumRange(manaRegenMin, manaRegenMax)}
                     </span>
                   }
@@ -391,10 +391,10 @@ export default function LeftStatsPanel() {
                       <span
                         className={
                           netMin >= 0
-                            ? "text-green-400"
+                            ? "text-stat-green"
                             : netMax < 0
-                              ? "text-red-400"
-                              : "text-yellow-300"
+                              ? "text-stat-red"
+                              : "text-stat-orange"
                         }
                       >
                         {netMin >= 0 ? "+" : ""}
@@ -410,10 +410,10 @@ export default function LeftStatsPanel() {
                       <span
                         className={
                           uptimeMin >= 100
-                            ? "text-green-400"
+                            ? "text-stat-green"
                             : uptimeMax < 75
-                              ? "text-red-400"
-                              : "text-yellow-300"
+                              ? "text-stat-red"
+                              : "text-stat-orange"
                         }
                       >
                         {formatNumRange(

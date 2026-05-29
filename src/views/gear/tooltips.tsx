@@ -214,7 +214,7 @@ export function buildRunewordTooltip(rw: {
       />
       <TooltipSection>
         <TooltipText>
-          <span className="font-mono text-[11px] tabular-nums tracking-[0.06em] text-amber-300">
+          <span className="font-mono text-[11px] tabular-nums tracking-[0.06em] text-accent-hot">
             {seq}
           </span>
         </TooltipText>

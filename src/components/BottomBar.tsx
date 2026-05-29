@@ -225,7 +225,7 @@ export default function BottomBar() {
             )
           }
         }}
-        className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-accent-deep px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
+        className="ml-auto inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
         style={{
           background:
             'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(42,36,24,0.35))',

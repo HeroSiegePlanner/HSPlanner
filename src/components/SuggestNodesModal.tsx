@@ -253,7 +253,12 @@ export default function SuggestNodesModal({
                 value={budget}
                 disabled={isComputing}
                 onChange={(e) => setBudget(Number(e.target.value))}
-                className="suggest-range w-full"
+                className="w-full"
+                style={{
+                  ['--sl-pct' as never]: `${
+                    ((budget - MIN_BUDGET) / (MAX_BUDGET - MIN_BUDGET)) * 100
+                  }%`,
+                }}
                 aria-label="Nodes to allocate"
               />
               <div className="mt-1 flex justify-between font-mono text-[9px] uppercase tracking-[0.14em] text-faint">
@@ -425,47 +430,6 @@ export default function SuggestNodesModal({
             </button>
           </div>
         </footer>
-
-      <style>{`
-        .suggest-range {
-          -webkit-appearance: none;
-          appearance: none;
-          height: 4px;
-          background: linear-gradient(
-            180deg,
-            #0a0b0f,
-            var(--color-panel-2)
-          );
-          border: 1px solid var(--color-border-2);
-          border-radius: 2px;
-          outline: none;
-        }
-        .suggest-range::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 14px;
-          height: 14px;
-          border-radius: 2px;
-          background: linear-gradient(180deg, #d4a64a, #8a6a2a);
-          border: 1px solid var(--color-accent-deep);
-          box-shadow: 0 0 10px rgba(224,184,100,0.45);
-          cursor: pointer;
-          transform: rotate(45deg);
-        }
-        .suggest-range::-moz-range-thumb {
-          width: 14px;
-          height: 14px;
-          border-radius: 2px;
-          background: linear-gradient(180deg, #d4a64a, #8a6a2a);
-          border: 1px solid var(--color-accent-deep);
-          box-shadow: 0 0 10px rgba(224,184,100,0.45);
-          cursor: pointer;
-        }
-        .suggest-range:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
-      `}</style>
     </Modal>
   )
 }

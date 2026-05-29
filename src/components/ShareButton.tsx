@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import { useBuild } from "../store/build";
 import { encodeBuildToShare } from "../utils/build/shareBuild";
-import { CornerMarks } from "./CornerMarks";
+import { Modal } from "./Modal";
 
 type Status = "idle" | "copied" | "error";
 
@@ -127,60 +126,13 @@ function ShareDialog({
         ? "text-stat-red"
         : "text-faint";
 
-  return createPortal(
-    <div
-      role="presentation"
-      className="fixed inset-0 z-100 flex items-center justify-center backdrop-blur-sm"
-      onMouseDown={onClose}
-      style={{
-        background:
-          "radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)",
-      }}
+  return (
+    <Modal
+      onClose={onClose}
+      eyebrow="Share"
+      title="Build Code"
+      panelClassName="max-h-[88vh] w-[34rem] max-w-[94vw]"
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        onMouseDown={(e) => e.stopPropagation()}
-        className="relative flex max-h-[88vh] w-[34rem] max-w-[94vw] flex-col overflow-hidden rounded-[6px] border border-border"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))",
-          boxShadow:
-            "inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)",
-        }}
-      >
-        <CornerMarks />
-        <header
-          className="flex items-start justify-between gap-3 border-b border-border px-5 py-4"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(201,165,90,0.05), transparent)",
-          }}
-        >
-          <div>
-            <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-              <span
-                aria-hidden
-                className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
-                style={{ boxShadow: "0 0 8px rgba(224,184,100,0.6)" }}
-              />
-              Share
-            </div>
-            <h2
-              className="m-0 text-[18px] font-semibold tracking-[0.02em] text-accent-hot"
-              style={{ textShadow: "0 0 16px rgba(224,184,100,0.15)" }}
-            >
-              Build Code
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-[3px] border border-border-2 bg-panel-2 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Close
-          </button>
-        </header>
-
         <div className="flex flex-col gap-3 p-5">
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
             Read-only build payload
@@ -241,9 +193,7 @@ function ShareDialog({
             </button>
           </div>
         </footer>
-      </div>
-    </div>,
-    document.body,
+    </Modal>
   );
 }
 

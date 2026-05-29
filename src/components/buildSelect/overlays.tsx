@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { motion } from 'motion/react'
-import { backdropVariants, panelVariants } from '../../lib/motion'
 import type { Folder } from '../../utils/build/savedBuilds'
 import { CaretIcon } from './icons'
-import { CornerMarks } from '../CornerMarks'
+import { Modal } from '../Modal'
 
-const PANEL_BG =
-  'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))'
-const HEADER_BG = 'linear-gradient(180deg, rgba(201,165,90,0.05), transparent)'
 const GOLD_BTN = 'linear-gradient(180deg, #3a2f1a, #2a2418)'
 
 const BTN_GHOST =
@@ -48,59 +43,18 @@ function OverlayShell({
   }, [onClose])
 
   return (
-    <motion.div
-      role="presentation"
-      onMouseDown={onClose}
-      variants={backdropVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="fixed inset-0 z-200 flex items-center justify-center backdrop-blur-[2px]"
-      style={{ background: 'rgba(0,0,0,0.6)' }}
+    <Modal
+      onClose={onClose}
+      eyebrow={section}
+      title={title}
+      panelClassName="max-w-[92vw]"
+      panelStyle={{ width }}
     >
-      <motion.div
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        onMouseDown={(e) => e.stopPropagation()}
-        variants={panelVariants}
-        initial="initial"
-        animate="animate"
-        className="relative flex flex-col overflow-hidden rounded-md border border-border"
-        style={{
-          width,
-          maxWidth: '92vw',
-          background: PANEL_BG,
-          boxShadow: '0 24px 64px rgba(0,0,0,0.7)',
-        }}
-      >
-        <CornerMarks size={12} opacity={0.6} />
-        <header
-          className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"
-          style={{ background: HEADER_BG }}
-        >
-          <div>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-faint">
-              {section}
-            </div>
-            <h3 className="m-0 text-[16px] font-semibold uppercase tracking-[0.14em] text-accent-hot">
-              {title}
-            </h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-          >
-            Close
-          </button>
-        </header>
-        <div className="flex flex-col gap-3 p-5">{children}</div>
-        <footer className="flex items-center justify-end gap-2 border-t border-border bg-black/30 px-5 py-3">
-          {footer}
-        </footer>
-      </motion.div>
-    </motion.div>
+      <div className="flex flex-col gap-3 p-5">{children}</div>
+      <footer className="flex items-center justify-end gap-2 border-t border-border bg-black/30 px-5 py-3">
+        {footer}
+      </footer>
+    </Modal>
   )
 }
 
@@ -456,7 +410,7 @@ function FolderChoice({
       className={`flex items-center gap-2 rounded-[3px] px-2.5 py-2 text-left text-[12px] transition-colors ${
         active
           ? 'bg-accent-hot/10 text-accent-hot'
-          : 'text-muted hover:bg-white/2.5 hover:text-text'
+          : 'text-muted hover:bg-white/[0.025] hover:text-text'
       }`}
       style={{ paddingLeft: 10 + indent * 16 }}
     >

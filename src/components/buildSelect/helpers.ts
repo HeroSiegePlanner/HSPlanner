@@ -5,7 +5,7 @@ export function classColor(classId: string | null): string {
   // Returns a stable HSL accent for a class id (used for the fallback letter
   // glyph and selection glow). Mirrors the hashing used by the old build
   // picker so colours stay consistent across the app.
-  if (!classId) return '#5a5448'
+  if (!classId) return 'var(--color-faint)'
   let hash = 0
   for (let i = 0; i < classId.length; i++) {
     hash = (hash * 31 + classId.charCodeAt(i)) | 0

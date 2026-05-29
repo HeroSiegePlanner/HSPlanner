@@ -3,6 +3,7 @@ import { ItemTooltipBody, RARITY_TONE } from '../../components/ItemTooltip'
 import Tooltip from '../../components/Tooltip'
 import type { PickerRow } from '../../components/PickerModal'
 import { gemTintForRarity } from './lib/icons'
+import { RARITY_TEXT } from './lib/rarity'
 
 export function GearItemRow({
   row,
@@ -17,28 +18,7 @@ export function GearItemRow({
 }) {
   // Renders one row inside the GearSlotModal's left column: rarity-coloured icon, base-type kindLabel, item name (in rarity colour), and meta string. Click selects the item; hover surfaces the compare overlay in the right column.
   const rarity = row.rarity
-  const nameColor =
-    rarity === 'common'
-      ? 'text-white'
-      : rarity === 'uncommon'
-        ? 'text-sky-400'
-        : rarity === 'rare'
-          ? 'text-accent-hot'
-          : rarity === 'mythic'
-            ? 'text-purple-400'
-            : rarity === 'satanic'
-              ? 'text-red-500'
-              : rarity === 'heroic'
-                ? 'text-lime-400'
-                : rarity === 'angelic'
-                  ? 'text-yellow-200'
-                  : rarity === 'satanic_set'
-                    ? 'text-green-400'
-                    : rarity === 'unholy'
-                      ? 'text-pink-400'
-                      : rarity === 'relic'
-                        ? 'text-orange-300'
-                        : 'text-text'
+  const nameColor = rarity ? RARITY_TEXT[rarity] : 'text-text'
 
   const itemBase = getItem(row.id)
   const tooltipTone = itemBase ? RARITY_TONE[itemBase.rarity] : 'neutral'

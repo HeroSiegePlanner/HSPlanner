@@ -10,6 +10,7 @@ import {
 } from '../lib/calc/bridge'
 import type { StatBreakdown, StatBreakdownKind } from '../lib/calc/bridge'
 import { useBuild } from '../store/build'
+import { DAMAGE_COLORS, skillHeroBg } from '../utils/damageColors'
 import {
   aggregateItemSkillBonuses,
   combineAdditiveAndMore,
@@ -35,7 +36,6 @@ import type {
 } from '../utils/nativeDamage'
 import type {
   AttributeKey,
-  DamageType,
   RangedStatMap,
   RangedValue,
   Skill,
@@ -49,28 +49,6 @@ const FILTER_TABS: Array<{ id: FilterTab; label: string }> = [
   { id: 'stats', label: 'All stats' },
   { id: 'skills', label: 'Skills' },
 ]
-
-const DAMAGE_TYPE_TEXT: Record<DamageType, string> = {
-  physical: 'text-text',
-  lightning: 'text-yellow-300',
-  cold: 'text-sky-300',
-  fire: 'text-red-400',
-  poison: 'text-green-400',
-  arcane: 'text-purple-300',
-  explosion: 'text-orange-300',
-  magic: 'text-pink-300',
-}
-
-const DAMAGE_TYPE_PILL: Record<DamageType, string> = {
-  physical: 'text-text/90 border-white/25 bg-white/[0.04]',
-  lightning: 'text-yellow-300 border-yellow-500/40 bg-yellow-500/[0.08]',
-  cold: 'text-sky-300 border-sky-500/40 bg-sky-500/[0.08]',
-  fire: 'text-red-400 border-red-500/40 bg-red-500/[0.08]',
-  poison: 'text-green-400 border-green-500/40 bg-green-500/[0.08]',
-  arcane: 'text-purple-300 border-purple-500/40 bg-purple-500/[0.08]',
-  explosion: 'text-orange-300 border-orange-500/40 bg-orange-500/[0.08]',
-  magic: 'text-pink-300 border-pink-500/40 bg-pink-500/[0.08]',
-}
 
 const RESISTANCE_KEYS = [
   'fire_resistance',
@@ -487,7 +465,7 @@ export default function StatsView() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search stats, attributes, or skills…"
           data-search-input
-          className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 pr-9 text-text placeholder:italic placeholder:text-faint focus:border-accent-deep focus:outline-none"
+          className="w-full rounded-[3px] border border-border-2 px-3 py-2 pl-9 pr-9 text-text placeholder:text-faint focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
           style={{
             background:
               'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
@@ -842,7 +820,7 @@ function SkillDamageHero({
           <span>{hasCrit ? 'Average Hit' : 'Hit Damage'}</span>
           {skill.damageType && (
             <span
-              className={`rounded-xs border px-1.5 py-px text-[9px] font-semibold ${DAMAGE_TYPE_PILL[skill.damageType]}`}
+              className={`rounded-xs border px-1.5 py-px text-[9px] font-semibold ${DAMAGE_COLORS[skill.damageType].pill}`}
             >
               {skill.damageType}
             </span>
@@ -919,26 +897,6 @@ function SkillDamageHero({
       </div>
     </div>
   )
-}
-
-function skillHeroBg(type: DamageType): string {
-  const map: Record<DamageType, string> = {
-    physical:
-      'linear-gradient(135deg, rgba(212,207,191,0.06), transparent 60%)',
-    fire: 'linear-gradient(135deg, rgba(232,144,122,0.07), transparent 60%)',
-    cold: 'linear-gradient(135deg, rgba(122,166,216,0.07), transparent 60%)',
-    lightning:
-      'linear-gradient(135deg, rgba(232,217,107,0.06), transparent 60%)',
-    poison:
-      'linear-gradient(135deg, rgba(136,212,154,0.07), transparent 60%)',
-    arcane:
-      'linear-gradient(135deg, rgba(201,122,204,0.07), transparent 60%)',
-    explosion:
-      'linear-gradient(135deg, rgba(217,154,90,0.07), transparent 60%)',
-    magic:
-      'linear-gradient(135deg, rgba(220,140,200,0.07), transparent 60%)',
-  }
-  return map[type]
 }
 
 function AttributesStrip({
@@ -1332,7 +1290,7 @@ function SkillCard({
     ? skill.damageType.charAt(0).toUpperCase() + skill.damageType.slice(1)
     : ''
   const dmgAccent = skill.damageType
-    ? DAMAGE_TYPE_TEXT[skill.damageType]
+    ? DAMAGE_COLORS[skill.damageType].text
     : 'text-text'
   const learned = currentRank > 0
   const containerStyle: React.CSSProperties = isMain
@@ -1390,7 +1348,7 @@ function SkillCard({
       <div className="flex flex-wrap items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.14em]">
         {skill.damageType && (
           <span
-            className={`rounded-xs border px-1.5 py-0.5 font-semibold ${DAMAGE_TYPE_PILL[skill.damageType]}`}
+            className={`rounded-xs border px-1.5 py-0.5 font-semibold ${DAMAGE_COLORS[skill.damageType].pill}`}
           >
             {skill.damageType}
           </span>

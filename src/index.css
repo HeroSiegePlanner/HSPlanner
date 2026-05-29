@@ -657,7 +657,7 @@ input[type="range"].compact {
   --rarity: #38bdf8;
 }
 .hs-dd-item.rarity-mythic {
-  --rarity: var(--color-stat-purple);
+  --rarity: #c084fc;
 }
 .hs-dd-item.rarity-satanic {
   --rarity: #ef4444;
@@ -669,13 +669,13 @@ input[type="range"].compact {
   --rarity: #fef08a;
 }
 .hs-dd-item.rarity-satanic_set {
-  --rarity: var(--color-stat-green);
+  --rarity: #4ade80;
 }
 .hs-dd-item.rarity-unholy {
   --rarity: #f472b6;
 }
 .hs-dd-item.rarity-relic {
-  --rarity: var(--color-stat-orange);
+  --rarity: #fdba74;
 }
 
 .hs-dd-item-meta {

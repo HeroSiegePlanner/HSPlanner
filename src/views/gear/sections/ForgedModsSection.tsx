@@ -49,7 +49,7 @@ export function ForgedModsSection({
           tier: m.tier,
           kindLabel: 'CRYSTAL',
           meta: m.description,
-          iconColor: '#d96b5a',
+          iconColor: 'var(--color-stat-red)',
           tooltip: buildCrystalModTooltip(m, { previousStats }),
           tooltipTone: 'satanic' as const,
         })),
@@ -94,7 +94,7 @@ export function ForgedModsSection({
                 {idx + 1}
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
-                <span className="font-mono font-semibold tabular-nums text-amber-300">
+                <span className="font-mono font-semibold tabular-nums text-accent-hot">
                   {eq.customValue !== undefined && mod.statKey
                     ? formatValue(eq.customValue, mod.statKey)
                     : formatAffixRange(mod)}

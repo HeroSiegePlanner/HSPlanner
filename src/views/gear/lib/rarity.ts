@@ -54,7 +54,7 @@ export const RARITY_BORDER: Record<ItemRarity, string> = {
 
 export const RARITY_LABEL: Record<ItemRarity, string> = {
   common: 'Common',
-  uncommon: 'Uncommon',
+  uncommon: 'Superior',
   rare: 'Rare',
   mythic: 'Mythic',
   satanic: 'Satanic',

@@ -13,12 +13,27 @@ export default function StorageErrorBanner() {
   return (
     <div
       role="alert"
-      className="fixed inset-x-0 bottom-0 z-300 flex items-start gap-3 border-t border-stat-red/60 bg-[#2a1416] px-4 py-3"
-      style={{ boxShadow: '0 -12px 32px rgba(0,0,0,0.55)' }}
+      className="fixed inset-x-0 bottom-0 z-300 flex items-start gap-3 border-t border-stat-red/60 px-4 py-3"
+      style={{
+        background:
+          'linear-gradient(180deg, color-mix(in srgb, var(--color-stat-red) 14%, var(--color-panel)), var(--color-panel-2))',
+        boxShadow: '0 -12px 32px rgba(0,0,0,0.55)',
+      }}
     >
-      <span aria-hidden className="mt-0.5 text-[15px] text-stat-red">
-        ⚠
-      </span>
+      <svg
+        aria-hidden
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="mt-0.5 h-4 w-4 shrink-0 text-stat-red"
+      >
+        <path d="M12 3 2 20h20L12 3Z" />
+        <path d="M12 10v4" />
+        <path d="M12 17h.01" />
+      </svg>
       <div className="min-w-0 flex-1">
         <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-stat-red">
           Save failed

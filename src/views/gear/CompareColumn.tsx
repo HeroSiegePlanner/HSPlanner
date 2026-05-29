@@ -298,7 +298,7 @@ export function CompareColumn({
             <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">
               Comparison
             </div>
-            <h3 className="m-0 font-cinzel text-[16px] font-semibold tracking-[0.02em] text-text/85">
+            <h3 className="m-0 text-[16px] font-semibold tracking-[0.02em] text-text/85">
               Net change
             </h3>
           </div>

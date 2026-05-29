@@ -101,7 +101,7 @@ export default function GearView() {
         kindLabel: 'RUNE',
         group: 'Runes',
         meta: fmtStats(r.stats) || '—',
-        iconColor: '#c9a560',
+        iconColor: 'var(--color-accent)',
         iconUrl: socketableIconForName(r.name),
         tooltip: buildSocketableTooltip(r, 'RUNE'),
       })

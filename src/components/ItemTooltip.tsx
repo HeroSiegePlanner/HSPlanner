@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
+import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import {
   detectRuneword,
   FORGE_KIND_LABEL,
@@ -60,19 +61,6 @@ const RARITY_TONE: Record<ItemRarity, TooltipTone> = {
   satanic_set: 'satanic_set',
   unholy: 'unholy',
   relic: 'relic',
-}
-
-const RARITY_LABEL: Record<ItemRarity, string> = {
-  common: 'Common',
-  uncommon: 'Superior',
-  rare: 'Rare',
-  mythic: 'Mythic',
-  satanic: 'Satanic',
-  heroic: 'Heroic',
-  angelic: 'Angelic',
-  satanic_set: 'Satanic Set',
-  unholy: 'Unholy',
-  relic: 'Relic',
 }
 
 const TRIGGER_LABEL: Record<string, string> = {
@@ -278,7 +266,7 @@ export function ItemTooltipBody({
   const equippedAffixes = equipped?.affixes ?? []
   const equippedForgedMods = equipped?.forgedMods ?? []
   const forgeKind = isGearSlot(base.slot) ? forgeKindFor(base.rarity) : null
-  const forgeAccent = 'text-red-300'
+  const forgeAccent = 'text-stat-red'
 
   return (
     <>

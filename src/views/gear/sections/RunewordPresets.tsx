@@ -42,7 +42,7 @@ export function RunewordPresets({
           tier: rw.runes.length,
           kindLabel: 'RUNEWORD',
           meta: `${runeSeq}${reqLabel}`,
-          iconColor: '#e0b864',
+          iconColor: 'var(--color-accent-hot)',
           searchTerms: [
             rw.name,
             runeSeq,
@@ -97,7 +97,7 @@ export function RunewordPresets({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex w-full items-center justify-between gap-2 rounded-[3px] border border-accent-deep/30 px-3 py-2 text-left transition-all hover:border-amber-400/50 hover:shadow-[0_0_12px_rgba(252,211,77,0.15)]"
+        className="group flex w-full items-center justify-between gap-2 rounded-[3px] border border-accent-deep/30 px-3 py-2 text-left transition-all hover:border-accent/50 hover:shadow-[0_0_12px_rgba(224,184,100,0.15)]"
         style={{
           background:
             'linear-gradient(180deg, rgba(28,29,36,0.7), rgba(13,14,18,0.5))',
@@ -106,7 +106,7 @@ export function RunewordPresets({
         <span className="flex min-w-0 flex-col">
           <span
             className={`truncate text-[13px] font-medium ${
-              activeRw ? 'text-amber-300' : 'italic text-faint'
+              activeRw ? 'text-accent-hot' : 'italic text-faint'
             }`}
           >
             {activeRw ? activeRw.name : 'Choose runeword…'}
@@ -117,7 +117,7 @@ export function RunewordPresets({
             </span>
           )}
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint group-hover:text-amber-300">
+        <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint group-hover:text-accent-hot">
           Browse →
         </span>
       </button>

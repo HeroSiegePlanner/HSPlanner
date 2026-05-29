@@ -83,7 +83,16 @@ function HeaderCell({
     >
       {label}
       {sorted && (
-        <span className="text-[9px]">{sortDir === 'asc' ? '▴' : '▾'}</span>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={3}
+          className="h-2.5 w-2.5"
+          aria-hidden
+        >
+          <path d={sortDir === 'asc' ? 'm6 15 6-6 6 6' : 'm6 9 6 6 6-6'} />
+        </svg>
       )}
     </button>
   )

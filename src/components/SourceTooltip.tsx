@@ -10,6 +10,7 @@ import type { EquippedItem, RangedValue } from '../types'
 import ItemTooltip from './ItemTooltip'
 import Tooltip from './Tooltip'
 import TreeNodeMiniMap from './TreeNodeMiniMap'
+import { CornerMarks } from './CornerMarks'
 import { findTreeNodeById, findTreeNodeByName } from '../utils/treeNodes'
 
 const SOURCE_COLOR: Record<SourceType, string> = {
@@ -39,7 +40,7 @@ const SOURCE_LABEL: Record<SourceType, string> = {
 }
 
 const FORGE_COLOR: Record<ForgeKind, string> = {
-  satanic_crystal: 'text-red-300',
+  satanic_crystal: 'text-stat-red',
 }
 
 // Socket-in-item form checked first so Rainbow/Transform trailing parens
@@ -718,7 +719,11 @@ export default function SourceTooltip({
       {pinned &&
         createPortal(
           <div
-            className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/50 backdrop-blur-[2px]"
+            className="fixed inset-0 z-[1100] flex items-center justify-center backdrop-blur-sm"
+            style={{
+              background:
+                'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
+            }}
             onClick={(e) => {
               // Skip dismissal when click lands on a portal-rendered tooltip
               // (pointer-events-none lets the click bubble to the backdrop).
@@ -743,10 +748,17 @@ export default function SourceTooltip({
             }}
           >
             <div
-              className="relative flex max-h-[80vh] w-[min(90vw,520px)] flex-col overflow-hidden rounded-[6px] border border-accent-deep bg-panel text-xs shadow-[0_16px_48px_rgba(0,0,0,0.85)]"
+              className="relative flex max-h-[80vh] w-[min(90vw,520px)] flex-col overflow-hidden rounded-[6px] border border-border text-xs"
+              style={{
+                background:
+                  'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 80%, transparent))',
+                boxShadow:
+                  'inset 0 1px 0 rgba(255,255,255,0.02), 0 24px 64px rgba(0,0,0,0.7)',
+              }}
               onClick={(e) => e.stopPropagation()}
               onContextMenu={(e) => e.stopPropagation()}
             >
+              <CornerMarks size={8} opacity={0.5} />
               <div
                 className="flex items-center justify-between gap-2 border-b border-border/70 px-4 py-2"
                 style={{

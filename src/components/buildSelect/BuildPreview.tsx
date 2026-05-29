@@ -391,14 +391,14 @@ export function BuildPreview({
         <button
           type="button"
           onClick={() => onCopy(build.id)}
-          className="flex h-[30px] items-center justify-center gap-1.5 rounded-[3px] border border-border bg-panel-2 text-[11px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          className="flex h-[30px] items-center justify-center gap-1.5 rounded-[3px] border border-border bg-panel-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
         >
           Copy code
         </button>
         <button
           type="button"
           onClick={() => onOpen(build.id)}
-          className="flex h-[30px] items-center justify-center gap-1.5 rounded-[3px] border border-accent-deep text-[11px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot"
+          className="flex h-[30px] items-center justify-center gap-1.5 rounded-[3px] border border-accent-deep font-mono text-[11px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot"
           style={{
             background: 'linear-gradient(180deg, #3a2f1a, #2a2418)',
           }}
