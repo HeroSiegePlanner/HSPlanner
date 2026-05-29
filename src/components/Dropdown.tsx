@@ -4,9 +4,7 @@ import { useOutsideClick } from '../hooks/useOutsideClick'
 export interface DropdownOption {
   id: string
   label: string
-  /** Optional secondary line rendered in .hs-dd-item-meta. */
   meta?: ReactNode
-  /** Rarity key mapped to the .hs-dd-item.rarity-<key> colour. */
   rarity?: string
 }
 
@@ -17,15 +15,12 @@ interface DropdownProps {
   placeholder?: string
   searchPlaceholder?: string
   emptyLabel?: string
-  /** When set, a "clear" entry resets the value to null while a value is picked. */
   clearLabel?: string
   onHoverChange?: (id: string | null) => void
   onOpenChange?: (open: boolean) => void
 }
 
-// Canonical searchable, keyboard-navigable select built on the .hs-dd* styles
-// defined in index.css. The CSS was already shipped for this component; this is
-// the implementation that consumes it.
+// Searchable, keyboard-navigable select built on the .hs-dd* styles in index.css.
 export default function Dropdown({
   value,
   options,
@@ -58,10 +53,8 @@ export default function Dropdown({
     return options.filter((o) => o.label.toLowerCase().includes(q))
   }, [options, query])
 
-  // The optional clear entry sits at keyboard index 0 when a value is set.
   const showClear = clearLabel != null && value !== null
   const entryCount = (showClear ? 1 : 0) + filtered.length
-  // Clamp at render time (filtering can shrink the list below the stored index).
   const activeKb = entryCount > 0 ? Math.min(kb, entryCount - 1) : 0
 
   const pick = (id: string | null) => {

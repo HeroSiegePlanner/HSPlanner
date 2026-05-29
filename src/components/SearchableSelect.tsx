@@ -20,9 +20,7 @@ interface Props {
   sidePanel?: (hoveredId: string | null) => ReactNode
 }
 
-// Thin wrapper over the canonical Dropdown (.hs-dd*) used by ConfigView for
-// pickers like the custom-stat selector. Maps option hints onto the dropdown's
-// meta line and keeps the optional left-anchored preview side panel.
+// Thin wrapper over the canonical Dropdown; maps option hints to its meta line.
 export default function SearchableSelect({
   value,
   options,
