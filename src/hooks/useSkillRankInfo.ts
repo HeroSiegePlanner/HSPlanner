@@ -12,10 +12,6 @@ export interface SkillRankInfo {
 
 const EMPTY: Map<number, SkillRankInfo> = new Map()
 
-// Fetches passive stats + mana cost for a set of ranks of one skill from the
-// Rust calc engine (calc/passive.rs). Returns a rank -> info map; the map is
-// keyed to (skill, ranks) so a stale skill's values never bleed into another's
-// while the async IPC is in flight.
 export function useSkillRankInfo(
   skill: Skill | null | undefined,
   ranks: number[],
@@ -51,7 +47,6 @@ export function useSkillRankInfo(
     return () => {
       cancelled = true
     }
-    // `key` encodes skill id + the distinct ranks it depends on.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key])
 
