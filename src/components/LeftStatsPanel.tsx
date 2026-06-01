@@ -12,7 +12,6 @@ import {
   effectiveCap,
   formatValue,
   isZero,
-  manaCostAtRank,
   normalizeSkillName,
   rangedMax,
   rangedMin,
@@ -21,6 +20,7 @@ import {
 import { computeBuildPerformanceAsync } from "../lib/calc/bridge";
 import type { BuildPerformance } from "../utils/build/buildPerformance";
 import { useBuildPerformanceDeps } from "../hooks/useBuildPerformanceDeps";
+import { useSkillRankInfo } from "../hooks/useSkillRankInfo";
 import type { RangedValue } from "../types";
 
 const ATTRIBUTE_ORDER: string[] = [
@@ -164,11 +164,15 @@ export default function LeftStatsPanel() {
   const effRankMin = activeRank + rankBonusMin;
   const effRankMax = activeRank + rankBonusMax;
 
+  const manaRankInfo = useSkillRankInfo(
+    activeSkill ?? null,
+    activeSkill ? [Math.max(effRankMin, 1), Math.max(effRankMax, 1)] : [],
+  );
   const baseManaMin = activeSkill
-    ? manaCostAtRank(activeSkill, Math.max(effRankMin, 1))
+    ? manaRankInfo.get(Math.max(effRankMin, 1))?.mana
     : undefined;
   const baseManaMax = activeSkill
-    ? manaCostAtRank(activeSkill, Math.max(effRankMax, 1))
+    ? manaRankInfo.get(Math.max(effRankMax, 1))?.mana
     : undefined;
   const fcrCombined = combineAdditiveAndMore(
     stats.faster_cast_rate,

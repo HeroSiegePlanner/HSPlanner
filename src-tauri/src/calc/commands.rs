@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+use tauri::Emitter;
 
 use super::build::{BuildPerformance, BuildPerformanceDeps, compute_build_performance};
 use super::skills as calc;
@@ -118,6 +119,83 @@ impl From<SkillDto> for calc::Skill {
             attack_scaling: None,
         }
     }
+}
+
+// ---------- passive_stats_at_rank / mana_cost_at_rank ----------
+// Thin commands over calc/passive.rs so the UI reads passive-rank stats and
+// mana cost from the same source the engine uses, not a TS mirror.
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PassiveStatsDto {
+    #[serde(default)]
+    pub base: HashMap<String, f64>,
+    #[serde(default)]
+    pub per_rank: HashMap<String, f64>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ManaCostFormulaDto {
+    pub base: f64,
+    pub per_level: f64,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SkillRankDto {
+    pub rank: u32,
+    #[serde(default)]
+    pub mana_cost: Option<f64>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PassiveSkillDto {
+    #[serde(default)]
+    pub passive_stats: Option<PassiveStatsDto>,
+    #[serde(default)]
+    pub mana_cost_formula: Option<ManaCostFormulaDto>,
+    #[serde(default)]
+    pub ranks: Vec<SkillRankDto>,
+}
+
+impl From<PassiveSkillDto> for super::passive::PassiveSkill {
+    fn from(v: PassiveSkillDto) -> Self {
+        super::passive::PassiveSkill {
+            passive_stats: v.passive_stats.map(|p| super::passive::PassiveStats {
+                base: p.base,
+                per_rank: p.per_rank,
+            }),
+            mana_cost_formula: v.mana_cost_formula.map(|f| super::passive::ManaCostFormula {
+                base: f.base,
+                per_level: f.per_level,
+            }),
+            ranks: v
+                .ranks
+                .into_iter()
+                .map(|r| super::passive::SkillRank {
+                    rank: r.rank,
+                    mana_cost: r.mana_cost,
+                })
+                .collect(),
+        }
+    }
+}
+
+// rank arrives as a JS number; clamp like the former TS helpers (rank <= 0 -> empty / 1).
+#[tauri::command]
+pub fn passive_stats_at_rank(skill: PassiveSkillDto, rank: f64) -> HashMap<String, f64> {
+    if rank <= 0.0 {
+        return HashMap::new();
+    }
+    super::passive::passive_stats_at_rank(&skill.into(), rank as u32)
+}
+
+#[tauri::command]
+pub fn mana_cost_at_rank(skill: PassiveSkillDto, rank: f64) -> Option<f64> {
+    let r = if rank <= 0.0 { 1 } else { rank as u32 };
+    super::passive::mana_cost_at_rank(&skill.into(), r)
 }
 
 #[derive(Deserialize)]
@@ -390,7 +468,7 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
 #[tauri::command]
 pub fn compute_weapon_damage(input: WeaponDamageInput) -> WeaponDamageOutput {
     let weapon: Option<calc::Weapon> = input.weapon.map(Into::into);
-    let stats = ranged_map(input.stats);
+    let stats = ranged_map(normalized_keys(input.stats));
     calc::compute_weapon_damage(
         weapon.as_ref(),
         &stats,
@@ -469,21 +547,52 @@ pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance 
     compute_build_performance(&deps)
 }
 
+/// Warm-up progress: `current` of `total` tree nodes parsed. Emitted as
+/// "warmup-progress" so the boot splash can drive an honest 0–15% slice.
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct WarmupProgress {
+    current: u32,
+    total: u32,
+}
+
 /// Warms the data Lazy and the tree-mod parser caches so the first real calc
-/// after launch isn't stuck compiling ~300 regexes on the UI thread.
-#[tauri::command]
-pub fn calc_warmup() -> bool {
+/// after launch isn't stuck compiling ~300 regexes on the UI thread. Reports
+/// progress via `on_progress(current, total)`; IO-free so tests can drive it
+/// without a Tauri app handle.
+pub fn run_warmup<F: FnMut(u32, u32)>(mut on_progress: F) -> bool {
     let d = super::data::data();
     if d.items.is_empty() {
         return false;
     }
-    for node in super::data::tree_nodes().values() {
+    let nodes = super::data::tree_nodes();
+    let total = nodes.len() as u32;
+    // Cap emitted ticks so a ~1000-node warm-up doesn't flood the event channel.
+    let step = (nodes.len() / 20).max(1);
+    for (i, node) in nodes.values().enumerate() {
         for line in &node.l {
             let _ = super::tree::parse::parse_tree_node_mod(line);
             let _ = super::tree::parse::parse_tree_node_meta(line);
         }
+        if i % step == 0 {
+            on_progress(i as u32, total);
+        }
     }
+    on_progress(total, total);
     true
+}
+
+/// Tauri command: runs the warm-up off the event loop so the webview stays
+/// responsive, emitting "warmup-progress" for the boot splash.
+#[tauri::command]
+pub async fn calc_warmup(app: tauri::AppHandle) -> bool {
+    tauri::async_runtime::spawn_blocking(move || {
+        run_warmup(|current, total| {
+            let _ = app.emit("warmup-progress", WarmupProgress { current, total });
+        })
+    })
+    .await
+    .unwrap_or(false)
 }
 
 /// Returns full stats plus per-stat source breakdown rendered by StatsView and

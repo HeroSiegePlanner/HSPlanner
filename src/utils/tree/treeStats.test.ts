@@ -6,7 +6,6 @@ import {
   TREE_JEWELRY_IDS,
   TREE_NODE_INFO,
   TREE_WARP_IDS,
-  aggregateTreeStats,
   classifyNodeLines,
   isRecognizedTreeLine,
   parseTreeNodeMeta,
@@ -84,6 +83,13 @@ describe('parseTreeNodeMod — increased life/mana', () => {
     expect(parseTreeNodeMod('10% Increased Total Maximum Mana')).toEqual({
       key: 'increased_mana_more',
       value: 10,
+    })
+  })
+
+  it('routes "Total Maximum Life" to the _more multiplicative bucket', () => {
+    expect(parseTreeNodeMod('15% Increased Total Maximum Life')).toEqual({
+      key: 'increased_life_more',
+      value: 15,
     })
   })
 
@@ -284,71 +290,5 @@ describe('classifyNodeLines', () => {
     const result = classifyNodeLines(['+5 to Maximum Life'])
     expect(result.parsed[0]?.line).toBe('+5 to Maximum Life')
     expect(result.parsed[0]?.mod).toEqual({ key: 'life', value: 5 })
-  })
-})
-
-// -----------------------------------------------------------------------
-// aggregateTreeStats — integration
-// -----------------------------------------------------------------------
-
-describe('aggregateTreeStats', () => {
-  it('returns an empty object for no allocated nodes', () => {
-    expect(aggregateTreeStats(new Set())).toEqual({})
-  })
-
-  it('ignores nodes whose id is not in TREE_NODE_INFO', () => {
-    // Synthetic id 9_999_999 almost certainly does not exist in the tree.
-    expect(aggregateTreeStats(new Set([9_999_999]))).toEqual({})
-  })
-
-  it('produces only finite numeric values for a real allocated node', () => {
-    const firstId = Object.keys(TREE_NODE_INFO).find((id) => {
-      const info = TREE_NODE_INFO[id]
-      if (!info?.l) return false
-      return info.l.some((line) => parseTreeNodeMod(line) !== null)
-    })
-    if (!firstId) {
-      throw new Error('expected the tree data to contain at least one parseable node')
-    }
-    const stats = aggregateTreeStats(new Set([Number(firstId)]))
-    expect(Object.keys(stats).length).toBeGreaterThan(0)
-    for (const value of Object.values(stats)) {
-      expect(Number.isFinite(value)).toBe(true)
-    }
-  })
-
-  it('filters out self-conditioned mods when the condition is not active', () => {
-    // Build a synthetic single-line scenario by finding a real node whose
-    // first line parses with a selfCondition. If none exist we skip rather
-    // than fail — the audit's W2 (data validation) is the right fix for
-    // that data drift, not this regression test.
-    const conditionalEntry = Object.entries(TREE_NODE_INFO).find(([, info]) => {
-      if (!info?.l) return false
-      return info.l.some((line) => parseTreeNodeMod(line)?.selfCondition !== undefined)
-    })
-    if (!conditionalEntry) return // nothing to assert against
-    const [idStr] = conditionalEntry
-    const id = Number(idStr)
-    const without = aggregateTreeStats(new Set([id]))
-    const conditionedLine = conditionalEntry[1].l.find(
-      (line) => parseTreeNodeMod(line)?.selfCondition !== undefined,
-    )!
-    const conditionedMod = parseTreeNodeMod(conditionedLine)!
-    // The conditioned stat must NOT appear in `without` (unless it would
-    // also be contributed by another unconditional line in the same node).
-    const unconditionedSameKey = conditionalEntry[1].l.some((line) => {
-      const m = parseTreeNodeMod(line)
-      return m && !m.selfCondition && m.key === conditionedMod.key
-    })
-    if (!unconditionedSameKey) {
-      expect(without[conditionedMod.key]).toBeUndefined()
-    }
-    // Now turn the condition on — the conditioned mod must contribute.
-    const withCond = aggregateTreeStats(new Set([id]), {
-      [conditionedMod.selfCondition!]: true,
-    })
-    const delta =
-      (withCond[conditionedMod.key] ?? 0) - (without[conditionedMod.key] ?? 0)
-    expect(delta).toBe(conditionedMod.value)
   })
 })

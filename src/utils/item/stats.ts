@@ -407,35 +407,3 @@ export function effectiveRankRangeFor(
     baseRank + rangedMax(all) + rangedMax(elem) + item[1],
   ]
 }
-
-export function passiveStatsAtRank(
-  skill: Skill,
-  rank: number,
-): Record<string, number> {
-  if (!skill.passiveStats || rank <= 0) return {}
-  const { base, perRank } = skill.passiveStats
-  const out: Record<string, number> = {}
-  if (base) for (const [k, v] of Object.entries(base)) out[k] = v
-  if (perRank) {
-    for (const [k, v] of Object.entries(perRank)) {
-      out[k] = (out[k] ?? 0) + v * (rank - 1)
-    }
-  }
-  for (const k of Object.keys(out)) {
-    out[k] = Math.round(out[k]! * 1000) / 1000
-  }
-  return out
-}
-
-export function manaCostAtRank(skill: Skill, rank: number): number | undefined {
-  if (rank <= 0) rank = 1
-  if (skill.manaCostFormula) {
-    return Math.floor(
-      skill.manaCostFormula.base +
-        skill.manaCostFormula.perLevel * (rank - 1),
-    )
-  }
-  const exact = skill.ranks.find((r) => r.rank === rank)
-  if (exact?.manaCost !== undefined) return exact.manaCost
-  return skill.ranks[0]?.manaCost
-}
