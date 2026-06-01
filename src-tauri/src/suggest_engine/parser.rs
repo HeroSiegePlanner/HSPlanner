@@ -91,7 +91,11 @@ fn build_rules() -> Vec<ParseRule> {
     // ====================== ATTRIBUTES ======================
     v.push(rule_simple(r"(?i)^([+\-\d.]+)\s+to\s+Maximum\s+Life$", "life"));
     v.push(rule_simple(r"(?i)^([+\-\d.]+)\s+to\s+Maximum\s+Mana$", "mana"));
-    v.push(rule_simple(r"(?i)^([+\-\d.]+)%\s+Increased\s+Maximum\s+Life$", "increased_life"));
+    v.push(rule_total(
+        r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Maximum\s+Life$",
+        "increased_life",
+        "increased_life_more",
+    ));
     v.push(rule_total(
         r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Maximum\s+Mana$",
         "increased_mana",
