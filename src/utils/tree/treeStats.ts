@@ -103,8 +103,11 @@ const RULES: ParseRule[] = [
     build: (m) => ({ key: 'mana', value: num(m[1]!) }),
   },
   {
-    test: /^([+-]?\d+(?:\.\d+)?)%\s+Increased\s+Maximum\s+Life$/i,
-    build: (m) => ({ key: 'increased_life', value: num(m[1]!) }),
+    test: /^([+-]?\d+(?:\.\d+)?)%\s+Increased\s+(Total\s+)?Maximum\s+Life$/i,
+    build: (m) => ({
+      key: m[2] ? 'increased_life_more' : 'increased_life',
+      value: num(m[1]!),
+    }),
   },
   {
     test: /^([+-]?\d+(?:\.\d+)?)%\s+Increased\s+(Total\s+)?Maximum\s+Mana$/i,
@@ -1964,23 +1967,4 @@ export function classifyNodeLines(lines: string[]): NodeModBreakdown {
     unsupported.push(line)
   }
   return { parsed, unsupported }
-}
-
-
-export function aggregateTreeStats(
-  allocated: Set<number>,
-  playerConditions?: Record<string, boolean>,
-): Record<string, number> {
-  const out: Record<string, number> = {}
-  for (const id of allocated) {
-    const info = TREE_NODE_INFO[String(id)]
-    if (!info?.l) continue
-    for (const line of info.l) {
-      const mod = parseTreeNodeMod(line)
-      if (!mod) continue
-      if (mod.selfCondition && !playerConditions?.[mod.selfCondition]) continue
-      out[mod.key] = (out[mod.key] ?? 0) + mod.value
-    }
-  }
-  return out
 }

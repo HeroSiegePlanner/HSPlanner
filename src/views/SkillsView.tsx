@@ -7,15 +7,14 @@ import SubtreeOverlay from '../components/SubtreeOverlay'
 import { listContainerVariants, skillIconVariants } from '../lib/motion'
 import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useSkillRankInfo } from '../hooks/useSkillRankInfo'
 import { computeBuildStatsAsync } from '../lib/calc/bridge'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
 import { DAMAGE_COLORS } from '../utils/damageColors'
 import {
   aggregateItemSkillBonuses,
   formatValue,
-  manaCostAtRank,
   normalizeSkillName,
-  passiveStatsAtRank,
   rangedMax,
   rangedMin,
   statName,
@@ -993,17 +992,21 @@ function SkillEffectsBlock({
   const nextMin = canIncrement ? curMin + 1 : null
   const nextMax = canIncrement ? curMax + 1 : null
 
-  const passiveCurMin = passiveStatsAtRank(skill, curMin)
-  const passiveCurMax = passiveStatsAtRank(skill, curMax)
+  const rankInfo = useSkillRankInfo(
+    skill,
+    [curMin, curMax, nextMin, nextMax].filter((r): r is number => r !== null),
+  )
+  const passiveCurMin = rankInfo.get(curMin)?.passive ?? {}
+  const passiveCurMax = rankInfo.get(curMax)?.passive ?? {}
   const passiveNextMin =
-    nextMin !== null ? passiveStatsAtRank(skill, nextMin) : null
+    nextMin !== null ? (rankInfo.get(nextMin)?.passive ?? {}) : null
   const passiveNextMax =
-    nextMax !== null ? passiveStatsAtRank(skill, nextMax) : null
+    nextMax !== null ? (rankInfo.get(nextMax)?.passive ?? {}) : null
 
-  const manaCurMin = manaCostAtRank(skill, curMin)
-  const manaCurMax = manaCostAtRank(skill, curMax)
-  const manaNextMin = nextMin !== null ? manaCostAtRank(skill, nextMin) : undefined
-  const manaNextMax = nextMax !== null ? manaCostAtRank(skill, nextMax) : undefined
+  const manaCurMin = rankInfo.get(curMin)?.mana
+  const manaCurMax = rankInfo.get(curMax)?.mana
+  const manaNextMin = nextMin !== null ? rankInfo.get(nextMin)?.mana : undefined
+  const manaNextMax = nextMax !== null ? rankInfo.get(nextMax)?.mana : undefined
 
   const computeBaseDmg = (rank: number): [number, number] | null => {
     if (skill.damageFormula) {

@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "parity": "cd src-tauri && cargo test --test parity",
+    "parity:regen": "cd src-tauri && cargo run --example dump_parity > tests/fixtures/parity.json.new && mv tests/fixtures/parity.json.new tests/fixtures/parity.json",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build"

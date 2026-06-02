@@ -11,9 +11,7 @@ import {
   formatValue,
   isAffixStarImmune,
   isZero,
-  manaCostAtRank,
   normalizeSkillName,
-  passiveStatsAtRank,
   rangedMax,
   rangedMin,
   rolledAffixRange,
@@ -413,92 +411,5 @@ describe('effectiveRankRangeFor', () => {
     // 'Test Fire' normalised = 'test fire'
     const itemBonuses = { 'test fire': [1, 3] as [number, number] }
     expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, {}, itemBonuses)).toEqual([6, 8])
-  })
-})
-
-// -----------------------------------------------------------------------
-// passiveStatsAtRank
-// -----------------------------------------------------------------------
-
-describe('passiveStatsAtRank', () => {
-  it('returns an empty record at rank 0', () => {
-    const skill = {
-      passiveStats: { base: { life: 10 } },
-      ranks: [],
-    } as unknown as Skill
-    expect(passiveStatsAtRank(skill, 0)).toEqual({})
-  })
-
-  it('returns just the base stats at rank 1 (perRank multiplier is 0)', () => {
-    const skill = {
-      passiveStats: {
-        base: { life: 100 },
-        perRank: { life: 25 },
-      },
-      ranks: [],
-    } as unknown as Skill
-    expect(passiveStatsAtRank(skill, 1)).toEqual({ life: 100 })
-  })
-
-  it('compounds base + perRank * (rank - 1)', () => {
-    const skill = {
-      passiveStats: {
-        base: { life: 100 },
-        perRank: { life: 25 },
-      },
-      ranks: [],
-    } as unknown as Skill
-    // rank 5: 100 + 25 * 4 = 200
-    expect(passiveStatsAtRank(skill, 5)).toEqual({ life: 200 })
-  })
-
-  it('rounds to 3 decimal places to avoid floating-point drift', () => {
-    const skill = {
-      passiveStats: { perRank: { x: 0.1 } },
-      ranks: [],
-    } as unknown as Skill
-    // (rank-1) * 0.1 — at rank 4 that's 0.30000000000000004 in raw FP.
-    expect(passiveStatsAtRank(skill, 4)).toEqual({ x: 0.3 })
-  })
-})
-
-// -----------------------------------------------------------------------
-// manaCostAtRank
-// -----------------------------------------------------------------------
-
-describe('manaCostAtRank', () => {
-  it('uses the formula when manaCostFormula is set, flooring the result', () => {
-    const skill = {
-      manaCostFormula: { base: 10, perLevel: 1.5 },
-      ranks: [],
-    } as unknown as Skill
-    // rank 3: floor(10 + 1.5 * 2) = floor(13) = 13
-    expect(manaCostAtRank(skill, 3)).toBe(13)
-  })
-
-  it('treats rank <= 0 as rank 1 for the formula', () => {
-    const skill = {
-      manaCostFormula: { base: 10, perLevel: 1.5 },
-      ranks: [],
-    } as unknown as Skill
-    expect(manaCostAtRank(skill, 0)).toBe(10)
-  })
-
-  it('looks up the exact rank in the ranks table when no formula is set', () => {
-    const skill = {
-      ranks: [
-        { rank: 1, manaCost: 5 },
-        { rank: 2, manaCost: 10 },
-        { rank: 3, manaCost: 15 },
-      ],
-    } as unknown as Skill
-    expect(manaCostAtRank(skill, 2)).toBe(10)
-  })
-
-  it('falls back to the rank-1 entry when the requested rank is missing', () => {
-    const skill = {
-      ranks: [{ rank: 1, manaCost: 5 }],
-    } as unknown as Skill
-    expect(manaCostAtRank(skill, 99)).toBe(5)
   })
 })

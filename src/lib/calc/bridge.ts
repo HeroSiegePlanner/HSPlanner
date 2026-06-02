@@ -2,7 +2,7 @@
 
 import { invoke } from '@tauri-apps/api/core'
 
-import type { CustomStat, Inventory, RangedValue, TreeSocketContent } from '../../types'
+import type { CustomStat, Inventory, RangedValue, Skill, TreeSocketContent } from '../../types'
 import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../../utils/item/stats'
 import type {
   BuildPerformance,
@@ -340,4 +340,21 @@ export function invokeCalc<TResult>(
   args: Record<string, unknown> = {},
 ): Promise<TResult> {
   return invoke<TResult>(cmd, args)
+}
+
+// ---------- passive_stats_at_rank / mana_cost_at_rank ----------
+// Replace the former TS stats.ts helpers; the math now lives in Rust calc/passive.rs.
+
+export function passiveStatsAtRankNative(
+  skill: Skill,
+  rank: number,
+): Promise<Record<string, number>> {
+  return invoke('passive_stats_at_rank', { skill, rank })
+}
+
+export function manaCostAtRankNative(
+  skill: Skill,
+  rank: number,
+): Promise<number | null> {
+  return invoke('mana_cost_at_rank', { skill, rank })
 }

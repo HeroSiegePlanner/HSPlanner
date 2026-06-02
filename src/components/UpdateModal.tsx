@@ -108,8 +108,12 @@ export default function UpdateModal({
     try {
       await installUpdate(info.assetUrl ?? info.releaseUrl, setProgress);
       onClose();
-    } catch {
-      void 0;
+    } catch (err) {
+      // installUpdate normally reports phase:"error" before throwing, but set it
+      // defensively so a throw on any other path can't leave the modal stuck in
+      // a busy state with no way to close.
+      const message = err instanceof Error ? err.message : String(err);
+      setProgress({ phase: "error", error: message });
     }
   };
 

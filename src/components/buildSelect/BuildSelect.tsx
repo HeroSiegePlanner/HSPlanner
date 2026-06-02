@@ -219,6 +219,14 @@ export default function BuildSelect({
       }
       return true
     })
+    // "Recent" = the RECENT_LIMIT most recently updated builds. Pick them by
+    // recency BEFORE applying the display sort, otherwise sorting by another
+    // column would change which builds the slice keeps.
+    if (scope.kind === 'recent') {
+      list = [...list]
+        .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+        .slice(0, RECENT_LIMIT)
+    }
     const dir = sortDir === 'asc' ? 1 : -1
     list = [...list].sort((a, b) => {
       let cmp = 0
@@ -243,7 +251,6 @@ export default function BuildSelect({
       }
       return cmp * dir
     })
-    if (scope.kind === 'recent') list = list.slice(0, RECENT_LIMIT)
     return list
   }, [scopedBuilds, search, activeTags, levelFilter, sortCol, sortDir, scope, lib.meta])
 

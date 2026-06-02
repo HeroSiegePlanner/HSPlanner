@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import {
@@ -15,17 +14,13 @@ import {
   getRune,
   isGearSlot,
 } from '../data'
-import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
-import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { BONUS_SOCKET_MOD_ID, RAINBOW_MULTIPLIER, useBuild } from '../store/build'
-import type { BuildPerformanceDeps } from '../utils/build/buildPerformance'
 import type {
   EquippedItem,
   ItemBase,
   ItemGrantedSkill,
   ItemRarity,
   RangedValue,
-  SlotKey,
   StatMap,
 } from '../types'
 import {
@@ -35,8 +30,6 @@ import {
   isZero,
   rangedMax,
   rangedMin,
-  rolledAffixValue,
-  rolledAffixValueWithStars,
   shouldScaleImplicit,
   statName,
 } from '../utils/item/stats'
@@ -112,13 +105,9 @@ export default function ItemTooltip({
 export function ItemTooltipBody({
   equipped,
   base,
-  compareWith,
-  compareSlotKey,
 }: {
   equipped?: EquippedItem
   base: ItemBase
-  compareWith?: EquippedItem
-  compareSlotKey?: SlotKey
 }) {
   const inventory = useBuild((s) => s.inventory)
 
@@ -554,292 +543,11 @@ export function ItemTooltipBody({
         </TooltipSection>
       )}
 
-      {compareWith && (
-        <NetChangeSection
-          equipped={equipped}
-          base={base}
-          compareWith={compareWith}
-          slotKey={compareSlotKey}
-        />
-      )}
-
       {footerBits.length > 0 && (
         <TooltipFooter>{footerBits.join(' · ')}</TooltipFooter>
       )}
     </>
   )
-}
-
-function aggregateItemStats(
-  base: ItemBase,
-  equipped: EquippedItem | undefined,
-): Record<string, number> {
-  const out: Record<string, number> = {}
-  const add = (k: string, v: number) => {
-    if (v === 0) return
-    out[k] = (out[k] ?? 0) + v
-  }
-
-  const stars = equipped?.stars ?? 0
-  const runeword = equipped ? detectRuneword(base, equipped.socketed) : undefined
-  const scaleImplicit = shouldScaleImplicit(!!runeword)
-
-  if (base.implicit) {
-    for (const [k, v] of Object.entries(base.implicit)) {
-      const override = equipped?.implicitOverrides?.[k]
-      if (override !== undefined) {
-        add(k, override)
-        continue
-      }
-      const scaled = scaleImplicit ? applyStarsToRangedValue(v, k, stars) : v
-      add(k, (rangedMin(scaled) + rangedMax(scaled)) / 2)
-    }
-  }
-
-  if (!equipped) return out
-
-  if (equipped.implicitOverrides) {
-    for (const [k, v] of Object.entries(equipped.implicitOverrides)) {
-      if (base.implicit && k in base.implicit) continue
-      add(k, v)
-    }
-  }
-
-  for (const eq of equipped.affixes) {
-    const affix = getAffix(eq.affixId)
-    if (!affix?.statKey) continue
-    // Use roll mid-point so Net Change isn't biased by the picker's default `roll: 1`.
-    const value =
-      eq.customValue !== undefined
-        ? eq.customValue
-        : rolledAffixValueWithStars(affix, 0.5, equipped.stars)
-    add(affix.statKey, value)
-  }
-
-  for (const eq of equipped.forgedMods ?? []) {
-    const mod = getCrystalMod(eq.affixId)
-    if (!mod?.statKey) continue
-    const value =
-      eq.customValue !== undefined
-        ? eq.customValue
-        : rolledAffixValue(mod, 0.5)
-    add(mod.statKey, value)
-  }
-
-  if (runeword) {
-    for (const [k, v] of Object.entries(runeword.stats)) add(k, v)
-  } else {
-    for (let i = 0; i < equipped.socketed.length; i++) {
-      const id = equipped.socketed[i]
-      if (!id) continue
-      const source = getGem(id) ?? getRune(id)
-      if (!source) continue
-      const mult =
-        equipped.socketTypes[i] === 'rainbow' ? RAINBOW_MULTIPLIER : 1
-      const transform = base.socketTransforms?.[id]
-      const src = transform ?? source.stats
-      for (const [k, v] of Object.entries(src)) add(k, v * mult)
-    }
-  }
-
-  return out
-}
-
-function DiffRow({
-  diffKey,
-  diff,
-  direction,
-}: {
-  diffKey: string
-  diff: number
-  direction: 'up' | 'down'
-}) {
-  const colorClass = direction === 'up' ? 'text-stat-green' : 'text-stat-red'
-  const arrow = direction === 'up' ? '▲' : '▼'
-  return (
-    <li className="flex items-baseline justify-between gap-2">
-      <span className="text-muted min-w-0 wrap-break-words leading-tight">
-        {statName(diffKey)}
-      </span>
-      <span
-        className={`font-mono tabular-nums whitespace-nowrap shrink-0 ${colorClass}`}
-      >
-        {arrow} {formatValue(diff, diffKey)}
-      </span>
-    </li>
-  )
-}
-
-function NetChangeSection({
-  equipped,
-  base,
-  compareWith,
-  slotKey,
-}: {
-  equipped: EquippedItem | undefined
-  base: ItemBase
-  compareWith: EquippedItem
-  slotKey?: SlotKey
-}) {
-  const baseDeps = useBuildPerformanceDeps()
-  const beforeBase = getItem(compareWith.baseId)
-
-  const diffs = useMemo(() => {
-    if (!beforeBase) return []
-    const before = aggregateItemStats(beforeBase, compareWith)
-    const after = aggregateItemStats(base, equipped)
-    const allKeys = new Set([...Object.keys(before), ...Object.keys(after)])
-    const out: Array<{ key: string; diff: number }> = []
-    for (const key of allKeys) {
-      const d = (after[key] ?? 0) - (before[key] ?? 0)
-      if (Math.abs(d) < 0.01) continue
-      out.push({ key, diff: d })
-    }
-    out.sort((a, b) => b.diff - a.diff)
-    return out
-  }, [beforeBase, compareWith, base, equipped])
-
-  const [dpsRow, setDpsRow] = useState<DpsRow | null>(null)
-
-  useEffect(() => {
-    if (!slotKey) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDpsRow(null)
-      return
-    }
-    let cancelled = false
-    computeDpsDeltaAsync(baseDeps, slotKey, base).then((row) => {
-      if (!cancelled) setDpsRow(row)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [slotKey, base, baseDeps])
-
-  if (!beforeBase) return null
-
-  const positives = diffs.filter((d) => d.diff > 0)
-  const negatives = diffs.filter((d) => d.diff < 0)
-  const hasDpsRow = dpsRow !== null && dpsRow.hasWeapon
-
-  if (diffs.length === 0 && !hasDpsRow) {
-    return (
-      <TooltipSection>
-        <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
-          Net Change
-        </div>
-        <p className="text-[11px] text-faint italic">No stat changes</p>
-      </TooltipSection>
-    )
-  }
-
-  return (
-    <TooltipSection>
-      <div className="text-[10px] uppercase tracking-[0.12em] text-muted mb-1">
-        Net Change
-      </div>
-      {diffs.length > 0 && (
-        <ul className="space-y-0.5 text-[12px]">
-          {positives.map(({ key, diff }) => (
-            <DiffRow
-              key={`up-${key}`}
-              diffKey={key}
-              diff={diff}
-              direction="up"
-            />
-          ))}
-          {negatives.map(({ key, diff }) => (
-            <DiffRow
-              key={`dn-${key}`}
-              diffKey={key}
-              diff={diff}
-              direction="down"
-            />
-          ))}
-        </ul>
-      )}
-      {hasDpsRow && (
-        <div className="mt-1.5 pt-1.5 border-t border-border/60">
-          <div className="flex items-baseline justify-between gap-2 text-[12px]">
-            <span className="text-muted">DPS</span>
-            {Math.abs(dpsRow!.diffAvg) < 0.5 ? (
-              <span className="font-mono tabular-nums whitespace-nowrap shrink-0 text-faint">
-                = no change
-              </span>
-            ) : (
-              <span
-                className={`font-mono tabular-nums whitespace-nowrap shrink-0 ${
-                  dpsRow!.diffAvg > 0 ? 'text-stat-green' : 'text-stat-red'
-                }`}
-              >
-                {dpsRow!.diffAvg > 0 ? '▲' : '▼'}{' '}
-                {formatDpsValue(Math.abs(dpsRow!.diffAvg))}
-              </span>
-            )}
-          </div>
-          <div className="text-[10px] text-faint tabular-nums mt-0.5 text-right">
-            {formatDpsValue(dpsRow!.beforeAvg)} →{' '}
-            {formatDpsValue(dpsRow!.afterAvg)}
-          </div>
-        </div>
-      )}
-    </TooltipSection>
-  )
-}
-
-function formatDpsValue(n: number): string {
-  if (!Number.isFinite(n) || n === 0) return '0'
-  const rounded = Math.round(n)
-  return rounded.toLocaleString('en-US')
-}
-
-interface DpsRow {
-  beforeAvg: number
-  afterAvg: number
-  diffAvg: number
-  hasWeapon: boolean
-}
-
-async function computeDpsDeltaAsync(
-  baseDeps: BuildPerformanceDeps,
-  slotKey: SlotKey,
-  prospectBase: ItemBase,
-): Promise<DpsRow | null> {
-  // Diff hit-DPS between current inventory and one with the hovered item swapped into `slotKey`.
-  const synthetic: EquippedItem = {
-    baseId: prospectBase.id,
-    affixes: [],
-    socketCount: prospectBase.sockets ?? 0,
-    socketed: Array(prospectBase.sockets ?? 0).fill(null),
-    socketTypes: Array(prospectBase.sockets ?? 0).fill('normal'),
-  }
-
-  const prospectDeps: BuildPerformanceDeps = {
-    ...baseDeps,
-    inventory: { ...baseDeps.inventory, [slotKey]: synthetic },
-  }
-
-  const [before, after] = await Promise.all([
-    computeBuildPerformanceAsync(baseDeps),
-    computeBuildPerformanceAsync(prospectDeps),
-  ])
-
-  const avg = (lo: number | undefined, hi: number | undefined): number =>
-    lo !== undefined && hi !== undefined ? (lo + hi) / 2 : 0
-
-  const beforeHas = before.hitDpsMin !== undefined && before.hitDpsMax !== undefined
-  const afterHas = after.hitDpsMin !== undefined && after.hitDpsMax !== undefined
-
-  if (!beforeHas && !afterHas) return null
-
-  const beforeAvg = avg(before.hitDpsMin, before.hitDpsMax)
-  const afterAvg = avg(after.hitDpsMin, after.hitDpsMax)
-  return {
-    beforeAvg,
-    afterAvg,
-    diffAvg: afterAvg - beforeAvg,
-    hasWeapon: beforeHas || afterHas,
-  }
 }
 
 export type CompareState = 'equipped' | 'selected'
@@ -849,16 +557,12 @@ export function ItemCard({
   base,
   arcLabel,
   state,
-  compareWith,
-  compareSlotKey,
   className,
 }: {
   equipped?: EquippedItem
   base: ItemBase | undefined
   arcLabel?: ReactNode
   state?: CompareState
-  compareWith?: EquippedItem
-  compareSlotKey?: SlotKey
   className?: string
 }) {
   const stateClass = state ? `compare-card is-${state}` : ''
@@ -895,8 +599,6 @@ export function ItemCard({
       <ItemTooltipBody
         equipped={equipped}
         base={base}
-        compareWith={compareWith}
-        compareSlotKey={compareSlotKey}
       />
     </div>
   )

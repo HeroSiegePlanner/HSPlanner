@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
 import BottomBar from "./components/BottomBar";
@@ -13,6 +14,11 @@ import StorageErrorBanner from "./components/StorageErrorBanner";
 import { classes, getClass } from "./data";
 import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
+import {
+  spriteBootProgress,
+  warmupBootProgress,
+  WARMUP_WEIGHT,
+} from "./utils/bootProgress";
 import { preloadSprites } from "./utils/preloadAssets";
 import { readStorage, readStorageWithLegacy, writeStorage } from "./utils/storage";
 const CharacterView = lazy(() => import("./views/CharacterView"));
@@ -56,10 +62,6 @@ function readInitialSection(): Section {
   return "tree";
 }
 
-// 0–50% Rust warm-up, 50–100% sprite fetches.
-const WARMUP_WEIGHT = 0.5;
-const SPRITES_WEIGHT = 0.5;
-
 function ViewLoadingFallback() {
   return (
     <div className="flex h-full items-center justify-center">
@@ -82,10 +84,13 @@ function App() {
   const [screen, setScreen] = useState<Screen>("library");
 
   // Boot: warm calc caches and preload sprites while the HTML splash from index.html is visible.
-  // Splash listens via window.__bootProgress / window.__bootFinish.
+  // The bar honestly tracks two real phases: Rust warm-up (0–15%) then sprite
+  // fetches (15–100%). Splash listens via window.__bootProgress / __bootFinish.
   useEffect(() => {
-    // Floor display time to avoid flashing the splash on hot reload.
-    const MIN_DISPLAY_MS = 1200;
+    // Short anti-flash floor so a fast start doesn't just blink the splash.
+    const MIN_DISPLAY_MS = 500;
+    // Reserve the final 1% for the dismissal frame so the bar never parks at 100%.
+    const FINALIZE_RESERVE = 1;
     let cancelled = false;
     const bootStart = performance.now();
 
@@ -94,33 +99,48 @@ function App() {
     };
 
     (async () => {
-      report(2, "Loading game data");
+      // Warm-up owns 0–15%, so seed the bar at 0 (not a fake 2%) to keep it
+      // monotonic when the first warmup-progress event reports current=0.
+      report(0, "Loading game data");
+      // Warm Rust data + parser caches, mirroring its real progress onto 0–15%.
       try {
-        // Pre-initialise Rust data + parser caches so the first real calc isn't slow.
-        await invoke<boolean>("calc_warmup");
+        const unlisten = await listen<{ current: number; total: number }>(
+          "warmup-progress",
+          (e) => {
+            if (cancelled) return;
+            const { pct, status } = warmupBootProgress(
+              e.payload.current,
+              e.payload.total,
+            );
+            report(pct, status);
+          },
+        );
+        try {
+          await invoke<boolean>("calc_warmup");
+        } finally {
+          unlisten();
+        }
       } catch {
-        // No Tauri (plain browser) — keep going.
+        // No Tauri (plain browser) — keep going without warm-up.
       }
       if (cancelled) return;
       report(WARMUP_WEIGHT * 100, "Loading sprites");
 
       await preloadSprites((loaded, total) => {
         if (cancelled) return;
-        const fraction = total > 0 ? loaded / total : 1;
-        report(
-          (WARMUP_WEIGHT + SPRITES_WEIGHT * fraction) * 100,
-          "Loading sprites",
-        );
+        const { pct, status } = spriteBootProgress(loaded, total);
+        report(Math.min(pct, 100 - FINALIZE_RESERVE), status);
       });
       if (cancelled) return;
-      report(100, "Ready");
 
-      const elapsed = performance.now() - bootStart;
-      const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+      // Honor the short floor (bar holds just under 100%), then snap to 100% in
+      // the same beat as dismissal so it never sits on a finished bar.
+      const remaining = Math.max(0, MIN_DISPLAY_MS - (performance.now() - bootStart));
       if (remaining > 0) {
         await new Promise((r) => window.setTimeout(r, remaining));
       }
       if (cancelled) return;
+      report(100, "Ready");
       window.__bootFinish?.();
 
       // "Auto-open last build": skip the library and jump straight into the

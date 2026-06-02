@@ -105,9 +105,6 @@ fn compare_value(path: &str, rust: &Value, ts: &Value) -> Option<String> {
         (Value::Bool(a), Value::Bool(b)) if a == b => None,
         (Value::String(a), Value::String(b)) if a == b => None,
         (Value::Number(a), Value::Number(b)) => compare_numbers(path, a, b),
-
-        // Rust emits Ranged as `[min, max]`. TS collapses `min === max` to a
-        // scalar — accept either side of the asymmetry.
         (Value::Array(arr), Value::Number(n)) if arr.len() == 2 => {
             compare_ranged_tuple_vs_scalar(path, arr, n)
         }
@@ -132,8 +129,6 @@ fn compare_value(path: &str, rust: &Value, ts: &Value) -> Option<String> {
         }
 
         (Value::Object(rust_obj), Value::Object(ts_obj)) => {
-            // Rust→TS: rust may emit `null` for Option<None> where TS omits
-            // the field entirely. Tolerate when the rust side is null.
             for (k, r_val) in rust_obj.iter() {
                 if !ts_obj.contains_key(k) && !r_val.is_null() {
                     return Some(format!(

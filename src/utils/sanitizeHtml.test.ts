@@ -70,6 +70,20 @@ describe('sanitizeHtml', () => {
     expect(out).not.toMatch(/onerror/i)
   })
 
+  it('strips dangerous descendants lifted out of disallowed wrappers', () => {
+    // Regression: children lifted from an unknown wrapper must still be sanitized.
+    const out = sanitizeHtml('<center><img src=x onerror=alert(1)></center>')
+    expect(out).not.toContain('<img')
+    expect(out).not.toMatch(/onerror/i)
+  })
+
+  it('strips event handlers on nested unknown wrappers (form)', () => {
+    const out = sanitizeHtml('<form><img src=x onerror=alert(1)><b>keep</b></form>')
+    expect(out).not.toContain('<img')
+    expect(out).not.toMatch(/onerror/i)
+    expect(out).toContain('<b>keep</b>')
+  })
+
   it('strips style url() expressions', () => {
     const out = sanitizeHtml('<p style="background-color: url(javascript:alert(1))">x</p>')
     expect(out).not.toMatch(/url\(/)

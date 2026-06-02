@@ -1,190 +1,360 @@
 [
   {
-    "name": "empty",
     "input": {
+      "activeAuraId": null,
+      "activeBuffs": {},
+      "allocatedAttrs": {},
+      "allocatedTreeNodes": [],
       "classId": null,
-      "level": 1,
-      "allocatedAttrs": {},
+      "customStats": [],
+      "enemyConditions": {},
+      "enemyResistances": {
+        "arcane": 85,
+        "cold": 85,
+        "fire": 85,
+        "lightning": 85,
+        "poison": 85
+      },
       "inventory": {},
+      "killsPerSec": 0,
+      "level": 1,
+      "mainSkillId": null,
+      "playerConditions": {},
+      "procToggles": {},
+      "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
-      "activeAuraId": null,
-      "activeBuffs": {},
-      "customStats": [],
-      "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
-      "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
-      "enemyResistances": {
-        "fire": 85,
-        "cold": 85,
-        "lightning": 85,
-        "poison": 85,
-        "arcane": 85
-      },
-      "procToggles": {},
-      "killsPerSec": 0
+      "treeSocketed": {}
     },
+    "name": "empty",
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": 2,
-        "dexterity": 2,
-        "intelligence": 1,
-        "energy": 8,
-        "vitality": 10,
-        "armor": 4
+        "armor": [
+          4.0,
+          4.0
+        ],
+        "dexterity": [
+          2.0,
+          2.0
+        ],
+        "energy": [
+          8.0,
+          8.0
+        ],
+        "intelligence": [
+          1.0,
+          1.0
+        ],
+        "strength": [
+          2.0,
+          2.0
+        ],
+        "vitality": [
+          10.0,
+          10.0
+        ]
       },
-      "stats": {
-        "attacks_per_second": 1.5,
-        "crit_chance": 5,
-        "crit_damage": 25,
-        "experience_gain": 4,
-        "life_replenish": 3,
-        "mana_replenish": 4,
-        "enhanced_damage": 2,
-        "attack_rating": 16,
-        "mana": 32,
-        "life": 50,
-        "defense": 20
-      },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
       "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "attack_rating": [
+          16.0,
+          16.0
+        ],
+        "attacks_per_second": [
+          1.5,
+          1.5
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          25.0,
+          25.0
+        ],
+        "defense": [
+          20.0,
+          20.0
+        ],
+        "enhanced_damage": [
+          2.0,
+          2.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "life": [
+          50.0,
+          50.0
+        ],
+        "life_replenish": [
+          3.0,
+          3.0
+        ],
+        "mana": [
+          32.0,
+          32.0
+        ],
+        "mana_replenish": [
+          4.0,
+          4.0
+        ]
+      }
     }
   },
   {
+    "input": {
+      "activeAuraId": null,
+      "activeBuffs": {},
+      "allocatedAttrs": {},
+      "allocatedTreeNodes": [],
+      "classId": "amazon",
+      "customStats": [],
+      "enemyConditions": {},
+      "enemyResistances": {
+        "arcane": 85,
+        "cold": 85,
+        "fire": 85,
+        "lightning": 85,
+        "poison": 85
+      },
+      "inventory": {},
+      "killsPerSec": 0,
+      "level": 1,
+      "mainSkillId": null,
+      "playerConditions": {},
+      "procToggles": {},
+      "skillProjectiles": {},
+      "skillRanks": {},
+      "subskillRanks": {},
+      "treeSocketed": {}
+    },
     "name": "class_only_lvl_1",
-    "input": {
-      "classId": "amazon",
-      "level": 1,
-      "allocatedAttrs": {},
-      "inventory": {},
-      "skillRanks": {},
-      "subskillRanks": {},
-      "activeAuraId": null,
-      "activeBuffs": {},
-      "customStats": [],
-      "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
-      "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
-      "enemyResistances": {
-        "fire": 85,
-        "cold": 85,
-        "lightning": 85,
-        "poison": 85,
-        "arcane": 85
-      },
-      "procToggles": {},
-      "killsPerSec": 0
-    },
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": 2,
-        "dexterity": 2,
-        "intelligence": 1,
-        "energy": 8,
-        "vitality": 10,
-        "armor": 4
+        "armor": [
+          4.0,
+          4.0
+        ],
+        "dexterity": [
+          2.0,
+          2.0
+        ],
+        "energy": [
+          8.0,
+          8.0
+        ],
+        "intelligence": [
+          1.0,
+          1.0
+        ],
+        "strength": [
+          2.0,
+          2.0
+        ],
+        "vitality": [
+          10.0,
+          10.0
+        ]
       },
-      "stats": {
-        "attacks_per_second": 1.5,
-        "crit_chance": 5,
-        "crit_damage": 25,
-        "experience_gain": 4,
-        "life_replenish": 3,
-        "mana_replenish": 4,
-        "enhanced_damage": 2,
-        "attack_rating": 16,
-        "mana": 32,
-        "life": 50,
-        "defense": 20
-      },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
       "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "attack_rating": [
+          16.0,
+          16.0
+        ],
+        "attacks_per_second": [
+          1.5,
+          1.5
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          25.0,
+          25.0
+        ],
+        "defense": [
+          20.0,
+          20.0
+        ],
+        "enhanced_damage": [
+          2.0,
+          2.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "life": [
+          50.0,
+          50.0
+        ],
+        "life_replenish": [
+          3.0,
+          3.0
+        ],
+        "mana": [
+          32.0,
+          32.0
+        ],
+        "mana_replenish": [
+          4.0,
+          4.0
+        ]
+      }
     }
   },
   {
-    "name": "class_leveled_50",
     "input": {
-      "classId": "amazon",
-      "level": 50,
+      "activeAuraId": null,
+      "activeBuffs": {},
       "allocatedAttrs": {
-        "strength": 20,
+        "armor": 20,
         "dexterity": 20,
-        "intelligence": 20,
         "energy": 20,
-        "vitality": 20,
-        "armor": 20
+        "intelligence": 20,
+        "strength": 20,
+        "vitality": 20
+      },
+      "allocatedTreeNodes": [],
+      "classId": "amazon",
+      "customStats": [],
+      "enemyConditions": {},
+      "enemyResistances": {
+        "arcane": 85,
+        "cold": 85,
+        "fire": 85,
+        "lightning": 85,
+        "poison": 85
       },
       "inventory": {},
+      "killsPerSec": 0,
+      "level": 50,
+      "mainSkillId": null,
+      "playerConditions": {},
+      "procToggles": {},
+      "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
-      "activeAuraId": null,
-      "activeBuffs": {},
-      "customStats": [],
-      "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
-      "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
-      "enemyResistances": {
-        "fire": 85,
-        "cold": 85,
-        "lightning": 85,
-        "poison": 85,
-        "arcane": 85
-      },
-      "procToggles": {},
-      "killsPerSec": 0
+      "treeSocketed": {}
     },
+    "name": "class_leveled_50",
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": 22,
-        "dexterity": 22,
-        "intelligence": 21,
-        "energy": 28,
-        "vitality": 30,
-        "armor": 24
+        "armor": [
+          24.0,
+          24.0
+        ],
+        "dexterity": [
+          22.0,
+          22.0
+        ],
+        "energy": [
+          28.0,
+          28.0
+        ],
+        "intelligence": [
+          21.0,
+          21.0
+        ],
+        "strength": [
+          22.0,
+          22.0
+        ],
+        "vitality": [
+          30.0,
+          30.0
+        ]
       },
-      "stats": {
-        "attacks_per_second": 1.5,
-        "crit_chance": 5,
-        "crit_damage": 27.5,
-        "experience_gain": 4,
-        "life_replenish": 5,
-        "mana_replenish": 7,
-        "enhanced_damage": 22,
-        "attack_rating": 176,
-        "mana": 112,
-        "life": 150,
-        "defense": 120
-      },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
       "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "attack_rating": [
+          176.0,
+          176.0
+        ],
+        "attacks_per_second": [
+          1.5,
+          1.5
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          27.5,
+          27.5
+        ],
+        "defense": [
+          120.0,
+          120.0
+        ],
+        "enhanced_damage": [
+          22.0,
+          22.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "life": [
+          150.0,
+          150.0
+        ],
+        "life_replenish": [
+          5.0,
+          5.0
+        ],
+        "mana": [
+          112.0,
+          112.0
+        ],
+        "mana_replenish": [
+          7.0,
+          7.0
+        ]
+      }
     }
   },
   {
-    "name": "class_with_custom_stat",
     "input": {
-      "classId": "amazon",
-      "level": 10,
-      "allocatedAttrs": {},
-      "inventory": {},
-      "skillRanks": {},
-      "subskillRanks": {},
       "activeAuraId": null,
       "activeBuffs": {},
+      "allocatedAttrs": {},
+      "allocatedTreeNodes": [],
+      "classId": "amazon",
       "customStats": [
         {
           "statKey": "all_skills",
@@ -199,117 +369,240 @@
           "value": "50-80"
         }
       ],
-      "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
       "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
       "enemyResistances": {
-        "fire": 85,
+        "arcane": 85,
         "cold": 85,
+        "fire": 85,
         "lightning": 85,
-        "poison": 85,
-        "arcane": 85
+        "poison": 85
       },
+      "inventory": {},
+      "killsPerSec": 0,
+      "level": 10,
+      "mainSkillId": null,
+      "playerConditions": {},
       "procToggles": {},
-      "killsPerSec": 0
+      "skillProjectiles": {},
+      "skillRanks": {},
+      "subskillRanks": {},
+      "treeSocketed": {}
     },
+    "name": "class_with_custom_stat",
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": 2,
-        "dexterity": 2,
-        "intelligence": 1,
-        "energy": 8,
-        "vitality": 10,
-        "armor": 4
-      },
-      "stats": {
-        "attacks_per_second": 1.5,
-        "crit_chance": 20,
-        "crit_damage": 25,
-        "experience_gain": 4,
-        "life_replenish": 3,
-        "mana_replenish": 4,
-        "all_skills": 2,
-        "fire_skill_damage": [
-          50,
-          80
+        "armor": [
+          4.0,
+          4.0
         ],
-        "enhanced_damage": 2,
-        "attack_rating": 16,
-        "mana": 32,
-        "life": 50,
-        "defense": 20
+        "dexterity": [
+          2.0,
+          2.0
+        ],
+        "energy": [
+          8.0,
+          8.0
+        ],
+        "intelligence": [
+          1.0,
+          1.0
+        ],
+        "strength": [
+          2.0,
+          2.0
+        ],
+        "vitality": [
+          10.0,
+          10.0
+        ]
       },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
       "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "all_skills": [
+          2.0,
+          2.0
+        ],
+        "attack_rating": [
+          16.0,
+          16.0
+        ],
+        "attacks_per_second": [
+          1.5,
+          1.5
+        ],
+        "crit_chance": [
+          20.0,
+          20.0
+        ],
+        "crit_damage": [
+          25.0,
+          25.0
+        ],
+        "defense": [
+          20.0,
+          20.0
+        ],
+        "enhanced_damage": [
+          2.0,
+          2.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "fire_skill_damage": [
+          50.0,
+          80.0
+        ],
+        "life": [
+          50.0,
+          50.0
+        ],
+        "life_replenish": [
+          3.0,
+          3.0
+        ],
+        "mana": [
+          32.0,
+          32.0
+        ],
+        "mana_replenish": [
+          4.0,
+          4.0
+        ]
+      }
     }
   },
   {
-    "name": "class_with_one_item",
     "input": {
-      "classId": "amazon",
-      "level": 20,
-      "allocatedAttrs": {},
-      "inventory": {
-        "weapon": {
-          "baseId": "base_flask_achemists_flask",
-          "affixes": [],
-          "socketCount": 0,
-          "socketed": [],
-          "socketTypes": []
-        }
-      },
-      "skillRanks": {},
-      "subskillRanks": {},
       "activeAuraId": null,
       "activeBuffs": {},
-      "customStats": [],
+      "allocatedAttrs": {},
       "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
+      "classId": "amazon",
+      "customStats": [],
       "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
       "enemyResistances": {
-        "fire": 85,
+        "arcane": 85,
         "cold": 85,
+        "fire": 85,
         "lightning": 85,
-        "poison": 85,
-        "arcane": 85
+        "poison": 85
       },
+      "inventory": {
+        "weapon": {
+          "affixes": [],
+          "baseId": "base_flask_achemists_flask",
+          "socketCount": 0,
+          "socketTypes": [],
+          "socketed": []
+        }
+      },
+      "killsPerSec": 0,
+      "level": 20,
+      "mainSkillId": null,
+      "playerConditions": {},
       "procToggles": {},
-      "killsPerSec": 0
+      "skillProjectiles": {},
+      "skillRanks": {},
+      "subskillRanks": {},
+      "treeSocketed": {}
     },
+    "name": "class_with_one_item",
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": 2,
-        "dexterity": 2,
-        "intelligence": 1,
-        "energy": 8,
-        "vitality": 10,
-        "armor": 4
+        "armor": [
+          4.0,
+          4.0
+        ],
+        "dexterity": [
+          2.0,
+          2.0
+        ],
+        "energy": [
+          8.0,
+          8.0
+        ],
+        "intelligence": [
+          1.0,
+          1.0
+        ],
+        "strength": [
+          2.0,
+          2.0
+        ],
+        "vitality": [
+          10.0,
+          10.0
+        ]
       },
-      "stats": {
-        "attacks_per_second": 1.75,
-        "crit_chance": 5,
-        "crit_damage": 25,
-        "experience_gain": 4,
-        "life_replenish": 3,
-        "mana_replenish": 4,
-        "enhanced_damage": 2,
-        "attack_rating": 16,
-        "mana": 32,
-        "life": 50,
-        "defense": 20
-      },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
       "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "attack_rating": [
+          16.0,
+          16.0
+        ],
+        "attacks_per_second": [
+          1.75,
+          1.75
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          25.0,
+          25.0
+        ],
+        "defense": [
+          20.0,
+          20.0
+        ],
+        "enhanced_damage": [
+          2.0,
+          2.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "life": [
+          50.0,
+          50.0
+        ],
+        "life_replenish": [
+          3.0,
+          3.0
+        ],
+        "mana": [
+          32.0,
+          32.0
+        ],
+        "mana_replenish": [
+          4.0,
+          4.0
+        ]
+      }
     }
   },
   {
@@ -321,291 +614,442 @@
     "skipped": "required game data not available"
   },
   {
-    "name": "class_with_stars_5",
     "input": {
-      "classId": "amazon",
-      "level": 40,
+      "activeAuraId": null,
+      "activeBuffs": {},
       "allocatedAttrs": {},
+      "allocatedTreeNodes": [],
+      "classId": "amazon",
+      "customStats": [],
+      "enemyConditions": {},
+      "enemyResistances": {
+        "arcane": 85,
+        "cold": 85,
+        "fire": 85,
+        "lightning": 85,
+        "poison": 85
+      },
       "inventory": {
         "amulet": {
-          "baseId": "amulet_heroic_compass_of_wealth",
           "affixes": [
             {
               "affixId": "1_5_to_all_resistances_t1_forest",
-              "tier": 1,
-              "roll": 1
+              "roll": 1,
+              "tier": 1
             }
           ],
+          "baseId": "amulet_heroic_compass_of_wealth",
           "socketCount": 0,
-          "socketed": [],
           "socketTypes": [],
+          "socketed": [],
           "stars": 5
         }
       },
+      "killsPerSec": 0,
+      "level": 40,
+      "mainSkillId": null,
+      "playerConditions": {},
+      "procToggles": {},
+      "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
-      "activeAuraId": null,
-      "activeBuffs": {},
-      "customStats": [],
-      "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
-      "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
-      "enemyResistances": {
-        "fire": 85,
-        "cold": 85,
-        "lightning": 85,
-        "poison": 85,
-        "arcane": 85
-      },
-      "procToggles": {},
-      "killsPerSec": 0
+      "treeSocketed": {}
     },
+    "name": "class_with_stars_5",
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": [
-          20,
-          26
+        "armor": [
+          22.0,
+          40.0
         ],
         "dexterity": [
-          20,
-          26
-        ],
-        "intelligence": [
-          19,
-          25
+          20.0,
+          38.0
         ],
         "energy": [
-          26,
-          32
+          26.0,
+          44.0
+        ],
+        "intelligence": [
+          19.0,
+          37.0
+        ],
+        "strength": [
+          20.0,
+          38.0
         ],
         "vitality": [
-          28,
-          34
-        ],
-        "armor": [
-          22,
-          28
+          28.0,
+          46.0
         ]
       },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
+      "damage": null,
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
       "stats": {
-        "gold_find": [
-          34,
-          46
+        "all_resistances": [
+          5.0,
+          5.0
         ],
-        "magic_find": [
-          23,
-          80
+        "all_skills": [
+          1.0,
+          2.0
         ],
-        "all_resistances": 5,
-        "attacks_per_second": 1.5,
-        "crit_chance": 5,
-        "crit_damage": [
-          27.25,
-          28
-        ],
-        "experience_gain": 4,
-        "life_replenish": [
-          5,
-          6
-        ],
-        "mana_replenish": [
-          7,
-          8
-        ],
-        "enhanced_damage": [
-          20,
-          26
+        "arcane_resistance": [
+          5.0,
+          5.0
         ],
         "attack_rating": [
-          160,
-          208
+          160.0,
+          304.0
         ],
-        "mana": [
-          104,
-          128
+        "attacks_per_second": [
+          1.5,
+          1.5
         ],
-        "life": [
-          140,
-          170
+        "cold_resistance": [
+          5.0,
+          5.0
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          27.25,
+          29.5
         ],
         "defense": [
-          110,
-          140
+          110.0,
+          200.0
         ],
-        "fire_resistance": 5,
-        "cold_resistance": 5,
-        "lightning_resistance": 5,
-        "poison_resistance": 5,
-        "arcane_resistance": 5
-      },
-      "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+        "enhanced_damage": [
+          20.0,
+          38.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "fire_resistance": [
+          5.0,
+          5.0
+        ],
+        "gold_find": [
+          34.0,
+          46.0
+        ],
+        "life": [
+          140.0,
+          230.0
+        ],
+        "life_replenish": [
+          5.0,
+          7.0
+        ],
+        "lightning_resistance": [
+          5.0,
+          5.0
+        ],
+        "magic_find": [
+          23.0,
+          80.0
+        ],
+        "mana": [
+          104.0,
+          176.0
+        ],
+        "mana_replenish": [
+          7.0,
+          10.0
+        ],
+        "poison_resistance": [
+          5.0,
+          5.0
+        ]
+      }
     }
   },
   {
-    "name": "class_with_skill_passive",
     "input": {
-      "classId": "stormweaver",
-      "level": 30,
+      "activeAuraId": null,
+      "activeBuffs": {},
       "allocatedAttrs": {},
+      "allocatedTreeNodes": [],
+      "classId": "stormweaver",
+      "customStats": [],
+      "enemyConditions": {},
+      "enemyResistances": {
+        "arcane": 85,
+        "cold": 85,
+        "fire": 85,
+        "lightning": 85,
+        "poison": 85
+      },
       "inventory": {},
+      "killsPerSec": 0,
+      "level": 30,
+      "mainSkillId": null,
+      "playerConditions": {},
+      "procToggles": {},
+      "skillProjectiles": {},
       "skillRanks": {
         "chain_lightning": 5
       },
       "subskillRanks": {},
-      "activeAuraId": null,
-      "activeBuffs": {},
-      "customStats": [],
-      "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": null,
-      "enemyConditions": {},
-      "playerConditions": {},
-      "skillProjectiles": {},
-      "enemyResistances": {
-        "fire": 85,
-        "cold": 85,
-        "lightning": 85,
-        "poison": 85,
-        "arcane": 85
-      },
-      "procToggles": {},
-      "killsPerSec": 0
+      "treeSocketed": {}
     },
+    "name": "class_with_skill_passive",
     "output": {
+      "activeSkillName": null,
+      "attackDamage": null,
       "attributes": {
-        "strength": 2,
-        "dexterity": 2,
-        "intelligence": 1,
-        "energy": 8,
-        "vitality": 10,
-        "armor": 4
+        "armor": [
+          4.0,
+          4.0
+        ],
+        "dexterity": [
+          2.0,
+          2.0
+        ],
+        "energy": [
+          8.0,
+          8.0
+        ],
+        "intelligence": [
+          1.0,
+          1.0
+        ],
+        "strength": [
+          2.0,
+          2.0
+        ],
+        "vitality": [
+          10.0,
+          10.0
+        ]
       },
-      "stats": {
-        "attacks_per_second": 1.5,
-        "crit_chance": 5,
-        "crit_damage": 25,
-        "experience_gain": 4,
-        "life_replenish": 3,
-        "mana_replenish": 4,
-        "chain_lightning_targets": 2.8,
-        "enhanced_damage": 2,
-        "attack_rating": 16,
-        "mana": 32,
-        "life": 50,
-        "defense": 20
-      },
+      "avgHitDpsMax": null,
+      "avgHitDpsMin": null,
+      "combinedDpsMax": null,
+      "combinedDpsMin": null,
       "damage": null,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "activeSkillName": null
+      "hitDpsMax": null,
+      "hitDpsMin": null,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "attack_rating": [
+          16.0,
+          16.0
+        ],
+        "attacks_per_second": [
+          1.5,
+          1.5
+        ],
+        "chain_lightning_targets": [
+          2.8,
+          2.8
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          25.0,
+          25.0
+        ],
+        "defense": [
+          20.0,
+          20.0
+        ],
+        "enhanced_damage": [
+          2.0,
+          2.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "life": [
+          50.0,
+          50.0
+        ],
+        "life_replenish": [
+          3.0,
+          3.0
+        ],
+        "mana": [
+          32.0,
+          32.0
+        ],
+        "mana_replenish": [
+          4.0,
+          4.0
+        ]
+      }
     }
   },
   {
-    "name": "class_with_active_skill_damage",
     "input": {
-      "classId": "stormweaver",
-      "level": 40,
-      "allocatedAttrs": {},
-      "inventory": {},
-      "skillRanks": {
-        "charged_bolts": 10
-      },
-      "subskillRanks": {},
       "activeAuraId": null,
       "activeBuffs": {},
-      "customStats": [],
+      "allocatedAttrs": {},
       "allocatedTreeNodes": [],
-      "treeSocketed": {},
-      "mainSkillId": "charged_bolts",
+      "classId": "stormweaver",
+      "customStats": [],
       "enemyConditions": {
         "burning": true,
         "frozen": true
       },
+      "enemyResistances": {
+        "arcane": 85,
+        "cold": 85,
+        "fire": 85,
+        "lightning": 85,
+        "poison": 85
+      },
+      "inventory": {},
+      "killsPerSec": 0,
+      "level": 40,
+      "mainSkillId": "charged_bolts",
       "playerConditions": {},
+      "procToggles": {},
       "skillProjectiles": {
         "charged_bolts": 3
       },
-      "enemyResistances": {
-        "fire": 85,
-        "cold": 85,
-        "lightning": 85,
-        "poison": 85,
-        "arcane": 85
+      "skillRanks": {
+        "charged_bolts": 10
       },
-      "procToggles": {},
-      "killsPerSec": 0
+      "subskillRanks": {},
+      "treeSocketed": {}
     },
+    "name": "class_with_active_skill_damage",
     "output": {
+      "activeSkillName": "Charged Bolts",
+      "attackDamage": null,
       "attributes": {
-        "strength": 2,
-        "dexterity": 2,
-        "intelligence": 1,
-        "energy": 8,
-        "vitality": 10,
-        "armor": 4
+        "armor": [
+          4.0,
+          4.0
+        ],
+        "dexterity": [
+          2.0,
+          2.0
+        ],
+        "energy": [
+          8.0,
+          8.0
+        ],
+        "intelligence": [
+          1.0,
+          1.0
+        ],
+        "strength": [
+          2.0,
+          2.0
+        ],
+        "vitality": [
+          10.0,
+          10.0
+        ]
       },
-      "stats": {
-        "attacks_per_second": 1.5,
-        "crit_chance": 5,
-        "crit_damage": 25,
-        "experience_gain": 4,
-        "life_replenish": 3,
-        "mana_replenish": 4,
-        "enhanced_damage": 2,
-        "attack_rating": 16,
-        "mana": 32,
-        "life": 50,
-        "defense": 20
-      },
+      "avgHitDpsMax": 55.0,
+      "avgHitDpsMin": 55.0,
+      "combinedDpsMax": 55.0,
+      "combinedDpsMin": 55.0,
       "damage": {
-        "effectiveRankMin": 10,
-        "effectiveRankMax": 10,
-        "baseMin": 114.5,
-        "baseMax": 114.5,
-        "flatMin": 0,
-        "flatMax": 0,
-        "synergyMinPct": 8.5,
-        "synergyMaxPct": 8.5,
-        "skillDamageMinPct": 0,
-        "skillDamageMaxPct": 0,
-        "extraDamagePct": 0,
-        "extraDamageSources": [],
-        "critChance": 0,
-        "critDamagePct": 0,
-        "critMultiplierAvg": 1,
-        "multicastChancePct": 0,
-        "multicastMultiplier": 1,
-        "projectileCount": 3,
-        "elementalBreakPct": 0,
-        "elementalBreakMultiplier": 1,
-        "enemyResistancePct": 85,
-        "resistanceIgnoredPct": 0,
-        "effectiveResistancePct": 85,
-        "resistanceMultiplier": 0.15000000000000002,
-        "hitMin": 18,
-        "hitMax": 18,
-        "critMin": 18,
-        "critMax": 18,
-        "finalMin": 18,
-        "finalMax": 18,
+        "avgMax": 55,
         "avgMin": 55,
-        "avgMax": 55
+        "baseMax": 114.5,
+        "baseMin": 114.5,
+        "critChance": 0.0,
+        "critDamagePct": 0.0,
+        "critMax": 18,
+        "critMin": 18,
+        "critMultiplierAvg": 1.0,
+        "effectiveRankMax": 10.0,
+        "effectiveRankMin": 10.0,
+        "effectiveResistancePct": 85.0,
+        "elementalBreakMultiplier": 1.0,
+        "elementalBreakPct": 0.0,
+        "enemyResistancePct": 85.0,
+        "extraDamagePct": 0.0,
+        "extraDamageSources": [],
+        "finalMax": 18,
+        "finalMin": 18,
+        "flatMax": 0.0,
+        "flatMin": 0.0,
+        "hitMax": 18,
+        "hitMin": 18,
+        "multicastChancePct": 0.0,
+        "multicastMultiplier": 1.0,
+        "projectileCount": 3,
+        "resistanceIgnoredPct": 0.0,
+        "resistanceMultiplier": 0.15000000000000002,
+        "skillDamageMaxPct": 0.0,
+        "skillDamageMinPct": 0.0,
+        "synergyMaxPct": 8.5,
+        "synergyMinPct": 8.5
       },
-      "hitDpsMin": 18,
-      "hitDpsMax": 18,
-      "avgHitDpsMin": 55,
-      "avgHitDpsMax": 55,
-      "procDpsMin": 0,
-      "procDpsMax": 0,
-      "combinedDpsMin": 55,
-      "combinedDpsMax": 55,
-      "activeSkillName": "Charged Bolts"
+      "hitDpsMax": 18.0,
+      "hitDpsMin": 18.0,
+      "procDpsMax": 0.0,
+      "procDpsMin": 0.0,
+      "stats": {
+        "attack_rating": [
+          16.0,
+          16.0
+        ],
+        "attacks_per_second": [
+          1.5,
+          1.5
+        ],
+        "crit_chance": [
+          5.0,
+          5.0
+        ],
+        "crit_damage": [
+          25.0,
+          25.0
+        ],
+        "defense": [
+          20.0,
+          20.0
+        ],
+        "enhanced_damage": [
+          2.0,
+          2.0
+        ],
+        "experience_gain": [
+          4.0,
+          4.0
+        ],
+        "life": [
+          50.0,
+          50.0
+        ],
+        "life_replenish": [
+          3.0,
+          3.0
+        ],
+        "mana": [
+          32.0,
+          32.0
+        ],
+        "mana_replenish": [
+          4.0,
+          4.0
+        ]
+      }
     }
   }
 ]

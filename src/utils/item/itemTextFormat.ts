@@ -461,6 +461,47 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
   let augment: { id: string; level: number } | undefined = undefined
   const implicitOverrides: Record<string, number> = {}
 
+  // The Sockets section is serialized AFTER the Implicit section, but runeword
+  // detection decides whether implicits are star-scaled (shouldScaleImplicit).
+  // Pre-scan the sockets so the Implicit handler below detects the runeword with
+  // the real runes instead of treating the item as un-socketed — otherwise a
+  // star-scaled runeword's implicits get re-scaled, mismatch their serialized
+  // values, and are all spuriously written into implicitOverrides.
+  const socketedForRuneword: (string | null)[] = (() => {
+    const sec = sections.find((s) => s[0]?.text.startsWith('Sockets:'))
+    if (!sec) return []
+    const mapText = sec[0]!.text
+      .slice('Sockets:'.length)
+      .trim()
+      .replace(/\s+/g, '')
+    if (!mapText) return []
+    const out: (string | null)[] = new Array(mapText.split('-').length).fill(
+      null,
+    )
+    for (let i = 1; i < sec.length; i++) {
+      const m = sec[i]!.text.match(
+        /^\[(\d+)]\s*\((?:Normal|Rainbow)\):\s*(.+)$/i,
+      )
+      if (!m) continue
+      const idx = Number(m[1]) - 1
+      if (idx < 0 || idx >= out.length) continue
+      const nameRaw = m[2]!.trim()
+      if (/^Rune of /i.test(nameRaw)) {
+        const runeName = nameRaw.replace(/^Rune of /i, '').trim()
+        const rune = runes.find(
+          (r) => r.name.toLowerCase() === runeName.toLowerCase(),
+        )
+        if (rune) out[idx] = rune.id
+      } else {
+        const gem = gems.find(
+          (g) => g.name.toLowerCase() === nameRaw.toLowerCase(),
+        )
+        if (gem) out[idx] = gem.id
+      }
+    }
+    return out
+  })()
+
   for (const sec of sections) {
     if (sec.length === 0) continue
     const head = sec[0]!
@@ -505,7 +546,7 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
     }
 
     if (firstLine === 'Implicit:') {
-      const runewordHere = detectRuneword(base, [])
+      const runewordHere = detectRuneword(base, socketedForRuneword)
       const scaleImplicitHere = shouldScaleImplicit(!!runewordHere)
       for (let i = 1; i < sec.length; i++) {
         const { text, lineNum } = sec[i]!

@@ -3,7 +3,7 @@ import {
   decodeShareToBuild,
   encodeBuildToShare,
 } from './shareBuild'
-import { readStorageWithLegacy, writeStorage } from '../storage'
+import { readStorage, readStorageWithLegacy, writeStorage } from '../storage'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
 const STORAGE_KEY_V2 = 'hsplanner.savedBuilds.v2'
@@ -321,9 +321,9 @@ function readLegacyBuilds(): SavedBuild[] {
       const parsed: unknown = JSON.parse(raw)
       if (Array.isArray(parsed)) return cleanBuilds(parsed, new Set())
     } catch {
-      // fall through
+      // Corrupt/non-array v2: fall through to the v1 migration below rather
+      // than returning [], so a damaged v2 key can't mask recoverable v1 data.
     }
-    return []
   }
   const v1 = readV1()
   return v1.length > 0 ? migrateV1(v1) : []
@@ -332,8 +332,8 @@ function readLegacyBuilds(): SavedBuild[] {
 export function readLibrary(): SavedLibrary {
   // Loads the persisted v3 saved-builds library (with legacy key fallback), defensively trimming oversized fields and dropping malformed entries. When no v3 data exists, migrates from v2/v1 and best-effort persists the result. Used internally by every public read/mutate function and by `savedFolders.ts`.
   const raw = readStorageWithLegacy(STORAGE_KEY, LEGACY_STORAGE_KEY)
-  try {
-    if (raw) {
+  if (raw) {
+    try {
       const parsed: unknown = JSON.parse(raw)
       if (
         parsed &&
@@ -345,23 +345,40 @@ export function readLibrary(): SavedLibrary {
         const validIds = new Set(folders.map((f) => f.id))
         return { version: 3, builds: cleanBuilds(p.builds, validIds), folders }
       }
-      return emptyLibrary()
+    } catch {
+      // fall through to the corrupt-data path below
     }
-    const builds = readLegacyBuilds()
-    const library: SavedLibrary = { version: 3, builds, folders: [] }
-    if (builds.length > 0) {
-      try {
-        writeLibrary(library)
-      } catch {
-        // Best-effort migration: if the rewrite under the v3 key fails (e.g.
-        // storage is full) we still return the migrated library in memory and
-        // retry persisting it on the next load — throwing here would make
-        // every read appear to wipe the user's entire library.
-      }
-    }
-    return library
-  } catch {
+    // The v3 blob exists but is unparseable or malformed. Preserve it under a
+    // backup key BEFORE returning an empty library, otherwise the next save
+    // would overwrite the v3 key and permanently destroy recoverable builds.
+    backupCorruptLibrary(raw)
     return emptyLibrary()
+  }
+  // No v3 data yet — migrate from v2/v1 and best-effort persist the result.
+  const builds = readLegacyBuilds()
+  const library: SavedLibrary = { version: 3, builds, folders: [] }
+  if (builds.length > 0) {
+    try {
+      writeLibrary(library)
+    } catch {
+      // Best-effort migration: if the rewrite under the v3 key fails (e.g.
+      // storage is full) we still return the migrated library in memory and
+      // retry persisting it on the next load — throwing here would make
+      // every read appear to wipe the user's entire library.
+    }
+  }
+  return library
+}
+
+// Saves the first seen corrupt v3 blob under a one-off backup key so a later
+// write can't silently overwrite (and destroy) data that might be recoverable
+// by hand. Best-effort: never throws from the read path.
+function backupCorruptLibrary(raw: string): void {
+  try {
+    const key = `${STORAGE_KEY}.corrupt`
+    if (!readStorage(key)) writeStorage(key, raw)
+  } catch {
+    // ignore — the backup is purely best-effort
   }
 }
 

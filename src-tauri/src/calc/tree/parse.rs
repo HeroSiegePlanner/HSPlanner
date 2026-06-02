@@ -246,10 +246,17 @@ pub(crate) static RULES: Lazy<Vec<ParseRule>> = Lazy::new(|| {
             },
         },
         ParseRule {
-            test: Regex::new(r"(?i)^([+\-\d.]+)%\s+Increased\s+Maximum\s+Life$").unwrap(),
+            test: Regex::new(
+                r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Maximum\s+Life$",
+            )
+            .unwrap(),
             build: |m| {
                 Some(ParsedMod {
-                    key: "increased_life".to_string(),
+                    key: if m.get(2).is_some() {
+                        "increased_life_more".to_string()
+                    } else {
+                        "increased_life".to_string()
+                    },
                     value: num(&m[1]),
                     self_condition: None,
                 })
@@ -2437,6 +2444,7 @@ mod tests {
         assert_mod("+10 to Maximum Life", "life", 10.0);
         assert_mod("+250 to Maximum Mana", "mana", 250.0);
         assert_mod("5% Increased Maximum Life", "increased_life", 5.0);
+        assert_mod("5% Increased Total Maximum Life", "increased_life_more", 5.0);
         assert_mod("8% Increased Maximum Mana", "increased_mana", 8.0);
         assert_mod("5% Increased Total Maximum Mana", "increased_mana_more", 5.0);
         assert_mod("12% Increased Mana", "increased_mana", 12.0);

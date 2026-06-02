@@ -312,13 +312,20 @@
             if (b && b.parentNode) b.parentNode.removeChild(b);
           }, 750);
         };
-        // Safety fallback: if React never wires up (crash, blank import, etc.)
-        // dismiss after 12 s so the splash can never trap the user forever.
-        setTimeout(function(){
+        // Dismissal is React-driven: on mount React calls __bootReady() to
+        // cancel this timer, then dismisses only when real loading finishes
+        // (Rust warm-up + every sprite + min floor). This timer is a pure
+        // last resort for the case React never wires up at all (crash, blank
+        // import, dev server never serves the app). It is intentionally long
+        // so a slow cold dev start — where React can mount well after 10 s —
+        // is never cut off mid-load; in production React mounts near-instantly
+        // so it never fires.
+        var fallback = setTimeout(function(){
           if (document.getElementById('boot') && !document.body.classList.contains('boot-done')) {
             window.__bootFinish();
           }
-        }, 12000);
+        }, 60000);
+        window.__bootReady = function(){ clearTimeout(fallback); };
       })();
     </script>
     <div id="root"></div>

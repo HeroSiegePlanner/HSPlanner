@@ -4,8 +4,6 @@ mod suggest_engine;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
-    .plugin(tauri_plugin_dialog::init())
-    .plugin(tauri_plugin_fs::init())
     .plugin(tauri_plugin_updater::Builder::new().build())
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_opener::init())
@@ -26,6 +24,8 @@ pub fn run() {
       calc::commands::calc_build_stats,
       calc::commands::calc_stat_breakdown,
       calc::commands::calc_warmup,
+      calc::commands::passive_stats_at_rank,
+      calc::commands::mana_cost_at_rank,
       suggest_engine::command::suggest_tree_nodes,
     ])
     .run(tauri::generate_context!())
