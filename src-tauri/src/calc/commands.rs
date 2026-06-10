@@ -198,6 +198,72 @@ pub fn mana_cost_at_rank(skill: PassiveSkillDto, rank: f64) -> Option<f64> {
     super::passive::mana_cost_at_rank(&skill.into(), r)
 }
 
+// ---------- subskill_aggregation ----------
+// Thin command over calc/subskill.rs so the skill tooltip reads subtree
+// bonuses from the same aggregation the engine uses.
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SubskillAggregationInput {
+    pub class_id: String,
+    pub skill_id: String,
+    #[serde(default)]
+    pub subskill_ranks: HashMap<String, u32>,
+    #[serde(default)]
+    pub enemy_conditions: HashMap<String, bool>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AppliedStateOut {
+    pub state: String,
+    pub trigger: String,
+    pub chance: f64,
+    pub amount: Option<f64>,
+}
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct SubskillAggregationOutput {
+    pub stats: HashMap<String, f64>,
+    pub proc_stats: HashMap<String, f64>,
+    pub applied_states: Vec<AppliedStateOut>,
+}
+
+fn subskill_aggregation_impl(input: &SubskillAggregationInput) -> SubskillAggregationOutput {
+    let Some(spec) = super::data::get_skills_by_class(&input.class_id)
+        .iter()
+        .find(|s| s.id == input.skill_id)
+    else {
+        return SubskillAggregationOutput::default();
+    };
+    let owner = super::stats::skill_spec_to_subskill_owner(spec);
+    let agg = super::subskill::aggregate_subskill_stats(
+        &owner,
+        &input.subskill_ranks,
+        Some(&input.enemy_conditions),
+    );
+    SubskillAggregationOutput {
+        stats: agg.stats,
+        proc_stats: agg.proc_stats,
+        applied_states: agg
+            .applied_states
+            .into_iter()
+            .map(|s| AppliedStateOut {
+                state: s.state,
+                trigger: s.trigger,
+                chance: s.chance,
+                amount: s.amount,
+            })
+            .collect(),
+    }
+}
+
+#[tauri::command]
+pub fn subskill_aggregation(input: SubskillAggregationInput) -> SubskillAggregationOutput {
+    subskill_aggregation_impl(&input)
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct WeaponDto {
@@ -665,4 +731,23 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         StatBreakdownKind::Attribute => computed.attributes.get(&input.stat_key).copied(),
     };
     compute_stat_breakdown(sources, &input.stat_key, final_value)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn subskill_aggregation_unknown_skill_returns_empty() {
+        let input = SubskillAggregationInput {
+            class_id: "no_such_class".to_string(),
+            skill_id: "no_such_skill".to_string(),
+            subskill_ranks: HashMap::from([("no_such_skill:sub".to_string(), 3)]),
+            enemy_conditions: HashMap::new(),
+        };
+        let out = subskill_aggregation_impl(&input);
+        assert!(out.stats.is_empty());
+        assert!(out.proc_stats.is_empty());
+        assert!(out.applied_states.is_empty());
+    }
 }

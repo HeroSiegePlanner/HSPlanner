@@ -370,3 +370,59 @@ export function manaCostAtRankNative(
 ): Promise<number | null> {
   return invoke('mana_cost_at_rank', { skill, rank })
 }
+
+// ---------- subskill_aggregation ----------
+// Replaces the former TS subtree.ts aggregation; the math lives in Rust
+// calc/subskill.rs.
+
+export interface AppliedStateInfo {
+  state: string
+  trigger: string
+  chance: number
+  amount?: number
+}
+
+export interface SubtreeAggregation {
+  stats: Record<string, number>
+  procStats: Record<string, number>
+  appliedStates: AppliedStateInfo[]
+}
+
+interface RustAppliedState {
+  state: string
+  trigger: string
+  chance: number
+  amount: number | null
+}
+
+interface SubskillAggregationRustOutput {
+  stats: Record<string, number>
+  procStats: Record<string, number>
+  appliedStates: RustAppliedState[]
+}
+
+export async function subskillAggregationNative(
+  classId: string,
+  skillId: string,
+  subskillRanks: Record<string, number>,
+  enemyConditions: Record<string, boolean>,
+): Promise<SubtreeAggregation> {
+  try {
+    const raw = await invoke<SubskillAggregationRustOutput>(
+      'subskill_aggregation',
+      { input: { classId, skillId, subskillRanks, enemyConditions } },
+    )
+    return {
+      stats: raw.stats,
+      procStats: raw.procStats,
+      appliedStates: raw.appliedStates.map((s) => ({
+        state: s.state,
+        trigger: s.trigger,
+        chance: s.chance,
+        ...(s.amount !== null ? { amount: s.amount } : {}),
+      })),
+    }
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}

@@ -8,7 +8,11 @@ import { listContainerVariants, skillIconVariants } from '../lib/motion'
 import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { useSkillRankInfo } from '../hooks/useSkillRankInfo'
-import { computeBuildStatsAsync } from '../lib/calc/bridge'
+import {
+  computeBuildStatsAsync,
+  subskillAggregationNative,
+} from '../lib/calc/bridge'
+import type { SubtreeAggregation } from '../lib/calc/bridge'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
 import { DAMAGE_COLORS } from '../utils/damageColors'
 import {
@@ -19,7 +23,6 @@ import {
   statName,
 } from '../utils/item/stats'
 import type { ComputedStats } from '../utils/item/stats'
-import { aggregateSubskillStats } from '../utils/tree/subtree'
 import type {
   AttributeKey,
   DamageType,
@@ -856,6 +859,12 @@ function formatPair(pair: [number, number]): string {
   return pair[0] === pair[1] ? String(pair[0]) : `${pair[0]}-${pair[1]}`
 }
 
+const EMPTY_SUBTREE_AGGREGATION: SubtreeAggregation = {
+  stats: {},
+  procStats: {},
+  appliedStates: [],
+}
+
 function SubtreeBonusBlock({
   skill,
   subskillRanks,
@@ -865,10 +874,21 @@ function SubtreeBonusBlock({
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
 }) {
-  const agg = useMemo(
-    () => aggregateSubskillStats(skill, subskillRanks, enemyConditions),
-    [skill, subskillRanks, enemyConditions],
-  )
+  const [agg, setAgg] = useState<SubtreeAggregation>(EMPTY_SUBTREE_AGGREGATION)
+  useEffect(() => {
+    let cancelled = false
+    subskillAggregationNative(
+      skill.classId,
+      skill.id,
+      subskillRanks,
+      enemyConditions,
+    ).then((a) => {
+      if (!cancelled) setAgg(a)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [skill, subskillRanks, enemyConditions])
   const statEntries = Object.entries(agg.stats)
     .filter(([, v]) => v !== 0)
     .sort(([a], [b]) => a.localeCompare(b))
