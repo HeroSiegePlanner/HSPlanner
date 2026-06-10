@@ -2,12 +2,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import { gameConfig, getSkillsByClass, getClass } from '../../data'
 import type { Skill } from '../../types'
-import {
-  aggregateItemSkillBonuses,
-  normalizeSkillName,
-  rangedMax,
-  rangedMin,
-} from '../item/stats'
+import { normalizeSkillName, rangedMax, rangedMin } from '../item/stats'
 import { computeBuildStatsAsync } from '../../lib/calc/bridge'
 import { ADJ, START_IDS } from './treeGraph'
 import {
@@ -151,13 +146,6 @@ export async function suggestNodesNative(
     ? (deps.skillRanks[activeSkill.id] ?? 0)
     : 0
 
-  const itemSkillBonuses: Record<string, Ranged> = {}
-  for (const [k, v] of Object.entries(
-    aggregateItemSkillBonuses(deps.inventory),
-  )) {
-    itemSkillBonuses[normalizeSkillName(k)] = [v[0], v[1]]
-  }
-
   const skillRanksByName: Record<string, number> = {}
   for (const s of allClassSkills) {
     skillRanksByName[normalizeSkillName(s.name)] = deps.skillRanks[s.id] ?? 0
@@ -185,7 +173,7 @@ export async function suggestNodesNative(
     activeSkill: activeSkill ? skillRef(activeSkill) : undefined,
     activeSkillRank: Math.max(0, Math.floor(activeSkillRank)),
     skillRanksByName,
-    itemSkillBonuses,
+    inventory: deps.inventory,
     enemyConditions: deps.enemyConditions ?? {},
     playerConditions: deps.playerConditions ?? {},
     enemyResistances,

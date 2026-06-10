@@ -19,7 +19,8 @@ import {
   START_IDS,
   START_SET,
 } from '../utils/tree/treeGraph'
-import { formatValue, rolledAffixValue, statName } from '../utils/item/stats'
+import { formatValue, statName } from '../utils/item/stats'
+import { useAffixDisplayRanges } from './gear/sections/AffixesSection'
 import {
   diffPerformanceDps,
   diffPerformanceStats,
@@ -1183,6 +1184,20 @@ function JewelrySocketSection({
   content: TreeSocketContent | null
   isAllocated: boolean
 }) {
+  const craftedAffixes = useMemo(
+    () => (content && content.kind !== 'item' ? content.affixes : []),
+    [content],
+  )
+  const craftedItems = useMemo(
+    () =>
+      craftedAffixes.map((eq) => ({
+        def: getAffix(eq.affixId),
+        roll: eq.roll,
+      })),
+    [craftedAffixes],
+  )
+  const craftedValues = useAffixDisplayRanges(craftedItems)
+
   if (!content) {
     return (
       <TooltipSection>
@@ -1224,11 +1239,11 @@ function JewelrySocketSection({
     socketedSubtitle = `${content.affixes.length} affix${
       content.affixes.length === 1 ? '' : 'es'
     }`
-    statLines = content.affixes
-      .map((eq) => {
+    statLines = craftedAffixes
+      .map((eq, idx) => {
         const def = getAffix(eq.affixId)
         if (!def || !def.statKey) return null
-        const value = rolledAffixValue(def, eq.roll)
+        const value = craftedValues[idx]?.value ?? 0
         if (value === 0) return null
         return { key: def.statKey, value }
       })

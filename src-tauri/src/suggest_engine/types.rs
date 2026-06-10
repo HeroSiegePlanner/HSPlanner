@@ -167,7 +167,7 @@ pub struct GameConfig {
     pub attribute_divided_stats: HashMap<String, HashMap<String, f64>>,
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PrecomputedInput {
     pub class: Option<ClassInfo>,
@@ -190,7 +190,7 @@ pub struct PrecomputedInput {
     #[serde(default)]
     pub skill_ranks_by_name: HashMap<String, f64>,
     #[serde(default)]
-    pub item_skill_bonuses: HashMap<String, Ranged>,
+    pub inventory: crate::calc::types::Inventory,
     #[serde(default)]
     pub enemy_conditions: HashMap<String, bool>,
     #[serde(default)]

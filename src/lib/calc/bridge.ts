@@ -371,6 +371,60 @@ export function manaCostAtRankNative(
   return invoke('mana_cost_at_rank', { skill, rank })
 }
 
+// ---------- parse_custom_stats ----------
+// Replaces the former TS parseCustomStatValue; the parser lives in Rust
+// calc/custom_stat.rs.
+
+export async function parseCustomStatsNative(
+  values: string[],
+): Promise<([number, number] | null)[]> {
+  try {
+    return await invoke<([number, number] | null)[]>('parse_custom_stats', {
+      values,
+    })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// ---------- display_values ----------
+// Batched affix/star display math; replaces the former TS
+// rolledAffixValue*/applyStarsToRangedValue helpers.
+
+export interface AffixValueRequest {
+  affix: unknown
+  roll?: number
+  stars?: number | null
+}
+
+export interface ScaledValueRequest {
+  value: [number, number]
+  statKey: string
+  stars?: number | null
+}
+
+export interface AffixValueOutput {
+  value: number
+  rangeMin: number
+  rangeMax: number
+}
+
+export interface DisplayValuesOutput {
+  affixes: AffixValueOutput[]
+  scaled: [number, number][]
+}
+
+export async function displayValuesNative(input: {
+  affixes?: AffixValueRequest[]
+  scaled?: ScaledValueRequest[]
+}): Promise<DisplayValuesOutput> {
+  try {
+    return await invoke<DisplayValuesOutput>('display_values', { input })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
 // ---------- classify_tree_nodes ----------
 // Replaces the former TS classifyNodeLines RULES engine; the regexes live in
 // Rust calc/tree/parse.rs. Fetched once and cached by TreeView.

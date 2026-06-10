@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import {
@@ -24,8 +25,7 @@ import type {
   StatMap,
 } from '../types'
 import {
-  applyStarsToRangedValue,
-  formatAffixRange,
+  formatAffixRangeFromValues,
   formatValue,
   isZero,
   rangedMax,
@@ -33,6 +33,8 @@ import {
   shouldScaleImplicit,
   statName,
 } from '../utils/item/stats'
+import { displayValuesNative } from '../lib/calc/bridge'
+import type { AffixValueOutput } from '../lib/calc/bridge'
 import Tooltip, {
   TooltipFooter,
   TooltipHeader,
@@ -102,6 +104,84 @@ export default function ItemTooltip({
   )
 }
 
+interface TooltipDisplayValues {
+  implicitScaled: Record<string, [number, number]>
+  skillRankScaled: Record<string, [number, number]>
+  affixRanges: (AffixValueOutput | null)[]
+}
+
+const EMPTY_DISPLAY: TooltipDisplayValues = {
+  implicitScaled: {},
+  skillRankScaled: {},
+  affixRanges: [],
+}
+
+// One display_values batch per item: star-scaled implicits, skill-rank
+// bonuses, and affix roll ranges all come from the Rust engine.
+function useItemDisplayValues(
+  base: ItemBase,
+  equipped: EquippedItem | undefined,
+  scaleImplicit: boolean,
+): TooltipDisplayValues | null {
+  const [out, setOut] = useState<TooltipDisplayValues | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    const stars = equipped?.stars ?? null
+    const toPair = (v: RangedValue): [number, number] => [
+      rangedMin(v),
+      rangedMax(v),
+    ]
+    const implicitEntries =
+      scaleImplicit && base.implicit ? Object.entries(base.implicit) : []
+    const skillEntries = base.skillBonuses
+      ? Object.entries(base.skillBonuses)
+      : []
+    const equippedAffixes = equipped?.affixes ?? []
+    const affixDefs = equippedAffixes.map((eq) => getAffix(eq.affixId))
+    const affixReqs = equippedAffixes
+      .map((eq, i) => ({ eq, def: affixDefs[i] }))
+      .filter((x) => x.def)
+      .map((x) => ({ affix: x.def, roll: x.eq.roll ?? 0, stars }))
+    const scaled = [
+      ...implicitEntries.map(([k, v]) => ({
+        value: toPair(v),
+        statKey: k,
+        stars,
+      })),
+      ...skillEntries.map(([, v]) => ({
+        value: toPair(v),
+        statKey: 'item_granted_skill_rank',
+        stars,
+      })),
+    ]
+    if (affixReqs.length === 0 && scaled.length === 0) {
+      setOut(EMPTY_DISPLAY)
+      return
+    }
+    displayValuesNative({ affixes: affixReqs, scaled }).then((res) => {
+      if (cancelled) return
+      const implicitScaled: Record<string, [number, number]> = {}
+      implicitEntries.forEach(([k], i) => {
+        implicitScaled[k] = res.scaled[i]!
+      })
+      const skillRankScaled: Record<string, [number, number]> = {}
+      skillEntries.forEach(([name], i) => {
+        skillRankScaled[name] = res.scaled[implicitEntries.length + i]!
+      })
+      const affixRanges: (AffixValueOutput | null)[] = []
+      let cursor = 0
+      for (const def of affixDefs) {
+        affixRanges.push(def ? (res.affixes[cursor++] ?? null) : null)
+      }
+      setOut({ implicitScaled, skillRankScaled, affixRanges })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [base, equipped, scaleImplicit])
+  return out
+}
+
 export function ItemTooltipBody({
   equipped,
   base,
@@ -112,6 +192,12 @@ export function ItemTooltipBody({
   const inventory = useBuild((s) => s.inventory)
 
   const runeword = equipped ? detectRuneword(base, equipped.socketed) : undefined
+  const display = useItemDisplayValues(
+    base,
+    equipped,
+    shouldScaleImplicit(!!runeword),
+  )
+  if (!display) return null
   const tone: TooltipTone = runeword ? 'rare' : RARITY_TONE[base.rarity]
   const set = base.setId ? getItemSet(base.setId) : undefined
   const setEquippedCount = base.setId
@@ -153,9 +239,7 @@ export function ItemTooltipBody({
           if (override !== undefined) {
             return [k, override, true] as [string, RangedValue, boolean]
           }
-          const scaled = scaleImplicit
-            ? applyStarsToRangedValue(v, k, stars)
-            : v
+          const scaled = scaleImplicit ? (display.implicitScaled[k] ?? v) : v
           return [k, scaled, false] as [string, RangedValue, boolean]
         })
         .filter(([, v]) => !isZero(v))
@@ -182,12 +266,12 @@ export function ItemTooltipBody({
       displayRank: string
       lines: string[]
     }> = []
-    for (const [skillName, val] of Object.entries(base.skillBonuses)) {
+    for (const skillName of Object.keys(base.skillBonuses)) {
       const skill = getItemGrantedSkillByName(skillName)
       if (!skill) continue
-      const scaled = applyStarsToRangedValue(val, 'item_granted_skill_rank', stars)
-      const rMin = Math.round(rangedMin(scaled))
-      const rMax = Math.round(rangedMax(scaled))
+      const [sMin, sMax] = display.skillRankScaled[skillName] ?? [0, 0]
+      const rMin = Math.round(sMin)
+      const rMax = Math.round(sMax)
       if (rMax <= 0) continue
       const displayRank = rMin === rMax ? String(rMin) : `${rMin}-${rMax}`
       const lines: string[] = []
@@ -381,7 +465,10 @@ export function ItemTooltipBody({
           const valueDisplay =
             eq.customValue !== undefined
               ? formatValue(eq.customValue, affix.statKey)
-              : formatAffixRange(affix, equipped?.stars)
+              : formatAffixRangeFromValues(
+                  affix,
+                  display.affixRanges[idx] ?? null,
+                )
           const customMark = eq.customValue !== undefined ? ' ✦' : ''
           return (
             <li key={idx} className={colorBase}>

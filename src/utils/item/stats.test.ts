@@ -1,23 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import type { Inventory, RangedStatMap } from '../types'
+import type { RangedStatMap } from '../types'
 import {
-  aggregateItemSkillBonuses,
-  applyStarsToRangedValue,
   effectiveCap,
   fmtStats,
-  formatAffixRange,
+  formatAffixRangeFromValues,
   formatValue,
-  isAffixStarImmune,
   isZero,
   normalizeSkillName,
   rangedMax,
   rangedMin,
-  rolledAffixRange,
-  rolledAffixValue,
-  rolledAffixValueWithStars,
   shouldScaleImplicit,
   statName,
 } from './stats'
+
+// Affix/star math (rolled values, star scaling, item skill bonuses) moved to
+// Rust — covered by src-tauri/src/calc/{affix,star_scaling,rank}.rs tests.
 
 // -----------------------------------------------------------------------
 // normalizeSkillName
@@ -123,202 +120,50 @@ describe('formatValue / fmtStats', () => {
 })
 
 // -----------------------------------------------------------------------
-// Affix rolling
+// formatAffixRangeFromValues — string formatting over Rust-computed ranges
 // -----------------------------------------------------------------------
 
-describe('rolledAffixValue', () => {
-  const baseAffix = {
-    sign: '+' as const,
-    format: 'flat' as const,
-    valueMin: 10,
-    valueMax: 20,
-  }
-
-  it('returns 0 when the affix has no documented range', () => {
-    expect(rolledAffixValue({ ...baseAffix, valueMin: null, valueMax: null }, 0.5)).toBe(0)
-  })
-
-  it('returns the exact value when min equals max (no lerp)', () => {
-    expect(rolledAffixValue({ ...baseAffix, valueMin: 7, valueMax: 7 }, 0.5)).toBe(7)
-  })
-
-  it('lerps roll=0 to min and roll=1 to max', () => {
-    expect(rolledAffixValue(baseAffix, 0)).toBe(10)
-    expect(rolledAffixValue(baseAffix, 1)).toBe(20)
-  })
-
-  it('rounds flat-format values to integers', () => {
-    // roll=0.5 → 15 exactly, which is already integer
-    expect(rolledAffixValue(baseAffix, 0.5)).toBe(15)
-    // odd roll exercises rounding
-    expect(rolledAffixValue(baseAffix, 0.33)).toBe(13) // 10 + 10*0.33 = 13.3 → 13
-  })
-
-  it('preserves fractional values for percent format', () => {
-    const percentAffix = { ...baseAffix, format: 'percent' as const, valueMin: 1, valueMax: 2 }
-    expect(rolledAffixValue(percentAffix, 0.5)).toBe(1.5)
-  })
-
-  it('negates the result when the sign is "-"', () => {
-    expect(rolledAffixValue({ ...baseAffix, sign: '-' }, 1)).toBe(-20)
-  })
-})
-
-describe('rolledAffixRange', () => {
-  it('returns 0 when the affix has no documented range', () => {
+describe('formatAffixRangeFromValues', () => {
+  it('returns just the sign when min/max are null or no range is available', () => {
     expect(
-      rolledAffixRange({
-        sign: '+',
-        format: 'flat',
-        valueMin: null,
-        valueMax: null,
-      }),
-    ).toBe(0)
-  })
-
-  it('collapses to a scalar when min equals max', () => {
-    expect(
-      rolledAffixRange({ sign: '+', format: 'flat', valueMin: 5, valueMax: 5 }),
-    ).toBe(5)
-  })
-
-  it('returns [min, max] for non-degenerate ranges', () => {
-    expect(
-      rolledAffixRange({ sign: '+', format: 'flat', valueMin: 3, valueMax: 9 }),
-    ).toEqual([3, 9])
-  })
-
-  it('flips the sign and order for "-" sign (so the range stays ascending)', () => {
-    expect(
-      rolledAffixRange({ sign: '-', format: 'flat', valueMin: 3, valueMax: 9 }),
-    ).toEqual([-9, -3])
-  })
-})
-
-describe('isAffixStarImmune', () => {
-  it('delegates to starScaling.isStatStarImmune', () => {
-    expect(isAffixStarImmune('to_strength')).toBe(false)
-    expect(isAffixStarImmune('totally_made_up_stat')).toBe(true)
-  })
-})
-
-describe('rolledAffixValueWithStars', () => {
-  const percentAffix = {
-    sign: '+' as const,
-    format: 'percent' as const,
-    valueMin: 10,
-    valueMax: 20,
-    statKey: 'to_strength',
-  }
-
-  it('returns base value when stars is 0 / undefined', () => {
-    expect(rolledAffixValueWithStars(percentAffix, 1, 0)).toBe(20)
-    expect(rolledAffixValueWithStars(percentAffix, 1, undefined)).toBe(20)
-  })
-
-  it('applies the percent multiplier and floors when stars are active', () => {
-    // roll=1 → base 20; 5 stars * 5% = 25% bonus → 20 * 1.25 = 25
-    expect(rolledAffixValueWithStars(percentAffix, 1, 5)).toBe(25)
-  })
-
-  it('returns 0 when both base and flat bonus are 0', () => {
-    expect(
-      rolledAffixValueWithStars(
-        { ...percentAffix, valueMin: 0, valueMax: 0 },
-        1,
-        3,
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'flat', valueMin: null, valueMax: null },
+        { rangeMin: 0, rangeMax: 0 },
       ),
-    ).toBe(0)
-  })
-
-  it('adds the flat-skill-staircase bonus for elemental_skills affixes', () => {
-    // fire_skills is flat-skill-staircase. 3 stars adds +1 flat, no percent.
-    const flatAffix = {
-      sign: '+' as const,
-      format: 'flat' as const,
-      valueMin: 1,
-      valueMax: 1,
-      statKey: 'fire_skills',
-    }
-    expect(rolledAffixValueWithStars(flatAffix, 1, 3)).toBe(2) // 1 + 1
-    expect(rolledAffixValueWithStars(flatAffix, 1, 5)).toBe(3) // 1 + 2
-  })
-})
-
-describe('formatAffixRange', () => {
-  it('returns just the sign when min/max are null', () => {
+    ).toBe('+')
     expect(
-      formatAffixRange({
-        sign: '+',
-        format: 'flat',
-        valueMin: null,
-        valueMax: null,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'flat', valueMin: 1, valueMax: 2 },
+        null,
+      ),
     ).toBe('+')
   })
 
   it('formats degenerate ranges as a single signed value', () => {
     expect(
-      formatAffixRange({
-        sign: '+',
-        format: 'flat',
-        valueMin: 5,
-        valueMax: 5,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'flat', valueMin: 5, valueMax: 5 },
+        { rangeMin: 5, rangeMax: 5 },
+      ),
     ).toBe('+5')
   })
 
   it('formats ranges as +[lo-hi] with the right suffix', () => {
     expect(
-      formatAffixRange({
-        sign: '+',
-        format: 'percent',
-        valueMin: 10,
-        valueMax: 20,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'percent', valueMin: 10, valueMax: 20 },
+        { rangeMin: 10, rangeMax: 20 },
+      ),
     ).toBe('+[10-20]%')
   })
 
-  it('flips to "-" when both bounds end up negative after star scaling', () => {
+  it('flips to "-" for negative ranges (rangeMin/Max are roll-0/roll-1 values)', () => {
     expect(
-      formatAffixRange({
-        sign: '-',
-        format: 'flat',
-        valueMin: 3,
-        valueMax: 9,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '-', format: 'flat', valueMin: 3, valueMax: 9 },
+        { rangeMin: -3, rangeMax: -9 },
+      ),
     ).toBe('-[3-9]')
-  })
-})
-
-describe('applyStarsToRangedValue', () => {
-  it('returns the value unchanged when stars is 0 / undefined', () => {
-    expect(applyStarsToRangedValue(10, 'to_strength', 0)).toBe(10)
-    expect(applyStarsToRangedValue([5, 7], 'to_strength', undefined)).toEqual([5, 7])
-  })
-
-  it('applies the percent multiplier and floors scalar values', () => {
-    // 100 * (1 + 5 * 5/100) = 125
-    expect(applyStarsToRangedValue(100, 'to_strength', 5)).toBe(125)
-  })
-
-  it('applies the multiplier element-wise to tuples', () => {
-    // [100, 200] * 1.25 = [125, 250]
-    expect(applyStarsToRangedValue([100, 200], 'to_strength', 5)).toEqual([125, 250])
-  })
-
-  it('routes item_granted_skill_rank through the item-specific staircase', () => {
-    // The synthetic key uses ITEM_SPECIFIC_STAIRCASE: 5 stars adds +3.
-    expect(applyStarsToRangedValue(1, 'item_granted_skill_rank', 5)).toBe(4)
-  })
-
-  it('returns the value unchanged when neither multiplier nor flat bonus applies', () => {
-    // all_skills has kind: 'none' so stars must not change it.
-    expect(applyStarsToRangedValue(5, 'all_skills', 5)).toBe(5)
   })
 })
 
@@ -329,15 +174,5 @@ describe('shouldScaleImplicit', () => {
 
   it('does not scale for runeword items', () => {
     expect(shouldScaleImplicit(true)).toBe(false)
-  })
-})
-
-// -----------------------------------------------------------------------
-// aggregateItemSkillBonuses
-// -----------------------------------------------------------------------
-
-describe('aggregateItemSkillBonuses', () => {
-  it('returns an empty map for an empty inventory', () => {
-    expect(aggregateItemSkillBonuses({} as Inventory)).toEqual({})
   })
 })

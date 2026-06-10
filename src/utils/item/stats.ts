@@ -1,14 +1,7 @@
-import { gameConfig, getItem, isGearSlot } from '../../data'
+import { gameConfig } from '../../data'
 import type { ForgeKind } from '../../data'
-import {
-  isStatStarImmune,
-  itemGrantedSkillRankFlatBonus,
-  statStarFlatBonus,
-  statStarPercentMultiplier,
-} from './starScaling'
 import type {
   AttributeKey,
-  Inventory,
   RangedStatMap,
   RangedValue,
   StatDef,
@@ -233,139 +226,31 @@ export interface WeaponDamageBreakdown {
   dpsMax: number
 }
 
-export function rolledAffixValue(
+export function formatAffixRangeFromValues(
   affix: {
     sign: '+' | '-'
     format: 'flat' | 'percent'
     valueMin: number | null
     valueMax: number | null
   },
-  roll: number,
-): number {
-  if (affix.valueMin === null || affix.valueMax === null) return 0
-  const raw =
-    affix.valueMin === affix.valueMax
-      ? affix.valueMax
-      : affix.valueMin + (affix.valueMax - affix.valueMin) * roll
-  const rounded = affix.format === 'flat' ? Math.round(raw) : raw
-  return affix.sign === '-' ? -rounded : rounded
-}
-
-function affixStarMultiplier(
-  statKey: string | null,
-  stars: number | undefined,
-): number {
-  return statStarPercentMultiplier(statKey, stars)
-}
-
-export function rolledAffixRange(affix: {
-  sign: '+' | '-'
-  format: 'flat' | 'percent'
-  valueMin: number | null
-  valueMax: number | null
-}): RangedValue {
-  if (affix.valueMin === null || affix.valueMax === null) return 0
-  const round = (n: number) => (affix.format === 'flat' ? Math.round(n) : n)
-  const min = round(affix.valueMin)
-  const max = round(affix.valueMax)
-  if (affix.sign === '-') {
-    return min === max ? -max : [-max, -min]
-  }
-  return min === max ? min : [min, max]
-}
-
-export function isAffixStarImmune(statKey: string | null): boolean {
-  return isStatStarImmune(statKey)
-}
-
-export function rolledAffixValueWithStars(
-  affix: {
-    sign: '+' | '-'
-    format: 'flat' | 'percent'
-    valueMin: number | null
-    valueMax: number | null
-    statKey: string | null
-  },
-  roll: number,
-  stars: number | undefined,
-): number {
-  const base = rolledAffixValue(affix, roll)
-  const mult = affixStarMultiplier(affix.statKey, stars)
-  const flat = statStarFlatBonus(affix.statKey, stars)
-  if (base === 0 && flat === 0) return 0
-  const direction = affix.sign === '-' ? -1 : 1
-  const scaled = base * mult + flat * direction
-  const starsActive = (stars ?? 0) > 0 && (mult !== 1 || flat !== 0)
-  if (starsActive) return Math.floor(scaled)
-  return affix.format === 'flat' ? Math.round(scaled) : scaled
-}
-
-export function formatAffixRange(
-  affix: {
-    sign: '+' | '-'
-    format: 'flat' | 'percent'
-    valueMin: number | null
-    valueMax: number | null
-    statKey: string | null
-  },
-  stars?: number,
+  range: { rangeMin: number; rangeMax: number } | null,
 ): string {
-  if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const minSigned = rolledAffixValueWithStars(affix, 0, stars)
-  const maxSigned = rolledAffixValueWithStars(affix, 1, stars)
+  if (!range || affix.valueMin === null || affix.valueMax === null) {
+    return affix.sign
+  }
   const fmtAbs = (v: number) => {
     const abs = Math.abs(v)
     return Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
   }
-  const lo = fmtAbs(minSigned)
-  const hi = fmtAbs(maxSigned)
+  const lo = fmtAbs(range.rangeMin)
+  const hi = fmtAbs(range.rangeMax)
   const sign =
-    affix.sign === '-' || minSigned < 0 || maxSigned < 0 ? '-' : '+'
+    affix.sign === '-' || range.rangeMin < 0 || range.rangeMax < 0 ? '-' : '+'
   const suffix = affix.format === 'percent' ? '%' : ''
   if (lo === hi) return `${sign}${hi}${suffix}`
   return `${sign}[${lo}-${hi}]${suffix}`
 }
 
-export function applyStarsToRangedValue(
-  value: RangedValue,
-  statKey: string,
-  stars: number | undefined,
-): RangedValue {
-  if (!stars || stars <= 0) return value
-  const flat =
-    statKey === 'item_granted_skill_rank'
-      ? itemGrantedSkillRankFlatBonus(stars)
-      : statStarFlatBonus(statKey, stars)
-  const mult = statStarPercentMultiplier(statKey, stars)
-  if (mult === 1 && flat === 0) return value
-  if (typeof value === 'number') {
-    return Math.floor(value * mult + flat)
-  }
-  const [min, max] = value
-  return [Math.floor(min * mult + flat), Math.floor(max * mult + flat)]
-}
-
 export function shouldScaleImplicit(isRuneword: boolean): boolean {
   return !isRuneword
-}
-
-export function aggregateItemSkillBonuses(
-  inventory: Inventory,
-): Record<string, [number, number]> {
-  const out: Record<string, [number, number]> = {}
-  for (const [slotKey, item] of Object.entries(inventory)) {
-    if (!item) continue
-    const base = getItem(item.baseId)
-    if (!base?.skillBonuses) continue
-    const stars = isGearSlot(slotKey) ? item.stars : undefined
-    for (const [skillName, val] of Object.entries(base.skillBonuses)) {
-      const scaled = applyStarsToRangedValue(val, 'item_granted_skill_rank', stars)
-      const min = Math.round(rangedMin(scaled))
-      const max = Math.round(rangedMax(scaled))
-      const key = normalizeSkillName(skillName)
-      const cur = out[key] ?? [0, 0]
-      out[key] = [cur[0] + min, cur[1] + max]
-    }
-  }
-  return out
 }

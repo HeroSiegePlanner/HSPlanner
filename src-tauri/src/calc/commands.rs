@@ -7,7 +7,7 @@ use super::skills as calc;
 use super::stats::{
     BuildStatsInput, ComputedStats, StatBreakdown, compute_build_stats, compute_stat_breakdown,
 };
-use super::types::{CustomStat, Inventory, TreeSocketContent};
+use super::types::{Affix, CustomStat, Inventory, TreeSocketContent};
 
 #[derive(Deserialize)]
 #[serde(untagged)]
@@ -196,6 +196,94 @@ pub fn passive_stats_at_rank(skill: PassiveSkillDto, rank: f64) -> HashMap<Strin
 pub fn mana_cost_at_rank(skill: PassiveSkillDto, rank: f64) -> Option<f64> {
     let r = if rank <= 0.0 { 1 } else { rank as u32 };
     super::passive::mana_cost_at_rank(&skill.into(), r)
+}
+
+// ---------- parse_custom_stats ----------
+// Batched custom-stat input validation so the config UI previews exactly what
+// calc/custom_stat.rs will apply.
+
+#[tauri::command]
+pub fn parse_custom_stats(values: Vec<String>) -> Vec<Option<[f64; 2]>> {
+    values
+        .iter()
+        .map(|v| super::custom_stat::parse_custom_stat_value(v).map(|(a, b)| [a, b]))
+        .collect()
+}
+
+// ---------- display_values ----------
+// Batched affix/star display math for tooltips and editors; replaces the
+// former TS rolledAffixValue*/applyStarsToRangedValue helpers.
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AffixValueReq {
+    pub affix: Affix,
+    #[serde(default)]
+    pub roll: f64,
+    #[serde(default)]
+    pub stars: Option<u32>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ScaledValueReq {
+    pub value: [f64; 2],
+    pub stat_key: String,
+    #[serde(default)]
+    pub stars: Option<u32>,
+}
+
+#[derive(Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayValuesInput {
+    #[serde(default)]
+    pub affixes: Vec<AffixValueReq>,
+    #[serde(default)]
+    pub scaled: Vec<ScaledValueReq>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AffixValueOut {
+    pub value: f64,
+    pub range_min: f64,
+    pub range_max: f64,
+}
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayValuesOutput {
+    pub affixes: Vec<AffixValueOut>,
+    pub scaled: Vec<[f64; 2]>,
+}
+
+pub fn display_values_impl(input: &DisplayValuesInput) -> DisplayValuesOutput {
+    use super::affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars};
+    DisplayValuesOutput {
+        affixes: input
+            .affixes
+            .iter()
+            .map(|r| AffixValueOut {
+                value: rolled_affix_value_with_stars(&r.affix, r.roll, r.stars),
+                range_min: rolled_affix_value_with_stars(&r.affix, 0.0, r.stars),
+                range_max: rolled_affix_value_with_stars(&r.affix, 1.0, r.stars),
+            })
+            .collect(),
+        scaled: input
+            .scaled
+            .iter()
+            .map(|r| {
+                let out =
+                    apply_stars_to_ranged_value((r.value[0], r.value[1]), &r.stat_key, r.stars);
+                [out.0, out.1]
+            })
+            .collect(),
+    }
+}
+
+#[tauri::command]
+pub fn display_values(input: DisplayValuesInput) -> DisplayValuesOutput {
+    display_values_impl(&input)
 }
 
 // ---------- classify_tree_nodes ----------
@@ -772,6 +860,49 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn parse_custom_stats_batch_mirrors_custom_stat_parser() {
+        let out = parse_custom_stats(vec![
+            "100".to_string(),
+            "50-80".to_string(),
+            "not a number".to_string(),
+        ]);
+        assert_eq!(out[0], Some([100.0, 100.0]));
+        assert_eq!(out[1], Some([50.0, 80.0]));
+        assert_eq!(out[2], None);
+    }
+
+    #[test]
+    fn display_values_batch_matches_affix_math() {
+        let affix = Affix {
+            id: "t".into(),
+            stat_key: Some("life".into()),
+            value_min: Some(10.0),
+            value_max: Some(20.0),
+            ..Default::default()
+        };
+        let input = DisplayValuesInput {
+            affixes: vec![AffixValueReq {
+                affix: affix.clone(),
+                roll: 0.5,
+                stars: None,
+            }],
+            scaled: vec![ScaledValueReq {
+                value: [10.0, 20.0],
+                stat_key: "life".into(),
+                stars: Some(0),
+            }],
+        };
+        let out = display_values_impl(&input);
+        assert_eq!(
+            out.affixes[0].value,
+            super::super::affix::rolled_affix_value(&affix, 0.5)
+        );
+        assert_eq!(out.affixes[0].range_min, 10.0);
+        assert_eq!(out.affixes[0].range_max, 20.0);
+        assert_eq!(out.scaled[0], [10.0, 20.0]);
+    }
 
     #[test]
     fn classify_tree_nodes_partitions_every_node_line() {

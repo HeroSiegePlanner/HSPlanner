@@ -28,6 +28,8 @@ pub fn run() {
       calc::commands::mana_cost_at_rank,
       calc::commands::subskill_aggregation,
       calc::commands::classify_tree_nodes,
+      calc::commands::display_values,
+      calc::commands::parse_custom_stats,
       suggest_engine::command::suggest_tree_nodes,
     ])
     .run(tauri::generate_context!())
