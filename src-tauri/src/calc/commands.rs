@@ -198,6 +198,42 @@ pub fn mana_cost_at_rank(skill: PassiveSkillDto, rank: f64) -> Option<f64> {
     super::passive::mana_cost_at_rank(&skill.into(), r)
 }
 
+// ---------- classify_tree_nodes ----------
+// Bulk three-way line classification for the tree tooltips; replaces the
+// former TS classifyNodeLines so the UI shows exactly what the engine parses.
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct NodeLineClassification {
+    pub parsed: Vec<String>,
+    pub unsupported: Vec<String>,
+}
+
+pub fn classify_tree_nodes_impl() -> HashMap<String, NodeLineClassification> {
+    use super::tree::parse::{TreeLineClass, classify_tree_node_line};
+    super::data::tree_nodes()
+        .iter()
+        .map(|(id, node)| {
+            let mut out = NodeLineClassification::default();
+            for line in &node.l {
+                match classify_tree_node_line(line) {
+                    TreeLineClass::Stat(_) | TreeLineClass::Meta(_) => {
+                        out.parsed.push(line.clone())
+                    }
+                    TreeLineClass::RecognizedNoStat => {}
+                    TreeLineClass::Unknown => out.unsupported.push(line.clone()),
+                }
+            }
+            (id.clone(), out)
+        })
+        .collect()
+}
+
+#[tauri::command]
+pub fn classify_tree_nodes() -> HashMap<String, NodeLineClassification> {
+    classify_tree_nodes_impl()
+}
+
 // ---------- subskill_aggregation ----------
 // Thin command over calc/subskill.rs so the skill tooltip reads subtree
 // bonuses from the same aggregation the engine uses.
@@ -736,6 +772,20 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn classify_tree_nodes_partitions_every_node_line() {
+        let map = classify_tree_nodes_impl();
+        assert!(!map.is_empty(), "tree data should yield nodes");
+        let nodes = super::super::data::tree_nodes();
+        for (id, cls) in &map {
+            let node = nodes.get(id).expect("classified id exists in data");
+            assert!(cls.parsed.len() + cls.unsupported.len() <= node.l.len());
+            for line in cls.parsed.iter().chain(cls.unsupported.iter()) {
+                assert!(node.l.contains(line), "line must come from the node");
+            }
+        }
+    }
 
     #[test]
     fn subskill_aggregation_unknown_skill_returns_empty() {

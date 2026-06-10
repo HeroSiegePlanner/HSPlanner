@@ -371,6 +371,27 @@ export function manaCostAtRankNative(
   return invoke('mana_cost_at_rank', { skill, rank })
 }
 
+// ---------- classify_tree_nodes ----------
+// Replaces the former TS classifyNodeLines RULES engine; the regexes live in
+// Rust calc/tree/parse.rs. Fetched once and cached by TreeView.
+
+export interface NodeLineClassification {
+  parsed: string[]
+  unsupported: string[]
+}
+
+export async function classifyTreeNodesNative(): Promise<
+  Record<string, NodeLineClassification>
+> {
+  try {
+    return await invoke<Record<string, NodeLineClassification>>(
+      'classify_tree_nodes',
+    )
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
 // ---------- subskill_aggregation ----------
 // Replaces the former TS subtree.ts aggregation; the math lives in Rust
 // calc/subskill.rs.

@@ -27,6 +27,7 @@ pub fn run() {
       calc::commands::passive_stats_at_rank,
       calc::commands::mana_cost_at_rank,
       calc::commands::subskill_aggregation,
+      calc::commands::classify_tree_nodes,
       suggest_engine::command::suggest_tree_nodes,
     ])
     .run(tauri::generate_context!())

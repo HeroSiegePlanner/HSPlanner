@@ -25,7 +25,11 @@ import {
   diffPerformanceStats,
   type BuildPerformance,
 } from '../utils/build/buildPerformance'
-import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
+import {
+  classifyTreeNodesNative,
+  computeBuildPerformanceAsync,
+} from '../lib/calc/bridge'
+import type { NodeLineClassification } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import NetChangeRow from '../components/NetChangeRow'
 import type { TreeSocketContent } from '../types'
@@ -41,7 +45,6 @@ import {
 import { TONE_BORDER, TONE_GLOW } from '../components/tooltip-tones'
 import type { TooltipTone } from '../components/tooltip-tones'
 import {
-  classifyNodeLines,
   TREE_JEWELRY_IDS,
   TREE_NODE_INFO,
   TREE_WARP_IDS,
@@ -192,6 +195,20 @@ export default function TreeView() {
       cancelled = true
     }
   }, [treeDeps])
+
+  const [nodeClassifications, setNodeClassifications] = useState<Record<
+    string,
+    NodeLineClassification
+  > | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    classifyTreeNodesNative().then((m) => {
+      if (!cancelled) setNodeClassifications(m)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const [scale, setScale] = useState(0.35)
   const [tx, setTx] = useState(0)
@@ -812,6 +829,9 @@ export default function TreeView() {
             key={hoverNode.id}
             node={hoverNode}
             info={hoverInfo}
+            classification={
+              nodeClassifications?.[String(hoverNode.id)] ?? null
+            }
             cursor={hoverPos}
             socketContent={
               TREE_JEWELRY_IDS.has(hoverNode.id)
@@ -859,6 +879,7 @@ export default function TreeView() {
 function NodeTooltip({
   node,
   info,
+  classification,
   cursor,
   socketContent,
   isJewelry,
@@ -871,6 +892,7 @@ function NodeTooltip({
 }: {
   node: TreeNode
   info: TreeNodeInfo | null
+  classification: NodeLineClassification | null
   cursor: { x: number; y: number }
   socketContent: TreeSocketContent | null
   isJewelry: boolean
@@ -885,10 +907,7 @@ function NodeTooltip({
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
   const tone = tierTone(info?.n, node.tier)
   const tierName = tierLabel(info?.n, node.tier)
-  const lineGroups = useMemo(
-    () => (info ? classifyNodeLines(info.l) : null),
-    [info],
-  )
+  const lineGroups = info ? classification : null
 
   const singleDpsDiffs = useMemo(
     () =>
@@ -1007,8 +1026,8 @@ function NodeTooltip({
           {lineGroups && lineGroups.parsed.length > 0 && (
             <TooltipSection>
               <div className="space-y-0.5">
-                {lineGroups.parsed.map((p, i) => (
-                  <TooltipText key={i}>{p.line}</TooltipText>
+                {lineGroups.parsed.map((line, i) => (
+                  <TooltipText key={i}>{line}</TooltipText>
                 ))}
               </div>
             </TooltipSection>
