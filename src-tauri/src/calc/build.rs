@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use serde::Serialize;
 
 use super::data;
-use super::rank::{aggregate_item_skill_bonuses, normalize_skill_name};
+use super::rank::normalize_skill_name;
 use super::skills::{
     AttackKind, AttackSkillDamageBreakdown, AttackSkillInput, AttackSkillScaling, BonusSource,
     DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput, Weapon,
@@ -54,6 +54,9 @@ pub struct BuildPerformance {
     pub combined_dps_min: Option<f64>,
     pub combined_dps_max: Option<f64>,
     pub active_skill_name: Option<String>,
+    pub stats_combined: HashMap<String, Ranged>,
+    pub item_skill_bonuses: HashMap<String, Ranged>,
+    pub rank_bonuses: HashMap<String, Ranged>,
 }
 
 fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
@@ -183,7 +186,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .and_then(|s| deps.skill_ranks.get(&s.id).copied())
         .unwrap_or(0);
 
-    let item_skill_bonuses = aggregate_item_skill_bonuses(deps.inventory, &data::data().items);
+    let item_skill_bonuses = &computed.item_skill_bonuses;
     let skill_ranks_by_name: HashMap<String, f64> = all_class_skills
         .iter()
         .map(|s| {
@@ -247,7 +250,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 attributes: &computed.attributes,
                 stats: &computed.stats,
                 skill_ranks_by_name: &skill_ranks_by_name,
-                item_skill_bonuses: &item_skill_bonuses,
+                item_skill_bonuses,
                 enemy_conditions: deps.enemy_conditions,
                 enemy_resistances: deps.enemy_resistances,
                 skills_by_name: &skills_by_name,
@@ -267,7 +270,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                     skill: calc_skill,
                     allocated_rank: active_rank as f64,
                     stats: &computed.stats,
-                    item_skill_bonuses: &item_skill_bonuses,
+                    item_skill_bonuses,
                     enemy_conditions: deps.enemy_conditions,
                     weapon: weapon_for_attack.as_ref(),
                     poison_breakdown: damage.as_ref(),
@@ -321,7 +324,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     let ctx = ProcContext {
         computed: &computed,
         skill_ranks_by_name: &skill_ranks_by_name,
-        item_skill_bonuses: &item_skill_bonuses,
+        item_skill_bonuses,
         enemy_conditions: deps.enemy_conditions,
         enemy_resistances: deps.enemy_resistances,
         skills_by_name: &skills_by_name,
@@ -428,6 +431,9 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         combined_dps_min,
         combined_dps_max,
         active_skill_name: active_skill.map(|s| s.name.clone()),
+        stats_combined: computed.stats_combined,
+        item_skill_bonuses: computed.item_skill_bonuses,
+        rank_bonuses: computed.rank_bonuses,
     }
 }
 

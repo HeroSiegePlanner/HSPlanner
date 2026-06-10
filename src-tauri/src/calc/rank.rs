@@ -9,6 +9,30 @@ pub fn normalize_skill_name(name: &str) -> String {
     name.trim().to_lowercase()
 }
 
+/// Rank bonus shared by every skill-rank consumer: all_skills + element
+/// skills + item-granted bonus. Exposed to the UI as `rankBonuses` so views
+/// stop re-deriving it from raw stats.
+pub fn rank_bonus_for(
+    name: &str,
+    damage_type: Option<&str>,
+    stats: &StatMap,
+    item_skill_bonuses: &ItemSkillBonuses,
+) -> Ranged {
+    let all = rg(stats, "all_skills");
+    let elem = match damage_type {
+        Some(dt) => rg(stats, &format!("{}_skills", dt)),
+        None => (0.0, 0.0),
+    };
+    let item = item_skill_bonuses
+        .get(&normalize_skill_name(name))
+        .copied()
+        .unwrap_or((0.0, 0.0));
+    (
+        r_min(all) + r_min(elem) + item.0,
+        r_max(all) + r_max(elem) + item.1,
+    )
+}
+
 pub fn effective_rank_range_for(
     skill: &Skill,
     base_rank: f64,
@@ -18,20 +42,13 @@ pub fn effective_rank_range_for(
     if base_rank <= 0.0 {
         return (0.0, 0.0);
     }
-    let all = rg(stats, "all_skills");
-    let elem = match skill.damage_type.as_deref() {
-        Some(dt) => rg(stats, &format!("{}_skills", dt)),
-        None => (0.0, 0.0),
-    };
-    let key = normalize_skill_name(&skill.name);
-    let item = item_skill_bonuses
-        .get(&key)
-        .copied()
-        .unwrap_or((0.0, 0.0));
-    (
-        base_rank + r_min(all) + r_min(elem) + item.0,
-        base_rank + r_max(all) + r_max(elem) + item.1,
-    )
+    let bonus = rank_bonus_for(
+        &skill.name,
+        skill.damage_type.as_deref(),
+        stats,
+        item_skill_bonuses,
+    );
+    (base_rank + bonus.0, base_rank + bonus.1)
 }
 
 pub fn aggregate_item_skill_bonuses(
@@ -124,6 +141,43 @@ mod tests {
         assert_eq!(normalize_skill_name("  Frost Nova  "), "frost nova");
         assert_eq!(normalize_skill_name("ALREADY_lower"), "already_lower");
         assert_eq!(normalize_skill_name(""), "");
+    }
+
+    // ---- rank_bonus_for ----
+
+    #[test]
+    fn rank_bonus_sums_all_element_and_item_components() {
+        let mut stats: StatMap = HashMap::new();
+        stats.insert("all_skills".into(), (1.0, 2.0));
+        stats.insert("fire_skills".into(), (1.0, 1.0));
+        let mut bonuses: ItemSkillBonuses = HashMap::new();
+        bonuses.insert("fireball".into(), (1.0, 3.0));
+        assert_eq!(
+            rank_bonus_for("Fireball", Some("fire"), &stats, &bonuses),
+            (3.0, 6.0)
+        );
+    }
+
+    #[test]
+    fn rank_bonus_without_damage_type_skips_element() {
+        let mut stats: StatMap = HashMap::new();
+        stats.insert("all_skills".into(), (2.0, 2.0));
+        stats.insert("fire_skills".into(), (99.0, 99.0));
+        let bonuses: ItemSkillBonuses = HashMap::new();
+        assert_eq!(rank_bonus_for("Berserk", None, &stats, &bonuses), (2.0, 2.0));
+    }
+
+    #[test]
+    fn rank_bonus_plus_base_matches_effective_rank() {
+        let s = skill("Fireball", Some("fire"));
+        let mut stats: StatMap = HashMap::new();
+        stats.insert("all_skills".into(), (1.0, 2.0));
+        stats.insert("fire_skills".into(), (1.0, 1.0));
+        let mut bonuses: ItemSkillBonuses = HashMap::new();
+        bonuses.insert("fireball".into(), (1.0, 3.0));
+        let bonus = rank_bonus_for(&s.name, s.damage_type.as_deref(), &stats, &bonuses);
+        let eff = effective_rank_range_for(&s, 10.0, &stats, &bonuses);
+        assert_eq!((10.0 + bonus.0, 10.0 + bonus.1), eff);
     }
 
     // ---- effective_rank_range_for ----

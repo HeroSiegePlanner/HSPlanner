@@ -11,7 +11,6 @@ import type {
   Inventory,
   RangedStatMap,
   RangedValue,
-  Skill,
   StatDef,
 } from '../../types'
 
@@ -51,28 +50,9 @@ export interface ComputedStats {
   stats: RangedStatMap
   attributeSources: Record<AttributeKey, SourceContribution[]>
   statSources: Record<string, SourceContribution[]>
-}
-
-export function combineAdditiveAndMore(
-  additive: RangedValue | undefined,
-  more: RangedValue | undefined,
-): RangedValue {
-  const [aMin, aMax] =
-    additive === undefined
-      ? [0, 0]
-      : typeof additive === 'number'
-        ? [additive, additive]
-        : additive
-  const [mMin, mMax] =
-    more === undefined
-      ? [0, 0]
-      : typeof more === 'number'
-        ? [more, more]
-        : more
-  const round = (n: number) => Math.round(n * 1e6) / 1e6
-  const min = round(((1 + aMin / 100) * (1 + mMin / 100) - 1) * 100)
-  const max = round(((1 + aMax / 100) * (1 + mMax / 100) - 1) * 100)
-  return min === max ? min : [min, max]
+  statsCombined: Record<string, RangedValue>
+  itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
 }
 
 export function statName(key: string): string {
@@ -388,22 +368,4 @@ export function aggregateItemSkillBonuses(
     }
   }
   return out
-}
-
-export function effectiveRankRangeFor(
-  skill: Skill,
-  baseRank: number,
-  stats: RangedStatMap,
-  itemSkillBonuses: Record<string, [number, number]>,
-): [number, number] {
-  if (baseRank <= 0) return [0, 0]
-  const all = stats.all_skills ?? 0
-  const elem = skill.damageType
-    ? (stats[`${skill.damageType}_skills`] ?? 0)
-    : 0
-  const item = itemSkillBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
-  return [
-    baseRank + rangedMin(all) + rangedMin(elem) + item[0],
-    baseRank + rangedMax(all) + rangedMax(elem) + item[1],
-  ]
 }

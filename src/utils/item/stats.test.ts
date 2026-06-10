@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import type { Inventory, RangedStatMap, Skill } from '../types'
+import type { Inventory, RangedStatMap } from '../types'
 import {
   aggregateItemSkillBonuses,
   applyStarsToRangedValue,
-  combineAdditiveAndMore,
   effectiveCap,
-  effectiveRankRangeFor,
   fmtStats,
   formatAffixRange,
   formatValue,
@@ -20,19 +18,6 @@ import {
   shouldScaleImplicit,
   statName,
 } from './stats'
-
-// -----------------------------------------------------------------------
-// Test fixtures
-// -----------------------------------------------------------------------
-
-const FIRE_SKILL_WITH_FORMULA: Skill = {
-  id: 'test_fire',
-  name: 'Test Fire',
-  classId: 'mage',
-  damageType: 'fire',
-  damageFormula: { base: 10, perLevel: 5 },
-  ranks: [],
-} as unknown as Skill
 
 // -----------------------------------------------------------------------
 // normalizeSkillName
@@ -77,35 +62,6 @@ describe('isZero', () => {
     expect(isZero(1)).toBe(false)
     expect(isZero([0, 1])).toBe(false)
     expect(isZero([-1, 0])).toBe(false)
-  })
-})
-
-// -----------------------------------------------------------------------
-// combineAdditiveAndMore
-// -----------------------------------------------------------------------
-
-describe('combineAdditiveAndMore', () => {
-  it('returns 0 when both inputs are undefined', () => {
-    expect(combineAdditiveAndMore(undefined, undefined)).toBe(0)
-  })
-
-  it('compounds additive% and more%: (1+a)*(1+m)-1', () => {
-    // 50% additive + 20% more = (1.5 * 1.2 - 1) * 100 = 80
-    expect(combineAdditiveAndMore(50, 20)).toBe(80)
-  })
-
-  it('handles negative values (e.g. "less" multipliers)', () => {
-    // 0 additive + -20% more = (1 * 0.8 - 1) * 100 = -20
-    expect(combineAdditiveAndMore(0, -20)).toBe(-20)
-  })
-
-  it('returns a tuple when both ranges differ at the bounds', () => {
-    // additive [10, 30], more [0, 0] → [10, 30]
-    expect(combineAdditiveAndMore([10, 30], 0)).toEqual([10, 30])
-  })
-
-  it('collapses to a scalar when min equals max', () => {
-    expect(combineAdditiveAndMore([50, 50], [20, 20])).toBe(80)
   })
 })
 
@@ -383,33 +339,5 @@ describe('shouldScaleImplicit', () => {
 describe('aggregateItemSkillBonuses', () => {
   it('returns an empty map for an empty inventory', () => {
     expect(aggregateItemSkillBonuses({} as Inventory)).toEqual({})
-  })
-})
-
-// -----------------------------------------------------------------------
-// effectiveRankRangeFor
-// -----------------------------------------------------------------------
-
-describe('effectiveRankRangeFor', () => {
-  it('returns [0, 0] for unallocated skills', () => {
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 0, {}, {})).toEqual([0, 0])
-  })
-
-  it('adds all_skills and element_skills bonuses to the base rank', () => {
-    // base 5 + all_skills 1 + fire_skills 2 = 8 (degenerate range)
-    const stats: RangedStatMap = { all_skills: 1, fire_skills: 2 }
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, stats, {})).toEqual([8, 8])
-  })
-
-  it('returns a range when bonuses are ranged', () => {
-    // base 5 + all_skills [0,2] + fire_skills [0,1] = [5, 8]
-    const stats: RangedStatMap = { all_skills: [0, 2], fire_skills: [0, 1] }
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, stats, {})).toEqual([5, 8])
-  })
-
-  it('adds item-granted skill bonuses keyed by normalised skill name', () => {
-    // 'Test Fire' normalised = 'test fire'
-    const itemBonuses = { 'test fire': [1, 3] as [number, number] }
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, {}, itemBonuses)).toEqual([6, 8])
   })
 })

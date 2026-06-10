@@ -12,10 +12,7 @@ import type { StatBreakdown, StatBreakdownKind } from '../lib/calc/bridge'
 import { useBuild } from '../store/build'
 import { DAMAGE_COLORS, skillHeroBg } from '../utils/damageColors'
 import {
-  aggregateItemSkillBonuses,
-  combineAdditiveAndMore,
   effectiveCap,
-  effectiveRankRangeFor,
   formatValue,
   isZero,
   normalizeSkillName,
@@ -246,9 +243,11 @@ export default function StatsView() {
   const fcrRange = stats.faster_cast_rate ?? 0
   const mcrRange = stats.mana_cost_reduction ?? 0
   const itemSkillBonuses = useMemo(
-    () => aggregateItemSkillBonuses(inventory),
-    [inventory],
+    () => computed?.itemSkillBonuses ?? {},
+    [computed],
   )
+  const rankBonuses = useMemo(() => computed?.rankBonuses ?? {}, [computed])
+  const statsCombined = useMemo(() => computed?.statsCombined ?? {}, [computed])
   const weaponInput = useMemo<NativeWeaponDamageInput>(() => {
     const equipped = inventory.weapon
     const base = equipped ? getItem(equipped.baseId) : undefined
@@ -514,6 +513,7 @@ export default function StatsView() {
           skillRanksByName={skillRanksByName}
           skillsByNormalizedName={skillsByNormalizedName}
           itemSkillBonuses={itemSkillBonuses}
+          rankBonuses={rankBonuses}
           enemyConditions={enemyConditions}
           enemyResistances={enemyResistances}
           skillProjectiles={skillProjectiles}
@@ -551,6 +551,7 @@ export default function StatsView() {
                     skillRanksByName={skillRanksByName}
                     skillsByNormalizedName={skillsByNormalizedName}
                     itemSkillBonuses={itemSkillBonuses}
+                    rankBonuses={rankBonuses}
                     currentRank={skillRanks[skill.id] ?? 0}
                     enemyConditions={enemyConditions}
                     enemyResistances={enemyResistances}
@@ -582,6 +583,7 @@ export default function StatsView() {
                   moreSources={statSources[`${key}_more`]}
                   highlighted={matches(statName(key))}
                   stats={stats}
+                  statsCombined={statsCombined}
                   breakdown={getBreakdown(key, 'stat')}
                   onRequestBreakdown={() => requestBreakdown(key, 'stat')}
                 />
@@ -668,6 +670,7 @@ function MainSkillSection({
   skillRanksByName,
   skillsByNormalizedName,
   itemSkillBonuses,
+  rankBonuses,
   enemyConditions,
   enemyResistances,
   skillProjectiles,
@@ -682,6 +685,7 @@ function MainSkillSection({
   skillRanksByName: Record<string, number>
   skillsByNormalizedName: Record<string, Skill>
   itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
   enemyConditions: Record<string, boolean>
   enemyResistances: Record<string, number>
   skillProjectiles: Record<string, number>
@@ -742,8 +746,7 @@ function MainSkillSection({
           attributes={attributes}
           skillRanksByName={skillRanksByName}
           skillsByNormalizedName={skillsByNormalizedName}
-          stats={stats}
-          itemSkillBonuses={itemSkillBonuses}
+          rankBonuses={rankBonuses}
         />
       </Panel>
     )
@@ -1212,6 +1215,7 @@ function SkillCard({
   skillRanksByName,
   skillsByNormalizedName,
   itemSkillBonuses,
+  rankBonuses,
   currentRank,
   enemyConditions,
   enemyResistances,
@@ -1226,6 +1230,7 @@ function SkillCard({
   skillRanksByName: Record<string, number>
   skillsByNormalizedName: Record<string, Skill>
   itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
   currentRank: number
   enemyConditions: Record<string, boolean>
   enemyResistances: Record<string, number>
@@ -1423,8 +1428,7 @@ function SkillCard({
           attributes={attributes}
           skillRanksByName={skillRanksByName}
           skillsByNormalizedName={skillsByNormalizedName}
-          stats={stats}
-          itemSkillBonuses={itemSkillBonuses}
+          rankBonuses={rankBonuses}
         />
       )}
     </li>
@@ -1439,6 +1443,7 @@ function StatRow({
   moreSources,
   highlighted,
   stats,
+  statsCombined,
   breakdown,
   onRequestBreakdown,
 }: {
@@ -1449,12 +1454,13 @@ function StatRow({
   moreSources?: SourceContribution[]
   highlighted: boolean
   stats: RangedStatMap
+  statsCombined: Record<string, RangedValue>
   breakdown: StatBreakdown | null
   onRequestBreakdown: () => void
 }) {
   const hasMore = !!moreSources && moreSources.length > 0
   const displayValue: RangedValue = hasMore
-    ? combineAdditiveAndMore(value, moreValue)
+    ? (statsCombined[statKey] ?? value)
     : value
   const zero = isZero(displayValue) && (!hasMore || isZero(moreValue ?? 0))
   const def = statDef(statKey)
@@ -1515,8 +1521,7 @@ function DamageBreakdown({
   attributes,
   skillRanksByName,
   skillsByNormalizedName,
-  stats,
-  itemSkillBonuses,
+  rankBonuses,
 }: {
   skill: Skill
   breakdown: SkillDamageBreakdown
@@ -1524,8 +1529,7 @@ function DamageBreakdown({
   attributes: Record<AttributeKey, RangedValue>
   skillRanksByName: Record<string, number>
   skillsByNormalizedName: Record<string, Skill>
-  stats: RangedStatMap
-  itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
 }) {
   const synergyLines: Array<{ label: string; pctMin: number; pctMax: number }> =
     []
@@ -1535,9 +1539,10 @@ function DamageBreakdown({
       const baseRank = skillRanksByName[sourceKey] ?? 0
       if (baseRank === 0) continue
       const srcSkill = skillsByNormalizedName[sourceKey]
-      const [effMin, effMax] = srcSkill
-        ? effectiveRankRangeFor(srcSkill, baseRank, stats, itemSkillBonuses)
-        : [baseRank, baseRank]
+      const [bonusMin, bonusMax] = srcSkill
+        ? (rankBonuses[sourceKey] ?? [0, 0])
+        : [0, 0]
+      const [effMin, effMax] = [baseRank + bonusMin, baseRank + bonusMax]
       const rankLabel =
         effMin === effMax ? `rank ${effMin}` : `rank ${effMin}-${effMax}`
       synergyLines.push({

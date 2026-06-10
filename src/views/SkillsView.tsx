@@ -12,7 +12,6 @@ import { computeBuildStatsAsync } from '../lib/calc/bridge'
 import { skillPointsFor, subskillKey, useBuild } from '../store/build'
 import { DAMAGE_COLORS } from '../utils/damageColors'
 import {
-  aggregateItemSkillBonuses,
   formatValue,
   normalizeSkillName,
   rangedMax,
@@ -35,7 +34,6 @@ const GAP = 18
 export default function SkillsView() {
   const classId = useBuild((s) => s.classId)
   const level = useBuild((s) => s.level)
-  const inventory = useBuild((s) => s.inventory)
   const skillRanks = useBuild((s) => s.skillRanks)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const enemyConditions = useBuild((s) => s.enemyConditions)
@@ -82,9 +80,10 @@ export default function SkillsView() {
   const stats = computed?.stats ?? {}
   const attributes = computed?.attributes ?? {}
   const itemSkillBonuses = useMemo(
-    () => aggregateItemSkillBonuses(inventory),
-    [inventory],
+    () => computed?.itemSkillBonuses ?? {},
+    [computed],
   )
+  const rankBonuses = useMemo(() => computed?.rankBonuses ?? {}, [computed])
 
   const trees = useMemo(() => {
     const byTree = new Map<string, Skill[]>()
@@ -218,8 +217,7 @@ export default function SkillsView() {
           attributes={attributes}
           subskillRanks={subskillRanks}
           enemyConditions={enemyConditions}
-          stats={stats}
-          itemSkillBonuses={itemSkillBonuses}
+          rankBonuses={rankBonuses}
         />
       </div>
       {openSubtreeSkill && (
@@ -492,8 +490,7 @@ function SkillDetailsPanel({
   attributes,
   subskillRanks,
   enemyConditions,
-  stats,
-  itemSkillBonuses,
+  rankBonuses,
 }: {
   skill: Skill | null
   currentRank: number
@@ -505,8 +502,7 @@ function SkillDetailsPanel({
   attributes: Record<AttributeKey, RangedValue>
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
-  stats: Record<string, RangedValue>
-  itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
 }) {
   if (!skill) {
     return (
@@ -675,8 +671,7 @@ function SkillDetailsPanel({
         allClassSkills={allClassSkills}
         skillRanks={skillRanks}
         attributes={attributes}
-        stats={stats}
-        itemSkillBonuses={itemSkillBonuses}
+        rankBonuses={rankBonuses}
       />
       <SubtreeBonusBlock
         skill={skill}
@@ -971,8 +966,7 @@ function SkillEffectsBlock({
   allClassSkills,
   skillRanks,
   attributes,
-  stats,
-  itemSkillBonuses,
+  rankBonuses,
 }: {
   skill: Skill
   currentRank: number
@@ -981,8 +975,7 @@ function SkillEffectsBlock({
   allClassSkills: Skill[]
   skillRanks: Record<string, number>
   attributes: Record<AttributeKey, RangedValue>
-  stats: Record<string, RangedValue>
-  itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
 }) {
   const allocated = currentRank > 0
   const curMin = allocated ? effRankMin : 1
@@ -1046,21 +1039,9 @@ function SkillEffectsBlock({
         if (!srcSkill) continue
         const baseRank = skillRanks[srcSkill.id] ?? 0
         if (baseRank === 0) continue
-        const allBonus: [number, number] = [
-          rangedMin(stats.all_skills ?? 0),
-          rangedMax(stats.all_skills ?? 0),
-        ]
-        const elemBonus: [number, number] = srcSkill.damageType
-          ? [
-              rangedMin(stats[`${srcSkill.damageType}_skills`] ?? 0),
-              rangedMax(stats[`${srcSkill.damageType}_skills`] ?? 0),
-            ]
-          : [0, 0]
-        const itemB: [number, number] = itemSkillBonuses[srcKey] ?? [0, 0]
-        const effMin =
-          baseRank + allBonus[0] + elemBonus[0] + itemB[0]
-        const effMax =
-          baseRank + allBonus[1] + elemBonus[1] + itemB[1]
+        const bonus: [number, number] = rankBonuses[srcKey] ?? [0, 0]
+        const effMin = baseRank + bonus[0]
+        const effMax = baseRank + bonus[1]
         const perLabel =
           effMin === effMax ? `rank ${effMin}` : `rank ${effMin}-${effMax}`
         synergiesReceived.push({

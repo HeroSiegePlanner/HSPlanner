@@ -11,7 +11,7 @@ use super::affix::{
 };
 use super::custom_stat::parse_custom_stat_value;
 use super::data::{self, ForgeKind};
-use super::rank::{aggregate_item_skill_bonuses, normalize_skill_name};
+use super::rank::{aggregate_item_skill_bonuses, normalize_skill_name, rank_bonus_for};
 use super::skills::Ranged;
 use super::tree::parse::{
     DisableTarget, ParsedConversion, ParsedMeta, parse_tree_node_meta, parse_tree_node_mod,
@@ -91,6 +91,9 @@ pub struct ComputedStats {
     pub stats: HashMap<String, Ranged>,
     pub attribute_sources: SourceMap,
     pub stat_sources: SourceMap,
+    pub stats_combined: HashMap<String, Ranged>,
+    pub item_skill_bonuses: HashMap<String, Ranged>,
+    pub rank_bonuses: HashMap<String, Ranged>,
 }
 
 // ---------- inline helpers ----------
@@ -218,6 +221,24 @@ pub fn combine_additive_and_more(additive: Ranged, more: Ranged) -> Ranged {
     let min = round(((1.0 + additive.0 / 100.0) * (1.0 + more.0 / 100.0) - 1.0) * 100.0);
     let max = round(((1.0 + additive.1 / 100.0) * (1.0 + more.1 / 100.0) - 1.0) * 100.0);
     (min, max)
+}
+
+/// Pre-combined `<key>`+`<key>_more` totals for every base key that has a
+/// `_more` twin. Exposed to the UI as `statsCombined` so views render engine
+/// numbers instead of re-deriving them.
+pub fn stats_combined_map(stats: &HashMap<String, Ranged>) -> HashMap<String, Ranged> {
+    let mut out = HashMap::new();
+    for (key, more) in stats {
+        let Some(base_key) = key.strip_suffix("_more") else {
+            continue;
+        };
+        let additive = stats.get(base_key).copied().unwrap_or((0.0, 0.0));
+        out.insert(
+            base_key.to_string(),
+            combine_additive_and_more(additive, *more),
+        );
+    }
+    out
 }
 
 // `floor=false` for replenish stats (preserves fractional regen).
@@ -1650,11 +1671,32 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 22. Tree disables (zero out life_replenish if flagged)
     apply_tree_disables(&tree_agg.disables, &mut stats);
 
+    // 23. UI-facing derivations so views read engine output instead of
+    // re-deriving: combined `_more` totals, item skill bonuses, per-skill
+    // rank bonuses (all_skills + element + item).
+    let stats_combined = stats_combined_map(&stats);
+    let item_skill_bonuses = aggregate_item_skill_bonuses(input.inventory, &data::data().items);
+    let rank_bonuses: HashMap<String, Ranged> = match input.class_id {
+        Some(cid) => data::get_skills_by_class(cid)
+            .iter()
+            .map(|s| {
+                (
+                    normalize_skill_name(&s.name),
+                    rank_bonus_for(&s.name, s.damage_type.as_deref(), &stats, &item_skill_bonuses),
+                )
+            })
+            .collect(),
+        None => HashMap::new(),
+    };
+
     ComputedStats {
         attributes,
         stats,
         attribute_sources: attr_sources,
         stat_sources,
+        stats_combined,
+        item_skill_bonuses,
+        rank_bonuses,
     }
 }
 
@@ -1932,6 +1974,42 @@ mod tests {
         // sum = (16.0, 26.2); floored → (16, 26).
         assert_eq!(sum_ranged_from_map(&map, "life"), (16.0, 26.0));
         assert_eq!(sum_ranged_from_map(&map, "missing"), (0.0, 0.0));
+    }
+
+    // ---- stats_combined_map ----
+
+    #[test]
+    fn stats_combined_only_emits_keys_with_more_twin() {
+        let mut stats: HashMap<String, Ranged> = HashMap::new();
+        stats.insert("faster_cast_rate".into(), (10.0, 10.0));
+        stats.insert("faster_cast_rate_more".into(), (50.0, 50.0));
+        stats.insert("life".into(), (100.0, 100.0));
+        let out = stats_combined_map(&stats);
+        // (1.10 * 1.50 - 1) * 100 = 65
+        assert_eq!(out.get("faster_cast_rate"), Some(&(65.0, 65.0)));
+        assert!(!out.contains_key("life"));
+        assert!(!out.contains_key("faster_cast_rate_more"));
+        assert_eq!(out.len(), 1);
+    }
+
+    #[test]
+    fn stats_combined_more_without_base_uses_zero_additive() {
+        let mut stats: HashMap<String, Ranged> = HashMap::new();
+        stats.insert("mana_replenish_more".into(), (25.0, 30.0));
+        let out = stats_combined_map(&stats);
+        assert_eq!(out.get("mana_replenish"), Some(&(25.0, 30.0)));
+    }
+
+    #[test]
+    fn stats_combined_matches_combine_additive_and_more() {
+        let mut stats: HashMap<String, Ranged> = HashMap::new();
+        stats.insert("enhanced_damage".into(), (12.5, 20.0));
+        stats.insert("enhanced_damage_more".into(), (33.0, 40.0));
+        let out = stats_combined_map(&stats);
+        assert_eq!(
+            out.get("enhanced_damage"),
+            Some(&combine_additive_and_more((12.5, 20.0), (33.0, 40.0)))
+        );
     }
 
     // ---- compute_item_effective_defense ----

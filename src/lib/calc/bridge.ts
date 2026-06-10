@@ -77,6 +77,9 @@ export interface BuildPerformanceOutput {
   combinedDpsMin: number | null
   combinedDpsMax: number | null
   activeSkillName: string | null
+  statsCombined: Record<string, RustRanged>
+  itemSkillBonuses: Record<string, RustRanged>
+  rankBonuses: Record<string, RustRanged>
 }
 
 async function computeBuildPerformanceNative(
@@ -157,6 +160,9 @@ function toLegacyBuildPerformance(
     combinedDpsMin: raw.combinedDpsMin ?? undefined,
     combinedDpsMax: raw.combinedDpsMax ?? undefined,
     activeSkillName: raw.activeSkillName,
+    statsCombined: toRangedMap(raw.statsCombined),
+    itemSkillBonuses: raw.itemSkillBonuses,
+    rankBonuses: raw.rankBonuses,
   }
 }
 
@@ -187,6 +193,9 @@ interface BuildStatsRustOutput {
   stats: Record<string, RustRanged>
   attributeSources: Record<string, RustSourceContribution[]>
   statSources: Record<string, RustSourceContribution[]>
+  statsCombined: Record<string, RustRanged>
+  itemSkillBonuses: Record<string, RustRanged>
+  rankBonuses: Record<string, RustRanged>
 }
 
 function convertContribution(raw: RustSourceContribution): SourceContribution {
@@ -217,6 +226,9 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
     stats: toRangedMap(raw.stats),
     attributeSources: convertSourceMap(raw.attributeSources),
     statSources: convertSourceMap(raw.statSources),
+    statsCombined: toRangedMap(raw.statsCombined),
+    itemSkillBonuses: raw.itemSkillBonuses,
+    rankBonuses: raw.rankBonuses,
   }
 }
 

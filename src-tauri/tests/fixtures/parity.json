@@ -63,8 +63,10 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {},
       "stats": {
         "attack_rating": [
           16.0,
@@ -110,7 +112,8 @@
           4.0,
           4.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -177,8 +180,83 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "astrope's battle maiden": [
+          0.0,
+          0.0
+        ],
+        "astrope's gift": [
+          0.0,
+          0.0
+        ],
+        "caustic spearhead": [
+          0.0,
+          0.0
+        ],
+        "chooser of the slain": [
+          0.0,
+          0.0
+        ],
+        "death from above": [
+          0.0,
+          0.0
+        ],
+        "envenom": [
+          0.0,
+          0.0
+        ],
+        "feint": [
+          0.0,
+          0.0
+        ],
+        "jungle camouflage": [
+          0.0,
+          0.0
+        ],
+        "leaping ambush": [
+          0.0,
+          0.0
+        ],
+        "master poisoner": [
+          0.0,
+          0.0
+        ],
+        "noxious strike": [
+          0.0,
+          0.0
+        ],
+        "rebound": [
+          0.0,
+          0.0
+        ],
+        "spearnage": [
+          0.0,
+          0.0
+        ],
+        "storm dash": [
+          0.0,
+          0.0
+        ],
+        "thrill of the hunt": [
+          0.0,
+          0.0
+        ],
+        "thunder fury": [
+          0.0,
+          0.0
+        ],
+        "thunder goddesses chosen": [
+          0.0,
+          0.0
+        ],
+        "toxic remains": [
+          0.0,
+          0.0
+        ]
+      },
       "stats": {
         "attack_rating": [
           16.0,
@@ -224,7 +302,8 @@
           4.0,
           4.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -298,8 +377,83 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "astrope's battle maiden": [
+          0.0,
+          0.0
+        ],
+        "astrope's gift": [
+          0.0,
+          0.0
+        ],
+        "caustic spearhead": [
+          0.0,
+          0.0
+        ],
+        "chooser of the slain": [
+          0.0,
+          0.0
+        ],
+        "death from above": [
+          0.0,
+          0.0
+        ],
+        "envenom": [
+          0.0,
+          0.0
+        ],
+        "feint": [
+          0.0,
+          0.0
+        ],
+        "jungle camouflage": [
+          0.0,
+          0.0
+        ],
+        "leaping ambush": [
+          0.0,
+          0.0
+        ],
+        "master poisoner": [
+          0.0,
+          0.0
+        ],
+        "noxious strike": [
+          0.0,
+          0.0
+        ],
+        "rebound": [
+          0.0,
+          0.0
+        ],
+        "spearnage": [
+          0.0,
+          0.0
+        ],
+        "storm dash": [
+          0.0,
+          0.0
+        ],
+        "thrill of the hunt": [
+          0.0,
+          0.0
+        ],
+        "thunder fury": [
+          0.0,
+          0.0
+        ],
+        "thunder goddesses chosen": [
+          0.0,
+          0.0
+        ],
+        "toxic remains": [
+          0.0,
+          0.0
+        ]
+      },
       "stats": {
         "attack_rating": [
           176.0,
@@ -345,7 +499,8 @@
           7.0,
           7.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -425,8 +580,83 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "astrope's battle maiden": [
+          2.0,
+          2.0
+        ],
+        "astrope's gift": [
+          2.0,
+          2.0
+        ],
+        "caustic spearhead": [
+          2.0,
+          2.0
+        ],
+        "chooser of the slain": [
+          2.0,
+          2.0
+        ],
+        "death from above": [
+          2.0,
+          2.0
+        ],
+        "envenom": [
+          2.0,
+          2.0
+        ],
+        "feint": [
+          2.0,
+          2.0
+        ],
+        "jungle camouflage": [
+          2.0,
+          2.0
+        ],
+        "leaping ambush": [
+          2.0,
+          2.0
+        ],
+        "master poisoner": [
+          2.0,
+          2.0
+        ],
+        "noxious strike": [
+          2.0,
+          2.0
+        ],
+        "rebound": [
+          2.0,
+          2.0
+        ],
+        "spearnage": [
+          2.0,
+          2.0
+        ],
+        "storm dash": [
+          2.0,
+          2.0
+        ],
+        "thrill of the hunt": [
+          2.0,
+          2.0
+        ],
+        "thunder fury": [
+          2.0,
+          2.0
+        ],
+        "thunder goddesses chosen": [
+          2.0,
+          2.0
+        ],
+        "toxic remains": [
+          2.0,
+          2.0
+        ]
+      },
       "stats": {
         "all_skills": [
           2.0,
@@ -480,7 +710,8 @@
           4.0,
           4.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -555,8 +786,83 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "astrope's battle maiden": [
+          0.0,
+          0.0
+        ],
+        "astrope's gift": [
+          0.0,
+          0.0
+        ],
+        "caustic spearhead": [
+          0.0,
+          0.0
+        ],
+        "chooser of the slain": [
+          0.0,
+          0.0
+        ],
+        "death from above": [
+          0.0,
+          0.0
+        ],
+        "envenom": [
+          0.0,
+          0.0
+        ],
+        "feint": [
+          0.0,
+          0.0
+        ],
+        "jungle camouflage": [
+          0.0,
+          0.0
+        ],
+        "leaping ambush": [
+          0.0,
+          0.0
+        ],
+        "master poisoner": [
+          0.0,
+          0.0
+        ],
+        "noxious strike": [
+          0.0,
+          0.0
+        ],
+        "rebound": [
+          0.0,
+          0.0
+        ],
+        "spearnage": [
+          0.0,
+          0.0
+        ],
+        "storm dash": [
+          0.0,
+          0.0
+        ],
+        "thrill of the hunt": [
+          0.0,
+          0.0
+        ],
+        "thunder fury": [
+          0.0,
+          0.0
+        ],
+        "thunder goddesses chosen": [
+          0.0,
+          0.0
+        ],
+        "toxic remains": [
+          0.0,
+          0.0
+        ]
+      },
       "stats": {
         "attack_rating": [
           16.0,
@@ -602,7 +908,8 @@
           4.0,
           4.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -692,8 +999,83 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "astrope's battle maiden": [
+          1.0,
+          2.0
+        ],
+        "astrope's gift": [
+          1.0,
+          2.0
+        ],
+        "caustic spearhead": [
+          1.0,
+          2.0
+        ],
+        "chooser of the slain": [
+          1.0,
+          2.0
+        ],
+        "death from above": [
+          1.0,
+          2.0
+        ],
+        "envenom": [
+          1.0,
+          2.0
+        ],
+        "feint": [
+          1.0,
+          2.0
+        ],
+        "jungle camouflage": [
+          1.0,
+          2.0
+        ],
+        "leaping ambush": [
+          1.0,
+          2.0
+        ],
+        "master poisoner": [
+          1.0,
+          2.0
+        ],
+        "noxious strike": [
+          1.0,
+          2.0
+        ],
+        "rebound": [
+          1.0,
+          2.0
+        ],
+        "spearnage": [
+          1.0,
+          2.0
+        ],
+        "storm dash": [
+          1.0,
+          2.0
+        ],
+        "thrill of the hunt": [
+          1.0,
+          2.0
+        ],
+        "thunder fury": [
+          1.0,
+          2.0
+        ],
+        "thunder goddesses chosen": [
+          1.0,
+          2.0
+        ],
+        "toxic remains": [
+          1.0,
+          2.0
+        ]
+      },
       "stats": {
         "all_resistances": [
           5.0,
@@ -775,7 +1157,8 @@
           5.0,
           5.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -844,8 +1227,83 @@
       "damage": null,
       "hitDpsMax": null,
       "hitDpsMin": null,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "aftershock": [
+          0.0,
+          0.0
+        ],
+        "apocalyptic thunder": [
+          0.0,
+          0.0
+        ],
+        "chain lightning": [
+          0.0,
+          0.0
+        ],
+        "charged bolts": [
+          0.0,
+          0.0
+        ],
+        "electric cells": [
+          0.0,
+          0.0
+        ],
+        "gateway": [
+          0.0,
+          0.0
+        ],
+        "high voltage aura": [
+          0.0,
+          0.0
+        ],
+        "hyper charged": [
+          0.0,
+          0.0
+        ],
+        "lightning surge": [
+          0.0,
+          0.0
+        ],
+        "loaded pulse": [
+          0.0,
+          0.0
+        ],
+        "manafiend": [
+          0.0,
+          0.0
+        ],
+        "pulsing charge": [
+          0.0,
+          0.0
+        ],
+        "static shock": [
+          0.0,
+          0.0
+        ],
+        "storm bolt": [
+          0.0,
+          0.0
+        ],
+        "storm cloud": [
+          0.0,
+          0.0
+        ],
+        "symphony of thunder": [
+          0.0,
+          0.0
+        ],
+        "the battery within": [
+          0.0,
+          0.0
+        ],
+        "wave length": [
+          0.0,
+          0.0
+        ]
+      },
       "stats": {
         "attack_rating": [
           16.0,
@@ -895,7 +1353,8 @@
           4.0,
           4.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   },
   {
@@ -1002,8 +1461,83 @@
       },
       "hitDpsMax": 18.0,
       "hitDpsMin": 18.0,
+      "itemSkillBonuses": {},
       "procDpsMax": 0.0,
       "procDpsMin": 0.0,
+      "rankBonuses": {
+        "aftershock": [
+          0.0,
+          0.0
+        ],
+        "apocalyptic thunder": [
+          0.0,
+          0.0
+        ],
+        "chain lightning": [
+          0.0,
+          0.0
+        ],
+        "charged bolts": [
+          0.0,
+          0.0
+        ],
+        "electric cells": [
+          0.0,
+          0.0
+        ],
+        "gateway": [
+          0.0,
+          0.0
+        ],
+        "high voltage aura": [
+          0.0,
+          0.0
+        ],
+        "hyper charged": [
+          0.0,
+          0.0
+        ],
+        "lightning surge": [
+          0.0,
+          0.0
+        ],
+        "loaded pulse": [
+          0.0,
+          0.0
+        ],
+        "manafiend": [
+          0.0,
+          0.0
+        ],
+        "pulsing charge": [
+          0.0,
+          0.0
+        ],
+        "static shock": [
+          0.0,
+          0.0
+        ],
+        "storm bolt": [
+          0.0,
+          0.0
+        ],
+        "storm cloud": [
+          0.0,
+          0.0
+        ],
+        "symphony of thunder": [
+          0.0,
+          0.0
+        ],
+        "the battery within": [
+          0.0,
+          0.0
+        ],
+        "wave length": [
+          0.0,
+          0.0
+        ]
+      },
       "stats": {
         "attack_rating": [
           16.0,
@@ -1049,7 +1583,8 @@
           4.0,
           4.0
         ]
-      }
+      },
+      "statsCombined": {}
     }
   }
 ]

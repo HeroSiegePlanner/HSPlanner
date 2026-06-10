@@ -7,8 +7,6 @@ import {
   useBuild,
 } from "../store/build";
 import {
-  aggregateItemSkillBonuses,
-  combineAdditiveAndMore,
   effectiveCap,
   formatValue,
   isZero,
@@ -83,22 +81,19 @@ const GOLD_OFFENSE = new Set(["enhanced_damage", "crit_chance", "crit_damage"]);
 const GOLD_DEFENSE = new Set(["life"]);
 const BLUE_DEFENSE = new Set(["mana", "mana_replenish"]);
 
-// Fold `<key>_more` Total multiplier into the additive sum so display matches engine output.
+// Combined `<key>`+`<key>_more` totals come precomputed from the Rust engine.
 function effectiveStatValue(
   stats: Record<string, RangedValue>,
+  statsCombined: Record<string, RangedValue>,
   key: string,
 ): RangedValue {
-  const additive = stats[key];
-  const more = stats[`${key}_more`];
-  if (more === undefined) return additive ?? 0;
-  return combineAdditiveAndMore(additive, more);
+  return statsCombined[key] ?? stats[key] ?? 0;
 }
 
 export default function LeftStatsPanel() {
   const classId = useBuild((s) => s.classId);
   const level = useBuild((s) => s.level);
   const allocated = useBuild((s) => s.allocated);
-  const inventory = useBuild((s) => s.inventory);
   const skillRanks = useBuild((s) => s.skillRanks);
   const mainSkillId = useBuild((s) => s.mainSkillId);
   const setMainSkill = useBuild((s) => s.setMainSkill);
@@ -118,6 +113,7 @@ export default function LeftStatsPanel() {
   }, [buildDeps]);
   const attributes = performance?.attributes ?? {};
   const stats = performance?.stats ?? {};
+  const statsCombined = performance?.statsCombined ?? {};
   const damage = performance?.damage ?? null;
   const hitDpsMin = performance?.hitDpsMin;
   const hitDpsMax = performance?.hitDpsMax;
@@ -144,23 +140,11 @@ export default function LeftStatsPanel() {
     mainSkillId != null ? classSkills.find((s) => s.id === mainSkillId) : null;
   const activeRank = activeSkill ? (skillRanks[activeSkill.id] ?? 0) : 0;
 
-  const itemSkillBonuses = useMemo(
-    () => aggregateItemSkillBonuses(inventory),
-    [inventory],
-  );
-  const allSkillsMin = rangedMin(stats.all_skills ?? 0);
-  const allSkillsMax = rangedMax(stats.all_skills ?? 0);
-  const elementSkillsMin = activeSkill?.damageType
-    ? rangedMin(stats[`${activeSkill.damageType}_skills`] ?? 0)
-    : 0;
-  const elementSkillsMax = activeSkill?.damageType
-    ? rangedMax(stats[`${activeSkill.damageType}_skills`] ?? 0)
-    : 0;
-  const itemBonus: [number, number] = activeSkill
-    ? (itemSkillBonuses[normalizeSkillName(activeSkill.name)] ?? [0, 0])
+  const rankBonus: [number, number] = activeSkill
+    ? (performance?.rankBonuses[normalizeSkillName(activeSkill.name)] ?? [0, 0])
     : [0, 0];
-  const rankBonusMin = allSkillsMin + elementSkillsMin + itemBonus[0];
-  const rankBonusMax = allSkillsMax + elementSkillsMax + itemBonus[1];
+  const rankBonusMin = rankBonus[0];
+  const rankBonusMax = rankBonus[1];
   const effRankMin = activeRank + rankBonusMin;
   const effRankMax = activeRank + rankBonusMax;
 
@@ -174,10 +158,7 @@ export default function LeftStatsPanel() {
   const baseManaMax = activeSkill
     ? manaRankInfo.get(Math.max(effRankMax, 1))?.mana
     : undefined;
-  const fcrCombined = combineAdditiveAndMore(
-    stats.faster_cast_rate,
-    stats.faster_cast_rate_more,
-  );
+  const fcrCombined = effectiveStatValue(stats, statsCombined, "faster_cast_rate");
   const fcrMin = rangedMin(fcrCombined);
   const fcrMax = rangedMax(fcrCombined);
   const mcrMin = rangedMin(stats.mana_cost_reduction ?? 0);
@@ -200,10 +181,7 @@ export default function LeftStatsPanel() {
     effManaMax !== undefined && effCastMax !== undefined
       ? effManaMax * effCastMax
       : undefined;
-  const manaRegenCombined = combineAdditiveAndMore(
-    stats.mana_replenish,
-    stats.mana_replenish_more,
-  );
+  const manaRegenCombined = effectiveStatValue(stats, statsCombined, "mana_replenish");
   const manaRegenMin = rangedMin(manaRegenCombined);
   const manaRegenMax = rangedMax(manaRegenCombined);
   const sustainable =
@@ -539,7 +517,7 @@ export default function LeftStatsPanel() {
           <StatLine
             key={key}
             statKey={key}
-            value={effectiveStatValue(stats, key)}
+            value={effectiveStatValue(stats, statsCombined, key)}
             highlight={GOLD_OFFENSE.has(key) ? "gold" : undefined}
           />
         ))}
@@ -550,7 +528,7 @@ export default function LeftStatsPanel() {
           <StatLine
             key={key}
             statKey={key}
-            value={effectiveStatValue(stats, key)}
+            value={effectiveStatValue(stats, statsCombined, key)}
             highlight={
               GOLD_DEFENSE.has(key)
                 ? "gold"
