@@ -6,10 +6,17 @@ import { fmtStats } from '../../utils/item/stats'
 import type { SlotKey } from '../../types'
 import { packCharms } from './lib/charmPacking'
 import { gemColorForName, socketableIconForName } from './lib/icons'
+import { groupGearSlots, type GearSlotGroups } from './lib/slotGroups'
 import { buildSocketableTooltip } from './tooltips'
 import { CharmSection } from './CharmSection'
 import { GearPanel, SlotRow } from './SlotRail'
 import { GearSlotModal } from './GearSlotModal'
+
+const SLOT_PANELS: { key: keyof GearSlotGroups; title: string }[] = [
+  { key: 'gear', title: 'Gear' },
+  { key: 'potions', title: 'Potions' },
+  { key: 'relics', title: 'Relics' },
+]
 
 export default function GearView() {
   const inventory = useBuild((s) => s.inventory)
@@ -72,7 +79,7 @@ export default function GearView() {
     return out
   }, [])
 
-  const gearSlots = gameConfig.slots.filter((s) => !s.key.startsWith('charm_'))
+  const slotGroups = useMemo(() => groupGearSlots(gameConfig.slots), [])
   const charmSlots = gameConfig.slots.filter((s) => s.key.startsWith('charm_'))
 
   const weaponBase = inventory.weapon ? getItem(inventory.weapon.baseId) : undefined
@@ -113,35 +120,41 @@ export default function GearView() {
       </header>
 
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr]">
-        <GearPanel
-          title="Equipment"
-          trailing={
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-              <span className="text-accent-hot">
-                {gearSlots.filter((s) => inventory[s.key]).length}
-              </span>
-              <span className="text-faint">
-                {' '}
-                / {gearSlots.length}
-              </span>{' '}
-              equipped
-            </span>
-          }
-        >
-          <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {gearSlots.map((slot) => (
-              <li key={slot.key}>
-                <SlotRow
-                  slot={slot}
-                  equipped={inventory[slot.key]}
-                  active={activeSlot === slot.key}
-                  locked={slot.key === 'offhand' && offhandLocked}
-                  onSelect={() => setActiveSlot(slot.key)}
-                />
-              </li>
-            ))}
-          </ul>
-        </GearPanel>
+        <div className="flex min-w-0 flex-col gap-4">
+          {SLOT_PANELS.map(({ key, title }) => {
+            const slots = slotGroups[key]
+            const used = slots.filter((s) => inventory[s.key]).length
+            return (
+              <GearPanel
+                key={key}
+                title={title}
+                trailing={
+                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+                    <span className={used > 0 ? 'text-accent-hot' : 'text-muted'}>
+                      {used}
+                    </span>
+                    <span className="text-faint"> / {slots.length}</span>{' '}
+                    equipped
+                  </span>
+                }
+              >
+                <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                  {slots.map((slot) => (
+                    <li key={slot.key}>
+                      <SlotRow
+                        slot={slot}
+                        equipped={inventory[slot.key]}
+                        active={activeSlot === slot.key}
+                        locked={slot.key === 'offhand' && offhandLocked}
+                        onSelect={() => setActiveSlot(slot.key)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </GearPanel>
+            )
+          })}
+        </div>
 
         <CharmSection
           charmSlots={charmSlots}
