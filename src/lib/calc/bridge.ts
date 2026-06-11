@@ -23,7 +23,9 @@ export function setBridgeErrorListener(fn: BridgeErrorListener | null): void {
   bridgeErrorListener = fn
 }
 
-function notifyBridgeError(err: unknown): Error {
+// Exported so sibling IPC wrappers (e.g. utils/nativeDamage.ts) surface
+// failures through the same storageError banner.
+export function notifyBridgeError(err: unknown): Error {
   const wrapped = err instanceof Error ? err : new Error(String(err))
   if (bridgeErrorListener) {
     try {
@@ -357,18 +359,26 @@ export function invokeCalc<TResult>(
 // ---------- passive_stats_at_rank / mana_cost_at_rank ----------
 // Replace the former TS stats.ts helpers; the math now lives in Rust calc/passive.rs.
 
-export function passiveStatsAtRankNative(
+export async function passiveStatsAtRankNative(
   skill: Skill,
   rank: number,
 ): Promise<Record<string, number>> {
-  return invoke('passive_stats_at_rank', { skill, rank })
+  try {
+    return await invoke('passive_stats_at_rank', { skill, rank })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
-export function manaCostAtRankNative(
+export async function manaCostAtRankNative(
   skill: Skill,
   rank: number,
 ): Promise<number | null> {
-  return invoke('mana_cost_at_rank', { skill, rank })
+  try {
+    return await invoke('mana_cost_at_rank', { skill, rank })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
 // ---------- parse_custom_stats ----------

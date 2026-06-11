@@ -213,7 +213,7 @@ pub struct PrecomputedInput {
     pub kills_per_sec: f64,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SuggestStep {
     pub node_id: u32,
@@ -223,7 +223,7 @@ pub struct SuggestStep {
     pub is_filler: bool,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SuggestResult {
     pub added_nodes: Vec<u32>,

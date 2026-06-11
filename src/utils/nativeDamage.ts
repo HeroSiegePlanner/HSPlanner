@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/core'
+import { notifyBridgeError } from '../lib/calc/bridge'
 import type { RangedValue } from '../types/game'
 import type { BonusSource, DamageFormula, DamageRange, DamageType } from '../types/skill'
 import type { SkillDamageBreakdown, WeaponDamageBreakdown } from './item/stats'
@@ -39,14 +40,22 @@ export interface NativeWeaponDamageInput {
   projectileCount?: number
 }
 
-export function computeSkillDamageNative(
+export async function computeSkillDamageNative(
   input: NativeSkillDamageInput,
 ): Promise<SkillDamageBreakdown | null> {
-  return invoke('compute_skill_damage', { input })
+  try {
+    return await invoke('compute_skill_damage', { input })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
 
-export function computeWeaponDamageNative(
+export async function computeWeaponDamageNative(
   input: NativeWeaponDamageInput,
 ): Promise<WeaponDamageBreakdown> {
-  return invoke('compute_weapon_damage', { input })
+  try {
+    return await invoke('compute_weapon_damage', { input })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }

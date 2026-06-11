@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
 import { isImageUrl } from "../utils/imageUrl";
 import {
@@ -18,6 +18,7 @@ import {
 import { computeBuildPerformanceAsync } from "../lib/calc/bridge";
 import type { BuildPerformance } from "../utils/build/buildPerformance";
 import { useBuildPerformanceDeps } from "../hooks/useBuildPerformanceDeps";
+import { useCalcResult } from "../hooks/useCalcResult";
 import { useSkillRankInfo } from "../hooks/useSkillRankInfo";
 import type { RangedValue } from "../types";
 
@@ -101,16 +102,11 @@ export default function LeftStatsPanel() {
   const setActiveAura = useBuild((s) => s.setActiveAura);
 
   const buildDeps = useBuildPerformanceDeps();
-  const [performance, setPerformance] = useState<BuildPerformance | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    computeBuildPerformanceAsync(buildDeps).then((p) => {
-      if (!cancelled) setPerformance(p);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [buildDeps]);
+  const performance = useCalcResult<BuildPerformance | null>(
+    () => computeBuildPerformanceAsync(buildDeps),
+    [buildDeps],
+    null,
+  );
   const attributes = performance?.attributes ?? {};
   const stats = performance?.stats ?? {};
   const statsCombined = performance?.statsCombined ?? {};

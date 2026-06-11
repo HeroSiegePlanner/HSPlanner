@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import SourceTooltip from '../components/SourceTooltip'
 import { classes, gameConfig, getItem, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useCalcResult } from '../hooks/useCalcResult'
 import { useSkillDamage } from '../hooks/useSkillDamage'
 import { useWeaponDamage } from '../hooks/useWeaponDamage'
 import {
@@ -14,6 +15,7 @@ import { DAMAGE_COLORS, skillHeroBg } from '../utils/damageColors'
 import {
   effectiveCap,
   formatValue,
+  groupStatKeysByCategory,
   isZero,
   normalizeSkillName,
   rangedMax,
@@ -160,16 +162,11 @@ export default function StatsView() {
     normalizedQuery.length > 0 &&
     label.toLowerCase().includes(normalizedQuery)
   const buildDeps = useBuildPerformanceDeps()
-  const [computed, setComputed] = useState<ComputedStats | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    computeBuildStatsAsync(buildDeps).then((c) => {
-      if (!cancelled) setComputed(c)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [buildDeps])
+  const computed = useCalcResult<ComputedStats | null>(
+    () => computeBuildStatsAsync(buildDeps),
+    [buildDeps],
+    null,
+  )
 
   // Keyed `${kind}:${statKey}` to avoid collisions between attributes and stats sharing a key.
   // `depsKey` lets stale buckets be discarded on buildDeps swap without a setState-in-effect.
@@ -263,23 +260,17 @@ export default function StatsView() {
   }, [inventory, stats, enemyConditions, enemyResistances])
   const weaponDamage = useWeaponDamage(weaponInput)
 
-  const grouped = useMemo(() => {
-    const out: Record<string, string[]> = {
-      base: [],
-      offense: [],
-      defense: [],
-      resource: [],
-      utility: [],
-    }
-    for (const def of gameConfig.stats) {
-      if (def.modifiesAttribute) continue
-      if (def.itemOnly) continue
-      if (def.skillScoped) continue
-      const bucket = out[def.category]
-      if (bucket) bucket.push(def.key)
-    }
-    return out
-  }, [])
+  const grouped = useMemo(
+    () =>
+      groupStatKeysByCategory(gameConfig.stats, [
+        'base',
+        'offense',
+        'defense',
+        'resource',
+        'utility',
+      ]),
+    [],
+  )
 
   const knownStatKeys = useMemo(() => {
     const out = new Set<string>()

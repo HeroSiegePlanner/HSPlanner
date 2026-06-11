@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { CornerMarks } from '../components/CornerMarks'
 import { motion } from 'motion/react'
 import FlashOnChange from '../components/FlashOnChange'
@@ -7,6 +7,7 @@ import SubtreeOverlay from '../components/SubtreeOverlay'
 import { listContainerVariants, skillIconVariants } from '../lib/motion'
 import { classes, getClass, resolveSkillIcon, skills } from '../data'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useCalcResult } from '../hooks/useCalcResult'
 import { useSkillRankInfo } from '../hooks/useSkillRankInfo'
 import {
   computeBuildStatsAsync,
@@ -70,16 +71,11 @@ export default function SkillsView() {
   )
 
   const buildDeps = useBuildPerformanceDeps()
-  const [computed, setComputed] = useState<ComputedStats | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    computeBuildStatsAsync(buildDeps).then((c) => {
-      if (!cancelled) setComputed(c)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [buildDeps])
+  const computed = useCalcResult<ComputedStats | null>(
+    () => computeBuildStatsAsync(buildDeps),
+    [buildDeps],
+    null,
+  )
   const stats = computed?.stats ?? {}
   const attributes = computed?.attributes ?? {}
   const itemSkillBonuses = useMemo(
@@ -874,21 +870,17 @@ function SubtreeBonusBlock({
   subskillRanks: Record<string, number>
   enemyConditions: Record<string, boolean>
 }) {
-  const [agg, setAgg] = useState<SubtreeAggregation>(EMPTY_SUBTREE_AGGREGATION)
-  useEffect(() => {
-    let cancelled = false
-    subskillAggregationNative(
-      skill.classId,
-      skill.id,
-      subskillRanks,
-      enemyConditions,
-    ).then((a) => {
-      if (!cancelled) setAgg(a)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [skill, subskillRanks, enemyConditions])
+  const agg = useCalcResult<SubtreeAggregation>(
+    () =>
+      subskillAggregationNative(
+        skill.classId,
+        skill.id,
+        subskillRanks,
+        enemyConditions,
+      ),
+    [skill, subskillRanks, enemyConditions],
+    EMPTY_SUBTREE_AGGREGATION,
+  )
   const statEntries = Object.entries(agg.stats)
     .filter(([, v]) => v !== 0)
     .sort(([a], [b]) => a.localeCompare(b))

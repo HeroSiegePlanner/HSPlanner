@@ -32,6 +32,7 @@ import {
 } from '../lib/calc/bridge'
 import type { NodeLineClassification } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useCalcResult } from '../hooks/useCalcResult'
 import NetChangeRow from '../components/NetChangeRow'
 import type { TreeSocketContent } from '../types'
 import JewelSocketModal from '../components/JewelSocketModal'
@@ -185,31 +186,16 @@ export default function TreeView() {
 
   const treeDeps = useBuildPerformanceDeps()
 
-  const [currentPerformance, setCurrentPerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    computeBuildPerformanceAsync(treeDeps).then((p) => {
-      if (!cancelled) setCurrentPerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [treeDeps])
+  const currentPerformance = useCalcResult<BuildPerformance | null>(
+    () => computeBuildPerformanceAsync(treeDeps),
+    [treeDeps],
+    null,
+  )
 
-  const [nodeClassifications, setNodeClassifications] = useState<Record<
+  const nodeClassifications = useCalcResult<Record<
     string,
     NodeLineClassification
-  > | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    classifyTreeNodesNative().then((m) => {
-      if (!cancelled) setNodeClassifications(m)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  > | null>(() => classifyTreeNodesNative(), [], null)
 
   const [scale, setScale] = useState(0.35)
   const [tx, setTx] = useState(0)
@@ -353,25 +339,17 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated, previewPath])
 
-  const [previewPerformance, setPreviewPerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    if (!previewAllocation) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPreviewPerformance(null)
-      return
-    }
-    let cancelled = false
-    computeBuildPerformanceAsync({
-      ...treeDeps,
-      allocatedTreeNodes: previewAllocation,
-    }).then((p) => {
-      if (!cancelled) setPreviewPerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [previewAllocation, treeDeps])
+  const previewPerformance = useCalcResult<BuildPerformance | null>(
+    () =>
+      previewAllocation
+        ? computeBuildPerformanceAsync({
+            ...treeDeps,
+            allocatedTreeNodes: previewAllocation,
+          })
+        : null,
+    [previewAllocation, treeDeps],
+    null,
+  )
 
   // "This node alone" preview for evaluating standalone value. Clicking never produces this exact allocation.
   const singleNodeAllocation = useMemo<Set<number> | null>(() => {
@@ -387,25 +365,17 @@ export default function TreeView() {
     return next
   }, [hoverId, allocated])
 
-  const [singleNodePerformance, setSingleNodePerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    if (!singleNodeAllocation) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSingleNodePerformance(null)
-      return
-    }
-    let cancelled = false
-    computeBuildPerformanceAsync({
-      ...treeDeps,
-      allocatedTreeNodes: singleNodeAllocation,
-    }).then((p) => {
-      if (!cancelled) setSingleNodePerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [singleNodeAllocation, treeDeps])
+  const singleNodePerformance = useCalcResult<BuildPerformance | null>(
+    () =>
+      singleNodeAllocation
+        ? computeBuildPerformanceAsync({
+            ...treeDeps,
+            allocatedTreeNodes: singleNodeAllocation,
+          })
+        : null,
+    [singleNodeAllocation, treeDeps],
+    null,
+  )
 
   const previewAddedCount = useMemo(() => {
     if (!previewAllocation) return 0

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
+import { useCalcResult } from '../hooks/useCalcResult'
 import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import {
   detectRuneword,
@@ -123,63 +123,59 @@ function useItemDisplayValues(
   equipped: EquippedItem | undefined,
   scaleImplicit: boolean,
 ): TooltipDisplayValues | null {
-  const [out, setOut] = useState<TooltipDisplayValues | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    const stars = equipped?.stars ?? null
-    const toPair = (v: RangedValue): [number, number] => [
-      rangedMin(v),
-      rangedMax(v),
-    ]
-    const implicitEntries =
-      scaleImplicit && base.implicit ? Object.entries(base.implicit) : []
-    const skillEntries = base.skillBonuses
-      ? Object.entries(base.skillBonuses)
-      : []
-    const equippedAffixes = equipped?.affixes ?? []
-    const affixDefs = equippedAffixes.map((eq) => getAffix(eq.affixId))
-    const affixReqs = equippedAffixes
-      .map((eq, i) => ({ eq, def: affixDefs[i] }))
-      .filter((x) => x.def)
-      .map((x) => ({ affix: x.def, roll: x.eq.roll ?? 0, stars }))
-    const scaled = [
-      ...implicitEntries.map(([k, v]) => ({
-        value: toPair(v),
-        statKey: k,
-        stars,
-      })),
-      ...skillEntries.map(([, v]) => ({
-        value: toPair(v),
-        statKey: 'item_granted_skill_rank',
-        stars,
-      })),
-    ]
-    if (affixReqs.length === 0 && scaled.length === 0) {
-      setOut(EMPTY_DISPLAY)
-      return
-    }
-    displayValuesNative({ affixes: affixReqs, scaled }).then((res) => {
-      if (cancelled) return
-      const implicitScaled: Record<string, [number, number]> = {}
-      implicitEntries.forEach(([k], i) => {
-        implicitScaled[k] = res.scaled[i]!
-      })
-      const skillRankScaled: Record<string, [number, number]> = {}
-      skillEntries.forEach(([name], i) => {
-        skillRankScaled[name] = res.scaled[implicitEntries.length + i]!
-      })
-      const affixRanges: (AffixValueOutput | null)[] = []
-      let cursor = 0
-      for (const def of affixDefs) {
-        affixRanges.push(def ? (res.affixes[cursor++] ?? null) : null)
+  return useCalcResult<TooltipDisplayValues | null>(
+    () => {
+      const stars = equipped?.stars ?? null
+      const toPair = (v: RangedValue): [number, number] => [
+        rangedMin(v),
+        rangedMax(v),
+      ]
+      const implicitEntries =
+        scaleImplicit && base.implicit ? Object.entries(base.implicit) : []
+      const skillEntries = base.skillBonuses
+        ? Object.entries(base.skillBonuses)
+        : []
+      const equippedAffixes = equipped?.affixes ?? []
+      const affixDefs = equippedAffixes.map((eq) => getAffix(eq.affixId))
+      const affixReqs = equippedAffixes
+        .map((eq, i) => ({ eq, def: affixDefs[i] }))
+        .filter((x) => x.def)
+        .map((x) => ({ affix: x.def, roll: x.eq.roll ?? 0, stars }))
+      const scaled = [
+        ...implicitEntries.map(([k, v]) => ({
+          value: toPair(v),
+          statKey: k,
+          stars,
+        })),
+        ...skillEntries.map(([, v]) => ({
+          value: toPair(v),
+          statKey: 'item_granted_skill_rank',
+          stars,
+        })),
+      ]
+      if (affixReqs.length === 0 && scaled.length === 0) {
+        return EMPTY_DISPLAY
       }
-      setOut({ implicitScaled, skillRankScaled, affixRanges })
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [base, equipped, scaleImplicit])
-  return out
+      return displayValuesNative({ affixes: affixReqs, scaled }).then((res) => {
+        const implicitScaled: Record<string, [number, number]> = {}
+        implicitEntries.forEach(([k], i) => {
+          implicitScaled[k] = res.scaled[i]!
+        })
+        const skillRankScaled: Record<string, [number, number]> = {}
+        skillEntries.forEach(([name], i) => {
+          skillRankScaled[name] = res.scaled[implicitEntries.length + i]!
+        })
+        const affixRanges: (AffixValueOutput | null)[] = []
+        let cursor = 0
+        for (const def of affixDefs) {
+          affixRanges.push(def ? (res.affixes[cursor++] ?? null) : null)
+        }
+        return { implicitScaled, skillRankScaled, affixRanges }
+      })
+    },
+    [base, equipped, scaleImplicit],
+    null,
+  )
 }
 
 export function ItemTooltipBody({

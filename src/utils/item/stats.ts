@@ -59,6 +59,39 @@ export function statName(key: string): string {
   return key
 }
 
+// Buckets visible stat keys by category. Dedupes keys because gameConfig.stats
+// may alias one key under several display names (item-text parsing aliases);
+// each key must surface once so list renders get unique React keys.
+export function groupStatKeysByCategory(
+  defs: readonly StatDef[],
+  categories: readonly string[],
+): Record<string, string[]> {
+  const out: Record<string, string[]> = {}
+  for (const category of categories) out[category] = []
+  const seen = new Set<string>()
+  for (const def of defs) {
+    if (def.modifiesAttribute || def.itemOnly || def.skillScoped) continue
+    if (seen.has(def.key)) continue
+    const bucket = out[def.category]
+    if (!bucket) continue
+    seen.add(def.key)
+    bucket.push(def.key)
+  }
+  return out
+}
+
+// Keeps the first definition per key. gameConfig.stats may alias one key
+// under several display names (item-text parsing aliases); pickers need one
+// def per key so option lists get unique React keys.
+export function dedupeStatDefsByKey(defs: readonly StatDef[]): StatDef[] {
+  const seen = new Set<string>()
+  return defs.filter((def) => {
+    if (seen.has(def.key)) return false
+    seen.add(def.key)
+    return true
+  })
+}
+
 export function statDef(key: string): StatDef | undefined {
   const direct = STAT_DEFS_MAP.get(key)
   if (direct) return direct

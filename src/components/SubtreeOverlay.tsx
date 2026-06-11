@@ -17,6 +17,7 @@ import {
 } from '../utils/build/buildPerformance'
 import { computeBuildPerformanceAsync } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
+import { useCalcResult } from '../hooks/useCalcResult'
 import NetChangeRow from './NetChangeRow'
 import { CornerMarks } from './CornerMarks'
 
@@ -100,32 +101,21 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
     isKeystone: boolean
   } | null>(null)
 
-  const [previewPerformance, setPreviewPerformance] =
-    useState<BuildPerformance | null>(null)
-  useEffect(() => {
-    if (!hover) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPreviewPerformance(null)
-      return
-    }
-    const key = subskillKey(skill.id, hover.sub.id)
-    const currentRank = subskillRanks[key] ?? 0
-    if (currentRank >= hover.sub.maxRank) {
-      setPreviewPerformance(null)
-      return
-    }
-    const previewRanks = { ...subskillRanks, [key]: currentRank + 1 }
-    let cancelled = false
-    computeBuildPerformanceAsync({
-      ...buildDeps,
-      subskillRanks: previewRanks,
-    }).then((p) => {
-      if (!cancelled) setPreviewPerformance(p)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [hover, skill.id, subskillRanks, buildDeps])
+  const previewPerformance = useCalcResult<BuildPerformance | null>(
+    () => {
+      if (!hover) return null
+      const key = subskillKey(skill.id, hover.sub.id)
+      const currentRank = subskillRanks[key] ?? 0
+      if (currentRank >= hover.sub.maxRank) return null
+      const previewRanks = { ...subskillRanks, [key]: currentRank + 1 }
+      return computeBuildPerformanceAsync({
+        ...buildDeps,
+        subskillRanks: previewRanks,
+      })
+    },
+    [hover, skill.id, subskillRanks, buildDeps],
+    null,
+  )
 
   const skillIcon = !skill.icon || skill.icon.startsWith('http') ? '✦' : skill.icon
 

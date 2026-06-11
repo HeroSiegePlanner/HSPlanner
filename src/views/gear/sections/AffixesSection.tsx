@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useCalcResult } from '../../../hooks/useCalcResult'
 import PickerModal, { type PickerRow } from '../../../components/PickerModal'
 import { affixes, getAffix } from '../../../data'
 import {
@@ -28,35 +29,29 @@ export function useAffixDisplayRanges(
   items: AffixDisplayItem[],
   stars?: number,
 ): (AffixValueOutput | null)[] {
-  const [ranges, setRanges] = useState<(AffixValueOutput | null)[]>([])
-  useEffect(() => {
-    let cancelled = false
-    const present = items
-      .map((item, i) => ({ item, i }))
-      .filter((x) => !!x.item.def)
-    if (present.length === 0) {
-      setRanges(items.map(() => null))
-      return
-    }
-    displayValuesNative({
-      affixes: present.map((x) => ({
-        affix: x.item.def,
-        roll: x.item.roll ?? 0,
-        stars: stars ?? null,
-      })),
-    }).then((res) => {
-      if (cancelled) return
-      const out: (AffixValueOutput | null)[] = items.map(() => null)
-      present.forEach((x, j) => {
-        out[x.i] = res.affixes[j] ?? null
+  return useCalcResult<(AffixValueOutput | null)[]>(
+    () => {
+      const present = items
+        .map((item, i) => ({ item, i }))
+        .filter((x) => !!x.item.def)
+      if (present.length === 0) return items.map(() => null)
+      return displayValuesNative({
+        affixes: present.map((x) => ({
+          affix: x.item.def,
+          roll: x.item.roll ?? 0,
+          stars: stars ?? null,
+        })),
+      }).then((res) => {
+        const out: (AffixValueOutput | null)[] = items.map(() => null)
+        present.forEach((x, j) => {
+          out[x.i] = res.affixes[j] ?? null
+        })
+        return out
       })
-      setRanges(out)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [items, stars])
-  return ranges
+    },
+    [items, stars],
+    [],
+  )
 }
 
 function InvertedCrossIcon({ color = '#cf6db0' }: { color?: string }) {

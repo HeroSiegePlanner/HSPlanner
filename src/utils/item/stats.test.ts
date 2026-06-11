@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest'
+import { gameConfig } from '../../data'
+import type { StatDef } from '../../types'
 import type { RangedStatMap } from '../types'
 import {
+  dedupeStatDefsByKey,
   effectiveCap,
   fmtStats,
   formatAffixRangeFromValues,
   formatValue,
+  groupStatKeysByCategory,
   isZero,
   normalizeSkillName,
   rangedMax,
@@ -174,5 +178,113 @@ describe('shouldScaleImplicit', () => {
 
   it('does not scale for runeword items', () => {
     expect(shouldScaleImplicit(true)).toBe(false)
+  })
+})
+
+// -----------------------------------------------------------------------
+// groupStatKeysByCategory
+// -----------------------------------------------------------------------
+
+const mkDef = (key: string, overrides: Partial<StatDef> = {}): StatDef => ({
+  key,
+  name: key,
+  category: 'offense',
+  ...overrides,
+})
+
+describe('groupStatKeysByCategory', () => {
+  it('buckets visible stat keys by category', () => {
+    const grouped = groupStatKeysByCategory(
+      [mkDef('a'), mkDef('b', { category: 'defense' })],
+      ['offense', 'defense'],
+    )
+    expect(grouped.offense).toEqual(['a'])
+    expect(grouped.defense).toEqual(['b'])
+  })
+
+  it('emits a key once when defs alias it under two display names', () => {
+    // game-config.json defines damage_per_rage_stack twice (parsing aliases);
+    // rendering the key twice triggers React duplicate-key warnings.
+    const grouped = groupStatKeysByCategory(
+      [mkDef('damage_per_rage_stack'), mkDef('damage_per_rage_stack')],
+      ['offense'],
+    )
+    expect(grouped.offense).toEqual(['damage_per_rage_stack'])
+  })
+
+  it('skips attribute-modifying, item-only and skill-scoped defs', () => {
+    const grouped = groupStatKeysByCategory(
+      [
+        mkDef('attr_mod', { modifiesAttribute: 'strength' }),
+        mkDef('item_only', { itemOnly: true }),
+        mkDef('skill_scoped', { skillScoped: true }),
+        mkDef('kept'),
+      ],
+      ['offense'],
+    )
+    expect(grouped.offense).toEqual(['kept'])
+  })
+
+  it('ignores defs whose category has no bucket', () => {
+    const grouped = groupStatKeysByCategory(
+      [mkDef('a', { category: 'utility' })],
+      ['offense'],
+    )
+    expect(grouped.offense).toEqual([])
+    expect(grouped.utility).toBeUndefined()
+  })
+
+  it('yields unique keys per bucket for the real game config', () => {
+    const grouped = groupStatKeysByCategory(gameConfig.stats, [
+      'base',
+      'offense',
+      'defense',
+      'resource',
+      'utility',
+    ])
+    for (const keys of Object.values(grouped)) {
+      expect(new Set(keys).size).toBe(keys.length)
+    }
+    expect(
+      grouped.offense.filter((k) => k === 'damage_per_rage_stack'),
+    ).toHaveLength(1)
+  })
+})
+
+// -----------------------------------------------------------------------
+// dedupeStatDefsByKey
+// -----------------------------------------------------------------------
+
+describe('dedupeStatDefsByKey', () => {
+  it('keeps the first definition when defs alias one key', () => {
+    const first = mkDef('damage_per_rage_stack', {
+      name: 'Increased Damage per Stack of Rage',
+    })
+    const second = mkDef('damage_per_rage_stack', {
+      name: 'Increased Damage per Rage Stack',
+    })
+    expect(dedupeStatDefsByKey([first, second])).toEqual([first])
+  })
+
+  it('preserves the order of distinct keys', () => {
+    const defs = [mkDef('a'), mkDef('b'), mkDef('a')]
+    expect(dedupeStatDefsByKey(defs).map((d) => d.key)).toEqual(['a', 'b'])
+  })
+
+  it('yields unique custom-stat option ids for the real game config', () => {
+    // ConfigView builds its SearchableSelect options from this exact
+    // pipeline; duplicate ids re-trigger the React duplicate-key warning
+    // in PickerModal. The raw config must keep the aliased defs (item-text
+    // parsing relies on them), so the picker pipeline has to dedupe.
+    const visible = gameConfig.stats.filter(
+      (s) => !s.itemOnly && !s.skillScoped,
+    )
+    expect(
+      visible.filter((s) => s.key === 'damage_per_rage_stack').length,
+    ).toBeGreaterThan(1)
+
+    const keys = dedupeStatDefsByKey(visible).map((d) => d.key)
+    expect(new Set(keys).size).toBe(keys.length)
+    expect(keys.filter((k) => k === 'damage_per_rage_stack')).toHaveLength(1)
   })
 })

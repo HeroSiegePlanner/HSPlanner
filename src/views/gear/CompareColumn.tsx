@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import { ItemCard } from '../../components/ItemTooltip'
+import { useCalcResult } from '../../hooks/useCalcResult'
 import { getItem } from '../../data'
 import type { EquippedItem, Inventory, SlotKey } from '../../types'
 import {
@@ -229,22 +229,18 @@ export function CompareColumn({
   slot: SlotKey
   deps: BuildSummaryDeps
 }) {
-  const [summaries, setSummaries] = useState<{
+  const summaries = useCalcResult<{
     before: BuildSummary
     after: BuildSummary
-  } | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    Promise.all([
-      computeBuildSummary(baselineInventory, slot, deps),
-      computeBuildSummary(currentInventory, slot, deps),
-    ]).then(([before, after]) => {
-      if (!cancelled) setSummaries({ before, after })
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [baselineInventory, currentInventory, slot, deps])
+  } | null>(
+    () =>
+      Promise.all([
+        computeBuildSummary(baselineInventory, slot, deps),
+        computeBuildSummary(currentInventory, slot, deps),
+      ]).then(([before, after]) => ({ before, after })),
+    [baselineInventory, currentInventory, slot, deps],
+    null,
+  )
 
   if (!summaries) {
     return (

@@ -1,12 +1,18 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { CornerMarks } from '../components/CornerMarks'
 import SearchableSelect from '../components/SearchableSelect'
 import { SkillIconImage } from '../components/SkillIconImage'
 import { resolveSkillIcon } from '../data'
 import { gameConfig, skills } from '../data'
 import { subskillKey, useBuild } from '../store/build'
+import { useCalcResult } from '../hooks/useCalcResult'
 import { parseCustomStatsNative } from '../lib/calc/bridge'
-import { formatValue, normalizeSkillName, statDef } from '../utils/item/stats'
+import {
+  dedupeStatDefsByKey,
+  formatValue,
+  normalizeSkillName,
+  statDef,
+} from '../utils/item/stats'
 import type { Skill, SubskillNode } from '../types'
 import {
   SELF_CONDITION_KEYS,
@@ -69,22 +75,14 @@ export default function ConfigView() {
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
-  const [parsedCustomValues, setParsedCustomValues] = useState<
-    ([number, number] | null)[]
-  >([])
-  useEffect(() => {
-    let cancelled = false
-    if (customStats.length === 0) {
-      setParsedCustomValues([])
-      return
-    }
-    parseCustomStatsNative(customStats.map((cs) => cs.value)).then((r) => {
-      if (!cancelled) setParsedCustomValues(r)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [customStats])
+  const parsedCustomValues = useCalcResult<([number, number] | null)[]>(
+    () =>
+      customStats.length === 0
+        ? []
+        : parseCustomStatsNative(customStats.map((cs) => cs.value)),
+    [customStats],
+    [],
+  )
 
   const buffSkills = useMemo(() => {
     if (!classId) return []
@@ -176,13 +174,13 @@ export default function ConfigView() {
 
   const statOptions = useMemo(
     () =>
-      gameConfig.stats
-        .filter((s) => !s.itemOnly && !s.skillScoped)
-        .map((s) => ({
-          id: s.key,
-          label: s.name,
-          hint: s.format === 'percent' ? '%' : 'flat',
-        })),
+      dedupeStatDefsByKey(
+        gameConfig.stats.filter((s) => !s.itemOnly && !s.skillScoped),
+      ).map((s) => ({
+        id: s.key,
+        label: s.name,
+        hint: s.format === 'percent' ? '%' : 'flat',
+      })),
     [],
   )
 
