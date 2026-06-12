@@ -20,8 +20,50 @@ import gameConfigJson from './game-config.json'
 import itemGrantedSkillsJson from './item-granted-skills.json'
 import runewordsJson from './runewords.json'
 import setsJson from './sets.json'
+import treeNodesJson from './tree-nodes.json'
+import heroSiegeTreeJson from './hero-siege-tree.json'
+import nodeIconsJson from './node-icons.json'
+import { resolveActiveSeasonId } from './seasons/registry'
+import { loadSeasonPatchSet } from './seasons/load'
+import {
+  applyGameConfigPatch,
+  applyListPatch,
+  applyRecordMergePatch,
+  applyRecordReplacePatch,
+  applyTreePatch,
+  type PatchResult,
+} from './seasons/resolve'
+import type {
+  HeroSiegeTree,
+  RecordPatch,
+  TreeNodeInfo,
+} from './seasons/patchTypes'
 
-export const gameConfig = gameConfigJson as GameConfig
+export const activeSeasonId = resolveActiveSeasonId()
+
+const seasonErrors: string[] = []
+const seasonLoad = loadSeasonPatchSet(activeSeasonId)
+seasonErrors.push(...seasonLoad.errors)
+const seasonPatches = seasonLoad.patches
+
+// All-or-nothing per collection: on any patch error the base data is kept so
+// a broken overlay can never half-apply (spec §6).
+function patched<T>(base: T, result: PatchResult<T>): T {
+  if (result.errors.length > 0) {
+    seasonErrors.push(...result.errors)
+    return base
+  }
+  return result.data
+}
+
+export const gameConfig = patched(
+  gameConfigJson as GameConfig,
+  applyGameConfigPatch(
+    gameConfigJson as GameConfig & Record<string, unknown>,
+    seasonPatches.gameConfig,
+    'game-config',
+  ) as PatchResult<GameConfig>,
+)
 
 const classModules = import.meta.glob<{ default: CharacterClass }>(
   './classes/*.json',
@@ -95,19 +137,89 @@ function collectFlat<T>(modules: Record<string, { default: T[] }>): T[] {
   return Object.values(modules).flatMap((m) => m.default)
 }
 
-export const classes: CharacterClass[] = collectScalar(classModules)
-export const skills: Skill[] = collectFlat(skillModules)
+export const classes: CharacterClass[] = patched(
+  collectScalar(classModules),
+  applyListPatch(
+    collectScalar(classModules) as unknown as Record<string, unknown>[],
+    seasonPatches.classes,
+    'classes',
+  ) as unknown as PatchResult<CharacterClass[]>,
+)
+export const skills: Skill[] = patched(
+  collectFlat(skillModules),
+  applyListPatch(
+    collectFlat(skillModules) as unknown as Record<string, unknown>[],
+    seasonPatches.skills,
+    'skills',
+  ) as unknown as PatchResult<Skill[]>,
+)
 export const talentTrees: TalentTree[] = collectScalar(talentModules)
-export const items: ItemBase[] = collectFlat(itemModules)
-export const gems: Gem[] = collectFlat(gemModules)
-export const runes: Rune[] = collectFlat(runeModules)
+export const items: ItemBase[] = patched(
+  collectFlat(itemModules),
+  applyListPatch(
+    collectFlat(itemModules) as unknown as Record<string, unknown>[],
+    seasonPatches.items,
+    'items',
+  ) as unknown as PatchResult<ItemBase[]>,
+)
+export const gems: Gem[] = patched(
+  collectFlat(gemModules),
+  applyListPatch(
+    collectFlat(gemModules) as unknown as Record<string, unknown>[],
+    seasonPatches.gems,
+    'gems',
+  ) as unknown as PatchResult<Gem[]>,
+)
+export const runes: Rune[] = patched(
+  collectFlat(runeModules),
+  applyListPatch(
+    collectFlat(runeModules) as unknown as Record<string, unknown>[],
+    seasonPatches.runes,
+    'runes',
+  ) as unknown as PatchResult<Rune[]>,
+)
 
-export const affixes: Affix[] = affixesJson as Affix[]
-export const crystalMods: Affix[] = crystalsJson as Affix[]
-export const runewords: Runeword[] = runewordsJson as unknown as Runeword[]
-const itemSets: ItemSet[] = setsJson as ItemSet[]
-const itemGrantedSkills: ItemGrantedSkill[] =
-  itemGrantedSkillsJson as ItemGrantedSkill[]
+export const affixes: Affix[] = patched(
+  affixesJson as Affix[],
+  applyListPatch(
+    affixesJson as unknown as Record<string, unknown>[],
+    seasonPatches.affixes,
+    'affixes',
+  ) as unknown as PatchResult<Affix[]>,
+)
+export const crystalMods: Affix[] = patched(
+  crystalsJson as Affix[],
+  applyListPatch(
+    crystalsJson as unknown as Record<string, unknown>[],
+    seasonPatches.crystals,
+    'crystals',
+  ) as unknown as PatchResult<Affix[]>,
+)
+export const runewords: Runeword[] = patched(
+  runewordsJson as unknown as Runeword[],
+  applyListPatch(
+    runewordsJson as unknown as Record<string, unknown>[],
+    seasonPatches.runewords,
+    'runewords',
+  ) as unknown as PatchResult<Runeword[]>,
+)
+const itemSets: ItemSet[] = patched(
+  setsJson as ItemSet[],
+  applyListPatch(
+    setsJson as unknown as Record<string, unknown>[],
+    seasonPatches.sets,
+    'sets',
+  ) as unknown as PatchResult<ItemSet[]>,
+)
+const itemGrantedSkills: ItemGrantedSkill[] = patched(
+  itemGrantedSkillsJson as ItemGrantedSkill[],
+  applyListPatch(
+    itemGrantedSkillsJson as unknown as Record<string, unknown>[],
+    seasonPatches.itemGrantedSkills,
+    'item-granted-skills',
+    'name',
+  ) as unknown as PatchResult<ItemGrantedSkill[]>,
+)
 
 const itemGrantedSkillByName = new Map<string, ItemGrantedSkill>(
   itemGrantedSkills.map((s) => [s.name.trim().toLowerCase(), s]),
@@ -119,7 +231,37 @@ export function getItemGrantedSkillByName(
   return itemGrantedSkillByName.get(name.trim().toLowerCase())
 }
 export const relics: Relic[] = []
-export const augments: AngelicAugment[] = augmentsJson as AngelicAugment[]
+export const augments: AngelicAugment[] = patched(
+  augmentsJson as AngelicAugment[],
+  applyListPatch(
+    augmentsJson as unknown as Record<string, unknown>[],
+    seasonPatches.augments,
+    'augments',
+  ) as unknown as PatchResult<AngelicAugment[]>,
+)
+export const treeNodeInfo: Record<string, TreeNodeInfo> = patched(
+  treeNodesJson as Record<string, TreeNodeInfo>,
+  applyRecordMergePatch(
+    treeNodesJson as Record<string, Record<string, unknown>>,
+    seasonPatches.treeNodes as unknown as
+      | RecordPatch<Record<string, unknown>>
+      | undefined,
+    'tree-nodes',
+  ) as unknown as PatchResult<Record<string, TreeNodeInfo>>,
+)
+export const heroSiegeTree: HeroSiegeTree = patched(
+  heroSiegeTreeJson as HeroSiegeTree,
+  applyTreePatch(heroSiegeTreeJson as HeroSiegeTree, seasonPatches.heroSiegeTree, 'hero-siege-tree'),
+)
+export const nodeIcons: Record<string, string> = patched(
+  nodeIconsJson as Record<string, string>,
+  applyRecordReplacePatch(
+    nodeIconsJson as Record<string, string>,
+    seasonPatches.nodeIcons,
+    'node-icons',
+  ),
+)
+export const seasonDataErrors: ReadonlyArray<string> = seasonErrors
 const GEAR_SLOTS = new Set<string>([
   'weapon',
   'offhand',
