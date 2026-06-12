@@ -69,11 +69,11 @@ static STAR_SCALING_BY_SEASON: Lazy<Mutex<HashMap<String, &'static StarScaling>>
 
 // Per-season star scaling resolved from the thread-local season scope. On
 // patch errors the base JSON is used and the errors are logged (never silent).
+// Season normalization matches data::data_for exactly: patchless ids collapse
+// to one base entry via season::cache_key.
 fn configs() -> &'static StarScaling {
-    let mut season = crate::calc::season::current_season_id();
-    if !crate::calc::season::known_season_id(&season) {
-        season = crate::calc::season::DEFAULT_SEASON_ID.to_string();
-    }
+    let current = crate::calc::season::current_season_id();
+    let season = crate::calc::season::cache_key(&current).to_string();
     {
         let cache = STAR_SCALING_BY_SEASON
             .lock()
@@ -82,7 +82,7 @@ fn configs() -> &'static StarScaling {
             return c;
         }
     }
-    let patches = crate::calc::season::patches_for(&season);
+    let patches = crate::calc::season::patches_for(crate::calc::season::load_id(&season));
     let base: serde_json::Value =
         serde_json::from_str(STAR_SCALING_JSON).expect("src/data/star-scaling.json must be valid");
     let value = match patches.get("star-scaling") {

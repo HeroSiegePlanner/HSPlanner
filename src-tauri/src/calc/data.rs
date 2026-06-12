@@ -275,19 +275,17 @@ fn load_for(season_id: &str) -> GameData {
     }
 }
 
+// Patchless ids (unknown or registry-listed) all collapse to one base-data
+// cache entry, matching the TS hub and bounding the cache against garbage ids.
 pub fn data_for(season_id: &str) -> &'static GameData {
-    let id = if season::known_season_id(season_id) {
-        season_id
-    } else {
-        season::DEFAULT_SEASON_ID
-    };
+    let id = season::cache_key(season_id);
     {
         let cache = GAME_DATA_BY_SEASON.lock().expect("game data cache poisoned");
         if let Some(d) = cache.get(id) {
             return d;
         }
     }
-    let loaded = load_for(id);
+    let loaded = load_for(season::load_id(id));
     let mut cache = GAME_DATA_BY_SEASON.lock().expect("game data cache poisoned");
     if let Some(d) = cache.get(id) {
         return d;
@@ -468,10 +466,34 @@ mod tests {
     // panic with a precise file/error in the message.
 
     #[test]
-    fn data_for_unknown_season_falls_back_to_default() {
-        let a = super::data_for("s9") as *const GameData;
-        let b = super::data_for("definitely-unknown") as *const GameData;
-        assert_eq!(a, b);
+    fn data_for_patchless_season_serves_base_data() {
+        let a = super::data_for("definitely-unknown") as *const GameData;
+        let b = super::data_for("also-unknown") as *const GameData;
+        assert_eq!(a, b, "patchless ids must share one base cache entry");
+        // Today base == s9 (no s9 patches), so contents must match even if
+        // the cache entries differ.
+        let base = super::data_for("definitely-unknown");
+        let s9 = super::data_for("s9");
+        assert_eq!(base.affixes.len(), s9.affixes.len());
+    }
+
+    // Sweep: every embedded season patch dir must deserialize into GameData
+    // without panicking. No-op while no patch files exist; the moment a bad
+    // patch lands under src/data/seasons/<id>/, cargo test fails.
+    #[test]
+    fn sweep_embedded_season_patch_dirs_load() {
+        let mut dirs: HashSet<&str> = HashSet::new();
+        for (rel, _) in SEASON_PATCHES {
+            if let Some((dir, _)) = rel.split_once('/') {
+                dirs.insert(dir);
+            }
+        }
+        for dir in dirs {
+            let d = super::data_for(dir);
+            assert!(!d.affixes.is_empty(), "season {dir} lost all affixes");
+        }
+        let s9 = super::data_for("s9");
+        assert!(!s9.affixes.is_empty());
     }
 
     #[test]

@@ -39,11 +39,36 @@ pub fn current_season_id() -> String {
     })
 }
 
-pub fn known_season_id(id: &str) -> bool {
-    id == DEFAULT_SEASON_ID
-        || SEASON_PATCHES.iter().any(|(rel, _)| {
-            rel.len() > id.len() && rel.starts_with(id) && rel.as_bytes()[id.len()] == b'/'
-        })
+pub fn has_patches(id: &str) -> bool {
+    SEASON_PATCHES.iter().any(|(rel, _)| {
+        rel.len() > id.len() && rel.starts_with(id) && rel.as_bytes()[id.len()] == b'/'
+    })
+}
+
+// Every patchless id (unknown or registry-listed) shares this one cache entry
+// of pure base data, so garbage ids cannot grow the per-season caches.
+pub const BASE_CACHE_KEY: &str = "__base__";
+
+// Shared season-id normalization for all per-season caches (game data, star
+// scaling): ids with embedded patches cache under themselves, the rest
+// collapse to BASE_CACHE_KEY. Must stay the only normalization, or Rust and
+// TS could serve different data for the same id.
+pub fn cache_key(season_id: &str) -> &str {
+    if has_patches(season_id) {
+        season_id
+    } else {
+        BASE_CACHE_KEY
+    }
+}
+
+// Season id whose patches should be loaded for a cache key; "" yields no
+// patches in patches_for, i.e. pure base data.
+pub fn load_id(cache_key: &str) -> &str {
+    if cache_key == BASE_CACHE_KEY {
+        ""
+    } else {
+        cache_key
+    }
 }
 
 // rel path "s10/affixes.patch.json" -> key "affixes"
@@ -83,6 +108,17 @@ fn obj<'a>(patch: &'a Value, key: &str) -> impl Iterator<Item = (&'a String, &'a
         .flatten()
 }
 
+// Mirrors the TS zod .strict() schemas: a typo'd key must fail the whole
+// collection (fall back to base), never partially apply the valid keys.
+fn validate_patch_keys(patch: &Value, allowed: &[&str], label: &str, errors: &mut Vec<String>) {
+    let Some(map) = patch.as_object() else { return };
+    for key in map.keys() {
+        if !allowed.contains(&key.as_str()) {
+            errors.push(format!("{label}: unknown patch key \"{key}\""));
+        }
+    }
+}
+
 fn merge_shallow(base: &Value, fields: &Value) -> Value {
     let mut out = base.as_object().cloned().unwrap_or_default();
     if let Some(f) = fields.as_object() {
@@ -110,6 +146,7 @@ pub fn apply_list_patch(
     key: &str,
 ) -> Result<Value, Vec<String>> {
     let mut errors = Vec::new();
+    validate_patch_keys(patch, &["add", "change", "remove"], label, &mut errors);
     let entries = base.as_array().cloned().unwrap_or_default();
     let mut order: Vec<String> = Vec::with_capacity(entries.len());
     let mut by_key: HashMap<String, Value> = HashMap::with_capacity(entries.len());
@@ -165,6 +202,7 @@ pub fn apply_record_patch(
     merge: bool,
 ) -> Result<Value, Vec<String>> {
     let mut errors = Vec::new();
+    validate_patch_keys(patch, &["add", "change", "remove"], label, &mut errors);
     let mut out: Map<String, Value> = base.as_object().cloned().unwrap_or_default();
     for id in arr(patch, "remove") {
         let id = value_key(id);
@@ -203,6 +241,8 @@ pub fn apply_game_config_patch(
     patch: &Value,
     label: &str,
 ) -> Result<Value, Vec<String>> {
+    let mut errors = Vec::new();
+    validate_patch_keys(patch, &["change", "stats"], label, &mut errors);
     let mut out = base.as_object().cloned().unwrap_or_default();
     if let Some(change) = patch.get("change").and_then(Value::as_object) {
         for (k, v) in change {
@@ -211,9 +251,15 @@ pub fn apply_game_config_patch(
     }
     if let Some(stats_patch) = patch.get("stats") {
         let base_stats = base.get("stats").cloned().unwrap_or(Value::Array(vec![]));
-        let stats =
-            apply_list_patch(&base_stats, stats_patch, &format!("{label}.stats"), "key")?;
-        out.insert("stats".to_string(), stats);
+        match apply_list_patch(&base_stats, stats_patch, &format!("{label}.stats"), "key") {
+            Ok(stats) => {
+                out.insert("stats".to_string(), stats);
+            }
+            Err(errs) => errors.extend(errs),
+        }
+    }
+    if !errors.is_empty() {
+        return Err(errors);
     }
     Ok(Value::Object(out))
 }
@@ -257,6 +303,40 @@ mod tests {
                 "aff: add duplicates id \"a\"",
             ]
         );
+    }
+
+    #[test]
+    fn list_patch_rejects_unknown_keys() {
+        let base = serde_json::json!([{ "id": "a" }]);
+        let patch = serde_json::json!({ "changee": {} });
+        let errs = apply_list_patch(&base, &patch, "aff", "id").unwrap_err();
+        assert_eq!(errs, vec!["aff: unknown patch key \"changee\""]);
+    }
+
+    #[test]
+    fn record_patch_rejects_unknown_keys() {
+        let base = serde_json::json!({ "a": { "v": 1 } });
+        let patch = serde_json::json!({ "changee": {} });
+        let errs = apply_record_patch(&base, &patch, "tree", true).unwrap_err();
+        assert_eq!(errs, vec!["tree: unknown patch key \"changee\""]);
+    }
+
+    #[test]
+    fn game_config_patch_rejects_unknown_keys() {
+        let base = serde_json::json!({ "stats": [] });
+        let patch = serde_json::json!({ "changee": {} });
+        let errs = apply_game_config_patch(&base, &patch, "gc").unwrap_err();
+        assert_eq!(errs, vec!["gc: unknown patch key \"changee\""]);
+    }
+
+    #[test]
+    fn patchless_ids_normalize_to_single_base_key() {
+        // No embedded patch dirs exist today, so every id is patchless.
+        assert_eq!(cache_key("definitely-unknown"), BASE_CACHE_KEY);
+        assert_eq!(cache_key("also-unknown"), BASE_CACHE_KEY);
+        assert_eq!(load_id(BASE_CACHE_KEY), "");
+        assert_eq!(load_id("s10"), "s10");
+        assert!(patches_for("").is_empty());
     }
 
     #[test]
