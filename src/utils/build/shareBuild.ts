@@ -12,9 +12,12 @@ import type {
   TreeSocketContent,
 } from '../../types'
 import { AUGMENT_MAX_LEVEL } from '../../types'
+import { activeSeasonId } from '../../data'
+import { isKnownSeasonId } from '../../data/seasons/registry'
 import { sanitizeHtml } from '../sanitizeHtml'
 
-const SCHEMA_VERSION = 1
+const SCHEMA_VERSION = 2
+const LEGACY_SEASON_ID = 's9'
 
 const DEFAULT_ENEMY_RESISTANCE_PCT = 85
 
@@ -143,6 +146,7 @@ const shareableBuildSchema = z.object({
     .max(MAX_CUSTOM_STATS)
     .optional(),
   ts: treeSocketedSchema.optional(),
+  se: SAFE_STRING.optional(),
 })
 
 export interface ShareableBuild {
@@ -166,6 +170,7 @@ export interface ShareableBuild {
   n?: string
   cs?: { k: string; v: string }[]
   ts?: Record<string, TreeSocketContent | null>
+  se?: string
 }
 
 export interface BuildSnapshot {
@@ -214,6 +219,7 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
       ? { er: snapshot.enemyResistances }
       : {}),
     kps: snapshot.killsPerSec,
+    se: activeSeasonId,
   }
   if (notes) out.n = notes
   if (snapshot.customStats.length > 0) {
@@ -236,6 +242,7 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
 export interface DecodedShare {
   snapshot: BuildSnapshot
   notes: string
+  season: string
 }
 
 // Hardening: a hostile share cannot push the level into a degenerate state.
@@ -245,11 +252,17 @@ function clampLevel(n: number): number {
 }
 
 function deserialize(encoded: ShareableBuild): DecodedShare {
-  if (encoded.v !== SCHEMA_VERSION) {
+  if (encoded.v !== 1 && encoded.v !== SCHEMA_VERSION) {
     throw new Error(
-      `Unsupported share schema v${encoded.v} (expected v${SCHEMA_VERSION})`,
+      `Unsupported share schema v${encoded.v} (expected v1..v${SCHEMA_VERSION})`,
     )
   }
+  const season =
+    encoded.v === 1
+      ? LEGACY_SEASON_ID
+      : encoded.se && isKnownSeasonId(encoded.se)
+        ? encoded.se
+        : LEGACY_SEASON_ID
   const snapshot: BuildSnapshot = {
     classId: encoded.c ?? null,
     level: clampLevel(encoded.l ?? 1),
@@ -291,6 +304,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
   return {
     snapshot,
     notes: encoded.n ? sanitizeHtml(encoded.n) : '',
+    season,
   }
 }
 
