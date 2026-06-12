@@ -9,6 +9,8 @@ import { AUTO_OPEN_KEY, BuildSelect } from "./components/buildSelect";
 import LeftStatsPanel from "./components/LeftStatsPanel";
 import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
+import SeasonConversionModal from "./components/SeasonConversionModal";
+import SeasonErrorBanner from "./components/SeasonErrorBanner";
 import SeasonSwitcher from "./components/SeasonSwitcher";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
@@ -357,6 +359,8 @@ function App() {
           </div>
         </header>
 
+        <SeasonErrorBanner />
+
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <LeftStatsPanel />
           <main
@@ -382,6 +386,7 @@ function App() {
         <BottomBar />
       </div>
 
+      <SeasonConversionModal />
       <StorageErrorBanner />
     </HoverProvider>
   );
