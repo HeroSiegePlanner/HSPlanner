@@ -11,6 +11,7 @@ import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
 import SeasonErrorBanner from "./components/SeasonErrorBanner";
 import SeasonSwitcher from "./components/SeasonSwitcher";
+import SeasonToast from "./components/SeasonToast";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
 import { activeSeasonId, classes, getClass } from "./data";
@@ -147,8 +148,7 @@ function App() {
       report(100, "Ready");
       window.__bootFinish?.();
 
-      // Per-build season: a reload-on-open/import persisted a pending action +
-      // the season; the hub already re-resolved to it — now replay the action.
+      // Boot replay: the hub already re-resolved the season, so run any pending action.
       const pendingBuild = readStorage(PENDING_BUILD_KEY);
       const pendingImport = readStorage(PENDING_IMPORT_KEY);
       if (pendingBuild) {
@@ -373,6 +373,7 @@ function App() {
         </header>
 
         <SeasonErrorBanner />
+        <SeasonToast />
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <LeftStatsPanel />
