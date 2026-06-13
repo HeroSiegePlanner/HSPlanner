@@ -46,8 +46,7 @@ const seasonLoad = loadSeasonPatchSet(activeSeasonId)
 seasonErrors.push(...seasonLoad.errors)
 const seasonPatches = seasonLoad.patches
 
-// All-or-nothing per collection: on any patch error the base data is kept so
-// a broken overlay can never half-apply (spec §6).
+// All-or-nothing per collection: any patch error keeps the base data.
 function patched<T>(base: T, result: PatchResult<T>): T {
   if (result.errors.length > 0) {
     seasonErrors.push(...result.errors)
@@ -211,6 +210,20 @@ const GEAR_SLOTS = new Set<string>([
 export function isGearSlot(slot: string): boolean {
   return GEAR_SLOTS.has(slot)
 }
+
+export function isCharmSlot(slot: string): boolean {
+  return slot.startsWith('charm_')
+}
+
+// Charm stars + forge arrived in S10, so every season except the S9 baseline allows them.
+export function charmsAllowStarsForge(season: string): boolean {
+  return season !== 's9'
+}
+
+export function canStarForge(slot: string, season: string): boolean {
+  return isGearSlot(slot) || (isCharmSlot(slot) && charmsAllowStarsForge(season))
+}
+
 export type ForgeKind = 'satanic_crystal'
 
 const SATANIC_CRYSTAL_RARITIES = new Set([
