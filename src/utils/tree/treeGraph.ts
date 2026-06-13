@@ -1,15 +1,11 @@
 import { heroSiegeTree, treeNodeInfo } from '../../data'
+import { posKey } from '../../data/seasons/resolve'
 
 type RawNode = [id: number, x: number, y: number, r: number]
 type RawEdge = [x1: number, y1: number, x2: number, y2: number]
 
 const NODES = heroSiegeTree.nodes as RawNode[]
 const EDGES = heroSiegeTree.edges as RawEdge[]
-
-function posKey(x: number, y: number): string {
-  // Builds a stable string key from a node's (x, y) coordinates rounded to one decimal so that floating-point edge endpoints reliably resolve back to a node id. Used during module load to construct the position-to-id index.
-  return `${Math.round(x * 10)}_${Math.round(y * 10)}`
-}
 
 const POS_TO_ID = new Map<string, number>()
 for (const [id, x, y] of NODES) {
@@ -19,8 +15,7 @@ for (const [id, x, y] of NODES) {
 export const ADJ = new Map<number, Set<number>>()
 for (const [id] of NODES) ADJ.set(id, new Set())
 
-// Unresolved edges are reported, not silently skipped — a season patch that
-// breaks topology must be visible (spec §2).
+// Unresolved edges are reported, not silently skipped, so a topology-breaking patch is visible.
 const treeGraphWarnings: string[] = []
 for (const [x1, y1, x2, y2] of EDGES) {
   const a = POS_TO_ID.get(posKey(x1, y1))
@@ -38,7 +33,6 @@ for (const [x1, y1, x2, y2] of EDGES) {
 if (import.meta.env.DEV && treeGraphWarnings.length > 0) {
   console.warn('[treeGraph]', treeGraphWarnings)
 }
-export const TREE_GRAPH_WARNINGS: ReadonlyArray<string> = treeGraphWarnings
 
 export const START_IDS: ReadonlyArray<number> = Object.entries(treeNodeInfo)
   .filter(([, info]) => info.n === 'root')

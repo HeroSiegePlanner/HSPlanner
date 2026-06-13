@@ -1,7 +1,11 @@
 use once_cell::sync::Lazy;
 use serde::Deserialize;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::Mutex;
+
+use super::data::{patched_value, PatchKind};
+use super::season;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum StarScaleConfig {
@@ -67,54 +71,47 @@ struct StarScaling {
 static STAR_SCALING_BY_SEASON: Lazy<Mutex<HashMap<String, &'static StarScaling>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 
-// Per-season star scaling resolved from the thread-local season scope. On
-// patch errors the base JSON is used and the errors are logged (never silent).
-// Season normalization matches data::data_for exactly: patchless ids collapse
-// to one base entry via season::cache_key.
-fn configs() -> &'static StarScaling {
-    let current = crate::calc::season::current_season_id();
-    let season = crate::calc::season::cache_key(&current).to_string();
-    {
-        let cache = STAR_SCALING_BY_SEASON
-            .lock()
-            .expect("star scaling cache poisoned");
-        if let Some(c) = cache.get(&season) {
-            return c;
-        }
-    }
-    let patches = crate::calc::season::patches_for(crate::calc::season::load_id(&season));
+// On patch errors the base JSON is used and the errors are logged (never
+// silent). Season normalization matches data::data_for exactly via
+// season::cached_per_season.
+fn load_for(season_id: &str) -> StarScaling {
+    let patches = season::patches_for(season_id);
     let base: serde_json::Value =
         serde_json::from_str(STAR_SCALING_JSON).expect("src/data/star-scaling.json must be valid");
-    let value = match patches.get("star-scaling") {
-        Some(p) => {
-            match crate::calc::season::apply_record_patch(&base, p, "star-scaling", true) {
-                Ok(v) => v,
-                Err(errs) => {
-                    for e in errs {
-                        log::error!("season patch error: {e}");
-                    }
-                    base
-                }
-            }
-        }
-        None => base,
-    };
+    let value = patched_value(base, &patches, "star-scaling", PatchKind::RecordMerge);
     let dto: StarScalingData =
         serde_json::from_value(value).expect("invalid star-scaling shape after patch");
-    let converted = StarScaling {
+    StarScaling {
         flat_skill_staircase: dto.flat_skill_staircase,
         item_specific_staircase: dto.item_specific_staircase,
         map: dto.map.into_iter().map(|(k, v)| (k, v.into())).collect(),
-    };
-    let mut cache = STAR_SCALING_BY_SEASON
-        .lock()
-        .expect("star scaling cache poisoned");
-    if let Some(c) = cache.get(&season) {
-        return c;
     }
-    let leaked: &'static StarScaling = Box::leak(Box::new(converted));
-    cache.insert(season, leaked);
-    leaked
+}
+
+fn configs_for(season_id: &str) -> &'static StarScaling {
+    season::cached_per_season(&STAR_SCALING_BY_SEASON, season_id, load_for)
+}
+
+thread_local! {
+    static LAST_SCALING: RefCell<Option<(String, &'static StarScaling)>> =
+        const { RefCell::new(None) };
+}
+
+// Per-season star scaling resolved from the thread-local season scope.
+// Per-thread memo: one mutex hit per season change per thread instead of per call.
+fn configs() -> &'static StarScaling {
+    season::with_current_season(|id| {
+        LAST_SCALING.with(|cell| {
+            if let Some((k, ptr)) = cell.borrow().as_ref() {
+                if k == id {
+                    return *ptr;
+                }
+            }
+            let ptr = configs_for(id);
+            *cell.borrow_mut() = Some((id.to_string(), ptr));
+            ptr
+        })
+    })
 }
 
 pub fn get_star_scale_config(stat_key: Option<&str>) -> StarScaleConfig {

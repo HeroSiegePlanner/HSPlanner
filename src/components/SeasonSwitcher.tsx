@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { hoverTap } from "../lib/motion";
-import { SEASONS, setStoredSeasonId } from "../data/seasons/registry";
+import { getSeason, SEASONS, setStoredSeasonId } from "../data/seasons/registry";
 import { activeSeasonId } from "../data";
-import { Modal } from "./Modal";
+import {
+  MODAL_BTN_CLASS,
+  MODAL_BTN_PRIMARY_CLASS,
+  MODAL_FOOTER_CLASS,
+  Modal,
+} from "./Modal";
 
 export default function SeasonSwitcher() {
   const [pending, setPending] = useState<string | null>(null);
-  const pendingSeason = pending
-    ? SEASONS.find((s) => s.id === pending)
-    : undefined;
+  const pendingSeason = pending ? getSeason(pending) : undefined;
 
   const confirm = () => {
     if (!pending) return;
@@ -65,14 +68,14 @@ export default function SeasonSwitcher() {
             </p>
           </section>
           <footer
-            className="flex items-center justify-end gap-2 border-t border-border px-6 py-3"
+            className={MODAL_FOOTER_CLASS}
             style={{ background: "rgba(0,0,0,0.3)" }}
           >
             <motion.button
               {...hoverTap}
               type="button"
               onClick={() => setPending(null)}
-              className="rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-text"
+              className={MODAL_BTN_CLASS}
             >
               Cancel
             </motion.button>
@@ -80,7 +83,7 @@ export default function SeasonSwitcher() {
               {...hoverTap}
               type="button"
               onClick={confirm}
-              className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot"
+              className={MODAL_BTN_PRIMARY_CLASS}
               style={{
                 background:
                   "linear-gradient(180deg, rgba(58,46,24,0.6), rgba(42,36,24,0.4))",

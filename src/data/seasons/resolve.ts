@@ -13,17 +13,19 @@ export interface PatchResult<T> {
   errors: string[]
 }
 
-// Shared add/change/remove semantics for id-keyed collections; the Rust twin
-// lives in src-tauri/src/calc/season.rs and is held to parity-fixture.json.
-export function applyListPatch<T extends Record<string, unknown>>(
+// Add/change/remove for id-keyed collections; Rust twin in season.rs, held to parity-fixture.json.
+export function applyListPatch<T extends object>(
   base: T[],
-  patch: ListPatch<T> | undefined,
+  patch: ListPatch<Record<string, unknown>> | undefined,
   label: string,
   key = 'id',
 ): PatchResult<T[]> {
   if (!patch) return { data: base, errors: [] }
   const errors: string[] = []
-  const byKey = new Map<string, T>(base.map((e) => [String(e[key]), e]))
+  // zod validated the patch shape; the id-keyed merge is the trust boundary
+  const byKey = new Map<string, T>(
+    base.map((e) => [String((e as Record<string, unknown>)[key]), e]),
+  )
   for (const id of patch.remove ?? []) {
     if (!byKey.delete(id)) errors.push(`${label}: remove unknown id "${id}"`)
   }
@@ -33,7 +35,7 @@ export function applyListPatch<T extends Record<string, unknown>>(
       errors.push(`${label}: change unknown id "${id}"`)
       continue
     }
-    byKey.set(id, { ...cur, ...(fields as Partial<T>) })
+    byKey.set(id, { ...cur, ...fields } as T)
   }
   for (const entry of patch.add ?? []) {
     const id = String(entry[key])
@@ -41,17 +43,22 @@ export function applyListPatch<T extends Record<string, unknown>>(
       errors.push(`${label}: add duplicates id "${id}"`)
       continue
     }
-    byKey.set(id, entry)
+    byKey.set(id, entry as unknown as T)
   }
   return { data: [...byKey.values()], errors }
 }
 
-export function applyRecordMergePatch<T extends Record<string, unknown>>(
+// Remove -> change -> add for record patches; merge vs replace injected via applyChange.
+function applyRecordPatchCore<T>(
   base: Record<string, T>,
-  patch: RecordPatch<T> | undefined,
+  patch: {
+    add?: Record<string, unknown>
+    change?: Record<string, unknown>
+    remove?: string[]
+  },
   label: string,
+  applyChange: (cur: T | undefined, fields: unknown) => T,
 ): PatchResult<Record<string, T>> {
-  if (!patch) return { data: base, errors: [] }
   const errors: string[] = []
   const out: Record<string, T> = { ...base }
   for (const id of patch.remove ?? []) {
@@ -66,7 +73,7 @@ export function applyRecordMergePatch<T extends Record<string, unknown>>(
       errors.push(`${label}: change unknown id "${id}"`)
       continue
     }
-    out[id] = { ...out[id], ...(fields as Partial<T>) } as T
+    out[id] = applyChange(out[id], fields)
   }
   for (const [id, value] of Object.entries(patch.add ?? {})) {
     if (id in out) {
@@ -76,6 +83,20 @@ export function applyRecordMergePatch<T extends Record<string, unknown>>(
     out[id] = value as T
   }
   return { data: out, errors }
+}
+
+export function applyRecordMergePatch<T extends object>(
+  base: Record<string, T>,
+  patch: RecordPatch<Record<string, unknown>> | undefined,
+  label: string,
+): PatchResult<Record<string, T>> {
+  if (!patch) return { data: base, errors: [] }
+  return applyRecordPatchCore(
+    base,
+    patch,
+    label,
+    (cur, fields) => ({ ...cur, ...(fields as Partial<T>) }) as T,
+  )
 }
 
 export function applyRecordReplacePatch<T>(
@@ -84,33 +105,10 @@ export function applyRecordReplacePatch<T>(
   label: string,
 ): PatchResult<Record<string, T>> {
   if (!patch) return { data: base, errors: [] }
-  const errors: string[] = []
-  const out: Record<string, T> = { ...base }
-  for (const id of patch.remove ?? []) {
-    if (!(id in out)) {
-      errors.push(`${label}: remove unknown id "${id}"`)
-      continue
-    }
-    delete out[id]
-  }
-  for (const [id, value] of Object.entries(patch.change ?? {})) {
-    if (!(id in out)) {
-      errors.push(`${label}: change unknown id "${id}"`)
-      continue
-    }
-    out[id] = value as T
-  }
-  for (const [id, value] of Object.entries(patch.add ?? {})) {
-    if (id in out) {
-      errors.push(`${label}: add duplicates id "${id}"`)
-      continue
-    }
-    out[id] = value as T
-  }
-  return { data: out, errors }
+  return applyRecordPatchCore(base, patch, label, (_cur, value) => value as T)
 }
 
-export function applyGameConfigPatch<T extends Record<string, unknown>>(
+export function applyGameConfigPatch<T extends object>(
   base: T,
   patch: GameConfigPatch | undefined,
   label: string,
@@ -119,8 +117,9 @@ export function applyGameConfigPatch<T extends Record<string, unknown>>(
   const errors: string[] = []
   let out: T = { ...base, ...(patch.change ?? {}) }
   if (patch.stats) {
-    const stats = Array.isArray(base.stats)
-      ? (base.stats as Record<string, unknown>[])
+    const baseStats = (base as Record<string, unknown>).stats
+    const stats = Array.isArray(baseStats)
+      ? (baseStats as Record<string, unknown>[])
       : []
     const r = applyListPatch(stats, patch.stats, `${label}.stats`, 'key')
     errors.push(...r.errors)
@@ -129,7 +128,8 @@ export function applyGameConfigPatch<T extends Record<string, unknown>>(
   return { data: out, errors }
 }
 
-function posKey(x: number, y: number): string {
+// Stable position key (coords rounded to 0.1) so float edge endpoints resolve back to a node id.
+export function posKey(x: number, y: number): string {
   return `${Math.round(x * 10)}_${Math.round(y * 10)}`
 }
 
@@ -137,9 +137,7 @@ function edgeKey(a: number, b: number): string {
   return a < b ? `${a}_${b}` : `${b}_${a}`
 }
 
-// Translates coordinate-pair edges to id pairs, applies node/edge ops by id,
-// then re-emits coordinates from the patched node positions so moved nodes
-// keep their edges. Duplicate base edges collapse into one.
+// Resolves edges to id pairs, applies ops by id, then re-emits coords so moved nodes keep edges.
 export function applyTreePatch(
   base: HeroSiegeTree,
   patch: TreePatch | undefined,

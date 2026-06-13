@@ -1,5 +1,6 @@
 import { compressToEncodedURIComponent } from 'lz-string'
 import { describe, expect, it } from 'vitest'
+import { makeSnapshot as makeBaseSnapshot } from './buildSnapshot.fixture'
 import {
   type BuildSnapshot,
   decodeShareToBuild,
@@ -8,27 +9,17 @@ import {
 } from './shareBuild'
 
 function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnapshot {
-  // Test helper that returns a complete BuildSnapshot pre-filled with sensible defaults, allowing each test to override only the fields it cares about. Used throughout the share-encoding tests to keep individual cases small and focused.
-  return {
+  // Shared fixture specialised with the values the share-encoding assertions expect.
+  return makeBaseSnapshot({
     classId: 'stormweaver',
     level: 50,
     allocated: { strength: 10 },
-    inventory: {},
     skillRanks: { fireball: 5 },
-    subskillRanks: {},
     allocatedTreeNodes: new Set([1, 2, 3]),
     mainSkillId: 'fireball',
-    activeAuraId: null,
-    activeBuffs: {},
-    enemyConditions: {},
-    playerConditions: {},
-    skillProjectiles: {},
     enemyResistances: {},
-    procToggles: {},
-    killsPerSec: 1,
-    customStats: [],
     ...overrides,
-  }
+  })
 }
 
 describe('encode/decode round-trip', () => {

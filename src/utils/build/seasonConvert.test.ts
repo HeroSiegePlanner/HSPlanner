@@ -1,38 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { affixes, gems, items, skills, treeNodeInfo } from '../../data'
 import { ADJ, START_IDS } from '../tree/treeGraph'
-import { defaultEnemyResistances, type BuildSnapshot } from './shareBuild'
+import { makeSnapshot } from './buildSnapshot.fixture'
 import { convertSnapshotToActiveSeason } from './seasonConvert'
-
-function baseSnapshot(): BuildSnapshot {
-  return {
-    classId: 'amazon',
-    level: 5,
-    allocated: { strength: 0, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 },
-    inventory: {},
-    skillRanks: {},
-    subskillRanks: {},
-    allocatedTreeNodes: new Set<number>(),
-    mainSkillId: null,
-    activeAuraId: null,
-    activeBuffs: {},
-    enemyConditions: {},
-    playerConditions: {},
-    skillProjectiles: {},
-    enemyResistances: defaultEnemyResistances(),
-    procToggles: {},
-    killsPerSec: 1,
-    customStats: [],
-    treeSocketed: {},
-  }
-}
 
 describe('convertSnapshotToActiveSeason', () => {
   it('valid snapshot passes through with no changes', () => {
-    const snap = baseSnapshot()
     const start = START_IDS[0]!
-    snap.allocatedTreeNodes = new Set([start])
-    snap.skillRanks = { [skills[0]!.id]: 3 }
+    const snap = makeSnapshot({
+      allocatedTreeNodes: new Set([start]),
+      skillRanks: { [skills[0]!.id]: 3 },
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
     expect(report.hasChanges).toBe(false)
     expect(snapshot.allocatedTreeNodes.has(start)).toBe(true)
@@ -41,9 +19,10 @@ describe('convertSnapshotToActiveSeason', () => {
   })
 
   it('drops unknown tree nodes and prunes orphans', () => {
-    const snap = baseSnapshot()
     const start = START_IDS[0]!
-    snap.allocatedTreeNodes = new Set([start, 999_999])
+    const snap = makeSnapshot({
+      allocatedTreeNodes: new Set([start, 999_999]),
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
     expect(report.hasChanges).toBe(true)
     expect(report.removedTreeNodes).toEqual([999_999])
@@ -52,28 +31,29 @@ describe('convertSnapshotToActiveSeason', () => {
   })
 
   it('drops unknown items, affixes, skills and clears dangling references', () => {
-    const snap = baseSnapshot()
-    snap.inventory = {
-      weapon: {
-        baseId: 'no_such_item_id',
-        affixes: [],
-        socketCount: 0,
-        socketed: [],
-        socketTypes: [],
+    const snap = makeSnapshot({
+      inventory: {
+        weapon: {
+          baseId: 'no_such_item_id',
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+        },
+        helmet: {
+          baseId: items[0]!.id,
+          affixes: [
+            { affixId: affixes[0]!.id, tier: 1, roll: 0.5 },
+            { affixId: 'no_such_affix', tier: 1, roll: 0.5 },
+          ],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+        },
       },
-      helmet: {
-        baseId: items[0]!.id,
-        affixes: [
-          { affixId: affixes[0]!.id, tier: 1, roll: 0.5 },
-          { affixId: 'no_such_affix', tier: 1, roll: 0.5 },
-        ],
-        socketCount: 0,
-        socketed: [],
-        socketTypes: [],
-      },
-    }
-    snap.skillRanks = { no_such_skill: 5 }
-    snap.mainSkillId = 'no_such_skill'
+      skillRanks: { no_such_skill: 5 },
+      mainSkillId: 'no_such_skill',
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
     expect(snapshot.inventory.weapon).toBeUndefined()
     expect(snapshot.inventory.helmet?.affixes).toHaveLength(1)
@@ -86,8 +66,7 @@ describe('convertSnapshotToActiveSeason', () => {
   })
 
   it('does not mutate the input snapshot', () => {
-    const snap = baseSnapshot()
-    snap.allocatedTreeNodes = new Set([999_999])
+    const snap = makeSnapshot({ allocatedTreeNodes: new Set([999_999]) })
     convertSnapshotToActiveSeason(snap, 's10')
     expect(snap.allocatedTreeNodes.has(999_999)).toBe(true)
   })
@@ -102,8 +81,7 @@ describe('convertSnapshotToActiveSeason', () => {
       .map(Number)
       .find((id) => !startSet.has(id) && !adjToStart.has(id))!
 
-    const snap = baseSnapshot()
-    snap.allocatedTreeNodes = new Set([startId, orphanId])
+    const snap = makeSnapshot({ allocatedTreeNodes: new Set([startId, orphanId]) })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(report.orphanedTreeNodes).toContain(orphanId)
@@ -115,11 +93,12 @@ describe('convertSnapshotToActiveSeason', () => {
   // B2a: treeSocketed — socket on unreachable/unknown node id is dropped into removedTreeSockets
   it('treeSocketed: socket on unknown node id is removed', () => {
     const startId = START_IDS[0]!
-    const snap = baseSnapshot()
-    snap.allocatedTreeNodes = new Set([startId])
-    snap.treeSocketed = {
-      999999: { kind: 'item', id: gems[0]!.id },
-    }
+    const snap = makeSnapshot({
+      allocatedTreeNodes: new Set([startId]),
+      treeSocketed: {
+        999999: { kind: 'item', id: gems[0]!.id },
+      },
+    })
     const { report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(report.removedTreeSockets).toContain(999999)
@@ -129,11 +108,12 @@ describe('convertSnapshotToActiveSeason', () => {
   // B2b: treeSocketed — kind 'item' with unknown id on a reachable node is removed
   it('treeSocketed: kind item with unknown id on reachable node is removed', () => {
     const startId = START_IDS[0]!
-    const snap = baseSnapshot()
-    snap.allocatedTreeNodes = new Set([startId])
-    snap.treeSocketed = {
-      [startId]: { kind: 'item', id: 'no_such_gem_or_item' },
-    }
+    const snap = makeSnapshot({
+      allocatedTreeNodes: new Set([startId]),
+      treeSocketed: {
+        [startId]: { kind: 'item', id: 'no_such_gem_or_item' },
+      },
+    })
     const { report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(report.removedTreeSockets).toContain(startId)
@@ -144,17 +124,18 @@ describe('convertSnapshotToActiveSeason', () => {
   it('treeSocketed: kind uncut keeps known affixes and records dropped affixId in removedUncutAffixes', () => {
     const startId = START_IDS[0]!
     const knownAffixId = affixes[0]!.id
-    const snap = baseSnapshot()
-    snap.allocatedTreeNodes = new Set([startId])
-    snap.treeSocketed = {
-      [startId]: {
-        kind: 'uncut',
-        affixes: [
-          { affixId: knownAffixId, tier: 1, roll: 0.5 },
-          { affixId: 'no_such_affix', tier: 1, roll: 0.5 },
-        ],
+    const snap = makeSnapshot({
+      allocatedTreeNodes: new Set([startId]),
+      treeSocketed: {
+        [startId]: {
+          kind: 'uncut',
+          affixes: [
+            { affixId: knownAffixId, tier: 1, roll: 0.5 },
+            { affixId: 'no_such_affix', tier: 1, roll: 0.5 },
+          ],
+        },
       },
-    }
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     const content = snapshot.treeSocketed[startId]
@@ -166,20 +147,21 @@ describe('convertSnapshotToActiveSeason', () => {
 
   // B3a: convertItem — forgedMods with unknown affix id is dropped
   it('convertItem: unknown forgedMod is recorded in removedForgedMods', () => {
-    const snap = baseSnapshot()
-    snap.inventory = {
-      weapon: {
-        baseId: items[0]!.id,
-        affixes: [],
-        socketCount: 0,
-        socketed: [],
-        socketTypes: [],
-        forgedMods: [
-          { affixId: affixes[0]!.id, tier: 1, roll: 0.5 },
-          { affixId: 'no_such_forged_mod', tier: 1, roll: 0.5 },
-        ],
+    const snap = makeSnapshot({
+      inventory: {
+        weapon: {
+          baseId: items[0]!.id,
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          forgedMods: [
+            { affixId: affixes[0]!.id, tier: 1, roll: 0.5 },
+            { affixId: 'no_such_forged_mod', tier: 1, roll: 0.5 },
+          ],
+        },
       },
-    }
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(snapshot.inventory.weapon?.forgedMods).toHaveLength(1)
@@ -189,16 +171,17 @@ describe('convertSnapshotToActiveSeason', () => {
 
   // B3b: convertItem — socketed with unknown gem, null, and real gem
   it('convertItem: unknown socketable becomes null and is recorded in removedSocketables', () => {
-    const snap = baseSnapshot()
-    snap.inventory = {
-      weapon: {
-        baseId: items[0]!.id,
-        affixes: [],
-        socketCount: 3,
-        socketed: ['no_such_gem', null, gems[0]!.id],
-        socketTypes: [],
+    const snap = makeSnapshot({
+      inventory: {
+        weapon: {
+          baseId: items[0]!.id,
+          affixes: [],
+          socketCount: 3,
+          socketed: ['no_such_gem', null, gems[0]!.id],
+          socketTypes: [],
+        },
       },
-    }
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(snapshot.inventory.weapon?.socketed).toEqual([null, null, gems[0]!.id])
@@ -208,17 +191,18 @@ describe('convertSnapshotToActiveSeason', () => {
 
   // B3c: convertItem — unknown runewordId is cleared
   it('convertItem: unknown runewordId is cleared and recorded in removedRunewords', () => {
-    const snap = baseSnapshot()
-    snap.inventory = {
-      weapon: {
-        baseId: items[0]!.id,
-        affixes: [],
-        socketCount: 0,
-        socketed: [],
-        socketTypes: [],
-        runewordId: 'no_such_rw',
+    const snap = makeSnapshot({
+      inventory: {
+        weapon: {
+          baseId: items[0]!.id,
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          runewordId: 'no_such_rw',
+        },
       },
-    }
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(snapshot.inventory.weapon?.runewordId).toBeUndefined()
@@ -228,17 +212,18 @@ describe('convertSnapshotToActiveSeason', () => {
 
   // B3d: convertItem — unknown augment id is cleared
   it('convertItem: unknown augment is cleared and recorded in removedAugments', () => {
-    const snap = baseSnapshot()
-    snap.inventory = {
-      weapon: {
-        baseId: items[0]!.id,
-        affixes: [],
-        socketCount: 0,
-        socketed: [],
-        socketTypes: [],
-        augment: { id: 'no_such_aug', level: 1 },
+    const snap = makeSnapshot({
+      inventory: {
+        weapon: {
+          baseId: items[0]!.id,
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          augment: { id: 'no_such_aug', level: 1 },
+        },
       },
-    }
+    })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(snapshot.inventory.weapon?.augment).toBeUndefined()
@@ -248,8 +233,7 @@ describe('convertSnapshotToActiveSeason', () => {
 
   // B4a: activeAuraId unknown → cleared to null
   it('unknown activeAuraId is cleared to null', () => {
-    const snap = baseSnapshot()
-    snap.activeAuraId = 'no_such_aura'
+    const snap = makeSnapshot({ activeAuraId: 'no_such_aura' })
     const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
     expect(snapshot.activeAuraId).toBeNull()
@@ -259,20 +243,14 @@ describe('convertSnapshotToActiveSeason', () => {
   // B4b: subskillRanks with unknown id → filtered out + removedSubskills
   it('unknown subskill is filtered and recorded in removedSubskills', () => {
     const allSubskills = skills.flatMap((s) => (s.subskills ?? []).map((n) => n.id))
-    const snap = baseSnapshot()
+    const knownSubskillId = allSubskills[0]!
+    const snap = makeSnapshot({
+      subskillRanks: { [knownSubskillId]: 2, no_such_subskill: 1 },
+    })
+    const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
 
-    if (allSubskills.length > 0) {
-      const knownSubskillId = allSubskills[0]!
-      snap.subskillRanks = { [knownSubskillId]: 2, no_such_subskill: 1 }
-      const { snapshot, report } = convertSnapshotToActiveSeason(snap, 's10')
-
-      expect(snapshot.subskillRanks[knownSubskillId]).toBe(2)
-      expect(snapshot.subskillRanks['no_such_subskill']).toBeUndefined()
-      expect(report.removedSubskills).toContain('no_such_subskill')
-    } else {
-      snap.subskillRanks = { no_such_subskill: 1 }
-      const { report } = convertSnapshotToActiveSeason(snap, 's10')
-      expect(report.removedSubskills).not.toContain('no_such_subskill')
-    }
+    expect(snapshot.subskillRanks[knownSubskillId]).toBe(2)
+    expect(snapshot.subskillRanks['no_such_subskill']).toBeUndefined()
+    expect(report.removedSubskills).toContain('no_such_subskill')
   })
 })

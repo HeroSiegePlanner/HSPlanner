@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { hoverTap } from "../lib/motion";
 import { getSeason } from "../data/seasons/registry";
 import { useBuild } from "../store/build";
-import { Modal } from "./Modal";
+import { MODAL_BTN_PRIMARY_CLASS, MODAL_FOOTER_CLASS, Modal } from "./Modal";
 
 function Row({ label, entries }: { label: string; entries: string[] }) {
   if (entries.length === 0) return null;
@@ -89,14 +89,14 @@ export default function SeasonConversionModal() {
         />
       </section>
       <footer
-        className="flex items-center justify-end gap-2 border-t border-border px-6 py-3"
+        className={MODAL_FOOTER_CLASS}
         style={{ background: "rgba(0,0,0,0.3)" }}
       >
         <motion.button
           {...hoverTap}
           type="button"
           onClick={clear}
-          className="rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot"
+          className={MODAL_BTN_PRIMARY_CLASS}
           style={{
             background:
               "linear-gradient(180deg, rgba(58,46,24,0.6), rgba(42,36,24,0.4))",

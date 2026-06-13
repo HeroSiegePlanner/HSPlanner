@@ -36,7 +36,6 @@ import {
 import type {
   HeroSiegeTree,
   ListPatch,
-  RecordPatch,
   TreeNodeInfo,
 } from './seasons/patchTypes'
 
@@ -57,30 +56,22 @@ function patched<T>(base: T, result: PatchResult<T>): T {
   return result.data
 }
 
-function patchedList<T>(
+function patchedList<T extends object>(
   base: T[],
   patch: ListPatch<Record<string, unknown>> | undefined,
   label: string,
   key = 'id',
 ): T[] {
-  return patched(
-    base,
-    applyListPatch(
-      base as unknown as Record<string, unknown>[],
-      patch,
-      label,
-      key,
-    ) as unknown as PatchResult<T[]>,
-  )
+  return patched(base, applyListPatch(base, patch, label, key))
 }
 
 export const gameConfig = patched(
   gameConfigJson as GameConfig,
   applyGameConfigPatch(
-    gameConfigJson as GameConfig & Record<string, unknown>,
+    gameConfigJson as GameConfig,
     seasonPatches.gameConfig,
     'game-config',
-  ) as PatchResult<GameConfig>,
+  ),
 )
 
 const classModules = import.meta.glob<{ default: CharacterClass }>(
@@ -187,12 +178,10 @@ export const augments: AngelicAugment[] = patchedList(augmentsJson as AngelicAug
 export const treeNodeInfo: Record<string, TreeNodeInfo> = patched(
   treeNodesJson as Record<string, TreeNodeInfo>,
   applyRecordMergePatch(
-    treeNodesJson as Record<string, Record<string, unknown>>,
-    seasonPatches.treeNodes as unknown as
-      | RecordPatch<Record<string, unknown>>
-      | undefined,
+    treeNodesJson as Record<string, TreeNodeInfo>,
+    seasonPatches.treeNodes,
     'tree-nodes',
-  ) as unknown as PatchResult<Record<string, TreeNodeInfo>>,
+  ),
 )
 export const heroSiegeTree: HeroSiegeTree = patched(
   heroSiegeTreeJson as HeroSiegeTree,

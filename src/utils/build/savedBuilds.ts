@@ -526,19 +526,10 @@ export function setBuildTags(
   return build
 }
 
-export function setBuildSeason(buildId: string, season: string): boolean {
-  const lib = readLibrary()
-  const idx = lib.builds.findIndex((b) => b.id === buildId)
-  if (idx === -1) return false
-  const builds = lib.builds.map((b, i) =>
-    i === idx ? { ...b, season, updatedAt: new Date().toISOString() } : b,
-  )
-  writeLibrary({ ...lib, builds })
-  return true
-}
-
 export interface SavedBuildConversion {
-  report: SeasonConversionReport
+  build: SavedBuild
+  /** Null when the active profile's code could not be decoded. */
+  report: SeasonConversionReport | null
 }
 
 // Converts ALL profiles of the build in one pass (a build has one season, so a
@@ -577,7 +568,7 @@ export function convertSavedBuildToSeason(
   }
   const builds = lib.builds.map((b, i) => (i === idx ? updated : b))
   writeLibrary({ ...lib, builds })
-  return activeReport ? { report: activeReport } : null
+  return { build: updated, report: activeReport }
 }
 
 export function moveBuildToFolder(

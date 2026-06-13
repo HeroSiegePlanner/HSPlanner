@@ -4,7 +4,7 @@ import {
   type InstallProgress,
 } from "../utils/installUpdate";
 import { readStorage, writeStorage } from "../utils/storage";
-import { Modal } from "./Modal";
+import { MODAL_BTN_CLASS, MODAL_BTN_PRIMARY_CLASS, Modal } from "./Modal";
 import {
   BUILD_CHANNEL,
   formatBytes,
@@ -43,12 +43,6 @@ const TAG_BG: Record<ChangelogTag, string> = {
   fixes: "linear-gradient(180deg, rgba(60,30,28,0.55), rgba(44,22,20,0.35))",
   other: "var(--color-panel-2)",
 };
-
-const FOOTER_BTN_CLASS =
-  "rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40";
-
-const FOOTER_BTN_PRIMARY_CLASS =
-  "rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:opacity-60";
 
 interface Props {
   info: UpdateInfo;
@@ -275,7 +269,7 @@ export default function UpdateModal({
                 type="button"
                 onClick={onRemindLater}
                 disabled={isBusy}
-                className={FOOTER_BTN_CLASS}
+                className={MODAL_BTN_CLASS}
               >
                 Remind Me Later
               </button>
@@ -283,7 +277,7 @@ export default function UpdateModal({
                 type="button"
                 onClick={onSkip}
                 disabled={isBusy}
-                className={FOOTER_BTN_CLASS}
+                className={MODAL_BTN_CLASS}
               >
                 Skip This Version
               </button>
@@ -291,7 +285,7 @@ export default function UpdateModal({
                 type="button"
                 onClick={onDownload}
                 disabled={isBusy}
-                className={FOOTER_BTN_PRIMARY_CLASS}
+                className={MODAL_BTN_PRIMARY_CLASS}
                 style={{
                   background: "linear-gradient(180deg, #3a2f1a, #2a2418)",
                 }}

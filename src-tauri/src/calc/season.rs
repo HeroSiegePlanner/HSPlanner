@@ -1,6 +1,7 @@
 use serde_json::{Map, Value};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::Mutex;
 
 use super::data::SEASON_PATCHES;
 
@@ -15,13 +16,19 @@ thread_local! {
 
 // RAII guard installing the per-command season; data::data() reads it. Install
 // at every #[tauri::command] entry, never across an .await point.
-pub struct SeasonScope;
+// !Send so the guard cannot cross an .await; commands install it in sync sections only.
+// Convention: commands with an input struct carry season inside it; param-style commands take a season argument.
+pub struct SeasonScope {
+    _not_send: std::marker::PhantomData<*const ()>,
+}
 
 impl SeasonScope {
     #[must_use]
     pub fn enter(season: Option<String>) -> SeasonScope {
         CURRENT_SEASON.with(|c| *c.borrow_mut() = season);
-        SeasonScope
+        SeasonScope {
+            _not_send: std::marker::PhantomData,
+        }
     }
 }
 
@@ -31,12 +38,14 @@ impl Drop for SeasonScope {
     }
 }
 
+// Borrows the thread-local season without cloning; hot paths use this to
+// avoid a String allocation per call.
+pub fn with_current_season<R>(f: impl FnOnce(&str) -> R) -> R {
+    CURRENT_SEASON.with(|c| f(c.borrow().as_deref().unwrap_or(DEFAULT_SEASON_ID)))
+}
+
 pub fn current_season_id() -> String {
-    CURRENT_SEASON.with(|c| {
-        c.borrow()
-            .clone()
-            .unwrap_or_else(|| DEFAULT_SEASON_ID.to_string())
-    })
+    with_current_season(str::to_string)
 }
 
 pub fn has_patches(id: &str) -> bool {
@@ -69,6 +78,31 @@ pub fn load_id(cache_key: &str) -> &str {
     } else {
         cache_key
     }
+}
+
+// Shared double-checked-lock cache for leaked per-season singletons (game
+// data, star scaling): normalize the id, check under lock, build outside the
+// lock, re-check, then leak and insert.
+pub fn cached_per_season<T>(
+    cache: &Mutex<HashMap<String, &'static T>>,
+    season_id: &str,
+    build: impl FnOnce(&str) -> T,
+) -> &'static T {
+    let key = cache_key(season_id);
+    {
+        let cache = cache.lock().expect("per-season cache poisoned");
+        if let Some(v) = cache.get(key) {
+            return v;
+        }
+    }
+    let built = build(load_id(key));
+    let mut cache = cache.lock().expect("per-season cache poisoned");
+    if let Some(v) = cache.get(key) {
+        return v;
+    }
+    let leaked: &'static T = Box::leak(Box::new(built));
+    cache.insert(key.to_string(), leaked);
+    leaked
 }
 
 // rel path "s10/affixes.patch.json" -> key "affixes"

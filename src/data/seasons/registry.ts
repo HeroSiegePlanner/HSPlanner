@@ -11,6 +11,9 @@ export const SEASONS: ReadonlyArray<Season> = [
 // Flip to 's10' (here and in src-tauri/src/calc/season.rs) at S10 launch.
 export const DEFAULT_SEASON_ID = 's9' as const
 
+// Stamp for pre-season data (v1 share codes, unstamped builds); never flips.
+export const LEGACY_SEASON_ID = 's9'
+
 export const SEASON_STORAGE_KEY = 'hsplanner.season.v1'
 
 export function isKnownSeasonId(id: string): boolean {

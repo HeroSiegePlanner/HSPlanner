@@ -3,6 +3,15 @@ import { createPortal } from 'react-dom'
 import { motion } from 'motion/react'
 import { backdropVariants, panelVariants } from '../lib/motion'
 
+export const MODAL_FOOTER_CLASS =
+  'flex items-center justify-end gap-2 border-t border-border px-6 py-3'
+
+export const MODAL_BTN_CLASS =
+  'rounded-[3px] border border-border-2 bg-transparent px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot disabled:cursor-not-allowed disabled:opacity-40'
+
+export const MODAL_BTN_PRIMARY_CLASS =
+  'rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:opacity-60'
+
 interface ModalProps {
   /** Called on backdrop click and the header Close button. */
   onClose: () => void

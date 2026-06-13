@@ -124,7 +124,7 @@ export function convertSnapshotToActiveSeason(
   }
   const subskillRanks: Record<string, number> = {}
   for (const [id, rank] of Object.entries(snapshot.subskillRanks)) {
-    if (SUBSKILL_IDS.size === 0 || SUBSKILL_IDS.has(id)) subskillRanks[id] = rank
+    if (SUBSKILL_IDS.has(id)) subskillRanks[id] = rank
     else report.removedSubskills.push(id)
   }
 
@@ -137,19 +137,9 @@ export function convertSnapshotToActiveSeason(
       ? snapshot.activeAuraId
       : null
 
+  // every array field in the report is a removal list
   report.hasChanges =
-    report.removedTreeNodes.length > 0 ||
-    report.orphanedTreeNodes.length > 0 ||
-    report.removedItems.length > 0 ||
-    report.removedAffixes.length > 0 ||
-    report.removedForgedMods.length > 0 ||
-    report.removedSocketables.length > 0 ||
-    report.removedRunewords.length > 0 ||
-    report.removedAugments.length > 0 ||
-    report.removedSkills.length > 0 ||
-    report.removedSubskills.length > 0 ||
-    report.removedTreeSockets.length > 0 ||
-    report.removedUncutAffixes.length > 0 ||
+    Object.values(report).some((v) => Array.isArray(v) && v.length > 0) ||
     mainSkillId !== snapshot.mainSkillId ||
     activeAuraId !== snapshot.activeAuraId
 

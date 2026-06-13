@@ -1,36 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { type BuildSnapshot } from './shareBuild'
+import { makeSnapshot } from './buildSnapshot.fixture'
 import {
   createBuild,
   getSavedBuild,
   readLibrary,
-  setBuildSeason,
   writeLibrary,
 } from './savedBuilds'
-
-function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnapshot {
-  return {
-    classId: 'stormweaver',
-    level: 50,
-    allocated: { strength: 10 },
-    inventory: {},
-    skillRanks: { fireball: 5 },
-    subskillRanks: {},
-    allocatedTreeNodes: new Set([1, 2, 3]),
-    mainSkillId: 'fireball',
-    activeAuraId: null,
-    activeBuffs: {},
-    enemyConditions: {},
-    playerConditions: {},
-    skillProjectiles: {},
-    enemyResistances: {},
-    procToggles: {},
-    killsPerSec: 1,
-    customStats: [],
-    treeSocketed: {},
-    ...overrides,
-  }
-}
 
 beforeEach(() => {
   localStorage.clear()
@@ -52,12 +27,5 @@ describe('saved build season field', () => {
     })
     writeLibrary({ ...lib, builds: raw as typeof lib.builds })
     expect(getSavedBuild(build.id)?.season).toBe('s9')
-  })
-
-  it('setBuildSeason persists', () => {
-    const build = createBuild('Conv', makeSnapshot())
-    expect(setBuildSeason(build.id, 's10')).toBe(true)
-    expect(getSavedBuild(build.id)?.season).toBe('s10')
-    expect(setBuildSeason('missing', 's10')).toBe(false)
   })
 })

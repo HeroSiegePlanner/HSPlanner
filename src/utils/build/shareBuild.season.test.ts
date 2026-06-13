@@ -1,5 +1,6 @@
 import { compressToEncodedURIComponent } from 'lz-string'
 import { describe, expect, it } from 'vitest'
+import { makeSnapshot } from './buildSnapshot.fixture'
 import {
   decodeShareToBuild,
   defaultEnemyResistances,
@@ -8,26 +9,11 @@ import {
 } from './shareBuild'
 
 function snapshot(): BuildSnapshot {
-  return {
-    classId: 'amazon',
+  return makeSnapshot({
     level: 10,
     allocated: { strength: 1, dexterity: 0, intelligence: 0, energy: 0, vitality: 0, armor: 0 },
-    inventory: {},
-    skillRanks: {},
-    subskillRanks: {},
     allocatedTreeNodes: new Set([0, 2]),
-    mainSkillId: null,
-    activeAuraId: null,
-    activeBuffs: {},
-    enemyConditions: {},
-    playerConditions: {},
-    skillProjectiles: {},
-    enemyResistances: defaultEnemyResistances(),
-    procToggles: {},
-    killsPerSec: 1,
-    customStats: [],
-    treeSocketed: {},
-  }
+  })
 }
 
 describe('share schema v2 season', () => {

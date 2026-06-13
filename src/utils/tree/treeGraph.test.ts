@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ADJ, START_IDS, START_SET, TREE_GRAPH_WARNINGS } from './treeGraph'
+import { ADJ, START_IDS, START_SET } from './treeGraph'
 
 describe('treeGraph season-aware build', () => {
   it('derives START_IDS from root nodes (s9 baseline)', () => {
@@ -10,9 +10,5 @@ describe('treeGraph season-aware build', () => {
   it('builds adjacency for every node', () => {
     expect(ADJ.size).toBeGreaterThan(1000)
     expect(ADJ.get(0)?.size).toBeGreaterThan(0)
-  })
-
-  it('collects edge warnings instead of dropping silently', () => {
-    expect(Array.isArray(TREE_GRAPH_WARNINGS)).toBe(true)
   })
 })

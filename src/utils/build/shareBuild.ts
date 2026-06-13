@@ -13,11 +13,10 @@ import type {
 } from '../../types'
 import { AUGMENT_MAX_LEVEL } from '../../types'
 import { activeSeasonId } from '../../data'
-import { isKnownSeasonId } from '../../data/seasons/registry'
+import { isKnownSeasonId, LEGACY_SEASON_ID } from '../../data/seasons/registry'
 import { sanitizeHtml } from '../sanitizeHtml'
 
 const SCHEMA_VERSION = 2
-const LEGACY_SEASON_ID = 's9'
 
 const DEFAULT_ENEMY_RESISTANCE_PCT = 85
 

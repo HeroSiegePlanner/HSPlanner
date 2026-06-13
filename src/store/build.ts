@@ -726,19 +726,24 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
         if (!build) return false
         // Convert BEFORE loadProfileSnapshot so the snapshot reads the post-conversion code.
         let conversionReport: SeasonConversionReport | null = null
+        let currentBuild = build
         if (build.season !== activeSeasonId) {
-          conversionReport = convertSavedBuildToSeason(buildId)?.report ?? null
+          const converted = convertSavedBuildToSeason(buildId)
+          if (converted) {
+            currentBuild = converted.build
+            conversionReport = converted.report
+          }
         }
         const targetProfileId =
-          profileId && build.profiles.some((p) => p.id === profileId)
+          profileId && currentBuild.profiles.some((p) => p.id === profileId)
             ? profileId
-            : build.activeProfileId
+            : currentBuild.activeProfileId
         const snap = loadProfileSnapshot(buildId, targetProfileId)
         if (!snap) return false
         storeSetActiveProfile(buildId, targetProfileId)
         set((s) => ({
           ...snapshotPatch(snap),
-          notes: sanitizeHtml(build.notes ?? ''),
+          notes: sanitizeHtml(currentBuild.notes ?? ''),
           activeBuildId: buildId,
           activeProfileId: targetProfileId,
           savedBuildsVersion: s.savedBuildsVersion + 1,

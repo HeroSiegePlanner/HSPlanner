@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
-// Node entry shape of tree-nodes.json; canonical home of this type
-// (treeStats.ts re-exports it for existing importers).
+// Canonical home of the tree-nodes.json node shape; treeStats.ts re-exports it.
 export interface TreeNodeInfo {
   t: string
   n: string
@@ -103,7 +102,7 @@ export interface SeasonPatchSet {
   skills?: ListPatch<Record<string, unknown>>
   classes?: ListPatch<Record<string, unknown>>
   itemGrantedSkills?: ListPatch<Record<string, unknown>>
-  treeNodes?: RecordPatch<TreeNodeInfo>
+  treeNodes?: RecordPatch<Record<string, unknown>>
   nodeIcons?: ScalarRecordPatch<string>
   heroSiegeTree?: TreePatch
   gameConfig?: GameConfigPatch

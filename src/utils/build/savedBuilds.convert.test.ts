@@ -1,47 +1,24 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { makeSnapshot } from './buildSnapshot.fixture'
 import {
   convertSavedBuildToSeason,
   createBuild,
   getActiveProfile,
   getSavedBuild,
-  setBuildSeason,
+  readLibrary,
+  writeLibrary,
+  type SavedBuild,
 } from './savedBuilds'
-import {
-  decodeShareToBuild,
-  defaultEnemyResistances,
-  type BuildSnapshot,
-} from './shareBuild'
+import { decodeShareToBuild } from './shareBuild'
 
 const GHOST_NODE_ID = 999_999
 
-function snapshotWithGhostNode(): BuildSnapshot {
-  return {
-    classId: 'amazon',
-    level: 5,
-    allocated: {
-      strength: 0,
-      dexterity: 0,
-      intelligence: 0,
-      energy: 0,
-      vitality: 0,
-      armor: 0,
-    },
-    inventory: {},
-    skillRanks: {},
-    subskillRanks: {},
-    allocatedTreeNodes: new Set([GHOST_NODE_ID]),
-    mainSkillId: null,
-    activeAuraId: null,
-    activeBuffs: {},
-    enemyConditions: {},
-    playerConditions: {},
-    skillProjectiles: {},
-    enemyResistances: defaultEnemyResistances(),
-    procToggles: {},
-    killsPerSec: 1,
-    customStats: [],
-    treeSocketed: {},
-  }
+function stampSeason(build: SavedBuild, season: string): void {
+  const lib = readLibrary()
+  writeLibrary({
+    ...lib,
+    builds: lib.builds.map((b) => (b.id === build.id ? { ...b, season } : b)),
+  })
 }
 
 beforeEach(() => {
@@ -50,13 +27,16 @@ beforeEach(() => {
 
 describe('convertSavedBuildToSeason', () => {
   it('converts every profile, restamps season and returns the active profile report', () => {
-    const build = createBuild('Conv', snapshotWithGhostNode())
-    setBuildSeason(build.id, 's10')
+    const build = createBuild(
+      'Conv',
+      makeSnapshot({ allocatedTreeNodes: new Set([GHOST_NODE_ID]) }),
+    )
+    stampSeason(build, 's10')
 
     const result = convertSavedBuildToSeason(build.id)
 
     expect(result).not.toBeNull()
-    expect(result!.report.removedTreeNodes).toEqual([GHOST_NODE_ID])
+    expect(result!.report!.removedTreeNodes).toEqual([GHOST_NODE_ID])
     const stored = getSavedBuild(build.id)
     expect(stored?.season).toBe('s9')
     // The persisted profile code must decode without the ghost node.
@@ -67,7 +47,10 @@ describe('convertSavedBuildToSeason', () => {
   })
 
   it('returns null for already-converted or missing builds', () => {
-    const build = createBuild('Same', snapshotWithGhostNode())
+    const build = createBuild(
+      'Same',
+      makeSnapshot({ allocatedTreeNodes: new Set([GHOST_NODE_ID]) }),
+    )
     expect(convertSavedBuildToSeason(build.id)).toBeNull()
     expect(convertSavedBuildToSeason('missing')).toBeNull()
   })

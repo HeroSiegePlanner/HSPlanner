@@ -28,6 +28,7 @@ const FILE_TO_KEY: Record<string, { key: keyof SeasonPatchSet; schema: ZodType }
   'node-icons': { key: 'nodeIcons', schema: scalarRecordPatchSchema },
   'hero-siege-tree': { key: 'heroSiegeTree', schema: treePatchSchema },
   'game-config': { key: 'gameConfig', schema: gameConfigPatchSchema },
+  // Validated here; applied only by the Rust engine.
   'star-scaling': { key: 'starScaling', schema: recordPatchSchema },
 }
 
@@ -36,8 +37,7 @@ export interface SeasonPatchLoad {
   errors: string[]
 }
 
-// Exported with an injectable modules map so tests can exercise the mapping
-// without real patch files on disk.
+// Injectable modules map so tests can run without real patch files on disk.
 export function buildSeasonPatchSet(
   seasonId: string,
   modules: Record<string, { default: unknown }>,

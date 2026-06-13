@@ -2,6 +2,7 @@
 // `$OUT_DIR/data_includes.rs`, then lazily parsed into a per-season GameData
 // (season patches applied) on first access.
 
+use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use std::sync::Mutex;
 
@@ -89,7 +90,7 @@ fn index_by_id<T, F: Fn(&T) -> String>(list: Vec<T>, key: F) -> HashMap<String, 
     out
 }
 
-enum PatchKind {
+pub(crate) enum PatchKind {
     List(&'static str),
     RecordMerge,
     GameConfig,
@@ -97,7 +98,7 @@ enum PatchKind {
 
 // All-or-nothing per collection, mirroring the TS hub: on patch error the base
 // JSON is used and the error is logged (spec §6 — loud, never silent).
-fn patched_value(
+pub(crate) fn patched_value(
     base: serde_json::Value,
     patches: &HashMap<String, serde_json::Value>,
     name: &str,
@@ -278,25 +279,28 @@ fn load_for(season_id: &str) -> GameData {
 // Patchless ids (unknown or registry-listed) all collapse to one base-data
 // cache entry, matching the TS hub and bounding the cache against garbage ids.
 pub fn data_for(season_id: &str) -> &'static GameData {
-    let id = season::cache_key(season_id);
-    {
-        let cache = GAME_DATA_BY_SEASON.lock().expect("game data cache poisoned");
-        if let Some(d) = cache.get(id) {
-            return d;
-        }
-    }
-    let loaded = load_for(season::load_id(id));
-    let mut cache = GAME_DATA_BY_SEASON.lock().expect("game data cache poisoned");
-    if let Some(d) = cache.get(id) {
-        return d;
-    }
-    let leaked: &'static GameData = Box::leak(Box::new(loaded));
-    cache.insert(id.to_string(), leaked);
-    leaked
+    season::cached_per_season(&GAME_DATA_BY_SEASON, season_id, load_for)
 }
 
+thread_local! {
+    static LAST_DATA: RefCell<Option<(String, &'static GameData)>> = const { RefCell::new(None) };
+}
+
+/// Season-sensitive: reads the thread-local installed by SeasonScope::enter at each #[tauri::command] entry; without a scope it serves DEFAULT_SEASON_ID data.
+// Per-thread memo: one mutex hit per season change per thread instead of per call.
 pub fn data() -> &'static GameData {
-    data_for(&season::current_season_id())
+    season::with_current_season(|id| {
+        LAST_DATA.with(|cell| {
+            if let Some((k, ptr)) = cell.borrow().as_ref() {
+                if k == id {
+                    return *ptr;
+                }
+            }
+            let ptr = data_for(id);
+            *cell.borrow_mut() = Some((id.to_string(), ptr));
+            ptr
+        })
+    })
 }
 
 // ---------- lookup helpers ----------
