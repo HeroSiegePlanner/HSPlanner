@@ -2,6 +2,8 @@ import type { ReactNode } from 'react'
 import { useCalcResult } from '../hooks/useCalcResult'
 import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import {
+  activeSeasonId,
+  canStarForge,
   detectRuneword,
   FORGE_KIND_LABEL,
   forgeKindFor,
@@ -13,7 +15,6 @@ import {
   getItemImage,
   getItemSet,
   getRune,
-  isGearSlot,
 } from '../data'
 import { BONUS_SOCKET_MOD_ID, RAINBOW_MULTIPLIER, useBuild } from '../store/build'
 import type {
@@ -334,7 +335,7 @@ export function ItemTooltipBody({
 
   const equippedAffixes = equipped?.affixes ?? []
   const equippedForgedMods = equipped?.forgedMods ?? []
-  const forgeKind = isGearSlot(base.slot) ? forgeKindFor(base.rarity) : null
+  const forgeKind = canStarForge(base.slot, activeSeasonId) ? forgeKindFor(base.rarity) : null
   const forgeAccent = 'text-stat-red'
 
   return (
