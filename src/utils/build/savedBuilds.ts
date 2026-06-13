@@ -3,10 +3,6 @@ import {
   decodeShareToBuild,
   encodeBuildToShare,
 } from './shareBuild'
-import {
-  convertSnapshotToActiveSeason,
-  type SeasonConversionReport,
-} from './seasonConvert'
 import { readStorage, readStorageWithLegacy, writeStorage } from '../storage'
 import { activeSeasonId } from '../../data'
 import { LEGACY_SEASON_ID } from '../../data/seasons/registry'
@@ -523,51 +519,6 @@ export function setBuildTags(
   build.updatedAt = new Date().toISOString()
   writeLibrary(library)
   return build
-}
-
-export interface SavedBuildConversion {
-  build: SavedBuild
-  /** Null when the active profile's code could not be decoded. */
-  report: SeasonConversionReport | null
-}
-
-// Converts ALL profiles of the build in one pass (a build has one season, so a
-// half-converted profile set would corrupt it), then restamps the season.
-// Undecodable profile codes pass through untouched.
-export function convertSavedBuildToSeason(
-  buildId: string,
-): SavedBuildConversion | null {
-  const lib = readLibrary()
-  const idx = lib.builds.findIndex((b) => b.id === buildId)
-  if (idx === -1) return null
-  const build = lib.builds[idx]!
-  if (build.season === activeSeasonId) return null
-
-  let activeReport: SeasonConversionReport | null = null
-  const profiles: SavedProfile[] = []
-  for (const p of build.profiles) {
-    const decoded = decodeShareToBuild(p.code)
-    if (!decoded) {
-      profiles.push(p)
-      continue
-    }
-    const { snapshot, report } = convertSnapshotToActiveSeason(
-      decoded.snapshot,
-      build.season,
-    )
-    if (p.id === build.activeProfileId) activeReport = report
-    profiles.push({ ...p, code: encodeBuildToShare(snapshot, decoded.notes) })
-  }
-
-  const updated: SavedBuild = {
-    ...build,
-    profiles,
-    season: activeSeasonId,
-    updatedAt: new Date().toISOString(),
-  }
-  const builds = lib.builds.map((b, i) => (i === idx ? updated : b))
-  writeLibrary({ ...lib, builds })
-  return { build: updated, report: activeReport }
 }
 
 export function moveBuildToFolder(
