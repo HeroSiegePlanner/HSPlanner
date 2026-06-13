@@ -71,9 +71,7 @@ struct StarScaling {
 static STAR_SCALING_BY_SEASON: Lazy<Mutex<HashMap<String, &'static StarScaling>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));
 
-// On patch errors the base JSON is used and the errors are logged (never
-// silent). Season normalization matches data::data_for exactly via
-// season::cached_per_season.
+// On patch error, log and fall back to base; same season normalization as data::data_for.
 fn load_for(season_id: &str) -> StarScaling {
     let patches = season::patches_for(season_id);
     let base: serde_json::Value =
@@ -97,21 +95,8 @@ thread_local! {
         const { RefCell::new(None) };
 }
 
-// Per-season star scaling resolved from the thread-local season scope.
-// Per-thread memo: one mutex hit per season change per thread instead of per call.
 fn configs() -> &'static StarScaling {
-    season::with_current_season(|id| {
-        LAST_SCALING.with(|cell| {
-            if let Some((k, ptr)) = cell.borrow().as_ref() {
-                if k == id {
-                    return *ptr;
-                }
-            }
-            let ptr = configs_for(id);
-            *cell.borrow_mut() = Some((id.to_string(), ptr));
-            ptr
-        })
-    })
+    season::memoized_current_season(&LAST_SCALING, configs_for)
 }
 
 pub fn get_star_scale_config(stat_key: Option<&str>) -> StarScaleConfig {

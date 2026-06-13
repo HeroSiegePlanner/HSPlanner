@@ -5,19 +5,14 @@ use std::sync::Mutex;
 
 use super::data::SEASON_PATCHES;
 
-// Must match DEFAULT_SEASON_ID in src/data/seasons/registry.ts; flip both at
-// S10 launch. The TS bridge always sends an explicit season, so this is only
-// a safety net for missing input.
+// Must match DEFAULT_SEASON_ID in registry.ts; flip both at S10 launch.
 pub const DEFAULT_SEASON_ID: &str = "s9";
 
 thread_local! {
     static CURRENT_SEASON: RefCell<Option<String>> = const { RefCell::new(None) };
 }
 
-// RAII guard installing the per-command season; data::data() reads it. Install
-// at every #[tauri::command] entry, never across an .await point.
-// !Send so the guard cannot cross an .await; commands install it in sync sections only.
-// Convention: commands with an input struct carry season inside it; param-style commands take a season argument.
+// RAII guard installing the per-command season; !Send so it never crosses an .await.
 pub struct SeasonScope {
     _not_send: std::marker::PhantomData<*const ()>,
 }
@@ -38,8 +33,6 @@ impl Drop for SeasonScope {
     }
 }
 
-// Borrows the thread-local season without cloning; hot paths use this to
-// avoid a String allocation per call.
 pub fn with_current_season<R>(f: impl FnOnce(&str) -> R) -> R {
     CURRENT_SEASON.with(|c| f(c.borrow().as_deref().unwrap_or(DEFAULT_SEASON_ID)))
 }
@@ -54,14 +47,10 @@ pub fn has_patches(id: &str) -> bool {
     })
 }
 
-// Every patchless id (unknown or registry-listed) shares this one cache entry
-// of pure base data, so garbage ids cannot grow the per-season caches.
+// All patchless ids share one base-data cache entry so garbage ids can't grow the caches.
 pub const BASE_CACHE_KEY: &str = "__base__";
 
-// Shared season-id normalization for all per-season caches (game data, star
-// scaling): ids with embedded patches cache under themselves, the rest
-// collapse to BASE_CACHE_KEY. Must stay the only normalization, or Rust and
-// TS could serve different data for the same id.
+// Sole season-id normalization for the per-season caches: patched ids key under themselves, the rest collapse to BASE_CACHE_KEY.
 pub fn cache_key(season_id: &str) -> &str {
     if has_patches(season_id) {
         season_id
@@ -70,8 +59,7 @@ pub fn cache_key(season_id: &str) -> &str {
     }
 }
 
-// Season id whose patches should be loaded for a cache key; "" yields no
-// patches in patches_for, i.e. pure base data.
+// Season id whose patches a cache key loads; "" means pure base data.
 pub fn load_id(cache_key: &str) -> &str {
     if cache_key == BASE_CACHE_KEY {
         ""
@@ -80,9 +68,7 @@ pub fn load_id(cache_key: &str) -> &str {
     }
 }
 
-// Shared double-checked-lock cache for leaked per-season singletons (game
-// data, star scaling): normalize the id, check under lock, build outside the
-// lock, re-check, then leak and insert.
+// Double-checked-lock cache for leaked per-season singletons.
 pub fn cached_per_season<T>(
     cache: &Mutex<HashMap<String, &'static T>>,
     season_id: &str,
@@ -103,6 +89,25 @@ pub fn cached_per_season<T>(
     let leaked: &'static T = Box::leak(Box::new(built));
     cache.insert(key.to_string(), leaked);
     leaked
+}
+
+// Per-thread memo: one mutex hit per season change, not per call.
+pub fn memoized_current_season<T: 'static>(
+    cell: &'static std::thread::LocalKey<RefCell<Option<(String, &'static T)>>>,
+    lookup: impl Fn(&str) -> &'static T,
+) -> &'static T {
+    with_current_season(|id| {
+        cell.with(|c| {
+            if let Some((k, ptr)) = c.borrow().as_ref() {
+                if k == id {
+                    return *ptr;
+                }
+            }
+            let ptr = lookup(id);
+            *c.borrow_mut() = Some((id.to_string(), ptr));
+            ptr
+        })
+    })
 }
 
 // rel path "s10/affixes.patch.json" -> key "affixes"
@@ -142,8 +147,7 @@ fn obj<'a>(patch: &'a Value, key: &str) -> impl Iterator<Item = (&'a String, &'a
         .flatten()
 }
 
-// Mirrors the TS zod .strict() schemas: a typo'd key must fail the whole
-// collection (fall back to base), never partially apply the valid keys.
+// Mirrors the TS zod .strict() schemas: any unknown key fails the whole collection.
 fn validate_patch_keys(patch: &Value, allowed: &[&str], label: &str, errors: &mut Vec<String>) {
     let Some(map) = patch.as_object() else { return };
     for key in map.keys() {
@@ -170,9 +174,7 @@ fn value_key(v: &Value) -> String {
     }
 }
 
-// Mirrors applyListPatch in src/data/seasons/resolve.ts: remove -> change ->
-// add, base order preserved, adds appended; on error the caller falls back to
-// base (all-or-nothing per collection).
+// Mirrors applyListPatch in resolve.ts: remove -> change -> add, all-or-nothing per collection.
 pub fn apply_list_patch(
     base: &Value,
     patch: &Value,
@@ -227,8 +229,7 @@ pub fn apply_list_patch(
     Ok(Value::Array(out))
 }
 
-// Mirrors applyRecordMergePatch (merge=true, object values) and
-// applyRecordReplacePatch (merge=false, scalar values).
+// Mirrors applyRecordMergePatch (merge=true) and applyRecordReplacePatch (merge=false).
 pub fn apply_record_patch(
     base: &Value,
     patch: &Value,
@@ -365,7 +366,6 @@ mod tests {
 
     #[test]
     fn patchless_ids_normalize_to_single_base_key() {
-        // No embedded patch dirs exist today, so every id is patchless.
         assert_eq!(cache_key("definitely-unknown"), BASE_CACHE_KEY);
         assert_eq!(cache_key("also-unknown"), BASE_CACHE_KEY);
         assert_eq!(load_id(BASE_CACHE_KEY), "");

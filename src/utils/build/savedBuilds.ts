@@ -9,6 +9,7 @@ import {
 } from './seasonConvert'
 import { readStorage, readStorageWithLegacy, writeStorage } from '../storage'
 import { activeSeasonId } from '../../data'
+import { LEGACY_SEASON_ID } from '../../data/seasons/registry'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
 const STORAGE_KEY_V2 = 'hsplanner.savedBuilds.v2'
@@ -39,8 +40,6 @@ export class StorageCapacityError extends StorageWriteError {
     this.name = 'StorageCapacityError'
   }
 }
-
-const LEGACY_BUILD_SEASON = 's9'
 
 const MAX_BUILDS = 1_000
 const MAX_PROFILES_PER_BUILD = 100
@@ -204,7 +203,7 @@ function cleanBuild(
     season:
       typeof (b as { season?: unknown }).season === 'string'
         ? (b as { season: string }).season
-        : LEGACY_BUILD_SEASON,
+        : LEGACY_SEASON_ID,
   }
 }
 
@@ -321,7 +320,7 @@ function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
       folderId: null,
       favorite: false,
       tags: [],
-      season: LEGACY_BUILD_SEASON,
+      season: LEGACY_SEASON_ID,
     }
   })
 }

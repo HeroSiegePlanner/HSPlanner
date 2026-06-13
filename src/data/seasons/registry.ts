@@ -1,3 +1,5 @@
+import { readStorage, writeStorage } from '../../utils/storage'
+
 export interface Season {
   id: string
   name: string
@@ -25,21 +27,10 @@ export function getSeason(id: string): Season | undefined {
 }
 
 export function resolveActiveSeasonId(): string {
-  try {
-    const stored = window.localStorage.getItem(SEASON_STORAGE_KEY)
-    if (stored && isKnownSeasonId(stored)) return stored
-  } catch {
-    return DEFAULT_SEASON_ID
-  }
-  return DEFAULT_SEASON_ID
+  const stored = readStorage(SEASON_STORAGE_KEY)
+  return stored && isKnownSeasonId(stored) ? stored : DEFAULT_SEASON_ID
 }
 
 export function setStoredSeasonId(id: string): boolean {
-  if (!isKnownSeasonId(id)) return false
-  try {
-    window.localStorage.setItem(SEASON_STORAGE_KEY, id)
-    return true
-  } catch {
-    return false
-  }
+  return isKnownSeasonId(id) && writeStorage(SEASON_STORAGE_KEY, id)
 }

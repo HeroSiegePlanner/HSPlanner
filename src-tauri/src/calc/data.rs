@@ -287,20 +287,8 @@ thread_local! {
 }
 
 /// Season-sensitive: reads the thread-local installed by SeasonScope::enter at each #[tauri::command] entry; without a scope it serves DEFAULT_SEASON_ID data.
-// Per-thread memo: one mutex hit per season change per thread instead of per call.
 pub fn data() -> &'static GameData {
-    season::with_current_season(|id| {
-        LAST_DATA.with(|cell| {
-            if let Some((k, ptr)) = cell.borrow().as_ref() {
-                if k == id {
-                    return *ptr;
-                }
-            }
-            let ptr = data_for(id);
-            *cell.borrow_mut() = Some((id.to_string(), ptr));
-            ptr
-        })
-    })
+    season::memoized_current_season(&LAST_DATA, data_for)
 }
 
 // ---------- lookup helpers ----------
