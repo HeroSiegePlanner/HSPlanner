@@ -283,6 +283,7 @@ pub fn apply_inventory(
     stat_sources: &mut SourceMap,
 ) -> bool {
     let mut weapon_has_attack_speed = false;
+    let season = super::season::current_season_id();
 
     for (slot_key, item) in inventory.iter() {
         let Some(base) = data::get_item(&item.base_id) else {
@@ -295,8 +296,8 @@ pub fn apply_inventory(
             item.socketed.iter().map(|s| s.as_deref()).collect();
         let runeword = data::detect_runeword(base, &socketed_refs);
         let scale_implicit = runeword.is_none();
-        let is_gear = data::is_gear_slot(slot_key);
-        let effective_stars: Option<u32> = if is_gear { item.stars } else { None };
+        let can_sf = data::can_star_forge(slot_key, &season);
+        let effective_stars: Option<u32> = if can_sf { item.stars } else { None };
 
         let aps_in_implicit = base
             .implicit
@@ -426,7 +427,7 @@ pub fn apply_inventory(
             );
         }
 
-        if is_gear {
+        if can_sf {
             if let Some(forge_kind) = data::forge_kind_for(&base.rarity) {
                 for eq in item.forged_mods.iter() {
                     let Some(mod_def) = data::get_crystal_mod(&eq.affix_id) else {
