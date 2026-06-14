@@ -84,7 +84,7 @@ export function usePreviewStats(build: SavedBuild | null): PreviewStats {
 
     let cancelled = false
     const timer = window.setTimeout(() => {
-      computeBuildPerformanceAsync({ ...snapshotToDeps(snapshot), season: decoded.season })
+      computeBuildPerformanceAsync({ ...snapshotToDeps(snapshot), season: build.season })
         .then((performance) => {
           if (cancelled) return
           setState({ performance, snapshot, loading: false, available: true })
