@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react'
 import { useCalcResult } from '../../../hooks/useCalcResult'
 import PickerModal, { type PickerRow } from '../../../components/PickerModal'
-import { affixes, getAffix } from '../../../data'
+import { activeSeasonId, affixes, effectiveStars, getAffix } from '../../../data'
 import {
   formatAffixRangeFromValues,
   formatValue,
@@ -27,7 +27,7 @@ export interface AffixDisplayItem {
 // and the tree jewel tooltip.
 export function useAffixDisplayRanges(
   items: AffixDisplayItem[],
-  stars?: number,
+  stars?: number | null,
 ): (AffixValueOutput | null)[] {
   return useCalcResult<(AffixValueOutput | null)[]>(
     () => {
@@ -132,7 +132,10 @@ export function AffixesSection({
     () => equipped.affixes.map((eq) => ({ def: getAffix(eq.affixId) })),
     [equipped.affixes],
   )
-  const affixRanges = useAffixDisplayRanges(equippedAffixItems, equipped.stars)
+  const affixRanges = useAffixDisplayRanges(
+    equippedAffixItems,
+    effectiveStars(base?.slot ?? '', activeSeasonId, equipped.stars),
+  )
 
   const pickerRows = useMemo<PickerRow[]>(() => {
     const source = randomGroupId

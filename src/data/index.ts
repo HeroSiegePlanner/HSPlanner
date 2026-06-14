@@ -224,6 +224,15 @@ export function canStarForge(slot: string, season: string): boolean {
   return isGearSlot(slot) || (isCharmSlot(slot) && charmsAllowStarsForge(season))
 }
 
+// Star count that applies for display/scaling, gated like the Rust effective_stars: charm stars vanish in s9.
+export function effectiveStars(
+  slot: string,
+  season: string,
+  stars: number | null | undefined,
+): number | null {
+  return canStarForge(slot, season) ? (stars ?? null) : null
+}
+
 export type ForgeKind = 'satanic_crystal'
 
 const SATANIC_CRYSTAL_RARITIES = new Set([

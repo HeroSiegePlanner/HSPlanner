@@ -5,6 +5,7 @@ import {
   activeSeasonId,
   canStarForge,
   detectRuneword,
+  effectiveStars,
   FORGE_KIND_LABEL,
   forgeKindFor,
   getAffix,
@@ -126,7 +127,7 @@ function useItemDisplayValues(
 ): TooltipDisplayValues | null {
   return useCalcResult<TooltipDisplayValues | null>(
     () => {
-      const stars = equipped?.stars ?? null
+      const stars = effectiveStars(base.slot, activeSeasonId, equipped?.stars)
       const toPair = (v: RangedValue): [number, number] => [
         rangedMin(v),
         rangedMax(v),
@@ -205,7 +206,7 @@ export function ItemTooltipBody({
       }, 0)
     : 0
 
-  const stars = equipped?.stars ?? 0
+  const stars = effectiveStars(base.slot, activeSeasonId, equipped?.stars) ?? 0
   const starSuffix = stars > 0 ? ` · ${'★'.repeat(stars)}` : ''
   const handSuffix =
     base.slot === 'weapon'

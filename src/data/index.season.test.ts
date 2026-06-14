@@ -4,6 +4,7 @@ import {
   affixes,
   canStarForge,
   charmsAllowStarsForge,
+  effectiveStars,
   heroSiegeTree,
   isCharmSlot,
   nodeIcons,
@@ -51,5 +52,15 @@ describe('charm stars/forge eligibility', () => {
     expect(canStarForge('charm_1', 's9')).toBe(false)
     expect(canStarForge('charm_1', 's10')).toBe(true)
     expect(canStarForge('relic', 's10')).toBe(false)
+  })
+
+  it('effectiveStars: charm stars vanish in s9 but apply elsewhere', () => {
+    expect(effectiveStars('charm_1', 's9', 3)).toBe(null)
+    expect(effectiveStars('charm_1', 's10', 3)).toBe(3)
+    expect(effectiveStars('weapon', 's9', 3)).toBe(3)
+    expect(effectiveStars('weapon', 's10', 3)).toBe(3)
+    expect(effectiveStars('relic_1', 's10', 3)).toBe(null)
+    expect(effectiveStars('charm_1', 's9', null)).toBe(null)
+    expect(effectiveStars('weapon', 's9', null)).toBe(null)
   })
 })
