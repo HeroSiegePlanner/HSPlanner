@@ -351,14 +351,6 @@ export async function computeStatBreakdownAsync(
   }
 }
 
-// Escape hatch for unwrapped commands.
-export function invokeCalc<TResult>(
-  cmd: string,
-  args: Record<string, unknown> = {},
-): Promise<TResult> {
-  return invoke<TResult>(cmd, args)
-}
-
 // ---------- passive_stats_at_rank / mana_cost_at_rank ----------
 // Replace the former TS stats.ts helpers; the math now lives in Rust calc/passive.rs.
 

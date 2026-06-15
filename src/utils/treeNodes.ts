@@ -43,16 +43,6 @@ export const ALL_TREE_NODES: TreeNodeEntry[] = (
 export type TreeEdge = readonly [number, number, number, number]
 export const ALL_TREE_EDGES: TreeEdge[] = heroSiegeTree.edges as unknown as TreeEdge[]
 
-export const TREE_VIEWBOX: { x: number; y: number; w: number; h: number } = (() => {
-  const parts = heroSiegeTree.viewBox.split(' ').map(Number)
-  return {
-    x: parts[0] ?? 0,
-    y: parts[1] ?? 0,
-    w: parts[2] ?? 0,
-    h: parts[3] ?? 0,
-  }
-})()
-
 // First-write-wins when multiple nodes share a name.
 const TREE_NODE_BY_NAME: Map<string, TreeNodeEntry> = (() => {
   const m = new Map<string, TreeNodeEntry>()

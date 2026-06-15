@@ -2,7 +2,6 @@ import type {
   GameConfig,
   CharacterClass,
   Skill,
-  TalentTree,
   ItemBase,
   ItemGrantedSkill,
   Affix,
@@ -10,7 +9,6 @@ import type {
   Gem,
   Runeword,
   ItemSet,
-  Relic,
   AngelicAugment,
 } from '../types'
 import affixesJson from './affixes.json'
@@ -81,10 +79,6 @@ const skillModules = import.meta.glob<{ default: Skill[] }>(
   './skills/*.json',
   { eager: true },
 )
-const talentModules = import.meta.glob<{ default: TalentTree }>(
-  './talents/*.json',
-  { eager: true },
-)
 const itemModules = import.meta.glob<{ default: ItemBase[] }>(
   './items/*.json',
   { eager: true },
@@ -147,7 +141,6 @@ function collectFlat<T>(modules: Record<string, { default: T[] }>): T[] {
 
 export const classes: CharacterClass[] = patchedList(collectScalar(classModules), seasonPatches.classes, 'classes')
 export const skills: Skill[] = patchedList(collectFlat(skillModules), seasonPatches.skills, 'skills')
-export const talentTrees: TalentTree[] = collectScalar(talentModules)
 export const items: ItemBase[] = patchedList(collectFlat(itemModules), seasonPatches.items, 'items')
 export const gems: Gem[] = patchedList(collectFlat(gemModules), seasonPatches.gems, 'gems')
 export const runes: Rune[] = patchedList(collectFlat(runeModules), seasonPatches.runes, 'runes')
@@ -172,7 +165,6 @@ export function getItemGrantedSkillByName(
 ): ItemGrantedSkill | undefined {
   return itemGrantedSkillByName.get(name.trim().toLowerCase())
 }
-export const relics: Relic[] = []
 export const augments: AngelicAugment[] = patchedList(augmentsJson as AngelicAugment[], seasonPatches.augments, 'augments')
 export const treeNodeInfo: Record<string, TreeNodeInfo> = patched(
   treeNodesJson as Record<string, TreeNodeInfo>,

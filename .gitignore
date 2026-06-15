@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 src-tauri/target/
+/target/
+/crates/
 
 # Editor directories and files
 .vscode/*
@@ -24,4 +26,7 @@ src-tauri/target/
 *.njsproj
 *.sln
 *.sw?
-/graphify-out/
+
+# Build/tooling output kept local, never committed
+graphify-out/
+/docs/

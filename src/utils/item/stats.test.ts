@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { gameConfig } from '../../data'
 import type { StatDef } from '../../types'
-import type { RangedStatMap } from '../types'
+import type { RangedStatMap } from '../../types'
 import {
   dedupeStatDefsByKey,
   effectiveCap,
