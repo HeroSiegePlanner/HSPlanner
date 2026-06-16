@@ -932,6 +932,25 @@ mod tests {
     }
 
     #[test]
+    fn every_tree_node_line_is_supported_in_all_seasons() {
+        // Every tree-node line must classify as parsed (stat or meta) in each
+        // season; an unrecognized future pattern fails here, not silently.
+        for season in ["s9", "s10"] {
+            let _scope = crate::calc::season::SeasonScope::enter(Some(season.to_string()));
+            let map = classify_tree_nodes_impl();
+            let nodes = super::super::data::tree_nodes();
+            for (id, cls) in &map {
+                assert!(
+                    cls.unsupported.is_empty(),
+                    "season {season} node {id} ({}) has unsupported lines: {:?}",
+                    nodes.get(id).map(|n| n.t.as_str()).unwrap_or(""),
+                    cls.unsupported,
+                );
+            }
+        }
+    }
+
+    #[test]
     fn subskill_aggregation_unknown_skill_returns_empty() {
         let input = SubskillAggregationInput {
             class_id: "no_such_class".to_string(),
