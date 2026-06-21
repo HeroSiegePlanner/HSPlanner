@@ -14,12 +14,12 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "damageFormula": { "base": 5.5, "perLevel": 74.5 },
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "damageFormula": { "base": 6.2, "perLevel": 74.2 },
+    "manaCostFormula": { "base": 4.5, "perLevel": 0.75 },
     "attackScaling": {
       "weaponDamagePct": { "base": 22.5, "perLevel": 17.5 },
-      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
-      "flatPhysicalMax": { "base": 7, "perLevel": 1 },
+      "flatPhysicalMin": { "base": 1.63, "perLevel": 0.37 },
+      "flatPhysicalMax": { "base": 6.95, "perLevel": 1.05 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
