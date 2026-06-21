@@ -4,87 +4,231 @@
     "classId": "redneck",
     "name": "Moonshine Molotov",
     "kind": "active",
-    "description": "",
+    "description": "Throw a bottle of moonshine that ignites the impacted area on fire and sends out burning oil.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Projectile"
     ],
     "tree": "Hillbilly",
     "position": {
       "row": 0,
       "col": 0
-    }
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 5.5,
+      "perLevel": 7.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "range": 240,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Oil Spill",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Spontaneous Combustion",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Tire Fire",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.15,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "pipe_bombs",
     "classId": "redneck",
     "name": "Pipe Bombs",
     "kind": "active",
-    "description": "",
+    "description": "Throw a barrage of handcrafted pipe bombs dealing area of effect fire damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Explosion"
     ],
     "tree": "Hillbilly",
     "position": {
       "row": 0,
       "col": 1
-    }
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 7,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "range": 340,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Combustible Oil",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moonshine Molotov",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Pickup Raid",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "tire_fire",
     "classId": "redneck",
     "name": "Tire Fire",
     "kind": "active",
-    "description": "",
+    "description": "Throw a truck tire that deals fire damage on hit.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Projectile",
+      "Explosion"
     ],
     "tree": "Hillbilly",
     "position": {
       "row": 1,
       "col": 0
-    }
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 11
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Hillbilly Rage",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moonshine Molotov",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Oil Spill",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "oil_spill",
     "classId": "redneck",
     "name": "Oil Spill",
     "kind": "active",
-    "description": "",
+    "description": "Spill oil on the ground slowing and lowering monster attack rating. Oil also ignites into flames when coming in contact with Moonshine Molotov dealing additional burning damage.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell"
     ],
     "tree": "Hillbilly",
     "position": {
       "row": 1,
       "col": 1
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 1,
+    "effectDuration": 5,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "burning_damage": 20,
+        "attack_rating": 1
+      },
+      "perRank": {
+        "burning_damage": 5,
+        "attack_rating": 1
+      }
     }
   },
   {
@@ -92,7 +236,7 @@
     "classId": "redneck",
     "name": "Combustible Oil",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your fire skill damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
@@ -107,6 +251,14 @@
     "position": {
       "row": 2,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "fire_skill_damage": 3
+      },
+      "perRank": {
+        "fire_skill_damage": 3
+      }
     }
   },
   {
@@ -114,12 +266,13 @@
     "classId": "redneck",
     "name": "Hillbilly Rage",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily increases your fire skill damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
@@ -129,6 +282,22 @@
     "position": {
       "row": 2,
       "col": 1
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 35,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "fire_skill_damage": 5
+      },
+      "perRank": {
+        "fire_skill_damage": 5
+      }
     }
   },
   {
@@ -136,7 +305,69 @@
     "classId": "redneck",
     "name": "Spontaneous Combustion",
     "kind": "passive",
-    "description": "",
+    "description": "When igniting oil in flames, also make the monsters combust dealing area of effect fire damage around them.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive",
+      "Explosion"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 12.5
+    },
+    "passiveStats": {
+      "base": {
+        "burning_damage": 30
+      },
+      "perRank": {
+        "burning_damage": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Combustible Oil",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Oil Spill",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moonshine Molotov",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.15,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "moonshine_madness",
+    "classId": "redneck",
+    "name": "Moonshine Madness",
+    "kind": "passive",
+    "description": "Increases your attack rating and movement speed.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -150,29 +381,17 @@
     "tree": "Hillbilly",
     "position": {
       "row": 3,
-      "col": 0
-    }
-  },
-  {
-    "id": "moonshine_madness",
-    "classId": "redneck",
-    "name": "Moonshine Madness",
-    "kind": "buff",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
-    "tree": "Hillbilly",
-    "position": {
-      "row": 3,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_rating": 3,
+        "movement_speed": 1.5
+      },
+      "perRank": {
+        "attack_rating": 3,
+        "movement_speed": 1.5
+      }
     }
   },
   {
@@ -180,29 +399,70 @@
     "classId": "redneck",
     "name": "Pickup Raid",
     "kind": "active",
-    "description": "",
+    "description": "Call your hillbilly friends to siege your opponents in a pickup truck dealing fire damage.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell"
     ],
     "tree": "Hillbilly",
     "position": {
       "row": 4,
       "col": 1
-    }
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 18
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "effectDuration": 4,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Pipe Bombs",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Tire Fire",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Spontaneous Combustion",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 8.5,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "durable_wear",
     "classId": "redneck",
     "name": "Durable Wear",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your defense.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
@@ -217,6 +477,14 @@
     "position": {
       "row": 0,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "defense": 5
+      },
+      "perRank": {
+        "defense": 5
+      }
     }
   },
   {
@@ -224,29 +492,77 @@
     "classId": "redneck",
     "name": "Chainsaw Slash",
     "kind": "active",
-    "description": "",
+    "description": "Perform an area of effect attack attaching a spinning chainsaw on monsters for a short period of time.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Melee",
+      "Strike"
     ],
     "tree": "Logger",
     "position": {
       "row": 0,
       "col": 2
-    }
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 65,
+        "perLevel": 22.5
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 10,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Durable Wear",
+        "stat": "attack_damage",
+        "value": 3.3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Chainsaw Massacre",
+        "stat": "attack_damage",
+        "value": 3.3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Experienced Logger",
+        "stat": "attack_damage",
+        "value": 3.3,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "loggers_endurance",
     "classId": "redneck",
     "name": "Loggers Endurance",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your life and life replenish.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -261,6 +577,16 @@
     "position": {
       "row": 1,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "life": 3,
+        "mana_replenish": 1
+      },
+      "perRank": {
+        "life": 3,
+        "mana_replenish": 1
+      }
     }
   },
   {
@@ -268,29 +594,78 @@
     "classId": "redneck",
     "name": "Chainsaw Massacre",
     "kind": "active",
-    "description": "",
+    "description": "Violently spin your chainsaw dealing damage to monsters around you. Going the full distance unleashes a whirl attack with increased damage and area of effect.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Melee",
+      "Area of Effect",
+      "Strike"
     ],
     "tree": "Logger",
     "position": {
       "row": 1,
       "col": 2
-    }
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 41,
+        "perLevel": 10
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 9,
+        "perLevel": 0
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Chainsaw Slash",
+        "stat": "attack_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Experienced Logger",
+        "stat": "attack_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Revved Up",
+        "stat": "attack_damage",
+        "value": 11,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "experienced_logger",
     "classId": "redneck",
     "name": "Experienced Logger",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your chance for critical strike and critical strike damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
@@ -305,6 +680,16 @@
     "position": {
       "row": 2,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "crit_chance": 1,
+        "crit_damage": 4
+      },
+      "perRank": {
+        "crit_chance": 1,
+        "crit_damage": 4
+      }
     }
   },
   {
@@ -312,12 +697,13 @@
     "classId": "redneck",
     "name": "Revved Up",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily increases your attack speed and damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
@@ -327,6 +713,24 @@
     "position": {
       "row": 2,
       "col": 2
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "attack_damage": 3.5
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "attack_damage": 3.5
+      }
     }
   },
   {
@@ -334,29 +738,87 @@
     "classId": "redneck",
     "name": "Rogue Chainsaw",
     "kind": "active",
-    "description": "",
+    "description": "Throw a chainsaw on the ground spinning and dealing increased damage and additional arcane damage to monsters struck.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell"
     ],
     "tree": "Logger",
     "position": {
       "row": 3,
       "col": 1
-    }
+    },
+    "damageType": "arcane",
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 10,
+        "perLevel": 15
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Loggers Endurance",
+        "stat": "arcane_skill_damage",
+        "value": 14,
+        "per": "skill_level"
+      },
+      {
+        "source": "Chainsaw Slash",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Tree Trunk Triumph",
+        "stat": "arcane_skill_damage",
+        "value": 22,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 6.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "chainsaw_mastery",
     "classId": "redneck",
     "name": "Chainsaw Mastery",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your damage and attack rating when using a chainsaw.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -371,6 +833,16 @@
     "position": {
       "row": 3,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 6,
+        "attack_rating": 2.5
+      },
+      "perRank": {
+        "attack_damage": 6,
+        "attack_rating": 2.5
+      }
     }
   },
   {
@@ -378,21 +850,79 @@
     "classId": "redneck",
     "name": "Tree Trunk Triumph",
     "kind": "active",
-    "description": "",
+    "description": "Summon a massive tree and cut it down on nearby monsters dealing increased damage and additional arcane damage.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Melee",
+      "Strike"
     ],
     "tree": "Logger",
     "position": {
       "row": 4,
       "col": 1
-    }
+    },
+    "damageType": "arcane",
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 10.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 37,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Revved Up",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Loggers Endurance",
+        "stat": "arcane_skill_damage",
+        "value": 22.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Chainsaw Mastery",
+        "stat": "attack_damage",
+        "value": 6.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 9.35,
+        "per": "attribute_point"
+      }
+    ]
   }
 ]
