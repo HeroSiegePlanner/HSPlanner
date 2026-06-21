@@ -4,233 +4,404 @@
     "classId": "shaman",
     "name": "Tectonic Boulder",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a massive boulder that travels forward dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 6, "perLevel": 12 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meteor Storm", "stat": "arcane_skill_damage", "value": 18, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "twisters",
     "classId": "shaman",
     "name": "Twisters",
     "kind": "active",
-    "description": "",
+    "description": "Unleash small twisters towards target location dealing arcane damage to monsters on their path.",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 0, "col": 2 }
+    "position": { "row": 0, "col": 2 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 5, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Tornado", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Earth's Grace", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.65, "per": "attribute_point" }
+    ]
   },
   {
     "id": "rock_fragments",
     "classId": "shaman",
     "name": "Rock Fragments",
     "kind": "active",
-    "description": "",
+    "description": "Unleash rock fragments towards target location dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 1, "col": 1 }
+    "position": { "row": 1, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Earth Bind", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "earth_bind",
     "classId": "shaman",
     "name": "Earth Bind",
     "kind": "active",
-    "description": "",
+    "description": "Raise vines from the ground dealing poison damage, poisoning and rooting monsters in place.",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 2, "col": 0 }
+    "position": { "row": 2, "col": 0 },
+    "damageType": "poison",
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Nature's Prophet", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "meteor_storm",
     "classId": "shaman",
     "name": "Meteor Storm",
     "kind": "active",
-    "description": "",
+    "description": "Call down a meteor storm on target location dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 2, "col": 1 }
+    "position": { "row": 2, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 240,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Earth's Grace", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.45, "per": "attribute_point" }
+    ]
   },
   {
     "id": "tornado",
     "classId": "shaman",
     "name": "Tornado",
     "kind": "active",
-    "description": "",
+    "description": "Summon a tornado traveling towards target direction dealing arcane damage to monsters on its path.",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 2, "col": 2 }
+    "position": { "row": 2, "col": 2 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 15.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Twisters", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Nature's Prophet", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "earths_grace",
     "classId": "shaman",
     "name": "Earth's Grace",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your maximum life and mana.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [{ "rank": 1 }],
     "tags": ["Passive"],
     "tree": "Elementalist",
-    "position": { "row": 3, "col": 0 }
+    "position": { "row": 3, "col": 0 },
+    "passiveStats": {
+      "base": { "life": 3, "mana": 3 },
+      "perRank": { "life": 3, "mana": 3 }
+    }
   },
   {
     "id": "natures_prophet",
     "classId": "shaman",
     "name": "Nature's Prophet",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your arcane skill damage.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [{ "rank": 1 }],
     "tags": ["Passive"],
     "tree": "Elementalist",
-    "position": { "row": 3, "col": 2 }
+    "position": { "row": 3, "col": 2 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3.5 },
+      "perRank": { "arcane_skill_damage": 3.5 }
+    }
   },
   {
     "id": "fissures",
     "classId": "shaman",
     "name": "Fissures",
     "kind": "active",
-    "description": "",
+    "description": "Rip the ground open with magic causing cracks that release fissures dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
-    "position": { "row": 4, "col": 1 }
+    "position": { "row": 4, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 1, "perLevel": 24 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Meteor Storm", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9, "per": "attribute_point" }
+    ]
   },
   {
     "id": "earth_totem",
     "classId": "shaman",
     "name": "Earth Totem",
     "kind": "active",
-    "description": "",
+    "description": "Summon a totem that fires rock fragments that deal area of effect arcane damage on hit.",
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Chieftain",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 7, "perLevel": 12 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Chaos Totem", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fractal Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Astral Intellect", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "spiritual_guide",
     "classId": "shaman",
     "name": "Spiritual Guide",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your mana and mana replenish.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [{ "rank": 1 }],
     "tags": ["Passive"],
     "tree": "Chieftain",
-    "position": { "row": 0, "col": 1 }
+    "position": { "row": 0, "col": 1 },
+    "passiveStats": {
+      "base": { "mana": 1.5, "mana_replenish": 1.5 },
+      "perRank": { "mana": 1.5, "mana_replenish": 1.5 }
+    }
   },
   {
     "id": "fractal_mind",
     "classId": "shaman",
     "name": "Fractal Mind",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your movement speed and magic skill damage.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [{ "rank": 1 }],
     "tags": ["Passive"],
     "tree": "Chieftain",
-    "position": { "row": 1, "col": 1 }
+    "position": { "row": 1, "col": 1 },
+    "passiveStats": {
+      "base": { "movement_speed": 1.5, "magic_skill_damage": 2 },
+      "perRank": { "movement_speed": 1.5, "magic_skill_damage": 2 }
+    }
   },
   {
     "id": "spirit_wolves",
     "classId": "shaman",
     "name": "Spirit Wolves",
     "kind": "active",
-    "description": "",
+    "description": "Spawn a spirit wolf to fight on your side.",
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Chieftain",
-    "position": { "row": 1, "col": 2 }
+    "position": { "row": 1, "col": 2 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 120,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Fractal Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Spiritual Guide", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Scent of the Wolf", "stat": "arcane_skill_damage", "value": 17.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 11.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "storm_totem",
     "classId": "shaman",
     "name": "Storm Totem",
     "kind": "active",
-    "description": "",
+    "description": "Summon a totem that releases chain lightning on nearby monsters dealing lightning damage.",
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Chieftain",
-    "position": { "row": 2, "col": 0 }
+    "position": { "row": 2, "col": 0 },
+    "damageType": "lightning",
+    "damageFormula": { "base": 1, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Chaos Totem", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fractal Mind", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Astral Intellect", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 9.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "scent_of_the_wolf",
     "classId": "shaman",
     "name": "Scent of the Wolf",
     "kind": "passive",
-    "description": "",
+    "description": "Increases spirit wolves arcane damage and life.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [{ "rank": 1 }],
     "tags": ["Passive"],
     "tree": "Chieftain",
-    "position": { "row": 2, "col": 2 }
+    "position": { "row": 2, "col": 2 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3, "summon_life": 3 },
+      "perRank": { "arcane_skill_damage": 3, "summon_life": 3 }
+    }
   },
   {
     "id": "fire_totem",
     "classId": "shaman",
     "name": "Fire Totem",
     "kind": "active",
-    "description": "",
+    "description": "Spawn a totem that casts piercing fire projectiles dealing fire damage.",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Chieftain",
-    "position": { "row": 3, "col": 0 }
+    "position": { "row": 3, "col": 0 },
+    "damageType": "fire",
+    "damageFormula": { "base": 0, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Chaos Totem", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fractal Mind", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Astral Intellect", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9, "per": "attribute_point" }
+    ]
   },
   {
     "id": "astral_intellect",
     "classId": "shaman",
     "name": "Astral Intellect",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Cast to move all spawned totems to you. Passively increases the attack range of all totems.",
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
     "tree": "Chieftain",
-    "position": { "row": 3, "col": 2 }
+    "position": { "row": 3, "col": 2 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": { "totem_attack_range": 3 },
+      "perRank": { "totem_attack_range": 3 }
+    }
   },
   {
     "id": "chaos_totem",
     "classId": "shaman",
     "name": "Chaos Totem",
     "kind": "active",
-    "description": "",
+    "description": "Summon a totem that rapidly shoots chaos bolts dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Chieftain",
-    "position": { "row": 4, "col": 1 }
+    "position": { "row": 4, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 1, "perLevel": 23 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 30,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
+      { "source": "Storm Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
+      { "source": "Fire Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.85, "per": "attribute_point" }
+    ]
   }
 ]
