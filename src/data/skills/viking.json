@@ -4,7 +4,7 @@
     "classId": "viking",
     "name": "Weapon Master",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your attack damage and attack rating when you are using weapons without a shield.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
@@ -19,6 +19,16 @@
     "position": {
       "row": 0,
       "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 8,
+        "attack_rating": 1
+      },
+      "perRank": {
+        "attack_damage": 8,
+        "attack_rating": 1
+      }
     }
   },
   {
@@ -26,12 +36,13 @@
     "classId": "viking",
     "name": "Charge",
     "kind": "active",
-    "description": "",
+    "description": "Charge forward dealing arcane damage and stunning monsters on impact.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
@@ -41,14 +52,52 @@
     "position": {
       "row": 0,
       "col": 2
-    }
+    },
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 21.75
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Devastating Charge",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Odin's Fury",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Agility",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "stoneskin",
     "classId": "viking",
     "name": "Stoneskin",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your defense rating.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -63,14 +112,22 @@
     "position": {
       "row": 1,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "defense": 10.5
+      },
+      "perRank": {
+        "defense": 3
+      }
     }
   },
   {
     "id": "devastating_charge",
     "classId": "viking",
     "name": "Devastating Charge",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "When hitting monsters with Charge release a pulse dealing additional arcane damage and decreasing monster attack rating.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -79,12 +136,23 @@
       }
     ],
     "tags": [
-      "Active"
+      "Passive"
     ],
     "tree": "Shield Bearer",
     "position": {
       "row": 1,
       "col": 2
+    },
+    "damageType": "arcane",
+    "passiveStats": {
+      "base": {
+        "arcane_skill_damage": 30,
+        "attack_rating": 2
+      },
+      "perRank": {
+        "arcane_skill_damage": 5,
+        "attack_rating": 2
+      }
     }
   },
   {
@@ -92,7 +160,7 @@
     "classId": "viking",
     "name": "Norse Resistance",
     "kind": "passive",
-    "description": "",
+    "description": "Increases all of your resistances.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
@@ -107,6 +175,14 @@
     "position": {
       "row": 2,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "all_resistances": 5
+      },
+      "perRank": {
+        "all_resistances": 0.5
+      }
     }
   },
   {
@@ -114,12 +190,13 @@
     "classId": "viking",
     "name": "Defensive Shout",
     "kind": "buff",
-    "description": "",
+    "description": "Powerful warcry which buffs your and your party members defense rating.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
@@ -129,36 +206,91 @@
     "position": {
       "row": 2,
       "col": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 100,
+    "movementDuringUse": 85,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "defense": 10
+      },
+      "perRank": {
+        "defense": 2
+      }
     }
   },
   {
     "id": "odins_fury",
     "classId": "viking",
     "name": "Odin's Fury",
-    "kind": "buff",
-    "description": "",
+    "kind": "active",
+    "description": "Powerful warcry which deals arcane damage and stuns monsters around you.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Buff"
+      "Active"
     ],
     "tree": "Shield Bearer",
     "position": {
       "row": 3,
       "col": 1
-    }
+    },
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 18.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 2,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Defensive Shout",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Combat Orders",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Stoneskin",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.2,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "battle_agility",
     "classId": "viking",
     "name": "Battle Agility",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your movement speed.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -173,6 +305,14 @@
     "position": {
       "row": 3,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "movement_speed": 5
+      },
+      "perRank": {
+        "movement_speed": 1
+      }
     }
   },
   {
@@ -180,12 +320,13 @@
     "classId": "viking",
     "name": "Combat Orders",
     "kind": "buff",
-    "description": "",
+    "description": "Powerful warcry which buffs your and your party members maximum life and mana.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
@@ -195,6 +336,23 @@
     "position": {
       "row": 4,
       "col": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 100,
+    "movementDuringUse": 85,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "life": 5,
+        "mana": 5
+      },
+      "perRank": {
+        "life": 1.25,
+        "mana": 1.25
+      }
     }
   },
   {
@@ -202,12 +360,13 @@
     "classId": "viking",
     "name": "Seismic Slam",
     "kind": "active",
-    "description": "",
+    "description": "Smash monsters in front of you dealing damage and knocking them up and stunning them.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
@@ -217,14 +376,60 @@
     "position": {
       "row": 0,
       "col": 0
-    }
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "effectDuration": 2,
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 126,
+        "perLevel": 24
+      },
+      "flatPhysicalMin": {
+        "base": 5,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 14,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 6
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Brute Force",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shockwave",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "brute_force",
     "classId": "viking",
     "name": "Brute Force",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your chance of critical strike and critical strike damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
@@ -239,6 +444,16 @@
     "position": {
       "row": 0,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "crit_damage": 2,
+        "crit_chance": 5.25
+      },
+      "perRank": {
+        "crit_damage": 2,
+        "crit_chance": 0.25
+      }
     }
   },
   {
@@ -246,12 +461,13 @@
     "classId": "viking",
     "name": "Throw!",
     "kind": "active",
-    "description": "",
+    "description": "Pick up and throw a monster which deals area of effect arcane damage and stuns monsters upon landing.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
@@ -261,38 +477,416 @@
     "position": {
       "row": 1,
       "col": 1
-    }
+    },
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 27
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 3,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Seismic Slam",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Stoneskin",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Charge",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "zeal",
     "classId": "viking",
     "name": "Zeal",
-    "kind": "buff",
-    "description": "",
+    "kind": "active",
+    "description": "Strike three fast and powerful attacks with increased attack rating.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Buff"
+      "Active"
     ],
     "tree": "Berserker",
     "position": {
       "row": 1,
       "col": 2
-    }
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 75,
+        "perLevel": 25
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Odin's Fury",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Weapon Master",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Agility",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "ymirs_champion",
     "classId": "viking",
     "name": "Ymir's Champion",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Perform a cold enhanced strike with additive cold damage, increased attack damage and attack rating. Attacks also freeze monsters and summons a spinning axe that deals additional damage.",
     "maxRank": 20,
     "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "damageType": "cold",
+    "attackKind": "attack",
+    "effectDuration": 2,
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 18
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 8,
+        "perLevel": 15
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Seismic Slam",
+        "stat": "cold_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Agility",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 7.5,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "whirlwind",
+    "classId": "viking",
+    "name": "Whirlwind",
+    "kind": "active",
+    "description": "Spin your weapons around you dealing damage to monsters struck.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 50,
+        "perLevel": 44
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 3
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Brute Force",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Demolishing Winds",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "shockwave",
+    "classId": "viking",
+    "name": "Shockwave",
+    "kind": "active",
+    "description": "Smash the ground causing a shockwave that deals area of effect damage and stuns monsters.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "effectDuration": 2,
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 91,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Seismic Slam",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Throw!",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Brute Force",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "berserk",
+    "classId": "viking",
+    "name": "Berserk",
+    "kind": "active",
+    "description": "Every successful hit with berserk increases your attack damage, attack speed and movement speed for berserk stacking up to 8 times.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 2,
+        "perLevel": 3
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6,
+        "perLevel": 0
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 4
+      }
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 2,
+        "movement_speed": 0.4
+      },
+      "perRank": {
+        "increased_attack_speed": 0.5,
+        "movement_speed": 0.4
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 1,
+        "per": "skill_level"
+      },
+      {
+        "source": "Weapon Master",
+        "stat": "attack_damage",
+        "value": 1,
+        "per": "skill_level"
+      },
+      {
+        "source": "Ymir's Champion",
+        "stat": "attack_damage",
+        "value": 1,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "demolishing_winds",
+    "classId": "viking",
+    "name": "Demolishing Winds",
+    "kind": "passive",
+    "description": "Whirlwind now unleashes tornadoes dealing portion of the Whirlwinds damage to monsters struck.",
+    "maxRank": 20,
+    "requiresLevel": 30,
     "ranks": [
       {
         "rank": 1
@@ -303,96 +897,17 @@
     ],
     "tree": "Berserker",
     "position": {
-      "row": 2,
-      "col": 1
-    }
-  },
-  {
-    "id": "whirlwind",
-    "classId": "viking",
-    "name": "Whirlwind",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
-    "tree": "Berserker",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
-  },
-  {
-    "id": "shockwave",
-    "classId": "viking",
-    "name": "Shockwave",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
-    "tree": "Berserker",
-    "position": {
-      "row": 3,
-      "col": 1
-    }
-  },
-  {
-    "id": "berserk",
-    "classId": "viking",
-    "name": "Berserk",
-    "kind": "buff",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
-    "tree": "Berserker",
-    "position": {
-      "row": 3,
-      "col": 2
-    }
-  },
-  {
-    "id": "demolishing_winds",
-    "classId": "viking",
-    "name": "Demolishing Winds",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
-    "tree": "Berserker",
-    "position": {
       "row": 4,
       "col": 1
+    },
+    "damageType": "physical",
+    "passiveStats": {
+      "base": {
+        "physical_skill_damage": 20
+      },
+      "perRank": {
+        "physical_skill_damage": 4
+      }
     }
   }
 ]
