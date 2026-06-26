@@ -356,7 +356,7 @@
     }
   },
   {
-    "id": "spiked_shields",
+    "id": "knights_vigor",
     "classId": "shield_lancer",
     "name": "Knight's Vigor",
     "kind": "passive",
