@@ -74,6 +74,53 @@ fn emit_data_includes() {
         println!("cargo:rerun-if-changed={}", dir_path.display());
     }
 
+    let seasons_dir = data_root.join("seasons");
+    out.push_str("\npub const SEASON_PATCHES: &[(&str, &str)] = &[\n");
+    if seasons_dir.is_dir() {
+        let mut season_dirs: Vec<PathBuf> = fs::read_dir(&seasons_dir)
+            .unwrap_or_else(|e| panic!("cannot read dir {}: {e}", seasons_dir.display()))
+            .filter_map(|e| e.ok())
+            .map(|e| e.path())
+            .filter(|p| p.is_dir())
+            .collect();
+        season_dirs.sort();
+        for sd in &season_dirs {
+            let season_id = sd
+                .file_name()
+                .and_then(|s| s.to_str())
+                .unwrap_or_else(|| panic!("non-UTF8 season dir name in {}", sd.display()));
+            let mut files: Vec<PathBuf> = fs::read_dir(sd)
+                .unwrap_or_else(|e| panic!("cannot read dir {}: {e}", sd.display()))
+                .filter_map(|e| e.ok())
+                .map(|e| e.path())
+                .filter(|p| {
+                    p.file_name()
+                        .and_then(|s| s.to_str())
+                        .is_some_and(|n| n.ends_with(".patch.json"))
+                })
+                .collect();
+            files.sort();
+            for f in &files {
+                let canonical = f
+                    .canonicalize()
+                    .unwrap_or_else(|e| panic!("cannot canonicalise {}: {e}", f.display()));
+                let file_name = f
+                    .file_name()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or_else(|| panic!("non-UTF8 patch file name in {}", f.display()));
+                let rel = format!("{season_id}/{file_name}");
+                out.push_str(&format!(
+                    "    ({:?}, include_str!({:?})),\n",
+                    rel, canonical
+                ));
+                println!("cargo:rerun-if-changed={}", canonical.display());
+            }
+            println!("cargo:rerun-if-changed={}", sd.display());
+        }
+        println!("cargo:rerun-if-changed={}", seasons_dir.display());
+    }
+    out.push_str("];\n");
+
     let dest = Path::new(&out_dir).join("data_includes.rs");
     fs::write(&dest, out).expect("failed to write data_includes.rs");
 }

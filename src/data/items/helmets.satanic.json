@@ -1661,34 +1661,6 @@
     ]
   },
   {
-    "id": "helmet_satanic_the_colossal_avenger",
-    "name": "The Colossal Avenger",
-    "baseType": "Helmet",
-    "slot": "helmet",
-    "rarity": "satanic",
-    "grade": "S",
-    "requiresLevel": 88,
-    "defenseMin": 80,
-    "defenseMax": 110,
-    "implicit": {
-      "all_skills": [
-        2,
-        3
-      ],
-      "attack_rating_pct": 20,
-      "life_steal": [
-        4,
-        8
-      ],
-      "to_strength": [
-        20,
-        30
-      ],
-      "to_armor": 20,
-      "all_resistances": 30
-    }
-  },
-  {
     "id": "helmet_satanic_the_curator_of_secrets",
     "name": "The Curator of Secrets",
     "baseType": "Helmet",

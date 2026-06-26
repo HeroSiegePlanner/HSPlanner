@@ -1,37 +1,57 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react'
+import { useCalcResult } from '../../../hooks/useCalcResult'
 import PickerModal, { type PickerRow } from '../../../components/PickerModal'
-import { affixes, getAffix } from '../../../data'
-import { formatValue, rolledAffixValueWithStars } from '../../../utils/item/stats'
+import { activeSeasonId, affixes, effectiveStars, getAffix } from '../../../data'
+import {
+  formatAffixRangeFromValues,
+  formatValue,
+} from '../../../utils/item/stats'
+import { displayValuesNative } from '../../../lib/calc/bridge'
+import type { AffixValueOutput } from '../../../lib/calc/bridge'
 import type { Affix, EquippedItem, ItemBase } from '../../../types'
 import { buildAffixTooltip } from '../tooltips'
 import { SectionCard } from '../SectionCard'
 
-export function formatAffixRange(
-  affix: {
-    sign: '+' | '-'
-    format: 'flat' | 'percent'
-    valueMin: number | null
-    valueMax: number | null
-    statKey: string | null
-  },
-  stars?: number,
-): string {
-  // Formats an affix's full roll window as a signed bracketed range ("+[15-25]%", "+[12-18]", "+30") with star scaling applied to both endpoints. Single-value affixes (min === max) drop the brackets and dash. Used by AffixesSection so each row shows the *range* the affix can roll, not just its current rolled value.
-  if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const minSigned = rolledAffixValueWithStars(affix, 0, stars)
-  const maxSigned = rolledAffixValueWithStars(affix, 1, stars)
-  const fmtAbs = (v: number) => {
-    const abs = Math.abs(v)
-    return Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
-  }
-  const lo = fmtAbs(minSigned)
-  const hi = fmtAbs(maxSigned)
-  const sign =
-    affix.sign === '-' || minSigned < 0 || maxSigned < 0 ? '-' : '+'
-  const suffix = affix.format === 'percent' ? '%' : ''
-  if (lo === hi) return `${sign}${hi}${suffix}`
-  return `${sign}[${lo}-${hi}]${suffix}`
+type AffixRangeDef = Parameters<typeof formatAffixRangeFromValues>[0] & {
+  statKey: string | null
+}
+
+export interface AffixDisplayItem {
+  def: AffixRangeDef | undefined
+  roll?: number
+}
+
+// Batched star-scaled rolled values and roll windows from the Rust engine,
+// one entry per item (null for missing defs). Shared with ForgedModsSection
+// and the tree jewel tooltip.
+export function useAffixDisplayRanges(
+  items: AffixDisplayItem[],
+  stars?: number | null,
+): (AffixValueOutput | null)[] {
+  return useCalcResult<(AffixValueOutput | null)[]>(
+    () => {
+      const present = items
+        .map((item, i) => ({ item, i }))
+        .filter((x) => !!x.item.def)
+      if (present.length === 0) return items.map(() => null)
+      return displayValuesNative({
+        affixes: present.map((x) => ({
+          affix: x.item.def,
+          roll: x.item.roll ?? 0,
+          stars: stars ?? null,
+        })),
+      }).then((res) => {
+        const out: (AffixValueOutput | null)[] = items.map(() => null)
+        present.forEach((x, j) => {
+          out[x.i] = res.affixes[j] ?? null
+        })
+        return out
+      })
+    },
+    [items, stars],
+    [],
+  )
 }
 
 function InvertedCrossIcon({ color = '#cf6db0' }: { color?: string }) {
@@ -108,6 +128,15 @@ export function AffixesSection({
   const randomGroupId = base?.randomAffixGroupId ?? null
   const isUnholy = randomGroupId === 'random_unholy'
 
+  const equippedAffixItems = useMemo(
+    () => equipped.affixes.map((eq) => ({ def: getAffix(eq.affixId) })),
+    [equipped.affixes],
+  )
+  const affixRanges = useAffixDisplayRanges(
+    equippedAffixItems,
+    effectiveStars(base?.slot ?? '', activeSeasonId, equipped.stars),
+  )
+
   const pickerRows = useMemo<PickerRow[]>(() => {
     const source = randomGroupId
       ? affixes.filter((a) => a.groupId === randomGroupId)
@@ -173,7 +202,10 @@ export function AffixesSection({
                 <span className="font-mono font-semibold tabular-nums text-accent-hot">
                   {eq.customValue !== undefined && affix.statKey
                     ? formatValue(eq.customValue, affix.statKey)
-                    : formatAffixRange(affix, equipped.stars)}
+                    : formatAffixRangeFromValues(
+                        affix,
+                        affixRanges[idx] ?? null,
+                      )}
                 </span>
                 <span className="truncate text-text/85">{affix.name}</span>
                 <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">

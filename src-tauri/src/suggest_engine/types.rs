@@ -139,21 +139,6 @@ pub struct SkillRef {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ClassInfo {
-    pub id: String,
-    pub name: String,
-    #[serde(default)]
-    pub base_attributes: HashMap<String, f64>,
-    #[serde(default)]
-    pub base_stats: HashMap<String, f64>,
-    #[serde(default)]
-    pub stats_per_level: HashMap<String, f64>,
-    #[serde(default)]
-    pub start_ids: Vec<u32>,
-}
-
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
 pub struct GameConfig {
     #[serde(default)]
     pub attribute_keys: Vec<String>,
@@ -167,13 +152,9 @@ pub struct GameConfig {
     pub attribute_divided_stats: HashMap<String, HashMap<String, f64>>,
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PrecomputedInput {
-    pub class: Option<ClassInfo>,
-    pub level: u32,
-    #[serde(default)]
-    pub allocated_attributes: HashMap<String, f64>,
     // Unaggregated per-key (min,max) contributions; engine must aggregate once
     // to match TS `computeBuildStatsCore`.
     #[serde(default)]
@@ -190,7 +171,7 @@ pub struct PrecomputedInput {
     #[serde(default)]
     pub skill_ranks_by_name: HashMap<String, f64>,
     #[serde(default)]
-    pub item_skill_bonuses: HashMap<String, Ranged>,
+    pub inventory: crate::calc::types::Inventory,
     #[serde(default)]
     pub enemy_conditions: HashMap<String, bool>,
     #[serde(default)]
@@ -211,9 +192,11 @@ pub struct PrecomputedInput {
     pub skill_projectiles: HashMap<String, u32>,
     #[serde(default)]
     pub kills_per_sec: f64,
+    #[serde(default)]
+    pub season: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SuggestStep {
     pub node_id: u32,
@@ -223,7 +206,7 @@ pub struct SuggestStep {
     pub is_filler: bool,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SuggestResult {
     pub added_nodes: Vec<u32>,

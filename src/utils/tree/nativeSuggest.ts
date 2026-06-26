@@ -1,13 +1,8 @@
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
-import { gameConfig, getSkillsByClass, getClass } from '../../data'
+import { activeSeasonId, gameConfig, getSkillsByClass } from '../../data'
 import type { Skill } from '../../types'
-import {
-  aggregateItemSkillBonuses,
-  normalizeSkillName,
-  rangedMax,
-  rangedMin,
-} from '../item/stats'
+import { normalizeSkillName, rangedMax, rangedMin } from '../item/stats'
 import { computeBuildStatsAsync } from '../../lib/calc/bridge'
 import { ADJ, START_IDS } from './treeGraph'
 import {
@@ -131,17 +126,6 @@ export async function suggestNodesNative(
   const statContributions = contributionsRecord(baseline.statSources)
   const attrContributions = contributionsRecord(baseline.attributeSources)
 
-  const cls = deps.classId ? getClass(deps.classId) : undefined
-  const classInfo = cls
-    ? {
-        id: cls.id,
-        name: cls.name,
-        baseAttributes: cls.baseAttributes ?? {},
-        baseStats: cls.baseStats ?? {},
-        statsPerLevel: cls.statsPerLevel ?? {},
-      }
-    : undefined
-
   const allClassSkills = getSkillsByClass(deps.classId)
   const activeSkill = deps.mainSkillId
     ? allClassSkills.find((s) => s.id === deps.mainSkillId)
@@ -150,13 +134,6 @@ export async function suggestNodesNative(
   const activeSkillRank = activeSkill
     ? (deps.skillRanks[activeSkill.id] ?? 0)
     : 0
-
-  const itemSkillBonuses: Record<string, Ranged> = {}
-  for (const [k, v] of Object.entries(
-    aggregateItemSkillBonuses(deps.inventory),
-  )) {
-    itemSkillBonuses[normalizeSkillName(k)] = [v[0], v[1]]
-  }
 
   const skillRanksByName: Record<string, number> = {}
   for (const s of allClassSkills) {
@@ -174,9 +151,6 @@ export async function suggestNodesNative(
       : 1
 
   const input = {
-    class: classInfo,
-    level: deps.level,
-    allocatedAttributes: deps.allocatedAttrs,
     statContributions,
     attrContributions,
     graph: GRAPH_PAYLOAD,
@@ -185,7 +159,7 @@ export async function suggestNodesNative(
     activeSkill: activeSkill ? skillRef(activeSkill) : undefined,
     activeSkillRank: Math.max(0, Math.floor(activeSkillRank)),
     skillRanksByName,
-    itemSkillBonuses,
+    inventory: deps.inventory,
     enemyConditions: deps.enemyConditions ?? {},
     playerConditions: deps.playerConditions ?? {},
     enemyResistances,
@@ -197,6 +171,7 @@ export async function suggestNodesNative(
     skillRanksById: deps.skillRanks ?? {},
     skillProjectiles: deps.skillProjectiles ?? {},
     killsPerSec: deps.killsPerSec ?? 0,
+    season: activeSeasonId,
   }
 
   let unlisten: UnlistenFn | null = null

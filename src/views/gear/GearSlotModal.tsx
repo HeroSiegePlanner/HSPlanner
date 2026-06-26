@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import ItemTextEditorModal from '../../components/ItemTextEditorModal'
 import type { PickerRow } from '../../components/PickerModal'
-import { detectRuneword, forgeKindFor, getItem, getItemSet, isGearSlot } from '../../data'
+import { activeSeasonId, canStarForge, detectRuneword, forgeKindFor, getItem, getItemSet } from '../../data'
 import { maxSocketsFor, useBuild } from '../../store/build'
 import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
 import type { EquippedItem, Inventory, SlotKey } from '../../types'
@@ -110,7 +110,7 @@ export function GearSlotModal({
         return b?.setId === base.setId ? acc + 1 : acc
       }, 0)
     : 0
-  const forgeKind = base && isGearSlot(slot) ? forgeKindFor(base.rarity) : null
+  const forgeKind = base && canStarForge(slot, activeSeasonId) ? forgeKindFor(base.rarity) : null
 
   const fullDeps = useBuildPerformanceDeps()
   const compareDeps = useMemo<BuildSummaryDeps>(() => {
@@ -215,7 +215,7 @@ export function GearSlotModal({
                     onApply={d.applyRuneword}
                   />
 
-                  {isGearSlot(slot) && (
+                  {canStarForge(slot, activeSeasonId) && (
                     <StarsSection stars={draft.stars ?? 0} onChange={d.setStars} />
                   )}
 

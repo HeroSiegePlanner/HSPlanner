@@ -1,7 +1,6 @@
 export * from './game'
 export * from './character'
 export * from './skill'
-export * from './talent'
 export * from './item'
 export * from './relic'
 export * from './build'

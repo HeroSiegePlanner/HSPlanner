@@ -7,6 +7,7 @@ pub mod custom_stat;
 pub mod data;
 pub mod passive;
 pub mod rank;
+pub mod season;
 pub mod star_scaling;
 pub mod stats;
 pub mod subskill;

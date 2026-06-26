@@ -103,6 +103,41 @@ pub(super) fn element_keys(damage_type: &str) -> Option<&'static ElementKeys> {
         .map(|(_, v)| v)
 }
 
+// Tag-gated "increased skill damage" for the caster's own hit. Returns
+// (additive_pct, more_multiplier). Summon/sentry/guardian sources are excluded.
+fn archetype_skill_damage(stats: &StatMap, tags: &[String]) -> (Ranged, Ranged) {
+    let has = |t: &str| tags.iter().any(|x| x == t);
+    let mut add: Ranged = (0.0, 0.0);
+    let mut more: Ranged = (1.0, 1.0);
+
+    let add_in = |add: &mut Ranged, key: &str| {
+        let v = rg(stats, key);
+        add.0 += r_min(v);
+        add.1 += r_max(v);
+    };
+    let more_in = |more: &mut Ranged, key: &str| {
+        let v = rg(stats, key);
+        more.0 *= 1.0 + r_min(v) / 100.0;
+        more.1 *= 1.0 + r_max(v) / 100.0;
+    };
+
+    if has("Orbital") {
+        add_in(&mut add, "orbital_skill_damage");
+        more_in(&mut more, "orbital_skill_damage_more");
+    }
+    if has("Explosion") {
+        add_in(&mut add, "explosion_damage");
+    }
+    if has("Spell") && has("Area of Effect") {
+        add_in(&mut add, "spell_aoe_damage");
+        more_in(&mut more, "spell_aoe_damage_more");
+    }
+    if has("Spell") && has("Projectile") {
+        add_in(&mut add, "spell_projectile_damage");
+    }
+    (add, more)
+}
+
 pub struct SkillInput<'a> {
     pub skill: &'a Skill,
     pub allocated_rank: f64,
@@ -159,9 +194,25 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     } else {
         let t = s.damage_per_rank.as_ref().unwrap();
         let n = t.len() as i64;
-        let i_min = ((eff_min as i64).max(1).min(n) - 1) as usize;
-        let i_max = ((eff_max as i64).max(1).min(n) - 1) as usize;
-        (t[i_min].min.max(0.0), t[i_max].max.max(0.0))
+        // Beyond the table, extrapolate at its final per-rank slope so +skills keep scaling base damage.
+        let val = |eff: f64, is_max: bool| -> f64 {
+            if n == 0 {
+                return 0.0;
+            }
+            let r = (eff as i64).max(1);
+            let field = |i: usize| {
+                let d = &t[i];
+                if is_max { d.max } else { d.min }
+            };
+            if r <= n {
+                field((r - 1) as usize).max(0.0)
+            } else {
+                let last = field((n - 1) as usize);
+                let prev = if n >= 2 { field((n - 2) as usize) } else { last };
+                (last + (last - prev) * (r - n) as f64).max(0.0)
+            }
+        };
+        (val(eff_min, false), val(eff_max, true))
     };
 
     let mut flat_min = 0.0;
@@ -220,15 +271,18 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let elem = keys
         .map(|k| rg(input.stats, k.skill_damage))
         .unwrap_or((0.0, 0.0));
-    let skill_dmg_min = r_min(magic) + r_min(elem);
-    let skill_dmg_max = r_max(magic) + r_max(elem);
+    let (arch_add, arch_more) = archetype_skill_damage(input.stats, &s.tags);
+    let skill_dmg_min = r_min(magic) + r_min(elem) + arch_add.0;
+    let skill_dmg_max = r_max(magic) + r_max(elem) + arch_add.1;
 
     let magic_more = rg(input.stats, "magic_skill_damage_more");
     let elem_more = keys
         .map(|k| rg(input.stats, k.skill_damage_more))
         .unwrap_or((0.0, 0.0));
-    let skill_more_min = (1.0 + r_min(magic_more) / 100.0) * (1.0 + r_min(elem_more) / 100.0);
-    let skill_more_max = (1.0 + r_max(magic_more) / 100.0) * (1.0 + r_max(elem_more) / 100.0);
+    let skill_more_min =
+        (1.0 + r_min(magic_more) / 100.0) * (1.0 + r_min(elem_more) / 100.0) * arch_more.0;
+    let skill_more_max =
+        (1.0 + r_max(magic_more) / 100.0) * (1.0 + r_max(elem_more) / 100.0) * arch_more.1;
 
     let (extra_mult, extra_sources) =
         collect_extra_damage(input.stats, input.enemy_conditions);
@@ -341,4 +395,61 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         avg_min: avg_min_f.floor() as i64,
         avg_max: avg_max_f.floor() as i64,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn tags(t: &[&str]) -> Vec<String> {
+        t.iter().map(|s| s.to_string()).collect()
+    }
+
+    fn stats(pairs: &[(&str, f64)]) -> StatMap {
+        pairs
+            .iter()
+            .map(|(k, v)| (k.to_string(), (*v, *v)))
+            .collect()
+    }
+
+    #[test]
+    fn archetype_orbital_applies_additive_and_more() {
+        let s = stats(&[
+            ("orbital_skill_damage", 30.0),
+            ("orbital_skill_damage_more", 50.0),
+        ]);
+        let (add, more) = archetype_skill_damage(&s, &tags(&["Orbital"]));
+        assert_eq!(add, (30.0, 30.0));
+        assert_eq!(more, (1.5, 1.5));
+    }
+
+    #[test]
+    fn archetype_ignored_when_tag_absent() {
+        let s = stats(&[("orbital_skill_damage", 30.0), ("explosion_damage", 40.0)]);
+        let (add, more) = archetype_skill_damage(&s, &tags(&["Spell"]));
+        assert_eq!(add, (0.0, 0.0));
+        assert_eq!(more, (1.0, 1.0));
+    }
+
+    #[test]
+    fn archetype_spell_aoe_requires_both_tags() {
+        let s = stats(&[("spell_aoe_damage", 20.0)]);
+        assert_eq!(
+            archetype_skill_damage(&s, &tags(&["Spell"])).0,
+            (0.0, 0.0),
+            "AoE damage must not apply to a non-AoE spell",
+        );
+        assert_eq!(
+            archetype_skill_damage(&s, &tags(&["Spell", "Area of Effect"])).0,
+            (20.0, 20.0),
+        );
+    }
+
+    #[test]
+    fn archetype_explosion_is_additive_only() {
+        let s = stats(&[("explosion_damage", 40.0)]);
+        let (add, more) = archetype_skill_damage(&s, &tags(&["Explosion"]));
+        assert_eq!(add, (40.0, 40.0));
+        assert_eq!(more, (1.0, 1.0));
+    }
 }

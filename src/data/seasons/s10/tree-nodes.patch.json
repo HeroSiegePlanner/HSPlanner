@@ -1,0 +1,76 @@
+{
+  "change": {
+    "1838": {
+      "l": [
+        "+35% of your Increased Attack Speed is added as Magic Skill Damage",
+        "You cannot regenerate life from life replenish anymore"
+      ]
+    },
+    "1614": {
+      "l": [
+        "+20% of Strength converted to weapon damage when Unarmed, Strength no longer provides attack damage.",
+        "+10% Increased Damage while Unarmed"
+      ]
+    },
+    "1744": {
+      "l": ["+4% of Negative All Resistances added as increased damage"]
+    },
+    "1612": {
+      "l": [
+        "+20% Increased effectiveness of Deadly Blow",
+        "+8% Chance for a deadly blow"
+      ]
+    },
+    "1682": {
+      "l": [
+        "+25% Increased effectiveness of Deadly Blow",
+        "+6% Chance for a deadly blow"
+      ]
+    },
+    "1802": {
+      "l": [
+        "+15% Increased Total Attack Speed when Critical Strike Chance is below 40%",
+        "+25% Increased Ranged Projectile Damage when Critical Strike Chance is below 40%"
+      ]
+    },
+    "1848": {
+      "l": [
+        "+3% Chance after kill to recover all skill cooldowns",
+        "+0.025 s Cooldown Recovered"
+      ]
+    },
+    "2980": {
+      "l": ["+7.5% of Attack Damage converted to Increased Life"]
+    },
+    "1638": {
+      "l": [
+        "+30% of Reduced Damage Healed Over Time",
+        "+100 Damage Taken Reduced"
+      ]
+    },
+    "2470": {
+      "l": ["+15% of Energy is added as Physical Damage"]
+    },
+    "1654": {
+      "l": [
+        "+16% Increased Orbiting Skill Damage",
+        "+15% Increased Orbiting Skill Size"
+      ]
+    },
+    "2600": {
+      "l": ["+35% Orbital Spell Size", "+-20% Total Orbital Spell Damage"]
+    },
+    "2586": {
+      "l": ["+25% Orbital Spell Duration", "+-15% Total Orbital Spell Damage"]
+    },
+    "1062": { "l": ["+-7% to All Resistances"] },
+    "1064": { "l": ["+-7% to All Resistances"] },
+    "1066": { "l": ["+-7% to All Resistances"] },
+    "1068": { "l": ["+-7% to All Resistances"] },
+    "1070": { "l": ["+-7% to All Resistances"] },
+    "1072": { "l": ["+-7% to All Resistances"] },
+    "1146": { "l": ["+-7% to All Resistances"] },
+    "1148": { "l": ["+-7% to All Resistances"] },
+    "1150": { "l": ["+-7% to All Resistances"] }
+  }
+}

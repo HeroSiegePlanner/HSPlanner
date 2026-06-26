@@ -2,7 +2,7 @@
 
 import { invoke } from '@tauri-apps/api/core'
 
-import type { CustomStat, Inventory, RangedValue, TreeSocketContent } from '../../types'
+import type { CustomStat, Inventory, RangedValue, Skill, TreeSocketContent } from '../../types'
 import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../../utils/item/stats'
 import type {
   BuildPerformance,
@@ -14,6 +14,7 @@ import type {
   SourceType,
 } from '../../utils/item/stats'
 import type { ForgeKind } from '../../data'
+import { activeSeasonId } from '../../data'
 
 // Single subscriber so the build store can surface Rust rejections via storageError.
 type BridgeErrorListener = (err: Error) => void
@@ -23,7 +24,9 @@ export function setBridgeErrorListener(fn: BridgeErrorListener | null): void {
   bridgeErrorListener = fn
 }
 
-function notifyBridgeError(err: unknown): Error {
+// Exported so sibling IPC wrappers (e.g. utils/nativeDamage.ts) surface
+// failures through the same storageError banner.
+export function notifyBridgeError(err: unknown): Error {
   const wrapped = err instanceof Error ? err : new Error(String(err))
   if (bridgeErrorListener) {
     try {
@@ -58,6 +61,7 @@ export interface BuildPerformanceInput {
   enemyResistances?: Record<string, number>
   procToggles?: Record<string, boolean>
   killsPerSec?: number
+  season?: string
 }
 
 // Rust returns [min, max]; TS expects `number | [number, number]` — see asRangedValue.
@@ -77,6 +81,9 @@ export interface BuildPerformanceOutput {
   combinedDpsMin: number | null
   combinedDpsMax: number | null
   activeSkillName: string | null
+  statsCombined: Record<string, RustRanged>
+  itemSkillBonuses: Record<string, RustRanged>
+  rankBonuses: Record<string, RustRanged>
 }
 
 async function computeBuildPerformanceNative(
@@ -127,6 +134,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     enemyResistances: deps.enemyResistances,
     procToggles: deps.procToggles,
     killsPerSec: deps.killsPerSec,
+    season: deps.season ?? activeSeasonId,
   }
 }
 
@@ -157,6 +165,9 @@ function toLegacyBuildPerformance(
     combinedDpsMin: raw.combinedDpsMin ?? undefined,
     combinedDpsMax: raw.combinedDpsMax ?? undefined,
     activeSkillName: raw.activeSkillName,
+    statsCombined: toRangedMap(raw.statsCombined),
+    itemSkillBonuses: raw.itemSkillBonuses,
+    rankBonuses: raw.rankBonuses,
   }
 }
 
@@ -187,6 +198,9 @@ interface BuildStatsRustOutput {
   stats: Record<string, RustRanged>
   attributeSources: Record<string, RustSourceContribution[]>
   statSources: Record<string, RustSourceContribution[]>
+  statsCombined: Record<string, RustRanged>
+  itemSkillBonuses: Record<string, RustRanged>
+  rankBonuses: Record<string, RustRanged>
 }
 
 function convertContribution(raw: RustSourceContribution): SourceContribution {
@@ -217,6 +231,9 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
     stats: toRangedMap(raw.stats),
     attributeSources: convertSourceMap(raw.attributeSources),
     statSources: convertSourceMap(raw.statSources),
+    statsCombined: toRangedMap(raw.statsCombined),
+    itemSkillBonuses: raw.itemSkillBonuses,
+    rankBonuses: raw.rankBonuses,
   }
 }
 
@@ -334,10 +351,173 @@ export async function computeStatBreakdownAsync(
   }
 }
 
-// Escape hatch for unwrapped commands.
-export function invokeCalc<TResult>(
-  cmd: string,
-  args: Record<string, unknown> = {},
-): Promise<TResult> {
-  return invoke<TResult>(cmd, args)
+// ---------- passive_stats_at_rank / mana_cost_at_rank ----------
+// Replace the former TS stats.ts helpers; the math now lives in Rust calc/passive.rs.
+
+export async function passiveStatsAtRankNative(
+  skill: Skill,
+  rank: number,
+): Promise<Record<string, number>> {
+  try {
+    return await invoke('passive_stats_at_rank', { skill, rank })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
 }
+
+export async function manaCostAtRankNative(
+  skill: Skill,
+  rank: number,
+): Promise<number | null> {
+  try {
+    return await invoke('mana_cost_at_rank', { skill, rank })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// ---------- parse_custom_stats ----------
+// Replaces the former TS parseCustomStatValue; the parser lives in Rust
+// calc/custom_stat.rs.
+
+export async function parseCustomStatsNative(
+  values: string[],
+): Promise<([number, number] | null)[]> {
+  try {
+    return await invoke<([number, number] | null)[]>('parse_custom_stats', {
+      values,
+    })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// ---------- display_values ----------
+// Batched affix/star display math; replaces the former TS
+// rolledAffixValue*/applyStarsToRangedValue helpers.
+
+export interface AffixValueRequest {
+  affix: unknown
+  roll?: number
+  stars?: number | null
+}
+
+export interface ScaledValueRequest {
+  value: [number, number]
+  statKey: string
+  stars?: number | null
+}
+
+export interface AffixValueOutput {
+  value: number
+  rangeMin: number
+  rangeMax: number
+}
+
+export interface DisplayValuesOutput {
+  affixes: AffixValueOutput[]
+  scaled: [number, number][]
+}
+
+export async function displayValuesNative(input: {
+  affixes?: AffixValueRequest[]
+  scaled?: ScaledValueRequest[]
+}): Promise<DisplayValuesOutput> {
+  try {
+    return await invoke<DisplayValuesOutput>('display_values', {
+      input,
+      season: activeSeasonId,
+    })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// ---------- classify_tree_nodes ----------
+// Replaces the former TS classifyNodeLines RULES engine; the regexes live in
+// Rust calc/tree/parse.rs. Fetched once and cached by TreeView.
+
+export interface NodeLineClassification {
+  parsed: string[]
+  unsupported: string[]
+}
+
+export async function classifyTreeNodesNative(): Promise<
+  Record<string, NodeLineClassification>
+> {
+  try {
+    return await invoke<Record<string, NodeLineClassification>>(
+      'classify_tree_nodes',
+      { season: activeSeasonId },
+    )
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// ---------- subskill_aggregation ----------
+// Replaces the former TS subtree.ts aggregation; the math lives in Rust
+// calc/subskill.rs.
+
+export interface AppliedStateInfo {
+  state: string
+  trigger: string
+  chance: number
+  amount?: number
+}
+
+export interface SubtreeAggregation {
+  stats: Record<string, number>
+  procStats: Record<string, number>
+  appliedStates: AppliedStateInfo[]
+}
+
+interface RustAppliedState {
+  state: string
+  trigger: string
+  chance: number
+  amount: number | null
+}
+
+interface SubskillAggregationRustOutput {
+  stats: Record<string, number>
+  procStats: Record<string, number>
+  appliedStates: RustAppliedState[]
+}
+
+export async function subskillAggregationNative(
+  classId: string,
+  skillId: string,
+  subskillRanks: Record<string, number>,
+  enemyConditions: Record<string, boolean>,
+): Promise<SubtreeAggregation> {
+  try {
+    const raw = await invoke<SubskillAggregationRustOutput>(
+      'subskill_aggregation',
+      {
+        input: {
+          classId,
+          skillId,
+          subskillRanks,
+          enemyConditions,
+          season: activeSeasonId,
+        },
+      },
+    )
+    return {
+      stats: raw.stats,
+      procStats: raw.procStats,
+      appliedStates: raw.appliedStates.map((s) => ({
+        state: s.state,
+        trigger: s.trigger,
+        chance: s.chance,
+        ...(s.amount !== null ? { amount: s.amount } : {}),
+      })),
+    }
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+// Test seam: depsToInput is module-private; expose it for unit tests only.
+export const __depsToInputForTest = depsToInput

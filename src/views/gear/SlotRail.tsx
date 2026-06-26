@@ -1,6 +1,6 @@
 import ItemTooltip from '../../components/ItemTooltip'
 import { CornerMarks } from '../../components/CornerMarks'
-import { detectRuneword, getItem } from '../../data'
+import { activeSeasonId, detectRuneword, effectiveStars, getItem, getItemImage } from '../../data'
 import type { EquippedItem, SlotKey } from '../../types'
 import { RARITY_BG, RARITY_BORDER, RARITY_TEXT } from './lib/rarity'
 
@@ -21,6 +21,7 @@ export function SlotRow({
   const base = equipped ? getItem(equipped.baseId) : undefined
   const runeword =
     base && equipped ? detectRuneword(base, equipped.socketed) : undefined
+  const sprite = base ? getItemImage(base.id) : undefined
 
   const rarityText = base
     ? runeword
@@ -50,8 +51,8 @@ export function SlotRow({
       badges.push(
         `${equipped.socketed.filter(Boolean).length}/${equipped.socketCount}◇`,
       )
-    if (equipped.stars && equipped.stars > 0)
-      badges.push(`${'★'.repeat(equipped.stars)}`)
+    const stars = effectiveStars(slot.key, activeSeasonId, equipped.stars) ?? 0
+    if (stars > 0) badges.push(`${'★'.repeat(stars)}`)
     if (base.requiresLevel) badges.push(`L${base.requiresLevel}`)
   }
 
@@ -59,7 +60,7 @@ export function SlotRow({
     <button
       type="button"
       onClick={onSelect}
-      className={`group flex h-full min-h-11 w-full items-center gap-2 rounded-[3px] border px-2 py-1.5 text-left transition-colors ${rarityBorder} ${
+      className={`group flex h-full min-h-14 w-full items-center gap-2 rounded-[3px] border px-2 py-1.5 text-left transition-colors ${rarityBorder} ${
         active
           ? 'border-accent-hot bg-accent-hot/10 ring-1 ring-accent-hot/40'
           : `${rarityBg} hover:border-accent-deep`
@@ -68,6 +69,32 @@ export function SlotRow({
       <span className="w-20 shrink-0 truncate font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-faint">
         {slot.name}
       </span>
+      {base ? (
+        <span
+          className="flex h-[38px] w-[38px] shrink-0 items-center justify-center overflow-hidden rounded-[3px] border border-border-2"
+          style={{
+            background: 'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+            boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+          }}
+        >
+          {sprite ? (
+            <img
+              src={sprite}
+              alt=""
+              draggable={false}
+              className="h-full w-full object-contain select-none"
+              style={{ imageRendering: 'pixelated' }}
+            />
+          ) : (
+            <span className={`text-base leading-none ${rarityText}`}>◆</span>
+          )}
+        </span>
+      ) : (
+        <span
+          aria-hidden
+          className="h-[38px] w-[38px] shrink-0 rounded-[3px] border border-dashed border-border/60"
+        />
+      )}
       <span className="flex-1 min-w-0">
         {base ? (
           <>

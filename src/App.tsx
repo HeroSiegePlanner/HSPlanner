@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
 import BottomBar from "./components/BottomBar";
@@ -8,13 +9,23 @@ import { AUTO_OPEN_KEY, BuildSelect } from "./components/buildSelect";
 import LeftStatsPanel from "./components/LeftStatsPanel";
 import { HoverProvider } from "./contexts/HoverProvider";
 import Logo from "./components/Logo";
+import SeasonErrorBanner from "./components/SeasonErrorBanner";
+import SeasonSwitcher from "./components/SeasonSwitcher";
+import SeasonToast from "./components/SeasonToast";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
-import { classes, getClass } from "./data";
+import { activeSeasonId, classes, getClass } from "./data";
+import { PENDING_BUILD_KEY, PENDING_IMPORT_KEY } from "./data/seasons/registry";
 import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
+import { decodeShareToBuild } from "./utils/build/shareBuild";
+import {
+  spriteBootProgress,
+  warmupBootProgress,
+  WARMUP_WEIGHT,
+} from "./utils/bootProgress";
 import { preloadSprites } from "./utils/preloadAssets";
-import { readStorage, readStorageWithLegacy, writeStorage } from "./utils/storage";
+import { readStorage, readStorageWithLegacy, removeStorage, writeStorage } from "./utils/storage";
 const CharacterView = lazy(() => import("./views/CharacterView"));
 const ConfigView = lazy(() => import("./views/ConfigView"));
 const GearView = lazy(() => import("./views/gear/GearView"));
@@ -56,10 +67,6 @@ function readInitialSection(): Section {
   return "tree";
 }
 
-// 0–50% Rust warm-up, 50–100% sprite fetches.
-const WARMUP_WEIGHT = 0.5;
-const SPRITES_WEIGHT = 0.5;
-
 function ViewLoadingFallback() {
   return (
     <div className="flex h-full items-center justify-center">
@@ -82,10 +89,13 @@ function App() {
   const [screen, setScreen] = useState<Screen>("library");
 
   // Boot: warm calc caches and preload sprites while the HTML splash from index.html is visible.
-  // Splash listens via window.__bootProgress / window.__bootFinish.
+  // The bar honestly tracks two real phases: Rust warm-up (0–15%) then sprite
+  // fetches (15–100%). Splash listens via window.__bootProgress / __bootFinish.
   useEffect(() => {
-    // Floor display time to avoid flashing the splash on hot reload.
-    const MIN_DISPLAY_MS = 1200;
+    // Short anti-flash floor so a fast start doesn't just blink the splash.
+    const MIN_DISPLAY_MS = 500;
+    // Reserve the final 1% for the dismissal frame so the bar never parks at 100%.
+    const FINALIZE_RESERVE = 1;
     let cancelled = false;
     const bootStart = performance.now();
 
@@ -94,38 +104,64 @@ function App() {
     };
 
     (async () => {
-      report(2, "Loading game data");
+      // Warm-up owns 0–15%, so seed the bar at 0 (not a fake 2%) to keep it
+      // monotonic when the first warmup-progress event reports current=0.
+      report(0, "Loading game data");
+      // Warm Rust data + parser caches, mirroring its real progress onto 0–15%.
       try {
-        // Pre-initialise Rust data + parser caches so the first real calc isn't slow.
-        await invoke<boolean>("calc_warmup");
+        const unlisten = await listen<{ current: number; total: number }>(
+          "warmup-progress",
+          (e) => {
+            if (cancelled) return;
+            const { pct, status } = warmupBootProgress(
+              e.payload.current,
+              e.payload.total,
+            );
+            report(pct, status);
+          },
+        );
+        try {
+          await invoke<boolean>("calc_warmup", { season: activeSeasonId });
+        } finally {
+          unlisten();
+        }
       } catch {
-        // No Tauri (plain browser) — keep going.
+        // No Tauri (plain browser) — keep going without warm-up.
       }
       if (cancelled) return;
       report(WARMUP_WEIGHT * 100, "Loading sprites");
 
       await preloadSprites((loaded, total) => {
         if (cancelled) return;
-        const fraction = total > 0 ? loaded / total : 1;
-        report(
-          (WARMUP_WEIGHT + SPRITES_WEIGHT * fraction) * 100,
-          "Loading sprites",
-        );
+        const { pct, status } = spriteBootProgress(loaded, total);
+        report(Math.min(pct, 100 - FINALIZE_RESERVE), status);
       });
       if (cancelled) return;
-      report(100, "Ready");
 
-      const elapsed = performance.now() - bootStart;
-      const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+      // Honor the short floor (bar holds just under 100%), then snap to 100% in
+      // the same beat as dismissal so it never sits on a finished bar.
+      const remaining = Math.max(0, MIN_DISPLAY_MS - (performance.now() - bootStart));
       if (remaining > 0) {
         await new Promise((r) => window.setTimeout(r, remaining));
       }
       if (cancelled) return;
+      report(100, "Ready");
       window.__bootFinish?.();
 
-      // "Auto-open last build": skip the library and jump straight into the
-      // most recently updated build when the user opted in.
-      if (readStorage(AUTO_OPEN_KEY) === "1") {
+      // Boot replay: the hub already re-resolved the season, so run any pending action.
+      const pendingBuild = readStorage(PENDING_BUILD_KEY);
+      const pendingImport = readStorage(PENDING_IMPORT_KEY);
+      if (pendingBuild) {
+        removeStorage(PENDING_BUILD_KEY);
+        if (useBuild.getState().loadSavedBuild(pendingBuild)) setScreen("planner");
+      } else if (pendingImport) {
+        removeStorage(PENDING_IMPORT_KEY);
+        const decoded = decodeShareToBuild(pendingImport);
+        if (decoded) {
+          useBuild.getState().importBuildSnapshot(decoded.snapshot, decoded.notes);
+          setScreen("planner");
+        }
+      } else if (readStorage(AUTO_OPEN_KEY) === "1") {
         const recent = listSavedBuilds()[0];
         if (recent && useBuild.getState().loadSavedBuild(recent.id)) {
           setScreen("planner");
@@ -329,11 +365,15 @@ function App() {
                 {cls.primaryAttribute}
               </span>
             )}
+            <SeasonSwitcher />
             <span aria-hidden className="h-6 w-px bg-border" />
             <BuildsMenu onOpenLibrary={() => setScreen("library")} />
             <ShareButton />
           </div>
         </header>
+
+        <SeasonErrorBanner />
+        <SeasonToast />
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <LeftStatsPanel />

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import {
+  activeSeasonId,
   classes,
   gameConfig,
   getClass,
@@ -31,6 +32,7 @@ import {
   setActiveProfile as storeSetActiveProfile,
   setBuildFavorite as storeSetBuildFavorite,
   setBuildNotes as storeSetBuildNotes,
+  setBuildSeason as storeSetBuildSeason,
   setBuildTags as storeSetBuildTags,
   type Folder,
   type SavedBuild,
@@ -40,11 +42,17 @@ import {
   deleteFolder as storeDeleteFolder,
   renameFolder as storeRenameFolder,
 } from '../utils/build/savedFolders'
+import {
+  PENDING_BUILD_KEY,
+  PENDING_IMPORT_KEY,
+  reloadIntoSeason,
+} from '../data/seasons/registry'
 import { guardStorage } from './storageError'
 import { setBridgeErrorListener } from '../lib/calc/bridge'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import {
   defaultEnemyResistances,
+  encodeBuildToShare,
   type BuildSnapshot,
 } from '../utils/build/shareBuild'
 import { ADJ, findPath, reachableFromAny, START_IDS } from '../utils/tree/treeGraph'
@@ -147,6 +155,7 @@ interface BuildActions {
   updateCustomStat: (index: number, patch: Partial<CustomStat>) => void
   removeCustomStat: (index: number) => void
   loadSavedBuild: (buildId: string, profileId?: string) => boolean
+  changeActiveSeason: (season: string) => void
   switchActiveProfile: (profileId: string) => boolean
   commitActiveProfile: () => boolean
   addProfileToActiveBuild: (name: string) => string | null
@@ -705,6 +714,10 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
         }
         const build = getSavedBuild(buildId)
         if (!build) return false
+        // A build of another season reloads the app into its season, then reopens here.
+        if (reloadIntoSeason(build.season, PENDING_BUILD_KEY, buildId, activeSeasonId)) {
+          return true
+        }
         const targetProfileId =
           profileId && build.profiles.some((p) => p.id === profileId)
             ? profileId
@@ -720,6 +733,33 @@ export const useBuild = create<BuildState & BuildActions>((set, get) => ({
           savedBuildsVersion: s.savedBuildsVersion + 1,
         }))
         return true
+      },
+    ),
+
+  // Moves the current build to another season and reloads; saved builds re-stamp, unsaved carry a snapshot.
+  changeActiveSeason: (season) =>
+    guardStorage(
+      (m) => set({ storageError: m }),
+      undefined,
+      () => {
+        const s = get()
+        if (s.activeBuildId && s.activeProfileId) {
+          storeCommitProfile(
+            s.activeBuildId,
+            s.activeProfileId,
+            s.exportBuildSnapshot(),
+          )
+          storeSetBuildSeason(s.activeBuildId, season)
+          reloadIntoSeason(
+            season,
+            PENDING_BUILD_KEY,
+            s.activeBuildId,
+            activeSeasonId,
+          )
+        } else {
+          const code = encodeBuildToShare(s.exportBuildSnapshot(), s.notes)
+          reloadIntoSeason(season, PENDING_IMPORT_KEY, code, activeSeasonId)
+        }
       },
     ),
 

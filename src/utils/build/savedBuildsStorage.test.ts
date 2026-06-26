@@ -82,6 +82,19 @@ describe('savedBuilds v3 — migration', () => {
   })
 })
 
+describe('savedBuilds v3 — corrupt data', () => {
+  it('backs up a corrupt v3 blob instead of silently discarding it', () => {
+    const corrupt = '{"version":3,"builds":[oops not valid json'
+    localStorage.setItem('hsplanner.savedBuilds.v3', corrupt)
+
+    const lib = readLibrary()
+    expect(lib.builds).toEqual([])
+    // The original corrupt blob is preserved under a backup key so a later save
+    // (which overwrites the v3 key) can't permanently destroy recoverable data.
+    expect(localStorage.getItem('hsplanner.savedBuilds.v3.corrupt')).toBe(corrupt)
+  })
+})
+
 describe('savedBuilds v3 — build mutations', () => {
   it('duplicateBuild deep-clones with a fresh id, "(copy)" name and favorite reset', () => {
     seed([makeBuild('b1', { name: 'My Build', favorite: true, tags: ['hc'] })])

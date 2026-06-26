@@ -26,3 +26,13 @@ export function writeStorage(key: string, value: string): boolean {
     return false
   }
 }
+
+export function removeStorage(key: string): void {
+  // Best-effort delete; mirrors readStorage/writeStorage SSR + disabled-storage guards.
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(key)
+  } catch {
+    // ignore — storage unavailable
+  }
+}

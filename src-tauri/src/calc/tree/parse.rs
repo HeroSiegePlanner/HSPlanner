@@ -246,10 +246,17 @@ pub(crate) static RULES: Lazy<Vec<ParseRule>> = Lazy::new(|| {
             },
         },
         ParseRule {
-            test: Regex::new(r"(?i)^([+\-\d.]+)%\s+Increased\s+Maximum\s+Life$").unwrap(),
+            test: Regex::new(
+                r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Maximum\s+Life$",
+            )
+            .unwrap(),
             build: |m| {
                 Some(ParsedMod {
-                    key: "increased_life".to_string(),
+                    key: if m.get(2).is_some() {
+                        "increased_life_more".to_string()
+                    } else {
+                        "increased_life".to_string()
+                    },
                     value: num(&m[1]),
                     self_condition: None,
                 })
@@ -1462,7 +1469,7 @@ pub(crate) static RULES: Lazy<Vec<ParseRule>> = Lazy::new(|| {
             "area_of_effect"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+Increased\s+Crushing\s+Blow\s+Chance$",
+            r"(?i)^([+\-\d.]+)%\s+(?:Increased\s+Crushing\s+Blow\s+Chance|Chance\s+for\s+a\s+Crushing\s+Blow)$",
             "crushing_blow_chance"
         ),
         mod_rule!(
@@ -1542,7 +1549,7 @@ pub(crate) static RULES: Lazy<Vec<ParseRule>> = Lazy::new(|| {
             "evasion_when_struck_chance"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)\s+Evasion\s+Duration$",
+            r"(?i)^([+\-\d.]+)\s+(?:s\s+)?Evasion\s+Duration$",
             "evasion_duration"
         ),
         mod_rule!(
@@ -1610,7 +1617,7 @@ pub(crate) static RULES: Lazy<Vec<ParseRule>> = Lazy::new(|| {
             "defense_ignored"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)\s+Stun\s+Duration$",
+            r"(?i)^([+\-\d.]+)\s+(?:s\s+)?Stun\s+Duration$",
             "stun_duration"
         ),
         mod_rule!(
@@ -1658,7 +1665,7 @@ pub(crate) static RULES: Lazy<Vec<ParseRule>> = Lazy::new(|| {
             "cooldown_recovery_after_kill_chance"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)\s+Cooldown\s+Recovered$",
+            r"(?i)^([+\-\d.]+)\s+(?:s\s+)?Cooldown\s+Recovered$",
             "cooldown_recovered_flat"
         ),
         mod_rule!(
@@ -2228,15 +2235,14 @@ static META_CACHE: Lazy<Mutex<HashMap<String, Option<ParsedMeta>>>> =
 
 // ---------- dispatchers ----------
 
-pub fn parse_tree_node_mod(line: &str) -> Option<ParsedMod> {
-    let trimmed = line.trim();
-    {
-        let cache = MOD_CACHE.lock().unwrap();
-        if let Some(cached) = cache.get(trimmed) {
-            return cached.clone();
-        }
-    }
+enum ModRuleOutcome {
+    Stat(ParsedMod),
+    /// A null-rule matched: line is recognized but intentionally carries no stat.
+    Reject,
+    NoMatch,
+}
 
+fn match_mod_rules(trimmed: &str) -> ModRuleOutcome {
     let (base, self_condition) = strip_self_condition(trimmed);
     let mut candidates: Vec<String> = vec![base.clone()];
     let stripped = strip_weapon_context(&base);
@@ -2252,19 +2258,13 @@ pub fn parse_tree_node_mod(line: &str) -> Option<ParsedMod> {
             match (rule.build)(&caps) {
                 None => {
                     // Explicit reject: abort, do not try further rules.
-                    MOD_CACHE.lock().unwrap().insert(trimmed.to_string(), None);
-                    return None;
+                    return ModRuleOutcome::Reject;
                 }
                 Some(built) if built.value.is_finite() => {
-                    let out = ParsedMod {
+                    return ModRuleOutcome::Stat(ParsedMod {
                         self_condition: self_condition.or(built.self_condition),
                         ..built
-                    };
-                    MOD_CACHE
-                        .lock()
-                        .unwrap()
-                        .insert(trimmed.to_string(), Some(out.clone()));
-                    return Some(out);
+                    });
                 }
                 Some(_) => {
                     // Non-finite value (e.g. NaN from bad capture) — try next rule.
@@ -2273,8 +2273,50 @@ pub fn parse_tree_node_mod(line: &str) -> Option<ParsedMod> {
             }
         }
     }
-    MOD_CACHE.lock().unwrap().insert(trimmed.to_string(), None);
-    None
+    ModRuleOutcome::NoMatch
+}
+
+pub fn parse_tree_node_mod(line: &str) -> Option<ParsedMod> {
+    let trimmed = line.trim();
+    {
+        let cache = MOD_CACHE.lock().unwrap();
+        if let Some(cached) = cache.get(trimmed) {
+            return cached.clone();
+        }
+    }
+    let out = match match_mod_rules(trimmed) {
+        ModRuleOutcome::Stat(m) => Some(m),
+        ModRuleOutcome::Reject | ModRuleOutcome::NoMatch => None,
+    };
+    MOD_CACHE
+        .lock()
+        .unwrap()
+        .insert(trimmed.to_string(), out.clone());
+    out
+}
+
+pub enum TreeLineClass {
+    Stat(ParsedMod),
+    Meta(ParsedMeta),
+    RecognizedNoStat,
+    Unknown,
+}
+
+pub fn classify_tree_node_line(line: &str) -> TreeLineClass {
+    let trimmed = line.trim();
+    match match_mod_rules(trimmed) {
+        ModRuleOutcome::Stat(m) => TreeLineClass::Stat(m),
+        // Mod-then-meta flow: a stat-rejected line still gets a meta pass, so
+        // meta-only lines (e.g. conversions) classify as parsed, not dropped.
+        ModRuleOutcome::Reject => match parse_tree_node_meta(trimmed) {
+            Some(meta) => TreeLineClass::Meta(meta),
+            None => TreeLineClass::RecognizedNoStat,
+        },
+        ModRuleOutcome::NoMatch => match parse_tree_node_meta(trimmed) {
+            Some(meta) => TreeLineClass::Meta(meta),
+            None => TreeLineClass::Unknown,
+        },
+    }
 }
 
 pub fn parse_tree_node_meta(line: &str) -> Option<ParsedMeta> {
@@ -2319,6 +2361,95 @@ pub fn parse_tree_node_meta(line: &str) -> Option<ParsedMeta> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // ---- classify_tree_node_line ----
+
+    #[test]
+    fn classify_stat_line_returns_stat_with_key() {
+        match classify_tree_node_line("+10 to Maximum Life") {
+            TreeLineClass::Stat(m) => {
+                assert_eq!(m.key, "life");
+                assert_eq!(m.value, 10.0);
+            }
+            _ => panic!("expected Stat"),
+        }
+    }
+
+    #[test]
+    fn classify_null_rule_line_is_recognized_no_stat() {
+        assert!(matches!(
+            classify_tree_node_line("Path to any Black Hole"),
+            TreeLineClass::RecognizedNoStat
+        ));
+    }
+
+    #[test]
+    fn classify_null_rule_conversion_line_is_meta() {
+        // Rejected as a stat by a null rule but still a conversion the engine
+        // applies — must classify as parsed (Meta), not silently dropped.
+        assert!(matches!(
+            classify_tree_node_line("12% of Resistances converted to Life"),
+            TreeLineClass::Meta(ParsedMeta::Convert(_))
+        ));
+    }
+
+    #[test]
+    fn classify_conversion_line_is_meta() {
+        match classify_tree_node_line("20% of Physical Damage converted to Fire") {
+            TreeLineClass::Meta(ParsedMeta::Convert(c)) => {
+                assert_eq!(c.pct, 20.0);
+            }
+            _ => panic!("expected Meta(Convert)"),
+        }
+    }
+
+    #[test]
+    fn classify_gibberish_is_unknown() {
+        assert!(matches!(
+            classify_tree_node_line("Totally not a real mod line"),
+            TreeLineClass::Unknown
+        ));
+    }
+
+    // Regression for rules the TS parser had but Rust initially missed
+    // (found by the one-shot TS↔Rust classification diff).
+    #[test]
+    fn rule_seconds_unit_and_crushing_blow_alternative() {
+        let cases = [
+            ("+0.1 s Cooldown Recovered", "cooldown_recovered_flat", 0.1),
+            ("+2 s Stun Duration", "stun_duration", 2.0),
+            ("+2 s Evasion Duration", "evasion_duration", 2.0),
+            ("+3% Chance for a Crushing Blow", "crushing_blow_chance", 3.0),
+            ("+2 Stun Duration", "stun_duration", 2.0),
+        ];
+        for (line, key, value) in cases {
+            let parsed = parse_tree_node_mod(line)
+                .unwrap_or_else(|| panic!("line must parse: {line}"));
+            assert_eq!(parsed.key, key, "line: {line}");
+            assert_eq!(parsed.value, value, "line: {line}");
+        }
+    }
+
+    // Penalty prefix "+-N" mirrors JS Number(): strip '+', keep the negative.
+    #[test]
+    fn rule_penalty_prefix_parses_negative() {
+        let parsed = parse_tree_node_mod("+-10% to All Resistances").expect("parses");
+        assert_eq!(parsed.key, "all_resistances");
+        assert_eq!(parsed.value, -10.0);
+    }
+
+    #[test]
+    fn classify_agrees_with_parse_tree_node_mod_on_stats() {
+        let line = "+5 to Strength";
+        let parsed = parse_tree_node_mod(line).expect("parses");
+        match classify_tree_node_line(line) {
+            TreeLineClass::Stat(m) => {
+                assert_eq!(m.key, parsed.key);
+                assert_eq!(m.value, parsed.value);
+            }
+            _ => panic!("expected Stat"),
+        }
+    }
 
     // ---- num ----
 
@@ -2437,6 +2568,7 @@ mod tests {
         assert_mod("+10 to Maximum Life", "life", 10.0);
         assert_mod("+250 to Maximum Mana", "mana", 250.0);
         assert_mod("5% Increased Maximum Life", "increased_life", 5.0);
+        assert_mod("5% Increased Total Maximum Life", "increased_life_more", 5.0);
         assert_mod("8% Increased Maximum Mana", "increased_mana", 8.0);
         assert_mod("5% Increased Total Maximum Mana", "increased_mana_more", 5.0);
         assert_mod("12% Increased Mana", "increased_mana", 12.0);

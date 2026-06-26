@@ -5,8 +5,14 @@ import { SkillIconImage } from '../components/SkillIconImage'
 import { resolveSkillIcon } from '../data'
 import { gameConfig, skills } from '../data'
 import { subskillKey, useBuild } from '../store/build'
-import { parseCustomStatValue } from '../utils/item/parseCustomStat'
-import { formatValue, normalizeSkillName, statDef } from '../utils/item/stats'
+import { useCalcResult } from '../hooks/useCalcResult'
+import { parseCustomStatsNative } from '../lib/calc/bridge'
+import {
+  dedupeStatDefsByKey,
+  formatValue,
+  normalizeSkillName,
+  statDef,
+} from '../utils/item/stats'
 import type { Skill, SubskillNode } from '../types'
 import {
   SELF_CONDITION_KEYS,
@@ -68,6 +74,15 @@ export default function ConfigView() {
   const setKillsPerSec = useBuild((s) => s.setKillsPerSec)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
+
+  const parsedCustomValues = useCalcResult<([number, number] | null)[]>(
+    () =>
+      customStats.length === 0
+        ? []
+        : parseCustomStatsNative(customStats.map((cs) => cs.value)),
+    [customStats],
+    [],
+  )
 
   const buffSkills = useMemo(() => {
     if (!classId) return []
@@ -159,13 +174,13 @@ export default function ConfigView() {
 
   const statOptions = useMemo(
     () =>
-      gameConfig.stats
-        .filter((s) => !s.itemOnly && !s.skillScoped)
-        .map((s) => ({
-          id: s.key,
-          label: s.name,
-          hint: s.format === 'percent' ? '%' : 'flat',
-        })),
+      dedupeStatDefsByKey(
+        gameConfig.stats.filter((s) => !s.itemOnly && !s.skillScoped),
+      ).map((s) => ({
+        id: s.key,
+        label: s.name,
+        hint: s.format === 'percent' ? '%' : 'flat',
+      })),
     [],
   )
 
@@ -718,7 +733,13 @@ export default function ConfigView() {
         ) : (
           <ul className="space-y-2">
             {customStats.map((cs, i) => {
-              const parsed = parseCustomStatValue(cs.value)
+              const parsedPair = parsedCustomValues[i] ?? null
+              const parsed =
+                parsedPair === null
+                  ? null
+                  : parsedPair[0] === parsedPair[1]
+                    ? parsedPair[0]
+                    : parsedPair
               const def = cs.statKey ? statDef(cs.statKey) : undefined
               const willApply = !!cs.statKey && parsed !== null
               const previewText =

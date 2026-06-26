@@ -1,0 +1,58 @@
+{
+  "list": {
+    "base": [
+      { "id": "alpha", "valueMin": 1, "valueMax": 2, "tags": ["old"] },
+      { "id": "beta", "valueMin": 3, "valueMax": 4 },
+      { "id": "gamma", "valueMin": 5, "valueMax": 6 }
+    ],
+    "patch": {
+      "remove": ["beta"],
+      "change": { "alpha": { "valueMax": 20, "tags": ["new", "hot"] } },
+      "add": [{ "id": "delta", "valueMin": 7, "valueMax": 8 }]
+    },
+    "expected": [
+      { "id": "alpha", "valueMin": 1, "valueMax": 20, "tags": ["new", "hot"] },
+      { "id": "gamma", "valueMin": 5, "valueMax": 6 },
+      { "id": "delta", "valueMin": 7, "valueMax": 8 }
+    ]
+  },
+  "record": {
+    "base": {
+      "10": { "t": "Strength", "n": "normal", "l": ["+5 to Strength"] },
+      "12": { "t": "Haste", "n": "big", "l": ["+4% to Spell Haste"] }
+    },
+    "patch": {
+      "remove": ["12"],
+      "change": { "10": { "l": ["+8 to Strength"] } },
+      "add": { "14": { "t": "Corruption", "n": "normal", "l": ["+1% Corruption"] } }
+    },
+    "expected": {
+      "10": { "t": "Strength", "n": "normal", "l": ["+8 to Strength"] },
+      "14": { "t": "Corruption", "n": "normal", "l": ["+1% Corruption"] }
+    }
+  },
+  "gameConfig": {
+    "base": {
+      "experience_gain": 4,
+      "stats": [
+        { "key": "alpha", "name": "Alpha", "format": "flat" },
+        { "key": "beta", "name": "Beta", "format": "percent" }
+      ]
+    },
+    "patch": {
+      "change": { "experience_gain": 7 },
+      "stats": {
+        "remove": ["beta"],
+        "change": { "alpha": { "name": "Alpha Prime" } },
+        "add": [{ "key": "gamma", "name": "Gamma", "format": "flat" }]
+      }
+    },
+    "expected": {
+      "experience_gain": 7,
+      "stats": [
+        { "key": "alpha", "name": "Alpha Prime", "format": "flat" },
+        { "key": "gamma", "name": "Gamma", "format": "flat" }
+      ]
+    }
+  }
+}

@@ -1,17 +1,9 @@
-import { gameConfig, getItem, isGearSlot } from '../../data'
+import { gameConfig } from '../../data'
 import type { ForgeKind } from '../../data'
-import {
-  isStatStarImmune,
-  itemGrantedSkillRankFlatBonus,
-  statStarFlatBonus,
-  statStarPercentMultiplier,
-} from './starScaling'
 import type {
   AttributeKey,
-  Inventory,
   RangedStatMap,
   RangedValue,
-  Skill,
   StatDef,
 } from '../../types'
 
@@ -51,28 +43,9 @@ export interface ComputedStats {
   stats: RangedStatMap
   attributeSources: Record<AttributeKey, SourceContribution[]>
   statSources: Record<string, SourceContribution[]>
-}
-
-export function combineAdditiveAndMore(
-  additive: RangedValue | undefined,
-  more: RangedValue | undefined,
-): RangedValue {
-  const [aMin, aMax] =
-    additive === undefined
-      ? [0, 0]
-      : typeof additive === 'number'
-        ? [additive, additive]
-        : additive
-  const [mMin, mMax] =
-    more === undefined
-      ? [0, 0]
-      : typeof more === 'number'
-        ? [more, more]
-        : more
-  const round = (n: number) => Math.round(n * 1e6) / 1e6
-  const min = round(((1 + aMin / 100) * (1 + mMin / 100) - 1) * 100)
-  const max = round(((1 + aMax / 100) * (1 + mMax / 100) - 1) * 100)
-  return min === max ? min : [min, max]
+  statsCombined: Record<string, RangedValue>
+  itemSkillBonuses: Record<string, [number, number]>
+  rankBonuses: Record<string, [number, number]>
 }
 
 export function statName(key: string): string {
@@ -84,6 +57,39 @@ export function statName(key: string): string {
     if (baseName) return `Total ${baseName}`
   }
   return key
+}
+
+// Buckets visible stat keys by category. Dedupes keys because gameConfig.stats
+// may alias one key under several display names (item-text parsing aliases);
+// each key must surface once so list renders get unique React keys.
+export function groupStatKeysByCategory(
+  defs: readonly StatDef[],
+  categories: readonly string[],
+): Record<string, string[]> {
+  const out: Record<string, string[]> = {}
+  for (const category of categories) out[category] = []
+  const seen = new Set<string>()
+  for (const def of defs) {
+    if (def.modifiesAttribute || def.itemOnly || def.skillScoped) continue
+    if (seen.has(def.key)) continue
+    const bucket = out[def.category]
+    if (!bucket) continue
+    seen.add(def.key)
+    bucket.push(def.key)
+  }
+  return out
+}
+
+// Keeps the first definition per key. gameConfig.stats may alias one key
+// under several display names (item-text parsing aliases); pickers need one
+// def per key so option lists get unique React keys.
+export function dedupeStatDefsByKey(defs: readonly StatDef[]): StatDef[] {
+  const seen = new Set<string>()
+  return defs.filter((def) => {
+    if (seen.has(def.key)) return false
+    seen.add(def.key)
+    return true
+  })
 }
 
 export function statDef(key: string): StatDef | undefined {
@@ -253,189 +259,31 @@ export interface WeaponDamageBreakdown {
   dpsMax: number
 }
 
-export function rolledAffixValue(
+export function formatAffixRangeFromValues(
   affix: {
     sign: '+' | '-'
     format: 'flat' | 'percent'
     valueMin: number | null
     valueMax: number | null
   },
-  roll: number,
-): number {
-  if (affix.valueMin === null || affix.valueMax === null) return 0
-  const raw =
-    affix.valueMin === affix.valueMax
-      ? affix.valueMax
-      : affix.valueMin + (affix.valueMax - affix.valueMin) * roll
-  const rounded = affix.format === 'flat' ? Math.round(raw) : raw
-  return affix.sign === '-' ? -rounded : rounded
-}
-
-function affixStarMultiplier(
-  statKey: string | null,
-  stars: number | undefined,
-): number {
-  return statStarPercentMultiplier(statKey, stars)
-}
-
-export function rolledAffixRange(affix: {
-  sign: '+' | '-'
-  format: 'flat' | 'percent'
-  valueMin: number | null
-  valueMax: number | null
-}): RangedValue {
-  if (affix.valueMin === null || affix.valueMax === null) return 0
-  const round = (n: number) => (affix.format === 'flat' ? Math.round(n) : n)
-  const min = round(affix.valueMin)
-  const max = round(affix.valueMax)
-  if (affix.sign === '-') {
-    return min === max ? -max : [-max, -min]
-  }
-  return min === max ? min : [min, max]
-}
-
-export function isAffixStarImmune(statKey: string | null): boolean {
-  return isStatStarImmune(statKey)
-}
-
-export function rolledAffixValueWithStars(
-  affix: {
-    sign: '+' | '-'
-    format: 'flat' | 'percent'
-    valueMin: number | null
-    valueMax: number | null
-    statKey: string | null
-  },
-  roll: number,
-  stars: number | undefined,
-): number {
-  const base = rolledAffixValue(affix, roll)
-  const mult = affixStarMultiplier(affix.statKey, stars)
-  const flat = statStarFlatBonus(affix.statKey, stars)
-  if (base === 0 && flat === 0) return 0
-  const direction = affix.sign === '-' ? -1 : 1
-  const scaled = base * mult + flat * direction
-  const starsActive = (stars ?? 0) > 0 && (mult !== 1 || flat !== 0)
-  if (starsActive) return Math.floor(scaled)
-  return affix.format === 'flat' ? Math.round(scaled) : scaled
-}
-
-export function formatAffixRange(
-  affix: {
-    sign: '+' | '-'
-    format: 'flat' | 'percent'
-    valueMin: number | null
-    valueMax: number | null
-    statKey: string | null
-  },
-  stars?: number,
+  range: { rangeMin: number; rangeMax: number } | null,
 ): string {
-  if (affix.valueMin === null || affix.valueMax === null) return affix.sign
-  const minSigned = rolledAffixValueWithStars(affix, 0, stars)
-  const maxSigned = rolledAffixValueWithStars(affix, 1, stars)
+  if (!range || affix.valueMin === null || affix.valueMax === null) {
+    return affix.sign
+  }
   const fmtAbs = (v: number) => {
     const abs = Math.abs(v)
     return Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
   }
-  const lo = fmtAbs(minSigned)
-  const hi = fmtAbs(maxSigned)
+  const lo = fmtAbs(range.rangeMin)
+  const hi = fmtAbs(range.rangeMax)
   const sign =
-    affix.sign === '-' || minSigned < 0 || maxSigned < 0 ? '-' : '+'
+    affix.sign === '-' || range.rangeMin < 0 || range.rangeMax < 0 ? '-' : '+'
   const suffix = affix.format === 'percent' ? '%' : ''
   if (lo === hi) return `${sign}${hi}${suffix}`
   return `${sign}[${lo}-${hi}]${suffix}`
 }
 
-export function applyStarsToRangedValue(
-  value: RangedValue,
-  statKey: string,
-  stars: number | undefined,
-): RangedValue {
-  if (!stars || stars <= 0) return value
-  const flat =
-    statKey === 'item_granted_skill_rank'
-      ? itemGrantedSkillRankFlatBonus(stars)
-      : statStarFlatBonus(statKey, stars)
-  const mult = statStarPercentMultiplier(statKey, stars)
-  if (mult === 1 && flat === 0) return value
-  if (typeof value === 'number') {
-    return Math.floor(value * mult + flat)
-  }
-  const [min, max] = value
-  return [Math.floor(min * mult + flat), Math.floor(max * mult + flat)]
-}
-
 export function shouldScaleImplicit(isRuneword: boolean): boolean {
   return !isRuneword
-}
-
-export function aggregateItemSkillBonuses(
-  inventory: Inventory,
-): Record<string, [number, number]> {
-  const out: Record<string, [number, number]> = {}
-  for (const [slotKey, item] of Object.entries(inventory)) {
-    if (!item) continue
-    const base = getItem(item.baseId)
-    if (!base?.skillBonuses) continue
-    const stars = isGearSlot(slotKey) ? item.stars : undefined
-    for (const [skillName, val] of Object.entries(base.skillBonuses)) {
-      const scaled = applyStarsToRangedValue(val, 'item_granted_skill_rank', stars)
-      const min = Math.round(rangedMin(scaled))
-      const max = Math.round(rangedMax(scaled))
-      const key = normalizeSkillName(skillName)
-      const cur = out[key] ?? [0, 0]
-      out[key] = [cur[0] + min, cur[1] + max]
-    }
-  }
-  return out
-}
-
-export function effectiveRankRangeFor(
-  skill: Skill,
-  baseRank: number,
-  stats: RangedStatMap,
-  itemSkillBonuses: Record<string, [number, number]>,
-): [number, number] {
-  if (baseRank <= 0) return [0, 0]
-  const all = stats.all_skills ?? 0
-  const elem = skill.damageType
-    ? (stats[`${skill.damageType}_skills`] ?? 0)
-    : 0
-  const item = itemSkillBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
-  return [
-    baseRank + rangedMin(all) + rangedMin(elem) + item[0],
-    baseRank + rangedMax(all) + rangedMax(elem) + item[1],
-  ]
-}
-
-export function passiveStatsAtRank(
-  skill: Skill,
-  rank: number,
-): Record<string, number> {
-  if (!skill.passiveStats || rank <= 0) return {}
-  const { base, perRank } = skill.passiveStats
-  const out: Record<string, number> = {}
-  if (base) for (const [k, v] of Object.entries(base)) out[k] = v
-  if (perRank) {
-    for (const [k, v] of Object.entries(perRank)) {
-      out[k] = (out[k] ?? 0) + v * (rank - 1)
-    }
-  }
-  for (const k of Object.keys(out)) {
-    out[k] = Math.round(out[k]! * 1000) / 1000
-  }
-  return out
-}
-
-export function manaCostAtRank(skill: Skill, rank: number): number | undefined {
-  if (rank <= 0) rank = 1
-  if (skill.manaCostFormula) {
-    return Math.floor(
-      skill.manaCostFormula.base +
-        skill.manaCostFormula.perLevel * (rank - 1),
-    )
-  }
-  const exact = skill.ranks.find((r) => r.rank === rank)
-  if (exact?.manaCost !== undefined) return exact.manaCost
-  return skill.ranks[0]?.manaCost
 }

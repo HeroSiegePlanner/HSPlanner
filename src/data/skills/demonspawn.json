@@ -4,233 +4,379 @@
     "classId": "demonspawn",
     "name": "Bone Fragments",
     "kind": "active",
-    "description": "",
+    "description": "Cast fragments of bone towards target location dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Bone Conjurer",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 14.1, "perLevel": 6.73 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Impale", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ossification", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "impale",
     "classId": "demonspawn",
     "name": "Impale",
     "kind": "active",
-    "description": "",
+    "description": "Summon spikes from the ground impaling monsters in a target area dealing arcane damage and knocking them up.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 260,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Bone Conjurer",
-    "position": { "row": 0, "col": 1 }
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 16, "perLevel": 8 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "bone_storm",
     "classId": "demonspawn",
     "name": "Bone Storm",
     "kind": "active",
-    "description": "",
+    "description": "Summon a storm of bone and cartilage surrounding you dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Orbital"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Bone Conjurer",
-    "position": { "row": 1, "col": 0 }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 18 }],
+    "damageFormula": { "base": 0.6, "perLevel": 6.7 },
+    "manaCostFormula": { "base": 18, "perLevel": 2.48 },
+    "bonusSources": [
+      { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Spinal Tap", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "ossification",
     "classId": "demonspawn",
     "name": "Ossification",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your defense and gives you a burst of movement speed after killing a monster.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Bone Conjurer",
-    "position": { "row": 1, "col": 2 }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "enhanced_defense": 2.5, "movement_speed": 2 },
+      "perRank": { "enhanced_defense": 2.5, "movement_speed": 2 }
+    }
   },
   {
     "id": "cartilage_build_up",
     "classId": "demonspawn",
     "name": "Cartilage Build Up",
     "kind": "passive",
-    "description": "",
+    "description": "When damaged by cartilage and bone monsters are stacked up and at 10 stacks they explode spreading bone and cartilage around them dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Passive", "Explosion"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Bone Conjurer",
-    "position": { "row": 2, "col": 1 }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.4, "perLevel": 30.25 },
+    "proc": { "chance": 25, "trigger": "on_hit", "target": "Cartilage Build Up" },
+    "bonusSources": [
+      { "source": "Impale", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Single Out", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ossification", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "single_out",
     "classId": "demonspawn",
     "name": "Single Out",
     "kind": "passive",
-    "description": "",
+    "description": "Monsters that have no other monsters around them take increased arcane damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Bone Conjurer",
-    "position": { "row": 2, "col": 2 }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2 },
+      "perRank": { "arcane_skill_damage": 2 }
+    }
   },
   {
     "id": "spinal_tap",
     "classId": "demonspawn",
     "name": "Spinal Tap",
     "kind": "active",
-    "description": "",
+    "description": "Rip the spine out of monsters at target location dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 240,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Bone Conjurer",
-    "position": { "row": 3, "col": 1 }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.4, "perLevel": 20.65 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Impale", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8, "per": "attribute_point" }
+    ]
   },
   {
     "id": "ominous_presence",
     "classId": "demonspawn",
     "name": "Ominous Presence",
     "kind": "aura",
-    "description": "",
+    "description": "When active, increases your and your party members arcane skill damage.",
+    "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
     "tree": "Bone Conjurer",
-    "position": { "row": 3, "col": 2 }
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2 },
+      "perRank": { "arcane_skill_damage": 2 }
+    }
   },
   {
     "id": "bone_barrage",
     "classId": "demonspawn",
     "name": "Bone Barrage",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a barrage of bones in target direction dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Bone Conjurer",
-    "position": { "row": 4, "col": 0 }
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 19.37 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Single Out", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "blood_bolts",
     "classId": "demonspawn",
     "name": "Blood Bolts",
     "kind": "active",
-    "description": "",
+    "description": "Unleash bolts of blood towards target location dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Blood Lord",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 14.1, "perLevel": 6.75 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Single Out", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
+      { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Blood Demons", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.8, "per": "attribute_point" }
+    ]
   },
   {
     "id": "manapool_aura",
     "classId": "demonspawn",
     "name": "Manapool Aura",
     "kind": "aura",
-    "description": "",
+    "description": "When active, increases your and your party members mana replenish.",
+    "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Aura"],
     "tree": "Blood Lord",
-    "position": { "row": 0, "col": 2 }
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana_replenish_pct": 20 },
+      "perRank": { "mana_replenish_pct": 4 }
+    }
   },
   {
     "id": "gut_spread",
     "classId": "demonspawn",
     "name": "Gut Spread",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Every 6th cast causes your intestines to boil and burst lumps of blood around you dealing a portion of blood bolts damage as arcane damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Blood Lord",
-    "position": { "row": 1, "col": 0 }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "of_total_damage": 5 },
+      "perRank": { "of_total_damage": 5 }
+    }
   },
   {
     "id": "mana_shield",
     "classId": "demonspawn",
     "name": "Mana Shield",
     "kind": "buff",
-    "description": "",
+    "description": "When active, create a mana shield around you that reduces physical damage taken and absorbs a portion of damage taken as mana.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
     "tree": "Blood Lord",
-    "position": { "row": 1, "col": 2 }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "passiveStats": {
+      "base": { "magic_damage_reduction": 1, "damage_recouped_as_mana": 12 },
+      "perRank": { "magic_damage_reduction": 0.5, "damage_recouped_as_mana": 2 }
+    }
   },
   {
     "id": "demonic_presence",
     "classId": "demonspawn",
     "name": "Demonic Presence",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your arcane skill damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Blood Lord",
-    "position": { "row": 2, "col": 1 }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2 },
+      "perRank": { "arcane_skill_damage": 2 }
+    }
   },
   {
     "id": "mana_devour",
     "classId": "demonspawn",
     "name": "Mana Devour",
     "kind": "active",
-    "description": "",
+    "description": "Instantly restores a portion of your mana.",
+    "tags": ["Cast", "Active"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Blood Lord",
-    "position": { "row": 2, "col": 2 }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "passiveStats": {
+      "base": { "mana_replenish_pct": 5 },
+      "perRank": { "mana_replenish_pct": 2 }
+    }
   },
   {
     "id": "blood_surge",
     "classId": "demonspawn",
     "name": "Blood Surge",
     "kind": "active",
-    "description": "",
+    "description": "Channel a massive surge of blood towards target direction dealing arcane damage to enemies in its path.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 65,
+    "range": 2000,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Blood Lord",
-    "position": { "row": 3, "col": 0 }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.4, "perLevel": 8.4 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Blood Bolts", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Blood Demons", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.66, "per": "attribute_point" }
+    ]
   },
   {
     "id": "blood_demons",
     "classId": "demonspawn",
     "name": "Blood Demons",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Chance on spellcast to summon a blood demon towards the closest monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Blood Lord",
-    "position": { "row": 3, "col": 1 }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.4, "perLevel": 17.57 },
+    "proc": { "chance": 40, "trigger": "on_cast", "target": "Blood Demon" },
+    "bonusSources": [
+      { "source": "Blood Surge", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Blood Bolts", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.6, "per": "attribute_point" }
+    ]
   },
   {
     "id": "blood_tendrils",
     "classId": "demonspawn",
     "name": "Blood Tendrils",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Blood surge now causes its target to release blood tendrils for a portion of its damage.",
+    "tags": ["Passive", "Chain Lightning"],
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Blood Lord",
-    "position": { "row": 4, "col": 1 }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "of_total_damage": 15 },
+      "perRank": { "of_total_damage": 3 }
+    }
   }
 ]

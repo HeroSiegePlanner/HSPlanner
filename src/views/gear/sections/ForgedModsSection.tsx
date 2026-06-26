@@ -2,11 +2,14 @@ import { useMemo, useState } from 'react'
 import PickerModal, { type PickerRow } from '../../../components/PickerModal'
 import { crystalMods, FORGE_KIND_LABEL, getCrystalMod } from '../../../data'
 import type { ForgeKind } from '../../../data'
-import { formatValue } from '../../../utils/item/stats'
+import {
+  formatAffixRangeFromValues,
+  formatValue,
+} from '../../../utils/item/stats'
 import type { EquippedItem } from '../../../types'
 import { affixAverageStats, buildCrystalModTooltip } from '../tooltips'
 import { SectionCard } from '../SectionCard'
-import { formatAffixRange } from './AffixesSection'
+import { useAffixDisplayRanges } from './AffixesSection'
 
 export function ForgedModsSection({
   forgeKind,
@@ -26,6 +29,12 @@ export function ForgedModsSection({
     [equipped.forgedMods],
   )
   const sourceLabel = FORGE_KIND_LABEL[forgeKind]
+
+  const modItems = useMemo(
+    () => mods.map((eq) => ({ def: getCrystalMod(eq.affixId) })),
+    [mods],
+  )
+  const modRanges = useAffixDisplayRanges(modItems)
 
   const previousStats = useMemo<Record<string, number>>(() => {
     const eq = mods[0]
@@ -97,7 +106,7 @@ export function ForgedModsSection({
                 <span className="font-mono font-semibold tabular-nums text-accent-hot">
                   {eq.customValue !== undefined && mod.statKey
                     ? formatValue(eq.customValue, mod.statKey)
-                    : formatAffixRange(mod)}
+                    : formatAffixRangeFromValues(mod, modRanges[idx] ?? null)}
                 </span>
                 <span className="truncate text-text/85">{mod.name}</span>
                 <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">

@@ -1,12 +1,13 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+use tauri::Emitter;
 
 use super::build::{BuildPerformance, BuildPerformanceDeps, compute_build_performance};
 use super::skills as calc;
 use super::stats::{
     BuildStatsInput, ComputedStats, StatBreakdown, compute_build_stats, compute_stat_breakdown,
 };
-use super::types::{CustomStat, Inventory, TreeSocketContent};
+use super::types::{Affix, CustomStat, Inventory, TreeSocketContent};
 
 #[derive(Deserialize)]
 #[serde(untagged)]
@@ -118,6 +119,279 @@ impl From<SkillDto> for calc::Skill {
             attack_scaling: None,
         }
     }
+}
+
+// ---------- passive_stats_at_rank / mana_cost_at_rank ----------
+// Thin commands over calc/passive.rs so the UI reads passive-rank stats and
+// mana cost from the same source the engine uses.
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PassiveStatsDto {
+    #[serde(default)]
+    pub base: HashMap<String, f64>,
+    #[serde(default)]
+    pub per_rank: HashMap<String, f64>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ManaCostFormulaDto {
+    pub base: f64,
+    pub per_level: f64,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SkillRankDto {
+    pub rank: u32,
+    #[serde(default)]
+    pub mana_cost: Option<f64>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PassiveSkillDto {
+    #[serde(default)]
+    pub passive_stats: Option<PassiveStatsDto>,
+    #[serde(default)]
+    pub mana_cost_formula: Option<ManaCostFormulaDto>,
+    #[serde(default)]
+    pub ranks: Vec<SkillRankDto>,
+}
+
+impl From<PassiveSkillDto> for super::passive::PassiveSkill {
+    fn from(v: PassiveSkillDto) -> Self {
+        super::passive::PassiveSkill {
+            passive_stats: v.passive_stats.map(|p| super::passive::PassiveStats {
+                base: p.base,
+                per_rank: p.per_rank,
+            }),
+            mana_cost_formula: v.mana_cost_formula.map(|f| super::passive::ManaCostFormula {
+                base: f.base,
+                per_level: f.per_level,
+            }),
+            ranks: v
+                .ranks
+                .into_iter()
+                .map(|r| super::passive::SkillRank {
+                    rank: r.rank,
+                    mana_cost: r.mana_cost,
+                })
+                .collect(),
+        }
+    }
+}
+
+// rank arrives as a JS number; clamp like the former TS helpers (rank <= 0 -> empty / 1).
+#[tauri::command]
+pub fn passive_stats_at_rank(skill: PassiveSkillDto, rank: f64) -> HashMap<String, f64> {
+    if rank <= 0.0 {
+        return HashMap::new();
+    }
+    super::passive::passive_stats_at_rank(&skill.into(), rank as u32)
+}
+
+#[tauri::command]
+pub fn mana_cost_at_rank(skill: PassiveSkillDto, rank: f64) -> Option<f64> {
+    let r = if rank <= 0.0 { 1 } else { rank as u32 };
+    super::passive::mana_cost_at_rank(&skill.into(), r)
+}
+
+// ---------- parse_custom_stats ----------
+// Batched custom-stat input validation so the config UI previews exactly what
+// calc/custom_stat.rs will apply.
+
+#[tauri::command]
+pub fn parse_custom_stats(values: Vec<String>) -> Vec<Option<[f64; 2]>> {
+    values
+        .iter()
+        .map(|v| super::custom_stat::parse_custom_stat_value(v).map(|(a, b)| [a, b]))
+        .collect()
+}
+
+// ---------- display_values ----------
+// Batched affix/star display math for tooltips and editors; replaces the
+// former TS rolledAffixValue*/applyStarsToRangedValue helpers.
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AffixValueReq {
+    pub affix: Affix,
+    #[serde(default)]
+    pub roll: f64,
+    #[serde(default)]
+    pub stars: Option<u32>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ScaledValueReq {
+    pub value: [f64; 2],
+    pub stat_key: String,
+    #[serde(default)]
+    pub stars: Option<u32>,
+}
+
+#[derive(Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayValuesInput {
+    #[serde(default)]
+    pub affixes: Vec<AffixValueReq>,
+    #[serde(default)]
+    pub scaled: Vec<ScaledValueReq>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AffixValueOut {
+    pub value: f64,
+    pub range_min: f64,
+    pub range_max: f64,
+}
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayValuesOutput {
+    pub affixes: Vec<AffixValueOut>,
+    pub scaled: Vec<[f64; 2]>,
+}
+
+pub fn display_values_impl(input: &DisplayValuesInput) -> DisplayValuesOutput {
+    use super::affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars};
+    DisplayValuesOutput {
+        affixes: input
+            .affixes
+            .iter()
+            .map(|r| AffixValueOut {
+                value: rolled_affix_value_with_stars(&r.affix, r.roll, r.stars),
+                range_min: rolled_affix_value_with_stars(&r.affix, 0.0, r.stars),
+                range_max: rolled_affix_value_with_stars(&r.affix, 1.0, r.stars),
+            })
+            .collect(),
+        scaled: input
+            .scaled
+            .iter()
+            .map(|r| {
+                let out =
+                    apply_stars_to_ranged_value((r.value[0], r.value[1]), &r.stat_key, r.stars);
+                [out.0, out.1]
+            })
+            .collect(),
+    }
+}
+
+// Star scaling reads per-season config, so the season rides as a command param.
+#[tauri::command]
+pub fn display_values(input: DisplayValuesInput, season: Option<String>) -> DisplayValuesOutput {
+    let _scope = crate::calc::season::SeasonScope::enter(season);
+    display_values_impl(&input)
+}
+
+// ---------- classify_tree_nodes ----------
+// Bulk three-way line classification for the tree tooltips; replaces the
+// former TS classifyNodeLines so the UI shows exactly what the engine parses.
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct NodeLineClassification {
+    pub parsed: Vec<String>,
+    pub unsupported: Vec<String>,
+}
+
+pub fn classify_tree_nodes_impl() -> HashMap<String, NodeLineClassification> {
+    use super::tree::parse::{TreeLineClass, classify_tree_node_line};
+    super::data::tree_nodes()
+        .iter()
+        .map(|(id, node)| {
+            let mut out = NodeLineClassification::default();
+            for line in &node.l {
+                match classify_tree_node_line(line) {
+                    TreeLineClass::Stat(_) | TreeLineClass::Meta(_) => {
+                        out.parsed.push(line.clone())
+                    }
+                    TreeLineClass::RecognizedNoStat => {}
+                    TreeLineClass::Unknown => out.unsupported.push(line.clone()),
+                }
+            }
+            (id.clone(), out)
+        })
+        .collect()
+}
+
+#[tauri::command]
+pub fn classify_tree_nodes(season: Option<String>) -> HashMap<String, NodeLineClassification> {
+    let _scope = crate::calc::season::SeasonScope::enter(season);
+    classify_tree_nodes_impl()
+}
+
+// ---------- subskill_aggregation ----------
+// Thin command over calc/subskill.rs so the skill tooltip reads subtree
+// bonuses from the same aggregation the engine uses.
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SubskillAggregationInput {
+    pub class_id: String,
+    pub skill_id: String,
+    #[serde(default)]
+    pub subskill_ranks: HashMap<String, u32>,
+    #[serde(default)]
+    pub enemy_conditions: HashMap<String, bool>,
+    #[serde(default)]
+    pub season: Option<String>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AppliedStateOut {
+    pub state: String,
+    pub trigger: String,
+    pub chance: f64,
+    pub amount: Option<f64>,
+}
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct SubskillAggregationOutput {
+    pub stats: HashMap<String, f64>,
+    pub proc_stats: HashMap<String, f64>,
+    pub applied_states: Vec<AppliedStateOut>,
+}
+
+fn subskill_aggregation_impl(input: &SubskillAggregationInput) -> SubskillAggregationOutput {
+    let Some(spec) = super::data::get_skills_by_class(&input.class_id)
+        .iter()
+        .find(|s| s.id == input.skill_id)
+    else {
+        return SubskillAggregationOutput::default();
+    };
+    let owner = super::stats::skill_spec_to_subskill_owner(spec);
+    let agg = super::subskill::aggregate_subskill_stats(
+        &owner,
+        &input.subskill_ranks,
+        Some(&input.enemy_conditions),
+    );
+    SubskillAggregationOutput {
+        stats: agg.stats,
+        proc_stats: agg.proc_stats,
+        applied_states: agg
+            .applied_states
+            .into_iter()
+            .map(|s| AppliedStateOut {
+                state: s.state,
+                trigger: s.trigger,
+                chance: s.chance,
+                amount: s.amount,
+            })
+            .collect(),
+    }
+}
+
+#[tauri::command]
+pub fn subskill_aggregation(input: SubskillAggregationInput) -> SubskillAggregationOutput {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
+    subskill_aggregation_impl(&input)
 }
 
 #[derive(Deserialize)]
@@ -390,7 +664,7 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
 #[tauri::command]
 pub fn compute_weapon_damage(input: WeaponDamageInput) -> WeaponDamageOutput {
     let weapon: Option<calc::Weapon> = input.weapon.map(Into::into);
-    let stats = ranged_map(input.stats);
+    let stats = ranged_map(normalized_keys(input.stats));
     calc::compute_weapon_damage(
         weapon.as_ref(),
         &stats,
@@ -442,10 +716,13 @@ pub struct BuildPerformanceInput {
     pub proc_toggles: HashMap<String, bool>,
     #[serde(default)]
     pub kills_per_sec: f64,
+    #[serde(default)]
+    pub season: Option<String>,
 }
 
 #[tauri::command]
 pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     let deps = BuildPerformanceDeps {
         class_id: input.class_id.as_deref(),
         level: input.level,
@@ -469,27 +746,61 @@ pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance 
     compute_build_performance(&deps)
 }
 
+/// Warm-up progress: `current` of `total` tree nodes parsed. Emitted as
+/// "warmup-progress" so the boot splash can drive an honest 0–15% slice.
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct WarmupProgress {
+    current: u32,
+    total: u32,
+}
+
 /// Warms the data Lazy and the tree-mod parser caches so the first real calc
-/// after launch isn't stuck compiling ~300 regexes on the UI thread.
-#[tauri::command]
-pub fn calc_warmup() -> bool {
+/// after launch isn't stuck compiling ~300 regexes on the UI thread. Reports
+/// progress via `on_progress(current, total)`; IO-free so tests can drive it
+/// without a Tauri app handle.
+pub fn run_warmup<F: FnMut(u32, u32)>(mut on_progress: F) -> bool {
     let d = super::data::data();
     if d.items.is_empty() {
         return false;
     }
-    for node in super::data::tree_nodes().values() {
+    let nodes = super::data::tree_nodes();
+    let total = nodes.len() as u32;
+    // Cap emitted ticks so a ~1000-node warm-up doesn't flood the event channel.
+    let step = (nodes.len() / 20).max(1);
+    for (i, node) in nodes.values().enumerate() {
         for line in &node.l {
             let _ = super::tree::parse::parse_tree_node_mod(line);
             let _ = super::tree::parse::parse_tree_node_meta(line);
         }
+        if i % step == 0 {
+            on_progress(i as u32, total);
+        }
     }
+    on_progress(total, total);
     true
+}
+
+/// Tauri command: runs the warm-up off the event loop so the webview stays
+/// responsive, emitting "warmup-progress" for the boot splash.
+#[tauri::command]
+pub async fn calc_warmup(app: tauri::AppHandle, season: Option<String>) -> bool {
+    // Scope lives inside the blocking closure so it never crosses an .await.
+    tauri::async_runtime::spawn_blocking(move || {
+        let _scope = crate::calc::season::SeasonScope::enter(season);
+        run_warmup(|current, total| {
+            let _ = app.emit("warmup-progress", WarmupProgress { current, total });
+        })
+    })
+    .await
+    .unwrap_or(false)
 }
 
 /// Returns full stats plus per-stat source breakdown rendered by StatsView and
 /// the tooltips. Reuses `BuildPerformanceInput`; damage/proc fields are unused here.
 #[tauri::command]
 pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     let stats_input = BuildStatsInput {
         class_id: input.class_id.as_deref(),
         level: input.level,
@@ -531,6 +842,7 @@ pub enum StatBreakdownKind {
 
 #[tauri::command]
 pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
+    let _scope = crate::calc::season::SeasonScope::enter(input.deps.season.clone());
     let stats_input = BuildStatsInput {
         class_id: input.deps.class_id.as_deref(),
         level: input.deps.level,
@@ -556,4 +868,100 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         StatBreakdownKind::Attribute => computed.attributes.get(&input.stat_key).copied(),
     };
     compute_stat_breakdown(sources, &input.stat_key, final_value)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_custom_stats_batch_mirrors_custom_stat_parser() {
+        let out = parse_custom_stats(vec![
+            "100".to_string(),
+            "50-80".to_string(),
+            "not a number".to_string(),
+        ]);
+        assert_eq!(out[0], Some([100.0, 100.0]));
+        assert_eq!(out[1], Some([50.0, 80.0]));
+        assert_eq!(out[2], None);
+    }
+
+    #[test]
+    fn display_values_batch_matches_affix_math() {
+        let affix = Affix {
+            id: "t".into(),
+            stat_key: Some("life".into()),
+            value_min: Some(10.0),
+            value_max: Some(20.0),
+            ..Default::default()
+        };
+        let input = DisplayValuesInput {
+            affixes: vec![AffixValueReq {
+                affix: affix.clone(),
+                roll: 0.5,
+                stars: None,
+            }],
+            scaled: vec![ScaledValueReq {
+                value: [10.0, 20.0],
+                stat_key: "life".into(),
+                stars: Some(0),
+            }],
+        };
+        let out = display_values_impl(&input);
+        assert_eq!(
+            out.affixes[0].value,
+            super::super::affix::rolled_affix_value(&affix, 0.5)
+        );
+        assert_eq!(out.affixes[0].range_min, 10.0);
+        assert_eq!(out.affixes[0].range_max, 20.0);
+        assert_eq!(out.scaled[0], [10.0, 20.0]);
+    }
+
+    #[test]
+    fn classify_tree_nodes_partitions_every_node_line() {
+        let map = classify_tree_nodes_impl();
+        assert!(!map.is_empty(), "tree data should yield nodes");
+        let nodes = super::super::data::tree_nodes();
+        for (id, cls) in &map {
+            let node = nodes.get(id).expect("classified id exists in data");
+            assert!(cls.parsed.len() + cls.unsupported.len() <= node.l.len());
+            for line in cls.parsed.iter().chain(cls.unsupported.iter()) {
+                assert!(node.l.contains(line), "line must come from the node");
+            }
+        }
+    }
+
+    #[test]
+    fn every_tree_node_line_is_supported_in_all_seasons() {
+        // Every tree-node line must classify as parsed (stat or meta) in each
+        // season; an unrecognized future pattern fails here, not silently.
+        for season in ["s9", "s10"] {
+            let _scope = crate::calc::season::SeasonScope::enter(Some(season.to_string()));
+            let map = classify_tree_nodes_impl();
+            let nodes = super::super::data::tree_nodes();
+            for (id, cls) in &map {
+                assert!(
+                    cls.unsupported.is_empty(),
+                    "season {season} node {id} ({}) has unsupported lines: {:?}",
+                    nodes.get(id).map(|n| n.t.as_str()).unwrap_or(""),
+                    cls.unsupported,
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn subskill_aggregation_unknown_skill_returns_empty() {
+        let input = SubskillAggregationInput {
+            class_id: "no_such_class".to_string(),
+            skill_id: "no_such_skill".to_string(),
+            subskill_ranks: HashMap::from([("no_such_skill:sub".to_string(), 3)]),
+            enemy_conditions: HashMap::new(),
+            season: None,
+        };
+        let out = subskill_aggregation_impl(&input);
+        assert!(out.stats.is_empty());
+        assert!(out.proc_stats.is_empty());
+        assert!(out.applied_states.is_empty());
+    }
 }

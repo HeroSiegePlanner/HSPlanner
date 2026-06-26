@@ -1,0 +1,62 @@
+{
+  "add": [
+    { "id": "s10_captains_anchor", "name": "Captain's Anchor", "baseType": "Charm", "slot": "charm_1", "rarity": "heroic" },
+    { "id": "s10_ghastly_skull", "name": "Ghastly Skull", "baseType": "Charm", "slot": "charm_1", "rarity": "heroic" },
+    { "id": "s10_grimtides_necklace", "name": "Grimtide's Necklace", "baseType": "Amulet", "slot": "amulet", "rarity": "heroic" },
+    { "id": "s10_skeleton_crews_band", "name": "Skeleton Crew's Band", "baseType": "Ring", "slot": "ring_1", "rarity": "heroic" },
+    { "id": "s10_ethereal_musket", "name": "Ethereal Musket", "baseType": "Rifle Gun", "slot": "weapon", "rarity": "heroic" },
+    { "id": "s10_grimtides_scimitar", "name": "Grimtide's Scimitar", "baseType": "Sword", "slot": "weapon", "rarity": "heroic" },
+    { "id": "s10_ghostplunderers_marchers", "name": "Ghostplunderer's Marchers", "baseType": "Boots", "slot": "boots", "rarity": "heroic" },
+    { "id": "s10_captains_attire", "name": "Captain's Attire", "baseType": "Body Armor", "slot": "armor", "rarity": "heroic" },
+    { "id": "s10_parasitic_heart", "name": "Parasitic Heart", "baseType": "Charm", "slot": "charm_1", "rarity": "heroic" },
+    { "id": "s10_parasite_queens_tiara", "name": "Parasite Queen's Tiara", "baseType": "Helmet", "slot": "helmet", "rarity": "heroic" },
+    { "id": "s10_blood_maggot_pendant", "name": "Blood Maggot Pendant", "baseType": "Amulet", "slot": "amulet", "rarity": "heroic" },
+    { "id": "s10_conjured_tentacle", "name": "Conjured Tentacle", "baseType": "Wand", "slot": "weapon", "rarity": "heroic" },
+    { "id": "s10_overgrowth", "name": "Overgrowth", "baseType": "Shield", "slot": "offhand", "rarity": "heroic" },
+    { "id": "s10_infected_grasp", "name": "Infected Grasp", "baseType": "Gloves", "slot": "gloves", "rarity": "heroic" },
+    { "id": "s10_jar_of_parasites", "name": "Jar of Parasites", "baseType": "Charm", "slot": "charm_1", "rarity": "heroic" },
+    { "id": "s10_parasite_loop", "name": "Parasite Loop", "baseType": "Ring", "slot": "ring_1", "rarity": "heroic" },
+    { "id": "s10_ghost_armada", "name": "Ghost Armada", "baseType": "Charm", "slot": "charm_1", "rarity": "heroic" },
+    { "id": "s10_phantom_scimitar", "name": "Phantom Scimitar", "baseType": "Sword", "slot": "weapon", "rarity": "heroic", "twoHanded": true },
+    { "id": "s10_leviathans_crown", "name": "Leviathan's Crown", "baseType": "Helmet", "slot": "helmet", "rarity": "heroic" },
+    { "id": "s10_phantom_strike", "name": "Phantom Strike", "baseType": "Bow", "slot": "weapon", "rarity": "heroic", "twoHanded": true },
+    { "id": "s10_leviathans_spine", "name": "Leviathan's Spine", "baseType": "Cane", "slot": "weapon", "rarity": "heroic" },
+    { "id": "s10_leviathans_ribcage", "name": "Leviathan's Ribcage", "baseType": "Body Armor", "slot": "armor", "rarity": "heroic" },
+    { "id": "s10_phantoms_step", "name": "Phantom's Step", "baseType": "Boots", "slot": "boots", "rarity": "heroic" },
+    { "id": "s10_leviathans_blood", "name": "Leviathan's Blood", "baseType": "Potion", "slot": "potion_1", "rarity": "heroic" }
+  ],
+  "change": {
+    "weapons_heroic_ukkos_revenge": {
+      "implicit": {
+        "enhanced_damage": [420, 525],
+        "all_skills": [2, 3],
+        "lightning_skills": [3, 5],
+        "faster_cast_rate": [35, 55],
+        "extra_lightning_dmg_stasis": [20, 30],
+        "to_intelligence": 25,
+        "lightning_skill_damage": [25, 40],
+        "ignore_lightning_res": [15, 25],
+        "max_lightning_resistance": 5
+      }
+    },
+    "boots_heroic_chaoswalkers": {
+      "implicit": {
+        "enhanced_defense": [180, 225],
+        "all_skills": [4, 6],
+        "movement_speed": [65, 80],
+        "extra_damage_ailments": [8, 15],
+        "all_attributes": 40,
+        "magic_skill_damage": [30, 40],
+        "faster_hit_recovery": 75
+      }
+    },
+    "claw_heroic_glacier_talons": {
+      "uniqueEffects": [
+        "4% Chance after each Kill to cast Blizzard Level 80",
+        "Skill Movement Diminish decreased by 50%",
+        "+40 to Energy (Based on Level)",
+        "+75 to Intelligence (Based on Level)"
+      ]
+    }
+  }
+}

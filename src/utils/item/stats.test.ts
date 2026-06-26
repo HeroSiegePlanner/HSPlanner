@@ -1,40 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import type { Inventory, RangedStatMap, Skill } from '../types'
+import { gameConfig } from '../../data'
+import type { StatDef } from '../../types'
+import type { RangedStatMap } from '../../types'
 import {
-  aggregateItemSkillBonuses,
-  applyStarsToRangedValue,
-  combineAdditiveAndMore,
+  dedupeStatDefsByKey,
   effectiveCap,
-  effectiveRankRangeFor,
   fmtStats,
-  formatAffixRange,
+  formatAffixRangeFromValues,
   formatValue,
-  isAffixStarImmune,
+  groupStatKeysByCategory,
   isZero,
-  manaCostAtRank,
   normalizeSkillName,
-  passiveStatsAtRank,
   rangedMax,
   rangedMin,
-  rolledAffixRange,
-  rolledAffixValue,
-  rolledAffixValueWithStars,
   shouldScaleImplicit,
   statName,
 } from './stats'
 
-// -----------------------------------------------------------------------
-// Test fixtures
-// -----------------------------------------------------------------------
-
-const FIRE_SKILL_WITH_FORMULA: Skill = {
-  id: 'test_fire',
-  name: 'Test Fire',
-  classId: 'mage',
-  damageType: 'fire',
-  damageFormula: { base: 10, perLevel: 5 },
-  ranks: [],
-} as unknown as Skill
+// Affix/star math (rolled values, star scaling, item skill bonuses) moved to
+// Rust — covered by src-tauri/src/calc/{affix,star_scaling,rank}.rs tests.
 
 // -----------------------------------------------------------------------
 // normalizeSkillName
@@ -79,35 +63,6 @@ describe('isZero', () => {
     expect(isZero(1)).toBe(false)
     expect(isZero([0, 1])).toBe(false)
     expect(isZero([-1, 0])).toBe(false)
-  })
-})
-
-// -----------------------------------------------------------------------
-// combineAdditiveAndMore
-// -----------------------------------------------------------------------
-
-describe('combineAdditiveAndMore', () => {
-  it('returns 0 when both inputs are undefined', () => {
-    expect(combineAdditiveAndMore(undefined, undefined)).toBe(0)
-  })
-
-  it('compounds additive% and more%: (1+a)*(1+m)-1', () => {
-    // 50% additive + 20% more = (1.5 * 1.2 - 1) * 100 = 80
-    expect(combineAdditiveAndMore(50, 20)).toBe(80)
-  })
-
-  it('handles negative values (e.g. "less" multipliers)', () => {
-    // 0 additive + -20% more = (1 * 0.8 - 1) * 100 = -20
-    expect(combineAdditiveAndMore(0, -20)).toBe(-20)
-  })
-
-  it('returns a tuple when both ranges differ at the bounds', () => {
-    // additive [10, 30], more [0, 0] → [10, 30]
-    expect(combineAdditiveAndMore([10, 30], 0)).toEqual([10, 30])
-  })
-
-  it('collapses to a scalar when min equals max', () => {
-    expect(combineAdditiveAndMore([50, 50], [20, 20])).toBe(80)
   })
 })
 
@@ -169,202 +124,50 @@ describe('formatValue / fmtStats', () => {
 })
 
 // -----------------------------------------------------------------------
-// Affix rolling
+// formatAffixRangeFromValues — string formatting over Rust-computed ranges
 // -----------------------------------------------------------------------
 
-describe('rolledAffixValue', () => {
-  const baseAffix = {
-    sign: '+' as const,
-    format: 'flat' as const,
-    valueMin: 10,
-    valueMax: 20,
-  }
-
-  it('returns 0 when the affix has no documented range', () => {
-    expect(rolledAffixValue({ ...baseAffix, valueMin: null, valueMax: null }, 0.5)).toBe(0)
-  })
-
-  it('returns the exact value when min equals max (no lerp)', () => {
-    expect(rolledAffixValue({ ...baseAffix, valueMin: 7, valueMax: 7 }, 0.5)).toBe(7)
-  })
-
-  it('lerps roll=0 to min and roll=1 to max', () => {
-    expect(rolledAffixValue(baseAffix, 0)).toBe(10)
-    expect(rolledAffixValue(baseAffix, 1)).toBe(20)
-  })
-
-  it('rounds flat-format values to integers', () => {
-    // roll=0.5 → 15 exactly, which is already integer
-    expect(rolledAffixValue(baseAffix, 0.5)).toBe(15)
-    // odd roll exercises rounding
-    expect(rolledAffixValue(baseAffix, 0.33)).toBe(13) // 10 + 10*0.33 = 13.3 → 13
-  })
-
-  it('preserves fractional values for percent format', () => {
-    const percentAffix = { ...baseAffix, format: 'percent' as const, valueMin: 1, valueMax: 2 }
-    expect(rolledAffixValue(percentAffix, 0.5)).toBe(1.5)
-  })
-
-  it('negates the result when the sign is "-"', () => {
-    expect(rolledAffixValue({ ...baseAffix, sign: '-' }, 1)).toBe(-20)
-  })
-})
-
-describe('rolledAffixRange', () => {
-  it('returns 0 when the affix has no documented range', () => {
+describe('formatAffixRangeFromValues', () => {
+  it('returns just the sign when min/max are null or no range is available', () => {
     expect(
-      rolledAffixRange({
-        sign: '+',
-        format: 'flat',
-        valueMin: null,
-        valueMax: null,
-      }),
-    ).toBe(0)
-  })
-
-  it('collapses to a scalar when min equals max', () => {
-    expect(
-      rolledAffixRange({ sign: '+', format: 'flat', valueMin: 5, valueMax: 5 }),
-    ).toBe(5)
-  })
-
-  it('returns [min, max] for non-degenerate ranges', () => {
-    expect(
-      rolledAffixRange({ sign: '+', format: 'flat', valueMin: 3, valueMax: 9 }),
-    ).toEqual([3, 9])
-  })
-
-  it('flips the sign and order for "-" sign (so the range stays ascending)', () => {
-    expect(
-      rolledAffixRange({ sign: '-', format: 'flat', valueMin: 3, valueMax: 9 }),
-    ).toEqual([-9, -3])
-  })
-})
-
-describe('isAffixStarImmune', () => {
-  it('delegates to starScaling.isStatStarImmune', () => {
-    expect(isAffixStarImmune('to_strength')).toBe(false)
-    expect(isAffixStarImmune('totally_made_up_stat')).toBe(true)
-  })
-})
-
-describe('rolledAffixValueWithStars', () => {
-  const percentAffix = {
-    sign: '+' as const,
-    format: 'percent' as const,
-    valueMin: 10,
-    valueMax: 20,
-    statKey: 'to_strength',
-  }
-
-  it('returns base value when stars is 0 / undefined', () => {
-    expect(rolledAffixValueWithStars(percentAffix, 1, 0)).toBe(20)
-    expect(rolledAffixValueWithStars(percentAffix, 1, undefined)).toBe(20)
-  })
-
-  it('applies the percent multiplier and floors when stars are active', () => {
-    // roll=1 → base 20; 5 stars * 5% = 25% bonus → 20 * 1.25 = 25
-    expect(rolledAffixValueWithStars(percentAffix, 1, 5)).toBe(25)
-  })
-
-  it('returns 0 when both base and flat bonus are 0', () => {
-    expect(
-      rolledAffixValueWithStars(
-        { ...percentAffix, valueMin: 0, valueMax: 0 },
-        1,
-        3,
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'flat', valueMin: null, valueMax: null },
+        { rangeMin: 0, rangeMax: 0 },
       ),
-    ).toBe(0)
-  })
-
-  it('adds the flat-skill-staircase bonus for elemental_skills affixes', () => {
-    // fire_skills is flat-skill-staircase. 3 stars adds +1 flat, no percent.
-    const flatAffix = {
-      sign: '+' as const,
-      format: 'flat' as const,
-      valueMin: 1,
-      valueMax: 1,
-      statKey: 'fire_skills',
-    }
-    expect(rolledAffixValueWithStars(flatAffix, 1, 3)).toBe(2) // 1 + 1
-    expect(rolledAffixValueWithStars(flatAffix, 1, 5)).toBe(3) // 1 + 2
-  })
-})
-
-describe('formatAffixRange', () => {
-  it('returns just the sign when min/max are null', () => {
+    ).toBe('+')
     expect(
-      formatAffixRange({
-        sign: '+',
-        format: 'flat',
-        valueMin: null,
-        valueMax: null,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'flat', valueMin: 1, valueMax: 2 },
+        null,
+      ),
     ).toBe('+')
   })
 
   it('formats degenerate ranges as a single signed value', () => {
     expect(
-      formatAffixRange({
-        sign: '+',
-        format: 'flat',
-        valueMin: 5,
-        valueMax: 5,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'flat', valueMin: 5, valueMax: 5 },
+        { rangeMin: 5, rangeMax: 5 },
+      ),
     ).toBe('+5')
   })
 
   it('formats ranges as +[lo-hi] with the right suffix', () => {
     expect(
-      formatAffixRange({
-        sign: '+',
-        format: 'percent',
-        valueMin: 10,
-        valueMax: 20,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '+', format: 'percent', valueMin: 10, valueMax: 20 },
+        { rangeMin: 10, rangeMax: 20 },
+      ),
     ).toBe('+[10-20]%')
   })
 
-  it('flips to "-" when both bounds end up negative after star scaling', () => {
+  it('flips to "-" for negative ranges (rangeMin/Max are roll-0/roll-1 values)', () => {
     expect(
-      formatAffixRange({
-        sign: '-',
-        format: 'flat',
-        valueMin: 3,
-        valueMax: 9,
-        statKey: null,
-      }),
+      formatAffixRangeFromValues(
+        { sign: '-', format: 'flat', valueMin: 3, valueMax: 9 },
+        { rangeMin: -3, rangeMax: -9 },
+      ),
     ).toBe('-[3-9]')
-  })
-})
-
-describe('applyStarsToRangedValue', () => {
-  it('returns the value unchanged when stars is 0 / undefined', () => {
-    expect(applyStarsToRangedValue(10, 'to_strength', 0)).toBe(10)
-    expect(applyStarsToRangedValue([5, 7], 'to_strength', undefined)).toEqual([5, 7])
-  })
-
-  it('applies the percent multiplier and floors scalar values', () => {
-    // 100 * (1 + 5 * 5/100) = 125
-    expect(applyStarsToRangedValue(100, 'to_strength', 5)).toBe(125)
-  })
-
-  it('applies the multiplier element-wise to tuples', () => {
-    // [100, 200] * 1.25 = [125, 250]
-    expect(applyStarsToRangedValue([100, 200], 'to_strength', 5)).toEqual([125, 250])
-  })
-
-  it('routes item_granted_skill_rank through the item-specific staircase', () => {
-    // The synthetic key uses ITEM_SPECIFIC_STAIRCASE: 5 stars adds +3.
-    expect(applyStarsToRangedValue(1, 'item_granted_skill_rank', 5)).toBe(4)
-  })
-
-  it('returns the value unchanged when neither multiplier nor flat bonus applies', () => {
-    // all_skills has kind: 'none' so stars must not change it.
-    expect(applyStarsToRangedValue(5, 'all_skills', 5)).toBe(5)
   })
 })
 
@@ -379,126 +182,109 @@ describe('shouldScaleImplicit', () => {
 })
 
 // -----------------------------------------------------------------------
-// aggregateItemSkillBonuses
+// groupStatKeysByCategory
 // -----------------------------------------------------------------------
 
-describe('aggregateItemSkillBonuses', () => {
-  it('returns an empty map for an empty inventory', () => {
-    expect(aggregateItemSkillBonuses({} as Inventory)).toEqual({})
-  })
+const mkDef = (key: string, overrides: Partial<StatDef> = {}): StatDef => ({
+  key,
+  name: key,
+  category: 'offense',
+  ...overrides,
 })
 
-// -----------------------------------------------------------------------
-// effectiveRankRangeFor
-// -----------------------------------------------------------------------
-
-describe('effectiveRankRangeFor', () => {
-  it('returns [0, 0] for unallocated skills', () => {
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 0, {}, {})).toEqual([0, 0])
+describe('groupStatKeysByCategory', () => {
+  it('buckets visible stat keys by category', () => {
+    const grouped = groupStatKeysByCategory(
+      [mkDef('a'), mkDef('b', { category: 'defense' })],
+      ['offense', 'defense'],
+    )
+    expect(grouped.offense).toEqual(['a'])
+    expect(grouped.defense).toEqual(['b'])
   })
 
-  it('adds all_skills and element_skills bonuses to the base rank', () => {
-    // base 5 + all_skills 1 + fire_skills 2 = 8 (degenerate range)
-    const stats: RangedStatMap = { all_skills: 1, fire_skills: 2 }
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, stats, {})).toEqual([8, 8])
+  it('emits a key once when defs alias it under two display names', () => {
+    // game-config.json defines damage_per_rage_stack twice (parsing aliases);
+    // rendering the key twice triggers React duplicate-key warnings.
+    const grouped = groupStatKeysByCategory(
+      [mkDef('damage_per_rage_stack'), mkDef('damage_per_rage_stack')],
+      ['offense'],
+    )
+    expect(grouped.offense).toEqual(['damage_per_rage_stack'])
   })
 
-  it('returns a range when bonuses are ranged', () => {
-    // base 5 + all_skills [0,2] + fire_skills [0,1] = [5, 8]
-    const stats: RangedStatMap = { all_skills: [0, 2], fire_skills: [0, 1] }
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, stats, {})).toEqual([5, 8])
-  })
-
-  it('adds item-granted skill bonuses keyed by normalised skill name', () => {
-    // 'Test Fire' normalised = 'test fire'
-    const itemBonuses = { 'test fire': [1, 3] as [number, number] }
-    expect(effectiveRankRangeFor(FIRE_SKILL_WITH_FORMULA, 5, {}, itemBonuses)).toEqual([6, 8])
-  })
-})
-
-// -----------------------------------------------------------------------
-// passiveStatsAtRank
-// -----------------------------------------------------------------------
-
-describe('passiveStatsAtRank', () => {
-  it('returns an empty record at rank 0', () => {
-    const skill = {
-      passiveStats: { base: { life: 10 } },
-      ranks: [],
-    } as unknown as Skill
-    expect(passiveStatsAtRank(skill, 0)).toEqual({})
-  })
-
-  it('returns just the base stats at rank 1 (perRank multiplier is 0)', () => {
-    const skill = {
-      passiveStats: {
-        base: { life: 100 },
-        perRank: { life: 25 },
-      },
-      ranks: [],
-    } as unknown as Skill
-    expect(passiveStatsAtRank(skill, 1)).toEqual({ life: 100 })
-  })
-
-  it('compounds base + perRank * (rank - 1)', () => {
-    const skill = {
-      passiveStats: {
-        base: { life: 100 },
-        perRank: { life: 25 },
-      },
-      ranks: [],
-    } as unknown as Skill
-    // rank 5: 100 + 25 * 4 = 200
-    expect(passiveStatsAtRank(skill, 5)).toEqual({ life: 200 })
-  })
-
-  it('rounds to 3 decimal places to avoid floating-point drift', () => {
-    const skill = {
-      passiveStats: { perRank: { x: 0.1 } },
-      ranks: [],
-    } as unknown as Skill
-    // (rank-1) * 0.1 — at rank 4 that's 0.30000000000000004 in raw FP.
-    expect(passiveStatsAtRank(skill, 4)).toEqual({ x: 0.3 })
-  })
-})
-
-// -----------------------------------------------------------------------
-// manaCostAtRank
-// -----------------------------------------------------------------------
-
-describe('manaCostAtRank', () => {
-  it('uses the formula when manaCostFormula is set, flooring the result', () => {
-    const skill = {
-      manaCostFormula: { base: 10, perLevel: 1.5 },
-      ranks: [],
-    } as unknown as Skill
-    // rank 3: floor(10 + 1.5 * 2) = floor(13) = 13
-    expect(manaCostAtRank(skill, 3)).toBe(13)
-  })
-
-  it('treats rank <= 0 as rank 1 for the formula', () => {
-    const skill = {
-      manaCostFormula: { base: 10, perLevel: 1.5 },
-      ranks: [],
-    } as unknown as Skill
-    expect(manaCostAtRank(skill, 0)).toBe(10)
-  })
-
-  it('looks up the exact rank in the ranks table when no formula is set', () => {
-    const skill = {
-      ranks: [
-        { rank: 1, manaCost: 5 },
-        { rank: 2, manaCost: 10 },
-        { rank: 3, manaCost: 15 },
+  it('skips attribute-modifying, item-only and skill-scoped defs', () => {
+    const grouped = groupStatKeysByCategory(
+      [
+        mkDef('attr_mod', { modifiesAttribute: 'strength' }),
+        mkDef('item_only', { itemOnly: true }),
+        mkDef('skill_scoped', { skillScoped: true }),
+        mkDef('kept'),
       ],
-    } as unknown as Skill
-    expect(manaCostAtRank(skill, 2)).toBe(10)
+      ['offense'],
+    )
+    expect(grouped.offense).toEqual(['kept'])
   })
 
-  it('falls back to the rank-1 entry when the requested rank is missing', () => {
-    const skill = {
-      ranks: [{ rank: 1, manaCost: 5 }],
-    } as unknown as Skill
-    expect(manaCostAtRank(skill, 99)).toBe(5)
+  it('ignores defs whose category has no bucket', () => {
+    const grouped = groupStatKeysByCategory(
+      [mkDef('a', { category: 'utility' })],
+      ['offense'],
+    )
+    expect(grouped.offense).toEqual([])
+    expect(grouped.utility).toBeUndefined()
+  })
+
+  it('yields unique keys per bucket for the real game config', () => {
+    const grouped = groupStatKeysByCategory(gameConfig.stats, [
+      'base',
+      'offense',
+      'defense',
+      'resource',
+      'utility',
+    ])
+    for (const keys of Object.values(grouped)) {
+      expect(new Set(keys).size).toBe(keys.length)
+    }
+    expect(
+      grouped.offense.filter((k) => k === 'damage_per_rage_stack'),
+    ).toHaveLength(1)
+  })
+})
+
+// -----------------------------------------------------------------------
+// dedupeStatDefsByKey
+// -----------------------------------------------------------------------
+
+describe('dedupeStatDefsByKey', () => {
+  it('keeps the first definition when defs alias one key', () => {
+    const first = mkDef('damage_per_rage_stack', {
+      name: 'Increased Damage per Stack of Rage',
+    })
+    const second = mkDef('damage_per_rage_stack', {
+      name: 'Increased Damage per Rage Stack',
+    })
+    expect(dedupeStatDefsByKey([first, second])).toEqual([first])
+  })
+
+  it('preserves the order of distinct keys', () => {
+    const defs = [mkDef('a'), mkDef('b'), mkDef('a')]
+    expect(dedupeStatDefsByKey(defs).map((d) => d.key)).toEqual(['a', 'b'])
+  })
+
+  it('yields unique custom-stat option ids for the real game config', () => {
+    // ConfigView builds its SearchableSelect options from this exact
+    // pipeline; duplicate ids re-trigger the React duplicate-key warning
+    // in PickerModal. The raw config must keep the aliased defs (item-text
+    // parsing relies on them), so the picker pipeline has to dedupe.
+    const visible = gameConfig.stats.filter(
+      (s) => !s.itemOnly && !s.skillScoped,
+    )
+    expect(
+      visible.filter((s) => s.key === 'damage_per_rage_stack').length,
+    ).toBeGreaterThan(1)
+
+    const keys = dedupeStatDefsByKey(visible).map((d) => d.key)
+    expect(new Set(keys).size).toBe(keys.length)
+    expect(keys.filter((k) => k === 'damage_per_rage_stack')).toHaveLength(1)
   })
 })

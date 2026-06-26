@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { NativeSkillDamageInput } from '../utils/nativeDamage'
 import { computeSkillDamageNative } from '../utils/nativeDamage'
-import type { SkillDamageBreakdown } from '../utils/stats'
+import type { SkillDamageBreakdown } from '../utils/item/stats'
 import { useSkillDamage } from './useSkillDamage'
 
 vi.mock('../utils/nativeDamage', () => ({

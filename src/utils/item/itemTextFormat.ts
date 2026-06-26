@@ -24,14 +24,21 @@ import type {
   SocketType,
 } from '../../types'
 import {
-  applyStarsToRangedValue,
-  formatAffixRange,
+  formatAffixRangeFromValues,
   formatValue,
   isZero,
-  rolledAffixValueWithStars,
+  rangedMax,
+  rangedMin,
   shouldScaleImplicit,
   statName,
 } from './stats'
+import { displayValuesNative } from '../../lib/calc/bridge'
+import type {
+  AffixValueOutput,
+  AffixValueRequest,
+  DisplayValuesOutput,
+  ScaledValueRequest,
+} from '../../lib/calc/bridge'
 
 export interface ParseError {
   line: number
@@ -42,6 +49,26 @@ export interface ParseError {
 export interface ParseResult {
   equipped: EquippedItem | null
   errors: ParseError[]
+}
+
+// Affix/star math provider: production uses the Rust display_values command;
+// tests inject a deterministic stub so serialize/parse round-trips stay
+// runnable outside the Tauri runtime.
+export interface AffixMathProvider {
+  batch(input: {
+    affixes?: AffixValueRequest[]
+    scaled?: ScaledValueRequest[]
+  }): Promise<DisplayValuesOutput>
+}
+
+export const nativeAffixMath: AffixMathProvider = {
+  batch: displayValuesNative,
+}
+
+const EMPTY_BATCH: DisplayValuesOutput = { affixes: [], scaled: [] }
+
+function toPair(v: number | [number, number]): [number, number] {
+  return [rangedMin(v), rangedMax(v)]
 }
 
 const RARITY_LABELS: Record<ItemRarity, string> = {
@@ -71,12 +98,49 @@ function normalizeWhitespace(s: string): string {
   return s.replace(/\s+/g, ' ').trim()
 }
 
-export function serializeEquippedItem(
+export async function serializeEquippedItem(
   equipped: EquippedItem,
   base: ItemBase,
-): string {
+  math: AffixMathProvider = nativeAffixMath,
+): Promise<string> {
   const lines: string[] = []
   const stars = equipped.stars ?? 0
+
+  const runewordEarly = detectRuneword(base, equipped.socketed)
+  const scaleImplicitEarly = shouldScaleImplicit(!!runewordEarly)
+  const implicitBaseEntries = base.implicit ? Object.entries(base.implicit) : []
+  const affixDefs = equipped.affixes.map((eq) => getAffix(eq.affixId))
+  const forgedList = equipped.forgedMods ?? []
+  const forgedDefs = forgedList.map((eq) => getCrystalMod(eq.affixId))
+  const scaledReqs: ScaledValueRequest[] = scaleImplicitEarly
+    ? implicitBaseEntries.map(([k, v]) => ({
+        value: toPair(v),
+        statKey: k,
+        stars,
+      }))
+    : []
+  const presentDefs = [...affixDefs, ...forgedDefs].filter(
+    (d): d is NonNullable<typeof d> => !!d,
+  )
+  const affixReqs: AffixValueRequest[] = presentDefs.map((def) => ({
+    affix: def,
+    roll: 0,
+    stars,
+  }))
+  const batch =
+    scaledReqs.length > 0 || affixReqs.length > 0
+      ? await math.batch({ affixes: affixReqs, scaled: scaledReqs })
+      : EMPTY_BATCH
+  const implicitScaled = new Map<string, [number, number]>()
+  scaledReqs.forEach((r, i) => {
+    const v = batch.scaled[i]
+    if (v) implicitScaled.set(r.statKey, v)
+  })
+  const rangeByDef = new Map<object, AffixValueOutput>()
+  presentDefs.forEach((def, i) => {
+    const v = batch.affixes[i]
+    if (v) rangeByDef.set(def, v)
+  })
 
   lines.push(`Rarity: ${RARITY_LABELS[base.rarity]}`)
   lines.push(base.name)
@@ -103,16 +167,14 @@ export function serializeEquippedItem(
     lines.push(`Block: ${base.blockChance}%`)
   }
 
-  const runeword = detectRuneword(base, equipped.socketed)
-  const scaleImplicit = shouldScaleImplicit(!!runeword)
-  const implicitEntries = base.implicit
-    ? Object.entries(base.implicit)
-        .map(
-          ([k, v]) =>
-            [k, scaleImplicit ? applyStarsToRangedValue(v, k, stars) : v] as const,
-        )
-        .filter(([, v]) => !isZero(v))
-    : []
+  const runeword = runewordEarly
+  const scaleImplicit = scaleImplicitEarly
+  const implicitEntries = implicitBaseEntries
+    .map(
+      ([k, v]) =>
+        [k, scaleImplicit ? (implicitScaled.get(k) ?? v) : v] as const,
+    )
+    .filter(([, v]) => !isZero(v))
   const extraImplicits = equipped.implicitOverrides
     ? Object.entries(equipped.implicitOverrides).filter(
         ([k]) => !base.implicit || !(k in base.implicit),
@@ -163,7 +225,10 @@ export function serializeEquippedItem(
         `${prefix}${signChar}${num}${suffix} ${descNoValue} [T${eq.tier}, custom]`,
       )
     } else {
-      const range = formatAffixRange(affix, stars)
+      const range = formatAffixRangeFromValues(
+        affix,
+        rangeByDef.get(affix) ?? null,
+      )
       lines.push(
         `${prefix}${range} ${descNoValue} [T${eq.tier}, roll ${eq.roll.toFixed(2)}]`,
       )
@@ -192,7 +257,10 @@ export function serializeEquippedItem(
           : Math.round(eq.customValue * 100) / 100
         lines.push(`${signChar}${num}${suffix} ${descNoValue} [T${eq.tier}, custom]`)
       } else {
-        const range = formatAffixRange(mod, stars)
+        const range = formatAffixRangeFromValues(
+          mod,
+          rangeByDef.get(mod) ?? null,
+        )
         lines.push(`${range} ${descNoValue} [T${eq.tier}]`)
       }
     }
@@ -241,13 +309,13 @@ export function serializeEquippedItem(
 interface AffixLineResult {
   equipped: EquippedAffix | null
   errors: ParseError[]
+  customCheck?: { affix: Affix; roll: number; userValue: number }
 }
 
 function parseAffixLine(
   line: string,
   lineNum: number,
   source: 'affix' | 'crystal',
-  stars: number,
 ): AffixLineResult {
   const errors: ParseError[] = []
   let work = line.trim()
@@ -338,6 +406,7 @@ function parseAffixLine(
   }
 
   let customValue: number | undefined = undefined
+  let customCheck: AffixLineResult['customCheck']
   if (matched.statKey) {
     const userValue = parseValuePrefix(content)
     if (explicitCustom) {
@@ -351,11 +420,9 @@ function parseAffixLine(
       }
       customValue = userValue
     } else if (matchedByFallback && userValue !== null) {
-      const computed = rolledAffixValueWithStars(matched, roll, stars)
-      const epsilon = 0.005
-      if (Math.abs(userValue - computed) > epsilon) {
-        customValue = userValue
-      }
+      // Deferred: compared against the Rust-computed rolled value after the
+      // whole text is parsed (one display_values batch per parse).
+      customCheck = { affix: matched, roll, userValue }
     }
   }
 
@@ -365,6 +432,7 @@ function parseAffixLine(
         ? { affixId: matched.id, tier, roll, customValue }
         : { affixId: matched.id, tier, roll },
     errors,
+    customCheck,
   }
 }
 
@@ -409,7 +477,11 @@ function lookupImplicitKey(base: ItemBase, displayName: string): string | null {
   return STAT_NAME_TO_KEY.get(norm) ?? null
 }
 
-export function parseItemText(text: string, baseItemId: string): ParseResult {
+export async function parseItemText(
+  text: string,
+  baseItemId: string,
+  math: AffixMathProvider = nativeAffixMath,
+): Promise<ParseResult> {
   const errors: ParseError[] = []
   const base = getItem(baseItemId)
   if (!base) {
@@ -460,6 +532,59 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
   let socketTypes: SocketType[] = []
   let augment: { id: string; level: number } | undefined = undefined
   const implicitOverrides: Record<string, number> = {}
+  const affixCustomChecks: {
+    list: EquippedAffix[]
+    index: number
+    check: { affix: Affix; roll: number; userValue: number }
+    checkStars: number
+  }[] = []
+  const implicitPendingChecks: {
+    key: string
+    value: [number, number]
+    userValue: number
+    checkStars: number
+  }[] = []
+
+  // The Sockets section is serialized AFTER the Implicit section, but runeword
+  // detection decides whether implicits are star-scaled (shouldScaleImplicit).
+  // Pre-scan the sockets so the Implicit handler below detects the runeword with
+  // the real runes instead of treating the item as un-socketed — otherwise a
+  // star-scaled runeword's implicits get re-scaled, mismatch their serialized
+  // values, and are all spuriously written into implicitOverrides.
+  const socketedForRuneword: (string | null)[] = (() => {
+    const sec = sections.find((s) => s[0]?.text.startsWith('Sockets:'))
+    if (!sec) return []
+    const mapText = sec[0]!.text
+      .slice('Sockets:'.length)
+      .trim()
+      .replace(/\s+/g, '')
+    if (!mapText) return []
+    const out: (string | null)[] = new Array(mapText.split('-').length).fill(
+      null,
+    )
+    for (let i = 1; i < sec.length; i++) {
+      const m = sec[i]!.text.match(
+        /^\[(\d+)]\s*\((?:Normal|Rainbow)\):\s*(.+)$/i,
+      )
+      if (!m) continue
+      const idx = Number(m[1]) - 1
+      if (idx < 0 || idx >= out.length) continue
+      const nameRaw = m[2]!.trim()
+      if (/^Rune of /i.test(nameRaw)) {
+        const runeName = nameRaw.replace(/^Rune of /i, '').trim()
+        const rune = runes.find(
+          (r) => r.name.toLowerCase() === runeName.toLowerCase(),
+        )
+        if (rune) out[idx] = rune.id
+      } else {
+        const gem = gems.find(
+          (g) => g.name.toLowerCase() === nameRaw.toLowerCase(),
+        )
+        if (gem) out[idx] = gem.id
+      }
+    }
+    return out
+  })()
 
   for (const sec of sections) {
     if (sec.length === 0) continue
@@ -505,7 +630,7 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
     }
 
     if (firstLine === 'Implicit:') {
-      const runewordHere = detectRuneword(base, [])
+      const runewordHere = detectRuneword(base, socketedForRuneword)
       const scaleImplicitHere = shouldScaleImplicit(!!runewordHere)
       for (let i = 1; i < sec.length; i++) {
         const { text, lineNum } = sec[i]!
@@ -539,12 +664,20 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
         if (!explicitCustom) {
           const baseValue = base.implicit?.[key]
           if (baseValue !== undefined) {
-            const computed = scaleImplicitHere
-              ? applyStarsToRangedValue(baseValue, key, stars)
-              : baseValue
-            if (typeof computed === 'number') {
+            if (scaleImplicitHere) {
+              // Deferred: compared against the Rust-scaled value after the
+              // whole text is parsed (one display_values batch per parse).
+              implicitPendingChecks.push({
+                key,
+                value: toPair(baseValue),
+                userValue,
+                checkStars: stars,
+              })
+              continue
+            }
+            if (typeof baseValue === 'number') {
               const epsilon = 0.005
-              if (Math.abs(userValue - computed) <= epsilon) continue
+              if (Math.abs(userValue - baseValue) <= epsilon) continue
             }
           }
         }
@@ -557,9 +690,19 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
     if (firstLine === 'Affixes:') {
       for (let i = 1; i < sec.length; i++) {
         const { text, lineNum } = sec[i]!
-        const result = parseAffixLine(text, lineNum, 'affix', stars)
+        const result = parseAffixLine(text, lineNum, 'affix')
         errors.push(...result.errors)
-        if (result.equipped) newAffixes.push(result.equipped)
+        if (result.equipped) {
+          if (result.customCheck) {
+            affixCustomChecks.push({
+              list: newAffixes,
+              index: newAffixes.length,
+              check: result.customCheck,
+              checkStars: stars,
+            })
+          }
+          newAffixes.push(result.equipped)
+        }
       }
       continue
     }
@@ -567,9 +710,19 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
     if (firstLine === 'Forged Mods:') {
       for (let i = 1; i < sec.length; i++) {
         const { text, lineNum } = sec[i]!
-        const result = parseAffixLine(text, lineNum, 'crystal', stars)
+        const result = parseAffixLine(text, lineNum, 'crystal')
         errors.push(...result.errors)
-        if (result.equipped) newForgedMods.push(result.equipped)
+        if (result.equipped) {
+          if (result.customCheck) {
+            affixCustomChecks.push({
+              list: newForgedMods,
+              index: newForgedMods.length,
+              check: result.customCheck,
+              checkStars: stars,
+            })
+          }
+          newForgedMods.push(result.equipped)
+        }
       }
       continue
     }
@@ -697,6 +850,37 @@ export function parseItemText(text: string, baseItemId: string): ParseResult {
   const hasErrors = errors.some((e) => e.severity === 'error')
   if (hasErrors) {
     return { equipped: null, errors }
+  }
+
+  if (affixCustomChecks.length > 0 || implicitPendingChecks.length > 0) {
+    const res = await math.batch({
+      affixes: affixCustomChecks.map((c) => ({
+        affix: c.check.affix,
+        roll: c.check.roll,
+        stars: c.checkStars,
+      })),
+      scaled: implicitPendingChecks.map((c) => ({
+        value: c.value,
+        statKey: c.key,
+        stars: c.checkStars,
+      })),
+    })
+    const epsilon = 0.005
+    affixCustomChecks.forEach((c, i) => {
+      const computed = res.affixes[i]?.value
+      if (computed === undefined) return
+      if (Math.abs(c.check.userValue - computed) > epsilon) {
+        const target = c.list[c.index]
+        if (target) {
+          c.list[c.index] = { ...target, customValue: c.check.userValue }
+        }
+      }
+    })
+    implicitPendingChecks.forEach((c, i) => {
+      const [mn, mx] = res.scaled[i] ?? c.value
+      if (mn === mx && Math.abs(c.userValue - mn) <= epsilon) return
+      implicitOverrides[c.key] = c.userValue
+    })
   }
 
   const equipped: EquippedItem = {

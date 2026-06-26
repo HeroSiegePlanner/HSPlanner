@@ -17,15 +17,9 @@ export const HoverContext = createContext<HoverContextValue | null>(null)
 function useHoverContext(): HoverContextValue {
   const ctx = useContext(HoverContext)
   if (!ctx) {
-    throw new Error(
-      'useHoverPreview / useSetHoverPreview must be used inside <HoverProvider>',
-    )
+    throw new Error('useSetHoverPreview must be used inside <HoverProvider>')
   }
   return ctx
-}
-
-export function useHoverPreview(): HoverPreview {
-  return useHoverContext().preview
 }
 
 export function useSetHoverPreview(): (next: HoverPreview) => void {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { EquippedItem, ItemBase, SlotKey } from '../types'
 import {
   parseItemText,
@@ -25,15 +25,22 @@ export default function ItemTextEditorModal({
   onSave,
   onClose,
 }: Props) {
-  const initialText = useMemo(
-    () => serializeEquippedItem(equipped, base),
-    [equipped, base],
-  )
-  const [text, setText] = useState(initialText)
-  const [result, setResult] = useState<ParseResult>(() =>
-    parseItemText(initialText, base.id),
-  )
+  const [text, setText] = useState<string | null>(null)
+  const [result, setResult] = useState<ParseResult>({
+    equipped: null,
+    errors: [],
+  })
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    serializeEquippedItem(equipped, base).then((t) => {
+      if (!cancelled) setText(t)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [equipped, base])
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -44,10 +51,17 @@ export default function ItemTextEditorModal({
   }, [onClose])
 
   useEffect(() => {
+    if (text === null) return
+    let cancelled = false
     const handle = setTimeout(() => {
-      setResult(parseItemText(text, base.id))
+      parseItemText(text, base.id).then((r) => {
+        if (!cancelled) setResult(r)
+      })
     }, 200)
-    return () => clearTimeout(handle)
+    return () => {
+      cancelled = true
+      clearTimeout(handle)
+    }
   }, [text, base.id])
 
   useEffect(() => {
@@ -82,7 +96,7 @@ export default function ItemTextEditorModal({
             </div>
             <textarea
               ref={textareaRef}
-              value={text}
+              value={text ?? ''}
               onChange={(e) => setText(e.target.value)}
               spellCheck={false}
               wrap="off"

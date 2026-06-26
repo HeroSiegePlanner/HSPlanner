@@ -1,10 +1,10 @@
-import treeData from '../../data/hero-siege-tree.json'
+import { heroSiegeTree } from '../../data'
 import { TREE_NODE_INFO, TREE_WARP_IDS } from './treeStats'
 
 type RawNode = [id: number, x: number, y: number, r: number]
 
 const NODE_RADIUS = new Map<number, number>(
-  (treeData.nodes as RawNode[]).map(([id, , , r]) => [id, r]),
+  (heroSiegeTree.nodes as RawNode[]).map(([id, , , r]) => [id, r]),
 )
 
 function isValuableNode(id: number): boolean {
@@ -18,5 +18,5 @@ function isValuableNode(id: number): boolean {
 }
 
 export const VALUABLE_NODE_IDS: Set<number> = new Set(
-  (treeData.nodes as RawNode[]).map(([id]) => id).filter(isValuableNode),
+  (heroSiegeTree.nodes as RawNode[]).map(([id]) => id).filter(isValuableNode),
 )

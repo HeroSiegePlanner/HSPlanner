@@ -2,7 +2,6 @@ import type {
   GameConfig,
   CharacterClass,
   Skill,
-  TalentTree,
   ItemBase,
   ItemGrantedSkill,
   Affix,
@@ -10,7 +9,6 @@ import type {
   Gem,
   Runeword,
   ItemSet,
-  Relic,
   AngelicAugment,
 } from '../types'
 import affixesJson from './affixes.json'
@@ -20,8 +18,58 @@ import gameConfigJson from './game-config.json'
 import itemGrantedSkillsJson from './item-granted-skills.json'
 import runewordsJson from './runewords.json'
 import setsJson from './sets.json'
+import treeNodesJson from './tree-nodes.json'
+import heroSiegeTreeJson from './hero-siege-tree.json'
+import nodeIconsJson from './node-icons.json'
+import { resolveActiveSeasonId, SEASON_BEFORE_CHARM_STARS } from './seasons/registry'
+import { loadSeasonPatchSet } from './seasons/load'
+import {
+  applyGameConfigPatch,
+  applyListPatch,
+  applyRecordMergePatch,
+  applyRecordReplacePatch,
+  applyTreePatch,
+  type PatchResult,
+} from './seasons/resolve'
+import type {
+  HeroSiegeTree,
+  ListPatch,
+  TreeNodeInfo,
+} from './seasons/patchTypes'
 
-export const gameConfig = gameConfigJson as GameConfig
+export const activeSeasonId = resolveActiveSeasonId()
+
+const seasonErrors: string[] = []
+const seasonLoad = loadSeasonPatchSet(activeSeasonId)
+seasonErrors.push(...seasonLoad.errors)
+const seasonPatches = seasonLoad.patches
+
+// All-or-nothing per collection: any patch error keeps the base data (matches the Rust twin).
+export function patched<T>(base: T, result: PatchResult<T>): T {
+  if (result.errors.length > 0) {
+    seasonErrors.push(...result.errors)
+    return base
+  }
+  return result.data
+}
+
+function patchedList<T extends object>(
+  base: T[],
+  patch: ListPatch<Record<string, unknown>> | undefined,
+  label: string,
+  key = 'id',
+): T[] {
+  return patched(base, applyListPatch(base, patch, label, key))
+}
+
+export const gameConfig = patched(
+  gameConfigJson as GameConfig,
+  applyGameConfigPatch(
+    gameConfigJson as GameConfig,
+    seasonPatches.gameConfig,
+    'game-config',
+  ),
+)
 
 const classModules = import.meta.glob<{ default: CharacterClass }>(
   './classes/*.json',
@@ -29,10 +77,6 @@ const classModules = import.meta.glob<{ default: CharacterClass }>(
 )
 const skillModules = import.meta.glob<{ default: Skill[] }>(
   './skills/*.json',
-  { eager: true },
-)
-const talentModules = import.meta.glob<{ default: TalentTree }>(
-  './talents/*.json',
   { eager: true },
 )
 const itemModules = import.meta.glob<{ default: ItemBase[] }>(
@@ -95,19 +139,22 @@ function collectFlat<T>(modules: Record<string, { default: T[] }>): T[] {
   return Object.values(modules).flatMap((m) => m.default)
 }
 
-export const classes: CharacterClass[] = collectScalar(classModules)
-export const skills: Skill[] = collectFlat(skillModules)
-export const talentTrees: TalentTree[] = collectScalar(talentModules)
-export const items: ItemBase[] = collectFlat(itemModules)
-export const gems: Gem[] = collectFlat(gemModules)
-export const runes: Rune[] = collectFlat(runeModules)
+export const classes: CharacterClass[] = patchedList(collectScalar(classModules), seasonPatches.classes, 'classes')
+export const skills: Skill[] = patchedList(collectFlat(skillModules), seasonPatches.skills, 'skills')
+export const items: ItemBase[] = patchedList(collectFlat(itemModules), seasonPatches.items, 'items')
+export const gems: Gem[] = patchedList(collectFlat(gemModules), seasonPatches.gems, 'gems')
+export const runes: Rune[] = patchedList(collectFlat(runeModules), seasonPatches.runes, 'runes')
 
-export const affixes: Affix[] = affixesJson as Affix[]
-export const crystalMods: Affix[] = crystalsJson as Affix[]
-export const runewords: Runeword[] = runewordsJson as unknown as Runeword[]
-const itemSets: ItemSet[] = setsJson as ItemSet[]
-const itemGrantedSkills: ItemGrantedSkill[] =
-  itemGrantedSkillsJson as ItemGrantedSkill[]
+export const affixes: Affix[] = patchedList(affixesJson as Affix[], seasonPatches.affixes, 'affixes')
+export const crystalMods: Affix[] = patchedList(crystalsJson as Affix[], seasonPatches.crystals, 'crystals')
+export const runewords: Runeword[] = patchedList(runewordsJson as unknown as Runeword[], seasonPatches.runewords, 'runewords')
+const itemSets: ItemSet[] = patchedList(setsJson as ItemSet[], seasonPatches.sets, 'sets')
+const itemGrantedSkills: ItemGrantedSkill[] = patchedList(
+  itemGrantedSkillsJson as ItemGrantedSkill[],
+  seasonPatches.itemGrantedSkills,
+  'item-granted-skills',
+  'name',
+)
 
 const itemGrantedSkillByName = new Map<string, ItemGrantedSkill>(
   itemGrantedSkills.map((s) => [s.name.trim().toLowerCase(), s]),
@@ -118,8 +165,28 @@ export function getItemGrantedSkillByName(
 ): ItemGrantedSkill | undefined {
   return itemGrantedSkillByName.get(name.trim().toLowerCase())
 }
-export const relics: Relic[] = []
-export const augments: AngelicAugment[] = augmentsJson as AngelicAugment[]
+export const augments: AngelicAugment[] = patchedList(augmentsJson as AngelicAugment[], seasonPatches.augments, 'augments')
+export const treeNodeInfo: Record<string, TreeNodeInfo> = patched(
+  treeNodesJson as Record<string, TreeNodeInfo>,
+  applyRecordMergePatch(
+    treeNodesJson as Record<string, TreeNodeInfo>,
+    seasonPatches.treeNodes,
+    'tree-nodes',
+  ),
+)
+export const heroSiegeTree: HeroSiegeTree = patched(
+  heroSiegeTreeJson as HeroSiegeTree,
+  applyTreePatch(heroSiegeTreeJson as HeroSiegeTree, seasonPatches.heroSiegeTree, 'hero-siege-tree'),
+)
+export const nodeIcons: Record<string, string> = patched(
+  nodeIconsJson as Record<string, string>,
+  applyRecordReplacePatch(
+    nodeIconsJson as Record<string, string>,
+    seasonPatches.nodeIcons,
+    'node-icons',
+  ),
+)
+export const seasonDataErrors: ReadonlyArray<string> = seasonErrors
 const GEAR_SLOTS = new Set<string>([
   'weapon',
   'offhand',
@@ -135,6 +202,29 @@ const GEAR_SLOTS = new Set<string>([
 export function isGearSlot(slot: string): boolean {
   return GEAR_SLOTS.has(slot)
 }
+
+export function isCharmSlot(slot: string): boolean {
+  return slot.startsWith('charm_')
+}
+
+// Charm stars + forge arrived in S10, so every season except the S9 baseline allows them.
+export function charmsAllowStarsForge(season: string): boolean {
+  return season !== SEASON_BEFORE_CHARM_STARS
+}
+
+export function canStarForge(slot: string, season: string): boolean {
+  return isGearSlot(slot) || (isCharmSlot(slot) && charmsAllowStarsForge(season))
+}
+
+// Star count that applies for display/scaling, gated like the Rust effective_stars: charm stars vanish in s9.
+export function effectiveStars(
+  slot: string,
+  season: string,
+  stars: number | null | undefined,
+): number | null {
+  return canStarForge(slot, season) ? (stars ?? null) : null
+}
+
 export type ForgeKind = 'satanic_crystal'
 
 const SATANIC_CRYSTAL_RARITIES = new Set([

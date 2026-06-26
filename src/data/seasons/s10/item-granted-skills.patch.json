@@ -1,0 +1,15 @@
+{
+  "change": {
+    "Fallen God's Bloodlust": {
+      "passiveConverts": {
+        "perRank": [
+          {
+            "from": "increased_attack_speed",
+            "to": "faster_cast_rate",
+            "pct": 7
+          }
+        ]
+      }
+    }
+  }
+}

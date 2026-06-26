@@ -1,6 +1,4 @@
-import treeGraph from '../data/hero-siege-tree.json'
-import treeNodeInfo from '../data/tree-nodes.json'
-import nodeIconsMap from '../data/node-icons.json'
+import { heroSiegeTree, nodeIcons, treeNodeInfo } from '../data'
 
 export interface TreeNodeEntry {
   id: number
@@ -12,8 +10,7 @@ export interface TreeNodeEntry {
   iconUrl?: string
 }
 
-const NODE_INFO_BY_ID: Record<string, { t: string; n: string }> =
-  treeNodeInfo as Record<string, { t: string; n: string }>
+const NODE_INFO_BY_ID: Record<string, { t: string; n: string }> = treeNodeInfo
 
 const NODE_ICON_FILES = import.meta.glob<string>(
   '../assets/atlas/nodes/*.png',
@@ -25,11 +22,11 @@ for (const [path, url] of Object.entries(NODE_ICON_FILES)) {
   const key = file.replace(/\.png$/i, '')
   NODE_ICON_URL_BY_KEY[key] = url
 }
-const NODE_ICON_KEY_BY_ID = nodeIconsMap as Record<string, string>
+const NODE_ICON_KEY_BY_ID: Record<string, string> = nodeIcons
 
 type RawNode = [number, number, number, number]
 export const ALL_TREE_NODES: TreeNodeEntry[] = (
-  treeGraph.nodes as RawNode[]
+  heroSiegeTree.nodes as RawNode[]
 ).map(([id, x, y, r]) => {
   const iconKey = NODE_ICON_KEY_BY_ID[String(id)]
   return {
@@ -44,17 +41,7 @@ export const ALL_TREE_NODES: TreeNodeEntry[] = (
 })
 
 export type TreeEdge = readonly [number, number, number, number]
-export const ALL_TREE_EDGES: TreeEdge[] = treeGraph.edges as unknown as TreeEdge[]
-
-export const TREE_VIEWBOX: { x: number; y: number; w: number; h: number } = (() => {
-  const parts = treeGraph.viewBox.split(' ').map(Number)
-  return {
-    x: parts[0] ?? 0,
-    y: parts[1] ?? 0,
-    w: parts[2] ?? 0,
-    h: parts[3] ?? 0,
-  }
-})()
+export const ALL_TREE_EDGES: TreeEdge[] = heroSiegeTree.edges as unknown as TreeEdge[]
 
 // First-write-wins when multiple nodes share a name.
 const TREE_NODE_BY_NAME: Map<string, TreeNodeEntry> = (() => {

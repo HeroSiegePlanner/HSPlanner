@@ -83,7 +83,10 @@ fn build_dps_context<'a>(input: &'a PrecomputedInput) -> Option<DpsContext<'a>> 
         skills_by_name,
         id_by_normalized_name,
         skill_ranks_norm: normalize_keys(&input.skill_ranks_by_name),
-        item_bonuses_norm: normalize_keys(&input.item_skill_bonuses),
+        item_bonuses_norm: crate::calc::rank::aggregate_item_skill_bonuses(
+            &input.inventory,
+            &crate::calc::data::data().items,
+        ),
     })
 }
 
