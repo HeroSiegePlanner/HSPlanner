@@ -91,9 +91,9 @@
     "position": { "row": 3, "col": 1 }
   },
   {
-    "id": "ominous_aura",
+    "id": "ominous_presence",
     "classId": "demonspawn",
-    "name": "Ominous Aura",
+    "name": "Ominous Presence",
     "kind": "aura",
     "description": "",
     "maxRank": 20,
