@@ -1,5 +1,3 @@
-// TS-to-Rust calc bridge.
-
 import { invoke } from '@tauri-apps/api/core'
 
 import type { CustomStat, Inventory, RangedValue, Skill, TreeSocketContent } from '../../types'
@@ -7,6 +5,7 @@ import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../../uti
 import type {
   BuildPerformance,
   BuildPerformanceDeps,
+  PerSkillDps,
 } from '../../utils/build/buildPerformance'
 import type {
   ComputedStats,
@@ -16,7 +15,6 @@ import type {
 import type { ForgeKind } from '../../data'
 import { activeSeasonId } from '../../data'
 
-// Single subscriber so the build store can surface Rust rejections via storageError.
 type BridgeErrorListener = (err: Error) => void
 let bridgeErrorListener: BridgeErrorListener | null = null
 
@@ -24,8 +22,6 @@ export function setBridgeErrorListener(fn: BridgeErrorListener | null): void {
   bridgeErrorListener = fn
 }
 
-// Exported so sibling IPC wrappers (e.g. utils/nativeDamage.ts) surface
-// failures through the same storageError banner.
 export function notifyBridgeError(err: unknown): Error {
   const wrapped = err instanceof Error ? err : new Error(String(err))
   if (bridgeErrorListener) {
@@ -38,8 +34,6 @@ export function notifyBridgeError(err: unknown): Error {
   return wrapped
 }
 
-// ---------- compute_build_performance ----------
-
 export interface BuildPerformanceInput {
   classId?: string | null
   level?: number
@@ -50,9 +44,7 @@ export interface BuildPerformanceInput {
   activeAuraId?: string | null
   activeBuffs?: Record<string, boolean>
   customStats?: CustomStat[]
-  // Rust deserialises into HashSet.
   allocatedTreeNodes?: number[]
-  // Node ids stringified because JSON keys must be strings.
   treeSocketed?: Record<string, TreeSocketContent>
   mainSkillId?: string | null
   enemyConditions?: Record<string, boolean>
@@ -64,7 +56,6 @@ export interface BuildPerformanceInput {
   season?: string
 }
 
-// Rust returns [min, max]; TS expects `number | [number, number]` — see asRangedValue.
 export type RustRanged = [number, number]
 
 export interface BuildPerformanceOutput {
@@ -96,12 +87,9 @@ async function computeBuildPerformanceNative(
   }
 }
 
-// Collapse [n, n] to n so legacy TS callers see the same shape.
 function asRangedValue([min, max]: RustRanged): RangedValue {
   return min === max ? min : [min, max]
 }
-
-// ---------- legacy-shape adapters ----------
 
 function filterTreeSocketed(
   socketed: Record<number, TreeSocketContent | null>,
@@ -113,7 +101,6 @@ function filterTreeSocketed(
   return out
 }
 
-// TS Set<number>/Record<number,...> -> Rust arrays/string-keyed objects.
 function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   return {
     classId: deps.classId,
@@ -127,7 +114,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     customStats: deps.customStats,
     allocatedTreeNodes: [...deps.allocatedTreeNodes],
     treeSocketed: filterTreeSocketed(deps.treeSocketed),
-    mainSkillId: deps.mainSkillId,
+    mainSkillId: deps.activeSkillIds[0] ?? null,
     enemyConditions: deps.enemyConditions,
     playerConditions: deps.playerConditions,
     skillProjectiles: deps.skillProjectiles,
@@ -138,8 +125,6 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   }
 }
 
-// Converts a Rust [min, max] record into the legacy "number | [number, number]"
-// map that the rest of the TS code expects.
 function toRangedMap(
   rec: Record<string, RustRanged>,
 ): Record<string, RangedValue> {
@@ -171,14 +156,66 @@ function toLegacyBuildPerformance(
   }
 }
 
+function perSkillEntry(id: string, raw: BuildPerformanceOutput): PerSkillDps {
+  return {
+    id,
+    name: raw.activeSkillName,
+    hitDpsMin: raw.hitDpsMin ?? undefined,
+    hitDpsMax: raw.hitDpsMax ?? undefined,
+  }
+}
+
+function mergeCombinedPerformance(
+  ids: string[],
+  raws: BuildPerformanceOutput[],
+): BuildPerformance {
+  const primary = raws[0]
+  if (!primary) {
+    throw new Error('mergeCombinedPerformance requires at least one result')
+  }
+  const base = toLegacyBuildPerformance(primary)
+  const sumAvg = (
+    pick: (r: BuildPerformanceOutput) => number | null,
+  ): number | undefined =>
+    raws.reduce<number | undefined>((acc, r) => {
+      const v = pick(r)
+      return v == null ? acc : (acc ?? 0) + v
+    }, undefined)
+  const avgMin = sumAvg((r) => r.avgHitDpsMin)
+  const avgMax = sumAvg((r) => r.avgHitDpsMax)
+  const procMin = primary.procDpsMin
+  const procMax = primary.procDpsMax
+  return {
+    ...base,
+    combinedDpsMin:
+      avgMin !== undefined || procMin > 0 ? (avgMin ?? 0) + procMin : undefined,
+    combinedDpsMax:
+      avgMax !== undefined || procMax > 0 ? (avgMax ?? 0) + procMax : undefined,
+    activeSkillName:
+      raws
+        .map((r) => r.activeSkillName)
+        .filter((n): n is string => !!n)
+        .join(' + ') || null,
+    perSkill: raws.map((raw, i) => perSkillEntry(ids[i] ?? '', raw)),
+  }
+}
+
 export async function computeBuildPerformanceAsync(
   deps: BuildPerformanceDeps,
 ): Promise<BuildPerformance> {
-  const raw = await computeBuildPerformanceNative(depsToInput(deps))
-  return toLegacyBuildPerformance(raw)
+  const ids = deps.activeSkillIds
+  if (ids.length === 0) {
+    const raw = await computeBuildPerformanceNative(depsToInput(deps))
+    return toLegacyBuildPerformance(raw)
+  }
+  const input = depsToInput(deps)
+  const raws = await Promise.all(
+    ids.map((id) =>
+      computeBuildPerformanceNative({ ...input, mainSkillId: id }),
+    ),
+  )
+  return mergeCombinedPerformance(ids, raws)
 }
-
-// ---------- compute_build_stats (with source maps) ----------
 
 interface RustForge {
   itemName: string
@@ -237,7 +274,6 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
   }
 }
 
-// Adds per-stat source breakdown on top of computeBuildPerformanceAsync.
 export async function computeBuildStatsAsync(
   deps: BuildPerformanceDeps,
 ): Promise<ComputedStats> {
@@ -250,8 +286,6 @@ export async function computeBuildStatsAsync(
     throw notifyBridgeError(err)
   }
 }
-
-// ---------- calc_stat_breakdown (per-key explainability) ----------
 
 export interface StatTypeSubtotal {
   sourceType: SourceType
@@ -331,7 +365,6 @@ function toLegacyStatBreakdown(raw: RustStatBreakdown): StatBreakdown {
   }
 }
 
-// Re-runs the same pipeline as computeBuildStatsAsync to guarantee identical numbers, then collapses one key into per-source-type subtotals + combined.
 export async function computeStatBreakdownAsync(
   deps: BuildPerformanceDeps,
   statKey: string,
@@ -350,9 +383,6 @@ export async function computeStatBreakdownAsync(
     throw notifyBridgeError(err)
   }
 }
-
-// ---------- passive_stats_at_rank / mana_cost_at_rank ----------
-// Replace the former TS stats.ts helpers; the math now lives in Rust calc/passive.rs.
 
 export async function passiveStatsAtRankNative(
   skill: Skill,
@@ -376,10 +406,6 @@ export async function manaCostAtRankNative(
   }
 }
 
-// ---------- parse_custom_stats ----------
-// Replaces the former TS parseCustomStatValue; the parser lives in Rust
-// calc/custom_stat.rs.
-
 export async function parseCustomStatsNative(
   values: string[],
 ): Promise<([number, number] | null)[]> {
@@ -391,10 +417,6 @@ export async function parseCustomStatsNative(
     throw notifyBridgeError(err)
   }
 }
-
-// ---------- display_values ----------
-// Batched affix/star display math; replaces the former TS
-// rolledAffixValue*/applyStarsToRangedValue helpers.
 
 export interface AffixValueRequest {
   affix: unknown
@@ -433,10 +455,6 @@ export async function displayValuesNative(input: {
   }
 }
 
-// ---------- classify_tree_nodes ----------
-// Replaces the former TS classifyNodeLines RULES engine; the regexes live in
-// Rust calc/tree/parse.rs. Fetched once and cached by TreeView.
-
 export interface NodeLineClassification {
   parsed: string[]
   unsupported: string[]
@@ -454,10 +472,6 @@ export async function classifyTreeNodesNative(): Promise<
     throw notifyBridgeError(err)
   }
 }
-
-// ---------- subskill_aggregation ----------
-// Replaces the former TS subtree.ts aggregation; the math lives in Rust
-// calc/subskill.rs.
 
 export interface AppliedStateInfo {
   state: string
@@ -519,5 +533,4 @@ export async function subskillAggregationNative(
   }
 }
 
-// Test seam: depsToInput is module-private; expose it for unit tests only.
 export const __depsToInputForTest = depsToInput

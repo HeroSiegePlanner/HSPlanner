@@ -3,74 +3,224 @@
     "id": "battle_glance",
     "classId": "samurai",
     "name": "Battle Glance",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Perform an area of effect attack with increased damage and attack rating.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Passive"
+      "Attack",
+      "Active",
+      "Melee",
+      "Strike"
     ],
     "tree": "Ronin",
     "position": {
       "row": 0,
       "col": 0
-    }
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 24,
+        "perLevel": 26
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Quickslash",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Bushido",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Live by the Sword",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "shuriken_throw",
     "classId": "samurai",
     "name": "Shuriken Throw",
     "kind": "active",
-    "description": "",
+    "description": "Throw three piercing Shurikens at your target dealing increased damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Attack",
+      "Active",
+      "Ranged",
+      "Projectile",
+      "Strike"
     ],
     "tree": "Ronin",
     "position": {
       "row": 0,
       "col": 1
-    }
+    },
+    "damageType": "physical",
+    "range": 320,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 35.5,
+        "perLevel": 17.5
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Battle Glance",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Kunai",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Warriors Spirit",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "quickslash",
     "classId": "samurai",
     "name": "Quickslash",
     "kind": "active",
-    "description": "",
+    "description": "Perform a quick dash unleashing area of effect slash dealing increased physical damage and knocking up monsters.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Attack",
+      "Active",
+      "Melee",
+      "Movement",
+      "Strike"
     ],
     "tree": "Ronin",
     "position": {
       "row": 1,
       "col": 0
-    }
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 8,
+        "perLevel": 23.5
+      },
+      "flatPhysicalMin": {
+        "base": 1,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 5,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Battle Glance",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shuriken Throw",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Evasion",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "evasion",
     "classId": "samurai",
     "name": "Evasion",
     "kind": "passive",
-    "description": "",
+    "description": "Gain a chance to evade melee and ranged attacks.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -85,6 +235,14 @@
     "position": {
       "row": 1,
       "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "dodge_chance": 1
+      },
+      "perRank": {
+        "dodge_chance": 1
+      }
     }
   },
   {
@@ -92,51 +250,136 @@
     "classId": "samurai",
     "name": "Smoke Bomb",
     "kind": "active",
-    "description": "",
+    "description": "Explode a smoke bomb dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
     ],
     "tree": "Ronin",
     "position": {
       "row": 2,
       "col": 1
-    }
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 27.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Evasion",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Quickslash",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Bushido",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "explosive_kunai",
     "classId": "samurai",
     "name": "Explosive Kunai",
     "kind": "active",
-    "description": "",
+    "description": "Throw an explosive kunai that explodes and splits on impact, causing smaller explosions that deal Arcane damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Projectile",
+      "Explosion",
+      "Spell"
     ],
     "tree": "Ronin",
     "position": {
       "row": 2,
       "col": 2
-    }
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "effectDuration": 2,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 16.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Warriors Spirit",
+        "stat": "arcane_skill_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Live by the Sword",
+        "stat": "arcane_skill_damage",
+        "value": 16.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Smoke Bomb",
+        "stat": "arcane_skill_damage",
+        "value": 13,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 9,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "warriors_spirit",
     "classId": "samurai",
     "name": "Warriors Spirit",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your attack speed.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -151,102 +394,254 @@
     "position": {
       "row": 3,
       "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 5,
+        "crit_damage": 10
+      },
+      "perRank": {
+        "increased_attack_speed": 0.5,
+        "crit_damage": 0.5
+      }
     }
   },
   {
     "id": "bushido",
     "classId": "samurai",
     "name": "Bushido",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Activate to gain a buff that increases your attack damage for every 10% of missing Life.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Passive"
+      "Cast",
+      "Active",
+      "Buff"
     ],
     "tree": "Ronin",
     "position": {
       "row": 3,
       "col": 1
+    },
+    "baseCastRate": 1,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "attack_damage": 3.5
+      },
+      "perRank": {
+        "attack_damage": 3.5
+      }
     }
   },
   {
     "id": "live_by_the_sword",
     "classId": "samurai",
     "name": "Live by the Sword",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increases your attack speed and movement speed.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Passive"
+      "Cast",
+      "Active",
+      "Buff"
     ],
     "tree": "Ronin",
     "position": {
       "row": 4,
       "col": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "movement_speed": 30
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "movement_speed": 1
+      }
     }
   },
   {
     "id": "blade_barrier",
     "classId": "samurai",
     "name": "Blade Barrier",
-    "kind": "buff",
-    "description": "",
+    "kind": "active",
+    "description": "Summon a barrier of rotating blades around you dealing Physical Damage and additional Arcane Damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Buff"
+      "Cast",
+      "Active",
+      "Spell",
+      "Orbital",
+      "Strike"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 0,
       "col": 0
-    }
+    },
+    "damageType": "arcane",
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "effectDuration": 6,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 6
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 0,
+        "perLevel": 11
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 5,
+        "perLevel": 1
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Fan of Knives",
+        "stat": "arcane_skill_damage",
+        "value": 25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Glance",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "exploding_bolas",
     "classId": "samurai",
     "name": "Exploding Bolas",
     "kind": "active",
-    "description": "",
+    "description": "Throw bolas that deal arcane damage on impact and again when they explode after a short delay.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Melee",
+      "Projectile",
+      "Explosion",
+      "Strike"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 0,
       "col": 2
-    }
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "baseCastRate": 1,
+    "effectDuration": 3,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 11
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Shuriken Throw",
+        "stat": "arcane_skill_damage",
+        "value": 16,
+        "per": "skill_level"
+      },
+      {
+        "source": "Fan of Knives",
+        "stat": "arcane_skill_damage",
+        "value": 13.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Kunai",
+        "stat": "arcane_skill_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "fan_of_knives",
     "classId": "samurai",
     "name": "Fan of Knives",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Attacks have a chance to throw knives around you dealing physical damage to nearby monsters. Additionally the knives have a chance to ricochet to nearby monsters.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -255,34 +650,106 @@
       }
     ],
     "tags": [
-      "Active"
+      "Passive",
+      "Projectile",
+      "Strike"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 1,
       "col": 0
-    }
+    },
+    "damageType": "physical",
+    "range": 320,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 34,
+        "perLevel": 20
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "passiveStats": {
+      "base": {
+        "ricochet_chance": 5
+      },
+      "perRank": {
+        "ricochet_chance": 0.33
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Shuriken Throw",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Blade Barrier",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "for_honor",
     "classId": "samurai",
     "name": "For Honor",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily increases your attack damage and movement speed.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
+      "Cast",
+      "Active",
       "Buff"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 1,
       "col": 2
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "attack_damage": 4.75,
+        "movement_speed": 2.5
+      },
+      "perRank": {
+        "attack_damage": 4.75,
+        "movement_speed": 2.5
+      }
     }
   },
   {
@@ -290,29 +757,81 @@
     "classId": "samurai",
     "name": "Omnislash",
     "kind": "active",
-    "description": "",
+    "description": "Become untargetable and rapidly strike monsters multiple times with increased attack rating dealing increased damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Attack",
+      "Active",
+      "Melee",
+      "Chain Lightning",
+      "Strike"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 2,
       "col": 1
-    }
+    },
+    "damageType": "physical",
+    "range": 320,
+    "baseCooldown": 5,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 82,
+        "perLevel": 22
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "For Honor",
+        "stat": "attack_damage",
+        "value": 2,
+        "per": "skill_level"
+      },
+      {
+        "source": "Blade Barrier",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Empires Slash",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ]
   },
   {
     "id": "burst_of_speed",
     "classId": "samurai",
     "name": "Burst of Speed",
-    "kind": "buff",
-    "description": "",
+    "kind": "passive",
+    "description": "Gain increased movement speed for a short period after killing a monster.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
@@ -321,12 +840,20 @@
       }
     ],
     "tags": [
-      "Buff"
+      "Passive"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 2,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "movement_speed": 1.5
+      },
+      "perRank": {
+        "movement_speed": 1.5
+      }
     }
   },
   {
@@ -334,29 +861,91 @@
     "classId": "samurai",
     "name": "Shadow Step",
     "kind": "active",
-    "description": "",
+    "description": "Step into the shadows, re-appearing at the target location dealing Arcane Damage to all nearby monsters.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 9
       }
     ],
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell",
+      "Movement",
+      "Blink",
+      "Area of Effect",
+      "Strike"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 3,
       "col": 0
-    }
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 1.25,
+    "effectDuration": 2,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 18.5
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 12,
+        "perLevel": 24
+      },
+      "flatPhysicalMin": {
+        "base": 1,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 7,
+        "perLevel": 1
+      }
+    },
+    "manaCostFormula": {
+      "base": 9,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Fan of Knives",
+        "stat": "arcane_skill_damage",
+        "value": 22.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Way of the Warrior",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.45,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "way_of_the_warrior",
     "classId": "samurai",
     "name": "Way of the Warrior",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your attack damage and magic skill damage.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -371,6 +960,16 @@
     "position": {
       "row": 3,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 3.75,
+        "magic_skill_damage": 2.8
+      },
+      "perRank": {
+        "attack_damage": 3.75,
+        "magic_skill_damage": 2.8
+      }
     }
   },
   {
@@ -378,21 +977,75 @@
     "classId": "samurai",
     "name": "Empires Slash",
     "kind": "active",
-    "description": "",
+    "description": "Perform an area of effect attack blinking a short distance and dealing physical damage to monsters in its path. Empire slash lowers Omnislashes cooldown when it strikes a monster.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 14
       }
     ],
     "tags": [
-      "Active"
+      "Attack",
+      "Active",
+      "Melee",
+      "Movement",
+      "Blink",
+      "Area of Effect",
+      "Strike"
     ],
     "tree": "Emperor's Blade",
     "position": {
       "row": 4,
       "col": 1
-    }
+    },
+    "damageType": "physical",
+    "range": 320,
+    "baseCooldown": 1.25,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 6,
+        "perLevel": 22.5
+      },
+      "flatPhysicalMin": {
+        "base": 1,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 5,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 14,
+      "perLevel": 2
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Quickslash",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Step",
+        "stat": "attack_damage",
+        "value": 2,
+        "per": "skill_level"
+      }
+    ]
   }
 ]

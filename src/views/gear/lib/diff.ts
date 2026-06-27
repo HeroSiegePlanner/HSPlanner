@@ -44,7 +44,7 @@ export interface StatDiff {
   afterMax: number
   delta: number
   kind: DiffKind
-  unit?: 'pct' | 'flat'
+  unit?: 'pct'
 }
 
 function classifyDiff(before: number, after: number): DiffKind {
@@ -58,14 +58,14 @@ function classifyDiff(before: number, after: number): DiffKind {
   return after > before ? 'up' : 'down'
 }
 
-export const ITEM_AFFIX_KEYS: ReadonlyArray<{ key: string; label: string; unit?: 'pct' | 'flat' }> = [
+export const ITEM_AFFIX_KEYS: ReadonlyArray<{ key: string; label: string; unit?: 'pct' }> = [
   { key: 'defense', label: 'Defense' },
   { key: 'enhanced_defense', label: 'Enhanced Defense', unit: 'pct' },
   { key: 'all_skills', label: '+ All Skills' },
   { key: 'enhanced_damage', label: 'Enhanced Damage', unit: 'pct' },
 ]
 
-export const BUILD_STAT_KEYS: ReadonlyArray<{ key: string; label: string; unit?: 'pct' | 'flat' }> = [
+export const BUILD_STAT_KEYS: ReadonlyArray<{ key: string; label: string; unit?: 'pct' }> = [
   { key: 'life', label: 'Life' },
   { key: 'mana', label: 'Mana' },
   { key: 'crit_chance', label: 'Crit Chance', unit: 'pct' },
@@ -81,7 +81,7 @@ export const BUILD_STAT_KEYS: ReadonlyArray<{ key: string; label: string; unit?:
 export function pickStatDiffsByKeys(
   before: BuildSummary,
   after: BuildSummary,
-  keys: ReadonlyArray<{ key: string; label: string; unit?: 'pct' | 'flat' }>,
+  keys: ReadonlyArray<{ key: string; label: string; unit?: 'pct' }>,
 ): StatDiff[] {
   const out: StatDiff[] = []
   for (const { key, label, unit } of keys) {
@@ -262,7 +262,7 @@ export function computeVerdict(
   return 'sidegrade'
 }
 
-function formatScalar(n: number, unit?: 'pct' | 'flat'): string {
+function formatScalar(n: number, unit?: 'pct'): string {
   const abs = Math.abs(n)
   const rounded =
     Math.abs(n - Math.round(n)) < 0.05 ? Math.round(n) : Math.round(n * 10) / 10
@@ -273,12 +273,12 @@ function formatScalar(n: number, unit?: 'pct' | 'flat'): string {
   return `${rounded}`
 }
 
-export function formatStatNum(min: number, max: number, unit?: 'pct' | 'flat'): string {
+export function formatStatNum(min: number, max: number, unit?: 'pct'): string {
   if (Math.abs(max - min) < 0.001) return formatScalar(min, unit)
   return `${formatScalar(min, unit)}-${formatScalar(max, unit)}`
 }
 
-export function formatDeltaNum(n: number, unit?: 'pct' | 'flat', kind?: DiffKind): string {
+export function formatDeltaNum(n: number, unit?: 'pct', kind?: DiffKind): string {
   if (kind === 'new') return 'new'
   if (kind === 'lost') return 'lost'
   if (kind === 'same') return '='

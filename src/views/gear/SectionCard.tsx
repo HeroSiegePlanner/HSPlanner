@@ -1,4 +1,4 @@
-type SectionTone = 'default' | 'satanic' | 'angelic' | 'set' | 'warning'
+type SectionTone = 'default' | 'satanic' | 'angelic' | 'set'
 
 const SECTION_TONE: Record<
   SectionTone,
@@ -33,12 +33,6 @@ const SECTION_TONE: Record<
     label: 'text-stat-green/90',
     bg: 'color-mix(in srgb, var(--color-stat-green) 6%, var(--color-panel-2))',
   },
-  warning: {
-    border: 'border-amber-500/25',
-    dot: 'bg-amber-400',
-    label: 'text-amber-200/90',
-    bg: 'color-mix(in srgb, #f5b450 6%, var(--color-panel-2))',
-  },
 }
 
 export function SectionCard({
@@ -54,10 +48,6 @@ export function SectionCard({
   bodyClassName?: string
   children?: React.ReactNode
 }) {
-  // Shared editor-block frame for the GearSlotModal config column: a flat,
-  // hairline-bordered panel with a sentence-case title (small tone dot + label
-  // + optional right-slot) and a configurable body. Quiet-modern styling —
-  // gold/tone colour is reserved for the dot and semantic tones, not the frame.
   const t = SECTION_TONE[tone]
   return (
     <div

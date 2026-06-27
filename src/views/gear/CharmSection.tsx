@@ -11,14 +11,11 @@ export function CharmSection({
   charmSlots,
   activeSlot,
   onSelect,
-  fitError,
 }: {
   charmSlots: { key: SlotKey; name: string }[]
   activeSlot: SlotKey | null
   onSelect: (s: SlotKey) => void
-  fitError?: string | null
 }) {
-  // Renders the visual charm grid (with blocked cells, multi-cell charms, click-to-edit, and an "overflow" warning when the user tries to equip more area than the grid can hold). Used by GearView underneath the slot rail.
   const inventory = useBuild((s) => s.inventory)
 
   const { placed, overflow, occupancy, totalUsable, occupiedCells } =
@@ -198,17 +195,6 @@ export function CharmSection({
         >
           {overflow.length} charm{overflow.length === 1 ? '' : 's'} could not be
           placed — remove some to free space.
-        </div>
-      )}
-      {fitError && (
-        <div
-          className="mt-2 rounded-[3px] border border-stat-red/40 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-red"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(60,30,28,0.4), rgba(44,22,20,0.25))',
-          }}
-        >
-          {fitError}
         </div>
       )}
     </GearPanel>

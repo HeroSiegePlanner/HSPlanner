@@ -25,10 +25,6 @@ export default function NotesView() {
   useEffect(() => {
     const el = editorRef.current
     if (!el) return
-    // While the user is typing in the focused editor it is the source of truth;
-    // re-assigning innerHTML (e.g. because the store's sanitized value differs
-    // string-wise from the live DOM) would reset the caret mid-keystroke. Only
-    // sync external changes (switching builds) when the editor is not focused.
     if (document.activeElement === el) return
     if (el.innerHTML === notes) return
     el.innerHTML = notes
@@ -53,7 +49,6 @@ export default function NotesView() {
     commitBuildNotes()
   }
 
-  // Sanitise pasted HTML so the browser can't inject arbitrary markup.
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     const html = e.clipboardData.getData('text/html')
     const text = e.clipboardData.getData('text/plain')
@@ -68,7 +63,6 @@ export default function NotesView() {
     }
   }
 
-  // Save selection so it can be restored after losing focus to a popover (link URL input).
   const saveSelection = () => {
     const sel = window.getSelection()
     if (!sel || sel.rangeCount === 0) return
@@ -93,7 +87,6 @@ export default function NotesView() {
     setLinkOpen(true)
   }
 
-  // Prepend `https://` to bare URLs; re-sanitise so the new anchor picks up safe target/rel attributes.
   const insertLink = () => {
     let url = linkUrl.trim()
     if (!url) {
@@ -265,7 +258,6 @@ function ToolbarBtn({
   title: string
   label: React.ReactNode
 }) {
-  // mousedown + preventDefault preserves the editor's text selection across the click.
   return (
     <button
       onMouseDown={(e) => {

@@ -4,87 +4,98 @@
     "classId": "paladin",
     "name": "Vengeance",
     "kind": "active",
-    "description": "",
+    "description": "Strike monsters with a lightning shock that splits towards nearby monsters, dealing physical damage and lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 6.2, "perLevel": 74.2 },
+    "manaCostFormula": { "base": 4.5, "perLevel": 0.75 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 22.5, "perLevel": 17.5 },
+      "flatPhysicalMin": { "base": 1.63, "perLevel": 0.37 },
+      "flatPhysicalMax": { "base": 6.95, "perLevel": 1.05 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Holy Shock Aura", "stat": "lightning_skill_damage", "value": 17, "per": "skill_level" },
+      { "source": "Thunder Shield", "stat": "lightning_skill_damage", "value": 17, "per": "skill_level" },
+      { "source": "Eye of the Storm", "stat": "attack_damage", "value": 9, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 9.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "thunder_shield",
     "classId": "paladin",
     "name": "Thunder Shield",
     "kind": "buff",
-    "description": "",
+    "description": "Cast a shield of thunder reducing damage taken and shocking monsters attacking you dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 30,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 56.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "damage_reduction": 5 },
+      "perRank": { "damage_reduction": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Holy Shock Aura", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ball Lightning", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "divine_storm",
     "classId": "paladin",
     "name": "Divine Storm",
     "kind": "active",
-    "description": "",
+    "description": "Turn your attack into a divine storm dealing area of effect lightning damage around you.",
+    "damageType": "lightning",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 1,
-      "col": 0
-    }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 86 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Lightning Fury", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Eye of the Storm", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "fanaticism_aura",
     "classId": "paladin",
     "name": "Fanaticism Aura",
     "kind": "aura",
-    "description": "",
+    "description": "When active, increases your and your party members attack speed.",
+    "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "increased_attack_speed": 10, "movement_speed": 10 },
+      "perRank": { "increased_attack_speed": 0.5, "movement_speed": 0.5 }
     }
   },
   {
@@ -92,109 +103,114 @@
     "classId": "paladin",
     "name": "Holy Shock Aura",
     "kind": "aura",
-    "description": "",
+    "description": "When active shock monsters around you dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 1, "perLevel": 48 },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Thunder Shield", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ball Lightning", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "ball_lightning",
     "classId": "paladin",
     "name": "Ball Lightning",
     "kind": "active",
-    "description": "",
+    "description": "Turn into a ball of lightning and dash towards to the target location, dealing lightning damage to nearby monsters upon landing.",
+    "damageType": "lightning",
+    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 3,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 127.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Divine Storm", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Thunder Shield", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Shock Aura", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "lightning_fury",
     "classId": "paladin",
     "name": "Lightning Fury",
     "kind": "active",
-    "description": "",
+    "description": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Attack", "Active", "Melee", "Chain Lightning", "Strike"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 3,
-      "col": 0
-    }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 1, "perLevel": 113 },
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 22.5, "per": "skill_level" },
+      { "source": "Divine Storm", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Eye of the Storm", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "eye_of_the_storm",
     "classId": "paladin",
     "name": "Eye of the Storm",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your lightning skill damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "lightning_skill_damage": 3.25 },
+      "perRank": { "lightning_skill_damage": 3.25 }
     }
   },
   {
     "id": "thors_fury",
     "classId": "paladin",
     "name": "Thor's Fury",
-    "kind": "active",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increases your attack speed and lightning skill damage.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 48.11,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Justiciar",
-    "position": {
-      "row": 4,
-      "col": 1
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "lightning_skill_damage": 4 },
+      "perRank": { "increased_attack_speed": 1, "lightning_skill_damage": 4 }
     }
   },
   {
@@ -202,21 +218,16 @@
     "classId": "paladin",
     "name": "Divine Wisdom",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your mana and mana replenish.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 0,
-      "col": 0
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana": 30, "mana_replenish": 4 },
+      "perRank": { "mana": 4, "mana_replenish": 4 }
     }
   },
   {
@@ -224,65 +235,58 @@
     "classId": "paladin",
     "name": "Holy Bolt",
     "kind": "active",
-    "description": "",
+    "description": "Cast a piercing bolt of holy light dealing arcane damage to monsters hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 12, "perLevel": 75 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Fist of the Heavens", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Light's Embrace", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Nova", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "lights_embrace",
     "classId": "paladin",
     "name": "Light's Embrace",
-    "kind": "buff",
-    "description": "",
+    "kind": "passive",
+    "description": "Increases your cast rate.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 1,
-      "col": 0
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "cast_rate": 5 },
+      "perRank": { "cast_rate": 0.5 }
     }
   },
   {
     "id": "holy_retribution",
     "classId": "paladin",
     "name": "Holy Retribution",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Increases your mana after kill.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana_after_kill": 2 },
+      "perRank": { "mana_after_kill": 2 }
     }
   },
   {
@@ -290,65 +294,71 @@
     "classId": "paladin",
     "name": "Holy Nova",
     "kind": "active",
-    "description": "",
+    "description": "Cast a nova of holy light dealing arcane damage to monsters and healing all allies hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 97 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "healing": 2 },
+      "perRank": { "healing": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Divine Wisdom", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Holy Bolt", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Fist of the Heavens", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "holy_hammer",
     "classId": "paladin",
     "name": "Holy Hammer",
     "kind": "active",
-    "description": "",
+    "description": "Summon a holy hammer that spirals outwards dealing arcane damage on hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Orbital"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "effectDuration": 4.5,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 70 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Light's Embrace", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Holy Aura", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Retribution", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "holy_aura",
     "classId": "paladin",
     "name": "Holy Aura",
     "kind": "aura",
-    "description": "",
+    "description": "When active, increases your and your party members attack damage and magic skill damage.",
+    "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 3,
-      "col": 0
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 2, "magic_skill_damage": 2.5 },
+      "perRank": { "attack_damage": 2, "magic_skill_damage": 2.5 }
     }
   },
   {
@@ -356,43 +366,46 @@
     "classId": "paladin",
     "name": "Fist of the Heavens",
     "kind": "active",
-    "description": "",
+    "description": "Call down a fist of divine energy exploding into multiple Holy Bolts dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 3,
-      "col": 1
-    }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 112 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Holy Aura", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "The Venerated One", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Bolt", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "the_venerated_one",
     "classId": "paladin",
     "name": "The Venerated One",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily increases your cast rate and mana replenish.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 48.11,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Lionheart",
-    "position": {
-      "row": 4,
-      "col": 1
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "cast_rate": 18, "mana_replenish": 4 },
+      "perRank": { "cast_rate": 2, "mana_replenish": 4 }
     }
   }
 ]

@@ -1,10 +1,4 @@
-// Shared presentation helpers for the Build Select library screen.
-
-/** Deterministic per-class accent colour derived from the class id hash. */
 export function classColor(classId: string | null): string {
-  // Returns a stable HSL accent for a class id (used for the fallback letter
-  // glyph and selection glow). Mirrors the hashing used by the old build
-  // picker so colours stay consistent across the app.
   if (!classId) return 'var(--color-faint)'
   let hash = 0
   for (let i = 0; i < classId.length; i++) {
@@ -14,7 +8,6 @@ export function classColor(classId: string | null): string {
   return `hsl(${hue} 58% 58%)`
 }
 
-/** Uppercase first letter of a class name, used as the fallback glyph. */
 export function classInitial(className: string | undefined): string {
   return (className?.[0] ?? '?').toUpperCase()
 }
@@ -29,12 +22,10 @@ const KNOWN_TAG_TONES: Record<string, string> = {
   draft: 'text-faint',
 }
 
-/** Tailwind text-colour class for a tag chip, by known tag name. */
 export function tagTone(tag: string): string {
   return KNOWN_TAG_TONES[tag.trim().toLowerCase()] ?? 'text-muted'
 }
 
-/** Human-friendly relative timestamp ("Today, 14:32", "May 08, 09:10"). */
 export function formatTimestamp(iso: string): string {
   try {
     const d = new Date(iso)
@@ -62,7 +53,6 @@ export function formatTimestamp(iso: string): string {
   }
 }
 
-/** Strips HTML tags from a notes string, returning collapsed plain text. */
 export function stripHtml(html: string): string {
   if (!html) return ''
   if (typeof document === 'undefined') return html.replace(/<[^>]*>/g, ' ')
@@ -71,7 +61,6 @@ export function stripHtml(html: string): string {
   return (el.textContent ?? '').replace(/\s+/g, ' ').trim()
 }
 
-/** Rough byte size of the persisted library, for the "~K KB used" footer. */
 export function approxKB(value: unknown): string {
   try {
     const bytes = JSON.stringify(value).length

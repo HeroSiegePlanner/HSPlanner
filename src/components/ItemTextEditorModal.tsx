@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { EquippedItem, ItemBase, SlotKey } from '../types'
+import type { EquippedItem, ItemBase } from '../types'
 import {
   parseItemText,
   serializeEquippedItem,
@@ -9,7 +9,6 @@ import {
 import { Modal } from './Modal'
 
 interface Props {
-  slot: SlotKey
   slotName: string
   equipped: EquippedItem
   base: ItemBase
@@ -18,7 +17,6 @@ interface Props {
 }
 
 export default function ItemTextEditorModal({
-  slot: _slot,
   slotName,
   equipped,
   base,

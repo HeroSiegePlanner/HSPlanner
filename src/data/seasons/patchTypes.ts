@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-// Canonical home of the tree-nodes.json node shape; treeStats.ts re-exports it.
 export interface TreeNodeInfo {
   t: string
   n: string

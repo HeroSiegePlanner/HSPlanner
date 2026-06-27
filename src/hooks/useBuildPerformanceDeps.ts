@@ -14,7 +14,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const customStats = useBuild((s) => s.customStats)
   const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
   const treeSocketed = useBuild((s) => s.treeSocketed)
-  const mainSkillId = useBuild((s) => s.mainSkillId)
+  const activeSkillIds = useBuild((s) => s.activeSkillIds)
   const enemyConditions = useBuild((s) => s.enemyConditions)
   const playerConditions = useBuild((s) => s.playerConditions)
   const skillProjectiles = useBuild((s) => s.skillProjectiles)
@@ -35,7 +35,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       customStats,
       allocatedTreeNodes,
       treeSocketed,
-      mainSkillId,
+      activeSkillIds,
       enemyConditions,
       playerConditions,
       skillProjectiles,
@@ -55,7 +55,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       customStats,
       allocatedTreeNodes,
       treeSocketed,
-      mainSkillId,
+      activeSkillIds,
       enemyConditions,
       playerConditions,
       skillProjectiles,

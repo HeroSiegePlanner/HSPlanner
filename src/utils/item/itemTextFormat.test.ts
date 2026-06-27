@@ -7,9 +7,7 @@ import {
   type AffixMathProvider,
 } from './itemTextFormat'
 
-// Deterministic star-less stub: these tests run outside the Tauri runtime, so
-// the Rust display_values command is replaced with the plain roll lerp (all
-// fixtures use stars: 0, where the engine math reduces to exactly this).
+// Deterministic stub replacing the Rust display_values command (fixtures use stars: 0).
 const stubMath: AffixMathProvider = {
   async batch({ affixes: affixReqs = [], scaled = [] }) {
     const rolled = (
@@ -151,8 +149,7 @@ Affixes:
     const allSkillsAffix = findToAllSkillsT1Affix()
     if (!allSkillsAffix) return
 
-    // Numeric-prefix replacement should match the *correct* affix by stat text,
-    // not collide with any unrelated affix whose description has no leading value.
+    // Numeric-prefix replacement must match by stat text, not collide with a value-less affix.
     const text = `Rarity: ${baseItem.rarity.toUpperCase()}
 ${baseItem.name}
 ${baseItem.baseType}
@@ -234,8 +231,7 @@ describe('itemTextFormat — implicitOverrides support', () => {
   })
 
   it('parser accepts a brand new implicit not present on base.implicit', async () => {
-    // Lucifer's Crown style: pick any item, then inject a stat key that the
-    // base item does NOT have. Should land in implicitOverrides as a new entry.
+    // Inject a stat key the base item does NOT have; expect a new implicitOverrides entry.
     const baseItem = findItemWithImplicit()
     if (!baseItem) return
     const newStatKey = 'increased_strength'

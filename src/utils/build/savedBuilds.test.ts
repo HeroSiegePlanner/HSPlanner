@@ -6,9 +6,7 @@ afterEach(() => {
 })
 
 function failingSetItem() {
-  // Replaces localStorage.setItem with a stub that throws a quota-exceeded
-  // DOMException, the way a real browser does once the ~5 MB origin quota is
-  // hit. Used to prove that a failed persist surfaces instead of being lost.
+  // Stub setItem to throw a quota-exceeded DOMException like a real browser.
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
     throw new DOMException('quota exceeded', 'QuotaExceededError')
   })

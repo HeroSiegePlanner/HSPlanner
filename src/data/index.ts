@@ -44,7 +44,6 @@ const seasonLoad = loadSeasonPatchSet(activeSeasonId)
 seasonErrors.push(...seasonLoad.errors)
 const seasonPatches = seasonLoad.patches
 
-// All-or-nothing per collection: any patch error keeps the base data (matches the Rust twin).
 export function patched<T>(base: T, result: PatchResult<T>): T {
   if (result.errors.length > 0) {
     seasonErrors.push(...result.errors)
@@ -187,7 +186,7 @@ export const nodeIcons: Record<string, string> = patched(
   ),
 )
 export const seasonDataErrors: ReadonlyArray<string> = seasonErrors
-const GEAR_SLOTS = new Set<string>([
+const GEAR_SLOT_KEYS = [
   'weapon',
   'offhand',
   'helmet',
@@ -198,7 +197,8 @@ const GEAR_SLOTS = new Set<string>([
   'amulet',
   'ring_1',
   'ring_2',
-])
+] as const
+const GEAR_SLOTS = new Set<string>(GEAR_SLOT_KEYS)
 export function isGearSlot(slot: string): boolean {
   return GEAR_SLOTS.has(slot)
 }
@@ -207,7 +207,6 @@ export function isCharmSlot(slot: string): boolean {
   return slot.startsWith('charm_')
 }
 
-// Charm stars + forge arrived in S10, so every season except the S9 baseline allows them.
 export function charmsAllowStarsForge(season: string): boolean {
   return season !== SEASON_BEFORE_CHARM_STARS
 }
@@ -216,7 +215,6 @@ export function canStarForge(slot: string, season: string): boolean {
   return isGearSlot(slot) || (isCharmSlot(slot) && charmsAllowStarsForge(season))
 }
 
-// Star count that applies for display/scaling, gated like the Rust effective_stars: charm stars vanish in s9.
 export function effectiveStars(
   slot: string,
   season: string,
@@ -295,7 +293,6 @@ export function getClassIcon(classId: string): string | undefined {
   return classImageIndex.get(classId)
 }
 
-// Local sprite first, JSON-supplied `icon` (wiki URL or emoji) as fallback.
 export function resolveSkillIcon(skill: {
   id: string
   classId: string
@@ -332,7 +329,6 @@ export function getAugment(id: string): AngelicAugment | undefined {
   return augmentIndex.get(id)
 }
 
-// Only common-rarity items can roll runewords; an exact rune-sequence match is required.
 export function detectRuneword(
   base: ItemBase,
   socketed: (string | null)[],

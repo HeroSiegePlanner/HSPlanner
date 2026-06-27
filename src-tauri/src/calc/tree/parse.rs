@@ -2306,7 +2306,12 @@ pub fn classify_tree_node_line(line: &str) -> TreeLineClass {
     let trimmed = line.trim();
     match match_mod_rules(trimmed) {
         ModRuleOutcome::Stat(m) => TreeLineClass::Stat(m),
-        ModRuleOutcome::Reject => TreeLineClass::RecognizedNoStat,
+        // Mod-then-meta flow: a stat-rejected line still gets a meta pass, so
+        // meta-only lines (e.g. conversions) classify as parsed, not dropped.
+        ModRuleOutcome::Reject => match parse_tree_node_meta(trimmed) {
+            Some(meta) => TreeLineClass::Meta(meta),
+            None => TreeLineClass::RecognizedNoStat,
+        },
         ModRuleOutcome::NoMatch => match parse_tree_node_meta(trimmed) {
             Some(meta) => TreeLineClass::Meta(meta),
             None => TreeLineClass::Unknown,
@@ -2375,6 +2380,16 @@ mod tests {
         assert!(matches!(
             classify_tree_node_line("Path to any Black Hole"),
             TreeLineClass::RecognizedNoStat
+        ));
+    }
+
+    #[test]
+    fn classify_null_rule_conversion_line_is_meta() {
+        // Rejected as a stat by a null rule but still a conversion the engine
+        // applies — must classify as parsed (Meta), not silently dropped.
+        assert!(matches!(
+            classify_tree_node_line("12% of Resistances converted to Life"),
+            TreeLineClass::Meta(ParsedMeta::Convert(_))
         ));
     }
 

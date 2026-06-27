@@ -43,8 +43,6 @@ const FORGE_COLOR: Record<ForgeKind, string> = {
   satanic_crystal: 'text-stat-red',
 }
 
-// Socket-in-item form checked first so Rainbow/Transform trailing parens
-// don't get mistaken for the item name by the generic parens fallback.
 function extractItemName(label: string): string | null {
   const trimmed = label.trim()
   if (!trimmed) return null
@@ -58,9 +56,6 @@ function extractItemName(label: string): string | null {
   return trimmed
 }
 
-// Parses a tree label into a node id (preferred) or display name. Handles
-// modern "Tree: X #N" labels, "Tree Socket #N" gem labels, and a legacy
-// pre-#N fallback that stops capture at the first ":" / "(".
 function extractTreeRef(label: string): { id?: number; name?: string } | null {
   const trimmed = label.trim()
   const socketMatch = trimmed.match(/\(Tree Socket #(\d+)\)\s*$/)
@@ -98,7 +93,6 @@ function sortByMagnitude(sources: SourceContribution[]): SourceContribution[] {
   return [...sources].sort((a, b) => magnitudeOf(b.value) - magnitudeOf(a.value))
 }
 
-// Groups each forged-crystal child directly under its parent item-source.
 function orderSources(sources: SourceContribution[]): SourceContribution[] {
   const forgedByParent = new Map<string, SourceContribution[]>()
   for (const s of sources) {
@@ -168,7 +162,6 @@ function SourceItem({
     }
     return <li key={index}>{forgedRow}</li>
   }
-  // Strip the `#N` node id from the display string; parsers read s.label.
   const displayLabel =
     s.sourceType === 'tree'
       ? s.label.replace(/\s+#\d+/, '')
@@ -271,8 +264,6 @@ const TOOLTIP_WIDTH = 320
 const TOOLTIP_GAP = 6
 const VIEWPORT_PADDING = 8
 
-// --- breakdown-mode renderers (pinned modal only) ---
-
 function rangedToPair(v: RangedValue): [number, number] {
   return typeof v === 'number' ? [v, v] : v
 }
@@ -313,7 +304,6 @@ function isZeroRanged(v: RangedValue): boolean {
   return min === 0 && max === 0
 }
 
-// Fallback Title-Case rendering when statName returns the raw snake_case key.
 function humanizeStatKey(key: string): string {
   return key
     .split('_')
@@ -349,7 +339,6 @@ function CalculationSection({ breakdown }: { breakdown: StatBreakdown }) {
       </div>
     )
   }
-  // Multiplied-flat stats (life / mana / replenishes) — additive is flat.
   if (hasIncreased || !isPercent) {
     return (
       <div className="border-b border-border/40">
@@ -579,19 +568,15 @@ export default function SourceTooltip({
   const [open, setOpen] = useState(false)
   const [pinned, setPinned] = useState(false)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
-  // Stable ref so the refetch effect doesn't churn on fresh inline arrows.
   const onRequestBreakdownRef = useRef(onRequestBreakdown)
   useEffect(() => {
     onRequestBreakdownRef.current = onRequestBreakdown
   })
-  // Refetch whenever the modal is pinned without a cached breakdown: covers
-  // initial open, build-edit cache invalidation, and reopen after a failure.
   useEffect(() => {
     if (!pinned || breakdown != null) return
     onRequestBreakdownRef.current?.()
   }, [pinned, breakdown])
   const inventory = useBuild((s) => s.inventory)
-  // First-match-wins for duplicates; copies carry identical stat ranges.
   const itemByName = useMemo(() => {
     const map = new Map<string, EquippedItem>()
     for (const equipped of Object.values(inventory)) {
@@ -636,7 +621,6 @@ export default function SourceTooltip({
     }
   }, [open, pinned])
 
-  // ESC closes the pinned modal.
   useEffect(() => {
     if (!pinned) return
     const onKey = (e: KeyboardEvent) => {
@@ -656,7 +640,6 @@ export default function SourceTooltip({
     e.preventDefault()
     openPinned()
   }
-  // Skip when the user just drag-selected text — their intent was copy, not pin.
   const handleClick = (e: React.MouseEvent) => {
     if (e.defaultPrevented) return
     const selection = window.getSelection()
@@ -725,8 +708,6 @@ export default function SourceTooltip({
                 'radial-gradient(ellipse at 50% 0%, rgba(201,165,90,0.06), rgba(0,0,0,0.78) 60%)',
             }}
             onClick={(e) => {
-              // Skip dismissal when click lands on a portal-rendered tooltip
-              // (pointer-events-none lets the click bubble to the backdrop).
               const tooltips = document.querySelectorAll('[role="tooltip"]')
               for (const tt of tooltips) {
                 const rect = tt.getBoundingClientRect()

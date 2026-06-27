@@ -20,7 +20,6 @@ function SocketPickerTrigger({
   rows: PickerRow[]
   onChange: (id: string | null) => void
 }) {
-  // Renders a single socket's trigger button (icon + name + Browse arrow, or "Empty socket" italic) that opens the shared PickerModal scoped to gems + runes when clicked. Uses the modal's `allowClear` to surface a Clear-socket action so the user never has to scroll for a "(none)" row. When the socket is filled, wraps the trigger in a Tooltip so the user can preview the socketed gem/rune's stats without re-opening the picker. The picker's row tooltips are enriched on-the-fly with a NetChangeBlock that diffs the candidate against whatever is currently socketed (with the rainbow multiplier applied where appropriate), so users see the build delta inline.
   const [open, setOpen] = useState(false)
   const multiplier = socketType === 'rainbow' ? RAINBOW_MULTIPLIER : 1
   const previousStats = useMemo<Record<string, number>>(() => {
@@ -188,7 +187,6 @@ function SocketTypeToggle({
   value: SocketType
   onChange: (t: SocketType) => void
 }) {
-  // Renders the small N/R toggle next to a socket dropdown that lets the user mark a socket as Rainbow (+50% effect on the socketed gem/rune). Used inside SocketsSection. Styled to match the modal's accent-deep border + mono typography language.
   return (
     <div className="flex shrink-0 overflow-hidden rounded-xs border border-accent-deep/30 font-mono text-[10px] font-semibold tracking-[0.06em]">
       <button
@@ -235,7 +233,6 @@ export function SocketsSection({
   onSocketed: (idx: number, id: string | null) => void
   onSocketType: (idx: number, type: SocketType) => void
 }) {
-  // Renders the per-item sockets editor: socket-count stepper, one socket trigger button per socket slot (with normal/rainbow toggle) that opens a PickerModal listing every gem and rune grouped by kind, and detection of any active runeword. Wrapped in the shared SectionCard for consistent framing inside the GearSlotModal right column.
   if (maxSockets === 0) return null
   return (
     <SectionCard

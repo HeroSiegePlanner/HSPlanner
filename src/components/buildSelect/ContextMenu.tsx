@@ -9,7 +9,6 @@ export interface ContextMenuItem {
   danger?: boolean
   disabled?: boolean
   kbd?: string
-  /** Render a thin divider above this item. */
   separatorBefore?: boolean
 }
 
@@ -25,8 +24,6 @@ const MENU_WIDTH = 220
 const ITEM_HEIGHT = 30
 
 export function ContextMenu({ x, y, header, items, onClose }: ContextMenuProps) {
-  // Right-click menu for builds and folders. Clamps itself inside the viewport
-  // and closes on outside click, Escape, or scroll.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()

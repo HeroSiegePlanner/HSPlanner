@@ -9,6 +9,13 @@ import type {
   TreeSocketContent,
 } from '../../types'
 
+export interface PerSkillDps {
+  id: string
+  name: string | null
+  hitDpsMin: number | undefined
+  hitDpsMax: number | undefined
+}
+
 export interface BuildPerformance {
   attributes: Record<AttributeKey, RangedValue>
   stats: Record<string, RangedValue>
@@ -26,6 +33,7 @@ export interface BuildPerformance {
   statsCombined: Record<string, RangedValue>
   itemSkillBonuses: Record<string, [number, number]>
   rankBonuses: Record<string, [number, number]>
+  perSkill?: PerSkillDps[]
 }
 
 export interface BuildPerformanceDeps {
@@ -40,14 +48,13 @@ export interface BuildPerformanceDeps {
   customStats: CustomStat[]
   allocatedTreeNodes: Set<number>
   treeSocketed: Record<number, TreeSocketContent | null>
-  mainSkillId: string | null
+  activeSkillIds: string[]
   enemyConditions: Record<string, boolean>
   playerConditions: Record<string, boolean>
   skillProjectiles: Record<string, number>
   enemyResistances: Record<string, number>
   procToggles: Record<string, boolean>
   killsPerSec: number
-  // When set, drives the calc; left undefined, the bridge falls back to the loaded season.
   season?: string
 }
 

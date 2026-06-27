@@ -17,13 +17,6 @@ import {
   statName,
 } from './stats'
 
-// Affix/star math (rolled values, star scaling, item skill bonuses) moved to
-// Rust — covered by src-tauri/src/calc/{affix,star_scaling,rank}.rs tests.
-
-// -----------------------------------------------------------------------
-// normalizeSkillName
-// -----------------------------------------------------------------------
-
 describe('normalizeSkillName', () => {
   it('trims and lowercases', () => {
     expect(normalizeSkillName('  Charged Bolts  ')).toBe('charged bolts')
@@ -33,10 +26,6 @@ describe('normalizeSkillName', () => {
     expect(normalizeSkillName('charged bolts')).toBe('charged bolts')
   })
 })
-
-// -----------------------------------------------------------------------
-// rangedMin / rangedMax / isZero
-// -----------------------------------------------------------------------
 
 describe('rangedMin / rangedMax', () => {
   it('returns the number itself for scalar RangedValue', () => {
@@ -66,18 +55,12 @@ describe('isZero', () => {
   })
 })
 
-// -----------------------------------------------------------------------
-// statName / effectiveCap / formatValue / fmtStats
-// -----------------------------------------------------------------------
-
 describe('statName', () => {
   it('falls back to the raw key when no definition exists', () => {
     expect(statName('totally_made_up_stat')).toBe('totally_made_up_stat')
   })
 
   it('prefixes "Total" for _more synthetic keys', () => {
-    // increased_attack_speed has a stat def. The _more variant gets a
-    // "Total" prefix to distinguish the multiplicative aggregate.
     const name = statName('increased_attack_speed_more')
     expect(name.startsWith('Total ')).toBe(true)
   })
@@ -89,7 +72,6 @@ describe('effectiveCap', () => {
   })
 
   it('adds the max_<key> mod to the base cap', () => {
-    // fire_resistance has cap=75. max_fire_resistance bumps it.
     const stats: RangedStatMap = { max_fire_resistance: 5 }
     const cap = effectiveCap('fire_resistance', stats)
     expect(cap).toBe(80)
@@ -122,10 +104,6 @@ describe('formatValue / fmtStats', () => {
     expect(joined).toBe('+5 totally_made_up_stat')
   })
 })
-
-// -----------------------------------------------------------------------
-// formatAffixRangeFromValues — string formatting over Rust-computed ranges
-// -----------------------------------------------------------------------
 
 describe('formatAffixRangeFromValues', () => {
   it('returns just the sign when min/max are null or no range is available', () => {
@@ -181,10 +159,6 @@ describe('shouldScaleImplicit', () => {
   })
 })
 
-// -----------------------------------------------------------------------
-// groupStatKeysByCategory
-// -----------------------------------------------------------------------
-
 const mkDef = (key: string, overrides: Partial<StatDef> = {}): StatDef => ({
   key,
   name: key,
@@ -203,8 +177,7 @@ describe('groupStatKeysByCategory', () => {
   })
 
   it('emits a key once when defs alias it under two display names', () => {
-    // game-config.json defines damage_per_rage_stack twice (parsing aliases);
-    // rendering the key twice triggers React duplicate-key warnings.
+    // Aliased keys must surface once or React emits duplicate-key warnings.
     const grouped = groupStatKeysByCategory(
       [mkDef('damage_per_rage_stack'), mkDef('damage_per_rage_stack')],
       ['offense'],
@@ -251,10 +224,6 @@ describe('groupStatKeysByCategory', () => {
   })
 })
 
-// -----------------------------------------------------------------------
-// dedupeStatDefsByKey
-// -----------------------------------------------------------------------
-
 describe('dedupeStatDefsByKey', () => {
   it('keeps the first definition when defs alias one key', () => {
     const first = mkDef('damage_per_rage_stack', {
@@ -272,10 +241,7 @@ describe('dedupeStatDefsByKey', () => {
   })
 
   it('yields unique custom-stat option ids for the real game config', () => {
-    // ConfigView builds its SearchableSelect options from this exact
-    // pipeline; duplicate ids re-trigger the React duplicate-key warning
-    // in PickerModal. The raw config must keep the aliased defs (item-text
-    // parsing relies on them), so the picker pipeline has to dedupe.
+    // Raw config keeps aliased defs for item-text parsing, so the picker pipeline dedupes.
     const visible = gameConfig.stats.filter(
       (s) => !s.itemOnly && !s.skillScoped,
     )

@@ -36,7 +36,7 @@ describe('share schema v2 season', () => {
       s: snap.skillRanks,
       ss: snap.subskillRanks,
       t: [...snap.allocatedTreeNodes].sort((x, y) => x - y),
-      m: snap.mainSkillId,
+      m: snap.activeSkillIds[0] ?? null,
       u: snap.activeAuraId,
       buf: snap.activeBuffs,
       ec: snap.enemyConditions,

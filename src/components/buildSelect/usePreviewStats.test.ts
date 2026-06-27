@@ -23,9 +23,7 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
-// Regression: changeActiveSeason re-stamps SavedBuild.season but never re-encodes
-// the profile blob, so decoded.season stays stale. The preview must compute with
-// the build's metadata season, otherwise an s10 charm's stars apply under s9.
+// Regression: preview must use the build metadata season, not the stale blob season.
 describe('usePreviewStats season source', () => {
   it('computes with the build metadata season, not the stale blob season', async () => {
     // Arrange

@@ -1,15 +1,10 @@
+import { useId } from 'react'
+
 interface LogoProps {
   size?: number
   glow?: boolean
   className?: string
   title?: string
-}
-
-let uid = 0
-function nextId(prefix: string) {
-  // Returns a process-unique id by incrementing a module-level counter so multiple Logo instances on the same page do not share inline SVG `<defs>` ids. Used inside Logo to generate unique gradient/filter ids per instance.
-  uid += 1
-  return `${prefix}-${uid}`
 }
 
 export default function Logo({
@@ -18,10 +13,10 @@ export default function Logo({
   className,
   title,
 }: LogoProps) {
-  // Renders the HSPlanner logo as an inline SVG with optional gold-glow filter and accessible title. Used by the top bar and any other surface that wants to render the brand mark.
-  const coreId = nextId('hsLogoCore')
-  const lineId = nextId('hsLogoLine')
-  const glowId = nextId('hsLogoGlow')
+  const baseId = useId()
+  const coreId = `${baseId}-core`
+  const lineId = `${baseId}-line`
+  const glowId = `${baseId}-glow`
 
   return (
     <svg

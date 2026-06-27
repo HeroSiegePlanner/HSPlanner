@@ -66,13 +66,6 @@ export interface ProcEffect {
   details?: string
 }
 
-export interface AffixTier {
-  tier: number
-  min: number
-  max: number
-  requiresLevel?: number
-}
-
 export interface Affix {
   id: string
   groupId: string
@@ -103,15 +96,6 @@ export interface Gem {
   color?: string
   stats: StatMap
   description?: string
-}
-
-export type SocketableKind = 'rune' | 'gem'
-
-export interface Socketable {
-  id: string
-  kind: SocketableKind
-  name: string
-  stats: StatMap
 }
 
 export interface Runeword {

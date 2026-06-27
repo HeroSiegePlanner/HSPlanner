@@ -59,9 +59,6 @@ export function statName(key: string): string {
   return key
 }
 
-// Buckets visible stat keys by category. Dedupes keys because gameConfig.stats
-// may alias one key under several display names (item-text parsing aliases);
-// each key must surface once so list renders get unique React keys.
 export function groupStatKeysByCategory(
   defs: readonly StatDef[],
   categories: readonly string[],
@@ -80,9 +77,6 @@ export function groupStatKeysByCategory(
   return out
 }
 
-// Keeps the first definition per key. gameConfig.stats may alias one key
-// under several display names (item-text parsing aliases); pickers need one
-// def per key so option lists get unique React keys.
 export function dedupeStatDefsByKey(defs: readonly StatDef[]): StatDef[] {
   const seen = new Set<string>()
   return defs.filter((def) => {

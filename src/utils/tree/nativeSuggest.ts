@@ -116,7 +116,6 @@ export async function suggestNodesNative(
   budget: number,
   onProgress?: (current: number, total: number) => void,
 ): Promise<NativeSuggestResult> {
-  // Compute baseline build stats WITHOUT tree (so Rust can incrementally add tree mods).
   const baseline = await computeBuildStatsAsync({
     ...deps,
     allocatedTreeNodes: new Set<number>(),
@@ -127,8 +126,9 @@ export async function suggestNodesNative(
   const attrContributions = contributionsRecord(baseline.attributeSources)
 
   const allClassSkills = getSkillsByClass(deps.classId)
-  const activeSkill = deps.mainSkillId
-    ? allClassSkills.find((s) => s.id === deps.mainSkillId)
+  const primarySkillId = deps.activeSkillIds[0] ?? null
+  const activeSkill = primarySkillId
+    ? allClassSkills.find((s) => s.id === primarySkillId)
     : null
 
   const activeSkillRank = activeSkill

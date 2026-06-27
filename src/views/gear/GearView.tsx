@@ -160,7 +160,6 @@ export default function GearView() {
           charmSlots={charmSlots}
           activeSlot={activeSlot}
           onSelect={(s) => setActiveSlot(s)}
-          fitError={null}
         />
       </div>
 

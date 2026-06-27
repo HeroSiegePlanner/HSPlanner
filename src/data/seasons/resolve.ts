@@ -13,7 +13,6 @@ export interface PatchResult<T> {
   errors: string[]
 }
 
-// Add/change/remove for id-keyed collections; Rust twin in season.rs, held to parity-fixture.json.
 export function applyListPatch<T extends object>(
   base: T[],
   patch: ListPatch<Record<string, unknown>> | undefined,
@@ -22,7 +21,6 @@ export function applyListPatch<T extends object>(
 ): PatchResult<T[]> {
   if (!patch) return { data: base, errors: [] }
   const errors: string[] = []
-  // zod validated the patch shape; the id-keyed merge is the trust boundary
   const byKey = new Map<string, T>(
     base.map((e) => [String((e as Record<string, unknown>)[key]), e]),
   )
@@ -48,7 +46,6 @@ export function applyListPatch<T extends object>(
   return { data: [...byKey.values()], errors }
 }
 
-// Remove -> change -> add for record patches; merge vs replace injected via applyChange.
 function applyRecordPatchCore<T>(
   base: Record<string, T>,
   patch: {
@@ -128,7 +125,6 @@ export function applyGameConfigPatch<T extends object>(
   return { data: out, errors }
 }
 
-// Stable position key (coords rounded to 0.1) so float edge endpoints resolve back to a node id.
 export function posKey(x: number, y: number): string {
   return `${Math.round(x * 10)}_${Math.round(y * 10)}`
 }
@@ -137,7 +133,6 @@ function edgeKey(a: number, b: number): string {
   return a < b ? `${a}_${b}` : `${b}_${a}`
 }
 
-// Resolves edges to id pairs, applies ops by id, then re-emits coords so moved nodes keep edges.
 export function applyTreePatch(
   base: HeroSiegeTree,
   patch: TreePatch | undefined,

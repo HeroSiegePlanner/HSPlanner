@@ -33,6 +33,13 @@ updates:
         patterns:
           - "tailwindcss"
           - "@tailwindcss/*"
+      # Catch-all: everything ungrouped, minor/patch in one PR
+      npm-misc:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
@@ -62,9 +69,21 @@ updates:
         patterns:
           - "serde"
           - "serde_*"
+      # Catch-all: everything ungrouped, minor/patch in one PR
+      cargo-misc:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      # Bundle every GitHub Actions update (incl. major) into one PR
+      actions:
+        patterns:
+          - "*"

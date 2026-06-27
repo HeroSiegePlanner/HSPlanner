@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
-import { isImageUrl } from "../utils/imageUrl";
+import { compactRange } from "../utils/compactNumber";
 import {
   attrPointsFor,
   skillPointsFor,
@@ -82,7 +82,6 @@ const GOLD_OFFENSE = new Set(["enhanced_damage", "crit_chance", "crit_damage"]);
 const GOLD_DEFENSE = new Set(["life"]);
 const BLUE_DEFENSE = new Set(["mana", "mana_replenish"]);
 
-// Combined `<key>`+`<key>_more` totals come precomputed from the Rust engine.
 function effectiveStatValue(
   stats: Record<string, RangedValue>,
   statsCombined: Record<string, RangedValue>,
@@ -96,10 +95,8 @@ export default function LeftStatsPanel() {
   const level = useBuild((s) => s.level);
   const allocated = useBuild((s) => s.allocated);
   const skillRanks = useBuild((s) => s.skillRanks);
-  const mainSkillId = useBuild((s) => s.mainSkillId);
-  const setMainSkill = useBuild((s) => s.setMainSkill);
-  const activeAuraId = useBuild((s) => s.activeAuraId);
-  const setActiveAura = useBuild((s) => s.setActiveAura);
+  const activeSkillIds = useBuild((s) => s.activeSkillIds);
+  const toggleActiveSkill = useBuild((s) => s.toggleActiveSkill);
 
   const buildDeps = useBuildPerformanceDeps();
   const performance = useCalcResult<BuildPerformance | null>(
@@ -128,12 +125,11 @@ export default function LeftStatsPanel() {
     () => allClassSkills.filter((s) => s.kind === "active"),
     [allClassSkills],
   );
-  const classAuras = useMemo(
-    () => allClassSkills.filter((s) => s.kind === "aura"),
-    [allClassSkills],
-  );
+  const primarySkillId = activeSkillIds[0] ?? null;
   const activeSkill =
-    mainSkillId != null ? classSkills.find((s) => s.id === mainSkillId) : null;
+    primarySkillId != null
+      ? classSkills.find((s) => s.id === primarySkillId)
+      : null;
   const activeRank = activeSkill ? (skillRanks[activeSkill.id] ?? 0) : 0;
 
   const rankBonus: [number, number] = activeSkill
@@ -242,46 +238,45 @@ export default function LeftStatsPanel() {
         )}
       </div>
 
-      {classAuras.length > 0 && (
-        <Section title="Active Aura">
-          <PanelSelect
-            value={activeAuraId ?? ""}
-            onChange={(e) => setActiveAura(e.target.value || null)}
-          >
-            <option value="">— none —</option>
-            {classAuras.map((s) => {
-              const rank = skillRanks[s.id] ?? 0;
-              return (
-                <option key={s.id} value={s.id} disabled={rank === 0}>
-                  {s.icon && !isImageUrl(s.icon) ? `${s.icon} ` : ""}
-                  {s.name}
-                </option>
-              );
-            })}
-          </PanelSelect>
-        </Section>
-      )}
-
-      <Section title="Main Skill">
+      <Section title="Active Skills">
         {classSkills.length === 0 ? (
           <div className="font-mono text-[11px] tracking-[0.04em] text-muted italic">
             No skills for this class
           </div>
         ) : (
           <>
-            <PanelSelect
-              value={mainSkillId ?? ""}
-              onChange={(e) => setMainSkill(e.target.value || null)}
-              className="mb-2"
-            >
-              <option value="">— select —</option>
-              {classSkills.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.icon && !isImageUrl(s.icon) ? `${s.icon} ` : ""}
-                  {s.name}
-                </option>
-              ))}
-            </PanelSelect>
+            {activeSkillIds.length === 0 ? (
+              <div className="mb-2 font-mono text-[11px] tracking-[0.04em] text-muted italic">
+                Pick active skills in the Skills tab
+              </div>
+            ) : (
+              <div className="mb-2 flex flex-col gap-1">
+                {activeSkillIds.map((id) => {
+                  const sk = classSkills.find((s) => s.id === id);
+                  const ps = performance?.perSkill?.find((p) => p.id === id);
+                  const dps =
+                    ps?.hitDpsMin !== undefined && ps?.hitDpsMax !== undefined
+                      ? compactRange(ps.hitDpsMin, ps.hitDpsMax)
+                      : "—";
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => toggleActiveSkill(id)}
+                      title={`Remove ${sk?.name ?? id} from active skills`}
+                      className="flex items-center justify-between gap-2 rounded-[3px] border border-border-2 px-2 py-1 text-left transition-colors hover:border-stat-red/60"
+                      style={{ background: "var(--color-panel-2)" }}
+                    >
+                      <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-text">
+                        {sk?.name ?? id}
+                      </span>
+                      <span className="shrink-0 font-mono text-[11px] tabular-nums text-accent-hot">
+                        {dps}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             {activeSkill && (
               <>
                 <Row
@@ -641,30 +636,6 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
       <span className="font-mono tabular-nums shrink-0 whitespace-nowrap text-right">
         {value}
       </span>
-    </div>
-  );
-}
-
-function PanelSelect({
-  className,
-  children,
-  ...rest
-}: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <div
-      className={`inline-flex w-full items-center rounded-[3px] border border-border-2 px-2 py-1.5 transition-colors hover:border-accent-deep focus-within:border-accent-hot ${className ?? ""}`}
-      style={{
-        background:
-          "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
-        boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
-      }}
-    >
-      <select
-        {...rest}
-        className="w-full cursor-pointer bg-transparent text-[12px] text-text outline-none"
-      >
-        {children}
-      </select>
     </div>
   );
 }

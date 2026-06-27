@@ -17,7 +17,6 @@ interface PlacedCharm {
 }
 
 function buildInitialOccupancy(): boolean[] {
-  // Returns a fresh boolean grid for the charm-pack solver, with the structurally-blocked cells of the charm grid pre-set to true. Used by `packCharms` (and the backtracker) before running each placement attempt.
   const occ = new Array(CHARM_GRID_ROWS * CHARM_GRID_COLS).fill(false)
   for (const [r, c] of CHARM_BLOCKED_CELLS) {
     occ[r * CHARM_GRID_COLS + c] = true
@@ -31,7 +30,6 @@ function canPlaceAt(
   c: number,
   occupancy: boolean[],
 ): boolean {
-  // Returns true when the rectangular charm `ch` can be placed at (r, c) without overlapping any already-occupied cell. Used by the backtracking and greedy charm-packing routines.
   for (let dr = 0; dr < ch.h; dr++) {
     for (let dc = 0; dc < ch.w; dc++) {
       if (occupancy[(r + dr) * CHARM_GRID_COLS + (c + dc)]) return false
@@ -47,7 +45,6 @@ function setOccupancy(
   occupancy: boolean[],
   value: boolean,
 ): void {
-  // Marks every cell that the rectangular charm `ch` occupies starting at (r, c) as `value`, used to claim or release a placement during backtracking.
   for (let dr = 0; dr < ch.h; dr++) {
     for (let dc = 0; dc < ch.w; dc++) {
       occupancy[(r + dr) * CHARM_GRID_COLS + (c + dc)] = value
@@ -61,7 +58,6 @@ function backtrackPack(
   occupancy: boolean[],
   positions: ({ row: number; col: number } | null)[],
 ): boolean {
-  // Recursive depth-first backtracking that tries to place every charm in the supplied order, with a fast path for trailing 1×1 charms (which only need a free-cell count, not full backtracking). Returns true when a complete placement is found and writes the chosen positions into the `positions` array. Used by `packCharms`.
   if (idx === charms.length) return true
 
   let allUnit = true
@@ -102,7 +98,7 @@ function backtrackPack(
 export function packCharms(
   charms: { slotKey: SlotKey; w: number; h: number }[],
 ): { placed: PlacedCharm[]; overflow: SlotKey[]; occupancy: boolean[] } {
-  // Packs every supplied charm into the constrained charm grid, sorting largest-first and trying the full backtracking solver first; if total area exceeds capacity it falls back to a greedy first-fit-decreasing algorithm and reports any charms that overflow. Used by GearView's CharmSection to render the visual layout.
+  // Backtracking solver first, greedy first-fit-decreasing fallback on overflow.
   const sorted = [...charms].sort((a, b) => {
     const areaDiff = b.w * b.h - a.w * a.h
     if (areaDiff !== 0) return areaDiff

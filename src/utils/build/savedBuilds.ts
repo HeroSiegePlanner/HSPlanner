@@ -18,18 +18,12 @@ const LEGACY_STORAGE_KEY = 'heroplanner.savedBuilds.v3'
 const DEFAULT_PROFILE_NAME = 'Default'
 
 export class StorageWriteError extends Error {
-  // Thrown by `writeLibrary` when persisting the saved-builds library to
-  // localStorage fails — most commonly because the ~5 MB origin quota is
-  // exhausted. It lets callers (and ultimately the build store) surface the
-  // failure to the user instead of silently dropping the build they believed
-  // they had saved.
   constructor(message = 'Could not save to local storage — it may be full.') {
     super(message)
     this.name = 'StorageWriteError'
   }
 }
 
-// Subtypes StorageWriteError so existing instanceof catches still surface it.
 export class StorageCapacityError extends StorageWriteError {
   constructor(message: string) {
     super(message)
@@ -69,14 +63,12 @@ export interface SavedBuild {
   updatedAt: string
   profiles: SavedProfile[]
   activeProfileId: string
-  /** Owning folder; `null` means the build is unfiled. */
   folderId: string | null
   favorite: boolean
   tags: string[]
   season: string
 }
 
-/** v3 storage shape: builds and folders co-located in one object. */
 export interface SavedLibrary {
   version: 3
   builds: SavedBuild[]
@@ -94,7 +86,6 @@ interface SavedBuildV1 {
 }
 
 export function newId(prefix: string): string {
-  // Returns a fresh unique identifier, preferring `crypto.randomUUID` and falling back to a `prefix_<timestamp><random>` form on platforms without it. Used to generate ids for newly created builds, profiles and folders.
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID()
   }
@@ -104,12 +95,10 @@ export function newId(prefix: string): string {
 }
 
 function clampString(s: unknown, max: number, fallback = ''): string {
-  // Returns the first `max` characters of `s` when it is a string, otherwise returns `fallback`. Used to bound user-controllable string fields to defensive maximum lengths before they enter the app state.
   return typeof s === 'string' ? s.slice(0, max) : fallback
 }
 
 function sanitizeTags(raw: unknown): string[] {
-  // Coerces a persisted `tags` value into a clean, de-duplicated, capped string array. Non-array input yields `[]`; entries are trimmed, length-clamped, and empties dropped. Used by `cleanBuild` and `setBuildTags`.
   if (!Array.isArray(raw)) return []
   const out: string[] = []
   const seen = new Set<string>()
@@ -127,7 +116,6 @@ function sanitizeTags(raw: unknown): string[] {
 }
 
 function isSavedProfile(p: unknown): p is SavedProfile {
-  // Type guard validating that an unknown blob has the SavedProfile shape with all string fields under their length caps. Used to defensively filter persisted profile entries before exposing them to the rest of the app.
   if (!p || typeof p !== 'object') return false
   const candidate = p as Partial<SavedProfile>
   return (
@@ -141,7 +129,6 @@ function isSavedProfile(p: unknown): p is SavedProfile {
 }
 
 function sanitizeProfiles(raw: unknown, now: string): SavedProfile[] {
-  // Filters an unknown `profiles` value down to valid, length-bounded SavedProfile records (capped at MAX_PROFILES_PER_BUILD). Used by `cleanBuild`.
   if (!Array.isArray(raw)) return []
   return raw
     .filter(isSavedProfile)
@@ -159,7 +146,6 @@ function cleanBuild(
   validFolderIds: Set<string>,
   now: string,
 ): SavedBuild | null {
-  // Validates a single persisted build entry, trimming oversized fields, applying defaults for the v3 fields (folderId/favorite/tags), and coercing an orphan `folderId` to null. Returns null for malformed entries (missing id/name, no profiles). Used by `cleanBuilds`.
   if (!entry || typeof entry !== 'object') return null
   const b = entry as Record<string, unknown>
   if (
@@ -207,7 +193,6 @@ function cleanBuilds(
   raw: unknown[],
   validFolderIds: Set<string>,
 ): SavedBuild[] {
-  // Maps an array of unknown persisted entries to valid SavedBuild records, dropping malformed ones and capping the count at MAX_BUILDS.
   const now = new Date().toISOString()
   const out: SavedBuild[] = []
   for (const entry of raw.slice(0, MAX_BUILDS)) {
@@ -218,7 +203,6 @@ function cleanBuilds(
 }
 
 function sanitizeFolders(raw: unknown): Folder[] {
-  // Validates an unknown `folders` value: drops malformed/duplicate entries, coerces a parentId that points at a missing folder to null, and breaks any parent-chain cycles. Used by `readLibrary`.
   if (!Array.isArray(raw)) return []
   const now = new Date().toISOString()
   const out: Folder[] = []
@@ -243,13 +227,10 @@ function sanitizeFolders(raw: unknown): Folder[] {
       createdAt: clampString(f.createdAt, MAX_NAME_LENGTH, now),
     })
   }
-  // Drop parent references that point at a non-existent folder.
   const ids = new Set(out.map((f) => f.id))
   for (const f of out) {
     if (f.parentId !== null && !ids.has(f.parentId)) f.parentId = null
   }
-  // Break parent-chain cycles defensively: walk each folder up to the root and
-  // null the link that closes a loop.
   const byId = new Map(out.map((f) => [f.id, f]))
   for (const f of out) {
     const visited = new Set<string>([f.id])
@@ -276,7 +257,6 @@ function emptyLibrary(): SavedLibrary {
 }
 
 function readV1(): SavedBuildV1[] {
-  // Reads the previous-generation v1 saved-builds blob (with legacy "heroplanner" key fallback) and returns only entries whose required string fields are present. Used as the migration source when no v2/v3 data exists yet.
   const raw = readStorageWithLegacy(STORAGE_KEY_V1, LEGACY_STORAGE_KEY_V1)
   if (!raw) return []
   try {
@@ -295,7 +275,6 @@ function readV1(): SavedBuildV1[] {
 }
 
 function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
-  // Wraps every legacy v1 build into a v3 build that contains a single "Default" profile carrying the original code, with the v3 fields defaulted (unfiled, not favorite, no tags).
   return list.map((b) => {
     const profileId = newId('p')
     const profile: SavedProfile = {
@@ -322,15 +301,14 @@ function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
 }
 
 function readLegacyBuilds(): SavedBuild[] {
-  // Reads builds from the pre-v3 storage: the v2 array (with legacy key fallback) or, failing that, a v1→v2 migration. Returns builds with the v3 fields defaulted. Used by `readLibrary` to seed a v3 library on first run after the upgrade.
   const raw = readStorageWithLegacy(STORAGE_KEY_V2, LEGACY_STORAGE_KEY_V2)
   if (raw) {
     try {
       const parsed: unknown = JSON.parse(raw)
       if (Array.isArray(parsed)) return cleanBuilds(parsed, new Set())
     } catch {
-      // Corrupt/non-array v2: fall through to the v1 migration below rather
-      // than returning [], so a damaged v2 key can't mask recoverable v1 data.
+      // Corrupt/non-array v2: fall through to the v1 migration below so a
+      // damaged v2 key can't mask recoverable v1 data.
     }
   }
   const v1 = readV1()
@@ -338,7 +316,6 @@ function readLegacyBuilds(): SavedBuild[] {
 }
 
 export function readLibrary(): SavedLibrary {
-  // Loads the persisted v3 saved-builds library (with legacy key fallback), defensively trimming oversized fields and dropping malformed entries. When no v3 data exists, migrates from v2/v1 and best-effort persists the result. Used internally by every public read/mutate function and by `savedFolders.ts`.
   const raw = readStorageWithLegacy(STORAGE_KEY, LEGACY_STORAGE_KEY)
   if (raw) {
     try {
@@ -356,31 +333,24 @@ export function readLibrary(): SavedLibrary {
     } catch {
       // fall through to the corrupt-data path below
     }
-    // The v3 blob exists but is unparseable or malformed. Preserve it under a
-    // backup key BEFORE returning an empty library, otherwise the next save
-    // would overwrite the v3 key and permanently destroy recoverable builds.
+    // Back up the corrupt v3 blob before returning empty, otherwise the next
+    // save overwrites the v3 key and destroys recoverable builds.
     backupCorruptLibrary(raw)
     return emptyLibrary()
   }
-  // No v3 data yet — migrate from v2/v1 and best-effort persist the result.
   const builds = readLegacyBuilds()
   const library: SavedLibrary = { version: 3, builds, folders: [] }
   if (builds.length > 0) {
     try {
       writeLibrary(library)
     } catch {
-      // Best-effort migration: if the rewrite under the v3 key fails (e.g.
-      // storage is full) we still return the migrated library in memory and
-      // retry persisting it on the next load — throwing here would make
-      // every read appear to wipe the user's entire library.
+      // Best-effort migration: keep the in-memory library and retry persisting
+      // on the next load instead of throwing (which would appear to wipe data).
     }
   }
   return library
 }
 
-// Saves the first seen corrupt v3 blob under a one-off backup key so a later
-// write can't silently overwrite (and destroy) data that might be recoverable
-// by hand. Best-effort: never throws from the read path.
 function backupCorruptLibrary(raw: string): void {
   try {
     const key = `${STORAGE_KEY}.corrupt`
@@ -391,25 +361,21 @@ function backupCorruptLibrary(raw: string): void {
 }
 
 export function writeLibrary(library: SavedLibrary): void {
-  // Persists the supplied SavedLibrary to localStorage as JSON under the v3 key, throwing StorageWriteError when the write is rejected (e.g. the storage quota is exceeded) so the failure is never silently swallowed. Used by every mutating function in this module and in `savedFolders.ts`.
   if (!writeStorage(STORAGE_KEY, JSON.stringify(library))) {
     throw new StorageWriteError()
   }
 }
 
 export function listSavedBuilds(): SavedBuild[] {
-  // Returns every persisted build sorted by `updatedAt` descending so the most recently used build appears first. Used by the build library UI.
   return readLibrary().builds.sort((a, b) =>
     b.updatedAt.localeCompare(a.updatedAt),
   )
 }
 
 export function getSavedBuild(id: string): SavedBuild | null {
-  // Looks up a single SavedBuild by id, returning null when nothing matches. Used to hydrate the active build before reading or mutating its profiles.
   return readLibrary().builds.find((b) => b.id === id) ?? null
 }
 
-// Re-stamps a saved build's season; returns false when the build is missing.
 export function setBuildSeason(buildId: string, season: string): boolean {
   const lib = readLibrary()
   const idx = lib.builds.findIndex((b) => b.id === buildId)
@@ -422,7 +388,6 @@ export function setBuildSeason(buildId: string, season: string): boolean {
 }
 
 export function getActiveProfile(b: SavedBuild): SavedProfile | null {
-  // Returns the profile referenced by `activeProfileId`, falling back to the first profile or null when the build has none. Used by the UI to know which profile's snapshot to load when the user opens a build.
   return (
     b.profiles.find((p) => p.id === b.activeProfileId) ?? b.profiles[0] ?? null
   )
@@ -435,7 +400,6 @@ export function createBuild(
   notes: string = '',
   folderId: string | null = null,
 ): SavedBuild {
-  // Creates a brand-new SavedBuild containing exactly one (active) profile encoded from `snapshot`, persists it, and returns the freshly built record. Optionally files it under `folderId`. Used when the user explicitly saves the current state as a new build.
   const library = readLibrary()
   if (library.builds.length >= MAX_BUILDS) {
     throw new StorageCapacityError(
@@ -469,7 +433,6 @@ export function createBuild(
 }
 
 export function duplicateBuild(buildId: string): SavedBuild | null {
-  // Deep-clones a build: fresh build + profile ids, a non-colliding "(copy)" name, copied notes/folder/tags, and `favorite` reset to false. Returns the new record, or null when the source build does not exist. Used by the library "Copy" action.
   const library = readLibrary()
   const src = library.builds.find((b) => b.id === buildId)
   if (!src) return null
@@ -509,7 +472,6 @@ export function setBuildFavorite(
   buildId: string,
   favorite: boolean,
 ): SavedBuild | null {
-  // Sets the `favorite` flag on a build and refreshes `updatedAt`. Used by the library's star toggle.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -523,7 +485,6 @@ export function setBuildTags(
   buildId: string,
   tags: string[],
 ): SavedBuild | null {
-  // Replaces a build's tag list (sanitised: trimmed, de-duplicated, capped) and refreshes `updatedAt`. Used by the library's tag editor.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -537,7 +498,6 @@ export function moveBuildToFolder(
   buildId: string,
   folderId: string | null,
 ): SavedBuild | null {
-  // Moves a build into the given folder (or unfiles it when `folderId` is null), validating that the target folder exists. Used by the library's "Move to folder" action.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -554,7 +514,6 @@ export function setBuildNotes(
   buildId: string,
   notes: string,
 ): SavedBuild | null {
-  // Replaces the build-level notes (shared by every profile) with the supplied HTML string and bumps `updatedAt`. Used by NotesView whenever the user edits a build's notes.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -569,7 +528,6 @@ export function commitProfileSnapshot(
   profileId: string,
   snapshot: BuildSnapshot,
 ): SavedBuild | null {
-  // Encodes `snapshot` and writes it onto the named profile of the named build, refreshing both the profile and build timestamps as well as the build's classId. Used both for explicit saves and for committing the current state before switching profiles.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -588,7 +546,6 @@ export function renameBuild(
   buildId: string,
   name: string,
 ): SavedBuild | null {
-  // Renames a SavedBuild by id and refreshes its `updatedAt`. Used by the library when the user edits a build's title.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -599,7 +556,6 @@ export function renameBuild(
 }
 
 export function deleteBuild(buildId: string): void {
-  // Removes the SavedBuild with the supplied id from storage. Used by the library delete action.
   const library = readLibrary()
   library.builds = library.builds.filter((b) => b.id !== buildId)
   writeLibrary(library)
@@ -609,7 +565,6 @@ export function setActiveProfile(
   buildId: string,
   profileId: string,
 ): SavedBuild | null {
-  // Marks `profileId` as the active profile of `buildId`, validating that the profile exists, and updates the build timestamp. Used by ProfileSwitcher when the user switches profiles within a build.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -626,7 +581,6 @@ export function addProfile(
   snapshot: BuildSnapshot,
   options: { activate?: boolean } = { activate: true },
 ): { build: SavedBuild; profile: SavedProfile } | null {
-  // Appends a new profile to the named build using the supplied snapshot, optionally promoting it to the active profile. Used by ProfileSwitcher when the user adds a new variant inside a build.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -654,7 +608,6 @@ export function duplicateProfile(
   profileId: string,
   options: { activate?: boolean } = { activate: true },
 ): { build: SavedBuild; profile: SavedProfile } | null {
-  // Clones an existing profile, picking a non-colliding "(copy)" name. When `options.activate` is set (the default) the duplicate becomes the active profile — ProfileSwitcher relies on this so the live editor follows the fork; the Build Select library passes `activate: false` so duplicating never changes which profile a non-loaded build opens with.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -687,7 +640,6 @@ export function renameProfile(
   profileId: string,
   name: string,
 ): SavedBuild | null {
-  // Renames a single profile within a build and refreshes both timestamps. Used by ProfileSwitcher's inline rename action.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -704,7 +656,6 @@ export function removeProfile(
   buildId: string,
   profileId: string,
 ): SavedBuild | null {
-  // Deletes a profile from a build (refusing to remove the last surviving profile) and reassigns the active profile to a sensible neighbour when the deleted profile was active. Used by ProfileSwitcher's delete action.
   const library = readLibrary()
   const build = library.builds.find((b) => b.id === buildId)
   if (!build) return null
@@ -726,7 +677,6 @@ export function loadProfileSnapshot(
   buildId: string,
   profileId: string,
 ): BuildSnapshot | null {
-  // Decodes the lz-string-compressed share code stored on a profile back into a BuildSnapshot, returning null on any lookup or decode failure. Used by the build store when hydrating a profile into the live editor state.
   const build = getSavedBuild(buildId)
   if (!build) return null
   const profile = build.profiles.find((p) => p.id === profileId)
@@ -735,14 +685,11 @@ export function loadProfileSnapshot(
 }
 
 function nextDuplicateName(base: string, taken: string[]): string {
-  // Generates the next available "(copy)" / "(copy 2)" / "(copy 3)" name from a base, skipping names already taken in `taken` and falling back to a timestamped name after fifty collisions. Used when duplicating builds and profiles.
   const cleanBase = base.replace(/\s+\(copy(?:\s+\d+)?\)$/i, '')
-  const candidates = [
-    `${cleanBase} (copy)`,
-    ...Array.from({ length: 50 }, (_, i) => `${cleanBase} (copy ${i + 2})`),
-  ]
-  for (const c of candidates) {
-    if (!taken.includes(c)) return c
+  const seen = new Set(taken)
+  if (!seen.has(`${cleanBase} (copy)`)) return `${cleanBase} (copy)`
+  for (let i = 2; ; i++) {
+    const candidate = `${cleanBase} (copy ${i})`
+    if (!seen.has(candidate)) return candidate
   }
-  return `${cleanBase} (copy ${Date.now()})`
 }

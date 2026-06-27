@@ -22,9 +22,6 @@ export interface AffixDisplayItem {
   roll?: number
 }
 
-// Batched star-scaled rolled values and roll windows from the Rust engine,
-// one entry per item (null for missing defs). Shared with ForgedModsSection
-// and the tree jewel tooltip.
 export function useAffixDisplayRanges(
   items: AffixDisplayItem[],
   stars?: number | null,
@@ -55,7 +52,6 @@ export function useAffixDisplayRanges(
 }
 
 function InvertedCrossIcon({ color = '#cf6db0' }: { color?: string }) {
-  // Pixel-art rotated crucifix glyph used as the row icon for unholy-group affixes in the PickerModal — replaces the default rotated diamond so unholy entries read as occult/dark even on a quick glance. Renders at the same 28×28 footprint as `FallbackIcon` so the row grid stays aligned.
   const dark = `color-mix(in srgb, ${color} 35%, #0d0b07)`
   return (
     <span
@@ -90,7 +86,6 @@ function InvertedCrossIcon({ color = '#cf6db0' }: { color?: string }) {
 }
 
 function affixToPickerRow(a: Affix, opts?: { useDescriptionAsName?: boolean }): PickerRow {
-  // Maps an affix definition into a PickerRow for the AffixesSection picker. When `useDescriptionAsName` is set, the description is shown as the primary label (used by the random_unholy group whose names are opaque). Affixes from the `random_unholy` group get the inverted-cross icon (pink unholy tone) instead of the default rotated diamond. Attaches a rich tooltip so users can preview the full description, value range, and stat key on hover.
   const primary = opts?.useDescriptionAsName ? a.description : a.name
   const meta = opts?.useDescriptionAsName ? a.name : a.description
   const isUnholy = a.groupId === 'random_unholy'
@@ -119,7 +114,6 @@ export function AffixesSection({
   onAdd: (affixId: string, tier: number) => void
   onRemove: (index: number) => void
 }) {
-  // Per-item affix editor that lists each rolled affix with a roll slider and remove button, and exposes an "Add" button that opens the affix PickerModal restricted to the affix groups available on the current item slot. Honours the item's `maxAffixes` cap and routes the special `random_unholy` group through the same modal with description-first labelling.
   const [open, setOpen] = useState(false)
   const atCap =
     maxAffixes !== undefined && equipped.affixes.length >= maxAffixes

@@ -4,51 +4,153 @@
     "classId": "pirate",
     "name": "Buckshot",
     "kind": "active",
-    "description": "",
+    "description": "Quick draw your musket and release a ranged buckshot with increased damage and additional fire damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Strike"
     ],
     "tree": "Gunner",
     "position": {
       "row": 0,
       "col": 0
-    }
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 8
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 32,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Grenade Jump",
+        "stat": "attack_damage",
+        "value": 5.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Bullets",
+        "stat": "fire_skill_damage",
+        "value": 22.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Cannonball",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "grenade_jump",
     "classId": "pirate",
     "name": "Grenade Jump",
     "kind": "active",
-    "description": "",
+    "description": "Blast yourself into the air leaving a cluster of grenades behind dealing fire damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion",
+      "Movement"
     ],
     "tree": "Gunner",
     "position": {
       "row": 0,
       "col": 1
-    }
+    },
+    "damageType": "fire",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 6.5,
+      "perLevel": 9.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Explosive Barrel",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Bullets",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Powder Trail",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "explosive_barrel",
     "classId": "pirate",
     "name": "Explosive Barrel",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Spawn a barrel of explosives which detonates after some time or when shot with a projectile dealing fire damage.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -57,44 +159,365 @@
       }
     ],
     "tags": [
-      "Active"
+      "Passive",
+      "Explosion"
     ],
     "tree": "Gunner",
     "position": {
       "row": 1,
       "col": 1
-    }
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "range": 8,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 9.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 15,
+        "perLevel": 15
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6.5,
+        "perLevel": 0.5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Buckshot",
+        "stat": "attack_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Bullets",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Powder Trail",
+        "stat": "fire_skill_damage",
+        "value": 25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "cannonball",
     "classId": "pirate",
     "name": "Cannonball",
     "kind": "active",
-    "description": "",
+    "description": "Shoot a cannonball that launches in the air on hit and deals area of effect damage when landing.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Explosion",
+      "Strike"
     ],
     "tree": "Gunner",
     "position": {
       "row": 1,
       "col": 2
-    }
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 16,
+        "perLevel": 16
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 3.5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Buckshot",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Grenade Jump",
+        "stat": "fire_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Kneecap",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "explosive_bullets",
     "classId": "pirate",
     "name": "Explosive Bullets",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Striking a monster leaves a charge in them that detonates after a short delay dealing area of effect fire damage and stunning them. If you have Explosive Barrel skilled, attacking has a chance to spawn barrels in a line around the target exploding shortly after.",
     "maxRank": 20,
     "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Explosion",
+      "Strike"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 13.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 0,
+        "perLevel": 20
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Cannonball",
+        "stat": "fire_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Barrel",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Kneecap",
+        "stat": "attack_damage",
+        "value": 7.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.45,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "powder_trail",
+    "classId": "pirate",
+    "name": "Powder Trail",
+    "kind": "active",
+    "description": "Throw a keg of gunpowder causing a chain of explosions dealing fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "damageType": "fire",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 2.5,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 24.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Explosive Barrel",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Grenade Jump",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Buckshot",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "bomb_barrage",
+    "classId": "pirate",
+    "name": "Bomb Barrage",
+    "kind": "active",
+    "description": "Start rapidly firing cannonballs dealing area of effect fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageType": "fire",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "range": 330,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 27
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Cannonball",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Grenade Jump",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Powder Trail",
+        "stat": "fire_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.15,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "kneecap",
+    "classId": "pirate",
+    "name": "Kneecap",
+    "kind": "passive",
+    "description": "Increases your attack rating and chance for critical strike.",
+    "maxRank": 20,
+    "requiresLevel": 24,
     "ranks": [
       {
         "rank": 1
@@ -105,96 +528,61 @@
     ],
     "tree": "Gunner",
     "position": {
-      "row": 2,
-      "col": 0
-    }
-  },
-  {
-    "id": "powder_trail",
-    "classId": "pirate",
-    "name": "Powder Trail",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
-    "tree": "Gunner",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
-  },
-  {
-    "id": "bomb_barrage",
-    "classId": "pirate",
-    "name": "Bomb Barrage",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
-    "tree": "Gunner",
-    "position": {
-      "row": 3,
-      "col": 1
-    }
-  },
-  {
-    "id": "kneecap",
-    "classId": "pirate",
-    "name": "Kneecap",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
-    "tree": "Gunner",
-    "position": {
       "row": 3,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_rating": 2,
+        "crit_chance": 1.5
+      },
+      "perRank": {
+        "attack_rating": 2,
+        "crit_chance": 1.5
+      }
     }
   },
   {
     "id": "rapid_fire",
     "classId": "pirate",
     "name": "Rapid Fire",
-    "kind": "active",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increase your attack speed and physical damage.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
+      "Buff",
+      "Cast",
       "Active"
     ],
     "tree": "Gunner",
     "position": {
       "row": 4,
       "col": 0
+    },
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "physical_damage": 20
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "physical_damage": 1
+      }
     }
   },
   {
@@ -202,51 +590,153 @@
     "classId": "pirate",
     "name": "Torrent",
     "kind": "active",
-    "description": "",
+    "description": "Summon a pool of corrupted water on target location bursting into a massive torrent that knocks up monsters struck dealing cold damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Cast",
+      "Spell",
+      "Area of Effect"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 0,
       "col": 0
-    }
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "range": 240,
+    "damageFormula": {
+      "base": 12,
+      "perLevel": 9
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Freezing Chain Shot",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Frozen Lead",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Set Sail",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.55,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "freezing_chain_shot",
     "classId": "pirate",
     "name": "Freezing Chain Shot",
     "kind": "active",
-    "description": "",
+    "description": "Shoot a piercing chain shot that freezes and deals cold damage to monsters struck.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 4
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Strike"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 0,
       "col": 1
-    }
+    },
+    "damageType": "cold",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 5,
+      "perLevel": 8.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": -0.5,
+        "perLevel": 12.5
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 5.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 1.5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Frozen Lead",
+        "stat": "attack_damage",
+        "value": 7,
+        "per": "skill_level"
+      },
+      {
+        "source": "Anchor Swing",
+        "stat": "cold_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 7.45,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "frozen_lead",
     "classId": "pirate",
     "name": "Frozen Lead",
     "kind": "passive",
-    "description": "",
+    "description": "Use specially hand crafted frozen lead to increase your cold skill damage.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -261,6 +751,14 @@
     "position": {
       "row": 1,
       "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 3
+      },
+      "perRank": {
+        "cold_skill_damage": 3
+      }
     }
   },
   {
@@ -268,43 +766,105 @@
     "classId": "pirate",
     "name": "Parrot",
     "kind": "active",
-    "description": "",
+    "description": "Summon a parrot to peck your monsters dealing cold damage.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Cast",
+      "Spell",
+      "Summon"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 1,
       "col": 2
-    }
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Frozen Lead",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Remiges",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 9,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "set_sail",
     "classId": "pirate",
     "name": "Set Sail",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily increases your cold skill damage and mana replenish.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Buff"
+      "Buff",
+      "Cast",
+      "Active"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 2,
       "col": 1
+    },
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 2.5,
+        "mana_replenish": 7
+      },
+      "perRank": {
+        "cold_skill_damage": 2.5,
+        "mana_replenish": 2
+      }
     }
   },
   {
@@ -312,7 +872,7 @@
     "classId": "pirate",
     "name": "Remiges",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your parrots cold damage and attack speed.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
@@ -327,6 +887,16 @@
     "position": {
       "row": 2,
       "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 2,
+        "increased_attack_speed": 5
+      },
+      "perRank": {
+        "cold_skill_damage": 2,
+        "increased_attack_speed": 0.75
+      }
     }
   },
   {
@@ -334,43 +904,103 @@
     "classId": "pirate",
     "name": "Anchor Swing",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a massive anchor swinging around you dealing cold damage.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Cast",
+      "Spell",
+      "Orbital"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 3,
       "col": 1
-    }
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 2,
+    "range": 360,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 24
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Set Sail",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Freezing Chain Shot",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
     "id": "treasure_hunter",
     "classId": "pirate",
     "name": "Treasure Hunter",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Search for a treasure from the corpses of dead monsters with additional magic find.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Passive"
+      "Active",
+      "Cast",
+      "Spell"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 3,
       "col": 2
+    },
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "magic_find": 1
+      },
+      "perRank": {
+        "magic_find": 1
+      }
     }
   },
   {
@@ -378,21 +1008,63 @@
     "classId": "pirate",
     "name": "Land Ahoy!",
     "kind": "active",
-    "description": "",
+    "description": "Call for the main ship to bombard the targeted area dealing area of effect cold damage.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion"
     ],
     "tree": "Plunderer",
     "position": {
       "row": 4,
       "col": 1
-    }
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 30.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Freezing Chain Shot",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Anchor Swing",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.15,
+        "per": "attribute_point"
+      }
+    ]
   }
 ]

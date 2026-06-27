@@ -1,14 +1,12 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
 import treeBackground from '../assets/atlas/Incarnation_Background.png'
-import { getAffix, getGem, getRune, heroSiegeTree, nodeIcons } from '../data'
 import { useBuild } from '../store/build'
 import {
   ADJ,
@@ -17,13 +15,7 @@ import {
   START_IDS,
   START_SET,
 } from '../utils/tree/treeGraph'
-import { formatValue, statName } from '../utils/item/stats'
-import { useAffixDisplayRanges } from './gear/sections/AffixesSection'
-import {
-  diffPerformanceDps,
-  diffPerformanceStats,
-  type BuildPerformance,
-} from '../utils/build/buildPerformance'
+import type { BuildPerformance } from '../utils/build/buildPerformance'
 import {
   classifyTreeNodesNative,
   computeBuildPerformanceAsync,
@@ -31,143 +23,33 @@ import {
 import type { NodeLineClassification } from '../lib/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { useCalcResult } from '../hooks/useCalcResult'
-import NetChangeRow from '../components/NetChangeRow'
-import type { TreeSocketContent } from '../types'
 import JewelSocketModal from '../components/JewelSocketModal'
 import SuggestNodesModal from '../components/SuggestNodesModal'
-import {
-  TooltipHeader,
-  TooltipSection,
-  TooltipSectionHeader,
-  TooltipText,
-  UnsupportedModsList,
-} from '../components/Tooltip'
-import { TONE_BORDER, TONE_GLOW } from '../components/tooltip-tones'
-import type { TooltipTone } from '../components/tooltip-tones'
 import {
   TREE_JEWELRY_IDS,
   TREE_NODE_INFO,
   TREE_WARP_IDS,
   type TreeNodeInfo,
 } from '../utils/tree/treeStats'
-
-type RawNode = [id: number, x: number, y: number, r: number]
-type RawEdge = [x1: number, y1: number, x2: number, y2: number]
-
-interface TreeNode {
-  id: number
-  x: number
-  y: number
-  r: number
-  tier: 'minor' | 'notable' | 'keystone'
-}
-
-function tierTone(nodeType: string | undefined, tier: TreeNode['tier']): TooltipTone {
-  if (nodeType === 'jewelry') return 'rare'
-  if (nodeType === 'warp') return 'rare'
-  if (nodeType === 'root') return 'angelic'
-  if (nodeType === 'big' || tier === 'keystone' || tier === 'notable') return 'rare'
-  return 'neutral'
-}
-
-function tierLabel(nodeType: string | undefined, tier: TreeNode['tier']): string {
-  if (nodeType === 'jewelry') return 'Jewelry Socket'
-  if (nodeType === 'warp') return 'Warp Node'
-  if (nodeType === 'root') return 'Starting Node'
-  if (nodeType === 'big') return 'Notable'
-  if (tier === 'keystone') return 'Keystone'
-  return 'Minor'
-}
-
-function classifyTier(r: number): TreeNode['tier'] {
-  if (r >= 12) return 'keystone'
-  if (r >= 10) return 'notable'
-  return 'minor'
-}
-
-const VIEW_BOX = heroSiegeTree.viewBox
-const NODES: TreeNode[] = (heroSiegeTree.nodes as RawNode[]).map(([id, x, y, r]) => ({
-  id,
-  x,
-  y,
-  r,
-  tier: classifyTier(r),
-}))
-const EDGES: RawEdge[] = heroSiegeTree.edges as RawEdge[]
-
-const [vbX = 0, vbY = 0, vbW = 1000, vbH = 800] = VIEW_BOX.split(' ').map(Number)
-
-const POS_ID_MAP = (() => {
-  const m = new Map<string, number>()
-  for (const n of NODES) {
-    m.set(`${Math.round(n.x * 10)}_${Math.round(n.y * 10)}`, n.id)
-  }
-  return m
-})()
-
-const SEARCH_INDEX: { id: number; haystack: string }[] = Object.entries(
-  TREE_NODE_INFO,
-).map(([id, info]) => ({
-  id: Number(id),
-  haystack: (info.t + ' ' + info.l.join(' ')).toLowerCase(),
-}))
-
-const NODE_ICON_FILES = import.meta.glob<string>(
-  '../assets/atlas/nodes/*.png',
-  { eager: true, query: '?url', import: 'default' },
-)
-const NODE_ICON_URL_BY_KEY: Record<string, string> = {}
-for (const [p, url] of Object.entries(NODE_ICON_FILES)) {
-  const file = p.split('/').pop() ?? ''
-  const key = file.replace(/\.png$/i, '')
-  NODE_ICON_URL_BY_KEY[key] = url
-}
-
-const NODE_ICON_KEY_BY_ID: Record<string, string> = nodeIcons
-const NODE_ICONS: { id: number; x: number; y: number; r: number; href: string }[] =
-  NODES.flatMap((n) => {
-    const key = NODE_ICON_KEY_BY_ID[String(n.id)]
-    const href = key ? NODE_ICON_URL_BY_KEY[key] : undefined
-    return href ? [{ id: n.id, x: n.x, y: n.y, r: n.r, href }] : []
-  })
-
-const JEWELRY_NODES = NODES.filter((n) => TREE_JEWELRY_IDS.has(n.id))
-
-interface NodePaint {
-  isAlloc: boolean
-  isHover: boolean
-  isPreview: boolean
-  isStart: boolean
-  tier: TreeNode['tier']
-}
-
-function nodeFill({ isAlloc, isPreview, isStart, tier }: NodePaint): string {
-  if (isAlloc) return tier === 'keystone' ? '#e94f37' : '#c9a55a'
-  if (isPreview) return '#5a4528'
-  if (isStart) return '#3a3528'
-  return '#1c1d24'
-}
-
-function baseStrokeWidth(isStart: boolean, tier: TreeNode['tier']): number {
-  if (isStart) return 2.5
-  if (tier === 'minor') return 1
-  return 2
-}
-
-function nodeStroke({
-  isAlloc,
-  isHover,
-  isPreview,
-  isStart,
-  tier,
-}: NodePaint): string {
-  if (isAlloc) return '#d4cfbf'
-  if (isHover || isPreview) return '#e0b864'
-  if (isStart) return '#c9a55a'
-  if (tier === 'keystone') return '#8a6f3a'
-  if (tier === 'notable') return '#5a5448'
-  return '#3a3528'
-}
+import {
+  EDGES,
+  JEWELRY_NODES,
+  NODE_ICONS,
+  NODES,
+  POS_ID_MAP,
+  SEARCH_INDEX,
+  vbH,
+  vbW,
+  vbX,
+  vbY,
+} from './tree/treeData'
+import {
+  baseStrokeWidth,
+  nodeFill,
+  nodeStroke,
+  type NodePaint,
+} from './tree/nodePaint'
+import { NodeTooltip } from './tree/NodeTooltip'
 
 export default function TreeView() {
   const allocated = useBuild((s) => s.allocatedTreeNodes)
@@ -237,9 +119,6 @@ export default function TreeView() {
     fitView()
   }, [fitView])
 
-  // React attaches onWheel as passive in v17+, so e.preventDefault() is a NO-OP
-  // and the page scrolls under the tree. Attach a native non-passive listener
-  // and read scale/tx/ty from refs to avoid stale closures on rapid wheels.
   const scaleRef = useRef(scale)
   const txRef = useRef(tx)
   const tyRef = useRef(ty)
@@ -323,7 +202,6 @@ export default function TreeView() {
     return keys
   }, [previewPath])
 
-  // Mirrors `toggleTreeNode`: union with cheapest path on allocate, `reachableFromAny` cleanup on deallocate.
   const previewAllocation = useMemo<Set<number> | null>(() => {
     if (hoverId == null) return null
     if (allocated.has(hoverId)) {
@@ -349,11 +227,9 @@ export default function TreeView() {
     null,
   )
 
-  // "This node alone" preview for evaluating standalone value. Clicking never produces this exact allocation.
   const singleNodeAllocation = useMemo<Set<number> | null>(() => {
     if (hoverId == null) return null
     if (allocated.has(hoverId)) {
-      // Removing a bridge node strands its descendants — mirror toggleTreeNode's cleanup.
       const without = new Set(allocated)
       without.delete(hoverId)
       return reachableFromAny(START_SET, without)
@@ -430,7 +306,6 @@ export default function TreeView() {
       NODES.map((n) => {
         const paint: NodePaint = {
           isAlloc: allocated.has(n.id),
-          isHover: false,
           isPreview: false,
           isStart: START_SET.has(n.id),
           tier: n.tier,
@@ -465,7 +340,6 @@ export default function TreeView() {
               toggleNode(n.id)
             }}
             onContextMenu={(e) => {
-              // Right-click on allocated jewelry opens the socket picker; left-click stays as allocate/deallocate.
               if (!TREE_JEWELRY_IDS.has(n.id) || !allocated.has(n.id)) return
               e.preventDefault()
               e.stopPropagation()
@@ -485,7 +359,6 @@ export default function TreeView() {
     if (!previewPath) return null
     const overlayPaint: Omit<NodePaint, 'tier'> = {
       isAlloc: false,
-      isHover: false,
       isPreview: true,
       isStart: false,
     }
@@ -842,404 +715,5 @@ export default function TreeView() {
         />
       )}
     </div>
-  )
-}
-
-function NodeTooltip({
-  node,
-  info,
-  classification,
-  cursor,
-  socketContent,
-  isJewelry,
-  isAllocated,
-  currentPerformance,
-  previewPerformance,
-  singleNodePerformance,
-  previewAddedCount,
-  previewRemovedCount,
-}: {
-  node: TreeNode
-  info: TreeNodeInfo | null
-  classification: NodeLineClassification | null
-  cursor: { x: number; y: number }
-  socketContent: TreeSocketContent | null
-  isJewelry: boolean
-  isAllocated: boolean
-  currentPerformance: BuildPerformance
-  previewPerformance: BuildPerformance | null
-  singleNodePerformance: BuildPerformance | null
-  previewAddedCount: number
-  previewRemovedCount: number
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
-  const tone = tierTone(info?.n, node.tier)
-  const tierName = tierLabel(info?.n, node.tier)
-  const lineGroups = info ? classification : null
-
-  const singleDpsDiffs = useMemo(
-    () =>
-      singleNodePerformance
-        ? diffPerformanceDps(currentPerformance, singleNodePerformance)
-        : [],
-    [currentPerformance, singleNodePerformance],
-  )
-  const singleStatDiffs = useMemo(
-    () =>
-      singleNodePerformance
-        ? diffPerformanceStats(currentPerformance, singleNodePerformance)
-        : [],
-    [currentPerformance, singleNodePerformance],
-  )
-  const pathDpsDiffs = useMemo(
-    () =>
-      previewPerformance
-        ? diffPerformanceDps(currentPerformance, previewPerformance)
-        : [],
-    [currentPerformance, previewPerformance],
-  )
-  const pathStatDiffs = useMemo(
-    () =>
-      previewPerformance
-        ? diffPerformanceStats(currentPerformance, previewPerformance)
-        : [],
-    [currentPerformance, previewPerformance],
-  )
-  const singleHasContent = singleDpsDiffs.length > 0 || singleStatDiffs.length > 0
-  const pathHasContent = pathDpsDiffs.length > 0 || pathStatDiffs.length > 0
-  const pathDiffersFromSingle =
-    pathHasContent &&
-    (previewAddedCount > 1 ||
-      previewRemovedCount > 1 ||
-      pathDpsDiffs.length !== singleDpsDiffs.length ||
-      pathStatDiffs.length !== singleStatDiffs.length)
-  const netChangeVisible = !isJewelry && (singleHasContent || pathHasContent)
-
-  const [colCount, setColCount] = useState(1)
-  const measuredColsRef = useRef(false)
-
-  // Strip column/max-height to read true natural height via scrollHeight; pinned via measuredColsRef so cursor moves only re-run positioning.
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const margin = 12
-    const offset = 16
-    const vw = window.innerWidth
-    const vh = window.innerHeight
-    const heightLimit = vh - 2 * margin
-
-    if (!measuredColsRef.current) {
-      const prevColumnCount = el.style.columnCount
-      const prevMaxHeight = el.style.maxHeight
-      el.style.columnCount = '1'
-      el.style.maxHeight = 'none'
-      const naturalHeight = el.scrollHeight
-      el.style.columnCount = prevColumnCount
-      el.style.maxHeight = prevMaxHeight
-
-      const needed = Math.max(
-        1,
-        Math.min(Math.ceil(naturalHeight / heightLimit), 5),
-      )
-      measuredColsRef.current = true
-      if (needed !== colCount) {
-        setColCount(needed)
-        return
-      }
-    }
-
-    const rect = el.getBoundingClientRect()
-    let left = cursor.x + offset
-    if (left + rect.width + margin > vw) left = cursor.x - rect.width - offset
-    left = Math.max(margin, Math.min(left, vw - rect.width - margin))
-    let top = cursor.y + offset
-    if (top + rect.height + margin > vh) top = cursor.y - rect.height - offset
-    top = Math.max(margin, Math.min(top, vh - rect.height - margin))
-    setPos({ left, top })
-  }, [cursor.x, cursor.y, info, node.id, colCount])
-
-  return (
-    <div
-      ref={ref}
-      role="tooltip"
-      className={`fixed z-[1000] bg-panel border ${TONE_BORDER[tone]} ${TONE_GLOW[tone]} rounded-[4px] overflow-hidden pointer-events-none select-none shadow-[0_8px_32px_rgba(0,0,0,0.8)]`}
-      style={{
-        left: pos?.left ?? -9999,
-        top: pos?.top ?? -9999,
-        opacity: pos ? 1 : 0,
-        transition: 'opacity 80ms ease-out',
-        columnCount: colCount,
-        columnGap: colCount > 1 ? 0 : undefined,
-        columnFill: 'auto',
-        columnRule:
-          colCount > 1 ? '1px solid var(--color-border)' : undefined,
-        width: colCount > 1 ? `${colCount * 320}px` : undefined,
-        minWidth: colCount === 1 ? 240 : undefined,
-        maxWidth: colCount === 1 ? 360 : 'calc(100vw - 24px)',
-        maxHeight: 'calc(100vh - 24px)',
-      }}
-    >
-      <TooltipHeader
-        title={info?.t ?? `Node #${node.id}`}
-        subtitle={tierName}
-        tone={tone}
-      />
-      {isJewelry ? (
-        <JewelrySocketSection
-          content={socketContent}
-          isAllocated={isAllocated}
-        />
-      ) : (
-        <>
-          {lineGroups && lineGroups.parsed.length > 0 && (
-            <TooltipSection>
-              <div className="space-y-0.5">
-                {lineGroups.parsed.map((line, i) => (
-                  <TooltipText key={i}>{line}</TooltipText>
-                ))}
-              </div>
-            </TooltipSection>
-          )}
-          {lineGroups && lineGroups.unsupported.length > 0 && (
-            <TooltipSection>
-              <UnsupportedModsList lines={lineGroups.unsupported} />
-            </TooltipSection>
-          )}
-          {info?.note && (
-            <TooltipSection>
-              <div className="text-[12px] leading-[1.55] text-accent-hot italic">
-                {info.note}
-              </div>
-            </TooltipSection>
-          )}
-          {netChangeVisible && (
-            <TooltipSection>
-              <div className="mb-2 flex items-center gap-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted">
-                <span>Net Change</span>
-                <span className="h-px flex-1 bg-border" />
-                {isAllocated && previewRemovedCount > 1 && (
-                  <span className="font-normal tracking-[0.14em] text-faint">
-                    −{previewRemovedCount} on click
-                  </span>
-                )}
-                {!isAllocated && previewAddedCount > 1 && (
-                  <span className="font-normal tracking-[0.14em] text-faint">
-                    +{previewAddedCount} on click
-                  </span>
-                )}
-              </div>
-              {singleHasContent && (
-                <div className={pathDiffersFromSingle ? 'mb-3' : undefined}>
-                  <div className="mb-1 flex items-baseline gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-faint">
-                    <span className="text-accent-deep">This Node</span>
-                    {pathDiffersFromSingle && (
-                      <span className="text-faint/70 normal-case">— hovered alone</span>
-                    )}
-                  </div>
-                  {singleDpsDiffs.length > 0 && (
-                    <div className="mb-1.5">
-                      <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
-                        Active Skill
-                        {currentPerformance.activeSkillName ? (
-                          <span className="ml-1 text-faint">
-                            · {currentPerformance.activeSkillName}
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="space-y-0.5">
-                        {singleDpsDiffs.map((d) => (
-                          <NetChangeRow key={d.key} diff={d} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {singleStatDiffs.length > 0 && (
-                    <div>
-                      {singleDpsDiffs.length > 0 && (
-                        <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
-                          Stats
-                        </div>
-                      )}
-                      <div className="space-y-0.5">
-                        {singleStatDiffs.map((d) => (
-                          <NetChangeRow key={d.key} diff={d} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-              {pathDiffersFromSingle && (
-                <div>
-                  <div className="mb-1 flex items-baseline gap-2 font-mono text-[9px] uppercase tracking-[0.16em] text-faint">
-                    <span className="text-accent-deep">
-                      {isAllocated ? 'With Cleanup' : 'Full Path'}
-                    </span>
-                    <span className="text-faint/70 normal-case">
-                      —{' '}
-                      {isAllocated
-                        ? `${previewRemovedCount} nodes lost`
-                        : `${previewAddedCount} nodes allocated`}
-                    </span>
-                  </div>
-                  {pathDpsDiffs.length > 0 && (
-                    <div className="mb-1.5">
-                      <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
-                        Active Skill
-                        {currentPerformance.activeSkillName ? (
-                          <span className="ml-1 text-faint">
-                            · {currentPerformance.activeSkillName}
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="space-y-0.5">
-                        {pathDpsDiffs.map((d) => (
-                          <NetChangeRow key={d.key} diff={d} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {pathStatDiffs.length > 0 && (
-                    <div>
-                      {pathDpsDiffs.length > 0 && (
-                        <div className="mb-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted/70">
-                          Stats
-                        </div>
-                      )}
-                      <div className="space-y-0.5">
-                        {pathStatDiffs.map((d) => (
-                          <NetChangeRow key={d.key} diff={d} />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </TooltipSection>
-          )}
-        </>
-      )}
-      {info && info.g && info.g.length > 0 && (
-        <TooltipSection className="bg-panel-2/40">
-          <div className="flex flex-wrap gap-1">
-            {info.g.map((tag, i) => (
-              <span
-                key={i}
-                className="inline-block rounded-[2px] border border-border-2 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </TooltipSection>
-      )}
-      {!info && (
-        <TooltipSection>
-          <TooltipText>
-            <span className="text-faint">No data available</span>
-          </TooltipText>
-        </TooltipSection>
-      )}
-    </div>
-  )
-}
-
-function JewelrySocketSection({
-  content,
-  isAllocated,
-}: {
-  content: TreeSocketContent | null
-  isAllocated: boolean
-}) {
-  const craftedAffixes = useMemo(
-    () => (content && content.kind !== 'item' ? content.affixes : []),
-    [content],
-  )
-  const craftedItems = useMemo(
-    () =>
-      craftedAffixes.map((eq) => ({
-        def: getAffix(eq.affixId),
-        roll: eq.roll,
-      })),
-    [craftedAffixes],
-  )
-  const craftedValues = useAffixDisplayRanges(craftedItems)
-
-  if (!content) {
-    return (
-      <TooltipSection>
-        <TooltipSectionHeader tone="gold">Socketed</TooltipSectionHeader>
-        <TooltipText>
-          <span className="text-faint italic">
-            Empty socket{isAllocated ? ' — right-click to insert' : ''}
-          </span>
-        </TooltipText>
-      </TooltipSection>
-    )
-  }
-
-  let socketedTitle: string
-  let socketedSubtitle: string | null = null
-  let statLines: { key: string; value: number }[] = []
-
-  if (content.kind === 'item') {
-    const source = getGem(content.id) ?? getRune(content.id)
-    if (!source) {
-      return (
-        <TooltipSection>
-          <TooltipSectionHeader tone="gold">Socketed</TooltipSectionHeader>
-          <TooltipText>
-            <span className="text-stat-red">
-              unknown socketable: {content.id}
-            </span>
-          </TooltipText>
-        </TooltipSection>
-      )
-    }
-    socketedTitle = source.name
-    socketedSubtitle = `T${source.tier}`
-    statLines = Object.entries(source.stats)
-      .filter(([, v]) => v !== 0)
-      .map(([key, value]) => ({ key, value }))
-  } else {
-    socketedTitle = 'Uncut Jewel'
-    socketedSubtitle = `${content.affixes.length} affix${
-      content.affixes.length === 1 ? '' : 'es'
-    }`
-    statLines = craftedAffixes
-      .map((eq, idx) => {
-        const def = getAffix(eq.affixId)
-        if (!def || !def.statKey) return null
-        const value = craftedValues[idx]?.value ?? 0
-        if (value === 0) return null
-        return { key: def.statKey, value }
-      })
-      .filter((x): x is { key: string; value: number } => x !== null)
-  }
-
-  return (
-    <>
-      <TooltipSection>
-        <TooltipSectionHeader tone="gold" trailing={socketedSubtitle}>
-          Socketed
-        </TooltipSectionHeader>
-        <div className="text-[12px] font-medium text-accent-hot">
-          {socketedTitle}
-        </div>
-      </TooltipSection>
-      {statLines.length > 0 && (
-        <TooltipSection>
-          <TooltipSectionHeader tone="gold">From Sockets</TooltipSectionHeader>
-          <ul className="space-y-0.5 text-[12px]">
-            {statLines.map(({ key, value }) => (
-              <li key={key} className="text-accent">
-                {formatValue(value, key)} {statName(key)}
-              </li>
-            ))}
-          </ul>
-        </TooltipSection>
-      )}
-    </>
   )
 }

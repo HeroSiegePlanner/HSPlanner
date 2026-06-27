@@ -15,7 +15,6 @@ for (const [id, x, y] of NODES) {
 export const ADJ = new Map<number, Set<number>>()
 for (const [id] of NODES) ADJ.set(id, new Set())
 
-// Unresolved edges are reported, not silently skipped, so a topology-breaking patch is visible.
 const treeGraphWarnings: string[] = []
 for (const [x1, y1, x2, y2] of EDGES) {
   const a = POS_TO_ID.get(posKey(x1, y1))
@@ -44,7 +43,6 @@ export function findPath(
   sources: Iterable<number>,
   target: number,
 ): number[] | null {
-  // Performs a multi-source BFS over the talent-tree adjacency graph and returns the shortest sequence of node ids reaching `target`, or null when no path exists. Used by the TreeView to find the cheapest cluster of nodes to allocate when the user clicks a distant node.
   const srcSet = new Set(sources)
   if (srcSet.has(target)) return [target]
   if (srcSet.size === 0) return null
@@ -85,7 +83,6 @@ export function reachableFromAny(
   starts: Iterable<number>,
   allowed: Set<number>,
 ): Set<number> {
-  // BFS-style search that returns the set of nodes reachable from any starting node while only stepping through nodes that appear in `allowed`. Used by the TreeView to detect "orphaned" allocated nodes when the player removes a connecting node.
   const seen = new Set<number>()
   const queue: number[] = []
   let head = 0
