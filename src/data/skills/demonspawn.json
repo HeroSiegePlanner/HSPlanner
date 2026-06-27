@@ -157,9 +157,9 @@
     ]
   },
   {
-    "id": "ominous_aura",
+    "id": "ominous_presence",
     "classId": "demonspawn",
-    "name": "Ominous Aura",
+    "name": "Ominous Presence",
     "kind": "aura",
     "description": "When active, increases your and your party members arcane skill damage.",
     "tags": ["Cast", "Active", "Aura"],

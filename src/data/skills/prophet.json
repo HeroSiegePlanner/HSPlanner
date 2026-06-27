@@ -1,398 +1,985 @@
 [
   {
-    "id": "prophet_fm_1",
+    "id": "summon_raven",
     "classId": "prophet",
-    "name": "FM Slot 1",
+    "name": "Summon Raven",
     "kind": "active",
-    "description": "",
+    "description": "Summon a raven circling around you attacking nearby monsters.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Forest Mystic",
     "position": {
       "row": 0,
       "col": 1
-    }
-  },
-  {
-    "id": "prophet_fm_2",
-    "classId": "prophet",
-    "name": "FM Slot 2",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 1,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 12
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Deep Rooted",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 9.15,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "thorned_roots",
+    "classId": "prophet",
+    "name": "Thorned Roots",
+    "kind": "active",
+    "description": "Unleash a swarm of roots dealing poison damage on hit.",
+    "damageType": "poison",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell"
     ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
     "tree": "Forest Mystic",
     "position": {
       "row": 0,
       "col": 2
-    }
-  },
-  {
-    "id": "prophet_fm_3",
-    "classId": "prophet",
-    "name": "FM Slot 3",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 8,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Thorned Branch",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "carrion_worm",
+    "classId": "prophet",
+    "name": "Carrion Worm",
+    "kind": "active",
+    "description": "Summons a carrion worm frequently attacking nearby monsters.",
+    "damageType": "poison",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
     ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "maxRank": 20,
+    "requiresLevel": 8,
     "tree": "Forest Mystic",
     "position": {
       "row": 1,
       "col": 0
-    }
-  },
-  {
-    "id": "prophet_fm_4",
-    "classId": "prophet",
-    "name": "FM Slot 4",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 8,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 18
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Summon Raven",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent Colossus",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 9.25,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "blessed_nature",
+    "classId": "prophet",
+    "name": "Blessed Nature",
+    "kind": "passive",
+    "description": "Increases poison skill damage.",
+    "damageType": "poison",
     "tags": [
-      "Active"
+      "Passive"
     ],
+    "maxRank": 20,
+    "requiresLevel": 8,
     "tree": "Forest Mystic",
     "position": {
       "row": 1,
       "col": 2
-    }
-  },
-  {
-    "id": "prophet_fm_5",
-    "classId": "prophet",
-    "name": "FM Slot 5",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 16,
+    },
     "ranks": [
       {
         "rank": 1
       }
     ],
+    "passiveStats": {
+      "base": {
+        "poison_skill_damage": 11
+      },
+      "perRank": {
+        "poison_skill_damage": 4.5
+      }
+    }
+  },
+  {
+    "id": "thorned_branch",
+    "classId": "prophet",
+    "name": "Thorned Branch",
+    "kind": "active",
+    "description": "Throw a thorned branch dealing poison damage on hit.",
+    "damageType": "poison",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell",
+      "Projectile"
     ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
     "tree": "Forest Mystic",
     "position": {
       "row": 2,
       "col": 0
-    }
-  },
-  {
-    "id": "prophet_fm_6",
-    "classId": "prophet",
-    "name": "FM Slot 6",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 16,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 20
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Thorned Roots",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "summon_ent_colossus",
+    "classId": "prophet",
+    "name": "Summon Ent Colossus",
+    "kind": "active",
+    "description": "Summons an ent colossus to fight by your side.",
+    "damageType": "poison",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
     ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
     "tree": "Forest Mystic",
     "position": {
       "row": 2,
       "col": 1
-    }
-  },
-  {
-    "id": "prophet_fm_7",
-    "classId": "prophet",
-    "name": "FM Slot 7",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 36
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Summon Raven",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "deep_rooted",
+    "classId": "prophet",
+    "name": "Deep Rooted",
+    "kind": "passive",
+    "description": "Increases all resistances.",
     "tags": [
-      "Active"
+      "Passive"
     ],
+    "maxRank": 20,
+    "requiresLevel": 24,
     "tree": "Forest Mystic",
     "position": {
       "row": 3,
       "col": 0
-    }
-  },
-  {
-    "id": "prophet_fm_8",
-    "classId": "prophet",
-    "name": "FM Slot 8",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
+    },
     "ranks": [
       {
         "rank": 1
       }
     ],
+    "passiveStats": {
+      "base": {
+        "all_resistances": 5
+      },
+      "perRank": {
+        "all_resistances": 0.5
+      }
+    }
+  },
+  {
+    "id": "summon_ent",
+    "classId": "prophet",
+    "name": "Summon Ent",
+    "kind": "active",
+    "description": "Summons an ent to fight by your side.",
+    "damageType": "poison",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
     ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
     "tree": "Forest Mystic",
     "position": {
       "row": 3,
       "col": 1
-    }
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent Colossus",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
-    "id": "prophet_fm_9",
+    "id": "summon_spirit_of_the_forest",
     "classId": "prophet",
-    "name": "FM Slot 9",
+    "name": "Summon Spirit of The Forest",
     "kind": "active",
-    "description": "",
+    "description": "Summons a spirit of the forest increasing life and mana for you and your party.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon",
+      "Chain Lightning"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "effectDuration": 120,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Forest Mystic",
     "position": {
       "row": 4,
       "col": 1
-    }
-  },
-  {
-    "id": "prophet_sw_1",
-    "classId": "prophet",
-    "name": "SW Slot 1",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 1,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 7.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "spirits_presence_buff": 5
+      },
+      "perRank": {
+        "spirits_presence_buff": 0.2
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "skinwalker",
+    "classId": "prophet",
+    "name": "Skinwalker",
+    "kind": "passive",
+    "description": "A portion of your life is added as physical damage.",
+    "damageType": "physical",
     "tags": [
-      "Active"
+      "Passive"
     ],
+    "maxRank": 20,
+    "requiresLevel": 1,
     "tree": "Skinwalker",
     "position": {
       "row": 0,
       "col": 0
-    }
-  },
-  {
-    "id": "prophet_sw_2",
-    "classId": "prophet",
-    "name": "SW Slot 2",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 1,
+    },
     "ranks": [
       {
         "rank": 1
       }
     ],
+    "passiveStats": {
+      "base": {
+        "life": 100,
+        "attack_damage": 1
+      },
+      "perRank": {
+        "life": 0,
+        "attack_damage": 0.2
+      }
+    }
+  },
+  {
+    "id": "wounding_paw",
+    "classId": "prophet",
+    "name": "Wounding Paw",
+    "kind": "active",
+    "description": "Strike monsters with increased damage with a chance to unleash a ripple of blood.",
+    "damageType": "physical",
     "tags": [
-      "Active"
+      "Attack",
+      "Active",
+      "Melee",
+      "Strike"
     ],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
     "tree": "Skinwalker",
     "position": {
       "row": 0,
       "col": 2
-    }
-  },
-  {
-    "id": "prophet_sw_3",
-    "classId": "prophet",
-    "name": "SW Slot 3",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 8,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 80,
+        "perLevel": 20
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 45,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Spirit of The Wendigo",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Skinwalker",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Leaping Charge",
+        "stat": "attack_damage",
+        "value": 7,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "leaping_charge",
+    "classId": "prophet",
+    "name": "Leaping Charge",
+    "kind": "active",
+    "description": "Perform a charging leap forward inflicting physical damage to monsters on hit.",
+    "damageType": "physical",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Melee",
+      "Movement"
     ],
+    "movementDuringUse": 65,
+    "range": 280,
+    "maxRank": 20,
+    "requiresLevel": 8,
     "tree": "Skinwalker",
     "position": {
       "row": 1,
       "col": 1
-    }
-  },
-  {
-    "id": "prophet_sw_4",
-    "classId": "prophet",
-    "name": "SW Slot 4",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 8,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 76,
+        "perLevel": 28
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Wounding Paw",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "storm_hawk",
+    "classId": "prophet",
+    "name": "Storm Hawk",
+    "kind": "active",
+    "description": "Morph into a storm hawk gaining flying and convert a portion of your physical damage into lightning damage. Your attacks now unleash a chain lightning.",
+    "damageType": "lightning",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Shape Shift",
+      "Projectile",
+      "Chain Lightning"
     ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
     "tree": "Skinwalker",
     "position": {
       "row": 1,
       "col": 2
-    }
-  },
-  {
-    "id": "prophet_sw_5",
-    "classId": "prophet",
-    "name": "SW Slot 5",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 16,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 35,
+      "perLevel": 15
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Manadwelling",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "spirit_of_the_ent",
+    "classId": "prophet",
+    "name": "Spirit of the Ent",
+    "kind": "active",
+    "description": "Morph into an Ent with a chance to knock monsters back on hit stunning and dealing additional damage when colliding with terrain.",
+    "damageType": "physical",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Shape Shift"
     ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
     "tree": "Skinwalker",
     "position": {
       "row": 2,
       "col": 1
-    }
-  },
-  {
-    "id": "prophet_sw_6",
-    "classId": "prophet",
-    "name": "SW Slot 6",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 16,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
+    "damageFormula": {
+      "base": 6.5,
+      "perLevel": 1.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "life": 15
+      },
+      "perRank": {
+        "life": 1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Swamp's Essence",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "maelstrom_of_frost",
+    "classId": "prophet",
+    "name": "Maelstrom of Frost",
+    "kind": "active",
+    "description": "Summon a maelstrom of frost around you inflicting cold and physical damage on hit.",
+    "damageType": "cold",
     "tags": [
-      "Active"
+      "Cast",
+      "Active",
+      "Melee",
+      "Area of Effect"
     ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 30,
+    "maxRank": 20,
+    "requiresLevel": 16,
     "tree": "Skinwalker",
     "position": {
       "row": 2,
       "col": 2
-    }
-  },
-  {
-    "id": "prophet_sw_7",
-    "classId": "prophet",
-    "name": "SW Slot 7",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
+    },
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 10
       }
     ],
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 16
+    },
+    "manaCostFormula": {
+      "base": 10,
+      "perLevel": 2
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 82,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Manadwelling",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Leaping Charge",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Wounding Paw",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.35,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "swamps_essence",
+    "classId": "prophet",
+    "name": "Swamp's Essence",
+    "kind": "passive",
+    "description": "Increases your maximum life.",
     "tags": [
-      "Active"
+      "Passive"
     ],
+    "maxRank": 20,
+    "requiresLevel": 24,
     "tree": "Skinwalker",
     "position": {
       "row": 3,
       "col": 1
-    }
-  },
-  {
-    "id": "prophet_sw_8",
-    "classId": "prophet",
-    "name": "SW Slot 8",
-    "kind": "active",
-    "description": "",
-    "maxRank": 20,
-    "requiresLevel": 24,
+    },
     "ranks": [
       {
         "rank": 1
       }
     ],
+    "passiveStats": {
+      "base": {
+        "life": 5
+      },
+      "perRank": {
+        "life": 0.25
+      }
+    }
+  },
+  {
+    "id": "manadwelling",
+    "classId": "prophet",
+    "name": "Manadwelling",
+    "kind": "passive",
+    "description": "Adds a portion of your mana as physical damage.",
+    "damageType": "physical",
     "tags": [
-      "Active"
+      "Passive"
     ],
+    "maxRank": 20,
+    "requiresLevel": 24,
     "tree": "Skinwalker",
     "position": {
       "row": 3,
       "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "mana": 100,
+        "attack_damage": 1
+      },
+      "perRank": {
+        "mana": 0,
+        "attack_damage": 0.2
+      }
     }
   },
   {
-    "id": "prophet_sw_9",
+    "id": "spirit_of_the_wendigo",
     "classId": "prophet",
-    "name": "SW Slot 9",
+    "name": "Spirit of The Wendigo",
     "kind": "active",
-    "description": "",
+    "description": "Morph into a wendigo gaining increased combat stats.",
+    "damageType": "physical",
+    "tags": [
+      "Cast",
+      "Active",
+      "Shape Shift"
+    ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Skinwalker",
     "position": {
       "row": 4,
       "col": 1
-    }
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 8,
+      "perLevel": 2
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "movement_speed": 25
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "movement_speed": 0
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Wounding Paw",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      }
+    ]
   }
 ]

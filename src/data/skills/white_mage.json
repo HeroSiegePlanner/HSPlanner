@@ -3,8 +3,8 @@
     "id": "martyr",
     "classId": "white_mage",
     "name": "Martyr",
-    "kind": "buff",
-    "description": "",
+    "kind": "passive",
+    "description": "Sacrifice your own blood when taking damage from any source temporarily increasing your life and mana replenish.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
@@ -13,8 +13,20 @@
       }
     ],
     "tags": [
-      "Buff"
+      "Passive"
     ],
+    "passiveStats": {
+      "base": {
+        "life_replenish": 3.5,
+        "mana_replenish": 3.5,
+        "arcane_skill_damage": 2
+      },
+      "perRank": {
+        "life_replenish": 3.5,
+        "mana_replenish": 3.5,
+        "arcane_skill_damage": 2
+      }
+    },
     "tree": "Zealot",
     "position": {
       "row": 0,
@@ -26,16 +38,57 @@
     "classId": "white_mage",
     "name": "Shadow Bolt",
     "kind": "active",
-    "description": "",
+    "description": "Gather your inner darkness and unleash a powerful piercing shadow bolt that deals arcane damage to monsters on its path. The shadow bolt slows down after hitting a target.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Projectile"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 6,
+      "perLevel": 14
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Restless Spirits",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Digest Souls",
+        "stat": "arcane_skill_damage",
+        "value": 13.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Black Mass",
+        "stat": "arcane_skill_damage",
+        "value": 14.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -48,7 +101,7 @@
     "classId": "white_mage",
     "name": "Digest Souls",
     "kind": "passive",
-    "description": "",
+    "description": "By sacrificing your victims to the devil temporarily gain increased movement speed and arcane skill damage after killing a monster.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -59,6 +112,16 @@
     "tags": [
       "Passive"
     ],
+    "passiveStats": {
+      "base": {
+        "movement_speed": 1,
+        "arcane_skill_damage": 5
+      },
+      "perRank": {
+        "movement_speed": 1,
+        "arcane_skill_damage": 5
+      }
+    },
     "tree": "Zealot",
     "position": {
       "row": 1,
@@ -70,16 +133,67 @@
     "classId": "white_mage",
     "name": "Soul Spurn",
     "kind": "active",
-    "description": "",
+    "description": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 420,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 13.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "healing": 2,
+        "mana_restored": 1
+      },
+      "perRank": {
+        "healing": 2,
+        "mana_restored": 1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Restless Spirits",
+        "stat": "arcane_skill_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Digest Souls",
+        "stat": "arcane_skill_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Dark Oath",
+        "stat": "arcane_skill_damage",
+        "value": 13.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.5,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -92,16 +206,57 @@
     "classId": "white_mage",
     "name": "Restless Spirits",
     "kind": "active",
-    "description": "",
+    "description": "Unleash restless spirits from an unholy dimension to seek new hosts inflicting arcane damage to the target.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Projectile"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Soul Spurn",
+        "stat": "arcane_skill_damage",
+        "value": 14,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Digest Souls",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 6.25,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -113,8 +268,8 @@
     "id": "dark_oath",
     "classId": "white_mage",
     "name": "Dark Oath",
-    "kind": "buff",
-    "description": "",
+    "kind": "aura",
+    "description": "Conjure an aura that unleashes waves of unholy energy around you inflicting arcane damage to nearby monsters.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
@@ -123,7 +278,38 @@
       }
     ],
     "tags": [
-      "Buff"
+      "Aura"
+    ],
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 13
+    },
+    "bonusSources": [
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Martyr",
+        "stat": "arcane_skill_damage",
+        "value": 11.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Malediction",
+        "stat": "arcane_skill_damage",
+        "value": 13.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -136,16 +322,58 @@
     "classId": "white_mage",
     "name": "Satans Mark",
     "kind": "active",
-    "description": "",
+    "description": "Mark the monsters on target area for satan causing them to unleash pulses of arcane damage when struck by other abilities and attacks.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Explosion"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 3,
+    "effectDuration": 5,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 14.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Restless Spirits",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Dark Oath",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -157,8 +385,8 @@
     "id": "malediction",
     "classId": "white_mage",
     "name": "Malediction",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Your unholy essence drives birds into insanity, casts have a chance to send crows towards random nearby monsters exploding into arcane damage on impact.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -167,7 +395,39 @@
       }
     ],
     "tags": [
-      "Active"
+      "Passive",
+      "Explosion"
+    ],
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 28
+    },
+    "bonusSources": [
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Satans Mark",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Soul Spurn",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 11.5,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -179,17 +439,59 @@
     "id": "black_mass",
     "classId": "white_mage",
     "name": "Black Mass",
-    "kind": "buff",
-    "description": "",
+    "kind": "active",
+    "description": "Summon all the coven's cultists to march in the name of satan inflicting arcane damage to monsters on their path.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Buff"
+      "Active",
+      "Spell",
+      "Area of Effect",
+      "Projectile"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 14,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 24
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Martyr",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Satans Mark",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.5,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Zealot",
     "position": {
@@ -202,16 +504,57 @@
     "classId": "white_mage",
     "name": "Heavenly Fire",
     "kind": "active",
-    "description": "",
+    "description": "Light the target location into holy fire dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 240,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 6,
+      "perLevel": 6.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Martyr",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Benediction",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 6.75,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Divine Being",
     "position": {
@@ -224,17 +567,33 @@
     "classId": "white_mage",
     "name": "Flash Heal",
     "kind": "active",
-    "description": "",
+    "description": "Heal yourself and any nearby allies.",
     "maxRank": 20,
     "requiresLevel": 1,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell"
     ],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "healing": 7
+      },
+      "perRank": {
+        "healing": 0.5
+      }
+    },
     "tree": "Divine Being",
     "position": {
       "row": 0,
@@ -246,16 +605,55 @@
     "classId": "white_mage",
     "name": "Burst of Light",
     "kind": "active",
-    "description": "",
+    "description": "Cast a ray of divine light dealing arcane damage and lights monsters on heavenly fire.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 11
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Heavenly Fire",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Divine Healing",
+        "stat": "arcane_skill_damage",
+        "value": 14,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Divine Being",
     "position": {
@@ -267,8 +665,8 @@
     "id": "divine_healing",
     "classId": "white_mage",
     "name": "Divine Healing",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Using flash heal temporarily increases your life replenish.",
     "maxRank": 20,
     "requiresLevel": 8,
     "ranks": [
@@ -277,8 +675,17 @@
       }
     ],
     "tags": [
-      "Active"
+      "Passive"
     ],
+    "effectDuration": 3,
+    "passiveStats": {
+      "base": {
+        "life_replenish": 3
+      },
+      "perRank": {
+        "life_replenish": 3
+      }
+    },
     "tree": "Divine Being",
     "position": {
       "row": 1,
@@ -290,16 +697,57 @@
     "classId": "white_mage",
     "name": "Chain of Holy Lightning",
     "kind": "active",
-    "description": "",
+    "description": "Cast a holy lightning jumping from monster to monster dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Chain Lightning"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 12
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Heavenly Fire",
+        "stat": "arcane_skill_damage",
+        "value": 14.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 16.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Benediction",
+        "stat": "arcane_skill_damage",
+        "value": 12.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Divine Being",
     "position": {
@@ -312,17 +760,35 @@
     "classId": "white_mage",
     "name": "Holy Shield",
     "kind": "buff",
-    "description": "",
+    "description": "By the power of god bless yourself and any nearby allies with immortality for a short period.",
     "maxRank": 20,
     "requiresLevel": 16,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
+      "Active",
       "Buff"
     ],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 300,
+    "effectDuration": 1.5,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "immortality_duration": 1.5
+      },
+      "perRank": {
+        "immortality_duration": 0.2
+      }
+    },
     "tree": "Divine Being",
     "position": {
       "row": 2,
@@ -333,8 +799,8 @@
     "id": "benediction",
     "classId": "white_mage",
     "name": "Benediction",
-    "kind": "buff",
-    "description": "",
+    "kind": "passive",
+    "description": "When healed by your abilities, smite monsters around you with holy lightning.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -343,7 +809,46 @@
       }
     ],
     "tags": [
-      "Buff"
+      "Passive"
+    ],
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 24
+    },
+    "passiveStats": {
+      "base": {
+        "projectiles": 5
+      },
+      "perRank": {
+        "projectiles": 0.25
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 13.26,
+        "per": "skill_level"
+      },
+      {
+        "source": "Healing Zone",
+        "stat": "arcane_skill_damage",
+        "value": 11.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Burst of Light",
+        "stat": "arcane_skill_damage",
+        "value": 15.26,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Divine Being",
     "position": {
@@ -356,17 +861,36 @@
     "classId": "white_mage",
     "name": "Healing Zone",
     "kind": "active",
-    "description": "",
+    "description": "Bless the area around you with divine energy healing yourself and nearby allies.",
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Area of Effect"
     ],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 14,
+    "effectDuration": 8,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "healing": 3
+      },
+      "perRank": {
+        "healing": 0.5
+      }
+    },
     "tree": "Divine Being",
     "position": {
       "row": 3,
@@ -378,16 +902,65 @@
     "classId": "white_mage",
     "name": "Mana Orb",
     "kind": "active",
-    "description": "",
+    "description": "Summon a pulsating orb of mana that replenishes mana for players and deals arcane damage to monsters.",
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
       {
-        "rank": 1
+        "rank": 1,
+        "manaCost": 5
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 19.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "mana_restored": 1
+      },
+      "perRank": {
+        "mana_restored": 0.1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Chain of Holy Lightning",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Healing Zone",
+        "stat": "arcane_skill_damage",
+        "value": 13.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Heavenly Fire",
+        "stat": "arcane_skill_damage",
+        "value": 14.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
     ],
     "tree": "Divine Being",
     "position": {

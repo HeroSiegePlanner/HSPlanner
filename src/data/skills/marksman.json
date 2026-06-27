@@ -4,233 +4,454 @@
     "classId": "marksman",
     "name": "Trickshot",
     "kind": "active",
-    "description": "",
+    "description": "Shoot an arrow with increased attack rating that bounces from monster to monster dealing increased attack damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Chaining", "Projectile", "Strike"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 82, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 1, "per": "skill_level" },
+      { "source": "Volatile Shot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Multishot", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ]
   },
   {
     "id": "vault",
     "classId": "marksman",
     "name": "Vault",
     "kind": "active",
-    "description": "",
+    "description": "Vault in the direction aimed unleashing arrows towards nearby monsters dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Movement", "Spell", "Strike"],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 0, "col": 2 }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 82, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 }
+    },
+    "bonusSources": [
+      { "source": "Trickshot", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Multishot", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Agility", "stat": "attack_damage", "value": 2, "per": "skill_level" }
+    ]
   },
   {
     "id": "multishot",
     "classId": "marksman",
     "name": "Multishot",
     "kind": "active",
-    "description": "",
+    "description": "Fire multiple arrows in an arc dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Strike"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 1, "col": 1 }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 82, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 4.75 }
+    },
+    "bonusSources": [
+      { "source": "Trickshot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Arrow Rain", "stat": "attack_damage", "value": 6, "per": "skill_level" }
+    ]
   },
   {
     "id": "homing_missile",
     "classId": "marksman",
     "name": "Homing Missile",
     "kind": "active",
-    "description": "",
+    "description": "Launch a barrage of homing missiles which seeks down its target dealing area of effect arcane and physical damage.",
+    "damageType": "arcane",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Explosion", "Strike"],
+    "movementDuringUse": 65,
+    "baseCooldown": 2,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 2, "col": 0 }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 1, "perLevel": 19 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 22 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3 }
+    },
+    "bonusSources": [
+      { "source": "Landmine", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Agility", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Rocket Turret", "stat": "arcane_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "agility",
     "classId": "marksman",
     "name": "Agility",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increases your movement speed and attack speed.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Sharpshooter",
-    "position": { "row": 2, "col": 2 }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "movement_speed": 20 },
+      "perRank": { "increased_attack_speed": 1, "movement_speed": 1 }
+    }
   },
   {
     "id": "volatile_shot",
     "classId": "marksman",
     "name": "Volatile Shot",
     "kind": "active",
-    "description": "",
+    "description": "Fire a colossal arrow exploding on hit dealing area of effect damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Explosion", "Strike"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 3, "col": 0 }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 7 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 7, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 133, "perLevel": 22 },
+      "flatPhysicalMin": { "base": 5, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 14, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3.75 }
+    },
+    "bonusSources": [
+      { "source": "Agility", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ]
   },
   {
     "id": "critical_accuracy",
     "classId": "marksman",
     "name": "Critical Accuracy",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your attack rating and critical strike damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Sharpshooter",
-    "position": { "row": 3, "col": 1 }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_rating_pct": 2, "crit_damage": 1 },
+      "perRank": { "attack_rating_pct": 2, "crit_damage": 1 }
+    }
   },
   {
     "id": "arrow_rain",
     "classId": "marksman",
     "name": "Arrow Rain",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a rain of arrows from the sky dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Ranged", "Explosion", "Strike"],
+    "movementDuringUse": 65,
+    "range": 300,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 4, "col": 1 }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 5, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3 }
+    },
+    "bonusSources": [
+      { "source": "Multishot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Vault", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ]
   },
   {
     "id": "arrow_rampage",
     "classId": "marksman",
     "name": "Arrow Rampage",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a swarm of arrows towards the direction aimed dealing arcane and physical damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Ranged", "Projectile", "Strike"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 10,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Sharpshooter",
-    "position": { "row": 4, "col": 2 }
+    "position": { "row": 4, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 1, "perLevel": 21 },
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 8, "perLevel": 15 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3 }
+    },
+    "bonusSources": [
+      { "source": "Multishot", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Arrow Rain", "stat": "arcane_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Agility", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "frag_grenade",
     "classId": "marksman",
     "name": "Frag Grenade",
     "kind": "active",
-    "description": "",
+    "description": "Throw a frag grenade dealing area of effect arcane damage launching shrapnel around.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8.5, "perLevel": 19.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Landmine", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Vault", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "arrow_turret",
     "classId": "marksman",
     "name": "Arrow Turret",
     "kind": "active",
-    "description": "",
+    "description": "Build an arrow turret that shoots arrows at the closest monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 0, "col": 2 }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Multishot", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "B.E.A.C.O.N", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "landmine",
     "classId": "marksman",
     "name": "Landmine",
     "kind": "active",
-    "description": "",
+    "description": "Lay down a landmine at the target location exploding shortly after detecting a nearby monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 1, "col": 0 }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 22.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rocket Turret", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "beacon",
     "classId": "marksman",
     "name": "B.E.A.C.O.N",
     "kind": "active",
-    "description": "",
+    "description": "Build a beacon that increases nearby allies arcane skill damage and mana replenish.",
+    "tags": ["Cast", "Active", "Spell", "Sentry"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 10,
+    "effectDuration": 4,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 1, "col": 2 }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 20, "mana_replenish": 30 },
+      "perRank": { "arcane_skill_damage": 2, "mana_replenish": 2 }
+    }
   },
   {
     "id": "turret_mastery",
     "classId": "marksman",
     "name": "Turret Mastery",
     "kind": "passive",
-    "description": "",
+    "description": "Increase arcane damage and attack speed of all turrets and drones.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Engineer",
-    "position": { "row": 2, "col": 1 }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 5, "increased_attack_speed": 5 },
+      "perRank": { "arcane_skill_damage": 1, "increased_attack_speed": 0.75 }
+    }
   },
   {
     "id": "cannon_turret",
     "classId": "marksman",
     "name": "Cannon Turret",
     "kind": "active",
-    "description": "",
+    "description": "Build a cannon turret that launches cannonballs towards the nearest monster that explode into shrapnel, dealing area of effect arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 2, "col": 2 }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 12.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Arrow Turret", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "B.E.A.C.O.N", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "master_mechanic",
     "classId": "marksman",
     "name": "Master Mechanic",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increase the attack speed and arcane damage of all your turrets and drones!",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Engineer",
-    "position": { "row": 3, "col": 1 }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10, "increased_attack_speed": 8 },
+      "perRank": { "arcane_skill_damage": 1.5, "increased_attack_speed": 0.5 }
+    }
   },
   {
     "id": "gunner_drone",
     "classId": "marksman",
     "name": "Gunner Drone",
     "kind": "active",
-    "description": "",
+    "description": "Build a gunner drone which follows you and shoots bullets that bounce from monster to monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Chaining"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "effectDuration": 10,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 4, "col": 0 }
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 12 }],
+    "damageFormula": { "base": 1, "perLevel": 11 },
+    "manaCostFormula": { "base": 12, "perLevel": 2 },
+    "bonusSources": [
+      { "source": "Master Mechanic", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Homing Missile", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "rocket_turret",
     "classId": "marksman",
     "name": "Rocket Turret",
     "kind": "active",
-    "description": "",
+    "description": "Build a rocket turret that shoots rockets towards the nearest monster dealing area of effect arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Engineer",
-    "position": { "row": 4, "col": 2 }
+    "position": { "row": 4, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Homing Missile", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Landmine", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   }
 ]

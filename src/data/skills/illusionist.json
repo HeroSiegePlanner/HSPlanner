@@ -4,87 +4,80 @@
     "classId": "illusionist",
     "name": "Sand Guardians",
     "kind": "active",
-    "description": "",
+    "description": "Conjure a Sand Guardian that attacks nearby monsters dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Guardian", "Summon"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "effectDuration": 7,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 15, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Call For War", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Circle of Guardians", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Link of Sand", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "call_for_war",
     "classId": "illusionist",
     "name": "Call For War",
     "kind": "active",
-    "description": "",
+    "description": "Command all Sand Guardians to charge to target area. Passively increases Sand Guardian dash range.",
+    "tags": ["Cast", "Active", "Spell"],
+    "range": 360,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 0,
-      "col": 2
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "range": 15 },
+      "perRank": { "range": 3 }
     }
   },
   {
     "id": "piercing_sand",
     "classId": "illusionist",
     "name": "Piercing Sand",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Sand Guardians break monster arcane resistances on attack.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_break": 2 },
+      "perRank": { "arcane_break": 2 }
     }
   },
   {
     "id": "link_of_sand",
     "classId": "illusionist",
     "name": "Link of Sand",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Pull yourself into the closest Sand Guardian in the target location temporarily empowering all nearby Sand Guardians arcane damage.",
+    "tags": ["Cast", "Active", "Spell"],
+    "baseCastRate": 1,
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 1,
-      "col": 2
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2.5 },
+      "perRank": { "arcane_skill_damage": 2.5 }
     }
   },
   {
@@ -92,21 +85,19 @@
     "classId": "illusionist",
     "name": "Circle of Guardians",
     "kind": "active",
-    "description": "",
+    "description": "Conjure a circle of Sand Guardians around you increasing Sand Guardians' arcane damage.",
+    "tags": ["Cast", "Active", "Spell", "Guardian", "Summon"],
+    "baseCastRate": 1,
+    "effectDuration": 10,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 2,
-      "col": 0
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 14 }],
+    "manaCostFormula": { "base": 14, "perLevel": 2 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10 },
+      "perRank": { "arcane_skill_damage": 1 }
     }
   },
   {
@@ -114,43 +105,37 @@
     "classId": "illusionist",
     "name": "Dissipation",
     "kind": "passive",
-    "description": "",
+    "description": "Sand Guardians explode upon expiration dealing area of effect arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Passive", "Explosion"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.5, "perLevel": 16.5 },
+    "bonusSources": [
+      { "source": "Piercing Sand", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Call For War", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Cheapshot", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "cheapshot",
     "classId": "illusionist",
     "name": "Cheapshot",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Sand Guardians gain a chance to deal a deadly attack with increased arcane damage and stunning their target.",
+    "tags": ["Passive", "Area of Effect"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2.5, "stun_duration": 1, "proc_chance": 22 },
+      "perRank": { "arcane_skill_damage": 2.5, "stun_duration": 0.1, "proc_chance": 0 }
     }
   },
   {
@@ -158,43 +143,34 @@
     "classId": "illusionist",
     "name": "Spirit Link",
     "kind": "passive",
-    "description": "",
+    "description": "Link of Sand increases your magic skill damage and physical damage reduction for a short period.",
+    "tags": ["Passive"],
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3, "physical_damage_reduction": 1 },
+      "perRank": { "arcane_skill_damage": 3, "physical_damage_reduction": 1 }
     }
   },
   {
     "id": "combat_order",
     "classId": "illusionist",
     "name": "Combat Order",
-    "kind": "buff",
-    "description": "",
+    "kind": "passive",
+    "description": "Sand Guardians gain a chance to perform an area of effect attack dealing arcane damage.",
+    "tags": ["Passive", "Area of Effect"],
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Sand Manipulator",
-    "position": {
-      "row": 4,
-      "col": 0
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10, "proc_chance": 15 },
+      "perRank": { "arcane_skill_damage": 1.5, "proc_chance": 0 }
     }
   },
   {
@@ -202,131 +178,144 @@
     "classId": "illusionist",
     "name": "Age Proliferation",
     "kind": "active",
-    "description": "",
+    "description": "Channel waves of fractal energy on the target monster sending pulses out dealing arcane damage to nearby monsters.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "effectDuration": 2.5,
+    "range": 256,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 16, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Dimensional Displacement", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Temporal Heroes", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Expansive Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9, "per": "attribute_point" }
+    ]
   },
   {
     "id": "gravitation_slam",
     "classId": "illusionist",
     "name": "Gravitation Slam",
     "kind": "active",
-    "description": "",
+    "description": "Raise monsters in target location into the air smashing them down with quantum force dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "range": 240,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 6, "perLevel": 15.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Age Proliferation", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Precognition", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Time Deceleration", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "split_reality",
     "classId": "illusionist",
     "name": "Split Reality",
     "kind": "active",
-    "description": "",
+    "description": "Detach from your quantum self leaving your fractal self behind that explodes when coming in contact with a monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "stun_duration": 1.2 },
+      "perRank": { "stun_duration": 0.2 }
+    },
+    "bonusSources": [
+      { "source": "Gravitation Slam", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Sands of Time", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Precognition", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "time_deceleration",
     "classId": "illusionist",
     "name": "Time Deceleration",
     "kind": "active",
-    "description": "",
+    "description": "Break time and space causing all nearby monsters to take arcane damage and Slowing them.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "baseCooldown": 6,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 1,
-      "col": 2
-    }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 15 }],
+    "damageFormula": { "base": 0, "perLevel": 15 },
+    "manaCostFormula": { "base": 15, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "slow_duration": 1.5 },
+      "perRank": { "slow_duration": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Gravitation Slam", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Age Proliferation", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Dimensional Displacement", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "dimensional_displacement",
     "classId": "illusionist",
     "name": "Dimensional Displacement",
     "kind": "active",
-    "description": "",
+    "description": "Warp a short distance towards target location temporarily gaining increased movement speed.",
+    "tags": ["Cast", "Active", "Movement", "Blink"],
+    "baseCastRate": 1,
+    "effectDuration": 2,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 2,
-      "col": 0
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "movement_speed": 3 },
+      "perRank": { "movement_speed": 3 }
     }
   },
   {
     "id": "sands_of_time",
     "classId": "illusionist",
     "name": "Sands of Time",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Temporarily increase your arcane skill damage and cast rate.",
+    "tags": ["Cast", "Active", "Buff"],
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 2,
-      "col": 1
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3, "cast_rate": 1.5 },
+      "perRank": { "arcane_skill_damage": 3, "cast_rate": 1.5 }
     }
   },
   {
@@ -334,21 +323,16 @@
     "classId": "illusionist",
     "name": "Expansive Mind",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your mana and mana replenish.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana": 0.5, "mana_replenish": 1 },
+      "perRank": { "mana": 0.5, "mana_replenish": 1 }
     }
   },
   {
@@ -356,21 +340,16 @@
     "classId": "illusionist",
     "name": "Precognition",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your arcane skill damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3 },
+      "perRank": { "arcane_skill_damage": 3 }
     }
   },
   {
@@ -378,21 +357,25 @@
     "classId": "illusionist",
     "name": "Temporal Heroes",
     "kind": "active",
-    "description": "",
+    "description": "Summon a fractal Viking, Pyromancer and Marksman to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Chronomancer",
-    "position": {
-      "row": 4,
-      "col": 1
-    }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 14 }],
+    "damageFormula": { "base": 1, "perLevel": 11 },
+    "manaCostFormula": { "base": 14, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Expansive Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Precognition", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Sands of Time", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   }
 ]

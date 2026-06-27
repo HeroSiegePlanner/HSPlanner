@@ -4,65 +4,71 @@
     "classId": "plague_doctor",
     "name": "Miasma",
     "kind": "active",
-    "description": "",
+    "description": "Empower your attack with a mixture of chemicals causing the monster to release a toxic cloud dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 83.72, "perLevel": 45.08 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 10, "perLevel": 3 },
+      "attackRatingPct": { "base": 0, "perLevel": 6 }
+    },
+    "bonusSources": [
+      { "source": "Toxic Flask", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Booster Shot", "stat": "attack_damage", "value": 2.5, "per": "skill_level" },
+      { "source": "Devout Doctor", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ]
   },
   {
     "id": "surgical_blood_letting",
     "classId": "plague_doctor",
     "name": "Surgical Blood Letting",
     "kind": "active",
-    "description": "",
+    "description": "Throw a surgical knife with razor sharp accuracy that bounces from monster to monster dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Ranged", "Projectile", "Chaining", "Strike"],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 99.2, "perLevel": 24.8 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 12, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Miasma", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Malpractice", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Booster Shot", "stat": "attack_damage", "value": 2.4, "per": "skill_level" }
+    ]
   },
   {
     "id": "booster_shot",
     "classId": "plague_doctor",
     "name": "Booster Shot",
     "kind": "buff",
-    "description": "",
+    "description": "When attacking have a chance to inject yourself with a mRNA gene altering shot temporarily increasing your attack damage and movement speed.",
+    "tags": ["Buff"],
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 1,
-      "col": 0
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 10, "movement_speed": 10 },
+      "perRank": { "attack_damage": 2, "movement_speed": 1 }
     }
   },
   {
@@ -70,21 +76,16 @@
     "classId": "plague_doctor",
     "name": "Malpractice",
     "kind": "passive",
-    "description": "",
+    "description": "Increases the force of surgical blood letting causing targets to bleed.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "bleeding_damage": 50 },
+      "perRank": { "bleeding_damage": 4 }
     }
   },
   {
@@ -92,21 +93,16 @@
     "classId": "plague_doctor",
     "name": "Blood Sustenance",
     "kind": "passive",
-    "description": "",
+    "description": "Gain increased attack damage and life stolen per hit from bleeding targets.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 2,
-      "col": 1
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_steal": 1, "attack_damage": 1 },
+      "perRank": { "life_steal": 1, "attack_damage": 1 }
     }
   },
   {
@@ -114,21 +110,17 @@
     "classId": "plague_doctor",
     "name": "Lifeblood Aura",
     "kind": "aura",
-    "description": "",
+    "description": "When active, increases your and your party members Life and life replenish.",
+    "tags": ["Cast", "Active", "Aura"],
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 2,
-      "col": 2
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1, "life_replenish": 1.25 },
+      "perRank": { "life": 0.5, "life_replenish": 1.25 }
     }
   },
   {
@@ -136,21 +128,16 @@
     "classId": "plague_doctor",
     "name": "Crow Mask's Presence",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your life and all resistances.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 3,
-      "col": 0
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1.25, "all_resistances": 5 },
+      "perRank": { "life": 1.25, "all_resistances": 0.5 }
     }
   },
   {
@@ -158,43 +145,38 @@
     "classId": "plague_doctor",
     "name": "Devout Doctor",
     "kind": "passive",
-    "description": "",
+    "description": "Gain physical damage based on your maximum life.",
+    "damageType": "physical",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "physical_damage": 1, "life_converted_to_damage": 300 },
+      "perRank": { "physical_damage": 1, "life_converted_to_damage": 60 }
     }
   },
   {
     "id": "defunct_surgeon",
     "classId": "plague_doctor",
     "name": "Defunct Surgeon",
-    "kind": "active",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increase your attack speed and life stolen per hit. When active lose a portion of your maximum life per second (Non-fatal).",
+    "tags": ["Cast", "Active", "Buff"],
+    "baseCastRate": 1,
+    "baseCooldown": 44.67,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Sanguine Physician",
-    "position": {
-      "row": 4,
-      "col": 1
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 10 }],
+    "manaCostFormula": { "base": 10, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 30, "life_steal": 1, "attack_rating_pct": 2 },
+      "perRank": { "increased_attack_speed": 0.5, "life_steal": 1, "attack_rating_pct": 2 }
     }
   },
   {
@@ -202,175 +184,174 @@
     "classId": "plague_doctor",
     "name": "Toxic Flask",
     "kind": "active",
-    "description": "",
+    "description": "Throw a bouncing toxic flask towards target location dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "range": 240,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 0,
-      "col": 1
-    }
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7, "perLevel": 54.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Crematus", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Oops", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Plague Master", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "crematus",
     "classId": "plague_doctor",
     "name": "Crematus",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a breath of toxic flames dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCooldown": 3.44,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 9, "perLevel": 62 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Oops", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "plague_of_rats",
     "classId": "plague_doctor",
     "name": "Plague of Rats",
     "kind": "active",
-    "description": "",
+    "description": "Send plague rats in target direction dealing poison damage on impact.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7.5, "perLevel": 85.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Exploding Mice", "stat": "poison_skill_damage", "value": 9, "per": "skill_level" },
+      { "source": "Randy the Rancid Rat", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 9, "per": "attribute_point" }
+    ]
   },
   {
     "id": "oops",
     "classId": "plague_doctor",
     "name": "Oops",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Toxic flask also leaves a pool of poisonous substance on the ground dealing poison damage, poisoning and slowing monsters. Oops.",
+    "damageType": "poison",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 1,
-      "col": 2
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "poison_damage": 4, "slow_duration": 3 },
+      "perRank": { "poison_damage": 4, "slow_duration": 0 }
     }
   },
   {
     "id": "exploding_mice",
     "classId": "plague_doctor",
     "name": "Exploding Mice",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Plague of Rats explode on impact causing poison damage.",
+    "damageType": "poison",
+    "tags": ["Passive", "Explosion"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 2,
-      "col": 1
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "poison_damage": 4.5 },
+      "perRank": { "poison_damage": 4.5 }
     }
   },
   {
     "id": "plague_master",
     "classId": "plague_doctor",
     "name": "Plague Master",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Cause all poisoned targets on target location to spread the plague and deal poison damage to monsters around them.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Chain Lightning"],
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 86 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Oops", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "jar_of_leeches",
     "classId": "plague_doctor",
     "name": "Jar of Leeches",
     "kind": "active",
-    "description": "",
+    "description": "Throw a glass jar towards target location releasing leeches dealing poison damage on impact.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "range": 240,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 3,
-      "col": 1
-    }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 70 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Plague of Rats", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Randy the Rancid Rat", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "chant_of_weakness",
     "classId": "plague_doctor",
     "name": "Chant of Weakness",
-    "kind": "aura",
-    "description": "",
+    "kind": "passive",
+    "description": "Poisoned targets take increased poison damage.",
+    "damageType": "poison",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "poison_damage": 2 },
+      "perRank": { "poison_damage": 2 }
     }
   },
   {
@@ -378,21 +359,22 @@
     "classId": "plague_doctor",
     "name": "Randy the Rancid Rat",
     "kind": "active",
-    "description": "",
+    "description": "Summon randy the rancid rat to fight for you dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "baseCooldown": 10.31,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Plague Caller",
-    "position": {
-      "row": 4,
-      "col": 1
-    }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 109 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Plague of Rats", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Jar of Leeches", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   }
 ]

@@ -4,233 +4,420 @@
     "classId": "butcher",
     "name": "Slicing Throw",
     "kind": "active",
-    "description": "",
+    "description": "Throw your weapon like a boomerang returning back to you dealing physical damage to monsters on its path. You can activate Daisy's Call to re-appear where the last thrown slicing throw is at any point in the flight.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Melee", "Projectile", "Strike"],
+    "movementDuringUse": 85,
+    "range": 320,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Face of Duality",
-    "position": { "row": 0, "col": 1 }
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 170, "perLevel": 30 },
+      "flatPhysicalMin": { "base": 6, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 17, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Furious Strike", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Ending Fate", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Insatiable Hunger", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ]
   },
   {
     "id": "furious_strike",
     "classId": "butcher",
     "name": "Furious Strike",
     "kind": "active",
-    "description": "",
+    "description": "Perform a powerful area of effect attack dealing physical damage and infecting monsters struck with a stack of rabies. Each stack of rabies increases attack damage dealt to the monster.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Face of Duality",
-    "position": { "row": 0, "col": 2 }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 168, "perLevel": 32 },
+      "flatPhysicalMin": { "base": 6, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 17, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "passiveStats": {
+      "base": { "rabies_damage": 15 },
+      "perRank": { "rabies_damage": 0.2 }
+    },
+    "bonusSources": [
+      { "source": "Unholy Form", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Sacrilegious Scorn", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Awakening Fury", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ]
   },
   {
     "id": "holy_form",
     "classId": "butcher",
     "name": "Holy Form",
     "kind": "buff",
-    "description": "",
+    "description": "Activate Holy Form gaining increased life replenish and life steal at the cost of damage dealt. Any damage dealt while in this form is decreased.",
+    "tags": ["Active", "Buff"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
     "tree": "Face of Duality",
-    "position": { "row": 1, "col": 0 }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_replenish": 20, "life_steal": 20, "damage": -50 },
+      "perRank": { "life_replenish": 8, "life_steal": 5, "damage": 0 }
+    }
   },
   {
     "id": "unholy_form",
     "classId": "butcher",
     "name": "Unholy Form",
     "kind": "buff",
-    "description": "",
+    "description": "Activate Unholy Form gaining increased damage at the cost inflicting a portion of your max life as damage to your self every time you cast, attack or proc something. Any life replenish when in this form is lowered.",
+    "tags": ["Active", "Buff"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Buff"],
     "tree": "Face of Duality",
-    "position": { "row": 1, "col": 2 }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage": 20, "life_replenish": -95, "life_steal": -95 },
+      "perRank": { "damage": 1.5, "life_replenish": 0, "life_steal": 0 }
+    }
   },
   {
     "id": "sacrilegious_scorn",
     "classId": "butcher",
     "name": "Sacrilegious Scorn",
     "kind": "passive",
-    "description": "",
+    "description": "While in Holy Form gain increased attack speed and while in Unholy Form gain increased Critical damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Face of Duality",
-    "position": { "row": 2, "col": 0 }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "crit_damage": 1 },
+      "perRank": { "increased_attack_speed": 0.5, "crit_damage": 1 }
+    }
   },
   {
     "id": "ending_fate",
     "classId": "butcher",
     "name": "Ending Fate",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "While in Holy Form gain increased base life regen after killing a monster and while in Unholy Form rip the monster apart after killing a monster causing huge area of effect damage.",
+    "tags": ["Passive", "Explosion"],
+    "range": 33,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Face of Duality",
-    "position": { "row": 2, "col": 1 }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_replenish": 50, "attack_damage": 22.5 },
+      "perRank": { "life_replenish": 8, "attack_damage": 22.5 }
+    }
   },
   {
     "id": "spiritual_duality",
     "classId": "butcher",
     "name": "Spiritual Duality",
     "kind": "passive",
-    "description": "",
+    "description": "While in Holy Form increases your life Per Hit and while in Unholy Form increases your attack damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Face of Duality",
-    "position": { "row": 3, "col": 0 }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_steal": 5, "attack_damage": 1.5 },
+      "perRank": { "life_steal": 1, "attack_damage": 1.5 }
+    }
   },
   {
     "id": "awakening_fury",
     "classId": "butcher",
     "name": "Awakening Fury",
     "kind": "passive",
-    "description": "",
+    "description": "On hit gain a chance to increase your attack damage for a short duration.",
+    "tags": ["Passive"],
+    "effectDuration": 4,
+    "range": 8,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Face of Duality",
-    "position": { "row": 3, "col": 1 }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 20 },
+      "perRank": { "attack_damage": 7 }
+    }
   },
   {
     "id": "insatiable_hunger",
     "classId": "butcher",
     "name": "Insatiable Hunger",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Awaken the full potential of both holy and unholy to gain both benefits for a short period of time with increased effectiveness.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 100,
+    "baseCastRate": 1,
+    "baseCooldown": 50,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Face of Duality",
-    "position": { "row": 4, "col": 1 }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "effectiveness": 1 },
+      "perRank": { "effectiveness": 0.25 }
+    }
   },
   {
     "id": "chain_rip",
     "classId": "butcher",
     "name": "Chain Rip",
     "kind": "active",
-    "description": "",
+    "description": "Perform a powerful attack pulling all nearby monsters infront of you.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 2,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Flesh Ripper",
-    "position": { "row": 0, "col": 0 }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 16, "perLevel": 24 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 1 }
+    },
+    "bonusSources": [
+      { "source": "Brutalizing Slash", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Hunger For Blood", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Blender", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ]
   },
   {
     "id": "brutalizing_slash",
     "classId": "butcher",
     "name": "Brutalizing Slash",
     "kind": "active",
-    "description": "",
+    "description": "Attack with brutalizing area of effect attack causing monsters to bleed.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Flesh Ripper",
-    "position": { "row": 0, "col": 2 }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 30, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "passiveStats": {
+      "base": { "bleeding_damage": 20, "ripple_damage": 30 },
+      "perRank": { "bleeding_damage": 4, "ripple_damage": 2 }
+    },
+    "bonusSources": [
+      { "source": "Fuel to Fire", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Hunger For Blood", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Butchers Hook", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ]
   },
   {
     "id": "fuel_to_fire",
     "classId": "butcher",
     "name": "Fuel to Fire",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Increase your damage dealt for a short period of time. Every corpse close to you will be siphoned for additional damage.",
+    "tags": ["Cast", "Active", "Buff"],
+    "baseCastRate": 1,
+    "baseCooldown": 50,
+    "movementDuringUse": 65,
+    "effectDuration": 12,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Flesh Ripper",
-    "position": { "row": 1, "col": 1 }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "damage": 20 },
+      "perRank": { "damage": 1.5 }
+    }
   },
   {
     "id": "hunger_for_blood",
     "classId": "butcher",
     "name": "Hunger For Blood",
     "kind": "passive",
-    "description": "",
+    "description": "Deal increased damage to bleeding targets.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Flesh Ripper",
-    "position": { "row": 1, "col": 2 }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage": 1.25 },
+      "perRank": { "damage": 1.25 }
+    }
   },
   {
     "id": "butchers_hook",
     "classId": "butcher",
     "name": "Butchers Hook",
     "kind": "active",
-    "description": "",
+    "description": "Flail a huge meat hook around you gathering all monsters struck then pulling and stunning them infront of you.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Orbital"],
+    "movementDuringUse": 85,
+    "baseCooldown": 5,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Flesh Ripper",
-    "position": { "row": 2, "col": 0 }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 25, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Brutalizing Slash", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Submerged Knives", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Enraged Mania", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ]
   },
   {
     "id": "chain_swing",
     "classId": "butcher",
     "name": "Chain Swing",
     "kind": "active",
-    "description": "",
+    "description": "Throw a meat hook that pulls you into it when connecting with monster or environment. Additionally fires chains to nearby monsters when landing.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Movement", "Strike"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 2.5,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Flesh Ripper",
-    "position": { "row": 2, "col": 1 }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 27, "perLevel": 26 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Hunger For Blood", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Chain Rip", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Blender", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ]
   },
   {
     "id": "submerged_knives",
     "classId": "butcher",
     "name": "Submerged Knives",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Smash the ground pushing waves of butchers knives out of the ground dealing massive damage and knocking them up. Deals extra damage to bleeding targets.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 2.5,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Flesh Ripper",
-    "position": { "row": 3, "col": 0 }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 42, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 9, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fuel to Fire", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Butchers Hook", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Enraged Mania", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ]
   },
   {
     "id": "enraged_mania",
     "classId": "butcher",
     "name": "Enraged Mania",
     "kind": "passive",
-    "description": "",
+    "description": "Increase attack area of effect range and attack speed.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Passive"],
     "tree": "Flesh Ripper",
-    "position": { "row": 3, "col": 2 }
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "area_of_effect": 8, "increased_attack_speed": 0.5 },
+      "perRank": { "area_of_effect": 1, "increased_attack_speed": 0.5 }
+    }
   },
   {
     "id": "blender",
     "classId": "butcher",
     "name": "Blender",
     "kind": "active",
-    "description": "",
+    "description": "Swing two huge butchers knives around you dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Melee", "Orbital", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 5,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Flesh Ripper",
-    "position": { "row": 4, "col": 1 }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 37.5, "perLevel": 17.5 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Brutalizing Slash", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Enraged Mania", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Butchers Hook", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ]
   }
 ]

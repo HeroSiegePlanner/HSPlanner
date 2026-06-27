@@ -4,43 +4,45 @@
     "classId": "necromancer",
     "name": "Bone Shred",
     "kind": "active",
-    "description": "",
+    "description": "Unleash bone fragments dealing arcane damage to monsters.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 9 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Bone Spear", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.45, "per": "attribute_point" }
+    ]
   },
   {
     "id": "meat_shield",
     "classId": "necromancer",
     "name": "Meat Shield",
-    "kind": "active",
-    "description": "",
+    "kind": "buff",
+    "description": "Cast a meat shield reducing physical damage taken.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 60,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 0,
-      "col": 1
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 3 },
+      "perRank": { "physical_damage_reduction": 1 }
     }
   },
   {
@@ -48,131 +50,145 @@
     "classId": "necromancer",
     "name": "Meat Bomb",
     "kind": "active",
-    "description": "",
+    "description": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 240,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Corpse Explosion", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "poison_breath",
     "classId": "necromancer",
     "name": "Poison Breath",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a rotten breath of toxins dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 1,
-      "col": 2
-    }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 20, "perLevel": 9.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Shred", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Poison Nova", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Cursed Ground", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 9.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "bone_spear",
     "classId": "necromancer",
     "name": "Bone Spear",
     "kind": "active",
-    "description": "",
+    "description": "Launch a piercing bone spear dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 2,
-      "col": 0
-    }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 19 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Shred", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Corpse Explosion", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "corpse_explosion",
     "classId": "necromancer",
     "name": "Corpse Explosion",
     "kind": "active",
-    "description": "",
+    "description": "Cause all corpses in target area to explode and deal an explosive arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Meat Bomb", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "bone_spirit",
     "classId": "necromancer",
     "name": "Bone Spirit",
     "kind": "active",
-    "description": "",
+    "description": "Spawn a bone spirit that seeks out the nearest monster and explodes on impact, causing an Arcane damage explosion, then seeks out other mobs after the first impact.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 300,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 3,
-      "col": 0
-    }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 29 }],
+    "damageFormula": { "base": 0, "perLevel": 18 },
+    "manaCostFormula": { "base": 29, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Spear", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Shred", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Meat Bomb", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "cursed_ground",
     "classId": "necromancer",
     "name": "Cursed Ground",
     "kind": "active",
-    "description": "",
+    "description": "Corrupt the ground in the target area inflicting poison break on monsters affected area.",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "poison_break": 2, "area_of_effect": 1 },
+      "perRank": { "poison_break": 2, "area_of_effect": 1 }
     }
   },
   {
@@ -180,43 +196,45 @@
     "classId": "necromancer",
     "name": "Poison Nova",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Venomancer",
-    "position": {
-      "row": 4,
-      "col": 1
-    }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 12 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Poison Breath", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Cursed Ground", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Amplify Damage", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 9.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "amplify_damage",
     "classId": "necromancer",
     "name": "Amplify Damage",
     "kind": "active",
-    "description": "",
+    "description": "Curse monsters in the target area decreasing their damage dealt and inflicting arcane break.",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 0,
-      "col": 0
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_break": 1, "damage_dealt": 1 },
+      "perRank": { "arcane_break": 1, "damage_dealt": 1 }
     }
   },
   {
@@ -224,43 +242,40 @@
     "classId": "necromancer",
     "name": "Raise Skeleton",
     "kind": "active",
-    "description": "",
+    "description": "Raise a skeleton warrior from target corpse to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 15, "perLevel": 5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Amplify Damage", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Raise Skeleton Mage", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Summon Damned Legion", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 5.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "summon_mastery",
     "classId": "necromancer",
     "name": "Summon Mastery",
     "kind": "passive",
-    "description": "",
+    "description": "Increases the life and arcane damage of all your summons.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "summon_damage": 2, "summon_life": 3.5 },
+      "perRank": { "summon_damage": 2, "summon_life": 3.5 }
     }
   },
   {
@@ -268,43 +283,44 @@
     "classId": "necromancer",
     "name": "Raise Skeleton Mage",
     "kind": "active",
-    "description": "",
+    "description": "Raise a skeleton mage from target corpse to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon", "Explosion", "Projectile"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 1,
-      "col": 2
-    }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 9.5, "perLevel": 8.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Amplify Damage", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Raise Skeleton", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Summon Vengeful Spirit", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "life_tap",
     "classId": "necromancer",
     "name": "Life Tap",
     "kind": "active",
-    "description": "",
+    "description": "Curse monsters in the target area increasing any attackers life steal when striking the target.",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 3.5,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 2,
-      "col": 0
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "life_steal": 5 },
+      "perRank": { "life_steal": 2.5 }
     }
   },
   {
@@ -312,21 +328,21 @@
     "classId": "necromancer",
     "name": "Summon Frenzy",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily enrage your summons increasing their attack speed and movement speed.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 2,
-      "col": 1
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "summon_attack_speed": 10, "movement_speed": 5 },
+      "perRank": { "summon_attack_speed": 2, "movement_speed": 1 }
     }
   },
   {
@@ -334,21 +350,16 @@
     "classId": "necromancer",
     "name": "Summon Resistances",
     "kind": "passive",
-    "description": "",
+    "description": "Increases all resistances and physical damage reduction of your summons.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "all_resistances": 2, "physical_damage_reduction": 0.75 },
+      "perRank": { "all_resistances": 2, "physical_damage_reduction": 0.75 }
     }
   },
   {
@@ -356,43 +367,47 @@
     "classId": "necromancer",
     "name": "Summon Damned Legion",
     "kind": "active",
-    "description": "",
+    "description": "Summon a damned legion to fight on your side.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 3,
-      "col": 2
-    }
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "damageFormula": { "base": 0, "perLevel": 12 },
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Raise Skeleton", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Raise Skeleton Mage", "stat": "attack_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Summon Frenzy", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "attack_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "summon_vengeful_spirit",
     "classId": "necromancer",
     "name": "Summon Vengeful Spirit",
     "kind": "active",
-    "description": "",
+    "description": "Summon a vengeful spirit to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon", "Chain Lightning"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Lord of the Dead",
-    "position": {
-      "row": 4,
-      "col": 1
-    }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "damageFormula": { "base": 0, "perLevel": 14 },
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Raise Skeleton", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Raise Skeleton Mage", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Summon Damned Legion", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   }
 ]
