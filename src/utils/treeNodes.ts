@@ -43,7 +43,6 @@ export const ALL_TREE_NODES: TreeNodeEntry[] = (
 export type TreeEdge = readonly [number, number, number, number]
 export const ALL_TREE_EDGES: TreeEdge[] = heroSiegeTree.edges as unknown as TreeEdge[]
 
-// First-write-wins when multiple nodes share a name.
 const TREE_NODE_BY_NAME: Map<string, TreeNodeEntry> = (() => {
   const m = new Map<string, TreeNodeEntry>()
   for (const n of ALL_TREE_NODES) {
@@ -53,8 +52,6 @@ const TREE_NODE_BY_NAME: Map<string, TreeNodeEntry> = (() => {
   return m
 })()
 
-// O(1) id lookup — built once at module load. Replaces a per-call O(n) scan
-// that ran for every tree-source row in every SourceItem render.
 const TREE_NODE_BY_ID: Map<number, TreeNodeEntry> = (() => {
   const m = new Map<number, TreeNodeEntry>()
   for (const n of ALL_TREE_NODES) {

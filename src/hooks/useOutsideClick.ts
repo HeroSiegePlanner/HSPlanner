@@ -5,7 +5,6 @@ export function useOutsideClick(
   enabled: boolean,
   onOutside: () => void,
 ): void {
-  // Fires onOutside when a mousedown or touchstart lands outside the referenced element.
   useEffect(() => {
     if (!enabled) return;
     const handler = (e: MouseEvent | TouchEvent) => {

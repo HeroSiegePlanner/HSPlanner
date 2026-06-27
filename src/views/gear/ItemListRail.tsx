@@ -7,18 +7,13 @@ import { GearItemRow } from './GearItemRow'
 interface ItemListRailProps {
   slot: SlotKey
   selectedBaseId?: string
-  isOffhandLocked: boolean
   onSelect: (baseId: string) => void
   onHoverBase: (baseId: string | null) => void
 }
 
-// Full-width item selection list (step 1 of the GearSlotModal): a search box over
-// a grouped, single-column list. Picking a row advances the modal to the config
-// step. Hovering a row surfaces the live build delta in the left stats panel.
 export function ItemListRail({
   slot,
   selectedBaseId,
-  isOffhandLocked,
   onSelect,
   onHoverBase,
 }: ItemListRailProps) {
@@ -56,17 +51,6 @@ export function ItemListRail({
   }, [filteredRows])
 
   const hasGroupHeaders = groupedRows.some((g) => g.group !== null)
-
-  if (isOffhandLocked) {
-    return (
-      <div className="flex min-h-0 flex-1 items-center justify-center p-8">
-        <div className="max-w-sm rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-center text-[12px] leading-relaxed text-amber-200">
-          Offhand is locked while a Two-Handed weapon is in the main hand. Remove
-          the weapon to free this slot.
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

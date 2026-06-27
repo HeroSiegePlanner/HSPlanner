@@ -16,7 +16,6 @@ export function GearItemRow({
   onSelect: () => void
   onHover: () => void
 }) {
-  // Renders one row inside the GearSlotModal's left column: rarity-coloured icon, base-type kindLabel, item name (in rarity colour), and meta string. Click selects the item; hover surfaces the compare overlay in the right column.
   const rarity = row.rarity
   const nameColor = rarity ? RARITY_TEXT[rarity] : 'text-text'
 

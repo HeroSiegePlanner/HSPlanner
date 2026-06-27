@@ -1,15 +1,9 @@
-// SVG icon set for the Build Select library screen. Replaces the unicode
-// glyphs the screen used to render in its toolbar, search field, folder tree
-// and preview pane — crisp strokes that match the rest of the app's
-// iconography (Logo, KofiIcon, the FolderTree folder/star icons).
-
 import type { ReactNode } from 'react'
 
 interface IconProps {
   className?: string
 }
 
-/** Shared 16×16 stroked-icon frame. Colour follows `currentColor`. */
 function StrokeIcon({
   className,
   children,
@@ -33,7 +27,6 @@ function StrokeIcon({
   )
 }
 
-/** Solid play triangle — "Open Build". */
 export function PlayIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 16 16" aria-hidden>
@@ -42,7 +35,6 @@ export function PlayIcon({ className }: IconProps) {
   )
 }
 
-/** Plus — "New" / "New Folder" affordances. */
 export function PlusIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -51,7 +43,6 @@ export function PlusIcon({ className }: IconProps) {
   )
 }
 
-/** Down-arrow into a tray — "Import". */
 export function ImportIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -62,7 +53,6 @@ export function ImportIcon({ className }: IconProps) {
   )
 }
 
-/** Floppy disk — "Save". */
 export function SaveIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -73,7 +63,6 @@ export function SaveIcon({ className }: IconProps) {
   )
 }
 
-/** Overlapping sheets — "Copy". */
 export function CopyIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -83,7 +72,6 @@ export function CopyIcon({ className }: IconProps) {
   )
 }
 
-/** Pencil — "Rename". */
 export function RenameIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -93,7 +81,6 @@ export function RenameIcon({ className }: IconProps) {
   )
 }
 
-/** Trash can — "Delete". */
 export function DeleteIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -104,7 +91,6 @@ export function DeleteIcon({ className }: IconProps) {
   )
 }
 
-/** Folder with a plus — "New Folder". */
 export function NewFolderIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -114,7 +100,6 @@ export function NewFolderIcon({ className }: IconProps) {
   )
 }
 
-/** Magnifier — search fields. */
 export function SearchIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>
@@ -124,7 +109,6 @@ export function SearchIcon({ className }: IconProps) {
   )
 }
 
-/** Right-pointing chevron — folder twist + folder-choice marker. */
 export function CaretIcon({ className }: IconProps) {
   return (
     <StrokeIcon className={className}>

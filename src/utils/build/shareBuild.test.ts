@@ -9,14 +9,13 @@ import {
 } from './shareBuild'
 
 function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnapshot {
-  // Shared fixture specialised with the values the share-encoding assertions expect.
   return makeBaseSnapshot({
     classId: 'stormweaver',
     level: 50,
     allocated: { strength: 10 },
     skillRanks: { fireball: 5 },
     allocatedTreeNodes: new Set([1, 2, 3]),
-    mainSkillId: 'fireball',
+    activeSkillIds: ['fireball'],
     enemyResistances: {},
     ...overrides,
   })
@@ -32,6 +31,31 @@ describe('encode/decode round-trip', () => {
     expect(decoded!.snapshot.level).toBe(50)
     expect(decoded!.snapshot.skillRanks.fireball).toBe(5)
     expect([...decoded!.snapshot.allocatedTreeNodes]).toEqual([1, 2, 3])
+    expect(decoded!.snapshot.activeSkillIds).toEqual(['fireball'])
+  })
+
+  it('migrates a legacy single-skill `m` string to activeSkillIds', () => {
+    const code = compressToEncodedURIComponent(
+      JSON.stringify({
+        v: 1,
+        c: 'stormweaver',
+        l: 10,
+        a: {},
+        i: {},
+        s: {},
+        ss: {},
+        t: [],
+        m: 'fireball',
+        u: null,
+        buf: {},
+        ec: {},
+        pt: {},
+        kps: 1,
+      }),
+    )
+    const decoded = decodeShareToBuild(code)
+    expect(decoded).not.toBeNull()
+    expect(decoded!.snapshot.activeSkillIds).toEqual(['fireball'])
   })
 
   it('preserves and sanitizes notes through the round-trip', () => {

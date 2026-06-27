@@ -58,7 +58,6 @@ function isGithubRelease(p: unknown): p is GithubRelease {
   return true;
 }
 
-// "1" sentinel yields the bundled fixture; otherwise parse as JSON GithubRelease.
 function readMockPayload(): GithubRelease | null {
   const raw = readStorage(MOCK_KEY);
   if (!raw) return null;
@@ -188,7 +187,6 @@ export function mapReleaseToUpdateInfo(payload: GithubRelease): UpdateInfo {
   };
 }
 
-// Heuristic: drop sig/checksum/source files, pick the largest remaining binary as "the real installer".
 function pickAsset(assets?: GithubAsset[]): GithubAsset | undefined {
   if (!assets || assets.length === 0) return undefined;
   const candidates = assets.filter((a) => {
@@ -274,30 +272,15 @@ export function formatBytes(n: number): string {
   return `${v.toFixed(decimals)} ${units[i]}`;
 }
 
-export function shortSha(sha: string, head = 4, tail = 4): string {
+export function shortSha(sha: string): string {
   const clean = sha.replace(/^sha256:/i, "");
-  if (clean.length <= head + tail + 1) return clean;
-  return `${clean.slice(0, head)}…${clean.slice(-tail)}`;
+  if (clean.length <= 9) return clean;
+  return `${clean.slice(0, 4)}…${clean.slice(-4)}`;
 }
 
-// Ignores pre-release suffix.
 export function compareSemver(a: string, b: string): number {
-  const parse = (v: string) =>
-    v
-      .split("-")[0]!
-      .split(".")
-      .map((part) => {
-        const n = Number.parseInt(part, 10);
-        return Number.isFinite(n) ? n : 0;
-      });
-  const pa = parse(a);
-  const pb = parse(b);
-  const len = Math.max(pa.length, pb.length);
-  for (let i = 0; i < len; i++) {
-    const na = pa[i] ?? 0;
-    const nb = pb[i] ?? 0;
-    if (na > nb) return 1;
-    if (na < nb) return -1;
-  }
-  return 0;
+  const release = (v: string) => v.split("-")[0]!;
+  return Math.sign(
+    release(a).localeCompare(release(b), undefined, { numeric: true }),
+  );
 }

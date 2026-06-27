@@ -12,7 +12,6 @@ export interface GearSlotGroups {
 }
 
 export function groupGearSlots(slots: SlotDefLite[]): GearSlotGroups {
-  // Display grouping for the gear view panels; charm slots are excluded.
   const gear: SlotDefLite[] = []
   const potions: SlotDefLite[] = []
   const relics: SlotDefLite[] = []

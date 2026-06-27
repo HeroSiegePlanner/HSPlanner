@@ -5,12 +5,10 @@ import type { ItemBase, SlotKey } from '../../types'
 import { RARITY_LABEL, RARITY_ORDER } from './lib/rarity'
 
 function slotGroup(slotKey: SlotKey): string {
-  // Strips a trailing `_N` suffix from a slot key so paired slots (e.g. `ring_1`, `ring_2`) collapse into a single shared group ("ring"). Used by `itemsForSlot` and the inventory move logic.
   return slotKey.replace(/_\d+$/, '')
 }
 
 function buildItemSearchTerms(i: ItemBase): string {
-  // Aggregates every searchable surface of a base item (implicits, unique effects, procs, skill bonuses, description, flavor) into a single lowercase string used by the gear PickerModal so users can filter by affix or effect text — not just by item name.
   const parts: string[] = [i.name, i.baseType]
   if (i.grade) parts.push(`Grade ${i.grade}`)
   if (i.implicit) {
@@ -39,7 +37,6 @@ function buildItemSearchTerms(i: ItemBase): string {
 }
 
 export function pickerItemsForSlot(slotKey: SlotKey): PickerRow[] {
-  // Builds the modal-picker rows for the supplied gear slot, mirroring the legacy itemsForSlot (sorted by rarity then name) but enriched with rarity, group, baseType, a one-line meta string, and a full searchable-text blob (built by `buildItemSearchTerms`) so users can filter by affix/effect text. Used by ItemPickerLauncher.
   const group = slotGroup(slotKey)
   const matching = items
     .filter((i) => i.slot === slotKey || slotGroup(i.slot) === group)

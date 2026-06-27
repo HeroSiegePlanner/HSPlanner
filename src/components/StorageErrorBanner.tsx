@@ -1,10 +1,6 @@
 import { useBuild } from '../store/build'
 
 export default function StorageErrorBanner() {
-  // Fixed banner shown whenever the build store records a `storageError` — i.e.
-  // a write to localStorage was rejected, most often because the browser's
-  // origin storage quota is exhausted. Saved builds live only in localStorage,
-  // so a failed save must be impossible to miss instead of silently lost.
   const storageError = useBuild((s) => s.storageError)
   const dismissStorageError = useBuild((s) => s.dismissStorageError)
 

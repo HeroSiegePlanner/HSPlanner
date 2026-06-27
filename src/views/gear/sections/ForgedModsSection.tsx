@@ -22,7 +22,6 @@ export function ForgedModsSection({
   onAdd: (modId: string, tier: number) => void
   onRemove: (index: number) => void
 }) {
-  // Editor for the (single) crystal-forge mod on a gear item, exposing a "+ Add" button that opens the satanic-crystal PickerModal and a per-mod remove control. The picker's row tooltips include a NetChangeBlock that diffs each candidate's averaged stats against whatever crystal is currently forged on the item, so users see the build delta without leaving the picker. Used inside the GearSlotModal right column for satanic-tier and above items.
   const [open, setOpen] = useState(false)
   const mods = useMemo(
     () => equipped.forgedMods ?? [],

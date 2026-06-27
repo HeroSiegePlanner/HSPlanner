@@ -31,7 +31,6 @@ export interface PickerRow {
   meta?: ReactNode
   group?: string
   disabled?: boolean
-  disabledNote?: string
   searchTerms?: string
   tooltip?: ReactNode
   tooltipTone?: TooltipTone
@@ -52,14 +51,12 @@ export interface PickerModalProps {
   emptyMessage?: string
   onSelect: (id: string) => void
   onClose: () => void
-  hoverPanel?: (rowId: string | null) => ReactNode
   selectedPanel?: (state: PickerPanelState) => ReactNode
   panelOffsetX?: number
   width?: number
   closeOnSelect?: boolean
   allowClear?: boolean
   onClear?: () => void
-  footerStatus?: ReactNode
   footerActions?: ReactNode
 }
 
@@ -73,14 +70,12 @@ export default function PickerModal({
   emptyMessage = 'No matches',
   onSelect,
   onClose,
-  hoverPanel,
   selectedPanel,
   panelOffsetX = 24,
   width = 640,
   closeOnSelect = true,
   allowClear = false,
   onClear,
-  footerStatus,
   footerActions,
 }: PickerModalProps) {
   const [q, setQ] = useState('')
@@ -280,7 +275,6 @@ export default function PickerModal({
                         onMouseEnter={() =>
                           !r.disabled && setHoveredId(r.id)
                         }
-                        title={r.disabledNote}
                         className={`group relative grid w-full items-center gap-3.5 border-b border-border px-4 py-2.5 text-left transition-colors last:border-b-0 ${
                           r.disabled
                             ? 'cursor-not-allowed opacity-30'
@@ -379,12 +373,11 @@ export default function PickerModal({
                 }}
               />
               <span className="truncate">
-                {footerStatus ??
-                  (selectedId
-                    ? `Selected: ${
-                        rows.find((r) => r.id === selectedId)?.name ?? selectedId
-                      }`
-                    : 'Nothing selected')}
+                {selectedId
+                  ? `Selected: ${
+                      rows.find((r) => r.id === selectedId)?.name ?? selectedId
+                    }`
+                  : 'Nothing selected'}
               </span>
             </div>
             <div className="flex shrink-0 gap-2">
@@ -410,14 +403,6 @@ export default function PickerModal({
           </footer>
         </motion.div>
 
-        {hoverPanel && (
-          <div
-            className="shrink-0 self-start max-h-[88vh] overflow-y-auto"
-            style={{ minWidth: 260, maxWidth: 320 }}
-          >
-            {hoverPanel(hoveredId)}
-          </div>
-        )}
       </div>
     </motion.div>,
     document.body,

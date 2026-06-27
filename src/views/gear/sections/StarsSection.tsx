@@ -8,7 +8,6 @@ export function StarsSection({
   stars: number
   onChange: (n: number) => void
 }) {
-  // Renders the 0-MAX_STARS star picker for the equipped gear item. Wrapped in the shared SectionCard for consistent framing inside the GearSlotModal right column. Used by GearSlotModal for any gear-slot equip.
   const bonusPct = stars * 8
   return (
     <SectionCard

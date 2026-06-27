@@ -36,18 +36,11 @@ export interface SlotDef {
   group: 'weapon' | 'armor' | 'jewelry' | 'special'
 }
 
-export interface TargetStateDef {
-  key: string
-  name: string
-  description?: string
-}
-
 export interface GameConfig {
   version: string
   attributes: AttributeDef[]
   stats: StatDef[]
   slots: SlotDef[]
-  targetStates?: TargetStateDef[]
   maxCharacterLevel: number
   etherMaxLevel: number
   attributePointsPerLevel: number

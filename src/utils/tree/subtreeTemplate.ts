@@ -45,7 +45,6 @@ export const SUBTREE_TEMPLATE: TemplateNode[] = defs.map((n, i) => ({
 }))
 
 export function getTemplateEdges(): Array<[number, number]> {
-  // Returns the deduplicated, undirected edge list of the shared subtree template by walking each node's `edges` and skipping reverse-direction duplicates. Used by SubtreeOverlay's renderer to draw connecting lines between subtree nodes.
   const seen = new Set<string>()
   const out: Array<[number, number]> = []
   for (const n of SUBTREE_TEMPLATE) {

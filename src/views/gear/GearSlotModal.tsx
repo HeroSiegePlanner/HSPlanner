@@ -55,8 +55,6 @@ export function GearSlotModal({
 
   const isOffhandLocked = slot === 'offhand' && offhandLocked && !draft
 
-  // Two-step flow: pick an item, then configure it. Open straight into config
-  // when the slot already holds an item.
   const [step, setStep] = useState<'select' | 'configure'>(() =>
     equipped ? 'configure' : 'select',
   )
@@ -152,7 +150,6 @@ export function GearSlotModal({
       <ItemListRail
         slot={slot}
         selectedBaseId={draft?.baseId}
-        isOffhandLocked={isOffhandLocked}
         onSelect={(id) => {
           d.pickBase(id)
           setCommitError(null)
@@ -395,7 +392,6 @@ export function GearSlotModal({
       </Modal>
       {textEditorOpen && draft && base && (
         <ItemTextEditorModal
-          slot={slot}
           slotName={slotName}
           equipped={draft}
           base={base}

@@ -17,7 +17,6 @@ export function SlotRow({
   locked?: boolean
   onSelect: () => void
 }) {
-  // Renders a single inventory-slot row in GearView's left rail with the slot label, the equipped item's name + rarity colour (or empty hint), the runeword override colour, and the click-to-select handler. Used once per slot inside GearView.
   const base = equipped ? getItem(equipped.baseId) : undefined
   const runeword =
     base && equipped ? detectRuneword(base, equipped.socketed) : undefined
@@ -140,7 +139,6 @@ export function GearPanel({
   trailing?: React.ReactNode
   children: React.ReactNode
 }) {
-  // Renders the panel-system frame (gradient, accent corners, sectionLabel header) shared by Equipment and Charm Inventory in GearView.
   return (
     <section
       className="relative overflow-hidden rounded-md border border-border p-4"

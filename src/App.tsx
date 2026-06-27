@@ -53,7 +53,6 @@ const SECTIONS = [
 
 type Section = (typeof SECTIONS)[number]["id"];
 
-/** Top-level screen: the build library, or the build planner. */
 type Screen = "library" | "planner";
 
 const SECTION_KEY = "hsplanner.activeSection.v1";
@@ -61,7 +60,6 @@ const LEGACY_SECTION_KEY = "heroplanner.activeSection.v1";
 const SECTION_IDS = new Set<Section>(SECTIONS.map((s) => s.id));
 
 function readInitialSection(): Section {
-  // Legacy "heroplanner" key was renamed at 0.4.x.
   const stored = readStorageWithLegacy(SECTION_KEY, LEGACY_SECTION_KEY);
   if (stored && SECTION_IDS.has(stored as Section)) return stored as Section;
   return "tree";
@@ -84,17 +82,10 @@ function ViewLoadingFallback() {
 
 function App() {
   const [section, setSection] = useState<Section>(readInitialSection);
-  // The library is the startup screen; boot may flip this to "planner" when
-  // "Auto-open last build" is enabled.
   const [screen, setScreen] = useState<Screen>("library");
 
-  // Boot: warm calc caches and preload sprites while the HTML splash from index.html is visible.
-  // The bar honestly tracks two real phases: Rust warm-up (0–15%) then sprite
-  // fetches (15–100%). Splash listens via window.__bootProgress / __bootFinish.
   useEffect(() => {
-    // Short anti-flash floor so a fast start doesn't just blink the splash.
     const MIN_DISPLAY_MS = 500;
-    // Reserve the final 1% for the dismissal frame so the bar never parks at 100%.
     const FINALIZE_RESERVE = 1;
     let cancelled = false;
     const bootStart = performance.now();
@@ -104,10 +95,7 @@ function App() {
     };
 
     (async () => {
-      // Warm-up owns 0–15%, so seed the bar at 0 (not a fake 2%) to keep it
-      // monotonic when the first warmup-progress event reports current=0.
       report(0, "Loading game data");
-      // Warm Rust data + parser caches, mirroring its real progress onto 0–15%.
       try {
         const unlisten = await listen<{ current: number; total: number }>(
           "warmup-progress",
@@ -126,7 +114,7 @@ function App() {
           unlisten();
         }
       } catch {
-        // No Tauri (plain browser) — keep going without warm-up.
+        /* empty */
       }
       if (cancelled) return;
       report(WARMUP_WEIGHT * 100, "Loading sprites");
@@ -138,8 +126,6 @@ function App() {
       });
       if (cancelled) return;
 
-      // Honor the short floor (bar holds just under 100%), then snap to 100% in
-      // the same beat as dismissal so it never sits on a finished bar.
       const remaining = Math.max(0, MIN_DISPLAY_MS - (performance.now() - bootStart));
       if (remaining > 0) {
         await new Promise((r) => window.setTimeout(r, remaining));
@@ -148,7 +134,6 @@ function App() {
       report(100, "Ready");
       window.__bootFinish?.();
 
-      // Boot replay: the hub already re-resolved the season, so run any pending action.
       const pendingBuild = readStorage(PENDING_BUILD_KEY);
       const pendingImport = readStorage(PENDING_IMPORT_KEY);
       if (pendingBuild) {
@@ -198,10 +183,8 @@ function App() {
 
   const ActiveView = SECTIONS.find((s) => s.id === section)?.view ?? TreeView;
   const classId = useBuild((s) => s.classId);
-  const level = useBuild((s) => s.level);
   const activeBuildId = useBuild((s) => s.activeBuildId);
   const setClass = useBuild((s) => s.setClass);
-  const setLevel = useBuild((s) => s.setLevel);
   const cls = classId ? getClass(classId) : undefined;
 
   const needsScroll = section !== "tree" && section !== "skills";
@@ -300,54 +283,31 @@ function App() {
 
           <div className="ml-auto flex items-center gap-2.5">
             {classes.length > 0 && (
-              <>
-                <label className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-                    Class
-                  </span>
-                  <div
-                    className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
-                      boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
-                    }}
+              <label className="flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+                  Class
+                </span>
+                <div
+                  className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
+                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+                  }}
+                >
+                  <select
+                    value={classId ?? ""}
+                    onChange={(e) => setClass(e.target.value)}
+                    className="min-w-20 cursor-pointer bg-transparent text-[12px] text-text outline-none"
                   >
-                    <select
-                      value={classId ?? ""}
-                      onChange={(e) => setClass(e.target.value)}
-                      className="min-w-20 cursor-pointer bg-transparent text-[12px] text-text outline-none"
-                    >
-                      {classes.map((c) => (
-                        <option key={c.id} value={c.id} className="bg-panel">
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </label>
-                <label className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
-                    Level
-                  </span>
-                  <div
-                    className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
-                    style={{
-                      background:
-                        "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
-                      boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    <input
-                      type="number"
-                      min={1}
-                      value={level}
-                      onChange={(e) => setLevel(Number(e.target.value))}
-                      className="w-14 bg-transparent text-center font-mono text-[12px] text-accent-hot tabular-nums outline-none"
-                    />
-                  </div>
-                </label>
-              </>
+                    {classes.map((c) => (
+                      <option key={c.id} value={c.id} className="bg-panel">
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
             )}
             {cls?.primaryAttribute && (
               <span

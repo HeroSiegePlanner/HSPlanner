@@ -11,29 +11,20 @@ import { listFolders } from '../../utils/build/savedFolders'
 import { decodeShareToBuild } from '../../utils/build/shareBuild'
 
 export interface BuildMeta {
-  /** Character level from the active profile snapshot. */
   level: number
-  /** Allocated talent-tree node count from the active profile snapshot. */
   nodes: number
-  /** Class display name, or "Unknown" when the class id is missing. */
   className: string
-  /** False when the active profile's build code could not be decoded. */
   decoded: boolean
 }
 
 export interface BuildLibrary {
   builds: SavedBuild[]
   folders: Folder[]
-  /** Per-build derived metadata, keyed by build id. */
   meta: Record<string, BuildMeta>
-  /** Folder id → direct child folders. Top-level folders are under the empty-string key. */
   childFolders: Record<string, Folder[]>
 }
 
 export function useBuildLibrary(): BuildLibrary {
-  // Reads the persisted build library (builds + folders) and derives per-build
-  // metadata plus a parent→children folder index. Re-reads from storage on
-  // every `savedBuildsVersion` bump, exactly like the old BuildsMenu.
   const version = useBuild((s) => s.savedBuildsVersion)
 
   return useMemo<BuildLibrary>(() => {

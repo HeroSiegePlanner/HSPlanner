@@ -5,7 +5,6 @@ export interface DropdownOption {
   id: string
   label: string
   meta?: ReactNode
-  rarity?: string
 }
 
 interface DropdownProps {
@@ -20,7 +19,6 @@ interface DropdownProps {
   onOpenChange?: (open: boolean) => void
 }
 
-// Searchable, keyboard-navigable select built on the .hs-dd* styles in index.css.
 export default function Dropdown({
   value,
   options,
@@ -154,7 +152,7 @@ export default function Dropdown({
                     key={o.id}
                     role="option"
                     aria-selected={active}
-                    className={`hs-dd-item${o.rarity ? ` rarity-${o.rarity}` : ''}${
+                    className={`hs-dd-item${
                       active ? ' is-active' : ''
                     }${activeKb === idx ? ' is-keyboard' : ''}`}
                     onClick={() => pick(o.id)}

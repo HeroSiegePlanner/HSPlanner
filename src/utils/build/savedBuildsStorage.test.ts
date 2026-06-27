@@ -89,8 +89,7 @@ describe('savedBuilds v3 — corrupt data', () => {
 
     const lib = readLibrary()
     expect(lib.builds).toEqual([])
-    // The original corrupt blob is preserved under a backup key so a later save
-    // (which overwrites the v3 key) can't permanently destroy recoverable data.
+    // Corrupt blob preserved under a backup key so a later save can't destroy it.
     expect(localStorage.getItem('hsplanner.savedBuilds.v3.corrupt')).toBe(corrupt)
   })
 })

@@ -13,37 +13,21 @@ export const MODAL_BTN_PRIMARY_CLASS =
   'rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:opacity-60'
 
 interface ModalProps {
-  /** Called on backdrop click and the header Close button. */
   onClose: () => void
-  /** Tailwind sizing classes for the panel, e.g. 'h-[88vh] w-[640px] max-w-[94vw]'. */
   panelClassName: string
-  /** Header eyebrow line, rendered after the accent diamond. */
   eyebrow: ReactNode
-  /** Header title. */
   title: ReactNode
-  /** id for the <h2>, paired with aria-labelledby on the panel. */
   titleId?: string
-  /** Extra classes for the <h2> (e.g. 'truncate'). */
   titleClassName?: string
-  /** Optional line below the title. */
   subtitle?: ReactNode
-  /** Disables the Close button (e.g. while a blocking action runs). */
   closeDisabled?: boolean
-  /** Optional controls rendered in the header, left of the Close button. */
   headerActions?: ReactNode
-  /** Extra classes appended to the backdrop wrapper (e.g. 'p-6'). */
   backdropClassName?: string
-  /** Extra inline styles merged into the panel (e.g. a dynamic width). */
   panelStyle?: CSSProperties
-  /** Render into document.body via a portal. Defaults to true. */
   portal?: boolean
-  /** Panel body, rendered below the header. */
   children: ReactNode
 }
 
-// Shared chrome for the app's dialogs: a fading backdrop, a scaling panel with
-// the project's CornerMarks, and the standard header (accent eyebrow, title,
-// optional subtitle, Close button). Body content goes in `children`.
 export function Modal({
   onClose,
   panelClassName,

@@ -12,7 +12,6 @@ export function SkillIconImage({
   size?: number
   className?: string
 }) {
-  // Renders a skill icon. When `icon` looks like a URL/image path it is rendered as an `<img>` (lazy-loaded, draggable disabled, no referrer); on load failure or for emoji/text icons it falls back to a `<span>` with the supplied glyph (or a default ✦). Used by SkillsView, BottomBar, and tooltips wherever a skill icon needs to render uniformly.
   const [errored, setErrored] = useState(false)
   if (isImageUrl(icon) && !errored) {
     const dim = size ? `${size * 0.9}px` : '100%'

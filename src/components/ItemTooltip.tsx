@@ -76,7 +76,6 @@ interface Props {
   children: ReactNode
   placement?: 'right' | 'left' | 'top' | 'bottom'
   className?: string
-  // Forwarded to the underlying Tooltip so triggers inside higher-stacked modals can layer above the backdrop.
   zIndex?: number
 }
 
@@ -118,8 +117,6 @@ const EMPTY_DISPLAY: TooltipDisplayValues = {
   affixRanges: [],
 }
 
-// One display_values batch per item: star-scaled implicits, skill-rank
-// bonuses, and affix roll ranges all come from the Rust engine.
 function useItemDisplayValues(
   base: ItemBase,
   equipped: EquippedItem | undefined,

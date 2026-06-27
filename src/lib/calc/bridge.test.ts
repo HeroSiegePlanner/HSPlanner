@@ -3,9 +3,11 @@ import { invoke } from '@tauri-apps/api/core'
 import type { Skill } from '../../types'
 import {
   __depsToInputForTest,
+  computeBuildPerformanceAsync,
   manaCostAtRankNative,
   passiveStatsAtRankNative,
   setBridgeErrorListener,
+  type BuildPerformanceOutput,
 } from './bridge'
 import { activeSeasonId } from '../../data'
 
@@ -72,7 +74,7 @@ function baseDeps(season?: string) {
     customStats: [],
     allocatedTreeNodes: new Set<number>(),
     treeSocketed: {},
-    mainSkillId: null,
+    activeSkillIds: [],
     enemyConditions: {},
     playerConditions: {},
     skillProjectiles: {},
@@ -89,5 +91,117 @@ describe('depsToInput season', () => {
   })
   it('falls back to the active season when deps season is absent', () => {
     expect(__depsToInputForTest(baseDeps()).season).toBe(activeSeasonId)
+  })
+})
+
+function fakeOutput(o: Partial<BuildPerformanceOutput>): BuildPerformanceOutput {
+  return {
+    attributes: {},
+    stats: {},
+    damage: null,
+    attackDamage: null,
+    hitDpsMin: null,
+    hitDpsMax: null,
+    avgHitDpsMin: null,
+    avgHitDpsMax: null,
+    procDpsMin: 0,
+    procDpsMax: 0,
+    combinedDpsMin: null,
+    combinedDpsMax: null,
+    activeSkillName: null,
+    statsCombined: {},
+    itemSkillBonuses: {},
+    rankBonuses: {},
+    ...o,
+  }
+}
+
+describe('computeBuildPerformanceAsync — combined (combo) DPS', () => {
+  beforeEach(() => {
+    mockedInvoke.mockReset()
+    setBridgeErrorListener(null)
+  })
+
+  it('combines per-skill DPS into combinedDps (proc counted once); hit/avg stay primary', async () => {
+    mockedInvoke.mockImplementation(async (_cmd, args) => {
+      const id = (args as { input: { mainSkillId: string | null } }).input
+        .mainSkillId
+      if (id === 'a')
+        return fakeOutput({
+          hitDpsMin: 120,
+          hitDpsMax: 120,
+          avgHitDpsMin: 100,
+          avgHitDpsMax: 100,
+          procDpsMin: 5,
+          procDpsMax: 5,
+          combinedDpsMin: 105,
+          combinedDpsMax: 105,
+          activeSkillName: 'A',
+        })
+      return fakeOutput({
+        hitDpsMin: 90,
+        hitDpsMax: 90,
+        avgHitDpsMin: 80,
+        avgHitDpsMax: 80,
+        procDpsMin: 5,
+        procDpsMax: 5,
+        combinedDpsMin: 85,
+        combinedDpsMax: 85,
+        activeSkillName: 'B',
+      })
+    })
+
+    const perf = await computeBuildPerformanceAsync({
+      ...baseDeps(),
+      activeSkillIds: ['a', 'b'],
+    })
+
+    expect(mockedInvoke).toHaveBeenCalledTimes(2)
+    expect(perf.combinedDpsMin).toBe(185)
+    expect(perf.procDpsMin).toBe(5)
+    expect(perf.hitDpsMin).toBe(120)
+    expect(perf.avgHitDpsMin).toBe(100)
+    expect(perf.activeSkillName).toBe('A + B')
+    expect(perf.perSkill).toEqual([
+      { id: 'a', name: 'A', hitDpsMin: 120, hitDpsMax: 120 },
+      { id: 'b', name: 'B', hitDpsMin: 90, hitDpsMax: 90 },
+    ])
+  })
+
+  it('a single active skill matches the legacy single-skill result', async () => {
+    mockedInvoke.mockResolvedValue(
+      fakeOutput({
+        avgHitDpsMin: 100,
+        avgHitDpsMax: 100,
+        procDpsMin: 5,
+        procDpsMax: 5,
+        combinedDpsMin: 105,
+        combinedDpsMax: 105,
+        activeSkillName: 'A',
+      }),
+    )
+    const perf = await computeBuildPerformanceAsync({
+      ...baseDeps(),
+      activeSkillIds: ['a'],
+    })
+    expect(mockedInvoke).toHaveBeenCalledTimes(1)
+    expect(perf.combinedDpsMin).toBe(105)
+  })
+
+  it('no active skill reports proc-only combined DPS via a single call', async () => {
+    mockedInvoke.mockResolvedValue(
+      fakeOutput({
+        procDpsMin: 7,
+        procDpsMax: 7,
+        combinedDpsMin: 7,
+        combinedDpsMax: 7,
+      }),
+    )
+    const perf = await computeBuildPerformanceAsync({
+      ...baseDeps(),
+      activeSkillIds: [],
+    })
+    expect(mockedInvoke).toHaveBeenCalledTimes(1)
+    expect(perf.combinedDpsMin).toBe(7)
   })
 })

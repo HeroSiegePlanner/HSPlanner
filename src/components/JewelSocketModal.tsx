@@ -85,7 +85,6 @@ export default function JewelSocketModal({
       }
       title="Insert Socketable"
     >
-        {/* Tabs */}
         <div className="grid grid-cols-2 border-b border-border bg-bg">
           {(
             [
@@ -116,7 +115,6 @@ export default function JewelSocketModal({
           ))}
         </div>
 
-        {/* Tab body */}
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {tab === 'items' ? (
             <ItemsTab
@@ -131,7 +129,6 @@ export default function JewelSocketModal({
           )}
         </div>
 
-        {/* Footer */}
         <footer className="flex items-center justify-between border-t border-border bg-black/30 px-4 py-3">
           <div
             className={`flex items-center gap-2 font-mono text-[11px] tracking-[0.06em] ${
@@ -284,7 +281,6 @@ function ItemsTab({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      {/* Search */}
       <div className="border-b border-border px-4 py-3">
         <div className="relative">
           <svg
@@ -312,7 +308,6 @@ function ItemsTab({
         </div>
       </div>
 
-      {/* List */}
       <div className="js-list min-h-0 flex-1 overflow-y-auto py-1">
         {rows.length === 0 && (
           <div className="p-8 text-center text-sm text-muted">No matches</div>
@@ -350,7 +345,6 @@ function ItemsTab({
                     : undefined
                 }
               />
-              {/* Icon: real PNG if exists; otherwise faceted gem dot */}
               <span className="flex items-center justify-center">
                 {url ? (
                   <img

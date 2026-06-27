@@ -53,8 +53,6 @@ const recordOfNumbers = z
     message: 'too many entries',
   })
 
-// Used for rank/projectile records where a negative number is meaningless
-// and would propagate as wrong-sign damage / multipliers in calc.
 const recordOfNonNegativeNumbers = z
   .record(SAFE_STRING, NON_NEGATIVE_NUMBER)
   .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
@@ -125,7 +123,12 @@ const shareableBuildSchema = z.object({
   s: recordOfNonNegativeNumbers,
   ss: recordOfNonNegativeNumbers,
   t: z.array(FINITE_NUMBER).max(MAX_TREE_NODES),
-  m: z.string().max(MAX_KEY_LENGTH).nullable(),
+  m: z
+    .union([
+      z.string().max(MAX_KEY_LENGTH),
+      z.array(z.string().max(MAX_KEY_LENGTH)).max(64),
+    ])
+    .nullable(),
   u: z.string().max(MAX_KEY_LENGTH).nullable(),
   buf: recordOfBooleans,
   ec: recordOfBooleans,
@@ -157,7 +160,7 @@ export interface ShareableBuild {
   s: Record<string, number>
   ss: Record<string, number>
   t: number[]
-  m: string | null
+  m: string | string[] | null
   u: string | null
   buf: Record<string, boolean>
   ec: Record<string, boolean>
@@ -180,7 +183,7 @@ export interface BuildSnapshot {
   skillRanks: Record<string, number>
   subskillRanks: Record<string, number>
   allocatedTreeNodes: Set<number>
-  mainSkillId: string | null
+  activeSkillIds: string[]
   activeAuraId: string | null
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
@@ -203,7 +206,7 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
     s: snapshot.skillRanks,
     ss: snapshot.subskillRanks,
     t: [...snapshot.allocatedTreeNodes].sort((x, y) => x - y),
-    m: snapshot.mainSkillId,
+    m: snapshot.activeSkillIds,
     u: snapshot.activeAuraId,
     buf: snapshot.activeBuffs,
     ec: snapshot.enemyConditions,
@@ -244,7 +247,6 @@ export interface DecodedShare {
   season: string
 }
 
-// Hardening: a hostile share cannot push the level into a degenerate state.
 function clampLevel(n: number): number {
   if (!Number.isFinite(n)) return 1
   return Math.max(1, Math.min(MAX_LEVEL, Math.floor(n)))
@@ -270,7 +272,11 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
     skillRanks: encoded.s ?? {},
     subskillRanks: encoded.ss ?? {},
     allocatedTreeNodes: new Set(encoded.t ?? []),
-    mainSkillId: encoded.m ?? null,
+    activeSkillIds: Array.isArray(encoded.m)
+      ? encoded.m
+      : encoded.m
+        ? [encoded.m]
+        : [],
     activeAuraId: encoded.u ?? null,
     activeBuffs: encoded.buf ?? {},
     enemyConditions: encoded.ec ?? {},
@@ -287,7 +293,6 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
             value: s.v,
           }))
       : [],
-    // Filter non-numeric keys so Number("abc") = NaN can't reach the store.
     treeSocketed: encoded.ts
       ? Object.fromEntries(
           Object.entries(encoded.ts)
@@ -307,7 +312,6 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
   }
 }
 
-// Repairs shares from older/hostile clients: socket arrays match socketCount, stars clamped to 0-5, augment level to 1-7.
 function normalizeInventory(inv: Inventory | undefined): Inventory {
   if (!inv) return {}
   const out: Inventory = {}
@@ -367,7 +371,6 @@ export function encodeBuildToShare(
   return compressToEncodedURIComponent(json)
 }
 
-// Returns null on any failure (length/decode/parse/validation) so callers can handle uniformly.
 export function decodeShareToBuild(code: string): DecodedShare | null {
   try {
     if (typeof code !== 'string' || code.length > MAX_SHARE_INPUT_LENGTH) {

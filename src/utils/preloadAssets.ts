@@ -1,8 +1,5 @@
-// Vite glob returns URLs at build time but does not fetch bytes; we kick off fetches during the loading screen so first-open of Gear/Tree/Skills is warm.
-
 const collectUrls = (map: Record<string, string>): string[] => Object.values(map)
 
-// Add a glob here for any new asset folder.
 const SPRITE_URLS: string[] = [
   ...collectUrls(
     import.meta.glob<string>('../assets/items/*.{png,webp,jpg,jpeg}', {
@@ -46,7 +43,6 @@ const SPRITE_URLS: string[] = [
   ),
 ]
 
-// onerror counts as "done" so a broken sprite cannot block the app.
 export function preloadSprites(
   onProgress?: (loaded: number, total: number) => void,
 ): Promise<void> {

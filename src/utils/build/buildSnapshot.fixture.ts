@@ -9,7 +9,7 @@ export function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnaps
     skillRanks: {},
     subskillRanks: {},
     allocatedTreeNodes: new Set<number>(),
-    mainSkillId: null,
+    activeSkillIds: [],
     activeAuraId: null,
     activeBuffs: {},
     enemyConditions: {},

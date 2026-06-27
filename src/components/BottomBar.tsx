@@ -34,7 +34,6 @@ export default function BottomBar() {
     if (!activeBuildId) return 'Unnamed'
     const b = getSavedBuild(activeBuildId)
     return b?.name ?? 'Unnamed'
-    // savedBuildsVersion is the store cache-buster: re-read on every store mutation.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeBuildId, savedBuildsVersion])
 

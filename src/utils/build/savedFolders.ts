@@ -6,12 +6,10 @@ import {
 } from './savedBuilds'
 
 export function listFolders(): Folder[] {
-  // Returns every persisted folder in storage order. Used by the build library to render the folder tree.
   return readLibrary().folders.slice()
 }
 
 export function createFolder(name: string, parentId: string | null): Folder {
-  // Creates a new folder under `parentId` (validated to be an existing folder, otherwise treated as a top-level folder) and persists it. Used by the library's "New folder" action.
   const library = readLibrary()
   const validParent =
     parentId !== null && library.folders.some((f) => f.id === parentId)
@@ -29,7 +27,6 @@ export function createFolder(name: string, parentId: string | null): Folder {
 }
 
 export function renameFolder(folderId: string, name: string): Folder | null {
-  // Renames a folder by id, returning null when it does not exist. Used by the library's folder rename action.
   const library = readLibrary()
   const folder = library.folders.find((f) => f.id === folderId)
   if (!folder) return null
@@ -42,7 +39,6 @@ function collectDescendants(
   rootId: string,
   folders: Folder[],
 ): Set<string> {
-  // Returns the set of folder ids in the subtree rooted at `rootId` (inclusive). Used by `deleteFolder` for cascade deletion.
   const out = new Set<string>([rootId])
   let added = true
   while (added) {
@@ -61,7 +57,6 @@ export function deleteFolder(
   folderId: string,
   opts: { cascade: boolean },
 ): void {
-  // Deletes a folder. With `cascade: false` (the safe default) child folders are reparented onto the deleted folder's parent and its builds are unfiled (folderId set to null). With `cascade: true` the whole subtree of folders and every build inside it is removed. No-op when the folder does not exist. Used by the library's folder delete action.
   const library = readLibrary()
   const folder = library.folders.find((f) => f.id === folderId)
   if (!folder) return

@@ -11,7 +11,6 @@ export type SortDir = 'asc' | 'desc'
 const GRID = 'grid-cols-[32px_minmax(0,1fr)_160px_80px_130px]'
 
 interface BuildTableProps {
-  /** Builds after filtering + sorting. */
   builds: SavedBuild[]
   meta: Record<string, BuildMeta>
   selectedId: string | null
@@ -30,7 +29,6 @@ interface BuildTableProps {
   onToggleLevelFilter: () => void
   onClearFilters: () => void
   totalCount: number
-  /** Animation key — re-staggers the row list when the scope/folder changes. */
   listKey: string
 }
 
@@ -168,13 +166,10 @@ export function BuildTable({
   totalCount,
   listKey,
 }: BuildTableProps) {
-  // Centre column: the filter-chip row, the sortable table header, and the
-  // scrolling list of build rows.
   const filtersActive = activeTags.length > 0 || levelFilter
 
   return (
     <section className="flex min-w-0 flex-col" style={{ background: 'var(--color-bg)' }}>
-      {/* Filter chips */}
       <div
         className="flex shrink-0 items-center gap-2 overflow-x-auto border-b border-border px-4 py-2.5"
         style={{ background: 'rgba(255,255,255,0.005)' }}
@@ -199,7 +194,6 @@ export function BuildTable({
         </span>
       </div>
 
-      {/* Header */}
       <div
         className={`grid ${GRID} shrink-0 items-center border-b border-border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em]`}
         style={{ background: 'rgba(255,255,255,0.008)' }}
@@ -211,7 +205,6 @@ export function BuildTable({
         <HeaderCell label="Modified" col="date" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
       </div>
 
-      {/* Body */}
       <motion.div
         key={listKey}
         variants={listContainerVariants}

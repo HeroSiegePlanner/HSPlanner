@@ -33,7 +33,6 @@ function OverlayShell({
   footer: ReactNode
   width?: number
 }) {
-  // Shared backdrop + gradient panel used by every Build Select dialog.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
@@ -87,7 +86,6 @@ export function TextPromptOverlay({
   onSubmit: (value: string) => void
   onClose: () => void
 }) {
-  // Single-line text dialog — used for renaming builds/folders and naming a new folder.
   const [value, setValue] = useState(initial)
   const submit = () => {
     const trimmed = value.trim()
@@ -154,7 +152,6 @@ export function ConfirmOverlay({
   onConfirm: () => void
   onClose: () => void
 }) {
-  // Generic confirm dialog — used for deleting builds and folders.
   return (
     <OverlayShell
       section={section}
@@ -192,7 +189,6 @@ export function SaveOverlay({
   onSaveAsNew: (name: string) => void
   onClose: () => void
 }) {
-  // Save dialog — overwrite the active profile, or save the current state as a new build.
   const [name, setName] = useState('')
   const submit = () => onSaveAsNew(name.trim() || 'Untitled build')
   return (
@@ -249,11 +245,9 @@ export function ImportOverlay({
   onImport,
   onClose,
 }: {
-  /** Returns an error message to display, or null on success (dialog closes). */
   onImport: (text: string) => string | null
   onClose: () => void
 }) {
-  // Import dialog — paste a build code / share URL, or load one from a file.
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -342,7 +336,6 @@ export function MoveToFolderOverlay({
   onMove: (folderId: string | null) => void
   onClose: () => void
 }) {
-  // Folder picker — moves a build into a folder (or unfiles it).
   const depth = (f: Folder): number => {
     let d = 0
     let cur: Folder | undefined = f
@@ -429,7 +422,6 @@ export function TagsOverlay({
   onSave: (tags: string[]) => void
   onClose: () => void
 }) {
-  // Tag editor — comma / Enter separated free-form tags for a build.
   const [tags, setTags] = useState<string[]>(initial)
   const [draft, setDraft] = useState('')
 
@@ -443,9 +435,6 @@ export function TagsOverlay({
   }
 
   const save = () => {
-    // Fold any text still sitting in the input into the tag list before
-    // saving — otherwise a tag the user typed but never pressed Enter on is
-    // silently dropped, which reads as "tags don't work".
     const t = draft.trim()
     const finalTags =
       t && !tags.some((x) => x.toLowerCase() === t.toLowerCase())

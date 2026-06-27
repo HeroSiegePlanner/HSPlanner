@@ -20,7 +20,6 @@ interface Props {
   sidePanel?: (hoveredId: string | null) => ReactNode
 }
 
-// Thin wrapper over the canonical Dropdown; maps option hints to its meta line.
 export default function SearchableSelect({
   value,
   options,
