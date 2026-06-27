@@ -59,7 +59,6 @@ export function isSafeUrl(url: string): boolean {
   return SAFE_URL_RE.test(url.trim())
 }
 
-// `style` is always allowed here because sanitizeStyle filters its body separately.
 function isAllowedAttribute(tagName: string, attr: string): boolean {
   if (attr === 'style') return true
   const allowed = ALLOWED_ATTRS_BY_TAG[tagName]
@@ -67,7 +66,6 @@ function isAllowedAttribute(tagName: string, attr: string): boolean {
   return allowed.has(attr)
 }
 
-// Rejects url(), expression(), and javascript: payloads.
 function sanitizeStyle(value: string): string {
   const out: string[] = []
   for (const decl of value.split(';')) {
@@ -116,8 +114,6 @@ function sanitizeNode(node: Element): void {
   }
   if (node.tagName === 'A' && node.getAttribute('href')) {
     const href = node.getAttribute('href')!.trim()
-    // Force _blank only on external schemes; in-page (#…) and same-origin
-    // relative URLs should stay in the current tab.
     const isExternal = /^https?:/i.test(href) || /^mailto:/i.test(href)
     if (isExternal) {
       node.setAttribute('target', '_blank')
@@ -126,7 +122,6 @@ function sanitizeNode(node: Element): void {
   }
 }
 
-// DANGEROUS_TAGS subtree is removed entirely; unknown-but-safe wrappers get unwrapped (children lifted into parent).
 function walk(root: Element): void {
   for (const child of Array.from(root.children)) {
     const tag = child.tagName.toUpperCase()
@@ -151,7 +146,6 @@ function walk(root: Element): void {
   }
 }
 
-// Falls back to a tag-stripping regex in non-DOM environments (SSR/Node).
 export function sanitizeHtml(html: string): string {
   if (!html) return ''
   if (typeof window === 'undefined' || !('DOMParser' in window)) {

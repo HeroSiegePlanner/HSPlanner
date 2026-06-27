@@ -4,175 +4,204 @@
     "classId": "pyromancer",
     "name": "Blazing Trail",
     "kind": "active",
-    "description": "",
+    "description": "Leave behind a trail of fire dealing fire damage to monsters.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Area of Effect", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 4.5, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "fire_enchant",
     "classId": "pyromancer",
     "name": "Fire Enchant",
     "kind": "buff",
-    "description": "",
+    "description": "Enchant your attacks with additive fire damage inflicting burning on monsters. Your spells also apply a stack of Ignite.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 30,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": -0.5, "perLevel": 4 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "burning_damage": 40 },
+      "perRank": { "burning_damage": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Inferno Slash", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Searing Chains", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 6.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "phoenix_flight",
     "classId": "pyromancer",
     "name": "Phoenix Flight",
     "kind": "active",
-    "description": "",
+    "description": "Charge forward through the air dealing area of effect fire damage when landing.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Movement", "Charge"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 1,
-      "col": 0
-    }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 14 }],
+    "damageFormula": { "base": -0.5, "perLevel": 31 },
+    "manaCostFormula": { "base": 14, "perLevel": 2 },
+    "bonusSources": [
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fire Nova", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Ignite", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 8.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "inferno_slash",
     "classId": "pyromancer",
     "name": "Inferno Slash",
     "kind": "active",
-    "description": "",
+    "description": "Send forward a fire enchanted cleave attack dealing increased damage and additional fire damage.",
+    "damageType": "fire",
+    "tags": ["Attack", "Active", "Melee", "Projectile", "Strike"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": -0.5, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 72, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11.5, "perLevel": 0.5 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fire Enchant", "stat": "fire_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Ignite", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Avatar of Fire", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "searing_chains",
     "classId": "pyromancer",
     "name": "Searing Chains",
     "kind": "active",
-    "description": "",
+    "description": "When striking a monster unleash a powerful chain attack dealing increased damage, additional fire damage and stunning monsters struck.",
+    "damageType": "fire",
+    "tags": ["Attack", "Active", "Melee", "Chain Lightning", "Strike"],
+    "movementDuringUse": 65,
+    "effectDuration": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": -0.5, "perLevel": 20 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 6, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Inferno Slash", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Ignite", "stat": "fire_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "ignite",
     "classId": "pyromancer",
     "name": "Ignite",
     "kind": "passive",
-    "description": "",
+    "description": "All fire enchanted attacks add a stack of ignite on the monster, causing them to combust at 10 stacks dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Passive", "Explosion"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.5, "perLevel": 11.5 },
+    "bonusSources": [
+      { "source": "Fire Enchant", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Searing Chains", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "fire_shield",
     "classId": "pyromancer",
     "name": "Fire Shield",
     "kind": "buff",
-    "description": "",
+    "description": "Cast a shield of fire that increases your Physical damage reduction and deals fire damage to monsters around you.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 30,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 3,
-      "col": 0
-    }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": -0.5, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 0.5 },
+      "perRank": { "physical_damage_reduction": 0.5 }
+    },
+    "bonusSources": [
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Avatar of Fire", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "fiery_presence",
     "classId": "pyromancer",
     "name": "Fiery Presence",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your fire skill damage.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "fire_skill_damage": 4.5 },
+      "perRank": { "fire_skill_damage": 4.5 }
     }
   },
   {
@@ -180,21 +209,21 @@
     "classId": "pyromancer",
     "name": "Avatar of Fire",
     "kind": "buff",
-    "description": "",
+    "description": "Temporarily turns you into an avatar of fire. Increasing your attack speed, fire damage, spell critical damage and spell critical chance.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 40,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Flame Diviner",
-    "position": {
-      "row": 4,
-      "col": 1
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "crit_chance": 20 },
+      "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "crit_chance": 0 }
     }
   },
   {
@@ -202,197 +231,224 @@
     "classId": "pyromancer",
     "name": "Breath of Fire",
     "kind": "active",
-    "description": "",
+    "description": "Breathe burning flames dealing fire damage and inflicting burning on hit.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8, "perLevel": 13.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "burning_damage": 35 },
+      "perRank": { "burning_damage": 0 }
+    },
+    "bonusSources": [
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "fireball",
     "classId": "pyromancer",
     "name": "Fireball",
     "kind": "active",
-    "description": "",
+    "description": "Cast a fireball dealing fire damage to monsters.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Projectile", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 3.5, "perLevel": 20 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Hydra", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 10, "per": "attribute_point" }
+    ]
   },
   {
     "id": "scorching_aura",
     "classId": "pyromancer",
     "name": "Scorching Aura",
     "kind": "aura",
-    "description": "",
+    "description": "Scorch monsters around you dealing fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 1,
-      "col": 0
-    }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0, "perLevel": 15.5 },
+    "bonusSources": [
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "hydra",
     "classId": "pyromancer",
     "name": "Hydra",
     "kind": "active",
-    "description": "",
+    "description": "Spawn a fiery hydra that shoots fireballs with area of effect fire damage towards the closest monster.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Projectile", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "damageFormula": { "base": -0.5, "perLevel": 20 },
+    "manaCostFormula": { "base": 8, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Armageddon", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9, "per": "attribute_point" }
+    ]
   },
   {
     "id": "volcano",
     "classId": "pyromancer",
     "name": "Volcano",
     "kind": "active",
-    "description": "",
+    "description": "Spawn a molten volcano that deals fire damage around it and spews out burning rocks that explode on hit.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 4,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 2,
-      "col": 0
-    }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "damageFormula": { "base": 0, "perLevel": 29.5 },
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Hydra", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 10, "per": "attribute_point" }
+    ]
   },
   {
     "id": "meteor",
     "classId": "pyromancer",
     "name": "Meteor",
     "kind": "active",
-    "description": "",
+    "description": "Cast a powerful meteor forwards dealing area of effect fire damage on impact.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 26 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "fire_nova",
     "classId": "pyromancer",
     "name": "Fire Nova",
     "kind": "active",
-    "description": "",
+    "description": "Cast a nova of fire around you dealing fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 3,
-      "col": 1
-    }
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 19.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 8.85, "per": "attribute_point" }
+    ]
   },
   {
     "id": "comet",
     "classId": "pyromancer",
     "name": "Comet",
     "kind": "active",
-    "description": "",
+    "description": "Call down a huge comet exploding on impact dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 360,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 3,
-      "col": 2
-    }
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 27.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "armageddon",
     "classId": "pyromancer",
     "name": "Armageddon",
     "kind": "active",
-    "description": "",
+    "description": "Call down a rain of meteors from the sky dealing area of effect fire damage to monsters struck.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Arsonist",
-    "position": {
-      "row": 4,
-      "col": 1
-    }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "damageFormula": { "base": -0.5, "perLevel": 33 },
+    "manaCostFormula": { "base": 8, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Volcano", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ]
   }
 ]

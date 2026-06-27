@@ -17,7 +17,6 @@ export function RunewordPresets({
   activeRunewordId?: string
   onApply: (runewordId: string) => void
 }) {
-  // Renders the runeword picker shown for common-rarity items: filters to runewords whose base-type and rune count fit, exposes a "Browse →" trigger button summarising the active runeword (or prompting to choose), and opens a PickerModal listing every compatible runeword (rune sequence as meta, socket-count + level requirement as a structured search blob). Used inside the GearSlotModal right column. Hidden when no runeword fits.
   const compatible = useMemo(() => {
     if (base.rarity !== 'common') return []
     return runewords.filter(

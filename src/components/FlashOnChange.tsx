@@ -3,15 +3,11 @@ import { motion, useAnimationControls } from "motion/react";
 import { EASE_OUT, useReducedMotion } from "../lib/motion";
 
 interface FlashOnChangeProps {
-  /** When this value changes, the wrapped content briefly pulses. */
   value: number;
   className?: string;
   children: ReactNode;
 }
 
-// Wraps a value (typically a headline number) and plays a short opacity pulse
-// whenever `value` changes — just enough to draw the eye to a recalculated
-// stat. Skips the pulse entirely when the user prefers reduced motion.
 export default function FlashOnChange({
   value,
   className,
@@ -22,7 +18,6 @@ export default function FlashOnChange({
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    // Don't flash on the initial mount — only on genuine changes.
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;

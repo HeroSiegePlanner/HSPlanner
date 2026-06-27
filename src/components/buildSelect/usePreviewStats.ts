@@ -4,20 +4,12 @@ import type { BuildPerformance, BuildPerformanceDeps } from '../../utils/build/b
 import { getActiveProfile, type SavedBuild } from '../../utils/build/savedBuilds'
 import { type BuildSnapshot, decodeShareToBuild } from '../../utils/build/shareBuild'
 
-/** Debounce before the (potentially expensive) Rust calc fires, so arrow-key
- * navigation through the build table does not spawn a calc per row. */
 const CALC_DEBOUNCE_MS = 130
 
 export interface PreviewStats {
-  /** Computed performance for the selected build, or null while loading / unavailable. */
   performance: BuildPerformance | null
-  /** Decoded snapshot of the build's active profile, or null when the code is corrupt. */
   snapshot: BuildSnapshot | null
-  /** True while the async calc is in flight. */
   loading: boolean
-  /** False when the build code could not be decoded OR the Rust calc is unavailable
-   *  (e.g. running in a plain browser without Tauri). The preview then falls back to
-   *  snapshot-only metadata. */
   available: boolean
 }
 
@@ -29,8 +21,6 @@ const EMPTY: PreviewStats = {
 }
 
 function snapshotToDeps(snapshot: BuildSnapshot): BuildPerformanceDeps {
-  // Maps a decoded BuildSnapshot onto the BuildPerformanceDeps shape the calc
-  // bridge expects. Fields align 1:1 except `allocated` → `allocatedAttrs`.
   return {
     classId: snapshot.classId,
     level: snapshot.level,
@@ -43,7 +33,7 @@ function snapshotToDeps(snapshot: BuildSnapshot): BuildPerformanceDeps {
     customStats: snapshot.customStats,
     allocatedTreeNodes: snapshot.allocatedTreeNodes,
     treeSocketed: snapshot.treeSocketed,
-    mainSkillId: snapshot.mainSkillId,
+    activeSkillIds: snapshot.activeSkillIds,
     enemyConditions: snapshot.enemyConditions,
     playerConditions: snapshot.playerConditions,
     skillProjectiles: snapshot.skillProjectiles,
@@ -54,20 +44,12 @@ function snapshotToDeps(snapshot: BuildSnapshot): BuildPerformanceDeps {
 }
 
 export function usePreviewStats(build: SavedBuild | null): PreviewStats {
-  // Decodes the active profile of `build` and runs the Rust calc to produce a
-  // live stats preview. Debounced and cancellation-guarded so rapid selection
-  // changes never leave a stale result on screen. Degrades gracefully to
-  // snapshot-only metadata when decoding fails or the calc is unavailable.
   const [state, setState] = useState<PreviewStats>(EMPTY)
 
-  // Re-run only when the selected build (or its active profile's code) changes,
-  // not on every unrelated library mutation.
   const profile = build ? getActiveProfile(build) : null
   const key = build ? `${build.id}:${profile?.code ?? ''}` : ''
 
   useEffect(() => {
-    // One-shot sync to the selected build — not a render loop. The disabled
-    // rule fires because the resets run synchronously on key change.
     /* eslint-disable react-hooks/set-state-in-effect */
     if (!build || !profile) {
       setState(EMPTY)
@@ -91,8 +73,6 @@ export function usePreviewStats(build: SavedBuild | null): PreviewStats {
         })
         .catch(() => {
           if (cancelled) return
-          // No Tauri / calc failed — keep the snapshot so the preview still
-          // shows class/level/tags/notes, just without computed numbers.
           setState({ performance: null, snapshot, loading: false, available: false })
         })
     }, CALC_DEBOUNCE_MS)

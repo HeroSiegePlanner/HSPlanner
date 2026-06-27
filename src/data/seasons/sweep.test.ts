@@ -51,7 +51,6 @@ function collectScalar(modules: Record<string, { default: Rec }>): Rec[] {
   return Object.values(modules).map((m) => m.default)
 }
 
-// Mirrors the hub: every patchable collection is applied against its real base data.
 const cases: ReadonlyArray<{
   name: string
   apply: (p: SeasonPatchSet) => { errors: string[] }

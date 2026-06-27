@@ -76,7 +76,6 @@ function formatStatLines(stats: Record<string, number>): ReactNode[] {
     ))
 }
 
-// Filter out legacy "Tier S/A/B/…" grade tags so they don't pollute the tooltip body.
 function isLegacyTierTag(s?: string): boolean {
   if (!s) return false
   return /^\s*tier\s+[a-z]+\s*$/i.test(s)

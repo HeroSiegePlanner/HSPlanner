@@ -5,17 +5,13 @@ const HEADER_BTN_CLASS =
   "inline-flex items-center gap-1.5 rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot";
 
 interface BuildsMenuProps {
-  /** Switches the app back to the full-screen Build Select library. */
   onOpenLibrary: () => void;
 }
 
 export default function BuildsMenu({ onOpenLibrary }: BuildsMenuProps) {
-  // Header button that returns to the Build Select library screen. Shows the
-  // active build's name; re-derives it on every `savedBuildsVersion` bump so
-  // the label stays fresh after a rename or save.
   const activeBuildId = useBuild((s) => s.activeBuildId);
-  const savedBuildsVersion = useBuild((s) => s.savedBuildsVersion);
-  void savedBuildsVersion;
+  // Subscribe so the active build name refreshes when saved builds change.
+  useBuild((s) => s.savedBuildsVersion);
   const activeBuild = activeBuildId ? getSavedBuild(activeBuildId) : null;
 
   return (

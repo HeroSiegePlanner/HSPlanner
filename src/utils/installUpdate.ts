@@ -18,7 +18,6 @@ export interface InstallProgress {
 export type ProgressCallback = (p: InstallProgress) => void;
 
 export function inTauriRuntime(): boolean {
-  // Returns true when the page is running inside the Tauri shell rather than a regular browser. Used to gate calls to the Tauri updater/process plugins so the same code path can fall back to opening a download URL in the web build.
   return isTauri();
 }
 
@@ -26,7 +25,6 @@ async function runInstall(
   onProgress: ProgressCallback,
   relaunchAfter: boolean,
 ): Promise<void> {
-  // Drives the Tauri updater plugin end-to-end: dynamically imports the updater modules, queries for an available update, downloads and installs it while reporting byte progress via onProgress, and optionally relaunches the app. Used by both installUpdate (immediate restart) and installUpdateOnQuit (deferred install).
   const { check } = await import("@tauri-apps/plugin-updater");
   const { relaunch } = await import("@tauri-apps/plugin-process");
 
@@ -88,7 +86,6 @@ export async function installUpdate(
   fallbackAssetUrl: string | undefined,
   onProgress: ProgressCallback,
 ): Promise<void> {
-  // Public entry point used by the UpdateModal "Install now" action: runs the Tauri update flow with relaunch-after-install when available, or opens the fallback browser download URL when running outside Tauri. Translates exceptions into an error-phase progress callback before re-throwing.
   if (!inTauriRuntime()) {
     if (fallbackAssetUrl && isSafeUpdateUrl(fallbackAssetUrl)) {
       window.open(fallbackAssetUrl, "_blank", "noopener,noreferrer");
@@ -106,7 +103,6 @@ export async function installUpdate(
 }
 
 export async function installUpdateOnQuit(): Promise<void> {
-  // Performs a silent updater download/install without relaunching the app. Used to apply pending updates when the user quits, so the new version is in place the next time they launch.
   if (!inTauriRuntime()) return;
   await runInstall(() => {}, false);
 }

@@ -1,5 +1,6 @@
 import { getClass, getClassIcon, skills } from '../../data'
 import { rangedMax, rangedMin } from '../../utils/item/stats'
+import { compact } from '../../utils/compactNumber'
 import type { RangedValue } from '../../types'
 import type { SavedBuild } from '../../utils/build/savedBuilds'
 import type { BuildMeta } from './useBuildLibrary'
@@ -15,33 +16,20 @@ interface BuildPreviewProps {
   meta: BuildMeta | undefined
   onOpen: (id: string) => void
   onCopy: (id: string) => void
-  /** Make `profileId` the active profile of `buildId`. */
   onSwitchProfile: (buildId: string, profileId: string) => void
-  /** Open the "new profile" dialog for `buildId`. */
   onAddProfile: (buildId: string) => void
-  /** Open the rename dialog for a profile, pre-filled with `current`. */
   onRenameProfile: (buildId: string, profileId: string, current: string) => void
-  /** Duplicate a profile within `buildId`. */
   onDuplicateProfile: (buildId: string, profileId: string) => void
-  /** Open the delete-confirmation dialog for a profile. */
   onRemoveProfile: (buildId: string, profileId: string, name: string) => void
 }
 
-function compact(n: number): string {
-  // Formats a large number compactly (2.4M, 7.8k, 920).
-  const abs = Math.abs(n)
-  const strip = (s: string) => s.replace(/\.0$/, '')
-  if (abs >= 1e9) return `${strip((n / 1e9).toFixed(1))}B`
-  if (abs >= 1e6) return `${strip((n / 1e6).toFixed(1))}M`
-  if (abs >= 1e4) return `${strip((n / 1e3).toFixed(1))}k`
-  return Math.round(n).toLocaleString()
+function range(lo: number, hi: number, fmt: (n: number) => string): string {
+  return Math.abs(lo - hi) < 0.5 ? fmt(lo) : `${fmt(lo)}–${fmt(hi)}`
 }
 
 function rangeText(v: RangedValue | undefined, fmt: (n: number) => string): string {
   if (v === undefined) return '—'
-  const lo = rangedMin(v)
-  const hi = rangedMax(v)
-  return Math.abs(lo - hi) < 0.5 ? fmt(lo) : `${fmt(lo)}–${fmt(hi)}`
+  return range(rangedMin(v), rangedMax(v), fmt)
 }
 
 function StatCell({
@@ -98,7 +86,6 @@ export function BuildPreview({
   onDuplicateProfile,
   onRemoveProfile,
 }: BuildPreviewProps) {
-  // Right pane: hero + tags + live-computed stats + main skill + notes + CTA.
   const preview = usePreviewStats(build)
 
   if (!build) {
@@ -136,16 +123,16 @@ export function BuildPreview({
   const stats = perf?.stats ?? {}
   const undecodable = meta ? !meta.decoded && preview.snapshot === null : false
 
-  const mainSkillId = preview.snapshot?.mainSkillId ?? null
+  const primarySkillId = preview.snapshot?.activeSkillIds[0] ?? null
   const mainSkillName =
     perf?.activeSkillName ??
-    (mainSkillId ? skills.find((s) => s.id === mainSkillId)?.name : undefined)
+    (primarySkillId
+      ? skills.find((s) => s.id === primarySkillId)?.name
+      : undefined)
 
   const dps =
     perf?.combinedDpsMin !== undefined && perf?.combinedDpsMax !== undefined
-      ? Math.abs(perf.combinedDpsMin - perf.combinedDpsMax) < 0.5
-        ? compact(perf.combinedDpsMin)
-        : `${compact(perf.combinedDpsMin)}–${compact(perf.combinedDpsMax)}`
+      ? range(perf.combinedDpsMin, perf.combinedDpsMax, compact)
       : '—'
 
   const resists = ['fire', 'cold', 'lightning', 'poison']
@@ -155,9 +142,6 @@ export function BuildPreview({
     })
     .join('/')
 
-  // Notes are HTML authored in the Notes tab. They are sanitised on write, but
-  // the value here is read straight from storage (external data) so it is
-  // re-sanitised before rendering. `hasNotes` ignores empty markup like <p></p>.
   const notesHtml = sanitizeHtml(build.notes)
   const hasNotes = stripHtml(notesHtml).length > 0
 
@@ -175,7 +159,6 @@ export function BuildPreview({
         transition={T_FAST}
         className="min-h-0 flex-1 overflow-y-auto px-4 pb-3.5"
       >
-        {/* Hero */}
         <div className="flex items-center gap-3.5 border-b border-border py-2 pb-3.5">
           {icon ? (
             <span
@@ -230,7 +213,6 @@ export function BuildPreview({
           </div>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 gap-x-[18px] gap-y-1.5 border-b border-border py-3.5">
           <StatCell label="DPS" value={dps} tone="text-accent-hot" />
           <StatCell
@@ -279,7 +261,6 @@ export function BuildPreview({
           </div>
         )}
 
-        {/* Profiles */}
         <Section title="Profiles" count={build.profiles.length}>
           <div className="flex flex-col gap-[5px]">
             {build.profiles.map((p) => {
@@ -363,7 +344,6 @@ export function BuildPreview({
           </div>
         </Section>
 
-        {/* Main skill */}
         {mainSkillName && (
           <Section title="Main Skill">
             <div className="flex items-center gap-2 rounded-[3px] border border-border bg-panel-2 px-2.5 py-[7px] font-mono text-[12px] text-text">
@@ -375,7 +355,6 @@ export function BuildPreview({
           </Section>
         )}
 
-        {/* Notes */}
         {hasNotes && (
           <Section title="Notes">
             <div
@@ -386,7 +365,6 @@ export function BuildPreview({
         )}
       </motion.div>
 
-      {/* CTA */}
       <div className="grid shrink-0 grid-cols-2 gap-2 border-t border-border px-3.5 py-2.5">
         <button
           type="button"

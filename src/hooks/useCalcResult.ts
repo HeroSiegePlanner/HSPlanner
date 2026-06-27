@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { DependencyList } from 'react'
 
-// Shared lifecycle for Rust-IPC results rendered from effects: keeps the last
-// value while a recompute is in flight, drops resolutions/rejections from
-// cancelled runs, and resets to `fallback` when the call fails so the UI never
-// shows stale numbers after an error. `compute` may return a plain value to
-// skip the async path (e.g. "nothing to compute" resets).
 export function useCalcResult<T>(
   compute: () => Promise<T> | T,
   deps: DependencyList,

@@ -100,15 +100,6 @@ export interface Skill {
   icon?: string
 }
 
-export interface Subskill {
-  id: string
-  parentSkillId: string
-  name: string
-  description?: string
-  maxRank: number
-  effect?: StatMap
-}
-
 export type SubskillRole = 'minor' | 'notable' | 'keystone'
 
 export interface SubskillEffect {

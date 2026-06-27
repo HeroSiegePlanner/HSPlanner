@@ -12,7 +12,6 @@ interface TooltipProps {
   className?: string
   disabled?: boolean
   placement?: 'right' | 'left' | 'top' | 'bottom'
-  // Override the default 1000 stacking level so tooltips inside higher-z modals (e.g. pinned breakdown at 1100) layer above the backdrop blur.
   zIndex?: number
 }
 

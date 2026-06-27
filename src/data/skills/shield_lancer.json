@@ -4,65 +4,70 @@
     "classId": "shield_lancer",
     "name": "Glorious Strike",
     "kind": "active",
-    "description": "",
+    "description": "Perform a powerful attack dealing physical area of effect damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 77.5, "perLevel": 22.5 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Lance Thrust", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Battle Charge", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Crushing Lance", "stat": "attack_damage", "value": 2, "per": "skill_level" }
+    ]
   },
   {
     "id": "battle_charge",
     "classId": "shield_lancer",
     "name": "Battle Charge",
     "kind": "active",
-    "description": "",
+    "description": "Charge towards target location knocking monsters up and dealing arcane damage on impact.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Movement"],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 0,
-      "col": 1
-    }
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Glorious Strike", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Armor Crush", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Crushing Lance", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "commending_banner",
     "classId": "shield_lancer",
     "name": "Commending Banner",
-    "kind": "aura",
-    "description": "",
+    "kind": "buff",
+    "description": "Place a commending banner on the target location increasing nearby players attack speed and attack rating.",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Aura"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 1,
-      "col": 0
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "attack_rating_pct": 1 },
+      "perRank": { "increased_attack_speed": 1, "attack_rating_pct": 1 }
     }
   },
   {
@@ -70,21 +75,16 @@
     "classId": "shield_lancer",
     "name": "Parry",
     "kind": "passive",
-    "description": "",
+    "description": "Gives you a chance to parry incoming attacks.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "parry_chance": 1 },
+      "perRank": { "parry_chance": 1 }
     }
   },
   {
@@ -92,87 +92,101 @@
     "classId": "shield_lancer",
     "name": "Crushing Lance",
     "kind": "active",
-    "description": "",
+    "description": "Call a crushing lance down from the sky smashing the target location dealing area of effect physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
+    "movementDuringUse": 65,
+    "range": 360,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 2,
-      "col": 0
-    }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 60, "perLevel": 24 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 10, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Lance Thrust", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Lance Throw", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Parry", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ]
   },
   {
     "id": "lance_thrust",
     "classId": "shield_lancer",
     "name": "Lance Thrust",
     "kind": "active",
-    "description": "",
+    "description": "Perform a long ranged lance attack piercing monsters in a line dealing physical damage. If the lance comes in contact with a commending banner you get dragged to the banner smashing the ground stunning monsters on impact.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "range": 560,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 57, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Glorious Strike", "stat": "attack_damage", "value": 5, "per": "skill_level" },
+      { "source": "Commending Banner", "stat": "attack_damage", "value": 7, "per": "skill_level" },
+      { "source": "Armor Crush", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ]
   },
   {
     "id": "lance_throw",
     "classId": "shield_lancer",
     "name": "Lance Throw",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "When using any of the abilities, you have a chance to throw a piercing lance at a nearby monster dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Passive", "Projectile", "Strike"],
+    "movementDuringUse": 10,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 3,
-      "col": 0
-    }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Lance Thrust", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Glory", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Glorious Strike", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ]
   },
   {
     "id": "armor_crush",
     "classId": "shield_lancer",
     "name": "Armor Crush",
     "kind": "passive",
-    "description": "",
+    "description": "Battle charge inflicts armor break and lowers monster attack rating on hit.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "armor_break": 2, "attack_rating_pct": 1 },
+      "perRank": { "armor_break": 2, "attack_rating_pct": 1 }
     }
   },
   {
@@ -180,21 +194,21 @@
     "classId": "shield_lancer",
     "name": "Glory",
     "kind": "buff",
-    "description": "",
+    "description": "Gain increased attack damage and magic skill damage for a short period.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Champion",
-    "position": {
-      "row": 4,
-      "col": 1
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "attack_damage": 3.5, "magic_skill_damage": 3 },
+      "perRank": { "attack_damage": 3.5, "magic_skill_damage": 3 }
     }
   },
   {
@@ -202,87 +216,90 @@
     "classId": "shield_lancer",
     "name": "Shield Slam",
     "kind": "active",
-    "description": "",
+    "description": "Strike with your shield dealing physical damage based on the defense of your shield.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Shield", "Strike"],
+    "movementDuringUse": 85,
+    "effectDuration": 2,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 160, "perLevel": 40 },
+      "flatPhysicalMin": { "base": 6, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 16, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 4 }
+    },
+    "bonusSources": [
+      { "source": "Shield Wall", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Knight's Vigor", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Parry", "stat": "attack_damage", "value": 15, "per": "skill_level" }
+    ]
   },
   {
     "id": "taunt",
     "classId": "shield_lancer",
     "name": "Taunt",
     "kind": "active",
-    "description": "",
+    "description": "Taunt monsters to attack you. Additional points increase the monster amount and duration.",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 0,
-      "col": 2
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "targets": 3, "duration": 5 },
+      "perRank": { "targets": 1, "duration": 0.4 }
     }
   },
   {
     "id": "honed_defenses",
     "classId": "shield_lancer",
     "name": "Honed Defenses",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "Every time you get hit by a monster attack gain stacks. At maximum stacks unleash a huge area of effect pulse dealing arcane damage to monsters around you. Can also be casted early to consume the stacks.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 1,
-      "col": 0
-    }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.25, "perLevel": 4.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Shield Slam", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Shield Wall", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Counter", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" },
+      { "source": "Armor", "stat": "arcane_skill_damage", "value": 4, "per": "attribute_point" }
+    ]
   },
   {
     "id": "knights_resilience",
     "classId": "shield_lancer",
     "name": "Knight's Resilience",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your life and all resistances.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 1,
-      "col": 1
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1, "all_resistances": 5 },
+      "perRank": { "life": 1, "all_resistances": 0.5 }
     }
   },
   {
@@ -290,109 +307,119 @@
     "classId": "shield_lancer",
     "name": "Shield Wall",
     "kind": "buff",
-    "description": "",
+    "description": "Cast a wall of shields around you blocking monster projectiles dealing arcane and physical damage on hit. Hitting an enemy with Shield Wall generates a Honed Defenses stack.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Shield", "Orbital"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 2,
-      "col": 0
-    }
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 15, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 }
+    },
+    "passiveStats": {
+      "base": { "life": 10 },
+      "perRank": { "life": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Last Stand", "stat": "arcane_skill_damage", "value": 16.5, "per": "skill_level" },
+      { "source": "Honed Defenses", "stat": "arcane_skill_damage", "value": 16.5, "per": "skill_level" },
+      { "source": "Shield Slam", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" },
+      { "source": "Armor", "stat": "arcane_skill_damage", "value": 5, "per": "attribute_point" }
+    ]
   },
   {
     "id": "damage_reflect",
     "classId": "shield_lancer",
     "name": "Damage Reflect",
-    "kind": "buff",
-    "description": "",
+    "kind": "passive",
+    "description": "Increases your damage return.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 2,
-      "col": 1
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage_return": 15, "total_damage_return": 5 },
+      "perRank": { "damage_return": 15, "total_damage_return": 5 }
     }
   },
   {
-    "id": "spiked_shields",
+    "id": "knights_vigor",
     "classId": "shield_lancer",
-    "name": "Spiked Shields",
+    "name": "Knight's Vigor",
     "kind": "passive",
-    "description": "",
+    "description": "Gain increased maximum life and vitality.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1, "vitality": 1 },
+      "perRank": { "life": 1, "vitality": 1 }
     }
   },
   {
     "id": "counter",
     "classId": "shield_lancer",
     "name": "Counter",
-    "kind": "passive",
-    "description": "",
+    "kind": "active",
+    "description": "When active all monster attacks get countered with thrusting lances dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Shield", "Projectile"],
+    "movementDuringUse": 100,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "effectDuration": 6,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 3,
-      "col": 2
-    }
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 24.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Taunt", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Damage Reflect", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Knight's Resilience", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" },
+      { "source": "Armor", "stat": "arcane_skill_damage", "value": 8, "per": "attribute_point" }
+    ]
   },
   {
     "id": "last_stand",
     "classId": "shield_lancer",
     "name": "Last Stand",
     "kind": "buff",
-    "description": "",
+    "description": "Restore yourself to full life and temporarily gain increased magic skill damage and physical damage reduction.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Buff"
-    ],
     "tree": "Knight",
-    "position": {
-      "row": 4,
-      "col": 1
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "magic_skill_damage": 3.5, "physical_damage_reduction": 1.25 },
+      "perRank": { "magic_skill_damage": 3.5, "physical_damage_reduction": 1.25 }
     }
   }
 ]

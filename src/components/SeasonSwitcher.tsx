@@ -19,7 +19,6 @@ export default function SeasonSwitcher() {
 
   const confirm = () => {
     if (!pending) return;
-    // Moves the current build to the chosen season and reloads into it.
     changeActiveSeason(pending);
   };
 

@@ -7,7 +7,6 @@ import { getSeason } from "../data/seasons/registry";
 
 const DISMISS_MS = 3500;
 
-// Transient toast confirming the open build's season (activeSeasonId, via reload-on-open).
 export default function SeasonToast() {
   const activeBuildId = useBuild((s) => s.activeBuildId);
   const [visible, setVisible] = useState(false);
@@ -15,7 +14,6 @@ export default function SeasonToast() {
 
   useEffect(() => {
     if (!activeBuildId) return;
-    // Effect-driven toast on build change; the auto-hide timer bounds the re-render.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setVisible(true);
     const timer = window.setTimeout(() => setVisible(false), DISMISS_MS);

@@ -11,7 +11,6 @@ for (const [p, url] of Object.entries(SOCKETABLE_ICONS)) {
   SOCKETABLE_ICON_BY_NAME[key.toLowerCase()] = url
 }
 export function socketableIconForName(name: string): string | undefined {
-  // Maps a gem/rune display name (e.g. "Chipped Amethyst", "Tul") to the bundled pixel-art PNG that the socket PickerModal renders next to the row. Mirrors JewelSocketModal's lookup so both modals share the same iconography.
   return SOCKETABLE_ICON_BY_NAME[name.toLowerCase()]
 }
 
@@ -25,13 +24,11 @@ const GEM_TINT: Record<string, string> = {
   skull: '#7a6a5a',
 }
 export function gemColorForName(name: string): string {
-  // Picks a fallback diamond-tint colour for a gem/jewel based on the last word of its name (sapphire → blue, ruby → red, etc.). Used by the socket PickerRow when no PNG icon is bundled, so the row still reads as a colour-coded gem.
   const last = name.split(' ').slice(-1)[0]?.toLowerCase() ?? ''
   return GEM_TINT[last] ?? 'var(--color-faint)'
 }
 
 export function gemTintForRarity(rarity: ItemRarity | undefined): string {
-  // Returns the primary tint color used for the diamond icon next to each gear-row in the slot modal. Mirrors the rarity palette used elsewhere in the app.
   switch (rarity) {
     case 'satanic':
       return '#d96b5a'

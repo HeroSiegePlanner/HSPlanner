@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'motion/react'
 import Logo from '../Logo'
 import { useBuild } from '../../store/build'
@@ -12,76 +12,20 @@ import { useBuildLibrary } from './useBuildLibrary'
 import { FolderTree, type Scope, type SmartCounts } from './FolderTree'
 import { BuildTable, type SortCol, type SortDir } from './BuildTable'
 import { BuildPreview } from './BuildPreview'
-import { ContextMenu, type ContextMenuItem } from './ContextMenu'
+import { type ContextMenuItem } from './ContextMenu'
+import { BuildSelectToolbar } from './BuildSelectToolbar'
+import { BuildSelectFooter } from './BuildSelectFooter'
+import { BuildSelectOverlays } from './BuildSelectOverlays'
 import {
-  ConfirmOverlay,
-  ImportOverlay,
-  MoveToFolderOverlay,
-  SaveOverlay,
-  TagsOverlay,
-  TextPromptOverlay,
-} from './overlays'
-import {
-  CopyIcon,
-  DeleteIcon,
-  ImportIcon,
-  NewFolderIcon,
-  PlusIcon,
-  RenameIcon,
-  SaveIcon,
-  SearchIcon,
-} from './icons'
+  RECENT_LIMIT,
+  SCOPE_LABEL,
+  type BuildSelectProps,
+  type CtxState,
+  type Overlay,
+} from './buildSelectTypes'
 import { T_VIEW } from '../../lib/motion'
 
-/** localStorage flag — when set, boot skips the library and opens the most recent build. */
 export const AUTO_OPEN_KEY = 'hsplanner.autoOpenLastBuild.v1'
-
-const RECENT_LIMIT = 12
-
-interface BuildSelectProps {
-  /** Load a saved build into the planner. */
-  onOpenBuild: (buildId: string) => void
-  /** Start a fresh blank build in the planner. */
-  onNewBuild: () => void
-  /** Return to the planner without changing the active build. */
-  onClose: () => void
-  /** True when a build is already loaded — enables the "back to planner" affordance. */
-  canClose: boolean
-}
-
-type Overlay =
-  | { kind: 'import' }
-  | { kind: 'save' }
-  | { kind: 'renameBuild'; buildId: string; current: string }
-  | { kind: 'tags'; buildId: string; current: string[] }
-  | { kind: 'move'; buildId: string; current: string | null }
-  | { kind: 'newFolder'; parentId: string | null }
-  | { kind: 'renameFolder'; folderId: string; current: string }
-  | { kind: 'deleteBuild'; buildId: string; name: string }
-  | { kind: 'deleteFolder'; folderId: string; name: string; count: number }
-  | { kind: 'addProfile'; buildId: string }
-  | {
-      kind: 'renameProfile'
-      buildId: string
-      profileId: string
-      current: string
-    }
-  | { kind: 'deleteProfile'; buildId: string; profileId: string; name: string }
-
-interface CtxState {
-  x: number
-  y: number
-  kind: 'build' | 'folder'
-  id: string
-}
-
-const SCOPE_LABEL: Record<Scope['kind'], string> = {
-  recent: 'Recent',
-  all: 'All Builds',
-  favorites: 'Favorites',
-  unfiled: 'Unfiled',
-  folder: 'Folder',
-}
 
 export default function BuildSelect({
   onOpenBuild,
@@ -89,9 +33,6 @@ export default function BuildSelect({
   onClose,
   canClose,
 }: BuildSelectProps) {
-  // Full-screen build library: folder tree + sortable build table + live
-  // stats preview. Replaces the old StartupBuildModal as the app's entry
-  // screen and stays reachable from the planner header.
   const lib = useBuildLibrary()
   const activeBuildId = useBuild((s) => s.activeBuildId)
 
@@ -132,7 +73,6 @@ export default function BuildSelect({
     () => readStorage(AUTO_OPEN_KEY) === '1',
   )
 
-  // Transient status-bar notice.
   useEffect(() => {
     if (!notice) return
     const t = window.setTimeout(() => setNotice(null), 2200)
@@ -141,7 +81,6 @@ export default function BuildSelect({
 
   const flash = (msg: string) => setNotice(msg)
 
-  // --- folder helpers ---------------------------------------------------
   const descendantFolderIds = useMemo(() => {
     return (rootId: string): Set<string> => {
       const out = new Set<string>([rootId])
@@ -192,7 +131,6 @@ export default function BuildSelect({
     return [...set].sort((a, b) => a.localeCompare(b))
   }, [lib.builds])
 
-  // --- scoped + filtered + sorted builds --------------------------------
   const scopedBuilds = useMemo(() => {
     if (scope.kind === 'favorites') return lib.builds.filter((b) => b.favorite)
     if (scope.kind === 'unfiled')
@@ -221,9 +159,6 @@ export default function BuildSelect({
       }
       return true
     })
-    // "Recent" = the RECENT_LIMIT most recently updated builds. Pick them by
-    // recency BEFORE applying the display sort, otherwise sorting by another
-    // column would change which builds the slice keeps.
     if (scope.kind === 'recent') {
       list = [...list]
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
@@ -268,7 +203,6 @@ export default function BuildSelect({
   const selectedBuild =
     lib.builds.find((b) => b.id === effectiveSelectedId) ?? null
 
-  // --- actions ----------------------------------------------------------
   const handleSort = (col: SortCol) => {
     if (col === sortCol) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
@@ -283,7 +217,6 @@ export default function BuildSelect({
     if (!code) return "Couldn't read a build code from input"
     const decoded = decodeShareToBuild(code)
     if (!decoded) return 'Invalid or corrupted build code'
-    // A code from another season reloads into that season; boot replays the import.
     if (reloadIntoSeason(decoded.season, PENDING_IMPORT_KEY, code, activeSeasonId)) {
       return null
     }
@@ -348,7 +281,6 @@ export default function BuildSelect({
     setCtx({ x: e.clientX, y: e.clientY, kind: 'folder', id: folder.id })
   }
 
-  // --- keyboard nav -----------------------------------------------------
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName
@@ -394,7 +326,6 @@ export default function BuildSelect({
     return () => window.removeEventListener('keydown', onKey)
   }, [filtered, effectiveSelectedId, selectedBuild, overlay, ctx, canClose, onClose, onNewBuild, onOpenBuild])
 
-  // --- context-menu items ----------------------------------------------
   const ctxItems: ContextMenuItem[] = useMemo(() => {
     if (!ctx) return []
     if (ctx.kind === 'build') {
@@ -482,7 +413,6 @@ export default function BuildSelect({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ctx, lib.builds, lib.folders, folderCounts])
 
-  // --- render -----------------------------------------------------------
   const breadcrumb =
     scope.kind === 'folder'
       ? (lib.folders.find((f) => f.id === scope.id)?.name ?? 'Folder')
@@ -496,7 +426,6 @@ export default function BuildSelect({
       animate={{ opacity: 1 }}
       transition={T_VIEW}
     >
-      {/* Titlebar */}
       <header
         className="relative flex h-11 shrink-0 items-center gap-0 pl-3 pr-3"
         style={{
@@ -540,84 +469,16 @@ export default function BuildSelect({
         </div>
       </header>
 
-      {/* Toolbar */}
-      <nav
-        className="flex h-full items-center gap-[2px] px-3"
-        style={{ background: 'var(--color-panel)' }}
-      >
-        <ToolButton
-          label="New"
-          icon={<PlusIcon className="h-3.5 w-3.5" />}
-          onClick={onNewBuild}
-        />
-        <ToolButton
-          label="Import…"
-          icon={<ImportIcon className="h-3.5 w-3.5" />}
-          onClick={() => setOverlay({ kind: 'import' })}
-        />
-        <ToolButton
-          label="Save…"
-          icon={<SaveIcon className="h-3.5 w-3.5" />}
-          onClick={() => setOverlay({ kind: 'save' })}
-        />
-        <ToolSep />
-        <ToolButton
-          label="Copy"
-          icon={<CopyIcon className="h-3.5 w-3.5" />}
-          disabled={!selectedBuild}
-          onClick={() => selectedBuild && handleCopy(selectedBuild.id)}
-        />
-        <ToolButton
-          label="Rename"
-          icon={<RenameIcon className="h-3.5 w-3.5" />}
-          disabled={!selectedBuild}
-          onClick={() =>
-            selectedBuild &&
-            setOverlay({
-              kind: 'renameBuild',
-              buildId: selectedBuild.id,
-              current: selectedBuild.name,
-            })
-          }
-        />
-        <ToolButton
-          label="Delete"
-          icon={<DeleteIcon className="h-3.5 w-3.5" />}
-          danger
-          disabled={!selectedBuild}
-          onClick={() =>
-            selectedBuild &&
-            setOverlay({
-              kind: 'deleteBuild',
-              buildId: selectedBuild.id,
-              name: selectedBuild.name,
-            })
-          }
-        />
-        <ToolSep />
-        <ToolButton
-          label="New Folder"
-          icon={<NewFolderIcon className="h-3.5 w-3.5" />}
-          onClick={() =>
-            setOverlay({
-              kind: 'newFolder',
-              parentId: scope.kind === 'folder' ? scope.id : null,
-            })
-          }
-        />
-        <div className="flex-1" />
-        <div className="flex h-[26px] w-[280px] items-center gap-2 rounded-[3px] border border-border bg-panel-2 px-2.5 transition-colors focus-within:border-accent-deep">
-          <SearchIcon className="h-3.5 w-3.5 shrink-0 text-faint" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search builds, classes, tags…"
-            className="min-w-0 flex-1 bg-transparent text-[12px] text-text outline-none placeholder:text-faint"
-          />
-        </div>
-      </nav>
+      <BuildSelectToolbar
+        scope={scope}
+        search={search}
+        selectedBuild={selectedBuild}
+        onSearchChange={setSearch}
+        onNewBuild={onNewBuild}
+        onOverlay={setOverlay}
+        onCopy={handleCopy}
+      />
 
-      {/* Body */}
       <main className="grid min-h-0 grid-cols-[240px_1fr_360px] border-t border-border">
         <FolderTree
           childFolders={lib.childFolders}
@@ -700,324 +561,99 @@ export default function BuildSelect({
         />
       </main>
 
-      {/* Status bar */}
-      <footer
-        className="flex items-center gap-3.5 border-t border-border px-3 font-mono text-[11px] tracking-[0.06em] text-muted"
-        style={{ background: 'var(--color-panel)' }}
-      >
-        <span
-          aria-hidden
-          className="h-1.5 w-1.5 shrink-0 rounded-full bg-stat-green"
-          style={{ boxShadow: '0 0 6px rgba(116,201,138,0.6)' }}
-        />
-        <span className="flex items-center gap-1.5">
-          {notice ? (
-            <span className="text-accent-hot">{notice}</span>
-          ) : (
-            <>
-              <b className="font-medium text-text">{lib.builds.length}</b> Builds
-              · <b className="font-medium text-text">{lib.folders.length}</b>{' '}
-              Folders
-            </>
-          )}
-        </span>
-        <span aria-hidden className="h-3.5 w-px bg-border" />
-        <label className="flex cursor-pointer items-center gap-1.5 select-none text-muted">
-          <input
-            type="checkbox"
-            checked={autoOpen}
-            onChange={(e) => {
-              setAutoOpen(e.target.checked)
-              writeStorage(AUTO_OPEN_KEY, e.target.checked ? '1' : '0')
-            }}
-          />
-          <span>Auto-open last build</span>
-        </label>
-        <div className="flex-1" />
-        <span className="inline-flex items-center gap-1.5 text-faint">
-          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
-            ↵
-          </span>
-          Open
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-faint">
-          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
-            Del
-          </span>
-          Delete
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-faint">
-          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
-            F2
-          </span>
-          Rename
-        </span>
-        <span className="inline-flex items-center gap-1.5 text-faint">
-          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
-            Ctrl
-          </span>
-          <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">
-            N
-          </span>
-          New
-        </span>
-      </footer>
+      <BuildSelectFooter
+        buildCount={lib.builds.length}
+        folderCount={lib.folders.length}
+        notice={notice}
+        autoOpen={autoOpen}
+        onToggleAutoOpen={(checked) => {
+          setAutoOpen(checked)
+          writeStorage(AUTO_OPEN_KEY, checked ? '1' : '0')
+        }}
+      />
 
-      {/* Context menu */}
-      {ctx && (
-        <ContextMenu
-          x={ctx.x}
-          y={ctx.y}
-          header={
-            ctx.kind === 'build'
-              ? lib.builds.find((b) => b.id === ctx.id)?.name
-              : lib.folders.find((f) => f.id === ctx.id)?.name
+      <BuildSelectOverlays
+        ctx={ctx}
+        ctxItems={ctxItems}
+        ctxHeader={
+          ctx?.kind === 'build'
+            ? lib.builds.find((b) => b.id === ctx.id)?.name
+            : ctx
+              ? lib.folders.find((f) => f.id === ctx.id)?.name
+              : undefined
+        }
+        onCloseCtx={() => setCtx(null)}
+        overlay={overlay}
+        onCloseOverlay={() => setOverlay(null)}
+        folders={lib.folders}
+        canOverwrite={!!activeBuildId}
+        onImport={handleImport}
+        onOverwrite={() => {
+          if (commitActiveProfile()) flash('Updated active profile')
+          setOverlay(null)
+        }}
+        onSaveAsNew={handleSaveCurrent}
+        onRenameBuild={(buildId, name) => {
+          renameSavedBuild(buildId, name)
+          setOverlay(null)
+          flash('Build renamed')
+        }}
+        onSaveTags={(buildId, tags) => {
+          setSavedBuildTags(buildId, tags)
+          setOverlay(null)
+          flash('Tags updated')
+        }}
+        onMove={(buildId, folderId) => {
+          moveSavedBuildToFolder(buildId, folderId)
+          setOverlay(null)
+          flash('Build moved')
+        }}
+        onCreateFolder={(name, parentId) => {
+          const folder = createSavedFolder(name, parentId)
+          if (folder && parentId) {
+            setExpanded((cur) => new Set(cur).add(parentId))
           }
-          items={ctxItems}
-          onClose={() => setCtx(null)}
-        />
-      )}
-
-      {/* Overlays */}
-      {overlay?.kind === 'import' && (
-        <ImportOverlay
-          onImport={handleImport}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'save' && (
-        <SaveOverlay
-          canOverwrite={!!activeBuildId}
-          onOverwrite={() => {
-            if (commitActiveProfile()) flash('Updated active profile')
-            setOverlay(null)
-          }}
-          onSaveAsNew={handleSaveCurrent}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'renameBuild' && (
-        <TextPromptOverlay
-          section="Rename"
-          title="Rename build"
-          label="New name"
-          initial={overlay.current}
-          submitLabel="Save"
-          onSubmit={(name) => {
-            renameSavedBuild(overlay.buildId, name)
-            setOverlay(null)
-            flash('Build renamed')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'tags' && (
-        <TagsOverlay
-          initial={overlay.current}
-          onSave={(tags) => {
-            setSavedBuildTags(overlay.buildId, tags)
-            setOverlay(null)
-            flash('Tags updated')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'move' && (
-        <MoveToFolderOverlay
-          folders={lib.folders}
-          currentFolderId={overlay.current}
-          onMove={(folderId) => {
-            moveSavedBuildToFolder(overlay.buildId, folderId)
-            setOverlay(null)
-            flash('Build moved')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'newFolder' && (
-        <TextPromptOverlay
-          section="Organise"
-          title="New folder"
-          label="Folder name"
-          placeholder="e.g. Season 7"
-          submitLabel="Create"
-          onSubmit={(name) => {
-            const folder = createSavedFolder(name, overlay.parentId)
-            if (folder && overlay.parentId) {
-              setExpanded((cur) => new Set(cur).add(overlay.parentId!))
-            }
-            setOverlay(null)
-            flash('Folder created')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'renameFolder' && (
-        <TextPromptOverlay
-          section="Organise"
-          title="Rename folder"
-          label="New name"
-          initial={overlay.current}
-          submitLabel="Save"
-          onSubmit={(name) => {
-            renameSavedFolder(overlay.folderId, name)
-            setOverlay(null)
-            flash('Folder renamed')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'deleteBuild' && (
-        <ConfirmOverlay
-          section="Delete"
-          title="Delete build"
-          danger
-          confirmLabel="Delete build"
-          message={
-            <>
-              Permanently delete{' '}
-              <span className="text-accent-hot">{overlay.name}</span> and all
-              its profiles? This cannot be undone.
-            </>
+          setOverlay(null)
+          flash('Folder created')
+        }}
+        onRenameFolder={(folderId, name) => {
+          renameSavedFolder(folderId, name)
+          setOverlay(null)
+          flash('Folder renamed')
+        }}
+        onDeleteBuild={(buildId) => {
+          deleteSavedBuild(buildId)
+          setOverlay(null)
+          flash('Build deleted')
+        }}
+        onDeleteFolder={(folderId) => {
+          deleteSavedFolder(folderId, false)
+          if (scope.kind === 'folder' && scope.id === folderId) {
+            setScope({ kind: 'all' })
           }
-          onConfirm={() => {
-            deleteSavedBuild(overlay.buildId)
-            setOverlay(null)
-            flash('Build deleted')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'deleteFolder' && (
-        <ConfirmOverlay
-          section="Delete"
-          title="Delete folder"
-          danger
-          confirmLabel="Delete folder"
-          message={
-            <>
-              Delete <span className="text-accent-hot">{overlay.name}</span>?
-              {overlay.count > 0 ? (
-                <>
-                  {' '}
-                  Its {overlay.count} build{overlay.count === 1 ? '' : 's'} will
-                  be moved to Unfiled.
-                </>
-              ) : (
-                ' It is empty.'
-              )}
-            </>
-          }
-          onConfirm={() => {
-            deleteSavedFolder(overlay.folderId, false)
-            if (scope.kind === 'folder' && scope.id === overlay.folderId) {
-              setScope({ kind: 'all' })
-            }
-            setOverlay(null)
-            flash('Folder deleted')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-
-      {/* Profile overlays */}
-      {overlay?.kind === 'addProfile' && (
-        <TextPromptOverlay
-          section="Profiles"
-          title="New profile"
-          label="Profile name"
-          placeholder="e.g. Boss setup"
-          submitLabel="Create"
-          hint="Seeded from this build's active profile."
-          onSubmit={(name) => {
-            const id = addSavedBuildProfile(overlay.buildId, name)
-            setOverlay(null)
-            flash(
-              id
-                ? 'Profile added'
-                : 'Could not add profile — build code unreadable',
-            )
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'renameProfile' && (
-        <TextPromptOverlay
-          section="Profiles"
-          title="Rename profile"
-          label="New name"
-          initial={overlay.current}
-          submitLabel="Save"
-          onSubmit={(name) => {
-            renameSavedBuildProfile(overlay.buildId, overlay.profileId, name)
-            setOverlay(null)
-            flash('Profile renamed')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
-      {overlay?.kind === 'deleteProfile' && (
-        <ConfirmOverlay
-          section="Delete"
-          title="Delete profile"
-          danger
-          confirmLabel="Delete profile"
-          message={
-            <>
-              Permanently delete profile{' '}
-              <span className="text-accent-hot">{overlay.name}</span>? This
-              cannot be undone.
-            </>
-          }
-          onConfirm={() => {
-            removeSavedBuildProfile(overlay.buildId, overlay.profileId)
-            setOverlay(null)
-            flash('Profile deleted')
-          }}
-          onClose={() => setOverlay(null)}
-        />
-      )}
+          setOverlay(null)
+          flash('Folder deleted')
+        }}
+        onAddProfile={(buildId, name) => {
+          const id = addSavedBuildProfile(buildId, name)
+          setOverlay(null)
+          flash(
+            id
+              ? 'Profile added'
+              : 'Could not add profile — build code unreadable',
+          )
+        }}
+        onRenameProfile={(buildId, profileId, name) => {
+          renameSavedBuildProfile(buildId, profileId, name)
+          setOverlay(null)
+          flash('Profile renamed')
+        }}
+        onDeleteProfile={(buildId, profileId) => {
+          removeSavedBuildProfile(buildId, profileId)
+          setOverlay(null)
+          flash('Profile deleted')
+        }}
+      />
     </motion.div>
-  )
-}
-
-function ToolSep() {
-  return <span aria-hidden className="mx-1 h-4 w-px bg-border" />
-}
-
-function ToolButton({
-  label,
-  icon,
-  disabled,
-  danger,
-  onClick,
-}: {
-  label: string
-  icon: ReactNode
-  disabled?: boolean
-  danger?: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className={`group inline-flex h-7 items-center gap-1.5 rounded-[3px] border border-transparent px-2.5 text-[12px] text-muted transition-colors hover:border-border hover:bg-panel-2 disabled:cursor-not-allowed disabled:opacity-50 ${
-        danger ? 'hover:text-stat-red' : 'hover:text-accent-hot'
-      }`}
-    >
-      <span
-        aria-hidden
-        className={`flex w-3.5 items-center justify-center transition-colors ${
-          danger
-            ? 'text-accent group-hover:text-stat-red'
-            : 'text-accent'
-        }`}
-      >
-        {icon}
-      </span>
-      {label}
-    </button>
   )
 }

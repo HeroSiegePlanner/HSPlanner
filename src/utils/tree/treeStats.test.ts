@@ -7,9 +7,6 @@ import {
   TREE_WARP_IDS,
 } from './treeStats'
 
-// Constants and tree-data smoke tests. Mod-line parsing is covered by the
-// Rust suite in src-tauri/src/calc/tree/parse.rs.
-
 describe('SELF_CONDITION_KEYS', () => {
   it('exposes the two supported self-condition keys', () => {
     expect(SELF_CONDITION_KEYS).toEqual(['crit_chance_below_40', 'life_below_40'])

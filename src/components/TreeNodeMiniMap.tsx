@@ -8,7 +8,6 @@ import {
   type TreeNodeEntry,
 } from '../utils/treeNodes'
 
-// 16:9 zoom window — must match the SVG container so background and atlas align.
 const ZOOM_VB_W = 600
 const ZOOM_VB_H = 340
 const ZOOM_MARGIN = 60
@@ -52,7 +51,6 @@ export default function TreeNodeMiniMap({ node, width = 340 }: Props) {
     }
     return keys
   }, [allocated])
-  // Edges in the JSON are coordinate pairs, not id pairs, so we need a position→id lookup.
   const POS_TO_ID = useMemo(() => {
     const m = new Map<string, number>()
     for (const n of ALL_TREE_NODES) {

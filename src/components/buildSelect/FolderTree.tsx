@@ -2,7 +2,6 @@ import { type ReactNode } from 'react'
 import type { Folder } from '../../utils/build/savedBuilds'
 import { CaretIcon, PlusIcon } from './icons'
 
-/** Which group of builds the centre table is showing. */
 export type Scope =
   | { kind: 'recent' }
   | { kind: 'all' }
@@ -22,7 +21,6 @@ interface FolderTreeProps {
   scope: Scope
   onScopeChange: (scope: Scope) => void
   smartCounts: SmartCounts
-  /** Recursive build count per folder id. */
   folderCounts: Record<string, number>
   expanded: Set<string>
   onToggleExpand: (folderId: string) => void
@@ -155,8 +153,6 @@ export function FolderTree({
   onFolderContextMenu,
   footer,
 }: FolderTreeProps) {
-  // Left pane: smart groups (Recent / All / Favorites / Unfiled) followed by
-  // the recursive tree of user folders.
   const renderFolders = (parentKey: string, depth: number): ReactNode => {
     const children = childFolders[parentKey] ?? []
     return children.map((folder) => {

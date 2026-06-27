@@ -4,153 +4,166 @@
     "classId": "marauder",
     "name": "Bouncing Grenade",
     "kind": "active",
-    "description": "",
+    "description": "Throw a grenade that bounces exploding into shrapnel on impact, dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Heavy Ball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bombardment", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
   },
   {
     "id": "heavy_ball",
     "classId": "marauder",
     "name": "Heavy Ball",
     "kind": "active",
-    "description": "",
+    "description": "Flail a big chained spike ball dealing physical damage to monsters on its path.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 80,
+    "range": 320,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 0,
-      "col": 2
-    }
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 34, "perLevel": 12 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Crazy Grapple", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Flail Mastery", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Force Overwhelming", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ]
   },
   {
     "id": "the_big_boom",
     "classId": "marauder",
     "name": "The Big Bo-oM",
     "kind": "active",
-    "description": "",
+    "description": "Throw a huge bo-omb scattering into shrapnel on impact dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 260,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 1,
-      "col": 0
-    }
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 16.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Bombardment", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Unstable Bomb", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "crazy_grapple",
     "classId": "marauder",
     "name": "Crazy Grapple",
     "kind": "active",
-    "description": "",
+    "description": "Throw a massive spike ball into target location dealing area of effect fire damage and dragging yourself towards it through the air.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Movement"],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Heavy Ball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Flail Mastery", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
   },
   {
     "id": "unstable_bomb",
     "classId": "marauder",
     "name": "Unstable Bomb",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "All bombs scatter small bombs around when exploding dealing fire damage.",
+    "damageType": "fire",
+    "tags": ["Passive", "Explosion"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 2,
-      "col": 1
-    }
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0, "perLevel": 19 },
+    "passiveStats": {
+      "base": { "proc_chance": 35 },
+      "perRank": { "proc_chance": 0 }
+    },
+    "bonusSources": [
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Crazy Grapple", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "wrecking_ball",
     "classId": "marauder",
     "name": "Wrecking Ball",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Increases the damage and range of Heavy Ball.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 2,
-      "col": 2
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 5, "range": 5 },
+      "perRank": { "attack_damage": 4, "range": 0.5 }
     }
   },
   {
     "id": "force_overwhelming",
     "classId": "marauder",
     "name": "Force Overwhelming",
-    "kind": "passive",
-    "description": "",
+    "kind": "buff",
+    "description": "Temporarily increase your attack damage, attack rating and attack speed.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 3,
-      "col": 1
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "attack_damage": 3, "attack_rating_pct": 3, "increased_attack_speed": 30 },
+      "perRank": { "attack_damage": 3, "attack_rating_pct": 3, "increased_attack_speed": 1 }
     }
   },
   {
@@ -158,21 +171,16 @@
     "classId": "marauder",
     "name": "Flail Mastery",
     "kind": "passive",
-    "description": "",
+    "description": "Increase attack speed, attack damage and cast rate when using mace weapons.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "increased_attack_speed": 5, "attack_damage": 1.25, "cast_rate": 5 },
+      "perRank": { "increased_attack_speed": 0.5, "attack_damage": 1.25, "cast_rate": 0.5 }
     }
   },
   {
@@ -180,65 +188,70 @@
     "classId": "marauder",
     "name": "Bombardment",
     "kind": "active",
-    "description": "",
+    "description": "Rapidly throw a barrage of small bombs in target direction dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "baseCooldown": 3,
+    "range": 320,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Juggernaut",
-    "position": {
-      "row": 4,
-      "col": 0
-    }
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 24.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Unstable Bomb", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 8, "per": "attribute_point" }
+    ]
   },
   {
     "id": "serrated_chains",
     "classId": "marauder",
     "name": "Serrated Chains",
     "kind": "active",
-    "description": "",
+    "description": "Perform an area of effect attack with increased attack rating and damage attaching serrated chains to monsters.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 0,
-      "col": 0
-    }
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 20, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Titanium Chains", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Rend Flesh", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Retiarius Net", "stat": "attack_damage", "value": 1.6, "per": "skill_level" }
+    ]
   },
   {
     "id": "rend_flesh",
     "classId": "marauder",
     "name": "Rend Flesh",
-    "kind": "active",
-    "description": "",
+    "kind": "passive",
+    "description": "Attacks have a chance to inflict bleeding on monsters in a small area around the target.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 0,
-      "col": 2
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "bleeding_damage": 5, "proc_chance": 15 },
+      "perRank": { "bleeding_damage": 5, "proc_chance": 0 }
     }
   },
   {
@@ -246,65 +259,65 @@
     "classId": "marauder",
     "name": "Titanium Chains",
     "kind": "passive",
-    "description": "",
+    "description": "Monsters affected by Serrated Chains explode upon death dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Passive", "Explosion"],
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 1,
-      "col": 1
-    }
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "attackScaling": {
+      "weaponDamagePct": { "base": 25.5, "perLevel": 0.5 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 0 }
+    },
+    "bonusSources": [
+      { "source": "Serrated Chains", "stat": "attack_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rend Flesh", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Madness Control", "stat": "attack_damage", "value": 15, "per": "skill_level" }
+    ]
   },
   {
     "id": "retiarius_net",
     "classId": "marauder",
     "name": "Retiarius Net",
     "kind": "active",
-    "description": "",
+    "description": "Throw a retiarius net dealing area of effect arcane damage and stunning monsters hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 300,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 1,
-      "col": 2
-    }
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Serrated Chains", "stat": "arcane_skill_damage", "value": 7.8, "per": "skill_level" },
+      { "source": "Chain Trap", "stat": "arcane_skill_damage", "value": 9.6, "per": "skill_level" },
+      { "source": "Annihilation", "stat": "arcane_skill_damage", "value": 11.2, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 5.75, "per": "attribute_point" }
+    ]
   },
   {
     "id": "resilient_gladiator",
     "classId": "marauder",
     "name": "Resilient Gladiator",
     "kind": "passive",
-    "description": "",
+    "description": "Increases your physical damage reduction and life.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 2,
-      "col": 1
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 1, "life": 1 },
+      "perRank": { "physical_damage_reduction": 0.5, "life": 1 }
     }
   },
   {
@@ -312,65 +325,72 @@
     "classId": "marauder",
     "name": "Chain Trap",
     "kind": "active",
-    "description": "",
+    "description": "Throw a chain trap into the target location dealing arcane damage and hooking nearby monsters with chains.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 2,
-      "col": 2
-    }
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Retiarius Net", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Rend Flesh", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Master Trap Maker", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
   },
   {
     "id": "annihilation",
     "classId": "marauder",
     "name": "Annihilation",
     "kind": "active",
-    "description": "",
+    "description": "Violently rip all serrated chains out of monsters dealing area of effect damage. Targets affected by retiarius net take increased damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Explosion", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 5,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 3,
-      "col": 0
-    }
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 3, "perLevel": 15 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 0 }
+    },
+    "passiveStats": {
+      "base": { "damage_multiplier": 2.5 },
+      "perRank": { "damage_multiplier": 2.5 }
+    },
+    "bonusSources": [
+      { "source": "Serrated Chains", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Titanium Chains", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Chain Trap", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ]
   },
   {
     "id": "master_trap_maker",
     "classId": "marauder",
     "name": "Master Trap Maker",
     "kind": "passive",
-    "description": "",
+    "description": "Passively increases the arcane damage dealt by chain traps and provides a chance for critical hits as well as a proc chance for traps to activate rapidly causing the trap and its hooks to travel faster.",
+    "tags": ["Passive"],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Passive"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 3,
-      "col": 2
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2, "crit_damage": 25, "crit_chance": 15, "proc_chance": 15 },
+      "perRank": { "arcane_skill_damage": 2, "crit_damage": 1, "crit_chance": 0, "proc_chance": 0 }
     }
   },
   {
@@ -378,21 +398,24 @@
     "classId": "marauder",
     "name": "Madness Control",
     "kind": "active",
-    "description": "",
+    "description": "Hook nearby monsters towards you stunning them and dealing arcane damage. Additionally summon a bomb from the sky onto your location creating an explosion that deals arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 8,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [
-      {
-        "rank": 1
-      }
-    ],
-    "tags": [
-      "Active"
-    ],
     "tree": "Gladiator",
-    "position": {
-      "row": 4,
-      "col": 1
-    }
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Chain Trap", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Annihilation", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "The Big Bo-oM", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
   }
 ]

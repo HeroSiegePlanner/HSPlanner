@@ -1,236 +1,903 @@
 [
   {
-    "id": "bard_mg_1",
+    "id": "slaying_riffs",
     "classId": "bard",
-    "name": "MG Slot 1",
+    "name": "Slaying Riffs",
     "kind": "active",
-    "description": "",
+    "description": "Drop an amplifier from the sky smashing the ground and send notes towards enemies dealing lightning damage. Dropping an amplifier on another one causes the first one to explode.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Projectile",
+      "Explosion"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 0, "col": 1 }
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 4,
+      "perLevel": 9.8
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Insane Riff",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Amping Up",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Sounds of Silence",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
-    "id": "bard_mg_2",
+    "id": "insane_riff",
     "classId": "bard",
-    "name": "MG Slot 2",
-    "kind": "active",
-    "description": "",
+    "name": "Insane Riff",
+    "kind": "passive",
+    "description": "Every fifth spell cast is empowered with increased lightning damage.",
+    "tags": [
+      "Passive"
+    ],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 0, "col": 2 }
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 30
+      },
+      "perRank": {
+        "lightning_skill_damage": 4
+      }
+    }
   },
   {
-    "id": "bard_mg_3",
+    "id": "visceral_growl",
     "classId": "bard",
-    "name": "MG Slot 3",
+    "name": "Visceral Growl",
     "kind": "active",
-    "description": "",
+    "description": "Unleash a visceral growl in a frontal cone dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 1, "col": 0 }
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 9.8
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "High dB",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Sounds of Silence",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Progenies of the Great Cataclysm",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
-    "id": "bard_mg_4",
+    "id": "amping_up",
     "classId": "bard",
-    "name": "MG Slot 4",
-    "kind": "active",
-    "description": "",
+    "name": "Amping Up",
+    "kind": "passive",
+    "description": "Chance on spellhit or strike to gain a stack of amping up increasing your cast rate for a short duration.",
+    "tags": [
+      "Passive"
+    ],
+    "range": 10,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 1, "col": 2 }
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "cast_rate": 5
+      },
+      "perRank": {
+        "cast_rate": 0.5
+      }
+    }
   },
   {
-    "id": "bard_mg_5",
+    "id": "sacrilegious_symphony",
     "classId": "bard",
-    "name": "MG Slot 5",
+    "name": "Sacrilegious Symphony",
     "kind": "active",
-    "description": "",
+    "description": "Channel for a brief moment before unleashing a massive area of effect pulse around you dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 100,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 7,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 38
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Slaying Riffs",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Satan's Melody",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Sounds of Silence",
+        "stat": "lightning_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
-    "id": "bard_mg_6",
+    "id": "satans_melody",
     "classId": "bard",
-    "name": "MG Slot 6",
-    "kind": "active",
-    "description": "",
+    "name": "Satan's Melody",
+    "kind": "buff",
+    "description": "Gain increased lightning skill damage for a short duration and a chance to unleash guitar picks in an arc on hit.",
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 15,
+        "proc_chance": 10
+      },
+      "perRank": {
+        "lightning_skill_damage": 2,
+        "proc_chance": 0
+      }
+    }
   },
   {
-    "id": "bard_mg_7",
+    "id": "sounds_of_silence",
     "classId": "bard",
-    "name": "MG Slot 7",
-    "kind": "active",
-    "description": "",
+    "name": "Sounds of Silence",
+    "kind": "passive",
+    "description": "Converts a portion of your intelligence into lightning skill damage.",
+    "tags": [
+      "Passive"
+    ],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 3, "col": 0 }
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 5
+      },
+      "perRank": {
+        "lightning_skill_damage": 0.5
+      }
+    }
   },
   {
-    "id": "bard_mg_8",
+    "id": "high_db",
     "classId": "bard",
-    "name": "MG Slot 8",
-    "kind": "active",
-    "description": "",
+    "name": "High dB",
+    "kind": "passive",
+    "description": "Notes have a chance to unleash a sonar pulse on hit dealing increased lightning damage.",
+    "tags": [
+      "Passive"
+    ],
+    "range": 15,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 4
+      },
+      "perRank": {
+        "lightning_skill_damage": 4
+      }
+    }
   },
   {
-    "id": "bard_mg_9",
+    "id": "progenies_of_the_great_cataclysm",
     "classId": "bard",
-    "name": "MG Slot 9",
+    "name": "Progenies of the Great Cataclysm",
     "kind": "active",
-    "description": "",
+    "description": "Summon a massive amplifier playing black metal at high volume sending piercing notes towards nearby monsters bouncing from terrain dealing lightning damage. If you are too far from the amplifier it is pulled back to your position.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 20,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Metal Guitarist",
-    "position": { "row": 4, "col": 1 }
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 25
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Sacrilegious Symphony",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Slaying Riffs",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "High dB",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
-    "id": "bard_pf_1",
+    "id": "crowd_dive",
     "classId": "bard",
-    "name": "PF Slot 1",
+    "name": "Crowd Dive",
     "kind": "active",
-    "description": "",
+    "description": "Charge towards target location knocking monsters up on hit dealing physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Attack",
+      "Active",
+      "Spell",
+      "Area of Effect",
+      "Charge",
+      "Strike"
+    ],
+    "movementDuringUse": 65,
+    "baseCooldown": 3,
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 0, "col": 0 }
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 56,
+        "perLevel": 30
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 10,
+        "perLevel": 1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Crowd Pummeler",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Headbanger",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Craving For Attention",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ]
   },
   {
-    "id": "bard_pf_2",
+    "id": "crowd_pummeler",
     "classId": "bard",
-    "name": "PF Slot 2",
-    "kind": "active",
-    "description": "",
+    "name": "Crowd Pummeler",
+    "kind": "passive",
+    "description": "Chance to unleash notes from monsters on hit dealing physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Passive"
+    ],
     "maxRank": 20,
     "requiresLevel": 1,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 0, "col": 2 }
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "attack_damage": 20
+      },
+      "perRank": {
+        "attack_damage": 5
+      }
+    }
   },
   {
-    "id": "bard_pf_3",
+    "id": "pyro_technician",
     "classId": "bard",
-    "name": "PF Slot 3",
+    "name": "Pyro Technician",
     "kind": "active",
-    "description": "",
+    "description": "Blink into the closest monster to target location unleashing an area of effect attack dealing physical and fire damage.",
+    "damageType": "fire",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Movement",
+      "Blink",
+      "Area of Effect",
+      "Strike"
+    ],
+    "movementDuringUse": 100,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 1, "col": 1 }
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 6
+      }
+    ],
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 28
+    },
+    "manaCostFormula": {
+      "base": 6,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 80,
+        "perLevel": 30
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 10,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Crowd Dive",
+        "stat": "fire_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Headbanger",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Craving For Another Killing",
+        "stat": "fire_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ]
   },
   {
-    "id": "bard_pf_4",
+    "id": "adrenaline_momentum",
     "classId": "bard",
-    "name": "PF Slot 4",
-    "kind": "active",
-    "description": "",
+    "name": "Adrenaline Momentum",
+    "kind": "passive",
+    "description": "Chance to gain a stack of adrenaline momentum on hit increasing your movement speed and attack speed.",
+    "tags": [
+      "Passive"
+    ],
+    "range": 10,
     "maxRank": 20,
     "requiresLevel": 8,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 1, "col": 2 }
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 5,
+        "movement_speed": 3
+      },
+      "perRank": {
+        "increased_attack_speed": 0.5,
+        "movement_speed": 0.25
+      }
+    }
   },
   {
-    "id": "bard_pf_5",
+    "id": "antisocial_pit_fighter",
     "classId": "bard",
-    "name": "PF Slot 5",
-    "kind": "active",
-    "description": "",
+    "name": "Antisocial Pit Fighter",
+    "kind": "passive",
+    "description": "Chance to apply increased magic find on kill.",
+    "tags": [
+      "Passive"
+    ],
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 2, "col": 0 }
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "magic_find": 30,
+        "proc_chance": 8
+      },
+      "perRank": {
+        "magic_find": 4,
+        "proc_chance": 0
+      }
+    }
   },
   {
-    "id": "bard_pf_6",
+    "id": "headbanger",
     "classId": "bard",
-    "name": "PF Slot 6",
+    "name": "Headbanger",
     "kind": "active",
-    "description": "",
+    "description": "Every third attack unleashes a headbang dealing area of effect damage.",
+    "damageType": "physical",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Area of Effect",
+      "Strike"
+    ],
+    "movementDuringUse": 100,
     "maxRank": 20,
     "requiresLevel": 16,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 2, "col": 1 }
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 100,
+        "perLevel": 35
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 12,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Crowd Pummeler",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Adrenaline Momentum",
+        "stat": "attack_damage",
+        "value": 7,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moshpit Massacre",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      }
+    ]
   },
   {
-    "id": "bard_pf_7",
+    "id": "craving_for_another_killing",
     "classId": "bard",
-    "name": "PF Slot 7",
-    "kind": "active",
-    "description": "",
+    "name": "Craving For Another Killing",
+    "kind": "buff",
+    "description": "Increases your attack damage, life per hit and attack speed for a short duration.",
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 3, "col": 0 }
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 20,
+        "life_steal": 5,
+        "increased_attack_speed": 15
+      },
+      "perRank": {
+        "attack_damage": 2,
+        "life_steal": 0.25,
+        "increased_attack_speed": 1
+      }
+    }
   },
   {
-    "id": "bard_pf_8",
+    "id": "craving_for_attention",
     "classId": "bard",
-    "name": "PF Slot 8",
-    "kind": "active",
-    "description": "",
+    "name": "Craving For Attention",
+    "kind": "passive",
+    "description": "Gain fire skill damage for a portion of your total enhanced damage.",
+    "tags": [
+      "Passive"
+    ],
     "maxRank": 20,
     "requiresLevel": 24,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 3, "col": 1 }
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "fire_skill_damage": 5
+      },
+      "perRank": {
+        "fire_skill_damage": 0.5
+      }
+    }
   },
   {
-    "id": "bard_pf_9",
+    "id": "moshpit_massacre",
     "classId": "bard",
-    "name": "PF Slot 9",
+    "name": "Moshpit Massacre",
     "kind": "active",
-    "description": "",
+    "description": "Summon a death metal crowd to fight monsters within the area radius draining a portion of your maximum mana over time dealing physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon",
+      "Orbital"
+    ],
+    "movementDuringUse": 65,
+    "baseCooldown": 5,
     "maxRank": 20,
     "requiresLevel": 30,
-    "ranks": [{ "rank": 1 }],
-    "tags": ["Active"],
     "tree": "Pit Fighter",
-    "position": { "row": 4, "col": 0 }
+    "position": {
+      "row": 4,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 88,
+        "perLevel": 30
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 12,
+        "perLevel": 1
+      }
+    },
+    "passiveStats": {
+      "base": {
+        "life": 2750,
+        "mana_drain_pct": 7
+      },
+      "perRank": {
+        "life": 250,
+        "mana_drain_pct": 0
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Headbanger",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Antisocial Pit Fighter",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Craving For Another Killing",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      }
+    ]
   }
 ]
