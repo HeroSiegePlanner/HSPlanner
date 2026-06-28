@@ -10,8 +10,8 @@
   --color-border-2: #363742;
 
   --color-text: #d4cfbf;
-  --color-muted: #8a8276;
-  --color-faint: #5a5448;
+  --color-muted: #a39a8a;
+  --color-faint: #8f8676;
 
   --color-accent: #c9a55a;
   --color-accent-hot: #e0b864;
@@ -74,7 +74,6 @@ button:focus-visible {
   outline-offset: 1px;
 }
 
-/* HSPlanner Checkbox — globalny styl dla wszystkich <input type="checkbox"> */
 input[type="checkbox"] {
   --cb-size: 14px;
   appearance: none;
@@ -301,7 +300,6 @@ input[type="range"]:disabled {
   opacity: 0.45;
 }
 
-/* WebKit / Chromium / Safari */
 input[type="range"]::-webkit-slider-runnable-track {
   height: var(--sl-track-h);
   background:
@@ -359,7 +357,6 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
     0 0 0 3px var(--sl-glow);
 }
 
-/* Firefox */
 input[type="range"]::-moz-range-track {
   height: var(--sl-track-h);
   background: linear-gradient(180deg, var(--color-bg), var(--sl-track-bg));
@@ -397,7 +394,6 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     0 0 12px var(--sl-glow);
 }
 
-/* === Wrapper z label/value/ticks (komponent Slider.tsx) === */
 .hs-slider {
   display: flex;
   flex-direction: column;
@@ -460,7 +456,6 @@ input[type="range"]:focus-visible::-moz-range-thumb {
   background: var(--color-border);
 }
 
-/* Warianty kolorystyczne i compact */
 .hs-slider.red,
 input[type="range"].red {
   --sl-fill-1: #7a3a3a;
@@ -509,10 +504,6 @@ input[type="range"].compact {
   font-size: 11px;
 }
 
-/* ========================================================================
- * HSPlanner Dropdown — searchable, keyboard-navigable, rarity-colored.
- * Komponent: Dropdown.tsx. Klasy: .hs-dd*.
- * ====================================================================== */
 
 .hs-dd {
   position: relative;
@@ -583,7 +574,7 @@ input[type="range"].compact {
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.7),
     0 0 0 1px rgba(0, 0, 0, 0.4);
-  z-index: 50;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   max-height: 380px;
@@ -705,7 +696,6 @@ input[type="range"].compact {
   --rarity: #c9762a;
 }
 
-/* Projectowe rarity (ItemRarity z src/types/item.ts) */
 .hs-dd-item.rarity-common {
   --rarity: #ffffff;
 }
@@ -810,4 +800,23 @@ input[type="range"].compact {
   font-size: 9px;
   color: var(--color-muted);
   margin: 0 2px;
+}
+
+.hs-dd-menu:focus {
+  outline: none;
+}
+
+.hs-dd--compact {
+  width: auto;
+}
+.hs-dd--compact .hs-dd-trigger {
+  gap: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+.hs-dd-menu--compact .hs-dd-item {
+  padding: 8px 12px;
+}
+.hs-dd-menu--compact .hs-dd-item-name {
+  font-size: 13px;
 }

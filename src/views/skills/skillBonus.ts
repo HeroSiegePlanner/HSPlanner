@@ -1,10 +1,6 @@
 import type { RangedStatMap, Skill } from '../../types'
 import { normalizeSkillName, rangedMax, rangedMin } from '../../utils/item/stats'
 
-// Effective skill-level bonus for one skill, summed as [min, max]:
-// +all skills, +<element> skills, and +named-skill from items.
-// Only allocated skills (rank > 0) gain the bonus — mirrors SkillDetailsPanel
-// and the in-game rule that +skills never activates an unallocated skill.
 export function skillLevelBonus(
   skill: Skill,
   rank: number,

@@ -16,8 +16,6 @@ function makeItem(baseId: string): EquippedItem {
 }
 
 function failingSetItem() {
-  // Simulates a browser that rejects every localStorage write once the origin
-  // quota is full, so the store's persisting actions hit a StorageWriteError.
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
     throw new DOMException('quota exceeded', 'QuotaExceededError')
   })
@@ -98,7 +96,7 @@ describe('build store — commitEquippedItem', () => {
   it('committing a two-handed weapon clears the offhand', () => {
     const twoH = items.find((i) => i.twoHanded)
     const off = items.find((i) => i.slot === 'offhand' || i.baseType === 'shield')
-    if (!twoH || !off) return // data without 2H/offhand; skip
+    if (!twoH || !off) return
     useBuild.setState({ inventory: { offhand: makeItem(off.id) } })
     useBuild.getState().commitEquippedItem('weapon', makeItem(twoH.id))
     expect(useBuild.getState().inventory.offhand).toBeUndefined()
