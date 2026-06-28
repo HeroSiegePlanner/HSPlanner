@@ -44,7 +44,7 @@ describe('<Dropdown>', () => {
   })
 
   it('renders a search box and footer by default (searchable)', async () => {
-    const { container } = render(
+    render(
       <Dropdown
         value={null}
         options={OPTIONS}
@@ -54,7 +54,7 @@ describe('<Dropdown>', () => {
     )
     await userEvent.click(screen.getByRole('button'))
     expect(screen.getByPlaceholderText('Find…')).toBeInTheDocument()
-    expect(container.querySelector('.hs-dd-foot')).toBeInTheDocument()
+    expect(document.querySelector('.hs-dd-foot')).toBeInTheDocument()
   })
 
   it('filters options by the search query', async () => {
@@ -66,7 +66,7 @@ describe('<Dropdown>', () => {
   })
 
   it('hides the search box and footer when searchable is false', async () => {
-    const { container } = render(
+    render(
       <Dropdown
         value={null}
         options={OPTIONS}
@@ -77,7 +77,7 @@ describe('<Dropdown>', () => {
     await userEvent.click(screen.getByRole('button'))
     expect(screen.getByRole('listbox')).toBeInTheDocument()
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
-    expect(container.querySelector('.hs-dd-foot')).not.toBeInTheDocument()
+    expect(document.querySelector('.hs-dd-foot')).not.toBeInTheDocument()
   })
 
   it('supports arrow-key navigation and Enter selection when not searchable', async () => {
@@ -117,5 +117,22 @@ describe('<Dropdown>', () => {
       <Dropdown value={null} options={OPTIONS} onChange={() => {}} compact />,
     )
     expect(container.querySelector('.hs-dd')).toHaveClass('hs-dd--compact')
+  })
+
+  it('portals the menu to document.body so overflow-hidden parents cannot clip it', async () => {
+    render(
+      <div style={{ overflow: 'hidden' }}>
+        <Dropdown
+          value={null}
+          options={OPTIONS}
+          onChange={() => {}}
+          searchable={false}
+        />
+      </div>,
+    )
+    await userEvent.click(screen.getByRole('button'))
+    const menu = document.querySelector('.hs-dd-menu')
+    expect(menu).toBeInTheDocument()
+    expect(menu?.parentElement).toBe(document.body)
   })
 })

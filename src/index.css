@@ -583,7 +583,7 @@ input[type="range"].compact {
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.7),
     0 0 0 1px rgba(0, 0, 0, 0.4);
-  z-index: 50;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   max-height: 380px;
@@ -827,15 +827,11 @@ input[type="range"].compact {
   padding: 5px 10px;
   font-size: 12px;
 }
-.hs-dd--compact .hs-dd-menu {
-  right: auto;
-  width: max-content;
-  min-width: max(100%, 200px);
-  max-width: 300px;
-}
-.hs-dd--compact .hs-dd-item {
+/* Compact menu sizing (width/min/max) is applied inline on the portaled menu,
+ * which is no longer a descendant of .hs-dd. Only item density lives here. */
+.hs-dd-menu--compact .hs-dd-item {
   padding: 8px 12px;
 }
-.hs-dd--compact .hs-dd-item-name {
+.hs-dd-menu--compact .hs-dd-item-name {
   font-size: 13px;
 }
