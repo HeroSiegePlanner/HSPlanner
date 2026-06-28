@@ -105,3 +105,37 @@ export async function uploadBuildToGist(
   }
   throw gistErrorFromStatus(res.status, 'upload')
 }
+
+export async function fetchBuildCodeFromGist(input: string): Promise<string> {
+  const id = extractGistId(input)
+  if (!id) {
+    throw new GistShareError('not-found', 'That does not look like a Gist link.')
+  }
+  const token = getGistToken()
+  const headers: Record<string, string> = {
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+  }
+  if (token) headers.Authorization = `Bearer ${token}`
+  let res: Response
+  try {
+    res = await fetch(`${GIST_API}/${id}`, { headers })
+  } catch {
+    throw new GistShareError('network', 'Network error. Check your connection.')
+  }
+  if (res.status !== 200) {
+    throw gistErrorFromStatus(res.status, 'fetch')
+  }
+  const data = (await res.json()) as {
+    files?: Record<string, { content?: string; truncated?: boolean } | null>
+  }
+  const files = data.files ?? {}
+  const file = files[GIST_FILENAME] ?? Object.values(files).find((f) => f != null)
+  if (!file || typeof file.content !== 'string') {
+    throw new GistShareError('not-found', 'No build found in that Gist.')
+  }
+  if (file.truncated) {
+    throw new GistShareError('too-large', 'Build is too large to import from this Gist.')
+  }
+  return file.content
+}

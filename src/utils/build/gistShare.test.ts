@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   extractGistId,
+  fetchBuildCodeFromGist,
   isGistReference,
   isGistSharingConfigured,
   uploadBuildToGist,
@@ -97,5 +98,58 @@ describe('uploadBuildToGist', () => {
     vi.stubEnv('VITE_GIST_TOKEN', 'ghp_test')
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
     await expect(uploadBuildToGist('CODE')).rejects.toMatchObject({ kind: 'network' })
+  })
+})
+
+describe('fetchBuildCodeFromGist', () => {
+  it('returns the .hsp file content', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', '')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse(200, {
+          files: { 'hsplanner-build.hsp': { content: 'BUILDCODE', truncated: false } },
+        }),
+      ),
+    )
+    await expect(fetchBuildCodeFromGist(`https://gist.github.com/u/${HEX}`)).resolves.toBe(
+      'BUILDCODE',
+    )
+  })
+
+  it('falls back to the first file when the named file is absent', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', '')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse(200, { files: { 'other.txt': { content: 'X', truncated: false } } }),
+      ),
+    )
+    await expect(fetchBuildCodeFromGist(HEX)).resolves.toBe('X')
+  })
+
+  it('throws too-large when the file is truncated', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', '')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        jsonResponse(200, {
+          files: { 'hsplanner-build.hsp': { content: 'X', truncated: true } },
+        }),
+      ),
+    )
+    await expect(fetchBuildCodeFromGist(HEX)).rejects.toMatchObject({ kind: 'too-large' })
+  })
+
+  it('throws not-found on 404', async () => {
+    vi.stubEnv('VITE_GIST_TOKEN', '')
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(404, {})))
+    await expect(fetchBuildCodeFromGist(HEX)).rejects.toMatchObject({ kind: 'not-found' })
+  })
+
+  it('throws not-found for input that is not a gist', async () => {
+    await expect(fetchBuildCodeFromGist('https://example.com/x')).rejects.toMatchObject({
+      kind: 'not-found',
+    })
   })
 })
