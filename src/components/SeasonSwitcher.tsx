@@ -10,6 +10,7 @@ import {
   MODAL_FOOTER_CLASS,
   Modal,
 } from "./Modal";
+import Dropdown from "./Dropdown";
 
 export default function SeasonSwitcher() {
   const [pending, setPending] = useState<string | null>(null);
@@ -28,27 +29,15 @@ export default function SeasonSwitcher() {
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
           Season
         </span>
-        <div
-          className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
-          style={{
-            background: "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
-            boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+        <Dropdown
+          compact
+          searchable={false}
+          value={activeSeasonId}
+          onChange={(id) => {
+            if (id && id !== activeSeasonId) setPending(id);
           }}
-        >
-          <select
-            value={activeSeasonId}
-            onChange={(e) => {
-              if (e.target.value !== activeSeasonId) setPending(e.target.value);
-            }}
-            className="min-w-20 cursor-pointer bg-transparent text-[12px] text-text outline-none"
-          >
-            {SEASONS.map((s) => (
-              <option key={s.id} value={s.id} className="bg-panel">
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          options={SEASONS.map((s) => ({ id: s.id, label: s.name }))}
+        />
       </label>
       {pendingSeason && (
         <Modal

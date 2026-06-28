@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useOutsideClick } from '../hooks/useOutsideClick'
 
 export interface DropdownOption {
@@ -17,6 +17,10 @@ interface DropdownProps {
   clearLabel?: string
   onHoverChange?: (id: string | null) => void
   onOpenChange?: (open: boolean) => void
+  /** Show the search box + keyboard-hint footer. Defaults to true; set false for short lists. */
+  searchable?: boolean
+  /** Inline, content-sized variant for headers and tight rows. */
+  compact?: boolean
 }
 
 export default function Dropdown({
@@ -29,11 +33,14 @@ export default function Dropdown({
   clearLabel,
   onHoverChange,
   onOpenChange,
+  searchable = true,
+  compact = false,
 }: DropdownProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [kb, setKb] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const close = () => {
     setOpen(false)
@@ -42,6 +49,12 @@ export default function Dropdown({
     onOpenChange?.(false)
   }
   useOutsideClick(ref, open, close)
+
+  // With no search box to autofocus, focus the menu itself so it captures
+  // arrow / Enter / Escape keys for keyboard navigation.
+  useEffect(() => {
+    if (open && !searchable) menuRef.current?.focus()
+  }, [open, searchable])
 
   const selected = options.find((o) => o.id === value) ?? null
 
@@ -82,7 +95,11 @@ export default function Dropdown({
   }
 
   return (
-    <div className="hs-dd" data-open={open} ref={ref}>
+    <div
+      className={`hs-dd${compact ? ' hs-dd--compact' : ''}`}
+      data-open={open}
+      ref={ref}
+    >
       <button
         type="button"
         className="hs-dd-trigger"
@@ -101,30 +118,37 @@ export default function Dropdown({
       </button>
 
       {open && (
-        <div className="hs-dd-menu" role="listbox">
-          <div className="hs-dd-search">
-            <svg
-              className="hs-dd-search-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" />
-            </svg>
-            <input
-              autoFocus
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value)
-                setKb(0)
-              }}
-              onKeyDown={onKeyDown}
-              placeholder={searchPlaceholder}
-            />
-          </div>
+        <div
+          className="hs-dd-menu"
+          role="listbox"
+          ref={menuRef}
+          tabIndex={searchable ? undefined : -1}
+          onKeyDown={onKeyDown}
+        >
+          {searchable && (
+            <div className="hs-dd-search">
+              <svg
+                className="hs-dd-search-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+              <input
+                autoFocus
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value)
+                  setKb(0)
+                }}
+                placeholder={searchPlaceholder}
+              />
+            </div>
+          )}
 
           <div className="hs-dd-list" onMouseLeave={() => onHoverChange?.(null)}>
             {showClear && (
@@ -171,15 +195,17 @@ export default function Dropdown({
             )}
           </div>
 
-          <div className="hs-dd-foot">
-            <span>
-              <kbd>↑</kbd>
-              <kbd>↓</kbd> navigate <kbd>↵</kbd> select
-            </span>
-            <span>
-              <kbd>esc</kbd> close
-            </span>
-          </div>
+          {searchable && (
+            <div className="hs-dd-foot">
+              <span>
+                <kbd>↑</kbd>
+                <kbd>↓</kbd> navigate <kbd>↵</kbd> select
+              </span>
+              <span>
+                <kbd>esc</kbd> close
+              </span>
+            </div>
+          )}
         </div>
       )}
     </div>

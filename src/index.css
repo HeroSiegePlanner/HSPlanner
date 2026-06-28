@@ -811,3 +811,31 @@ input[type="range"].compact {
   color: var(--color-muted);
   margin: 0 2px;
 }
+
+/* Bez pola search menu samo przejmuje klawiaturę — ukryj jego ring focusu. */
+.hs-dd-menu:focus {
+  outline: none;
+}
+
+/* Kompaktowy, inline wariant — nagłówek (Class/Season) oraz wybór tieru.
+ * Trigger dopasowuje się do treści zamiast zajmować 100% szerokości. */
+.hs-dd--compact {
+  width: auto;
+}
+.hs-dd--compact .hs-dd-trigger {
+  gap: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+.hs-dd--compact .hs-dd-menu {
+  right: auto;
+  width: max-content;
+  min-width: max(100%, 200px);
+  max-width: 300px;
+}
+.hs-dd--compact .hs-dd-item {
+  padding: 8px 12px;
+}
+.hs-dd--compact .hs-dd-item-name {
+  font-size: 13px;
+}

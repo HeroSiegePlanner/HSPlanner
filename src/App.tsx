@@ -4,6 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT, hoverTap, viewVariants } from "./lib/motion";
 import BottomBar from "./components/BottomBar";
+import Dropdown from "./components/Dropdown";
 import BuildsMenu from "./components/BuildsMenu";
 import { AUTO_OPEN_KEY, BuildSelect } from "./components/buildSelect";
 import LeftStatsPanel from "./components/LeftStatsPanel";
@@ -287,26 +288,16 @@ function App() {
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
                   Class
                 </span>
-                <div
-                  className="inline-flex items-center rounded-[3px] border border-border-2 px-2 py-1 transition-colors hover:border-accent-deep focus-within:border-accent-hot"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, #0d0e12, var(--color-panel-2))",
-                    boxShadow: "inset 0 1px 2px rgba(0,0,0,0.5)",
+                <Dropdown
+                  compact
+                  value={classId ?? null}
+                  onChange={(id) => {
+                    if (id) setClass(id);
                   }}
-                >
-                  <select
-                    value={classId ?? ""}
-                    onChange={(e) => setClass(e.target.value)}
-                    className="min-w-20 cursor-pointer bg-transparent text-[12px] text-text outline-none"
-                  >
-                    {classes.map((c) => (
-                      <option key={c.id} value={c.id} className="bg-panel">
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  options={classes.map((c) => ({ id: c.id, label: c.name }))}
+                  placeholder="Class"
+                  searchPlaceholder="Search class…"
+                />
               </label>
             )}
             {cls?.primaryAttribute && (

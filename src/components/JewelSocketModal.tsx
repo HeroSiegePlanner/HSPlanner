@@ -7,6 +7,7 @@ import {
 import type { Affix, EquippedAffix, Gem, Rune, TreeSocketContent } from '../types'
 import { UNCUT_JEWEL_MAX_AFFIXES } from '../types'
 import { Modal } from './Modal'
+import Dropdown from './Dropdown'
 
 const SOCKETABLE_ICONS = import.meta.glob<string>(
   '../assets/socketable/*.png',
@@ -616,24 +617,23 @@ function UncutAffixCard({
       <div className="mt-2.5 flex flex-wrap items-center gap-3 pl-[34px] font-mono text-[10px] tracking-[0.06em] text-faint">
         <label className="flex items-center gap-2">
           <span>tier</span>
-          <select
+          <Dropdown
+            compact
+            searchable={false}
             value={affix.affixId}
-            onChange={(e) => {
-              const next = tiers.find((t) => t.id === e.target.value)
+            onChange={(id) => {
+              const next = tiers.find((t) => t.id === id)
               if (!next) return
               onChange({
                 affixId: next.id,
                 tier: next.tier,
               })
             }}
-            className="rounded-[2px] border border-border-2 bg-panel-2 px-2 py-0.5 text-text"
-          >
-            {tiers.map((t) => (
-              <option key={t.id} value={t.id}>
-                T{t.tier} ({t.valueMin}-{t.valueMax})
-              </option>
-            ))}
-          </select>
+            options={tiers.map((t) => ({
+              id: t.id,
+              label: `T${t.tier} (${t.valueMin}-${t.valueMax})`,
+            }))}
+          />
         </label>
         <label className="flex items-center gap-2">
           <span>roll</span>

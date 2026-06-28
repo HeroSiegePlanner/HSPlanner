@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Dropdown from '../../components/Dropdown'
 import { Panel } from './primitives'
 import { classes, gameConfig, getClass } from '../../data'
 import { attrPointsFor, finalAttributes, useBuild } from '../../store/build'
@@ -38,16 +39,15 @@ export default function CharacterBasics() {
               .
             </p>
           ) : (
-            <PanelSelect
-              value={classId ?? ''}
-              onChange={(e) => setClass(e.target.value)}
-            >
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </PanelSelect>
+            <Dropdown
+              value={classId ?? null}
+              onChange={(id) => {
+                if (id) setClass(id)
+              }}
+              options={classes.map((c) => ({ id: c.id, label: c.name }))}
+              placeholder="Select a class…"
+              searchPlaceholder="Search class…"
+            />
           )}
           {cls?.description && (
             <p className="mt-3 text-[12px] leading-relaxed text-muted">
@@ -205,29 +205,6 @@ function SpinButton({
     >
       {label}
     </button>
-  )
-}
-
-function PanelSelect({
-  className,
-  children,
-  ...rest
-}: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <div
-      className={`inline-flex w-full items-center rounded-[3px] border border-border-2 px-3 py-2 transition-colors hover:border-accent-deep focus-within:border-accent-hot ${className ?? ''}`}
-      style={{
-        background: 'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
-        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
-      }}
-    >
-      <select
-        {...rest}
-        className="w-full cursor-pointer bg-transparent text-[13px] text-text outline-none"
-      >
-        {children}
-      </select>
-    </div>
   )
 }
 
