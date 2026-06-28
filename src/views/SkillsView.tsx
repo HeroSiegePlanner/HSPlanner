@@ -60,7 +60,6 @@ export default function SkillsView() {
   )
   const rankBonuses = useMemo(() => computed?.rankBonuses ?? {}, [computed])
 
-  // Per-skill effective-level bonus map (see skillLevelBonus); display-only.
   const skillBonuses = useMemo(() => {
     const s = computed?.stats ?? {}
     const map: Record<string, [number, number]> = {}

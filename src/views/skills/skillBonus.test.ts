@@ -33,7 +33,6 @@ describe('skillLevelBonus', () => {
     const itemBonuses = {
       [normalizeSkillName('Thunder Fury')]: [1, 1] as [number, number],
     }
-    // 3 (all) + 2 (lightning) + 1 (named item) = 6
     expect(skillLevelBonus(lightningSkill, 5, stats, itemBonuses)).toEqual([6, 6])
   })
 

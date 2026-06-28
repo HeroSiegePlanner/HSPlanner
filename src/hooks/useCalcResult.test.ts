@@ -2,7 +2,6 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { useCalcResult } from './useCalcResult'
 
-// Manual promise so tests control resolve/reject timing.
 function deferred<T>() {
   let resolve!: (v: T) => void
   let reject!: (e: unknown) => void

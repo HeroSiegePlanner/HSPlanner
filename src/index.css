@@ -74,7 +74,6 @@ button:focus-visible {
   outline-offset: 1px;
 }
 
-/* HSPlanner Checkbox — globalny styl dla wszystkich <input type="checkbox"> */
 input[type="checkbox"] {
   --cb-size: 14px;
   appearance: none;
@@ -301,7 +300,6 @@ input[type="range"]:disabled {
   opacity: 0.45;
 }
 
-/* WebKit / Chromium / Safari */
 input[type="range"]::-webkit-slider-runnable-track {
   height: var(--sl-track-h);
   background:
@@ -359,7 +357,6 @@ input[type="range"]:focus-visible::-webkit-slider-thumb {
     0 0 0 3px var(--sl-glow);
 }
 
-/* Firefox */
 input[type="range"]::-moz-range-track {
   height: var(--sl-track-h);
   background: linear-gradient(180deg, var(--color-bg), var(--sl-track-bg));
@@ -397,7 +394,6 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     0 0 12px var(--sl-glow);
 }
 
-/* === Wrapper z label/value/ticks (komponent Slider.tsx) === */
 .hs-slider {
   display: flex;
   flex-direction: column;
@@ -460,7 +456,6 @@ input[type="range"]:focus-visible::-moz-range-thumb {
   background: var(--color-border);
 }
 
-/* Warianty kolorystyczne i compact */
 .hs-slider.red,
 input[type="range"].red {
   --sl-fill-1: #7a3a3a;
@@ -509,10 +504,6 @@ input[type="range"].compact {
   font-size: 11px;
 }
 
-/* ========================================================================
- * HSPlanner Dropdown — searchable, keyboard-navigable, rarity-colored.
- * Komponent: Dropdown.tsx. Klasy: .hs-dd*.
- * ====================================================================== */
 
 .hs-dd {
   position: relative;
@@ -705,7 +696,6 @@ input[type="range"].compact {
   --rarity: #c9762a;
 }
 
-/* Projectowe rarity (ItemRarity z src/types/item.ts) */
 .hs-dd-item.rarity-common {
   --rarity: #ffffff;
 }
@@ -812,13 +802,10 @@ input[type="range"].compact {
   margin: 0 2px;
 }
 
-/* Bez pola search menu samo przejmuje klawiaturę — ukryj jego ring focusu. */
 .hs-dd-menu:focus {
   outline: none;
 }
 
-/* Kompaktowy, inline wariant — nagłówek (Class/Season) oraz wybór tieru.
- * Trigger dopasowuje się do treści zamiast zajmować 100% szerokości. */
 .hs-dd--compact {
   width: auto;
 }
@@ -827,8 +814,6 @@ input[type="range"].compact {
   padding: 5px 10px;
   font-size: 12px;
 }
-/* Compact menu sizing (width/min/max) is applied inline on the portaled menu,
- * which is no longer a descendant of .hs-dd. Only item density lives here. */
 .hs-dd-menu--compact .hs-dd-item {
   padding: 8px 12px;
 }

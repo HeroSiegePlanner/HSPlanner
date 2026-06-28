@@ -17,7 +17,6 @@ import {
   withStars,
 } from './itemEdits'
 
-// A synthetic 3-socket item that needs no data lookups for socket/star/affix edits.
 function synthItem(baseId = '__synthetic__'): EquippedItem {
   return {
     baseId,
@@ -128,7 +127,7 @@ describe('itemEdits — data-driven happy paths', () => {
     const base = items.find(
       (i) => i.rarity === 'common' && rw.allowedBaseTypes.includes(i.baseType),
     )
-    if (!base) return // data without a compatible common base; skip
+    if (!base) return
     const item = makeEquippedItem(base.id)!
     const next = withRuneword(item, rw.id)
     if (rw.runes.length <= 6) {

@@ -7,7 +7,6 @@ import {
   type AffixMathProvider,
 } from './itemTextFormat'
 
-// Deterministic stub replacing the Rust display_values command (fixtures use stars: 0).
 const stubMath: AffixMathProvider = {
   async batch({ affixes: affixReqs = [], scaled = [] }) {
     const rolled = (
@@ -149,7 +148,6 @@ Affixes:
     const allSkillsAffix = findToAllSkillsT1Affix()
     if (!allSkillsAffix) return
 
-    // Numeric-prefix replacement must match by stat text, not collide with a value-less affix.
     const text = `Rarity: ${baseItem.rarity.toUpperCase()}
 ${baseItem.name}
 ${baseItem.baseType}
@@ -231,7 +229,6 @@ describe('itemTextFormat — implicitOverrides support', () => {
   })
 
   it('parser accepts a brand new implicit not present on base.implicit', async () => {
-    // Inject a stat key the base item does NOT have; expect a new implicitOverrides entry.
     const baseItem = findItemWithImplicit()
     if (!baseItem) return
     const newStatKey = 'increased_strength'

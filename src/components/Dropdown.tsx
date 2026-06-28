@@ -25,9 +25,7 @@ interface DropdownProps {
   clearLabel?: string
   onHoverChange?: (id: string | null) => void
   onOpenChange?: (open: boolean) => void
-  /** Show the search box + keyboard-hint footer. Defaults to true; set false for short lists. */
   searchable?: boolean
-  /** Inline, content-sized variant for headers and tight rows. */
   compact?: boolean
 }
 
@@ -71,14 +69,9 @@ export default function Dropdown({
     onHoverChange?.(null)
     onOpenChange?.(false)
   }
-  // The menu is portaled out of `ref`; pass menuRef so inside-clicks aren't
-  // treated as outside-clicks.
   useOutsideClick(ref, open, close, menuRef)
 
-  // Position the portaled menu against the trigger and keep it in sync while
-  // open. Rendering in a portal means no ancestor `overflow: hidden` can clip it.
   useLayoutEffect(() => {
-    // Menu render is gated on `open` too, so no need to clear `pos` on close.
     if (!open) return
     function recompute() {
       const el = ref.current
@@ -110,8 +103,6 @@ export default function Dropdown({
     }
   }, [open])
 
-  // After the menu mounts, keep a wide (compact) menu fully on screen when its
-  // trigger sits near the right edge. Measured imperatively to avoid a render loop.
   useLayoutEffect(() => {
     const menu = menuRef.current
     if (!open || !pos || !menu) return
@@ -161,8 +152,6 @@ export default function Dropdown({
     }
   }
 
-  // With no search box to autofocus, focus the menu itself when it mounts so it
-  // captures arrow / Enter / Escape keys for keyboard navigation.
   const setMenuNode = useCallback(
     (node: HTMLDivElement | null) => {
       menuRef.current = node

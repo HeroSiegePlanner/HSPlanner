@@ -17,7 +17,6 @@ import heroSiegeTreeJson from './hero-siege-tree.json'
 import treeNodesJson from './tree-nodes.json'
 import nodeIconsJson from './node-icons.json'
 
-// Empty localStorage under vitest resolves the default season (s9): collections equal base JSON.
 describe('data hub season resolution (default season)', () => {
   it('resolves s9 with no errors', () => {
     expect(activeSeasonId).toBe('s9')

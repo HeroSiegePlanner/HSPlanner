@@ -71,7 +71,6 @@ describe('sanitizeHtml', () => {
   })
 
   it('strips dangerous descendants lifted out of disallowed wrappers', () => {
-    // Regression: children lifted from an unknown wrapper must still be sanitized.
     const out = sanitizeHtml('<center><img src=x onerror=alert(1)></center>')
     expect(out).not.toContain('<img')
     expect(out).not.toMatch(/onerror/i)

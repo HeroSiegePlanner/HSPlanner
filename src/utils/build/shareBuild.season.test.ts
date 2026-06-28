@@ -24,7 +24,6 @@ describe('share schema v2 season', () => {
     expect(decoded!.season).toBe('s9')
   })
 
-  // Regression: v1 payloads (no `se` field) must decode as the legacy season 's9'
   it('v1 payload (no se field) decodes as legacy season s9', () => {
     const snap = snapshot()
     const v1Payload = {

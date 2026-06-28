@@ -240,7 +240,6 @@ function SkillIcon({
     shadows.push(`0 0 12px rgba(${dmgRgb},0.4)`)
   }
   const ringShadow = shadows.length ? shadows.join(', ') : undefined
-  // Ranged bonuses get parentheses for readability: "20+(60-62)" vs flat "20+61".
   const bonusLabel = bonus
     ? `${bonus[0] >= 0 ? '+' : ''}${
         bonus[0] === bonus[1] ? formatPair(bonus) : `(${formatPair(bonus)})`

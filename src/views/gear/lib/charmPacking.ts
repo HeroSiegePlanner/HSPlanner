@@ -98,7 +98,6 @@ function backtrackPack(
 export function packCharms(
   charms: { slotKey: SlotKey; w: number; h: number }[],
 ): { placed: PlacedCharm[]; overflow: SlotKey[]; occupancy: boolean[] } {
-  // Backtracking solver first, greedy first-fit-decreasing fallback on overflow.
   const sorted = [...charms].sort((a, b) => {
     const areaDiff = b.w * b.h - a.w * a.h
     if (areaDiff !== 0) return areaDiff

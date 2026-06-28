@@ -13,7 +13,6 @@ export function useOutsideClick(
       if (!el) return;
       const target = e.target as Node;
       if (el.contains(target)) return;
-      // The menu may be portaled outside `ref`; treat clicks inside it as inside.
       if (extraRef?.current?.contains(target)) return;
       onOutside();
     };
