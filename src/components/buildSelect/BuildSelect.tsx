@@ -6,6 +6,11 @@ import { activeSeasonId } from '../../data'
 import { PENDING_IMPORT_KEY, reloadIntoSeason } from '../../data/seasons/registry'
 import { getActiveProfile, type Folder } from '../../utils/build/savedBuilds'
 import { decodeShareToBuild, parseBuildCodeFromInput } from '../../utils/build/shareBuild'
+import {
+  GistShareError,
+  fetchBuildCodeFromGist,
+  isGistReference,
+} from '../../utils/build/gistShare'
 import { readStorage, writeStorage } from '../../utils/storage'
 import { approxKB } from './helpers'
 import { useBuildLibrary } from './useBuildLibrary'
@@ -212,8 +217,16 @@ export default function BuildSelect({
     }
   }
 
-  const handleImport = (text: string): string | null => {
-    const code = parseBuildCodeFromInput(text)
+  const handleImport = async (text: string): Promise<string | null> => {
+    let raw = text
+    if (isGistReference(text)) {
+      try {
+        raw = await fetchBuildCodeFromGist(text)
+      } catch (e) {
+        return e instanceof GistShareError ? e.message : 'Could not fetch the Gist'
+      }
+    }
+    const code = parseBuildCodeFromInput(raw)
     if (!code) return "Couldn't read a build code from input"
     const decoded = decodeShareToBuild(code)
     if (!decoded) return 'Invalid or corrupted build code'

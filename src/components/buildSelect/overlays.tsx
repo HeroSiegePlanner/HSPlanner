@@ -245,16 +245,24 @@ export function ImportOverlay({
   onImport,
   onClose,
 }: {
-  onImport: (text: string) => string | null
+  onImport: (text: string) => Promise<string | null>
   onClose: () => void
 }) {
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const submit = (value: string) => {
-    const err = onImport(value)
-    if (err) setError(err)
+  const submit = async (value: string) => {
+    if (busy) return
+    setBusy(true)
+    setError(null)
+    try {
+      const err = await onImport(value)
+      if (err) setError(err)
+    } finally {
+      setBusy(false)
+    }
   }
   const handleFile = (file: File) => {
     const reader = new FileReader()
@@ -277,15 +285,16 @@ export function ImportOverlay({
           <button
             type="button"
             onClick={() => submit(text)}
+            disabled={busy}
             className={BTN_GOLD}
             style={{ background: GOLD_BTN }}
           >
-            Import &amp; open
+            {busy ? 'Importing…' : 'Import & open'}
           </button>
         </>
       }
     >
-      <FieldLabel>Paste a build code or share URL — or load from file</FieldLabel>
+      <FieldLabel>Paste a build code, share URL, or Gist link — or load from file</FieldLabel>
       <textarea
         autoFocus
         value={text}
@@ -313,7 +322,7 @@ export function ImportOverlay({
       <input
         ref={fileRef}
         type="file"
-        accept=".txt,.hsbuild,.hspb,application/json,text/plain"
+        accept=".hsp,.txt,.hsbuild,.hspb,application/json,text/plain"
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0]

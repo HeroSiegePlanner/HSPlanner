@@ -21,7 +21,7 @@ interface BuildSelectOverlaysProps {
   folders: Folder[]
   canOverwrite: boolean
 
-  onImport: (text: string) => string | null
+  onImport: (text: string) => Promise<string | null>
   onOverwrite: () => void
   onSaveAsNew: (name: string) => void
   onRenameBuild: (buildId: string, name: string) => void
