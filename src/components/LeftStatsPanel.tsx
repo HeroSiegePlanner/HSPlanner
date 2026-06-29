@@ -75,7 +75,7 @@ const ATTR_COLOR: Record<string, string> = {
   intelligence: "text-stat-purple",
   energy: "text-stat-blue",
   vitality: "text-stat-red",
-  armor: "text-muted",
+  armor: "text-text",
 };
 
 const GOLD_OFFENSE = new Set(["enhanced_damage", "crit_chance", "crit_damage"]);
@@ -580,11 +580,8 @@ function StatLine({
   const zero = isZero(value);
   const def = statDef(statKey);
   const label = def?.name ?? statKey;
-  const labelClass = zero
-    ? "text-faint"
-    : highlight === "blue"
-      ? "text-stat-blue"
-      : "text-muted";
+  const labelClass =
+    highlight === "blue" ? "text-stat-blue" : "text-muted";
   const valueClass = zero
     ? "text-faint"
     : highlight === "gold"

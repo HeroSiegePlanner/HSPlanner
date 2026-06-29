@@ -72,7 +72,6 @@ async function runInstall(
   }
 }
 
-// Reject non-https URLs so a tampered manifest can't smuggle javascript:/data: payloads.
 function isSafeUpdateUrl(url: string): boolean {
   try {
     const parsed = new URL(url);

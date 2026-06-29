@@ -307,8 +307,7 @@ function readLegacyBuilds(): SavedBuild[] {
       const parsed: unknown = JSON.parse(raw)
       if (Array.isArray(parsed)) return cleanBuilds(parsed, new Set())
     } catch {
-      // Corrupt/non-array v2: fall through to the v1 migration below so a
-      // damaged v2 key can't mask recoverable v1 data.
+      // ignore
     }
   }
   const v1 = readV1()
@@ -331,10 +330,8 @@ export function readLibrary(): SavedLibrary {
         return { version: 3, builds: cleanBuilds(p.builds, validIds), folders }
       }
     } catch {
-      // fall through to the corrupt-data path below
+      // ignore
     }
-    // Back up the corrupt v3 blob before returning empty, otherwise the next
-    // save overwrites the v3 key and destroys recoverable builds.
     backupCorruptLibrary(raw)
     return emptyLibrary()
   }
@@ -344,8 +341,7 @@ export function readLibrary(): SavedLibrary {
     try {
       writeLibrary(library)
     } catch {
-      // Best-effort migration: keep the in-memory library and retry persisting
-      // on the next load instead of throwing (which would appear to wipe data).
+      // ignore
     }
   }
   return library
@@ -356,7 +352,7 @@ function backupCorruptLibrary(raw: string): void {
     const key = `${STORAGE_KEY}.corrupt`
     if (!readStorage(key)) writeStorage(key, raw)
   } catch {
-    // ignore — the backup is purely best-effort
+    // ignore
   }
 }
 

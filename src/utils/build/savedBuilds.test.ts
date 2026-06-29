@@ -6,7 +6,6 @@ afterEach(() => {
 })
 
 function failingSetItem() {
-  // Stub setItem to throw a quota-exceeded DOMException like a real browser.
   vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
     throw new DOMException('quota exceeded', 'QuotaExceededError')
   })

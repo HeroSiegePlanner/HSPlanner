@@ -4,13 +4,17 @@ export function useOutsideClick(
   ref: RefObject<HTMLElement | null>,
   enabled: boolean,
   onOutside: () => void,
+  extraRef?: RefObject<HTMLElement | null>,
 ): void {
   useEffect(() => {
     if (!enabled) return;
     const handler = (e: MouseEvent | TouchEvent) => {
       const el = ref.current;
       if (!el) return;
-      if (!el.contains(e.target as Node)) onOutside();
+      const target = e.target as Node;
+      if (el.contains(target)) return;
+      if (extraRef?.current?.contains(target)) return;
+      onOutside();
     };
     document.addEventListener("mousedown", handler);
     document.addEventListener("touchstart", handler, { passive: true });
@@ -18,5 +22,5 @@ export function useOutsideClick(
       document.removeEventListener("mousedown", handler);
       document.removeEventListener("touchstart", handler);
     };
-  }, [ref, enabled, onOutside]);
+  }, [ref, enabled, onOutside, extraRef]);
 }

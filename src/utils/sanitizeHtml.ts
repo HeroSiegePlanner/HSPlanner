@@ -132,10 +132,6 @@ function walk(root: Element): void {
     if (!ALLOWED_TAGS.has(tag)) {
       const parent = child.parentNode
       if (!parent) continue
-      // Sanitize the subtree in place BEFORE lifting it out: the lifted nodes
-      // are not part of this loop's static snapshot, so they would otherwise
-      // escape sanitization and could smuggle through dangerous descendants or
-      // onerror/onload handlers (e.g. <center><img src=x onerror=...>).
       walk(child)
       while (child.firstChild) parent.insertBefore(child.firstChild, child)
       parent.removeChild(child)
@@ -152,7 +148,6 @@ export function sanitizeHtml(html: string): string {
     return html.replace(/<[^>]*>/g, '')
   }
   const parser = new DOMParser()
-  // Walk doc.body directly; a wrapper div would let "</div>" smuggle the tail out.
   const doc = parser.parseFromString(html, 'text/html')
   walk(doc.body)
   return doc.body.innerHTML

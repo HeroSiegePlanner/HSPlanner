@@ -10,7 +10,6 @@ interface BuildsMenuProps {
 
 export default function BuildsMenu({ onOpenLibrary }: BuildsMenuProps) {
   const activeBuildId = useBuild((s) => s.activeBuildId);
-  // Subscribe so the active build name refreshes when saved builds change.
   useBuild((s) => s.savedBuildsVersion);
   const activeBuild = activeBuildId ? getSavedBuild(activeBuildId) : null;
 

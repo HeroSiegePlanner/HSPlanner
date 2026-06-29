@@ -177,7 +177,6 @@ describe('groupStatKeysByCategory', () => {
   })
 
   it('emits a key once when defs alias it under two display names', () => {
-    // Aliased keys must surface once or React emits duplicate-key warnings.
     const grouped = groupStatKeysByCategory(
       [mkDef('damage_per_rage_stack'), mkDef('damage_per_rage_stack')],
       ['offense'],
@@ -241,7 +240,6 @@ describe('dedupeStatDefsByKey', () => {
   })
 
   it('yields unique custom-stat option ids for the real game config', () => {
-    // Raw config keeps aliased defs for item-text parsing, so the picker pipeline dedupes.
     const visible = gameConfig.stats.filter(
       (s) => !s.itemOnly && !s.skillScoped,
     )
