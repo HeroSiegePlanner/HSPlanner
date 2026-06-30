@@ -396,22 +396,34 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                         ? resolveSkillIcon(skill)
                         : resolveSubskillIconUrl(sub!.icon)
                       if (iconUrl) {
-                        const imgR = r * 0.9
+                        const imgR = isRoot ? r * 1.22 : r * 0.9
                         return (
-                          <image
-                            href={iconUrl}
-                            x={cx - imgR}
-                            y={cy - imgR}
-                            width={imgR * 2}
-                            height={imgR * 2}
-                            pointerEvents="none"
-                            style={{
-                              imageRendering: 'pixelated',
-                              filter: isRoot
-                                ? 'drop-shadow(0 0 8px rgba(255,200,80,0.55))'
-                                : 'drop-shadow(0 0 4px rgba(0,0,0,0.6))',
-                            }}
-                          />
+                          <>
+                            {isRoot && (
+                              <clipPath id="hsplanner-root-icon-clip">
+                                <circle cx={cx} cy={cy} r={r} />
+                              </clipPath>
+                            )}
+                            <image
+                              href={iconUrl}
+                              x={cx - imgR}
+                              y={cy - imgR}
+                              width={imgR * 2}
+                              height={imgR * 2}
+                              clipPath={
+                                isRoot
+                                  ? 'url(#hsplanner-root-icon-clip)'
+                                  : undefined
+                              }
+                              pointerEvents="none"
+                              style={{
+                                imageRendering: 'pixelated',
+                                filter: isRoot
+                                  ? 'drop-shadow(0 0 8px rgba(255,200,80,0.55))'
+                                  : 'drop-shadow(0 0 4px rgba(0,0,0,0.6))',
+                              }}
+                            />
+                          </>
                         )
                       }
                       const glyph = isRoot
