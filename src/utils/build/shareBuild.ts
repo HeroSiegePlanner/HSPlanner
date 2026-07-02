@@ -154,6 +154,7 @@ const shareableBuildSchema = z.object({
   mc: z.string().max(MAX_KEY_LENGTH).nullable().optional(),
   ms: recordOfNonNegativeNumbers.optional(),
   mi: inventorySchema.optional(),
+  mda: recordOfBooleans.optional(),
 })
 
 export interface ShareableBuild {
@@ -183,6 +184,7 @@ export interface ShareableBuild {
   mc?: string | null
   ms?: Record<string, number>
   mi?: Inventory
+  mda?: Record<string, boolean>
 }
 
 export interface BuildSnapshot {
@@ -209,6 +211,7 @@ export interface BuildSnapshot {
   mercClassId: string | null
   mercSkillRanks: Record<string, number>
   mercInventory: Inventory
+  mercDisabledAuras: Record<string, boolean>
 }
 
 function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
@@ -250,6 +253,9 @@ function serialize(snapshot: BuildSnapshot, notes?: string): ShareableBuild {
   }
   if (Object.keys(snapshot.mercInventory ?? {}).length > 0) {
     out.mi = snapshot.mercInventory
+  }
+  if (Object.keys(snapshot.mercDisabledAuras ?? {}).length > 0) {
+    out.mda = snapshot.mercDisabledAuras
   }
   if (notes) out.n = notes
   if (snapshot.customStats.length > 0) {
@@ -337,6 +343,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
     mercClassId: encoded.mc ?? null,
     mercSkillRanks: encoded.ms ?? {},
     mercInventory: normalizeInventory(encoded.mi),
+    mercDisabledAuras: encoded.mda ?? {},
   }
   return {
     snapshot,

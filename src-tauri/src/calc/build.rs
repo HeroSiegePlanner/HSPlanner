@@ -36,6 +36,7 @@ pub struct BuildPerformanceDeps<'a> {
     pub enemy_resistances: &'a HashMap<String, f64>,
     pub proc_toggles: &'a HashMap<String, bool>,
     pub kills_per_sec: f64,
+    pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -169,6 +170,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         player_conditions: deps.player_conditions,
         subskill_ranks: deps.subskill_ranks,
         enemy_conditions: deps.enemy_conditions,
+        granted_skill_ranks: deps.granted_skill_ranks,
     };
     let computed = compute_build_stats(&stats_input);
 
@@ -476,6 +478,7 @@ mod tests {
             enemy_resistances,
             proc_toggles,
             kills_per_sec: 0.0,
+            granted_skill_ranks: None,
         }
     }
 

@@ -54,6 +54,7 @@ export interface BuildPerformanceInput {
   procToggles?: Record<string, boolean>
   killsPerSec?: number
   season?: string
+  grantedSkillRanks?: Record<string, [number, number]>
 }
 
 export type RustRanged = [number, number]
@@ -122,6 +123,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     procToggles: deps.procToggles,
     killsPerSec: deps.killsPerSec,
     season: deps.season ?? activeSeasonId,
+    grantedSkillRanks: deps.grantedSkillRanks,
   }
 }
 

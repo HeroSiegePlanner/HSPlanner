@@ -7,9 +7,11 @@ type MercSlice = Pick<
   | 'mercClassId'
   | 'mercSkillRanks'
   | 'mercInventory'
+  | 'mercDisabledAuras'
   | 'setMercClass'
   | 'setMercSkillRank'
   | 'commitMercItem'
+  | 'setMercAuraDisabled'
   | 'resetMerc'
 >
 
@@ -22,6 +24,7 @@ export const createMercSlice: StateCreator<
   mercClassId: null,
   mercSkillRanks: {},
   mercInventory: {},
+  mercDisabledAuras: {},
 
   setMercClass: (id) =>
     set((s) => {
@@ -55,6 +58,19 @@ export const createMercSlice: StateCreator<
       return { mercInventory: next }
     }),
 
+  setMercAuraDisabled: (auraKey, disabled) =>
+    set((s) => {
+      const next = { ...s.mercDisabledAuras }
+      if (disabled) next[auraKey] = true
+      else delete next[auraKey]
+      return { mercDisabledAuras: next }
+    }),
+
   resetMerc: () =>
-    set({ mercClassId: null, mercSkillRanks: {}, mercInventory: {} }),
+    set({
+      mercClassId: null,
+      mercSkillRanks: {},
+      mercInventory: {},
+      mercDisabledAuras: {},
+    }),
 })

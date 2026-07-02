@@ -43,6 +43,7 @@ export function snapshotPatch(snap: BuildSnapshot) {
     mercClassId: snap.mercClassId ?? null,
     mercSkillRanks: snap.mercSkillRanks ?? {},
     mercInventory: snap.mercInventory ?? {},
+    mercDisabledAuras: snap.mercDisabledAuras ?? {},
   }
 }
 

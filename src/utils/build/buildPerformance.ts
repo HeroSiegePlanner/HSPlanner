@@ -56,6 +56,7 @@ export interface BuildPerformanceDeps {
   procToggles: Record<string, boolean>
   killsPerSec: number
   season?: string
+  grantedSkillRanks?: Record<string, [number, number]>
 }
 
 export interface BuildStatDiff {

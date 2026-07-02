@@ -4,6 +4,7 @@ import {
   applyDisabledPotions,
   type BuildPerformanceDeps,
 } from '../utils/build/buildPerformance'
+import { mercGrantedSkillRanks } from '../utils/build/mercStats'
 
 export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const classId = useBuild((s) => s.classId)
@@ -25,10 +26,17 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
+  const mercInventory = useBuild((s) => s.mercInventory)
+  const mercDisabledAuras = useBuild((s) => s.mercDisabledAuras)
 
   const inventoryForCalc = useMemo(
     () => applyDisabledPotions(inventory, disabledPotions),
     [inventory, disabledPotions],
+  )
+
+  const grantedSkillRanks = useMemo(
+    () => mercGrantedSkillRanks(mercInventory, mercDisabledAuras),
+    [mercInventory, mercDisabledAuras],
   )
 
   return useMemo<BuildPerformanceDeps>(
@@ -51,6 +59,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       enemyResistances,
       procToggles,
       killsPerSec,
+      grantedSkillRanks,
     }),
     [
       classId,
@@ -71,6 +80,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       enemyResistances,
       procToggles,
       killsPerSec,
+      grantedSkillRanks,
     ],
   )
 }

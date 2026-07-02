@@ -25,6 +25,7 @@ export function makeSnapshot(overrides: Partial<BuildSnapshot> = {}): BuildSnaps
     mercClassId: null,
     mercSkillRanks: {},
     mercInventory: {},
+    mercDisabledAuras: {},
     ...overrides,
   }
 }

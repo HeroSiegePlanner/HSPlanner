@@ -166,6 +166,7 @@ export const createSavedBuildsSlice: StateCreator<
       mercClassId: s.mercClassId,
       mercSkillRanks: s.mercSkillRanks,
       mercInventory: s.mercInventory,
+      mercDisabledAuras: s.mercDisabledAuras,
     }
   },
 
@@ -205,6 +206,7 @@ export const createSavedBuildsSlice: StateCreator<
       mercClassId: null,
       mercSkillRanks: {},
       mercInventory: {},
+      mercDisabledAuras: {},
       activeBuildId: null,
       activeProfileId: null,
       notes: '',

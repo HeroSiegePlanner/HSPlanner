@@ -718,6 +718,8 @@ pub struct BuildPerformanceInput {
     pub kills_per_sec: f64,
     #[serde(default)]
     pub season: Option<String>,
+    #[serde(default)]
+    pub granted_skill_ranks: HashMap<String, calc::Ranged>,
 }
 
 #[tauri::command]
@@ -742,6 +744,7 @@ pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance 
         enemy_resistances: &input.enemy_resistances,
         proc_toggles: &input.proc_toggles,
         kills_per_sec: input.kills_per_sec,
+        granted_skill_ranks: Some(&input.granted_skill_ranks),
     };
     compute_build_performance(&deps)
 }
@@ -815,6 +818,7 @@ pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
         player_conditions: &input.player_conditions,
         subskill_ranks: &input.subskill_ranks,
         enemy_conditions: &input.enemy_conditions,
+        granted_skill_ranks: Some(&input.granted_skill_ranks),
     };
     compute_build_stats(&stats_input)
 }
@@ -857,6 +861,7 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         player_conditions: &input.deps.player_conditions,
         subskill_ranks: &input.deps.subskill_ranks,
         enemy_conditions: &input.deps.enemy_conditions,
+        granted_skill_ranks: Some(&input.deps.granted_skill_ranks),
     };
     let computed = compute_build_stats(&stats_input);
     let sources = match input.kind {

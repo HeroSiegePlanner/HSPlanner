@@ -241,6 +241,13 @@ describe('ether + merc fields', () => {
     expect(decoded!.snapshot.mercClassId).toBeNull()
     expect(decoded!.snapshot.mercSkillRanks).toEqual({})
     expect(decoded!.snapshot.mercInventory).toEqual({})
+    expect(decoded!.snapshot.mercDisabledAuras).toEqual({})
+  })
+
+  it('round-trips disabled merc auras', () => {
+    const snap = makeSnapshot({ mercDisabledAuras: { 'holy aura': true } })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.mercDisabledAuras).toEqual({ 'holy aura': true })
   })
 
   it('omits empty ether/merc fields from the encoded payload', () => {

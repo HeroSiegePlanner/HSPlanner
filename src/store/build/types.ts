@@ -35,6 +35,7 @@ export interface BuildState {
   mercClassId: string | null
   mercSkillRanks: Record<string, number>
   mercInventory: Inventory
+  mercDisabledAuras: Record<string, boolean>
   activeBuildId: string | null
   activeProfileId: string | null
   savedBuildsVersion: number
@@ -79,6 +80,7 @@ export interface BuildActions {
   setMercClass: (id: string | null) => void
   setMercSkillRank: (skillId: string, rank: number, maxRank?: number) => void
   commitMercItem: (slot: SlotKey, item: EquippedItem | null) => void
+  setMercAuraDisabled: (auraKey: string, disabled: boolean) => void
   resetMerc: () => void
   setTreeSocketed: (nodeId: number, content: TreeSocketContent | null) => void
   toggleActiveSkill: (skillId: string) => void

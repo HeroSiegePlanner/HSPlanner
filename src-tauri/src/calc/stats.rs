@@ -1299,12 +1299,23 @@ pub fn apply_attribute_divided_stats(
 }
 
 // Side-effect: push passive stats. Returns ranks map for the conversion pass.
+// `extra_ranks` carries externally granted skills (e.g. merc item auras);
+// same-skill ranks do not stack — the higher level wins.
 pub fn apply_item_granted_passive_stats(
     inventory: &Inventory,
+    extra_ranks: Option<&HashMap<String, Ranged>>,
     attr_sources: &mut SourceMap,
     stat_sources: &mut SourceMap,
 ) -> HashMap<String, Ranged> {
-    let ranks = aggregate_item_skill_bonuses(inventory, &data::data().items);
+    let mut ranks = aggregate_item_skill_bonuses(inventory, &data::data().items);
+    if let Some(extra) = extra_ranks {
+        for (name, &(min, max)) in extra.iter() {
+            let key = normalize_skill_name(name);
+            let entry = ranks.entry(key).or_insert((0.0, 0.0));
+            entry.0 = entry.0.max(min);
+            entry.1 = entry.1.max(max);
+        }
+    }
     for granted in data::item_granted_skills().iter() {
         let key = normalize_skill_name(&granted.name);
         let (rank_min, rank_max) = ranks.get(&key).copied().unwrap_or((0.0, 0.0));
@@ -1562,6 +1573,7 @@ pub struct BuildStatsInput<'a> {
     pub player_conditions: &'a HashMap<String, bool>,
     pub subskill_ranks: &'a HashMap<String, u32>,
     pub enemy_conditions: &'a HashMap<String, bool>,
+    pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
 }
 
 // Single pass of the full stat-aggregation pipeline; compute_build_stats
@@ -1638,8 +1650,12 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     apply_attribute_divided_stats(&attributes, &mut stat_sources);
 
     // 15. Item-granted skill bonuses → passive stats; ranks reused in step 19.
-    let item_granted_ranks =
-        apply_item_granted_passive_stats(input.inventory, &mut attr_sources, &mut stat_sources);
+    let item_granted_ranks = apply_item_granted_passive_stats(
+        input.inventory,
+        input.granted_skill_ranks,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
 
     // 16. Stat fan-outs (all_resistances → per-element variants)
     apply_stat_fan_outs(&mut stat_sources);
@@ -2742,6 +2758,7 @@ mod tests {
             player_conditions,
             subskill_ranks,
             enemy_conditions,
+            granted_skill_ranks: None,
         }
     }
 
@@ -2775,6 +2792,68 @@ mod tests {
         assert!(!result.stats.is_empty(), "default base stats should be present");
         // Base attributes from game-config seed the attribute map.
         assert!(!result.attributes.is_empty(), "attributes should be seeded from defaults");
+    }
+
+    // Merc-granted auras arrive as input.granted_skill_ranks and must apply
+    // the granted skill's per-rank passive stats without any worn item.
+    #[test]
+    fn granted_skill_ranks_from_input_apply_passive_stats() {
+        let granted = data::item_granted_skills().iter().find(|g| {
+            g.passive_stats
+                .as_ref()
+                .and_then(|p| p.per_rank.as_ref())
+                .is_some_and(|m| !m.is_empty())
+        });
+        let Some(granted) = granted else { return };
+        let per_rank = granted
+            .passive_stats
+            .as_ref()
+            .unwrap()
+            .per_rank
+            .as_ref()
+            .unwrap();
+        let (stat_key, per) = per_rank.iter().next().unwrap();
+
+        let allocated = HashMap::new();
+        let inventory = HashMap::new();
+        let skill_ranks = HashMap::new();
+        let active_buffs = HashMap::new();
+        let custom_stats: Vec<CustomStat> = Vec::new();
+        let alloc_tree = HashSet::new();
+        let tree_socketed = HashMap::new();
+        let player_conditions = HashMap::new();
+        let subskill_ranks = HashMap::new();
+        let enemy_conditions = HashMap::new();
+        let mut extra: HashMap<String, Ranged> = HashMap::new();
+        extra.insert(granted.name.clone(), (10.0, 20.0));
+        let mut input = empty_input(
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &player_conditions,
+            &subskill_ranks,
+            &enemy_conditions,
+        );
+        input.granted_skill_ranks = Some(&extra);
+        let result = compute_build_stats(&input);
+
+        let expected = (per * 10.0, per * 20.0);
+        let found = result
+            .stat_sources
+            .get(stat_key)
+            .into_iter()
+            .flatten()
+            .chain(result.attribute_sources.get(stat_key).into_iter().flatten())
+            .any(|s| s.label.starts_with(granted.name.as_str()) && s.value == expected);
+        assert!(
+            found,
+            "expected {expected:?} from '{}' on '{stat_key}'",
+            granted.name
+        );
     }
 
     #[test]

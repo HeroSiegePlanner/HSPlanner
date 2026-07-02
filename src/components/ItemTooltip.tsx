@@ -292,10 +292,10 @@ export function ItemTooltipBody({
             totals[k] = [cur[0] + v * rMin, cur[1] + v * rMax]
           }
         }
-        for (const [k, [a, b]] of Object.entries(totals)) {
+        for (const [k, pair] of Object.entries(totals)) {
+          const [a, b] = pair
           if (a === 0 && b === 0) continue
-          const txt = a === b ? `${a >= 0 ? '+' : ''}${a}` : `+${a}–${b}`
-          lines.push(`${txt} ${statName(k)}`)
+          lines.push(`${formatValue(a === b ? a : pair, k)} ${statName(k)}`)
         }
       }
       out.push({ skill, displayRank, lines })

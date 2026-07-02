@@ -23,7 +23,10 @@
     "name": "Holy Aura",
     "description": "Increases your and your party members attack damage and magic skill damage.",
     "passiveStats": {
-      "perRank": { "attack_damage": 2, "magic_skill_damage": 2.5 }
+      "perRank": {
+        "attack_damage": 2,
+        "magic_skill_damage": 2.5
+      }
     }
   }
 ]
