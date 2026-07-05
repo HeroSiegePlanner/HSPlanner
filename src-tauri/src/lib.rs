@@ -21,6 +21,7 @@ pub fn run() {
       calc::commands::compute_skill_damage,
       calc::commands::compute_weapon_damage,
       calc::commands::calc_build_performance,
+      calc::commands::rank_slot_items,
       calc::commands::calc_build_stats,
       calc::commands::calc_stat_breakdown,
       calc::commands::calc_warmup,

@@ -7,7 +7,7 @@ use super::skills as calc;
 use super::stats::{
     BuildStatsInput, ComputedStats, StatBreakdown, compute_build_stats, compute_stat_breakdown,
 };
-use super::types::{Affix, CustomStat, Inventory, TreeSocketContent};
+use super::types::{Affix, CustomStat, EquippedItem, Inventory, TreeSocketContent};
 
 #[derive(Deserialize)]
 #[serde(untagged)]
@@ -722,14 +722,16 @@ pub struct BuildPerformanceInput {
     pub granted_skill_ranks: HashMap<String, calc::Ranged>,
 }
 
-#[tauri::command]
-pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
-    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
-    let deps = BuildPerformanceDeps {
+fn perf_deps<'a>(
+    input: &'a BuildPerformanceInput,
+    inventory: &'a Inventory,
+    main_skill_id: Option<&'a str>,
+) -> BuildPerformanceDeps<'a> {
+    BuildPerformanceDeps {
         class_id: input.class_id.as_deref(),
         level: input.level,
         allocated_attrs: &input.allocated_attrs,
-        inventory: &input.inventory,
+        inventory,
         skill_ranks: &input.skill_ranks,
         subskill_ranks: &input.subskill_ranks,
         active_aura_id: input.active_aura_id.as_deref(),
@@ -737,7 +739,7 @@ pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance 
         custom_stats: &input.custom_stats,
         allocated_tree_nodes: &input.allocated_tree_nodes,
         tree_socketed: &input.tree_socketed,
-        main_skill_id: input.main_skill_id.as_deref(),
+        main_skill_id,
         enemy_conditions: &input.enemy_conditions,
         player_conditions: &input.player_conditions,
         skill_projectiles: &input.skill_projectiles,
@@ -745,8 +747,81 @@ pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance 
         proc_toggles: &input.proc_toggles,
         kills_per_sec: input.kills_per_sec,
         granted_skill_ranks: Some(&input.granted_skill_ranks),
+    }
+}
+
+#[tauri::command]
+pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
+    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
+    compute_build_performance(&perf_deps(
+        &input,
+        &input.inventory,
+        input.main_skill_id.as_deref(),
+    ))
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RankSlotItemsInput {
+    pub perf: BuildPerformanceInput,
+    pub slot: String,
+    pub base_ids: Vec<String>,
+    #[serde(default)]
+    pub active_skill_ids: Vec<String>,
+}
+
+// Ranks candidate bases for one slot by combined-DPS midpoint. Multi-skill
+// builds mirror the frontend combo fan-out: sum avg-hit DPS per active
+// skill, count proc DPS once.
+#[tauri::command]
+pub fn rank_slot_items(input: RankSlotItemsInput) -> HashMap<String, f64> {
+    let _scope = crate::calc::season::SeasonScope::enter(input.perf.season.clone());
+    let mid = |a: Option<f64>, b: Option<f64>| match (a, b) {
+        (Some(x), Some(y)) => Some((x + y) / 2.0),
+        _ => None,
     };
-    compute_build_performance(&deps)
+    let mut out: HashMap<String, f64> = HashMap::with_capacity(input.base_ids.len());
+    for base_id in &input.base_ids {
+        let mut inventory = input.perf.inventory.clone();
+        inventory.insert(
+            input.slot.clone(),
+            EquippedItem {
+                base_id: base_id.clone(),
+                ..Default::default()
+            },
+        );
+        let dps = if input.active_skill_ids.len() > 1 {
+            let mut sum: Option<(f64, f64)> = None;
+            let mut proc = (0.0, 0.0);
+            for (i, sid) in input.active_skill_ids.iter().enumerate() {
+                let p =
+                    compute_build_performance(&perf_deps(&input.perf, &inventory, Some(sid)));
+                if let (Some(a), Some(b)) = (p.avg_hit_dps_min, p.avg_hit_dps_max) {
+                    let s = sum.unwrap_or((0.0, 0.0));
+                    sum = Some((s.0 + a, s.1 + b));
+                }
+                if i == 0 {
+                    proc = (p.proc_dps_min, p.proc_dps_max);
+                }
+            }
+            match sum {
+                Some((a, b)) => (a + proc.0 + b + proc.1) / 2.0,
+                None => (proc.0 + proc.1) / 2.0,
+            }
+        } else {
+            let main = input
+                .active_skill_ids
+                .first()
+                .map(String::as_str)
+                .or(input.perf.main_skill_id.as_deref());
+            let p = compute_build_performance(&perf_deps(&input.perf, &inventory, main));
+            mid(p.combined_dps_min, p.combined_dps_max)
+                .or_else(|| mid(p.hit_dps_min, p.hit_dps_max))
+                .unwrap_or(0.0)
+        };
+        out.insert(base_id.clone(), dps);
+    }
+    out
 }
 
 /// Warm-up progress: `current` of `total` tree nodes parsed. Emitted as
@@ -968,5 +1043,27 @@ mod tests {
         assert!(out.stats.is_empty());
         assert!(out.proc_stats.is_empty());
         assert!(out.applied_states.is_empty());
+    }
+
+    // Proves the item-ranking batch returns one finite score per base id.
+    #[test]
+    fn rank_slot_items_scores_every_base() {
+        let perf: BuildPerformanceInput =
+            serde_json::from_str("{}").expect("all fields default");
+        let base_ids: Vec<String> = crate::calc::data::data()
+            .items
+            .keys()
+            .take(3)
+            .cloned()
+            .collect();
+        assert!(!base_ids.is_empty(), "items present");
+        let out = rank_slot_items(RankSlotItemsInput {
+            perf,
+            slot: "armor".to_string(),
+            base_ids: base_ids.clone(),
+            active_skill_ids: Vec::new(),
+        });
+        assert_eq!(out.len(), base_ids.len());
+        assert!(out.values().all(|v| v.is_finite() && *v >= 0.0));
     }
 }

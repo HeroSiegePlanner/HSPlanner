@@ -219,6 +219,25 @@ export async function computeBuildPerformanceAsync(
   return mergeCombinedPerformance(ids, raws)
 }
 
+export async function rankSlotItemsNative(
+  deps: BuildPerformanceDeps,
+  slot: string,
+  baseIds: string[],
+): Promise<Record<string, number>> {
+  try {
+    return await invoke<Record<string, number>>('rank_slot_items', {
+      input: {
+        perf: depsToInput(deps),
+        slot,
+        baseIds,
+        activeSkillIds: deps.activeSkillIds,
+      },
+    })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
 interface RustForge {
   itemName: string
   modName: string

@@ -10,11 +10,13 @@ export function GearItemRow({
   selected,
   onSelect,
   onHover,
+  sortBadge,
 }: {
   row: PickerRow
   selected: boolean
   onSelect: () => void
   onHover: () => void
+  sortBadge?: string | null
 }) {
   const rarity = row.rarity
   const nameColor = rarity ? RARITY_TEXT[rarity] : 'text-text'
@@ -30,7 +32,10 @@ export function GearItemRow({
       className={`group relative grid w-full cursor-pointer items-center gap-3 border-b border-border px-4 py-2.5 text-left transition-colors last:border-b-0 hover:bg-accent-hot/5 ${
         selected ? 'bg-accent-hot/5' : ''
       }`}
-      style={{ gridTemplateColumns: '40px 1fr auto' }}
+      style={{
+        gridTemplateColumns:
+          sortBadge != null ? '40px 1fr auto auto' : '40px 1fr auto',
+      }}
     >
       <span
         className={`pointer-events-none absolute left-0 top-0 bottom-0 w-0.5 bg-accent transition-opacity ${
@@ -59,6 +64,11 @@ export function GearItemRow({
       <span className={`truncate text-[12px] font-medium ${nameColor}`}>
         {row.name}
       </span>
+      {sortBadge != null && (
+        <span className="shrink-0 rounded-[2px] border border-accent-deep/40 bg-accent-deep/10 px-1.5 py-0.5 text-right font-mono text-[10px] font-semibold tabular-nums text-accent-hot">
+          {sortBadge}
+        </span>
+      )}
       <span className="truncate font-mono text-[9px] tracking-[0.04em] text-muted/80 max-w-45">
         {typeof row.meta === 'string' ? row.meta : ''}
       </span>

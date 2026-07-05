@@ -156,6 +156,7 @@ export function GearSlotModal({
       <ItemListRail
         slot={slot}
         selectedBaseId={draft?.baseId}
+        dpsRankingEnabled={dpsPreviewEnabled}
         onSelect={(id) => {
           d.pickBase(id)
           setCommitError(null)

@@ -1,8 +1,28 @@
 import { getItemImage, items } from '../../data'
 import { formatValue, statName } from '../../utils/item/stats'
 import type { PickerRow } from '../../components/PickerModal'
-import type { ItemBase, SlotKey } from '../../types'
+import type { ItemBase, RangedValue, SlotKey } from '../../types'
 import { RARITY_LABEL, RARITY_ORDER } from './lib/rarity'
+
+function midValue(v: RangedValue | undefined): number {
+  if (v === undefined) return 0
+  return Array.isArray(v) ? (v[0] + v[1]) / 2 : v
+}
+
+function buildSortValues(i: ItemBase): Record<string, number> {
+  const out: Record<string, number> = {}
+  for (const [k, v] of Object.entries(i.implicit ?? {})) {
+    const mid = midValue(v)
+    if (mid !== 0) out[k] = mid
+  }
+  if (i.defenseMax !== undefined) out.defense = i.defenseMax
+  if (i.damageMin !== undefined && i.damageMax !== undefined)
+    out.weapon_damage = (i.damageMin + i.damageMax) / 2
+  if (i.blockChance !== undefined) out.block_chance = i.blockChance
+  const sockets = i.maxSockets ?? i.sockets
+  if (sockets !== undefined && sockets > 0) out.sockets = sockets
+  return out
+}
 
 function slotGroup(slotKey: SlotKey): string {
   return slotKey.replace(/_\d+$/, '')
@@ -73,6 +93,7 @@ export function pickerItemsForSlot(slotKey: SlotKey): PickerRow[] {
       meta: parts.join(' · '),
       searchTerms: buildItemSearchTerms(i),
       iconUrl: getItemImage(i.id),
+      sortValues: buildSortValues(i),
     }
   })
 }
