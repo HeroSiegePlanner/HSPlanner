@@ -1,10 +1,15 @@
-import { gameConfig, getItem, getItemGrantedSkillByName } from '../../data'
+import {
+  activeSeasonId,
+  effectiveStars,
+  gameConfig,
+  getItem,
+  getItemGrantedSkillByName,
+  itemGrantedRankStarBonus,
+} from '../../data'
 import type { Inventory } from '../../types'
 import { rangedMax, rangedMin } from '../item/stats'
 import type { BuildPerformanceDeps } from './buildPerformance'
 import { defaultEnemyResistances } from './shareBuild'
-
-const GRANT_AURA_RE = /^Grant Aura:\s*(.+?)\s+Level\b/i
 
 export function mercOnlyDeps(mercInventory: Inventory): BuildPerformanceDeps {
   const allocatedAttrs = Object.fromEntries(
@@ -68,21 +73,20 @@ export function mercAuraKey(name: string): string {
 
 export function mercGrantedAuras(mercInventory: Inventory): MercGrantedAura[] {
   const out: MercGrantedAura[] = []
-  for (const equipped of Object.values(mercInventory)) {
+  for (const [slot, equipped] of Object.entries(mercInventory)) {
     if (!equipped) continue
     const base = getItem(equipped.baseId)
-    if (!base) continue
-    for (const effect of base.uniqueEffects ?? []) {
-      const name = GRANT_AURA_RE.exec(effect)?.[1]?.trim()
-      if (!name || !getItemGrantedSkillByName(name)) continue
-      const level = base.skillBonuses?.[name]
-      if (level == null) continue
+    if (!base?.skillBonuses) continue
+    const stars = effectiveStars(slot, activeSeasonId, equipped.stars)
+    const starBonus = itemGrantedRankStarBonus(stars)
+    for (const [name, level] of Object.entries(base.skillBonuses)) {
+      if (!getItemGrantedSkillByName(name)?.aura) continue
       out.push({
         name,
         itemName: base.name,
         baseId: base.id,
-        levelMin: rangedMin(level),
-        levelMax: rangedMax(level),
+        levelMin: Math.round(rangedMin(level)) + starBonus,
+        levelMax: Math.round(rangedMax(level)) + starBonus,
       })
     }
   }

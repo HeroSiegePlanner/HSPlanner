@@ -698,6 +698,12 @@
       "format": "percent"
     },
     {
+      "key": "damage_per_resist_point",
+      "name": "Damage per Point of Resistance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "dot_duration",
       "name": "Damage Over Time Duration",
       "category": "offense",
@@ -1711,6 +1717,18 @@
     {
       "key": "damaging_aura_radius",
       "name": "Increased Damaging Aura Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "buffing_aura_effectiveness",
+      "name": "Increased Buffing Aura Effectiveness",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "buffing_aura_range",
+      "name": "Increased Buffing Aura Range",
       "category": "offense",
       "format": "percent"
     },

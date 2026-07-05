@@ -26,6 +26,7 @@ import heroSiegeTreeJson from './hero-siege-tree.json'
 import nodeIconsJson from './node-icons.json'
 import etherTreeJson from './ether-tree.json'
 import mercenariesJson from './mercenaries.json'
+import starScalingJson from './star-scaling.json'
 import { resolveActiveSeasonId, SEASON_BEFORE_CHARM_STARS } from './seasons/registry'
 import { loadSeasonPatchSet } from './seasons/load'
 import {
@@ -248,6 +249,26 @@ export function effectiveStars(
   stars: number | null | undefined,
 ): number | null {
   return canStarForge(slot, season) ? (stars ?? null) : null
+}
+
+const starScaling = patched(
+  starScalingJson as Record<string, unknown>,
+  applyRecordMergePatch(
+    starScalingJson as unknown as Record<string, Record<string, unknown>>,
+    seasonPatches.starScaling,
+    'star-scaling',
+  ) as PatchResult<Record<string, unknown>>,
+)
+
+// mirrors Rust item_granted_skill_rank_flat_bonus (itemSpecificStaircase)
+export function itemGrantedRankStarBonus(
+  stars: number | null | undefined,
+): number {
+  if (!stars || stars <= 0) return 0
+  const staircase = starScaling.itemSpecificStaircase
+  if (!Array.isArray(staircase)) return 0
+  const bonus = staircase[stars]
+  return typeof bonus === 'number' ? bonus : 0
 }
 
 export type ForgeKind = 'satanic_crystal'

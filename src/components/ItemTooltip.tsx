@@ -302,6 +302,12 @@ export function ItemTooltipBody({
     }
     return out
   })()
+  const grantedSkillNames = new Set(
+    grantedSkillEntries.map((e) => e.skill.name.trim().toLowerCase()),
+  )
+  const visibleSkillBonusEntries = skillBonusEntries.filter(
+    ([skill]) => !grantedSkillNames.has(skill.trim().toLowerCase()),
+  )
   const runewordEntries = runeword
     ? Object.entries(runeword.stats).filter(([, v]) => v !== 0)
     : []
@@ -351,7 +357,7 @@ export function ItemTooltipBody({
         </TooltipSection>
       )}
 
-      {(implicitEntries.length > 0 || skillBonusEntries.length > 0) && (
+      {(implicitEntries.length > 0 || visibleSkillBonusEntries.length > 0) && (
         <TooltipSection>
           <TooltipSectionHeader tone="gold">Implicit</TooltipSectionHeader>
           <ul className="space-y-0.5 text-[12px]">
@@ -368,7 +374,7 @@ export function ItemTooltipBody({
                 )}
               </li>
             ))}
-            {skillBonusEntries.map(([skill, val]) => (
+            {visibleSkillBonusEntries.map(([skill, val]) => (
               <li key={`skill-${skill}`} className="text-accent-hot">
                 {formatValue(val, '')} to {skill}
               </li>

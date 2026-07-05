@@ -14,7 +14,7 @@ import {
   SkillEffectsBlock,
   SubtreeBonusBlock,
 } from './SkillEffectsBlock'
-import { formatPair } from './format'
+import { formatPair, formatStatPair } from './format'
 
 export function SkillDetailsPanel({
   skill,
@@ -31,6 +31,7 @@ export function SkillDetailsPanel({
   onSynergyHover,
   activeSkillIds,
   onToggleActive,
+  buffingAuraEffectiveness,
 }: {
   skill: Skill | null
   currentRank: number
@@ -46,6 +47,7 @@ export function SkillDetailsPanel({
   onSynergyHover: (id: string | null) => void
   activeSkillIds: string[]
   onToggleActive: (id: string) => void
+  buffingAuraEffectiveness: RangedValue
 }) {
   if (!skill) {
     return (
@@ -124,6 +126,16 @@ export function SkillDetailsPanel({
   const effLabel =
     effMin === effMax ? String(effMin) : `${effMin}-${effMax}`
   const hasBonus = totalBonusMin !== 0 || totalBonusMax !== 0
+  const auraEffMin =
+    typeof buffingAuraEffectiveness === 'number'
+      ? buffingAuraEffectiveness
+      : buffingAuraEffectiveness[0]
+  const auraEffMax =
+    typeof buffingAuraEffectiveness === 'number'
+      ? buffingAuraEffectiveness
+      : buffingAuraEffectiveness[1]
+  const hasAuraBonus =
+    skill.kind === 'aura' && (auraEffMin !== 0 || auraEffMax !== 0)
   return (
     <aside
       className="h-full min-h-0 w-96 shrink-0 overflow-y-auto border-l border-border p-4"
@@ -193,33 +205,51 @@ export function SkillDetailsPanel({
           </span>
         )}
       </div>
-      {hasBonus && (
+      {(hasBonus || hasAuraBonus) && (
         <DetailBlock title="Skill bonuses">
           <div className="space-y-1 text-[12px] tabular-nums">
-            {(allSkillsBonus[0] !== 0 || allSkillsBonus[1] !== 0) && (
-              <div className="flex justify-between">
-                <span className="text-muted">+ to All Skills</span>
-                <span className="text-accent-hot">
-                  +{formatPair(allSkillsBonus)}
-                </span>
-              </div>
+            {hasBonus && (
+              <>
+                {(allSkillsBonus[0] !== 0 || allSkillsBonus[1] !== 0) && (
+                  <div className="flex justify-between">
+                    <span className="text-muted">+ to All Skills</span>
+                    <span className="text-accent-hot">
+                      +{formatPair(allSkillsBonus)}
+                    </span>
+                  </div>
+                )}
+                {(elementSkillsBonus[0] !== 0 || elementSkillsBonus[1] !== 0) &&
+                  skill.damageType && (
+                    <div className="flex justify-between">
+                      <span className="text-muted">
+                        + to {skill.damageType[0]!.toUpperCase()}
+                        {skill.damageType.slice(1)} Skills
+                      </span>
+                      <span className="text-accent-hot">
+                        +{formatPair(elementSkillsBonus)}
+                      </span>
+                    </div>
+                  )}
+                {(itemBonus[0] !== 0 || itemBonus[1] !== 0) && (
+                  <div className="flex justify-between">
+                    <span className="text-muted">+ to {skill.name}</span>
+                    <span className="text-accent-hot">
+                      +{formatPair(itemBonus)}
+                    </span>
+                  </div>
+                )}
+              </>
             )}
-            {(elementSkillsBonus[0] !== 0 || elementSkillsBonus[1] !== 0) &&
-              skill.damageType && (
-                <div className="flex justify-between">
-                  <span className="text-muted">
-                    + to {skill.damageType[0]!.toUpperCase()}
-                    {skill.damageType.slice(1)} Skills
-                  </span>
-                  <span className="text-accent-hot">
-                    +{formatPair(elementSkillsBonus)}
-                  </span>
-                </div>
-              )}
-            {(itemBonus[0] !== 0 || itemBonus[1] !== 0) && (
+            {hasAuraBonus && (
               <div className="flex justify-between">
-                <span className="text-muted">+ to {skill.name}</span>
-                <span className="text-accent-hot">+{formatPair(itemBonus)}</span>
+                <span className="text-muted">Buffing Aura Effectiveness</span>
+                <span className="text-accent-hot">
+                  {formatStatPair(
+                    'buffing_aura_effectiveness',
+                    auraEffMin,
+                    auraEffMax,
+                  )}
+                </span>
               </div>
             )}
           </div>
@@ -235,6 +265,7 @@ export function SkillDetailsPanel({
         attributes={attributes}
         rankBonuses={rankBonuses}
         onSynergyHover={onSynergyHover}
+        buffingAuraEffectiveness={buffingAuraEffectiveness}
       />
       <SubtreeBonusBlock
         skill={skill}

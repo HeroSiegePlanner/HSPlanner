@@ -137,6 +137,7 @@ export interface ItemGrantedSkill {
   id: string
   name: string
   description?: string
+  aura?: boolean
   passiveStats?: {
     base?: Record<string, number>
     perRank?: Record<string, number>

@@ -84,6 +84,8 @@ const EMPTY_SUBTREE_AGGREGATION: SubtreeAggregation = {
   appliedStates: [],
 }
 
+const PROVIDES_RGB = '217,154,90'
+
 export function SubtreeBonusBlock({
   skill,
   subskillRanks,
@@ -203,6 +205,7 @@ export function SkillEffectsBlock({
   attributes,
   rankBonuses,
   onSynergyHover,
+  buffingAuraEffectiveness,
 }: {
   skill: Skill
   currentRank: number
@@ -213,8 +216,16 @@ export function SkillEffectsBlock({
   attributes: Record<AttributeKey, RangedValue>
   rankBonuses: Record<string, [number, number]>
   onSynergyHover: (id: string | null) => void
+  buffingAuraEffectiveness?: RangedValue
 }) {
   const allocated = currentRank > 0
+  const auraEff = buffingAuraEffectiveness ?? 0
+  const auraEffMin = typeof auraEff === 'number' ? auraEff : auraEff[0]
+  const auraEffMax = typeof auraEff === 'number' ? auraEff : auraEff[1]
+  const applyAuraBoost =
+    skill.kind === 'aura' && (auraEffMin !== 0 || auraEffMax !== 0)
+  const boostMin = applyAuraBoost ? 1 + auraEffMin / 100 : 1
+  const boostMax = applyAuraBoost ? 1 + auraEffMax / 100 : 1
   const curMin = allocated ? effRankMin : 1
   const curMax = allocated ? effRankMax : 1
   const canIncrement = allocated && currentRank < skill.maxRank
@@ -322,10 +333,10 @@ export function SkillEffectsBlock({
 
   const synergiesProvided: Array<{
     target: string
+    targetId: string
+    perRank: number
     pctCurMin: number
     pctCurMax: number
-    pctNextMin: number | null
-    pctNextMax: number | null
     stat: string
   }> = []
   for (const other of allClassSkills) {
@@ -336,10 +347,10 @@ export function SkillEffectsBlock({
       ) {
         synergiesProvided.push({
           target: other.name,
+          targetId: other.id,
+          perRank: bs.value,
           pctCurMin: bs.value * curMin,
           pctCurMax: bs.value * curMax,
-          pctNextMin: nextMin !== null ? bs.value * nextMin : null,
-          pctNextMax: nextMax !== null ? bs.value * nextMax : null,
           stat: bs.stat,
         })
       }
@@ -360,6 +371,12 @@ export function SkillEffectsBlock({
 
   if (!hasAnything) return null
 
+  const hasOwnEffects =
+    baseDmgCurMin !== null ||
+    manaCurMin !== undefined ||
+    passiveKeys.size > 0 ||
+    !!skill.attackScaling
+
   const rankLabel =
     curMin === curMax ? String(curMin) : `${curMin}-${curMax}`
   const nextRankLabel =
@@ -371,6 +388,7 @@ export function SkillEffectsBlock({
 
   return (
     <>
+    {hasOwnEffects && (
     <DetailBlock
       title={allocated ? 'Effects' : 'Preview (not learned)'}
       trailing={
@@ -459,10 +477,12 @@ export function SkillEffectsBlock({
           />
         )}
         {[...passiveKeys].map((key) => {
-          const vMin = passiveCurMin[key] ?? 0
-          const vMax = passiveCurMax[key] ?? 0
-          const nMin = passiveNextMin ? passiveNextMin[key] : undefined
-          const nMax = passiveNextMax ? passiveNextMax[key] : undefined
+          const vMin = (passiveCurMin[key] ?? 0) * boostMin
+          const vMax = (passiveCurMax[key] ?? 0) * boostMax
+          const rawNMin = passiveNextMin ? passiveNextMin[key] : undefined
+          const rawNMax = passiveNextMax ? passiveNextMax[key] : undefined
+          const nMin = rawNMin !== undefined ? rawNMin * boostMin : undefined
+          const nMax = rawNMax !== undefined ? rawNMax * boostMax : undefined
           return (
             <EffRow
               key={key}
@@ -477,21 +497,48 @@ export function SkillEffectsBlock({
             />
           )
         })}
-        {synergiesProvided.map((s, i) => (
-          <EffRow
-            key={i}
-            label={`→ ${s.target}`}
-            cur={formatStatPair(s.stat, s.pctCurMin, s.pctCurMax)}
-            next={
-              s.pctNextMin !== null && s.pctNextMax !== null
-                ? formatStatPair(s.stat, s.pctNextMin, s.pctNextMax)
-                : undefined
-            }
-            color={allocated ? 'text-stat-orange' : 'text-muted'}
-          />
-        ))}
       </div>
     </DetailBlock>
+    )}
+    {synergiesProvided.length > 0 && (
+      <DetailBlock
+        title="Provides synergy to"
+        accentRgb={PROVIDES_RGB}
+        onMouseLeave={() => onSynergyHover(null)}
+      >
+        <div className="space-y-0.5 text-[12px]">
+          {synergiesProvided.map((s, i) => (
+            <div
+              key={i}
+              onMouseEnter={() => onSynergyHover(s.targetId)}
+              className="-mx-1.5 rounded-[2px] px-1.5 py-1 tabular-nums transition-colors hover:bg-[rgba(217,154,90,0.12)]"
+            >
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="flex min-w-0 items-baseline gap-1.5">
+                  <span
+                    aria-hidden
+                    className="inline-block h-1.5 w-1.5 shrink-0 translate-y-[-1px] rotate-45"
+                    style={{
+                      background: `rgb(${PROVIDES_RGB})`,
+                      boxShadow: `0 0 5px rgba(${PROVIDES_RGB},0.6)`,
+                    }}
+                  />
+                  <span className="truncate text-text/85">{s.target}</span>
+                </span>
+                <span
+                  className={`shrink-0 ${allocated ? 'text-stat-orange' : 'text-muted'}`}
+                >
+                  {formatStatPair(s.stat, s.pctCurMin, s.pctCurMax)}
+                </span>
+              </div>
+              <div className="pl-3 text-[10px] text-faint">
+                {s.perRank}% per rank
+              </div>
+            </div>
+          ))}
+        </div>
+      </DetailBlock>
+    )}
     {(skill.bonusSources?.length ?? 0) > 0 && (
       <DetailBlock
         title="Receives synergy from"

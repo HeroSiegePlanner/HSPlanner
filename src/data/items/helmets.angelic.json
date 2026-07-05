@@ -24,11 +24,9 @@
       ],
       "all_resistances": -300,
       "max_all_resistances": -30,
-      "increased_all_attributes": 5
-    },
-    "uniqueEffects": [
-      "Damage From Resist"
-    ]
+      "increased_all_attributes": 5,
+      "damage_per_resist_point": 0.4
+    }
   },
   {
     "id": "helmet_angelic_mask_of_the_celestial",
@@ -60,11 +58,15 @@
       "all_resistances": [
         30,
         40
+      ],
+      "buffing_aura_range": [
+        55,
+        75
+      ],
+      "buffing_aura_effectiveness": [
+        80,
+        125
       ]
-    },
-    "uniqueEffects": [
-      "Buffing Aura Range Increased",
-      "Buffing Aura Effectiveness Increased"
-    ]
+    }
   }
 ]

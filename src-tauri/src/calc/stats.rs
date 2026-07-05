@@ -986,6 +986,18 @@ pub fn apply_skill_ranks(
             }
         }
 
+        // Buffing Aura Effectiveness scales the active aura's buff output.
+        if skill.kind == SkillKind::Aura {
+            let buff_eff = sum_ranged_from_map(stat_sources, "buffing_aura_effectiveness");
+            if buff_eff.0 != 0.0 || buff_eff.1 != 0.0 {
+                let mult_min = 1.0 + buff_eff.0 / 100.0;
+                let mult_max = 1.0 + buff_eff.1 / 100.0;
+                for value in combined.values_mut() {
+                    *value = (value.0 * mult_min, value.1 * mult_max);
+                }
+            }
+        }
+
         let rank_label = if eff_min == eff_max {
             format!("{eff_min}")
         } else {
@@ -1384,6 +1396,49 @@ pub fn apply_stat_fan_outs(stat_sources: &mut SourceMap) {
     }
 }
 
+// Damage from Resistances: every point of summed elemental resistance adds
+// `damage_per_resist_point`% Enhanced Damage. Runs after fan-out so per-element
+// buckets already include the all_resistances spread; negative resist reduces it.
+pub fn apply_damage_per_resist(stat_sources: &mut SourceMap) {
+    // Raw (unfloored) sums: the per-point rate is fractional (e.g. 0.4).
+    let rate = match stat_sources.get("damage_per_resist_point") {
+        Some(list) => sum_contributions(list),
+        None => return,
+    };
+    if rate.0 == 0.0 && rate.1 == 0.0 {
+        return;
+    }
+    const ELEMS: [&str; 5] = [
+        "fire_resistance",
+        "cold_resistance",
+        "lightning_resistance",
+        "poison_resistance",
+        "arcane_resistance",
+    ];
+    let mut resist = (0.0, 0.0);
+    for e in ELEMS.iter() {
+        if let Some(list) = stat_sources.get(*e) {
+            let r = sum_contributions(list);
+            resist.0 += r.0;
+            resist.1 += r.1;
+        }
+    }
+    let bonus = (resist.0 * rate.0, resist.1 * rate.1);
+    if bonus.0 == 0.0 && bonus.1 == 0.0 {
+        return;
+    }
+    push_source(
+        stat_sources,
+        "enhanced_damage",
+        SourceContribution {
+            label: "Damage from Resistances".to_string(),
+            source_type: SourceType::Item,
+            value: bonus,
+            forge: None,
+        },
+    );
+}
+
 // ---------- finalization helpers ----------
 
 // Display name; `_more` variants are prefixed with "Total ".
@@ -1659,6 +1714,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 16. Stat fan-outs (all_resistances → per-element variants)
     apply_stat_fan_outs(&mut stat_sources);
+
+    // 16b. Damage from Resistances → enhanced_damage (needs fanned-out resists).
+    apply_damage_per_resist(&mut stat_sources);
 
     // 17. Compute stat totals from sources
     let mut stats = compute_final_stats(&stat_sources);
@@ -1944,6 +2002,57 @@ mod tests {
             value,
             forge: None,
         }
+    }
+
+    // ---- augment application ----
+
+    // Proves every augment in augments.json flows into stat aggregation:
+    // equipping an augment adds exactly its tier stats, and out-of-range
+    // levels clamp to the last tier.
+    #[test]
+    fn augment_stats_apply_and_level_clamps() {
+        use super::super::types::{AugmentRef, EquippedItem};
+
+        let aug = data::get_augment("artful_dodger").expect("artful_dodger in augments.json");
+        let last_tier = aug.levels.last().expect("levels present");
+        let (key, &expected) = last_tier.stats.iter().next().expect("tier has stats");
+
+        let base_id = data::data()
+            .items
+            .keys()
+            .next()
+            .expect("items present")
+            .clone();
+        let sum_for = |aug_ref: Option<AugmentRef>| {
+            let mut inv: Inventory = HashMap::new();
+            inv.insert(
+                "armor".to_string(),
+                EquippedItem {
+                    base_id: base_id.clone(),
+                    augment: aug_ref,
+                    ..Default::default()
+                },
+            );
+            let mut attr: SourceMap = HashMap::new();
+            let mut stats: SourceMap = HashMap::new();
+            apply_inventory(&inv, &mut attr, &mut stats);
+            sum_contributions(stats.get(key).map(|v| v.as_slice()).unwrap_or(&[]))
+        };
+
+        let max_level = aug.levels.len() as u32;
+        let without = sum_for(None);
+        let with_max = sum_for(Some(AugmentRef {
+            id: "artful_dodger".into(),
+            level: max_level,
+        }));
+        assert_eq!(with_max.0 - without.0, expected);
+        assert_eq!(with_max.1 - without.1, expected);
+
+        let with_overflow = sum_for(Some(AugmentRef {
+            id: "artful_dodger".into(),
+            level: 99,
+        }));
+        assert_eq!(with_overflow, with_max);
     }
 
     // ---- is_zero ----
@@ -3127,6 +3236,111 @@ mod tests {
             "expected passive contributions for skill '{}'",
             skill.id
         );
+    }
+
+    #[test]
+    fn buffing_aura_effectiveness_scales_active_aura_passive() {
+        // Pick a real aura skill that contributes passive stats.
+        let pick = data::data().skills_by_class.iter().find_map(|(class_id, skills)| {
+            skills
+                .iter()
+                .find(|s| {
+                    s.kind == SkillKind::Aura
+                        && s.passive_stats.as_ref().is_some_and(|p| {
+                            p.base.as_ref().is_some_and(|b| !b.is_empty())
+                                || p.per_rank.as_ref().is_some_and(|m| !m.is_empty())
+                        })
+                })
+                .map(|s| (class_id.clone(), s.clone()))
+        });
+        let Some((class_id, aura)) = pick else {
+            eprintln!("no aura with passive_stats in data; skipping");
+            return;
+        };
+
+        let mut ranks = HashMap::new();
+        ranks.insert(aura.id.clone(), 5_u32);
+
+        // Baseline: no buffing_aura_effectiveness in the stat map.
+        let mut attrs0: SourceMap = HashMap::new();
+        let mut stats0: SourceMap = HashMap::new();
+        apply_skill_ranks(
+            Some(&class_id),
+            &ranks,
+            Some(&aura.id),
+            &HashMap::new(),
+            &HashMap::new(),
+            &mut attrs0,
+            &mut stats0,
+        );
+        let Some(key) = stats0.keys().next().cloned() else {
+            eprintln!("aura contributed no non-attribute stat; skipping");
+            return;
+        };
+        let base_val = stats0.get(&key).unwrap()[0].value;
+
+        // With +100% buffing aura effectiveness the contribution doubles.
+        let mut attrs1: SourceMap = HashMap::new();
+        let mut stats1: SourceMap = HashMap::new();
+        stats1.insert(
+            "buffing_aura_effectiveness".to_string(),
+            vec![SourceContribution {
+                label: "test".to_string(),
+                source_type: SourceType::Item,
+                value: (100.0, 100.0),
+                forge: None,
+            }],
+        );
+        apply_skill_ranks(
+            Some(&class_id),
+            &ranks,
+            Some(&aura.id),
+            &HashMap::new(),
+            &HashMap::new(),
+            &mut attrs1,
+            &mut stats1,
+        );
+        let scaled_val = stats1.get(&key).unwrap()[0].value;
+
+        assert!(
+            (scaled_val.0 - base_val.0 * 2.0).abs() < 0.02
+                && (scaled_val.1 - base_val.1 * 2.0).abs() < 0.02,
+            "expected doubled aura contribution for '{}' key '{}': base={:?} scaled={:?}",
+            aura.id,
+            key,
+            base_val,
+            scaled_val,
+        );
+    }
+
+    #[test]
+    fn damage_per_resist_scales_enhanced_damage_from_summed_resistances() {
+        let seed = |m: &mut SourceMap, key: &str, v: f64| {
+            m.entry(key.to_string())
+                .or_default()
+                .push(SourceContribution {
+                    label: "test".to_string(),
+                    source_type: SourceType::Item,
+                    value: (v, v),
+                    forge: None,
+                });
+        };
+        // Positive: (fire 100 + cold 50) * 0.4 = +60 enhanced_damage.
+        let mut pos: SourceMap = HashMap::new();
+        seed(&mut pos, "fire_resistance", 100.0);
+        seed(&mut pos, "cold_resistance", 50.0);
+        seed(&mut pos, "damage_per_resist_point", 0.4);
+        apply_damage_per_resist(&mut pos);
+        let ed = sum_ranged_from_map(&pos, "enhanced_damage");
+        assert!((ed.0 - 60.0).abs() < 1e-9, "positive: got {ed:?}");
+
+        // Negative resist reduces damage: -300 * 0.4 = -120 (faithful, no clamp).
+        let mut neg: SourceMap = HashMap::new();
+        seed(&mut neg, "fire_resistance", -300.0);
+        seed(&mut neg, "damage_per_resist_point", 0.4);
+        apply_damage_per_resist(&mut neg);
+        let edn = sum_ranged_from_map(&neg, "enhanced_damage");
+        assert!((edn.0 + 120.0).abs() < 1e-9, "negative: got {edn:?}");
     }
 
     #[test]

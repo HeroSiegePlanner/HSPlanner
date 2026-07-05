@@ -130,10 +130,7 @@
     },
     "skillBonuses": {
       "Holy Aura": [20, 30]
-    },
-    "uniqueEffects": [
-      "Grant Aura: Holy Aura Level [20-30]"
-    ]
+    }
   },
   {
     "id": "boots_heroic_steampowered_flamewalkers",

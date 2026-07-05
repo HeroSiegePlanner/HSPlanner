@@ -212,6 +212,7 @@ export default function SkillsView() {
           subskillRanks={subskillRanks}
           enemyConditions={enemyConditions}
           rankBonuses={rankBonuses}
+          buffingAuraEffectiveness={stats.buffing_aura_effectiveness ?? 0}
           onSynergyHover={setSynergyNode}
           activeSkillIds={activeSkillIds}
           onToggleActive={toggleActiveSkill}

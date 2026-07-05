@@ -16,6 +16,7 @@ import type { ComputedStats } from '../utils/item/stats'
 import { formatValue, isZero } from '../utils/item/stats'
 import {
   hasMercGear,
+  mercGrantedAuras,
   mercOnlyDeps,
   mercSharedEffects,
 } from '../utils/build/mercStats'
@@ -152,10 +153,17 @@ export default function MercView() {
     null,
   )
   const mercMagicFind = mercComputed?.stats.magic_find ?? 0
-  const sharedEffects = useMemo(
-    () => mercSharedEffects(mercInventory),
-    [mercInventory],
-  )
+  const sharedEffects = useMemo(() => {
+    const auras = mercGrantedAuras(mercInventory).map((a) => ({
+      itemName: a.itemName,
+      effect: `Grants ${a.name} Level ${
+        a.levelMin === a.levelMax
+          ? a.levelMin
+          : `[${a.levelMin}-${a.levelMax}]`
+      }`,
+    }))
+    return [...auras, ...mercSharedEffects(mercInventory)]
+  }, [mercInventory])
   const sharedSkills = useMemo(
     () =>
       (cls?.skills ?? []).filter(
