@@ -31,16 +31,24 @@
         15,
         30
       ],
-      "mana_replenish_pct": 50
+      "mana_replenish_pct": 50,
+      "projectile_skills": [
+        4,
+        8
+      ]
     },
     "sockets": 1,
     "maxSockets": 3,
     "uniqueEffects": [
-      "Projectile Skills",
-      "Grant Spell: Accelerated Flames",
-      "Unholy None"
+      "Unholy"
     ],
     "maxAffixes": 1,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "skillBonuses": {
+      "Accelerated Flames": [
+        1,
+        3
+      ]
+    }
   }
 ]

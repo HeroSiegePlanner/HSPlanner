@@ -135,12 +135,10 @@
       ],
       "life_steal": 5,
       "to_strength": 10,
-      "life_per_kill": 15
+      "life_per_kill": 15,
+      "enhanced_damage_based_on_level": 75
     },
-    "setId": "battle_worn",
-    "uniqueEffects": [
-      "Enhanced Dmgd On Level"
-    ]
+    "setId": "battle_worn"
   },
   {
     "id": "helmet_satanic_blood_letter_s_crown",
@@ -244,13 +242,16 @@
       "defense_ignored": [
         10,
         20
+      ],
+      "ailment_damage_all": 20,
+      "max_all_resistances": [
+        1,
+        3
       ]
     },
     "setId": "blood_bond",
     "uniqueEffects": [
-      "Ailment Damage",
-      "Max All Resist",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ]
   },
   {
@@ -271,12 +272,23 @@
       "life": 75,
       "mana": 75,
       "all_resistances": 10,
-      "magic_find": 15
+      "magic_find": 15,
+      "faster_cast_rate": [
+        40,
+        50
+      ],
+      "flat_arcane_skill_damage": [
+        20,
+        30
+      ],
+      "increased_mana": [
+        5,
+        10
+      ]
     },
     "setId": "temporal_mastery",
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    "sockets": 2,
+    "maxSockets": 3
   },
   {
     "id": "helmet_satanic_crown_of_midnight",
@@ -340,10 +352,18 @@
       "all_resistances": [
         15,
         30
+      ],
+      "mana_replenish": [
+        50,
+        75
+      ],
+      "frostbite_damage": [
+        12,
+        18
       ]
     },
     "uniqueEffects": [
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -412,12 +432,18 @@
         15
       ],
       "faster_hit_recovery": 25,
-      "all_resistances": 30
-    },
-    "uniqueEffects": [
-      "Lifed On Level",
-      "Attack Dmgd On Level"
-    ]
+      "all_resistances": 30,
+      "enhanced_defense": [
+        80,
+        130
+      ],
+      "life_based_on_level": 385,
+      "damage_based_on_level": 35,
+      "open_wound_chance": [
+        10,
+        15
+      ]
+    }
   },
   {
     "id": "helmet_satanic_doctor_s_visage",
@@ -558,11 +584,9 @@
         15
       ],
       "mana": 75,
-      "fire_resistance": 75
-    },
-    "uniqueEffects": [
-      "Max Fire Resist"
-    ]
+      "fire_resistance": 75,
+      "max_fire_resistance": 5
+    }
   },
   {
     "id": "helmet_satanic_gabriel_s_brimmed_fedora",
@@ -716,11 +740,11 @@
       "magic_find": [
         20,
         30
-      ]
+      ],
+      "mana_based_on_level": 150
     },
-    "uniqueEffects": [
-      "Manad On Level"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "helmet_satanic_helm_of_dominator",
@@ -748,12 +772,13 @@
       "all_resistances": [
         15,
         20
-      ]
-    },
-    "uniqueEffects": [
-      "Defense Vs Missiles",
-      "Enhanced Defensed On Level"
-    ]
+      ],
+      "defense_vs_missiles": [
+        25,
+        40
+      ],
+      "enhanced_defense_based_on_level": 50
+    }
   },
   {
     "id": "helmet_satanic_ice_king_s_crown",
@@ -786,7 +811,7 @@
       "cold_resistance": 75
     },
     "uniqueEffects": [
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -813,10 +838,18 @@
       "light_radius": [
         1,
         2
-      ]
+      ],
+      "mana_replenish": 15
     },
-    "uniqueEffects": [
-      "Chance When Casting: Chain of Holy Lightning"
+    "sockets": 0,
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 20,
+        "description": "cast Chain of Holy Lightning Level 19",
+        "details": "Cast a holy lightning jumping from monster to monster dealing arcane damage."
+      }
     ]
   },
   {
@@ -865,9 +898,12 @@
       "life_per_kill": 15
     },
     "setId": "juggernaut_s_rampart",
-    "uniqueEffects": [
-      "Grant Spell: Flail Mastery"
-    ]
+    "skillBonuses": {
+      "Chain Trap": [
+        2,
+        5
+      ]
+    }
   },
   {
     "id": "helmet_satanic_knight_captain_s_helmet",
@@ -1051,11 +1087,9 @@
       "life_per_kill": [
         35,
         50
-      ]
-    },
-    "uniqueEffects": [
-      "Enhanced Dmgd On Level"
-    ]
+      ],
+      "enhanced_damage_based_on_level": 175
+    }
   },
   {
     "id": "helmet_satanic_metal_vocalist_s_leather_mask",
@@ -1080,13 +1114,11 @@
       "all_resistances": [
         30,
         35
-      ]
+      ],
+      "mana_replenish": 90
     },
     "sockets": 2,
-    "maxSockets": 2,
-    "uniqueEffects": [
-      "All Skills Class"
-    ]
+    "maxSockets": 2
   },
   {
     "id": "helmet_satanic_mevius_mighty_helmet",
@@ -1263,11 +1295,9 @@
       "to_vitality": [
         10,
         15
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Dmgd On Level"
-    ]
+      ],
+      "damage_based_on_level": 40
+    }
   },
   {
     "id": "helmet_satanic_reaper_s_hood",
@@ -1299,11 +1329,15 @@
       "open_wounds": [
         5,
         10
+      ],
+      "open_wound_chance": [
+        5,
+        10
       ]
     },
     "setId": "death_s_toll",
     "uniqueEffects": [
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -1330,9 +1364,14 @@
         25
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Whirlwind"
-    ]
+    "skillBonuses": {
+      "Whirlwind": [
+        1,
+        7
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 1
   },
   {
     "id": "helmet_satanic_redneck_s_cap",
@@ -1466,14 +1505,21 @@
       "all_resistances": [
         5,
         40
+      ],
+      "ailment_damage_all": [
+        5,
+        40
+      ],
+      "damage_drained_from_mana": [
+        25,
+        35
       ]
     },
     "sockets": 1,
     "maxSockets": 1,
     "setId": "sheep_king_s_kingdom",
     "uniqueEffects": [
-      "Ailment Damage",
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -1494,12 +1540,16 @@
       "all_skills": 1,
       "to_vitality": 15,
       "life_replenish_pct": 10,
-      "increased_life": 2
+      "increased_life": 2,
+      "life_replenish": 10
     },
     "setId": "shield_bearer_s_sanctuary",
-    "uniqueEffects": [
-      "Grant Spell: Combat Orders"
-    ]
+    "skillBonuses": {
+      "Combat Orders": [
+        1,
+        4
+      ]
+    }
   },
   {
     "id": "helmet_satanic_sky_crusader_helm",
@@ -1523,10 +1573,11 @@
       "all_resistances": [
         15,
         20
-      ]
+      ],
+      "cooldown_recovery": 15
     },
     "uniqueEffects": [
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
     ]
   },
   {
@@ -1624,11 +1675,9 @@
       "to_vitality": [
         10,
         15
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Dmgd On Level"
-    ]
+      ],
+      "damage_based_on_level": 75
+    }
   },
   {
     "id": "helmet_satanic_the_bucket",
@@ -1652,13 +1701,19 @@
       "magic_find": [
         15,
         30
-      ]
+      ],
+      "physical_damage_reduction": [
+        10,
+        15
+      ],
+      "magic_damage_reduction": [
+        10,
+        15
+      ],
+      "magic_find_based_on_level": 45
     },
     "sockets": 2,
-    "maxSockets": 2,
-    "uniqueEffects": [
-      "Magic Findd On Level"
-    ]
+    "maxSockets": 2
   },
   {
     "id": "helmet_satanic_the_curator_of_secrets",
@@ -1745,13 +1800,14 @@
       "all_resistances": [
         20,
         35
-      ]
-    },
-    "uniqueEffects": [
-      "Defense Vs Missiles",
-      "Armord On Level",
-      "Vitalityd On Level"
-    ]
+      ],
+      "defense_vs_missiles": [
+        20,
+        35
+      ],
+      "armor_based_on_level": 40,
+      "vitality_based_on_level": 40
+    }
   },
   {
     "id": "helmet_satanic_thor_s_battle_cap",
@@ -1925,12 +1981,16 @@
       "all_resistances": [
         20,
         30
+      ],
+      "buffing_aura_range_increased": [
+        35,
+        50
+      ],
+      "buffing_aura_effectiveness_increased": [
+        35,
+        50
       ]
-    },
-    "uniqueEffects": [
-      "Buffing Aura Range Increased",
-      "Buffing Aura Effectiveness Increased"
-    ]
+    }
   },
   {
     "id": "helmet_satanic_veil_of_mystery",
@@ -2058,10 +2118,7 @@
         30
       ]
     },
-    "setId": "god_of_the_elements",
-    "uniqueEffects": [
-      "All Skills Class"
-    ]
+    "setId": "god_of_the_elements"
   },
   {
     "id": "helmet_satanic_witches_brimmed_hat",

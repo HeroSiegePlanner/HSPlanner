@@ -38,12 +38,21 @@
         10,
         15
       ],
-      "all_resistances": 50
+      "all_resistances": 50,
+      "cooldown_recovery": [
+        25,
+        40
+      ]
     },
     "sockets": 3,
     "maxSockets": 3,
-    "uniqueEffects": [
-      "Chance After Blocking: Holy Shield"
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 6,
+        "description": "cast Holy Shield Level 20",
+        "details": "By the power of god bless yourself and any nearby allies with immortality for a short period."
+      }
     ]
   },
   {
@@ -74,8 +83,11 @@
     },
     "sockets": 4,
     "maxSockets": 4,
-    "uniqueEffects": [
-      "Grant Aura: Angels Vibrance"
-    ]
+    "skillBonuses": {
+      "Angels Vibrance": [
+        20,
+        30
+      ]
+    }
   }
 ]

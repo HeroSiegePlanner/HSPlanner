@@ -5,9 +5,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Heavy Weight"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Heavy Weight": 50
+    }
   },
   {
     "id": "relic_relic_a_wizard_s_hat",
@@ -15,9 +16,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Manalicious"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Manalicious": 10
+    }
   },
   {
     "id": "relic_relic_aaron_s_staff",
@@ -25,9 +27,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Healing Touch"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Healing Touch": 10
+    }
   },
   {
     "id": "relic_relic_amazon_s_spears",
@@ -35,8 +38,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Poisonous Hit"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Poisonous Hit Level 10"
+      }
     ]
   },
   {
@@ -45,9 +53,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Ancient Rock"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Ancient Rock": 85
+    }
   },
   {
     "id": "relic_relic_angel_staff_of_apocalypse",
@@ -55,9 +64,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Arch Angel's Fury"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Arch Angel's Fury": 50
+    }
   },
   {
     "id": "relic_relic_apple",
@@ -65,9 +75,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Apple Blast"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Apple Blast": 50
+    }
   },
   {
     "id": "relic_relic_arcane_globe",
@@ -87,8 +98,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Attacking: Shruken Strike"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Shruken Strike Level 50"
+      }
     ]
   },
   {
@@ -97,9 +113,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Classic Tunes"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Classic Tunes": 50
+    }
   },
   {
     "id": "relic_relic_barbed_shield",
@@ -117,8 +134,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Stoned"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 6,
+        "description": "cast Stoned Level 1"
+      }
     ]
   },
   {
@@ -127,9 +149,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Blazing Trail"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Blazing Trail": 50
+    }
   },
   {
     "id": "relic_relic_bomb",
@@ -139,10 +162,7 @@
     "rarity": "relic",
     "implicit": {
       "explosion_damage": 50
-    },
-    "uniqueEffects": [
-      "Grant Spell: Naval Bomb"
-    ]
+    }
   },
   {
     "id": "relic_relic_bonsai_tree",
@@ -160,9 +180,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Satanic Chant"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Satanic Chant": 10
+    }
   },
   {
     "id": "relic_relic_book_of_command",
@@ -170,9 +191,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Commanding Power"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Commanding Power": 1
+    }
   },
   {
     "id": "relic_relic_boomerang",
@@ -180,9 +202,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Australian Sport"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Australian Sport": 50
+    }
   },
   {
     "id": "relic_relic_bouncy",
@@ -190,9 +213,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Bouncing Spikeball"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Bouncing Spikeball": 50
+    }
   },
   {
     "id": "relic_relic_bracer_of_life",
@@ -211,8 +235,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Meat Bomb"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Meat Bomb Level 50",
+        "details": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
+      }
     ]
   },
   {
@@ -232,8 +262,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Casting: Spiky Plant"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Spiky Plant Level 50"
+      }
     ]
   },
   {
@@ -252,9 +287,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Candy Basket"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Candy Basket": 1
+    }
   },
   {
     "id": "relic_relic_candy_crusher",
@@ -262,9 +298,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Candy Crush"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Candy Crush": 50
+    }
   },
   {
     "id": "relic_relic_casino_die",
@@ -272,9 +309,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Lucky Dice"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Lucky Dice": 50
+    }
   },
   {
     "id": "relic_relic_charmed_blood",
@@ -285,9 +323,9 @@
     "implicit": {
       "life_steal": 10
     },
-    "uniqueEffects": [
-      "Grant Spell: Charmed Blood"
-    ]
+    "skillBonuses": {
+      "Charmed Blood": 10
+    }
   },
   {
     "id": "relic_relic_cheese_burger",
@@ -306,9 +344,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: All Them Chickens"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "All Them Chickens": 1
+    }
   },
   {
     "id": "relic_relic_commander_s_sword",
@@ -338,9 +377,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Dare to Read?"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Dare to Read?": 1
+    }
   },
   {
     "id": "relic_relic_damned_buckler",
@@ -359,8 +399,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Casting: Rotting Carcas"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Rotting Carcas Level 50"
+      }
     ]
   },
   {
@@ -369,9 +414,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Flying Darts"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Flying Darts": 50
+    }
   },
   {
     "id": "relic_relic_death_s_scythe",
@@ -379,8 +425,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Reaping"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Agility Level 30",
+        "details": "Temporarily increases your movement speed and attack speed."
+      }
     ]
   },
   {
@@ -389,9 +441,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: So Good"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "So Good": 50
+    }
   },
   {
     "id": "relic_relic_demon_sheep",
@@ -399,9 +452,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Demon Sheep"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Demon Sheep": 85
+    }
   },
   {
     "id": "relic_relic_devil_horn",
@@ -409,8 +463,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Struck: Satanic Replenishment"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "description": "cast Satanic Replenishment",
+        "details": "Gain increased Life Replenish for a short period!"
+      }
     ]
   },
   {
@@ -419,8 +478,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Burst of Rage"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Burst of Rage Level 50"
+      }
     ]
   },
   {
@@ -440,9 +504,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Crippling Cold"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Crippling Cold": 50
+    }
   },
   {
     "id": "relic_relic_doggo",
@@ -450,9 +515,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: To the Moon"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "To the Moon": 50
+    }
   },
   {
     "id": "relic_relic_doom_flute",
@@ -460,9 +526,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Holy Aura"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Holy Aura": 10
+    }
   },
   {
     "id": "relic_relic_double_scythe",
@@ -470,9 +537,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Flying Scythe"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Flying Scythe": 50
+    }
   },
   {
     "id": "relic_relic_dragon_shield",
@@ -480,8 +548,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Struck: Breath of Fire"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Breath of Fire Level 50",
+        "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
+      }
     ]
   },
   {
@@ -490,9 +564,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Molten Breath"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Molten Breath": 50
+    }
   },
   {
     "id": "relic_relic_es_energy",
@@ -500,9 +575,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Jonnen Valinta"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Jonnen Valinta": 10
+    }
   },
   {
     "id": "relic_relic_f_e_t_u_s",
@@ -510,9 +586,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: F.E.T.U.S."
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "F.E.T.U.S.": 85
+    }
   },
   {
     "id": "relic_relic_fire_ice",
@@ -520,8 +597,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Frostburn"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 5,
+        "description": "cast Frostburn Level 50"
+      }
     ]
   },
   {
@@ -542,9 +624,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Trap the Fish"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Trap the Fish": 1
+    }
   },
   {
     "id": "relic_relic_flail",
@@ -552,9 +635,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Flailstrike"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Flailstrike": 1
+    }
   },
   {
     "id": "relic_relic_fly_swatter",
@@ -562,9 +646,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Memes"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Memes": 10
+    }
   },
   {
     "id": "relic_relic_fortune_card",
@@ -583,8 +668,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Chilling Strike"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Chilling Strike Level 50",
+        "details": "Perform a chilling AOE strike dealing extra damage and freezing enemies."
+      }
     ]
   },
   {
@@ -593,9 +684,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Gamma Pulse"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Gamma Pulse": 1
+    }
   },
   {
     "id": "relic_relic_guardian_angel",
@@ -603,9 +695,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Guardian Angel"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Guardian Angel": 85
+    }
   },
   {
     "id": "relic_relic_half_eaten_mochi",
@@ -613,9 +706,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "+10% of Vitality added as Magic Skill Damage"
-    ]
+    "implicit": {
+      "vitality_converted_to_magic_skill_dmg": 10
+    }
   },
   {
     "id": "relic_relic_hand_of_midas",
@@ -644,9 +737,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Extract Heads"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Extract Heads": 1
+    }
   },
   {
     "id": "relic_relic_hellscream_axe",
@@ -665,8 +759,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Struck: Odin's Fury"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 5,
+        "description": "cast Odin's Fury Level 50"
+      }
     ]
   },
   {
@@ -675,9 +774,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Honey Bee"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Honey Bee": 85
+    }
   },
   {
     "id": "relic_relic_horned_mask",
@@ -685,9 +785,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "+10% of Energy added as Magic Skill Damage"
-    ]
+    "implicit": {
+      "energy_converted_to_magic_skill_dmg": 10
+    }
   },
   {
     "id": "relic_relic_hungering_blade_of_frost",
@@ -695,8 +795,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Breath of Ice"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Breath of Ice Level 50",
+        "details": "Breathe glacial air freezing and dealing cold damage to monsters."
+      }
     ]
   },
   {
@@ -717,9 +823,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Nasty Flies"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Nasty Flies": 50
+    }
   },
   {
     "id": "relic_relic_jefre_s_subscription",
@@ -738,8 +845,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Struck: Envenom"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Envenom Level 50",
+        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
+      }
     ]
   },
   {
@@ -748,9 +861,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Karp Head"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Karp Head": 85
+    }
   },
   {
     "id": "relic_relic_keygen_exe",
@@ -758,9 +872,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Bluescreen of Death"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Bluescreen of Death": 50
+    }
   },
   {
     "id": "relic_relic_king_s_crown",
@@ -778,9 +893,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Nausea"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Nausea": 10
+    }
   },
   {
     "id": "relic_relic_light_cola",
@@ -788,9 +904,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Boost of Energy"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Boost of Energy": 50
+    }
   },
   {
     "id": "relic_relic_light_katana",
@@ -831,8 +948,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance After Each Kill: Lucky Numbers"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 2,
+        "description": "cast Lucky Numbers Level 10"
+      }
     ]
   },
   {
@@ -851,8 +973,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Casting: Mana Recovery"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 10,
+        "description": "cast Mana Recovery Level 20",
+        "details": "Chance on cast to replenish a portion of your maximum mana."
+      }
     ]
   },
   {
@@ -861,9 +989,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Pipe Driver"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Pipe Diver": 10
+    }
   },
   {
     "id": "relic_relic_mayo_s_old_sock",
@@ -882,9 +1011,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Meat Hook"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Meat Hook": 50
+    }
   },
   {
     "id": "relic_relic_metal_detector",
@@ -892,9 +1022,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Node Detection"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Node Detection": 10
+    }
   },
   {
     "id": "relic_relic_minisect",
@@ -902,9 +1033,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Minisect"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Minisect": 85
+    }
   },
   {
     "id": "relic_relic_monkey_king_bar",
@@ -923,9 +1055,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Bone Spirit"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Bone Spirit": 50
+    }
   },
   {
     "id": "relic_relic_newt_tail",
@@ -944,9 +1077,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Ninja Hooks"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Ninja Hooks": 50
+    }
   },
   {
     "id": "relic_relic_nunchucks",
@@ -975,8 +1109,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Divine Scorch"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Divine Scorch Level 10",
+        "details": "Perform a fiery attack setting enemies on fire."
+      }
     ]
   },
   {
@@ -988,8 +1128,12 @@
     "implicit": {
       "extra_damage_stunned": 30
     },
-    "uniqueEffects": [
-      "Chance When Striking: Me Smash"
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Me Smash Level 10"
+      }
     ]
   },
   {
@@ -1048,9 +1192,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Aldo's Rotten Brain"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Aldo's Rotten Brain": 85
+    }
   },
   {
     "id": "relic_relic_poison_globe",
@@ -1070,9 +1215,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Rainbow Drool"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Rainbow Drool": 50
+    }
   },
   {
     "id": "relic_relic_razer_blade",
@@ -1090,9 +1236,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Sonar Pulse"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Sonar Pulse": 50
+    }
   },
   {
     "id": "relic_relic_razor_leaf",
@@ -1100,8 +1247,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Attacking: Razor Leaves"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Razor Leaves Level 50"
+      }
     ]
   },
   {
@@ -1113,8 +1265,13 @@
     "implicit": {
       "increased_bleeding_damage": 30
     },
-    "uniqueEffects": [
-      "Chance When Striking: Rupture"
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Rupture Level 20",
+        "details": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
+      }
     ]
   },
   {
@@ -1123,8 +1280,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Disarming Strike"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Disarming Strike Level 50"
+      }
     ]
   },
   {
@@ -1144,9 +1306,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Barrage of Rockets"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Barrage of Rockets": 50
+    }
   },
   {
     "id": "relic_relic_rotten_apple",
@@ -1154,9 +1317,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Mass Hex"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Mass Hex": 10
+    }
   },
   {
     "id": "relic_relic_rubber_duck",
@@ -1164,9 +1328,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Duck Throw"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Duck Throw": 50
+    }
   },
   {
     "id": "relic_relic_satan_s_eye",
@@ -1174,9 +1339,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Burning Vision"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Burning Vision": 50
+    }
   },
   {
     "id": "relic_relic_satan_s_horn",
@@ -1184,9 +1350,7 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Satanic Groundsmash"
-    ]
+    "implicit": {}
   },
   {
     "id": "relic_relic_satan_s_tooth",
@@ -1194,9 +1358,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Molten Toothache"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Molten Toothache": 50
+    }
   },
   {
     "id": "relic_relic_sausage",
@@ -1225,9 +1390,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Gust of Wind"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Gust of Wind": 50
+    }
   },
   {
     "id": "relic_relic_shiv",
@@ -1235,8 +1401,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Attacking: Live by the Sword"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Live by the Sword Level 30",
+        "details": "Temporarily increases your attack speed and movement speed."
+      }
     ]
   },
   {
@@ -1245,9 +1417,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Shocker 9000"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Shocker 9000": 1
+    }
   },
   {
     "id": "relic_relic_shredder",
@@ -1255,9 +1428,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Shredder"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Shredder": 85
+    }
   },
   {
     "id": "relic_relic_shrunken_head",
@@ -1265,9 +1439,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Shrunken Head"
-    ]
+    "implicit": {
+      "poison_skill_damage": [
+        12,
+        25
+      ],
+      "ignore_poison_res": 10
+    }
   },
   {
     "id": "relic_relic_skull_axe",
@@ -1286,9 +1464,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Skull Bat"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Skull Bat": 85
+    }
   },
   {
     "id": "relic_relic_spirit_skull",
@@ -1307,9 +1486,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Suicidal Pig"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Suicidal Pig": 50
+    }
   },
   {
     "id": "relic_relic_steam_sale",
@@ -1317,9 +1497,9 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Decreased Merchant Prices"
-    ]
+    "implicit": {
+      "decreased_merchant_prices": 10
+    }
   },
   {
     "id": "relic_relic_steve_s_dirty_head",
@@ -1327,9 +1507,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Steves Dirty Head"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Steves Dirty Head": 85
+    }
   },
   {
     "id": "relic_relic_stickman_steve",
@@ -1337,9 +1518,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Call of Steve"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Call of Steve": 50
+    }
   },
   {
     "id": "relic_relic_stigmata",
@@ -1358,8 +1540,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Striking: Lightning Strike"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Lightning Strike Level 50",
+        "details": "Perform a charged attack striking enemies with thunder bolts."
+      }
     ]
   },
   {
@@ -1368,9 +1556,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Sucking Power"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Sucking Power": 1
+    }
   },
   {
     "id": "relic_relic_sucker_5000_b",
@@ -1378,9 +1567,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Empowered Sucking Power"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Empowered Sucking Power": 1
+    }
   },
   {
     "id": "relic_relic_templar_shield",
@@ -1388,9 +1578,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Templar Shield"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Templar Shield": 85
+    }
   },
   {
     "id": "relic_relic_tequila",
@@ -1398,9 +1589,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Drunken Arson"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Drunken Arson": 50
+    }
   },
   {
     "id": "relic_relic_the_allmighty_fedora",
@@ -1408,9 +1600,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: The Almighty Fedora"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "The Almighty Fedora": 85
+    }
   },
   {
     "id": "relic_relic_the_amputation_kit",
@@ -1428,9 +1621,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: The Eye"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "The Eye": 85
+    }
   },
   {
     "id": "relic_relic_the_holy_bible",
@@ -1452,8 +1646,12 @@
     "implicit": {
       "all_attributes": 10
     },
-    "uniqueEffects": [
-      "Chance When Casting: Heaven’s Light"
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Heaven’s Light Level 10"
+      }
     ]
   },
   {
@@ -1462,9 +1660,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Tasty Explosion"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Tasty Explosion": 50
+    }
   },
   {
     "id": "relic_relic_the_spoon",
@@ -1515,9 +1714,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: Stormy Javelin"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Stormy Javelin": 50
+    }
   },
   {
     "id": "relic_relic_war_zeppelin",
@@ -1525,9 +1725,10 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Grant Spell: War Zeppelin"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "War Zeppelin": 85
+    }
   },
   {
     "id": "relic_relic_whip",
@@ -1546,8 +1747,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Casting: Manastream"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Dopium! Level 10",
+        "details": "Chance on cast to increase your magic skill damage and faster cast rate for a short duration."
+      }
     ]
   },
   {
@@ -1556,8 +1763,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Attacking: Hexing Strike"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Hexing Strike Level 10"
+      }
     ]
   },
   {
@@ -1566,8 +1778,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "uniqueEffects": [
-      "Chance When Struck: Disease"
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Disease Level 50"
+      }
     ]
   }
 ]

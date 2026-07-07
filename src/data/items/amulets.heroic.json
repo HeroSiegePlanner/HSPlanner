@@ -23,11 +23,9 @@
       "magic_find": [
         20,
         70
-      ]
-    },
-    "uniqueEffects": [
-      "Magic Findd On Level"
-    ]
+      ],
+      "magic_find_based_on_level": 35
+    }
   },
   {
     "id": "amulet_heroic_gryphon_s_claw",
@@ -53,11 +51,18 @@
       "all_attributes": [
         20,
         30
+      ],
+      "open_wound_chance": [
+        15,
+        25
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Execute"
-    ]
+    "skillBonuses": {
+      "Execute": [
+        12,
+        18
+      ]
+    }
   },
   {
     "id": "amulet_heroic_pendant_of_eternity",
@@ -76,10 +81,19 @@
       "magic_skill_damage": [
         30,
         45
+      ],
+      "cooldown_recovery": [
+        15,
+        25
       ]
     },
-    "uniqueEffects": [
-      "Chance When Casting: The Venerated One"
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast The Venerated One Level 20",
+        "details": "Temporarily increases your cast rate and mana replenish."
+      }
     ]
   },
   {
@@ -126,10 +140,7 @@
         1,
         3
       ]
-    },
-    "uniqueEffects": [
-      "Grant Spell: Magnum Opus"
-    ]
+    }
   },
   {
     "id": "amulet_heroic_amulet_of_colosseum",
@@ -180,11 +191,16 @@
       "extra_damage_burning": [
         25,
         35
+      ],
+      "extra_fire_dmg_to_burning": [
+        25,
+        35
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        1,
+        5
       ]
-    },
-    "uniqueEffects": [
-      "Intelligence To Fire Skill Damage"
-    ]
+    }
   },
   {
     "id": "amulet_heroic_fractal_of_existence",
@@ -266,7 +282,8 @@
       {
         "trigger": "on_hit",
         "chance": 7,
-        "description": "cast Live by the Sword Level 13"
+        "description": "cast Live by the Sword Level 13",
+        "details": "Temporarily increases your attack speed and movement speed."
       }
     ]
   },
@@ -291,11 +308,15 @@
       "sentry_damage": [
         15,
         30
+      ],
+      "sentry_amount": [
+        1,
+        2
       ]
     },
     "uniqueEffects": [
-      "Movement Phasing",
-      "Sentry Amount"
+      "Unholy",
+      "Movement Phasing"
     ],
     "maxAffixes": 1,
     "randomAffixGroupId": "random_unholy"
@@ -346,12 +367,13 @@
       "increased_intelligence": [
         8,
         15
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        1,
+        5
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
-    "uniqueEffects": [
-      "Intelligence To Magic Skill Damage"
-    ]
+    "maxSockets": 1
   }
 ]

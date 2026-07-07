@@ -37,12 +37,19 @@
       "summon_attack_radius": [
         50,
         75
+      ],
+      "guardian_additional_attack": [
+        10,
+        15
+      ],
+      "guardian_attack_range": [
+        50,
+        75
       ]
     },
     "sockets": 2,
     "maxSockets": 2,
     "uniqueEffects": [
-      "All Skills Class",
       "Movement Phasing"
     ]
   },
@@ -77,15 +84,29 @@
         50,
         75
       ],
-      "faster_hit_recovery": 50
+      "faster_hit_recovery": 50,
+      "reduced_movement_diminish": [
+        25,
+        50
+      ]
     },
     "uniqueEffects": [
-      "Grant Spell: Sand Gush",
-      "Grant Spell: Sand Vortex",
-      "Grant Spell: Sand Entombment",
-      "Skill Movement Diminish",
-      "Movement Phasing None"
-    ]
+      "Movement Phasing"
+    ],
+    "skillBonuses": {
+      "Sand Gush": [
+        8,
+        12
+      ],
+      "Sand Vortex": [
+        6,
+        12
+      ],
+      "Sand Entombment": [
+        6,
+        12
+      ]
+    }
   },
   {
     "id": "boots_heroic_pearlescent_dream",
@@ -129,7 +150,10 @@
       ]
     },
     "skillBonuses": {
-      "Holy Aura": [20, 30]
+      "Holy Aura": [
+        20,
+        30
+      ]
     }
   },
   {
@@ -179,7 +203,8 @@
       {
         "trigger": "on_hit",
         "chance": 7,
-        "description": "cast Blazing Trail Level 49"
+        "description": "cast Blazing Trail Level 49",
+        "details": "Leave behind a trail of fire dealing fire damage to monsters."
       }
     ],
     "uniqueEffects": [
@@ -214,11 +239,15 @@
       "faster_hit_recovery": [
         50,
         75
+      ],
+      "defense_vs_missiles": [
+        25,
+        40
       ]
     },
     "uniqueEffects": [
-      "Defense Vs Missiles",
-      "Movement Phasing None"
+      "Movement Phasing",
+      "Double Jump"
     ]
   },
   {
@@ -454,14 +483,21 @@
         25,
         40
       ],
-      "faster_hit_recovery": 100
+      "faster_hit_recovery": 100,
+      "cooldown_recovery": [
+        15,
+        25
+      ],
+      "sentry_skills": [
+        2,
+        3
+      ],
+      "sentry_amount": 1
     },
     "sockets": 2,
     "maxSockets": 3,
     "uniqueEffects": [
-      "Sentry Skills [2-3]",
-      "Sentry Amount +1",
-      "Cannot Be Frozen"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -612,12 +648,14 @@
       {
         "trigger": "on_kill",
         "chance": 4,
-        "description": "cast Set Sail Level 30"
+        "description": "cast Set Sail Level 30",
+        "details": "Temporarily increases your cold skill damage and mana replenish.       "
       },
       {
         "trigger": "on_cast",
         "chance": 8,
-        "description": "cast Anchor Swing"
+        "description": "cast Anchor Swing",
+        "details": "Unleash a massive anchor swinging around you dealing cold damage."
       }
     ],
     "skillBonuses": {
@@ -625,7 +663,7 @@
       "Walson's Aid": 1
     },
     "uniqueEffects": [
-      "Cannot Be Frozen"
+      "Cannot be Frozen"
     ]
   },
   {

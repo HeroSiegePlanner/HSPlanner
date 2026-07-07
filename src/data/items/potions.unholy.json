@@ -7,10 +7,13 @@
     "rarity": "unholy",
     "grade": "SS",
     "requiresLevel": 1,
-    "uniqueEffects": [
-      "Monsters have a chance to explode on death dealing 10% of their maximum life as Fire Damage in a small area",
-      "Proc Chance: 30%"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Amun Ra's Demise": [
+        1,
+        5
+      ]
+    }
   },
   {
     "id": "potion_unholy_elixir_of_unworldly_cognition",

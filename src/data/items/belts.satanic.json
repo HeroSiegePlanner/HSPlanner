@@ -21,12 +21,10 @@
       "fire_resistance": [
         35,
         50
-      ]
-    },
-    "uniqueEffects": [
-      "Lifed On Level",
-      "Max Fire Resist"
-    ]
+      ],
+      "life_based_on_level": 500,
+      "max_fire_resistance": 10
+    }
   },
   {
     "id": "belt_satanic_assassin_s_belt",
@@ -286,7 +284,7 @@
       ]
     },
     "uniqueEffects": [
-      "Piercing Attack None"
+      "Piercing Attack"
     ]
   },
   {
@@ -371,12 +369,13 @@
       "arcane_skill_damage": [
         12,
         20
+      ],
+      "explosion_aoe": [
+        6,
+        12
       ]
     },
-    "setId": "engineer_s_combat_gear",
-    "uniqueEffects": [
-      "Explosion Area Of Effect"
-    ]
+    "setId": "engineer_s_combat_gear"
   },
   {
     "id": "belt_satanic_flame_diviner_s_cord",
@@ -404,11 +403,21 @@
       "magic_find": [
         10,
         25
+      ],
+      "all_resistances": 25,
+      "extra_fire_dmg_to_burning": [
+        25,
+        35
       ]
     },
     "setId": "flames_of_divinity",
-    "uniqueEffects": [
-      "Chance When Struck: Hydra"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 5,
+        "description": "cast Hydra Level 34",
+        "details": "Spawn a fiery hydra that shoots fireballs with area of effect fire damage towards the closest monster."
+      }
     ]
   },
   {
@@ -437,7 +446,7 @@
       "cold_resistance": 75
     },
     "uniqueEffects": [
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -616,10 +625,15 @@
       "cold_resistance": [
         40,
         50
+      ],
+      "cold_skills": 2,
+      "damage_drained_from_mana": [
+        8,
+        15
       ]
     },
     "uniqueEffects": [
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -648,13 +662,24 @@
       "arcane_resistance": [
         20,
         40
-      ]
+      ],
+      "lightning_skills": [
+        2,
+        3
+      ],
+      "mana_per_kill": 12
     },
     "setId": "justiciar_s_thunder_raiment",
-    "uniqueEffects": [
-      "Grant Spell: Lightning Fury",
-      "Grant Spell: Eye of the Storm"
-    ]
+    "skillBonuses": {
+      "Lightning Fury": [
+        3,
+        5
+      ],
+      "Eye of the Storm": [
+        2,
+        4
+      ]
+    }
   },
   {
     "id": "belt_satanic_knight_s_girdle",
@@ -853,8 +878,13 @@
       ],
       "all_resistances": 30
     },
-    "uniqueEffects": [
-      "Chance When Struck: Meat Shield"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 12,
+        "description": "cast Meat Shield Level 32",
+        "details": "Cast a meat shield reducing physical damage taken."
+      }
     ]
   },
   {
@@ -898,14 +928,18 @@
       "all_skills": [
         1,
         2
+      ],
+      "guardian_damage": [
+        20,
+        35
+      ],
+      "guardian_attack_speed": 15,
+      "guardian_duration": 25,
+      "guardian_additional_attack": [
+        5,
+        10
       ]
-    },
-    "uniqueEffects": [
-      "Guardian Additional Attack",
-      "Guardian Damage",
-      "Guardian Attack Speed",
-      "Guardian Duration"
-    ]
+    }
   },
   {
     "id": "belt_satanic_sash_of_the_magi",
@@ -936,9 +970,12 @@
       ],
       "increased_mana": 4
     },
-    "uniqueEffects": [
-      "Grant Aura: Manapool Aura"
-    ]
+    "skillBonuses": {
+      "Manapool Aura": [
+        12,
+        18
+      ]
+    }
   },
   {
     "id": "belt_satanic_solar_magister_s_sash",
@@ -963,10 +1000,19 @@
       "fire_resistance": [
         25,
         40
+      ],
+      "fire_skills": [
+        1,
+        2
       ]
     },
-    "uniqueEffects": [
-      "Chance When Striking: Supernova"
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Supernova Level 10",
+        "details": "Explode into a supernova dealing fire damage on a large radius."
+      }
     ]
   },
   {
@@ -1016,11 +1062,10 @@
       "all_resistances": [
         10,
         15
-      ]
-    },
-    "uniqueEffects": [
-      "Lifed On Level"
-    ]
+      ],
+      "life_replenish": 50,
+      "life_based_on_level": 300
+    }
   },
   {
     "id": "belt_satanic_tether_of_anguish",
@@ -1052,11 +1097,9 @@
       "poison_resistance": [
         40,
         60
-      ]
-    },
-    "uniqueEffects": [
-      "Poison Length Reduced"
-    ]
+      ],
+      "poison_length_reduced": 25
+    }
   },
   {
     "id": "belt_satanic_thunder_caller_s_sash",
@@ -1080,13 +1123,20 @@
       "damage_recouped_as_mana": [
         5,
         15
+      ],
+      "defense_vs_missiles": 40,
+      "damage_drained_from_mana": [
+        5,
+        15
       ]
     },
     "setId": "thunder_caller_s_wrath",
-    "uniqueEffects": [
-      "Grant Spell: Symphony of Thunder",
-      "Defense Vs Missiles"
-    ]
+    "skillBonuses": {
+      "Symphony of Thunder": [
+        2,
+        4
+      ]
+    }
   },
   {
     "id": "belt_satanic_traveler_s_double_belt",
@@ -1216,12 +1266,10 @@
       "crit_damage": [
         20,
         35
-      ]
+      ],
+      "damage_based_on_level": 40
     },
-    "setId": "vagabond_s_rags",
-    "uniqueEffects": [
-      "Attack Dmgd On Level"
-    ]
+    "setId": "vagabond_s_rags"
   },
   {
     "id": "belt_satanic_vipermagi_s_belt",
@@ -1268,10 +1316,8 @@
         25
       ],
       "to_strength": 30,
-      "to_vitality": 8
-    },
-    "uniqueEffects": [
-      "Enhanced Dmgd On Level"
-    ]
+      "to_vitality": 8,
+      "enhanced_damage_based_on_level": 50
+    }
   }
 ]

@@ -11,22 +11,45 @@
     "damageMax": 92,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [800, 850],
-      "all_skills": [3, 4],
-      "movement_speed": [25, 40],
-      "increased_attack_speed": [75, 100],
+      "enhanced_damage": [
+        800,
+        850
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "movement_speed": [
+        25,
+        40
+      ],
+      "increased_attack_speed": [
+        75,
+        100
+      ],
       "deadly_blow": 30,
       "attack_rating_pct": 25,
-      "crit_damage": [50, 65],
-      "extra_damage_stunned": [20, 30],
-      "magic_skill_damage": [50, 65]
+      "crit_damage": [
+        50,
+        65
+      ],
+      "extra_damage_stunned": [
+        20,
+        30
+      ],
+      "magic_skill_damage": [
+        50,
+        65
+      ],
+      "increased_attack_rating": 25,
+      "reduced_movement_diminish": [
+        50,
+        75
+      ]
     },
     "skillBonuses": {
       "Laser Sight": 1
     },
-    "uniqueEffects": [
-      "Skill Movement Diminish decreased by [50-75]%"
-    ],
     "sockets": 4,
     "maxSockets": 4
   },
@@ -42,21 +65,47 @@
     "damageMax": 76,
     "attackSpeed": 1.65,
     "implicit": {
-      "enhanced_damage": [575, 625],
+      "enhanced_damage": [
+        575,
+        625
+      ],
       "all_skills": 2,
-      "fire_skills": [6, 10],
-      "faster_cast_rate": [35, 45],
-      "increased_attack_speed": [50, 75],
-      "extra_damage_burning": [35, 50],
-      "all_attributes": [20, 30],
-      "flat_fire_skill_damage": [28, 60],
+      "fire_skills": [
+        6,
+        10
+      ],
+      "faster_cast_rate": [
+        35,
+        45
+      ],
+      "increased_attack_speed": [
+        50,
+        75
+      ],
+      "extra_damage_burning": [
+        35,
+        50
+      ],
+      "all_attributes": [
+        20,
+        30
+      ],
+      "flat_fire_skill_damage": [
+        28,
+        60
+      ],
       "fire_skill_damage": 35
     },
-    "uniqueEffects": [
-      "15% Chance when Casting to cast Supernova Level 85"
-    ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Supernova Level 85",
+        "details": "Explode into a supernova dealing fire damage on a large radius."
+      }
+    ]
   },
   {
     "id": "mace_unholy_stormslayer",
@@ -70,16 +119,31 @@
     "damageMax": 112,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [930, 1180],
-      "all_skills": [4, 5],
+      "enhanced_damage": [
+        930,
+        1180
+      ],
+      "all_skills": [
+        4,
+        5
+      ],
       "deadly_blow": 30,
       "defense_ignored": 35,
-      "extra_damage_bleeding": [30, 40],
-      "flat_fire_skill_damage": [40, 70],
+      "extra_damage_bleeding": [
+        30,
+        40
+      ],
+      "flat_fire_skill_damage": [
+        40,
+        70
+      ],
       "ignore_fire_res": 25
     },
     "skillBonuses": {
-      "Adrenaline Momentum": [10, 15],
+      "Adrenaline Momentum": [
+        10,
+        15
+      ],
       "Pyro Technician": 20
     },
     "uniqueEffects": [

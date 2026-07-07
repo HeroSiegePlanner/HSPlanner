@@ -16,18 +16,40 @@
       {
         "trigger": "when_struck",
         "chance": 19,
-        "description": "cast Gabriel's Revenge Level 4"
+        "description": "cast Gabriel's Revenge Level 4",
+        "details": "Summon three unholy swords behind you slicing forward dealing arcane damage to monsters on hit."
       }
     ],
     "implicit": {
-      "enhanced_defense": [450, 600],
-      "all_skills": [3, 5],
-      "skill_haste": [30, 50],
-      "magic_skill_damage": [5, 25],
+      "enhanced_defense": [
+        450,
+        600
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "skill_haste": [
+        30,
+        50
+      ],
+      "magic_skill_damage": [
+        5,
+        25
+      ],
       "defense_vs_missiles": 250,
-      "light_radius": [4, 8],
-      "physical_damage_reduction": [8, 15],
-      "magic_damage_reduction": [8, 15]
+      "light_radius": [
+        4,
+        8
+      ],
+      "physical_damage_reduction": [
+        8,
+        15
+      ],
+      "magic_damage_reduction": [
+        8,
+        15
+      ]
     }
   }
 ]

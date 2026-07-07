@@ -12,21 +12,44 @@
     "damageMax": 102,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [780, 820],
-      "all_skills": [4, 6],
-      "increased_attack_speed": [20, 70],
-      "crit_chance": [11, 17],
+      "enhanced_damage": [
+        780,
+        820
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "increased_attack_speed": [
+        20,
+        70
+      ],
+      "crit_chance": [
+        11,
+        17
+      ],
       "deadly_blow": 20,
       "mana_steal": 15,
-      "crit_damage": [30, 50],
-      "to_dexterity": 50
+      "crit_damage": [
+        30,
+        50
+      ],
+      "to_dexterity": 50,
+      "melee_range": [
+        10,
+        20
+      ]
     },
-    "uniqueEffects": [
-      "Chance when Attacking to cast Rapid Fire Level 32",
-      "Attack Range Increased by [10-20]%"
-    ],
     "sockets": 3,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Rapid Fire Level 31",
+        "details": "Temporarily increase your attack speed and physical damage."
+      }
+    ]
   },
   {
     "id": "bow_heroic_arachno_phobia",
@@ -41,15 +64,33 @@
     "damageMax": 135,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [850, 1000],
-      "all_skills": [2, 4],
-      "poison_skills": [5, 8],
+      "enhanced_damage": [
+        850,
+        1000
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "poison_skills": [
+        5,
+        8
+      ],
       "attack_rating": 1500,
       "mana_steal": 12,
       "defense_ignored": 75,
-      "extra_damage_poisoned": [40, 55],
-      "flat_poison_skill_damage": [22, 50],
-      "poison_skill_damage": [40, 70],
+      "extra_damage_poisoned": [
+        40,
+        55
+      ],
+      "flat_poison_skill_damage": [
+        22,
+        50
+      ],
+      "poison_skill_damage": [
+        40,
+        70
+      ],
       "ignore_poison_res": 40
     },
     "uniqueEffects": [],
@@ -68,17 +109,29 @@
     "damageMax": 64,
     "attackSpeed": 1.65,
     "implicit": {
-      "enhanced_damage": [220, 280],
-      "faster_cast_rate": [45, 60],
-      "flat_arcane_skill_damage": [22, 50],
-      "arcane_skill_damage": [30, 40]
+      "enhanced_damage": [
+        220,
+        280
+      ],
+      "faster_cast_rate": [
+        45,
+        60
+      ],
+      "flat_arcane_skill_damage": [
+        22,
+        50
+      ],
+      "arcane_skill_damage": [
+        30,
+        40
+      ]
     },
     "skillBonuses": {
-      "Holy Hammer": [12, 20]
+      "Holy Hammer": [
+        12,
+        20
+      ]
     },
-    "uniqueEffects": [
-      "+[4-6] to All Skills (Paladin)"
-    ],
     "sockets": 3,
     "maxSockets": 5
   },
@@ -94,18 +147,39 @@
     "damageMax": 126,
     "attackSpeed": 1.5,
     "implicit": {
-      "enhanced_damage": [650, 850],
-      "all_skills": [3, 5],
+      "enhanced_damage": [
+        650,
+        850
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
       "movement_speed": 25,
       "mana_steal": 15,
-      "to_strength": [40, 50],
+      "to_strength": [
+        40,
+        50
+      ],
       "to_dexterity": 65,
-      "cold_skill_damage": [40, 70],
-      "ignore_cold_res": [25, 40],
-      "cold_absorption": [8, 15]
+      "cold_skill_damage": [
+        40,
+        70
+      ],
+      "ignore_cold_res": [
+        25,
+        40
+      ],
+      "cold_absorption": [
+        8,
+        15
+      ]
     },
     "skillBonuses": {
-      "Lingering Frost": [1, 3]
+      "Lingering Frost": [
+        1,
+        3
+      ]
     },
     "uniqueEffects": [],
     "sockets": 3,
@@ -124,15 +198,33 @@
     "damageMax": 96,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [650, 850],
-      "all_skills": [4, 6],
+      "enhanced_damage": [
+        650,
+        850
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
       "movement_speed": 30,
-      "increased_stasis_damage": [30, 45],
+      "increased_stasis_damage": [
+        30,
+        45
+      ],
       "mana_steal": 15,
       "to_dexterity": 65,
-      "to_intelligence": [40, 50],
-      "lightning_skill_damage": [50, 70],
-      "ignore_lightning_res": [25, 40]
+      "to_intelligence": [
+        40,
+        50
+      ],
+      "lightning_skill_damage": [
+        50,
+        70
+      ],
+      "ignore_lightning_res": [
+        25,
+        40
+      ]
     },
     "skillBonuses": {
       "Ricochet": 1
@@ -154,19 +246,46 @@
     "damageMax": 120,
     "attackSpeed": 1.9,
     "implicit": {
-      "enhanced_damage": [875, 950],
+      "enhanced_damage": [
+        875,
+        950
+      ],
       "all_skills": 3,
-      "arcane_skills": [4, 5],
+      "arcane_skills": [
+        4,
+        5
+      ],
       "attack_rating": 1750,
-      "mana_replenish": [4, 8],
-      "to_intelligence": [30, 60],
-      "increased_intelligence": [4, 10],
-      "flat_arcane_skill_damage": [45, 70],
-      "arcane_skill_damage": [30, 45],
-      "explosion_aoe": [10, 20]
+      "mana_replenish": [
+        4,
+        8
+      ],
+      "to_intelligence": [
+        30,
+        60
+      ],
+      "increased_intelligence": [
+        4,
+        10
+      ],
+      "flat_arcane_skill_damage": [
+        45,
+        70
+      ],
+      "arcane_skill_damage": [
+        30,
+        45
+      ],
+      "explosion_aoe": [
+        10,
+        20
+      ]
     },
     "skillBonuses": {
-      "Homing Missile": [3, 6]
+      "Homing Missile": [
+        3,
+        6
+      ]
     },
     "uniqueEffects": [],
     "sockets": 3,
@@ -184,19 +303,36 @@
     "damageMax": 42,
     "attackSpeed": 1.25,
     "implicit": {
-      "all_skills": [3, 4],
+      "all_skills": [
+        3,
+        4
+      ],
       "faster_cast_rate": 50,
       "mana_replenish": 6,
-      "to_energy": [30, 40],
-      "to_vitality": [10, 15],
-      "magic_skill_damage": [35, 50]
+      "to_energy": [
+        30,
+        40
+      ],
+      "to_vitality": [
+        10,
+        15
+      ],
+      "magic_skill_damage": [
+        35,
+        50
+      ],
+      "ailment_damage_all": 20
     },
-    "uniqueEffects": [
-      "10% Chance when Casting to cast Shadow Bolt Level 99",
-      "Ailment Damage increased by 20%"
-    ],
     "sockets": 1,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 10,
+        "description": "cast Shadow Bolt Level 95",
+        "details": "Gather your inner darkness and unleash a powerful piercing shadow bolt that deals arcane damage to monsters on its path. The shadow bolt slows down after hitting a target."
+      }
+    ]
   },
   {
     "id": "sword_heroic_blood_moon_crescent",
@@ -209,21 +345,43 @@
     "damageMax": 82,
     "attackSpeed": 1.4,
     "implicit": {
-      "enhanced_damage": [900, 975],
-      "all_skills": [2, 3],
-      "movement_speed": [50, 100],
-      "increased_attack_speed": [50, 100],
+      "enhanced_damage": [
+        900,
+        975
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        50,
+        100
+      ],
+      "increased_attack_speed": [
+        50,
+        100
+      ],
       "life_steal": 15,
-      "to_dexterity": [125, 150]
+      "to_dexterity": [
+        125,
+        150
+      ],
+      "reduced_movement_diminish": 75,
+      "random_skill_element": 8
     },
     "uniqueEffects": [
-      "Chance when Striking to cast Tide of Blood Level 80",
-      "+8 to Random Skill Element",
-      "Skill Movement Diminish decreased by 75%",
       "Movement Phasing"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Tide of Blood Level 80",
+        "details": "Unleash a falling blood moon exploding into smaller moons which explode into smaller moons dealing magic damage."
+      }
+    ]
   },
   {
     "id": "cane_heroic_blood_of_abaddon",
@@ -238,21 +396,46 @@
     "damageMax": 42,
     "attackSpeed": 1.15,
     "implicit": {
-      "all_skills": [5, 8],
-      "faster_cast_rate": [40, 70],
-      "mana_replenish": [6, 10],
-      "to_energy": [30, 40],
-      "to_vitality": [25, 35],
-      "arcane_skill_damage": [25, 45],
-      "mana_replenish_pct": 66
+      "all_skills": [
+        5,
+        8
+      ],
+      "faster_cast_rate": [
+        40,
+        70
+      ],
+      "mana_replenish": [
+        6,
+        10
+      ],
+      "to_energy": [
+        30,
+        40
+      ],
+      "to_vitality": [
+        25,
+        35
+      ],
+      "arcane_skill_damage": [
+        25,
+        45
+      ],
+      "mana_replenish_pct": 66,
+      "ailment_damage_all": [
+        20,
+        30
+      ]
     },
     "skillBonuses": {
-      "Blood Surge": [14, 24],
-      "Blood Tendrils": [14, 24]
+      "Blood Surge": [
+        14,
+        24
+      ],
+      "Blood Tendrils": [
+        14,
+        24
+      ]
     },
-    "uniqueEffects": [
-      "Ailment Damage increased by [20-30]%"
-    ],
     "sockets": 5,
     "maxSockets": 6
   },
@@ -268,15 +451,30 @@
     "damageMax": 74,
     "attackSpeed": 1.85,
     "implicit": {
-      "enhanced_damage": [550, 650],
-      "increased_attack_speed": [30, 60],
+      "enhanced_damage": [
+        550,
+        650
+      ],
+      "increased_attack_speed": [
+        30,
+        60
+      ],
       "crit_chance": 25,
       "crushing_blow_chance": 25,
-      "attack_rating": [375, 410],
-      "life_steal": [3, 6],
+      "attack_rating": [
+        375,
+        410
+      ],
+      "life_steal": [
+        3,
+        6
+      ],
       "crit_damage": 65,
       "open_wounds": 20,
-      "to_strength": [20, 30],
+      "to_strength": [
+        20,
+        30
+      ],
       "faster_hit_recovery": 25
     },
     "skillBonuses": {
@@ -298,15 +496,30 @@
     "damageMax": 48,
     "attackSpeed": 1.75,
     "implicit": {
-      "all_skills": [2, 3],
+      "all_skills": [
+        2,
+        3
+      ],
       "cold_skills": 4,
       "faster_cast_rate": 30,
-      "mana_replenish": [6, 10],
-      "cold_skill_damage": [55, 70],
-      "ignore_cold_res": [25, 40]
+      "mana_replenish": [
+        6,
+        10
+      ],
+      "cold_skill_damage": [
+        55,
+        70
+      ],
+      "ignore_cold_res": [
+        25,
+        40
+      ]
     },
     "skillBonuses": {
-      "Power of the Ancients": [20, 30]
+      "Power of the Ancients": [
+        20,
+        30
+      ]
     },
     "uniqueEffects": [],
     "sockets": 4,
@@ -325,19 +538,41 @@
     "damageMax": 120,
     "attackSpeed": 1.65,
     "implicit": {
-      "enhanced_damage": [875, 975],
-      "all_skills": [4, 6],
-      "increased_attack_speed": [35, 60],
-      "additive_physical_damage": [22, 50],
+      "enhanced_damage": [
+        875,
+        975
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "increased_attack_speed": [
+        35,
+        60
+      ],
+      "additive_physical_damage": [
+        22,
+        50
+      ],
       "to_strength": 35,
-      "increased_strength": [4, 8]
+      "increased_strength": [
+        4,
+        8
+      ]
     },
     "uniqueEffects": [
-      "35% Chance when Striking to cast Bone Spear Level 158",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 5,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 35,
+        "description": "cast Bone Spear Level 150",
+        "details": "Launch a piercing bone spear dealing arcane damage."
+      }
+    ]
   },
   {
     "id": "chainsaw_heroic_candy_shredder",
@@ -352,14 +587,33 @@
     "damageMax": 86,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [740, 820],
-      "all_skills": [2, 3],
-      "increased_attack_speed": [65, 100],
+      "enhanced_damage": [
+        740,
+        820
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "increased_attack_speed": [
+        65,
+        100
+      ],
       "deadly_blow": 33,
-      "additive_physical_damage": [28, 56]
+      "additive_physical_damage": [
+        28,
+        56
+      ],
+      "random_skill": [
+        5,
+        20
+      ]
     },
     "skillBonuses": {
-      "Portal of Ice": [5, 20]
+      "Portal of Ice": [
+        5,
+        20
+      ]
     },
     "uniqueEffects": [
       "Movement Phasing",
@@ -383,17 +637,31 @@
       "fire_skills": 6,
       "lightning_skills": 6,
       "arcane_skills": 6,
-      "sentry_attack_speed": [40, 60],
-      "extra_damage_ailments": [25, 45],
+      "sentry_attack_speed": [
+        40,
+        60
+      ],
+      "extra_damage_ailments": [
+        25,
+        45
+      ],
       "projectile_speed": 1,
-      "magic_skill_damage": [25, 60]
+      "magic_skill_damage": [
+        25,
+        60
+      ],
+      "extra_dmg_to_monsters_afflicted_with_ailments": [
+        25,
+        45
+      ],
+      "enemy_all_resist": 35
     },
     "skillBonuses": {
-      "Celestial Creation": [1, 3]
+      "Celestial Creation": [
+        1,
+        3
+      ]
     },
-    "uniqueEffects": [
-      "-35% to All Enemy Resistances"
-    ],
     "sockets": 5,
     "maxSockets": 6
   },
@@ -409,20 +677,40 @@
     "damageMax": 42,
     "attackSpeed": 1.5,
     "implicit": {
-      "increased_poisoned_damage": [40, 60],
+      "increased_poisoned_damage": [
+        40,
+        60
+      ],
       "mana_replenish": 6,
-      "extra_damage_poisoned": [25, 35],
-      "poison_skill_damage": [40, 50],
-      "ignore_poison_res": [20, 25]
+      "extra_damage_poisoned": [
+        25,
+        35
+      ],
+      "poison_skill_damage": [
+        40,
+        50
+      ],
+      "ignore_poison_res": [
+        20,
+        25
+      ]
     },
     "skillBonuses": {
-      "Master Poisoner": [5, 10]
+      "Master Poisoner": [
+        5,
+        10
+      ]
     },
-    "uniqueEffects": [
-      "Chance when Casting to cast Cursed Ground Level 33"
-    ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 18,
+        "description": "cast Cursed Ground Level 32",
+        "details": "Corrupt the ground in the target area inflicting poison break on monsters affected area."
+      }
+    ]
   },
   {
     "id": "wand_heroic_crackling_thunder",
@@ -435,20 +723,44 @@
     "damageMax": 73,
     "attackSpeed": 1.8,
     "implicit": {
-      "all_skills": [5, 6],
-      "lightning_skills": [7, 10],
-      "faster_cast_rate": [70, 90],
-      "increased_stasis_damage": [25, 35],
+      "all_skills": [
+        5,
+        6
+      ],
+      "lightning_skills": [
+        7,
+        10
+      ],
+      "faster_cast_rate": [
+        70,
+        90
+      ],
+      "increased_stasis_damage": [
+        25,
+        35
+      ],
       "to_energy": 55,
       "to_intelligence": 40,
-      "lightning_skill_damage": [40, 60],
-      "ignore_lightning_res": 25
+      "lightning_skill_damage": [
+        40,
+        60
+      ],
+      "ignore_lightning_res": 25,
+      "stasis_damage": [
+        25,
+        35
+      ]
     },
-    "uniqueEffects": [
-      "40% Chance when Casting to cast Thunder Orb Level 1"
-    ],
     "sockets": 5,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 40,
+        "description": "cast Thunder Orb Level 3",
+        "details": "Conjures a traveling orb of thunder shocking nearby monsters with chainlightning."
+      }
+    ]
   },
   {
     "id": "wand_heroic_crow_s_whisper",
@@ -461,19 +773,40 @@
     "damageMax": 52,
     "attackSpeed": 1.15,
     "implicit": {
-      "all_skills": [6, 8],
-      "faster_cast_rate": [90, 120],
-      "extra_damage_burning": [35, 60],
-      "mana_replenish_pct": 150
+      "all_skills": [
+        6,
+        8
+      ],
+      "faster_cast_rate": [
+        90,
+        120
+      ],
+      "extra_damage_burning": [
+        35,
+        60
+      ],
+      "mana_replenish_pct": 150,
+      "ailment_damage_all": [
+        35,
+        50
+      ],
+      "mana_replenish": 150,
+      "random_skill_element": 12,
+      "enemy_all_resist": [
+        25,
+        35
+      ]
     },
-    "uniqueEffects": [
-      "25% Chance when Casting to cast Flock of Vultures Level 1",
-      "+12 to Random Skill Element",
-      "Ailment Damage increased by [35-60]%",
-      "[25-35] to All Enemy Resistances"
-    ],
     "sockets": 4,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 25,
+        "description": "cast Flock of Vultures Level 3",
+        "details": "Unleash a swarm of flying crows dealing fire damage on a large radius inflicting burning on hit."
+      }
+    ]
   },
   {
     "id": "book_heroic_damien_s_corrupted_head",
@@ -486,15 +819,34 @@
     "damageMax": 35,
     "attackSpeed": 1.75,
     "implicit": {
-      "all_skills": [2, 4],
-      "faster_cast_rate": [30, 40],
+      "all_skills": [
+        2,
+        4
+      ],
+      "faster_cast_rate": [
+        30,
+        40
+      ],
       "ailment_crit_chance": 10,
-      "ailment_crit_damage": [15, 50],
-      "mana_replenish_pct": 50
+      "ailment_crit_damage": [
+        15,
+        50
+      ],
+      "mana_replenish_pct": 50,
+      "ailment_damage_all": [
+        20,
+        30
+      ],
+      "mana_replenish": 50,
+      "enemy_all_resist": [
+        10,
+        25
+      ]
     },
     "uniqueEffects": [
-      "Ailment Damage increased by [20-30]%",
-      "[10-25] to All Enemy Resistances"
+      "Unholy",
+      "Unholy",
+      "Unholy"
     ],
     "sockets": 4,
     "maxSockets": 5,
@@ -514,20 +866,35 @@
     "damageMax": 72,
     "attackSpeed": 1.5,
     "implicit": {
-      "enhanced_damage": [660, 780],
-      "increased_attack_speed": [40, 80],
+      "enhanced_damage": [
+        660,
+        780
+      ],
+      "increased_attack_speed": [
+        40,
+        80
+      ],
       "deadly_blow": 15,
       "crushing_blow_chance": 20,
       "attack_rating_pct": 5,
-      "additive_physical_damage": [22, 50],
+      "additive_physical_damage": [
+        22,
+        50
+      ],
       "defense_ignored": 35,
-      "to_strength": 35
+      "to_strength": 35,
+      "increased_attack_rating": 5
     },
-    "uniqueEffects": [
-      "15% Chance when Striking to cast Lance Thrust Level 37"
-    ],
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Lance Thrust Level 37",
+        "details": "Perform a long ranged lance attack piercing monsters in a line dealing physical damage. If the lance comes in contact with a commending banner you get dragged to the banner smashing the ground stunning monsters on impact."
+      }
+    ]
   },
   {
     "id": "bow_heroic_deathquill",
@@ -542,20 +909,37 @@
     "damageMax": 125,
     "attackSpeed": 1.8,
     "implicit": {
-      "enhanced_damage": [875, 950],
+      "enhanced_damage": [
+        875,
+        950
+      ],
       "increased_attack_speed": 50,
-      "flat_poison_skill_damage": [44, 64],
-      "poison_skill_damage": [45, 65],
-      "ignore_poison_res": [15, 25],
+      "flat_poison_skill_damage": [
+        44,
+        64
+      ],
+      "poison_skill_damage": [
+        45,
+        65
+      ],
+      "ignore_poison_res": [
+        15,
+        25
+      ],
       "poison_resistance": 60,
       "max_poison_resistance": 5,
       "poison_length_reduced": 50
     },
-    "uniqueEffects": [
-      "19% Chance when Striking to cast Plague of Rats Level 190"
-    ],
     "sockets": 4,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Plague of Rats Level 175",
+        "details": "Send plague rats in target direction dealing poison damage on impact. "
+      }
+    ]
   },
   {
     "id": "chainsaw_heroic_diablo",
@@ -570,25 +954,56 @@
     "damageMax": 114,
     "attackSpeed": 0.65,
     "implicit": {
-      "enhanced_damage": [775, 850],
-      "all_skills": [3, 5],
-      "fire_skills": [3, 6],
-      "faster_cast_rate": [50, 75],
-      "extra_damage_burning": [35, 50],
-      "flat_fire_skill_damage": [22, 50],
-      "fire_skill_damage": [30, 66],
+      "enhanced_damage": [
+        775,
+        850
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "fire_skills": [
+        3,
+        6
+      ],
+      "faster_cast_rate": [
+        50,
+        75
+      ],
+      "extra_damage_burning": [
+        35,
+        50
+      ],
+      "flat_fire_skill_damage": [
+        22,
+        50
+      ],
+      "fire_skill_damage": [
+        30,
+        66
+      ],
       "ignore_fire_res": 20,
       "all_resistances": 25
     },
     "skillBonuses": {
-      "Spontaneous Combustion": [12, 20]
+      "Spontaneous Combustion": [
+        12,
+        20
+      ]
     },
     "uniqueEffects": [
-      "40% Chance when Attacking to cast Moonshine Molotov Level 64",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 40,
+        "description": "cast Moonshine Molotov Level 50",
+        "details": "Throw a bottle of moonshine that ignites the impacted area on fire and sends out burning oil."
+      }
+    ]
   },
   {
     "id": "gun_heroic_dracula_s_demise",
@@ -602,20 +1017,40 @@
     "damageMax": 175,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [950, 1150],
-      "all_skills": [4, 6],
+      "enhanced_damage": [
+        950,
+        1150
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
       "attack_damage": 40,
       "increased_attack_speed": -40,
       "crit_chance": 25,
       "deadly_blow": 50,
-      "additive_physical_damage": [44, 72],
-      "life_steal": [10, 15],
-      "crit_damage": [40, 65],
-      "defense_ignored": 50
+      "additive_physical_damage": [
+        44,
+        72
+      ],
+      "life_steal": [
+        10,
+        15
+      ],
+      "crit_damage": [
+        40,
+        65
+      ],
+      "defense_ignored": 50,
+      "increased_attack_speed_more": -40,
+      "damage_based_on_level": 100,
+      "melee_range": 40,
+      "vitality_converted_to_attack_dmg": [
+        15,
+        25
+      ]
     },
     "uniqueEffects": [
-      "[15-25] of Vitality is added as Attack Damage",
-      "+100 Physical Damage (Based on Level)",
       "Piercing Attack"
     ],
     "sockets": 4,
@@ -634,10 +1069,16 @@
     "damageMax": 122,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [1050, 1150],
+      "enhanced_damage": [
+        1050,
+        1150
+      ],
       "all_skills": 3,
       "increased_attack_speed": -35,
-      "additive_physical_damage": [40, 60],
+      "additive_physical_damage": [
+        40,
+        60
+      ],
       "defense_ignored": 75
     },
     "uniqueEffects": [],
@@ -657,15 +1098,30 @@
     "damageMax": 78,
     "attackSpeed": 1.7,
     "implicit": {
-      "enhanced_damage": [685, 740],
-      "all_skills": [2, 3],
+      "enhanced_damage": [
+        685,
+        740
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
       "movement_speed": 30,
-      "increased_attack_speed": [30, 50],
+      "increased_attack_speed": [
+        30,
+        50
+      ],
       "crushing_blow_chance": 25,
       "attack_rating_pct": 30,
-      "crit_damage": [40, 50],
+      "crit_damage": [
+        40,
+        50
+      ],
       "open_wounds": 25,
-      "to_strength": [40, 60]
+      "to_strength": [
+        40,
+        60
+      ]
     },
     "uniqueEffects": [],
     "sockets": 4,
@@ -683,22 +1139,45 @@
     "damageMax": 140,
     "attackSpeed": 1.15,
     "implicit": {
-      "enhanced_damage": [900, 950],
+      "enhanced_damage": [
+        900,
+        950
+      ],
       "all_skills": 5,
       "crit_chance": 50,
-      "crit_damage": [150, 200],
-      "projectile_speed": [3, 4],
-      "explosion_damage": [75, 150],
-      "explosion_aoe": [10, 15]
+      "crit_damage": [
+        150,
+        200
+      ],
+      "projectile_speed": [
+        3,
+        4
+      ],
+      "explosion_damage": [
+        75,
+        150
+      ],
+      "explosion_aoe": [
+        10,
+        15
+      ],
+      "reduced_movement_diminish": 75
     },
     "uniqueEffects": [
-      "15% Chance when Striking to cast Homing Missile Level 80",
-      "Skill Movement Diminish decreased by 75%"
+      "Unholy"
     ],
     "sockets": 4,
     "maxSockets": 4,
     "maxAffixes": 1,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Homing Missile Level 80",
+        "details": "Launch a barrage of homing missiles which seeks down its target dealing area of effect arcane and physical damage."
+      }
+    ]
   },
   {
     "id": "dagger_heroic_fenrirs_bloodfang",
@@ -712,22 +1191,51 @@
     "damageMax": 22,
     "attackSpeed": 1.8,
     "implicit": {
-      "enhanced_damage": [530, 625],
-      "all_skills": [2, 3],
-      "arcane_skills": [2, 4],
-      "increased_attack_speed": [75, 120],
-      "flat_arcane_skill_damage": [32, 60],
-      "ignore_arcane_res": [15, 25]
+      "enhanced_damage": [
+        530,
+        625
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "arcane_skills": [
+        2,
+        4
+      ],
+      "increased_attack_speed": [
+        75,
+        120
+      ],
+      "flat_arcane_skill_damage": [
+        32,
+        60
+      ],
+      "ignore_arcane_res": [
+        15,
+        25
+      ],
+      "reduced_movement_diminish": [
+        35,
+        50
+      ]
     },
     "skillBonuses": {
-      "Explosive Kunai": [12, 20]
+      "Explosive Kunai": [
+        12,
+        20
+      ]
     },
-    "uniqueEffects": [
-      "15% Chance when Casting to cast Sands of Time Level 23",
-      "Skill Movement Diminish decreased by [35-50]%"
-    ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Sands of Time Level 15",
+        "details": "Temporarily increase your arcane skill damage and cast rate."
+      }
+    ]
   },
   {
     "id": "sword_gabriel_s_broken_resolve",
@@ -741,20 +1249,37 @@
     "damageMax": 82,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [890, 975],
+      "enhanced_damage": [
+        890,
+        975
+      ],
       "all_skills": 3,
-      "life_steal": [10, 15],
+      "life_steal": [
+        10,
+        15
+      ],
       "defense_ignored": 40,
       "to_strength": 35,
-      "all_attributes": [25, 40]
+      "all_attributes": [
+        25,
+        40
+      ]
     },
     "uniqueEffects": [
-      "15% Chance when Attacking to cast Gabriel's Shadow Level 1"
+      "Unholy",
+      "Unholy"
     ],
     "sockets": 3,
     "maxSockets": 5,
     "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Gabriels Shadow Level 1"
+      }
+    ]
   },
   {
     "id": "axe_heroic_gem_king_s_cleaver",
@@ -788,22 +1313,49 @@
     "damageMax": 54,
     "attackSpeed": 1.5,
     "implicit": {
-      "enhanced_damage": [380, 420],
-      "all_skills": [2, 3],
-      "cold_skills": [5, 6],
+      "enhanced_damage": [
+        380,
+        420
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": [
+        5,
+        6
+      ],
       "faster_cast_rate": 50,
-      "extra_damage_frozen": [30, 50],
-      "flat_cold_skill_damage": [15, 30],
-      "cold_skill_damage": [45, 70]
+      "extra_damage_frozen": [
+        30,
+        50
+      ],
+      "flat_cold_skill_damage": [
+        15,
+        30
+      ],
+      "cold_skill_damage": [
+        45,
+        70
+      ],
+      "energy_based_on_level": 40,
+      "intelligence_based_on_level": 75,
+      "reduced_movement_diminish": 50,
+      "extra_dmg_to_deep_frozen": [
+        30,
+        50
+      ]
     },
-    "uniqueEffects": [
-      "10% Chance after each Kill to cast Blizzard Level 80",
-      "Skill Movement Diminish decreased by 50%",
-      "+40 to Energy (Based on Level)",
-      "+75 to Intelligence (Based on Level)"
-    ],
     "sockets": 2,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 10,
+        "description": "cast Blizzard Level 80",
+        "details": "Cast a freezing blizzard dealing area of effect cold damage and freezing monsters in the target area."
+      }
+    ]
   },
   {
     "id": "sword_heroic_glowstick_estoc",
@@ -817,21 +1369,54 @@
     "damageMax": 95,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [725, 850],
-      "all_skills": [3, 4],
-      "increased_attack_speed": [35, 50],
+      "enhanced_damage": [
+        725,
+        850
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "increased_attack_speed": [
+        35,
+        50
+      ],
       "attack_rating": 1750,
-      "to_strength": [40, 60],
+      "to_strength": [
+        40,
+        60
+      ],
       "to_dexterity": 45,
-      "attack_damage": [45, 65]
+      "attack_damage": [
+        45,
+        65
+      ]
     },
     "uniqueEffects": [
-      "4% Chance when Striking to cast Vacuuming Strike Level 2",
-      "8% Chance when Attacking to cast Weapon Throw Level 60",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "skillBonuses": {
+      "Returning Projectiles": [
+        1,
+        5
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Vacuuming Strike Level 2",
+        "details": "Pulls all monsters in front of you dealing physical damage"
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Weapon Throw Level 59",
+        "details": "Throw your weapon dealing increased damage"
+      }
+    ]
   },
   {
     "id": "polearm_heroic_grimbone_s_scythe",
@@ -845,20 +1430,39 @@
     "damageMax": 125,
     "attackSpeed": 1.65,
     "implicit": {
-      "enhanced_damage": [880, 1000],
-      "all_skills": [2, 3],
+      "enhanced_damage": [
+        880,
+        1000
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
       "attack_rating": 1250,
       "life_steal": 20,
-      "crit_damage": [100, 125],
+      "crit_damage": [
+        100,
+        125
+      ],
       "to_dexterity": 30,
-      "increased_dexterity": [4, 10]
+      "increased_dexterity": [
+        4,
+        10
+      ]
     },
     "uniqueEffects": [
-      "25% Chance when Striking to cast Grim Bones Level 71",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 25,
+        "description": "cast Grim Bones Level 65",
+        "details": "Send forward a shockwave of bone spikes dealing physical damage."
+      }
+    ]
   },
   {
     "id": "axe_heroic_headsman_s_bloodthrister",
@@ -872,22 +1476,43 @@
     "damageMax": 115,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [810, 920],
-      "all_skills": [1, 2],
-      "physical_skills": [6, 9],
+      "enhanced_damage": [
+        810,
+        920
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "physical_skills": [
+        6,
+        9
+      ],
       "crit_chance": 10,
       "defense_ignored": 25,
-      "extra_damage_bleeding": [30, 50],
+      "extra_damage_bleeding": [
+        30,
+        50
+      ],
       "to_strength": 20,
       "to_dexterity": 30,
-      "physical_damage_reduction": [8, 14],
-      "magic_damage_reduction": [8, 14]
+      "physical_damage_reduction": [
+        8,
+        14
+      ],
+      "magic_damage_reduction": [
+        8,
+        14
+      ],
+      "attack_rating_based_on_level": 1200
     },
     "skillBonuses": {
-      "Execution": [1, 5]
+      "Execution": [
+        1,
+        5
+      ]
     },
     "uniqueEffects": [
-      "+1200 to Attack Rating (Based on Level)",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 5,
@@ -905,22 +1530,59 @@
     "damageMax": 64,
     "attackSpeed": 1.9,
     "implicit": {
-      "enhanced_damage": [520, 600],
-      "all_skills": [2, 3],
-      "cold_skills": [3, 6],
+      "enhanced_damage": [
+        520,
+        600
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": [
+        3,
+        6
+      ],
       "faster_cast_rate": 30,
-      "increased_frost_bite_damage": [25, 35],
-      "mana_replenish": [8, 12],
-      "flat_cold_skill_damage": [22, 48],
-      "cold_skill_damage": [45, 60]
+      "increased_frost_bite_damage": [
+        25,
+        35
+      ],
+      "mana_replenish": [
+        8,
+        12
+      ],
+      "flat_cold_skill_damage": [
+        22,
+        48
+      ],
+      "cold_skill_damage": [
+        45,
+        60
+      ],
+      "frostbite_damage": [
+        25,
+        35
+      ]
     },
     "uniqueEffects": [
-      "8% Chance when Striking to cast Torrent Level 79",
-      "5% Chance when Casting to cast Frozen Hide Level 76",
       "Cannot be Frozen"
     ],
     "sockets": 1,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Torrent Level 68",
+        "details": "Summon a pool of corrupted water on target location bursting into a massive torrent that knocks up monsters struck dealing cold damage."
+      },
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Frozen Hide Level 72",
+        "details": "Cast a frost enhanced shield on yourself reducing incoming physical damage, freezing and dealing cold damage to monsters that attack you."
+      }
+    ]
   },
   {
     "id": "mace_heroic_luci_s_day",
@@ -934,20 +1596,43 @@
     "damageMax": 114,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [825, 900],
-      "all_skills": [3, 6],
-      "crit_damage": [40, 60],
+      "enhanced_damage": [
+        825,
+        900
+      ],
+      "all_skills": [
+        3,
+        6
+      ],
+      "crit_damage": [
+        40,
+        60
+      ],
       "defense_ignored": 75,
       "open_wounds": 50,
-      "extra_damage_bleeding": [20, 30],
-      "to_strength": [40, 55]
+      "extra_damage_bleeding": [
+        20,
+        30
+      ],
+      "to_strength": [
+        40,
+        55
+      ],
+      "open_wound_chance": 50
     },
     "uniqueEffects": [
-      "16% Chance when Striking to cast Throw! Level 92",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 16,
+        "description": "cast Throw! Level 89",
+        "details": "Pick up and throw a monster which deals area of effect arcane damage and stuns monsters upon landing."
+      }
+    ]
   },
   {
     "id": "wand_heroic_manafunneler_s_conjurer",
@@ -960,20 +1645,50 @@
     "damageMax": 40,
     "attackSpeed": 1.5,
     "implicit": {
-      "all_skills": [3, 4],
-      "cold_skills": [0, 6],
-      "fire_skills": [0, 6],
-      "poison_skills": [0, 6],
-      "arcane_skills": [0, 6],
+      "all_skills": [
+        3,
+        4
+      ],
+      "cold_skills": [
+        0,
+        6
+      ],
+      "fire_skills": [
+        0,
+        6
+      ],
+      "poison_skills": [
+        0,
+        6
+      ],
+      "arcane_skills": [
+        0,
+        6
+      ],
       "faster_cast_rate": 70,
-      "to_energy": [30, 40],
-      "magic_skill_damage": [30, 40]
+      "to_energy": [
+        30,
+        40
+      ],
+      "magic_skill_damage": [
+        30,
+        40
+      ],
+      "lightning_skills": [
+        0,
+        6
+      ]
     },
-    "uniqueEffects": [
-      "1% Chance when Casting to cast Manalicious Level 1"
-    ],
     "sockets": 1,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 1,
+        "description": "cast Manalicious Level 1",
+        "details": "Cast to instantly restore some Mana."
+      }
+    ]
   },
   {
     "id": "gun_heroic_masters_magnum",
@@ -987,20 +1702,46 @@
     "damageMax": 92,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [750, 920],
-      "all_skills": [2, 4],
-      "crit_chance": [15, 25],
-      "crit_damage": [80, 120],
+      "enhanced_damage": [
+        750,
+        920
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "crit_chance": [
+        15,
+        25
+      ],
+      "crit_damage": [
+        80,
+        120
+      ],
       "defense_ignored": 30,
-      "to_strength": [25, 45],
-      "to_dexterity": [25, 45]
+      "to_strength": [
+        25,
+        45
+      ],
+      "to_dexterity": [
+        25,
+        45
+      ],
+      "deadly_blow_effectiveness": [
+        35,
+        55
+      ]
     },
-    "uniqueEffects": [
-      "15% Chance when Attacking to cast Shredder Trap Level 71",
-      "Deadly Blow Damage increased by [35-55]%"
-    ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Shredder Trap Level 70",
+        "details": "Throw a shredder on the ground spinning with deadly speed dealing physical damage."
+      }
+    ]
   },
   {
     "id": "bow_heroic_monsoon",
@@ -1015,18 +1756,36 @@
     "damageMax": 126,
     "attackSpeed": 1.8,
     "implicit": {
-      "enhanced_damage": [650, 850],
-      "all_skills": [2, 4],
-      "mana_steal": [8, 15],
-      "to_strength": [45, 60],
-      "to_dexterity": [40, 50]
+      "enhanced_damage": [
+        650,
+        850
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "mana_steal": [
+        8,
+        15
+      ],
+      "to_strength": [
+        45,
+        60
+      ],
+      "to_dexterity": [
+        40,
+        50
+      ],
+      "attack_rating_based_on_level": 1000,
+      "melee_range": [
+        10,
+        20
+      ]
     },
     "skillBonuses": {
       "Ricochet": 1
     },
     "uniqueEffects": [
-      "Attack Range Increased by [10-20]%",
-      "+1000 to Attack Rating (Based on Level)",
       "Piercing Attack"
     ],
     "sockets": 4,
@@ -1044,22 +1803,54 @@
     "damageMax": 42,
     "attackSpeed": 1.5,
     "implicit": {
-      "all_skills": [4, 5],
+      "all_skills": [
+        4,
+        5
+      ],
       "faster_cast_rate": 50,
-      "mana_replenish": [7, 15],
-      "to_energy": [35, 50],
-      "to_intelligence": [35, 50],
-      "magic_skill_damage": [20, 45],
-      "mana_per_kill": [15, 30],
-      "all_resistances": [10, 20],
-      "magic_find": [25, 50]
+      "mana_replenish": [
+        7,
+        15
+      ],
+      "to_energy": [
+        35,
+        50
+      ],
+      "to_intelligence": [
+        35,
+        50
+      ],
+      "magic_skill_damage": [
+        20,
+        45
+      ],
+      "mana_per_kill": [
+        15,
+        30
+      ],
+      "all_resistances": [
+        10,
+        20
+      ],
+      "magic_find": [
+        25,
+        50
+      ],
+      "ailment_damage_all": [
+        20,
+        30
+      ]
     },
-    "uniqueEffects": [
-      "20% Chance when Struck to cast Teleport Level 1",
-      "Ailment Damage increased by [20-30]%"
-    ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 20,
+        "description": "cast Teleport Level 1",
+        "details": "Move through the ether for a short distance instantaneously"
+      }
+    ]
   },
   {
     "id": "cane_heroic_pagan_god_s_blasphemy",
@@ -1074,19 +1865,41 @@
     "damageMax": 42,
     "attackSpeed": 1,
     "implicit": {
-      "all_skills": [4, 6],
+      "all_skills": [
+        4,
+        6
+      ],
       "faster_cast_rate": 60,
-      "mana_replenish": [8, 12],
-      "magic_skill_damage": [70, 100],
-      "light_radius": 8
+      "mana_replenish": [
+        8,
+        12
+      ],
+      "magic_skill_damage": [
+        70,
+        100
+      ],
+      "light_radius": 8,
+      "ailment_damage_all": [
+        20,
+        30
+      ]
     },
-    "uniqueEffects": [
-      "1% Chance when Struck to cast Despair Level 666",
-      "50% Chance when Casting to cast Judgement Level 666",
-      "Ailment Damage increased by [20-30]%"
-    ],
     "sockets": 5,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 1,
+        "description": "cast Despair Level 666",
+        "details": "Reduces your movement speed and all resistances"
+      },
+      {
+        "trigger": "on_cast",
+        "chance": 50,
+        "description": "cast Judgement Level 666",
+        "details": "Unleash a powerful area of effect spell dealing arcane damage"
+      }
+    ]
   },
   {
     "id": "mace_heroic_rakhul_s_legion_crusher",
@@ -1100,21 +1913,45 @@
     "damageMax": 175,
     "attackSpeed": 1.15,
     "implicit": {
-      "enhanced_damage": [850, 965],
-      "all_skills": [3, 5],
+      "enhanced_damage": [
+        850,
+        965
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
       "increased_attack_speed": -75,
       "crushing_blow_chance": 30,
       "defense_ignored": 75,
-      "extra_damage_stunned": [40, 80],
-      "to_strength": [150, 250],
-      "to_vitality": [75, 125]
+      "extra_damage_stunned": [
+        40,
+        80
+      ],
+      "to_strength": [
+        150,
+        250
+      ],
+      "to_vitality": [
+        75,
+        125
+      ],
+      "increased_attack_speed_more": -75
     },
     "uniqueEffects": [
-      "8% Chance when Attacking to cast King Rakhul's Carnage Level 4",
+      "Unholy",
+      "Unholy",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 12,
+        "description": "cast King Rakhuls Carnage Level 9"
+      }
+    ]
   },
   {
     "id": "bow_heroic_recurving_corrosion",
@@ -1129,15 +1966,33 @@
     "damageMax": 128,
     "attackSpeed": 1.5,
     "implicit": {
-      "enhanced_damage": [850, 925],
+      "enhanced_damage": [
+        850,
+        925
+      ],
       "all_skills": 3,
-      "poison_skills": [3, 5],
-      "extra_damage_poisoned": [15, 25],
+      "poison_skills": [
+        3,
+        5
+      ],
+      "extra_damage_poisoned": [
+        15,
+        25
+      ],
       "to_strength": 40,
       "to_dexterity": 65,
-      "increased_dexterity": [4, 10],
-      "flat_poison_skill_damage": [40, 65],
-      "poison_skill_damage": [30, 50],
+      "increased_dexterity": [
+        4,
+        10
+      ],
+      "flat_poison_skill_damage": [
+        40,
+        65
+      ],
+      "poison_skill_damage": [
+        30,
+        50
+      ],
       "poison_absorption": 8,
       "poison_resistance": 50
     },
@@ -1155,19 +2010,39 @@
     "damageMax": 80,
     "attackSpeed": 1.8,
     "implicit": {
-      "enhanced_damage": [270, 300],
-      "all_skills": [2, 3],
+      "enhanced_damage": [
+        270,
+        300
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
       "movement_speed": 45,
-      "increased_attack_speed": [85, 125],
+      "increased_attack_speed": [
+        85,
+        125
+      ],
       "deadly_blow": 25,
-      "flat_arcane_skill_damage": [32, 60],
-      "ignore_arcane_res": [15, 30]
+      "flat_arcane_skill_damage": [
+        32,
+        60
+      ],
+      "ignore_arcane_res": [
+        15,
+        30
+      ]
     },
-    "uniqueEffects": [
-      "20% Chance when Attacking to cast Age Proliferation Level 62"
-    ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Age Proliferation Level 75",
+        "details": "Channel waves of fractal energy on the target monster sending pulses out dealing arcane damage to nearby monsters."
+      }
+    ]
   },
   {
     "id": "mace_heroic_s_hk_puimuri",
@@ -1181,20 +2056,47 @@
     "damageMax": 64,
     "attackSpeed": 1.85,
     "implicit": {
-      "enhanced_damage": [650, 750],
-      "lightning_skills": [3, 5],
-      "increased_attack_speed": [70, 80],
-      "attack_rating_pct": [15, 25],
+      "enhanced_damage": [
+        650,
+        750
+      ],
+      "lightning_skills": [
+        3,
+        5
+      ],
+      "increased_attack_speed": [
+        70,
+        80
+      ],
+      "attack_rating_pct": [
+        15,
+        25
+      ],
       "defense_ignored": 40,
-      "flat_lightning_skill_damage": [30, 50],
-      "lightning_skill_damage": [23, 40],
-      "ignore_lightning_res": 25
+      "flat_lightning_skill_damage": [
+        30,
+        50
+      ],
+      "lightning_skill_damage": [
+        23,
+        40
+      ],
+      "ignore_lightning_res": 25,
+      "increased_attack_rating": [
+        15,
+        25
+      ]
     },
-    "uniqueEffects": [
-      "20% Chance when Striking to cast Storm Caller Level 90"
-    ],
     "sockets": 2,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Storm Caller Level 91",
+        "details": "Call down bolts of thunder striking all monsters around the target dealing Lightning damage"
+      }
+    ]
   },
   {
     "id": "throwing_heroic_scarred_battle_darts",
@@ -1207,22 +2109,51 @@
     "damageMax": 72,
     "attackSpeed": 1.85,
     "implicit": {
-      "enhanced_damage": [850, 925],
+      "enhanced_damage": [
+        850,
+        925
+      ],
       "all_skills": 2,
-      "physical_skills": [3, 5],
-      "increased_attack_speed": [30, 40],
-      "increased_bleeding_damage": [20, 30],
-      "crit_chance": [15, 25],
+      "physical_skills": [
+        3,
+        5
+      ],
+      "increased_attack_speed": [
+        30,
+        40
+      ],
+      "increased_bleeding_damage": [
+        20,
+        30
+      ],
+      "crit_chance": [
+        15,
+        25
+      ],
       "attack_rating_pct": 8,
       "life_steal": 6,
-      "crit_damage": [30, 60],
-      "open_wounds": 100
+      "crit_damage": [
+        30,
+        60
+      ],
+      "open_wounds": 100,
+      "crushing_blow_chance": [
+        10,
+        20
+      ],
+      "increased_attack_rating": 8,
+      "open_wound_chance": 100
     },
-    "uniqueEffects": [
-      "8% Chance when Attacking to cast Caustic Spearhead Level 61"
-    ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Caustic Spearhead Level 59",
+        "details": "Perform a burst attack dealing increased damage, additional poison damage and inflicting Poisoned on hit."
+      }
+    ]
   },
   {
     "id": "dagger_heroic_serpent_s_tooth",
@@ -1235,21 +2166,51 @@
     "damageMax": 72,
     "attackSpeed": 1.55,
     "implicit": {
-      "enhanced_damage": [420, 560],
-      "all_skills": [1, 2],
-      "poison_skills": [3, 5],
+      "enhanced_damage": [
+        420,
+        560
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "poison_skills": [
+        3,
+        5
+      ],
       "movement_speed": 35,
-      "faster_cast_rate": [30, 45],
-      "extra_damage_poisoned": [15, 30],
-      "flat_poison_skill_damage": [22, 35],
-      "poison_skill_damage": [20, 45],
-      "ignore_poison_res": 25
+      "faster_cast_rate": [
+        30,
+        45
+      ],
+      "extra_damage_poisoned": [
+        15,
+        30
+      ],
+      "flat_poison_skill_damage": [
+        22,
+        35
+      ],
+      "poison_skill_damage": [
+        20,
+        45
+      ],
+      "ignore_poison_res": 25,
+      "extra_poison_dmg_to_poisoned": [
+        15,
+        30
+      ]
     },
-    "uniqueEffects": [
-      "30% Chance when Casting to cast Envenom Level 114"
-    ],
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 30,
+        "description": "cast Envenom Level 100",
+        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
+      }
+    ]
   },
   {
     "id": "sword_heroic_shadow_carver",
@@ -1262,25 +2223,48 @@
     "damageMax": 100,
     "attackSpeed": 1.2,
     "implicit": {
-      "enhanced_damage": [575, 635],
+      "enhanced_damage": [
+        575,
+        635
+      ],
       "increased_attack_speed": 50,
-      "life_steal": [10, 15],
+      "life_steal": [
+        10,
+        15
+      ],
       "open_wounds": 25,
-      "to_strength": [40, 60],
+      "to_strength": [
+        40,
+        60
+      ],
       "to_vitality": 20,
-      "additive_arcane_damage": [2150, 2375],
-      "life_per_kill": 12
+      "additive_arcane_damage": [
+        2150,
+        2375
+      ],
+      "life_per_kill": 12,
+      "open_wound_chance": 25,
+      "enemy_all_resist": 15
     },
     "skillBonuses": {
       "Reaper's Culling": 2
     },
-    "uniqueEffects": [
-      "23% Chance when Striking to cast Slice of Shadows Level 30",
-      "8% Chance when Attacking to cast Reaping Throw Level 3",
-      "-15% to All Enemy Resistances"
-    ],
     "sockets": 2,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Slice of Shadows Level 29",
+        "details": "Perform an attack that releases a wave of shadow dealing physical damage."
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Reaping Throw Level 3",
+        "details": "Summon Grim Reaper´s scythe and throw with deadly force dealing Elemental damage."
+      }
+    ]
   },
   {
     "id": "sword_heroic_shadowfury",
@@ -1293,18 +2277,45 @@
     "damageMax": 114,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [550, 780],
-      "all_skills": [3, 5],
-      "increased_attack_speed": [20, 30],
-      "life_steal": [5, 7],
-      "projectile_speed": [1, 2],
-      "to_strength": [40, 50],
+      "enhanced_damage": [
+        550,
+        780
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "increased_attack_speed": [
+        20,
+        30
+      ],
+      "life_steal": [
+        5,
+        7
+      ],
+      "projectile_speed": [
+        1,
+        2
+      ],
+      "to_strength": [
+        40,
+        50
+      ],
       "to_dexterity": 60,
-      "additive_arcane_damage": [1180, 1300],
-      "magic_skill_damage": [8, 25]
+      "additive_arcane_damage": [
+        1180,
+        1300
+      ],
+      "magic_skill_damage": [
+        8,
+        25
+      ]
     },
     "skillBonuses": {
-      "Reaper's Culling": [1, 3]
+      "Reaper's Culling": [
+        1,
+        3
+      ]
     },
     "uniqueEffects": [],
     "sockets": 3,
@@ -1322,23 +2333,55 @@
     "damageMax": 100,
     "attackSpeed": 1.15,
     "implicit": {
-      "enhanced_damage": [700, 900],
-      "all_skills": [3, 5],
-      "fire_skills": [3, 6],
+      "enhanced_damage": [
+        700,
+        900
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "fire_skills": [
+        3,
+        6
+      ],
       "movement_speed": 30,
-      "life_steal": [8, 15],
-      "extra_damage_burning": [25, 40],
-      "to_strength": [35, 60],
-      "additive_fire_damage": [4000, 7500]
+      "life_steal": [
+        8,
+        15
+      ],
+      "extra_damage_burning": [
+        25,
+        40
+      ],
+      "to_strength": [
+        35,
+        60
+      ],
+      "additive_fire_damage": [
+        4000,
+        7500
+      ],
+      "attack_rating_based_on_level": 1500
     },
     "uniqueEffects": [
-      "22% Chance when Striking to cast Fresh Cut Level 1",
-      "5% Chance when Attacking to cast Butchers Hook Level 32",
-      "+1500 to Attack Rating (Based on Level)",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 22,
+        "description": "cast Fresh Cut Level 1",
+        "details": "Throw pieces of fresh hot kebab meat dealing damage and setting monsters on fire."
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 5,
+        "description": "cast Butcher's Hook Level 38"
+      }
+    ]
   },
   {
     "id": "sword_heroic_sidewinder",
@@ -1351,24 +2394,53 @@
     "damageMax": 82,
     "attackSpeed": 1.85,
     "implicit": {
-      "enhanced_damage": [550, 825],
+      "enhanced_damage": [
+        550,
+        825
+      ],
       "all_skills": 3,
-      "physical_skills": [2, 5],
-      "increased_attack_speed": [30, 60],
+      "physical_skills": [
+        2,
+        5
+      ],
+      "increased_attack_speed": [
+        30,
+        60
+      ],
       "deadly_blow": 20,
-      "crushing_blow_chance": [10, 20],
+      "crushing_blow_chance": [
+        10,
+        20
+      ],
       "attack_rating_pct": 30,
       "life_steal": 10,
-      "attack_damage": [15, 40],
-      "magic_skill_damage": [20, 30]
+      "attack_damage": [
+        15,
+        40
+      ],
+      "magic_skill_damage": [
+        20,
+        30
+      ],
+      "increased_attack_rating": 30,
+      "reduced_movement_diminish": 25
     },
-    "uniqueEffects": [
-      "13% Chance when Striking to cast Asteroid Level 54",
-      "17% Chance when Attacking to cast Rebound Level 67",
-      "Skill Movement Diminish decreased by 25%"
-    ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Asteroid Level 64",
+        "details": "Cast down an asteroid from the sky dealing cold damage when landing."
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Rebound Level 59",
+        "details": "Perform an attack dealing physical damage and  lightning damage that rebounds to the closest monster."
+      }
+    ]
   },
   {
     "id": "throwing_heroic_sowyer_s_javelin_of_devastation",
@@ -1381,15 +2453,39 @@
     "damageMax": 82,
     "attackSpeed": 1.4,
     "implicit": {
-      "enhanced_damage": [725, 875],
-      "all_skills": [2, 3],
-      "lightning_skills": [3, 5],
-      "movement_speed": [20, 30],
-      "increased_attack_speed": [50, 70],
-      "extra_damage_stasis": [20, 30],
+      "enhanced_damage": [
+        725,
+        875
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "lightning_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "increased_attack_speed": [
+        50,
+        70
+      ],
+      "extra_damage_stasis": [
+        20,
+        30
+      ],
       "all_attributes": 35,
-      "lightning_skill_damage": [30, 60],
-      "ignore_lightning_res": [15, 25]
+      "lightning_skill_damage": [
+        30,
+        60
+      ],
+      "ignore_lightning_res": [
+        15,
+        25
+      ]
     },
     "uniqueEffects": [],
     "sockets": 2,
@@ -1409,19 +2505,49 @@
     "attackSpeed": 1.75,
     "implicit": {
       "all_skills": 6,
-      "arcane_skills": [5, 8],
-      "faster_cast_rate": [70, 90],
-      "mana_replenish": [10, 15],
-      "flat_arcane_skill_damage": [35, 70],
-      "ignore_arcane_res": [25, 35],
-      "magic_absorption": [20, 30]
+      "arcane_skills": [
+        5,
+        8
+      ],
+      "faster_cast_rate": [
+        70,
+        90
+      ],
+      "mana_replenish": [
+        10,
+        15
+      ],
+      "flat_arcane_skill_damage": [
+        35,
+        70
+      ],
+      "ignore_arcane_res": [
+        25,
+        35
+      ],
+      "magic_absorption": [
+        20,
+        30
+      ],
+      "ailment_damage_all": [
+        20,
+        30
+      ],
+      "arcane_skill_damage": [
+        35,
+        65
+      ]
     },
-    "uniqueEffects": [
-      "10% Chance when Casting to cast Mana Devour Level 11",
-      "Ailment Damage increased by [20-30]%"
-    ],
     "sockets": 4,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 10,
+        "description": "cast Mana Devour Level 13",
+        "details": "Instantly restores a portion of your mana."
+      }
+    ]
   },
   {
     "id": "mace_heroic_sung_lee_s_destroyer_flail",
@@ -1434,22 +2560,43 @@
     "damageMax": 64,
     "attackSpeed": 1.5,
     "implicit": {
-      "enhanced_damage": [820, 920],
-      "all_skills": [2, 3],
+      "enhanced_damage": [
+        820,
+        920
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
       "increased_attack_speed": 35,
       "crit_chance": 15,
       "deadly_blow": 25,
       "attack_rating_pct": 15,
-      "crit_damage": [25, 45],
+      "crit_damage": [
+        25,
+        45
+      ],
       "to_dexterity": 30,
-      "life_per_kill": [12, 18]
+      "life_per_kill": [
+        12,
+        18
+      ],
+      "ailment_damage_all": [
+        20,
+        30
+      ],
+      "increased_attack_rating": 15
     },
-    "uniqueEffects": [
-      "15% Chance when Attacking to cast Heavy Ball Level 40",
-      "Ailment Damage increased by [20-30]%"
-    ],
     "sockets": 5,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Heavy Ball Level 39",
+        "details": "Flail a big chained spike ball dealing physical damage to monsters on its path. "
+      }
+    ]
   },
   {
     "id": "cane_heroic_the_eye_of_tarethiel",
@@ -1464,24 +2611,62 @@
     "damageMax": 42,
     "attackSpeed": 1.25,
     "implicit": {
-      "faster_cast_rate": [80, 120],
-      "skill_haste": [20, 45],
-      "to_energy": [30, 45],
-      "arcane_skill_damage": [40, 60],
-      "mana_replenish_pct": [25, 35],
-      "life_per_kill": [8, 15],
-      "all_resistances": [10, 15]
+      "faster_cast_rate": [
+        80,
+        120
+      ],
+      "skill_haste": [
+        20,
+        45
+      ],
+      "to_energy": [
+        30,
+        45
+      ],
+      "arcane_skill_damage": [
+        40,
+        60
+      ],
+      "mana_replenish_pct": [
+        25,
+        35
+      ],
+      "life_per_kill": [
+        8,
+        15
+      ],
+      "all_resistances": [
+        10,
+        15
+      ],
+      "all_skills": [
+        5,
+        10
+      ],
+      "cooldown_recovery": [
+        20,
+        45
+      ],
+      "mana_replenish": [
+        25,
+        35
+      ]
     },
     "skillBonuses": {
       "Age Proliferation": 8,
-      "Sands of Time": 8
+      "Sands of Time": 8,
+      "Temporal Heroes": 8
     },
-    "uniqueEffects": [
-      "15% Chance when Casting to cast Eye of Tarethiel Level 63",
-      "+[5-10] to All Skills (Illusionist)"
-    ],
     "sockets": 5,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Eye of Tarethiel Level 62",
+        "details": "Activates your third eye for a short period, shocking any nearby monsters with chain lightning dealing arcane damage"
+      }
+    ]
   },
   {
     "id": "sword_heroic_the_hope_ender",
@@ -1496,22 +2681,52 @@
     "attackSpeed": 1.35,
     "implicit": {
       "enhanced_damage": 666,
-      "all_skills": [6, 9],
-      "mana_steal": [15, 22],
-      "to_strength": [80, 100],
-      "to_dexterity": [80, 100]
+      "all_skills": [
+        6,
+        9
+      ],
+      "mana_steal": [
+        15,
+        22
+      ],
+      "to_strength": [
+        80,
+        100
+      ],
+      "to_dexterity": [
+        80,
+        100
+      ]
     },
     "skillBonuses": {
-      "Enraged Mania": [20, 30]
+      "Enraged Mania": [
+        20,
+        30
+      ]
     },
     "uniqueEffects": [
-      "18% Chance after each Kill to cast Gabriel's Shadow Level 1",
-      "25% Chance when Striking to cast Gabriel's Annihilation Level 3",
-      "5% Chance when Struck to cast Demon Form Level 40",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 5,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 18,
+        "description": "cast Gabriels Shadow Level 1"
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 25,
+        "description": "cast Gabriels Annihilation Level 1"
+      },
+      {
+        "trigger": "when_struck",
+        "chance": 5,
+        "description": "cast Demon Form Level 40",
+        "details": "Temporarily turn into a demon gaining increased attack damage and attack speed."
+      }
+    ]
   },
   {
     "id": "mace_heroic_the_light_of_dawn",
@@ -1525,21 +2740,41 @@
     "damageMax": 156,
     "attackSpeed": 1,
     "implicit": {
-      "enhanced_damage": [825, 975],
+      "enhanced_damage": [
+        825,
+        975
+      ],
       "increased_attack_speed": -50,
       "deadly_blow": 50,
-      "crit_damage": [75, 100],
-      "defense_ignored": [35, 50]
+      "crit_damage": [
+        75,
+        100
+      ],
+      "defense_ignored": [
+        35,
+        50
+      ],
+      "increased_attack_speed_more": -50,
+      "vitality_based_on_level": 65,
+      "vitality_converted_to_attack_dmg": [
+        25,
+        40
+      ],
+      "less_dmg_with_cd_skills": 80
     },
     "uniqueEffects": [
-      "30% Chance when Attacking to cast Apocalyptic Thunder Level 115",
-      "[25-40] of Vitality is added as Attack Damage",
-      "-80% less damage dealt with skills that have a cooldown",
-      "+65 to Vitality (Based on Level)",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 5,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Apocalyptic Thunder Level 106",
+        "details": "Cast a high voltage thunder bolt on target spot stunning and dealing massive area of effect damage."
+      }
+    ]
   },
   {
     "id": "polearm_heroic_thorn_of_noxus",
@@ -1553,24 +2788,45 @@
     "damageMax": 232,
     "attackSpeed": 0.5,
     "implicit": {
-      "enhanced_damage": [850, 1150],
+      "enhanced_damage": [
+        850,
+        1150
+      ],
       "all_skills": 8,
-      "poison_skills": [5, 10],
+      "poison_skills": [
+        5,
+        10
+      ],
       "increased_attack_speed": -60,
       "deadly_blow": 75,
       "defense_ignored": 75,
-      "to_strength": [150, 200],
-      "poison_skill_damage": [60, 80]
+      "to_strength": [
+        150,
+        200
+      ],
+      "poison_skill_damage": [
+        60,
+        80
+      ],
+      "increased_attack_speed_more": -60,
+      "less_dmg_with_cd_skills": 85
     },
     "skillBonuses": {
-      "Noxious Strike": [40, 60]
+      "Noxious Strike": [
+        40,
+        60
+      ]
     },
-    "uniqueEffects": [
-      "15% Chance when Attacking to cast Envenom Level 40",
-      "-85% less damage dealt with skills that have a cooldown"
-    ],
     "sockets": 6,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Envenom Level 34",
+        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
+      }
+    ]
   },
   {
     "id": "axe_heroic_winter_s_bite",
@@ -1584,24 +2840,60 @@
     "damageMax": 80,
     "attackSpeed": 1.75,
     "implicit": {
-      "enhanced_damage": [700, 820],
-      "all_skills": [2, 3],
-      "cold_skills": [3, 5],
-      "increased_attack_speed": [20, 60],
-      "crit_chance": [12, 20],
+      "enhanced_damage": [
+        700,
+        820
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": [
+        3,
+        5
+      ],
+      "increased_attack_speed": [
+        20,
+        60
+      ],
+      "crit_chance": [
+        12,
+        20
+      ],
       "attack_rating_pct": 15,
-      "mana_steal": [7, 12],
-      "extra_damage_frozen": [20, 40]
+      "mana_steal": [
+        7,
+        12
+      ],
+      "extra_damage_frozen": [
+        20,
+        40
+      ],
+      "increased_attack_rating": 15,
+      "extra_dmg_to_deep_frozen": [
+        20,
+        40
+      ]
     },
     "skillBonuses": {
-      "Frost Sunder": [8, 12]
+      "Frost Sunder": [
+        8,
+        12
+      ]
     },
     "uniqueEffects": [
-      "18% Chance when Striking to cast Breath of Ice Level 73",
       "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 18,
+        "description": "cast Breath of Ice Level 60",
+        "details": "Breathe glacial air freezing and dealing cold damage to monsters."
+      }
+    ]
   },
   {
     "id": "axe_heroic_wraith_forged_cleaver",
@@ -1615,20 +2907,44 @@
     "damageMax": 88,
     "attackSpeed": 1.1,
     "implicit": {
-      "enhanced_damage": [640, 780],
-      "all_skills": [5, 10],
-      "life_steal": [11, 15],
+      "enhanced_damage": [
+        640,
+        780
+      ],
+      "all_skills": [
+        5,
+        10
+      ],
+      "life_steal": [
+        11,
+        15
+      ],
       "crit_damage": 100,
       "defense_ignored": 50,
       "open_wounds": 33,
-      "mana_per_kill": [22, 35]
+      "mana_per_kill": [
+        22,
+        35
+      ],
+      "crit_chance": 100,
+      "open_wound_chance": 33,
+      "grant_aura_holder_only": [
+        20,
+        40
+      ]
     },
     "uniqueEffects": [
-      "15% Chance when Attacking to cast Slice of Shadows Level 66",
-      "Attacks can hit multiple enemies",
-      "Dark Oath Level [20-40] (Holder Only)"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 4,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Slice of Shadows Level 66",
+        "details": "Perform an attack that releases a wave of shadow dealing physical damage."
+      }
+    ]
   }
 ]

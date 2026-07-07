@@ -25,10 +25,14 @@
         25
       ],
       "cold_resistance": -66,
-      "max_cold_resistance": -5
+      "max_cold_resistance": -5,
+      "phys_dmg_taken_as_cold": [
+        15,
+        25
+      ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Freezing Touch"
-    ]
+    "skillBonuses": {
+      "Freezing Touch": 1
+    }
   }
 ]

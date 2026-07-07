@@ -26,11 +26,9 @@
       "experience_gain": [
         1,
         5
-      ]
-    },
-    "uniqueEffects": [
-      "Magic Findd On Level"
-    ]
+      ],
+      "magic_find_based_on_level": 25
+    }
   },
   {
     "id": "belt_heroic_belt_of_skulls",
@@ -114,17 +112,26 @@
       "cold_absorption": [
         10,
         15
+      ],
+      "frostbite_damage": [
+        25,
+        40
+      ],
+      "extra_dmg_to_frostbitten": [
+        15,
+        30
       ]
     },
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 16,
-        "description": "cast Frozen Boulder Level 60"
+        "description": "cast Frozen Boulder Level 60",
+        "details": "Throw a frozen boulder dealing cold damage to monsters on its path."
       }
     ],
     "uniqueEffects": [
-      "Cannot Be Frozen"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -163,11 +170,16 @@
       "poison_absorption": [
         10,
         15
-      ]
+      ],
+      "increased_poisoned_frequency": 15
     },
-    "uniqueEffects": [
-      "Chance When Casting: Jungle Camouflage",
-      "Poison Tick Frequency"
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Jungle Camouflage Level 10",
+        "details": "Temporarily increases your poison skill damage."
+      }
     ]
   },
   {
@@ -206,10 +218,27 @@
         10,
         15
       ],
-      "max_lightning_resistance": 10
+      "max_lightning_resistance": 10,
+      "all_skills": [
+        1,
+        2
+      ],
+      "stasis_damage": [
+        25,
+        35
+      ],
+      "mana_replenish": [
+        25,
+        40
+      ]
     },
-    "uniqueEffects": [
-      "Chance When Attacking: Static Shock"
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 4,
+        "description": "cast Static Shock Level 24",
+        "details": "Shock target location with static electricity inflicting monsters with static shock dealing lightning damage over time. "
+      }
     ]
   },
   {
@@ -293,12 +322,12 @@
       "life": [
         500,
         750
-      ]
+      ],
+      "random_skill_element": 3
     },
     "sockets": 2,
     "maxSockets": 2,
     "uniqueEffects": [
-      "Random Skill Element +3",
       "Movement Phasing"
     ]
   },
@@ -360,19 +389,25 @@
       "physical_damage_reduction": [
         8,
         14
-      ]
+      ],
+      "random_skill_element": 2,
+      "life_replenish": 15,
+      "life_based_on_level": 520
     },
     "procs": [
       {
         "trigger": "on_block",
         "chance": 5,
-        "description": "cast Defunct Surgeon Level 27"
+        "description": "cast Defunct Surgeon Level 27",
+        "details": "Temporarily increase your attack speed and life stolen per hit. When active lose a portion of your maximum life per second (Non-fatal)."
       }
     ],
-    "uniqueEffects": [
-      "Random Skill Element +2",
-      "Life On Level 520"
-    ]
+    "skillBonuses": {
+      "Devout Doctor": [
+        20,
+        35
+      ]
+    }
   },
   {
     "id": "belt_heroic_sash_of_eternal_hatred",
@@ -443,7 +478,8 @@
       {
         "trigger": "on_kill",
         "chance": 0.03,
-        "description": "cast Collector Level 1"
+        "description": "cast Collector Level 1",
+        "details": "Activates a random Shrine event."
       }
     ]
   }

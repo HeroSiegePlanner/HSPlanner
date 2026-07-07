@@ -45,13 +45,11 @@
       "magic_find": [
         28,
         50
-      ]
+      ],
+      "mana_based_on_level": 525
     },
     "sockets": 2,
-    "maxSockets": 3,
-    "uniqueEffects": [
-      "Manad On Level"
-    ]
+    "maxSockets": 3
   },
   {
     "id": "helmet_heroic_lava_king_s_lost_mask",
@@ -101,11 +99,9 @@
       "magic_find": [
         15,
         25
-      ]
-    },
-    "uniqueEffects": [
-      "Lifed On Level"
-    ]
+      ],
+      "life_based_on_level": 475
+    }
   },
   {
     "id": "helmet_heroic_nikita_s_kj_33_helmet",
@@ -143,11 +139,9 @@
       "defense_ignored": [
         30,
         40
-      ]
-    },
-    "uniqueEffects": [
-      "Physical Damage On Level 100"
-    ]
+      ],
+      "damage_based_on_level": 100
+    }
   },
   {
     "id": "helmet_heroic_sight_of_the_gods",
@@ -180,12 +174,21 @@
       "magic_damage_reduction": [
         7,
         15
+      ],
+      "ailment_damage_all": [
+        20,
+        25
+      ],
+      "mana_replenish": [
+        75,
+        150
       ]
     },
+    "skillBonuses": {
+      "Teleport": 1
+    },
     "uniqueEffects": [
-      "Grant Spell: Teleport",
-      "Ailment Damage",
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
     ]
   },
   {
@@ -270,7 +273,8 @@
       {
         "trigger": "on_hit",
         "chance": 40,
-        "description": "cast Breath of Fire Level 125"
+        "description": "cast Breath of Fire Level 125",
+        "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
       }
     ]
   },
@@ -321,7 +325,8 @@
       {
         "trigger": "when_struck",
         "chance": 20,
-        "description": "cast Wall of Eternity Level 1"
+        "description": "cast Wall of Eternity Level 1",
+        "details": "Chance when struck to unleash a wall of marching mummies dealing damage and knocking back monsters on hit."
       }
     ],
     "skillBonuses": {
@@ -430,7 +435,8 @@
       {
         "trigger": "on_cast",
         "chance": 25,
-        "description": "cast Restless Spirits Level 74"
+        "description": "cast Restless Spirits Level 74",
+        "details": "Unleash restless spirits from an unholy dimension to seek new hosts inflicting arcane damage to the target."
       }
     ]
   },
@@ -547,10 +553,8 @@
       "all_resistances": [
         25,
         35
-      ]
-    },
-    "uniqueEffects": [
-      "Physical Damage On Level 150"
-    ]
+      ],
+      "damage_based_on_level": 150
+    }
   }
 ]

@@ -76,9 +76,6 @@
         40
       ]
     },
-    "uniqueEffects": [
-      "Monsters Rest In Peace"
-    ],
     "width": 3,
     "height": 3
   },
@@ -101,14 +98,12 @@
       "experience_gain": [
         1,
         5
-      ]
+      ],
+      "all_skills": 1
     },
     "skillBonuses": {
       "Goburin's Greed": 1
     },
-    "uniqueEffects": [
-      "Grant Spell: Goburin's Greed"
-    ],
     "width": 2,
     "height": 2
   },
@@ -128,14 +123,22 @@
       "fire_skill_damage": [
         20,
         40
+      ],
+      "explosion_aoe": [
+        15,
+        20
       ]
     },
-    "uniqueEffects": [
-      "Chance When Struck: Agony of Souls",
-      "Explosion Area Of Effect"
-    ],
     "width": 1,
-    "height": 3
+    "height": 3,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 30,
+        "description": "cast Agony of Souls Level 1",
+        "details": "Unleash a soul nova dealing fire damage"
+      }
+    ]
   },
   {
     "id": "charm_unholy_rotten_pumpkin",
@@ -192,13 +195,17 @@
       "light_radius": [
         3,
         6
+      ],
+      "movement_speed": [
+        3,
+        6
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Soul Burst"
-    ],
     "width": 1,
-    "height": 5
+    "height": 5,
+    "skillBonuses": {
+      "Soul Burst": 3
+    }
   },
   {
     "id": "charm_unholy_overloaded_dice",
@@ -210,11 +217,9 @@
     "requiresLevel": 100,
     "implicit": {
       "all_skills": 2,
-      "all_attributes": 10
+      "all_attributes": 10,
+      "grant_subskills": 1
     },
-    "uniqueEffects": [
-      "Grant Subskills: Random Skill"
-    ],
     "width": 2,
     "height": 2
   }

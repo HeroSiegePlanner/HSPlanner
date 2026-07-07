@@ -53,16 +53,17 @@
       "movement_speed": [
         30,
         50
-      ]
+      ],
+      "mana_based_on_level": 175,
+      "life_based_on_level": 300,
+      "attack_rating_based_on_level": 500,
+      "increased_experience_gain_below_100": [
+        25,
+        50
+      ],
+      "defense_based_on_level": 50
     },
-    "setId": "arc_s_blessed_faith",
-    "uniqueEffects": [
-      "Manad On Level",
-      "Lifed On Level",
-      "Defensed On Level",
-      "Attack Ratingd On Level",
-      "Increased Experience Gain Below 100"
-    ]
+    "setId": "arc_s_blessed_faith"
   },
   {
     "id": "boots_satanic_arch_wizard_s_silk_boots",
@@ -216,12 +217,11 @@
         8,
         20
       ],
-      "mana_replenish_pct": 20
+      "mana_replenish_pct": 20,
+      "mana_replenish": 20,
+      "mana_based_on_level": 75
     },
-    "setId": "bone_conjurer_s_regalia",
-    "uniqueEffects": [
-      "Manad On Level"
-    ]
+    "setId": "bone_conjurer_s_regalia"
   },
   {
     "id": "boots_satanic_boots_of_blood",
@@ -269,12 +269,13 @@
       ],
       "movement_speed": 30,
       "faster_cast_rate": 20,
-      "faster_hit_recovery": 50
+      "faster_hit_recovery": 50,
+      "defense_vs_missiles": [
+        35,
+        50
+      ]
     },
-    "setId": "god_of_the_elements",
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    "setId": "god_of_the_elements"
   },
   {
     "id": "boots_satanic_chronomancer_s_omnipotence",
@@ -385,12 +386,19 @@
       "damage_recouped_as_mana": [
         6,
         12
+      ],
+      "damage_drained_from_mana": [
+        6,
+        12
       ]
     },
     "setId": "death_lord_s_legacy",
-    "uniqueEffects": [
-      "Grant Spell: Summon Mastery"
-    ]
+    "skillBonuses": {
+      "Summon Mastery": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "boots_satanic_deep_chilled_marchers",
@@ -424,11 +432,12 @@
         15,
         20
       ],
-      "cold_resistance": 50
-    },
-    "uniqueEffects": [
-      "Max Cold Resist"
-    ]
+      "cold_resistance": 50,
+      "max_cold_resistance": [
+        3,
+        5
+      ]
+    }
   },
   {
     "id": "boots_satanic_earth_shaper_s_boots",
@@ -543,12 +552,20 @@
         8,
         20
       ],
-      "mana_per_kill": 12
+      "mana_per_kill": 12,
+      "increased_burning_damage": [
+        25,
+        40
+      ],
+      "fire_resistance": [
+        35,
+        50
+      ],
+      "max_fire_resistance": 5
     },
     "setId": "flames_of_the_apocalypse",
-    "uniqueEffects": [
-      "Max Fire Resist"
-    ]
+    "sockets": 3,
+    "maxSockets": 3
   },
   {
     "id": "boots_satanic_frozen_marchers",
@@ -583,7 +600,7 @@
       ]
     },
     "uniqueEffects": [
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
     ]
   },
   {
@@ -609,12 +626,24 @@
       "to_intelligence": [
         15,
         20
+      ],
+      "increased_attack_speed": [
+        15,
+        20
+      ],
+      "to_strength": [
+        15,
+        20
       ]
     },
     "setId": "gladiator_s_glory",
-    "uniqueEffects": [
-      "Chance When Struck: Madness Control",
-      "Explosion Area Of Effect"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 15,
+        "description": "cast Force Overwhelming Level 20",
+        "details": "Temporarily increase your attack damage, attack rating and attack speed."
+      }
     ]
   },
   {
@@ -678,11 +707,12 @@
       "all_resistances": [
         30,
         40
+      ],
+      "defense_vs_missiles": [
+        50,
+        75
       ]
-    },
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    }
   },
   {
     "id": "boots_satanic_juggernaut_s_victory_marchers",
@@ -772,11 +802,16 @@
         7,
         15
       ],
-      "fire_resistance": 50
-    },
-    "uniqueEffects": [
-      "Max Fire Resist"
-    ]
+      "fire_resistance": 50,
+      "ignore_fire_res": [
+        7,
+        15
+      ],
+      "max_fire_resistance": [
+        3,
+        5
+      ]
+    }
   },
   {
     "id": "boots_satanic_lost_master_s_marchers",
@@ -798,12 +833,13 @@
       "to_dexterity": [
         20,
         30
+      ],
+      "defense_vs_missiles": [
+        40,
+        50
       ]
     },
-    "setId": "master_s_legacy",
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    "setId": "master_s_legacy"
   },
   {
     "id": "boots_satanic_lumberjack_s_forestry_boots",
@@ -861,7 +897,7 @@
     },
     "setId": "the_lunar_eclipse",
     "uniqueEffects": [
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
     ]
   },
   {
@@ -895,11 +931,13 @@
         30,
         40
       ],
-      "increased_mana": 20
-    },
-    "uniqueEffects": [
-      "Random Skill Element"
-    ]
+      "increased_mana": 20,
+      "random_skill_element": 2,
+      "mana_costs_decreased": [
+        5,
+        10
+      ]
+    }
   },
   {
     "id": "boots_satanic_metal_vocalist_s_war_boots",
@@ -1193,7 +1231,7 @@
     },
     "setId": "plunderer_s_ensemble",
     "uniqueEffects": [
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
     ]
   },
   {
@@ -1249,9 +1287,12 @@
       ],
       "faster_hit_recovery": 75
     },
-    "uniqueEffects": [
-      "Grant Spell: Zoooooom"
-    ]
+    "skillBonuses": {
+      "Zoooooom": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "boots_satanic_runescribe_s_striders",
@@ -1306,12 +1347,19 @@
         15
       ],
       "increased_mana": 5,
-      "arcane_resistance": 40
+      "arcane_resistance": 40,
+      "vitality_converted_to_magic_skill_dmg": [
+        3,
+        8
+      ]
     },
     "setId": "the_holy_one",
-    "uniqueEffects": [
-      "Grant Spell: Divine Healing"
-    ]
+    "skillBonuses": {
+      "Divine Healing": [
+        5,
+        8
+      ]
+    }
   },
   {
     "id": "boots_satanic_satan_s_molten_steps",
@@ -1406,10 +1454,19 @@
       "damage_return": [
         35,
         60
+      ],
+      "life_replenish": [
+        15,
+        20
       ]
     },
-    "uniqueEffects": [
-      "Chance When Struck: Dissipating Tornado"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 1,
+        "description": "cast Dissipating Tornado Level 15",
+        "details": "Summon a dissipating tornado around you that pulls nearby monsters and causes you to dodge all attacks and unleash sand at monsters when they strike you dealing arcane damage."
+      }
     ]
   },
   {
@@ -1535,8 +1592,13 @@
       "increased_mana": 8
     },
     "setId": "thunder_caller_s_wrath",
-    "uniqueEffects": [
-      "Chance When Struck: Storm Cloud"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Storm Cloud Level 16",
+        "details": "Conjure a storm cloud at target location striking monsters with surges of lightning dealing lightning damage."
+      }
     ]
   },
   {
@@ -1567,11 +1629,11 @@
       "experience_gain": [
         1,
         3
-      ]
+      ],
+      "magic_find_based_on_level": 25
     },
     "uniqueEffects": [
-      "Magic Findd On Level",
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
     ]
   },
   {
@@ -1629,8 +1691,15 @@
       ]
     },
     "uniqueEffects": [
-      "Chance When Struck: Avalanche",
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
+    ],
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Avalanche Level 14",
+        "details": "Release a bellowing shout dealing cold damage to all monsters around you and freezing them."
+      }
     ]
   },
   {
@@ -1749,12 +1818,16 @@
       "poison_resistance": [
         40,
         60
+      ],
+      "max_poison_resistance": [
+        3,
+        5
+      ],
+      "poison_length_reduced": [
+        20,
+        30
       ]
-    },
-    "uniqueEffects": [
-      "Max Poison Resist",
-      "Poison Length Reduced"
-    ]
+    }
   },
   {
     "id": "boots_satanic_whisper_walker_s_feiyue",
@@ -1784,12 +1857,15 @@
       "all_attributes": [
         7,
         10
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Dmgd On Level",
-      "Strengthd On Level"
-    ]
+      ],
+      "cooldown_recovery": [
+        12,
+        25
+      ],
+      "increased_attack_rating": 15,
+      "damage_based_on_level": 50,
+      "strength_based_on_level": 25
+    }
   },
   {
     "id": "boots_satanic_wizard_boots",

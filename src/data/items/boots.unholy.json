@@ -29,12 +29,21 @@
       "increased_attack_speed": [
         12,
         20
+      ],
+      "crushing_blow_chance": [
+        25,
+        35
+      ],
+      "faster_hit_recovery": 120,
+      "reduced_movement_diminish": 50,
+      "deadly_blow_effectiveness": [
+        60,
+        110
       ]
     },
     "uniqueEffects": [
-      "Skill Movement Diminish",
-      "Unholy None",
-      "Unholy None"
+      "Unholy",
+      "Unholy"
     ]
   },
   {
@@ -61,19 +70,34 @@
       "cold_skill_damage": [
         25,
         45
-      ]
+      ],
+      "summon_attack_speed": [
+        15,
+        25
+      ],
+      "summon_life": [
+        5,
+        10
+      ],
+      "grant_subskills": 1,
+      "summon_movement_speed": [
+        20,
+        40
+      ],
+      "summon_all_resist": 25,
+      "summon_reduced_dmg_taken": 20
     },
-    "uniqueEffects": [
-      "Grant Subskills: Parrot",
-      "Grant Spell: Parrot",
-      "Grant Spell: Remiges",
-      "Summon Attack Speed",
-      "Summon Movement Speed",
-      "Summon Life",
-      "Summon All Resist",
-      "Summon Reduced Dmg Taken"
-    ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "skillBonuses": {
+      "Parrot": [
+        10,
+        16
+      ],
+      "Remiges": [
+        24,
+        30
+      ]
+    }
   }
 ]

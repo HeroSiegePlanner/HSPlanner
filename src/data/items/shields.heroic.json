@@ -34,9 +34,21 @@
         60
       ]
     },
-    "uniqueEffects": [
-      "Chance After Blocking: Dissipating Tornado",
-      "Grant Spell: Mystic Sand"
+    "skillBonuses": {
+      "Mystic Sand": [
+        8,
+        14
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 20,
+        "description": "cast Dissipating Tornado Level 20",
+        "details": "Summon a dissipating tornado around you that pulls nearby monsters and causes you to dodge all attacks and unleash sand at monsters when they strike you dealing arcane damage."
+      }
     ]
   },
   {
@@ -68,14 +80,14 @@
         20,
         40
       ],
-      "arcane_resistance": 75
+      "arcane_resistance": 75,
+      "max_arcane_resistance": 10
     },
     "sockets": 4,
     "maxSockets": 4,
-    "uniqueEffects": [
-      "Grant Spell: Celestial Might",
-      "Max Arcane Resist"
-    ]
+    "skillBonuses": {
+      "Celestial Might": 1
+    }
   },
   {
     "id": "shield_heroic_defender_s_justice",
@@ -107,14 +119,19 @@
       "all_resistances": [
         45,
         75
-      ]
+      ],
+      "mana_based_on_level": 125,
+      "life_based_on_level": 275
     },
     "sockets": 3,
     "maxSockets": 3,
-    "uniqueEffects": [
-      "Chance After Blocking: Counter",
-      "Manad On Level",
-      "Lifed On Level"
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 20,
+        "description": "cast Counter Level 73",
+        "details": "When active all monster attacks get countered with thrusting lances dealing arcane damage."
+      }
     ]
   },
   {
@@ -153,12 +170,17 @@
       "all_resistances": [
         20,
         40
+      ],
+      "life_based_on_level": 300
+    },
+    "skillBonuses": {
+      "Shield Slam": [
+        5,
+        10
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Shield Slam",
-      "Lifed On Level"
-    ]
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "shield_heroic_shield_of_the_abyss",
@@ -193,12 +215,25 @@
         20
       ],
       "faster_hit_recovery": 60,
-      "cold_resistance": 75
+      "cold_resistance": 75,
+      "all_skills": [
+        2,
+        3
+      ],
+      "max_cold_resistance": [
+        3,
+        5
+      ],
+      "extra_dmg_to_deep_frozen": [
+        25,
+        35
+      ]
     },
     "uniqueEffects": [
-      "Max Cold Resist",
-      "Cannot Be Frozen None"
-    ]
+      "Cannot be Frozen"
+    ],
+    "sockets": 3,
+    "maxSockets": 6
   },
   {
     "id": "shield_heroic_suomi_finland_perkele",
@@ -277,14 +312,20 @@
       "all_resistances": [
         25,
         40
+      ],
+      "increased_armor": [
+        8,
+        12
       ]
     },
     "sockets": 5,
     "maxSockets": 5,
-    "uniqueEffects": [
-      "Armor Increase",
-      "Grant Spell: Vector Shroud"
-    ]
+    "skillBonuses": {
+      "Vector Shroud": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "shield_heroic_tombstone",

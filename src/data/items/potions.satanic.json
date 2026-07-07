@@ -24,9 +24,12 @@
     "implicit": {
       "movement_speed": 40
     },
-    "uniqueEffects": [
-      "Phasing"
-    ]
+    "skillBonuses": {
+      "Fleet Footwork": [
+        1,
+        5
+      ]
+    }
   },
   {
     "id": "potion_satanic_bottle_of_sake",
@@ -123,10 +126,13 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "uniqueEffects": [
-      "Grant Spell: Chaos Unleashed",
-      "Causes your skills to rain down Comets dealing fire damage for a short period (Comet Level 62)"
-    ]
+    "implicit": {},
+    "skillBonuses": {
+      "Chaos Unleashed": [
+        1,
+        5
+      ]
+    }
   },
   {
     "id": "potion_satanic_praetorian_blood",
@@ -215,9 +221,12 @@
       "life_replenish_pct": 160,
       "mana_replenish_pct": 160
     },
-    "uniqueEffects": [
-      "Instantly recover full Life and Mana"
-    ]
+    "skillBonuses": {
+      "Conjured Replenishment": [
+        1,
+        5
+      ]
+    }
   },
   {
     "id": "potion_satanic_wizard_potion",

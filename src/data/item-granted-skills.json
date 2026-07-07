@@ -29,5 +29,889 @@
         "magic_skill_damage": 2.5
       }
     }
+  },
+  {
+    "id": "roll_the_dice",
+    "name": "Roll the Dice",
+    "description": "The die has been rolled.. if the crowns combined stats surpass 777 gain lady luck's blessing as bonus stats.",
+    "condition": "roll_the_dice_blessing",
+    "passiveStats": {
+      "base": {
+        "all_skills": 7,
+        "all_damage_taken_reduced_pct": 7,
+        "experience_gain": 7
+      }
+    }
+  },
+  {
+    "id": "teleport",
+    "name": "Teleport",
+    "description": "Move through the ether for a short distance instantaneously.",
+    "condition": "grant_teleport"
+  },
+  {
+    "id": "absolute_zero",
+    "name": "Absolute Zero",
+    "description": "Applies Cold Break on Attack."
+  },
+  {
+    "id": "accelerated_flames",
+    "name": "Accelerated Flames",
+    "description": "Increases the speed of your projectiles."
+  },
+  {
+    "id": "adrenaline_momentum",
+    "name": "Adrenaline Momentum",
+    "description": "chance to gain a stack of adrenaline momentum on hit increasing your movement speed and attack speed."
+  },
+  {
+    "id": "age_proliferation",
+    "name": "Age Proliferation",
+    "description": "Channel waves of fractal energy on the target monster sending pulses out dealing arcane damage to nearby monsters."
+  },
+  {
+    "id": "aimbot",
+    "name": "Aimbot",
+    "description": "All casts and attacks are targeted towards the closest target."
+  },
+  {
+    "id": "all_them_chickens",
+    "name": "All Them Chickens",
+    "description": "Cast to equip a chicken mask on Death."
+  },
+  {
+    "id": "amun_ra_s_demise",
+    "name": "Amun Ra's Demise",
+    "description": "Monsters have a chance to explode on death dealing a portion of their maximum life as fire damage in a small area"
+  },
+  {
+    "id": "apocalyptic_thunder",
+    "name": "Apocalyptic Thunder",
+    "description": "Cast a high voltage thunder bolt on target spot stunning and dealing massive area of effect damage."
+  },
+  {
+    "id": "apple_blast",
+    "name": "Apple Blast",
+    "description": "Throw an apple in to the air that explodes in to small projectiles around you that deal Magic Damage."
+  },
+  {
+    "id": "arch_angel_s_fury",
+    "name": "Arch Angel's Fury",
+    "description": "Cast to unleash apocalypse on small AOE around you dealing Magic Damage."
+  },
+  {
+    "id": "armageddon",
+    "name": "Armageddon",
+    "description": "Call down a rain of meteors from the sky dealing area of effect fire damage to monsters struck."
+  },
+  {
+    "id": "arrow_turret",
+    "name": "Arrow Turret",
+    "description": "Build an arrow turret that shoots arrows at the closest monster dealing arcane damage."
+  },
+  {
+    "id": "australian_sport",
+    "name": "Australian Sport",
+    "description": "Cast to throw a boomerang in towards target location dealing Damage on hit."
+  },
+  {
+    "id": "avalanche",
+    "name": "Avalanche",
+    "description": "Release a bellowing shout dealing cold damage to all monsters around you and freezing them."
+  },
+  {
+    "id": "baleful_aura",
+    "name": "Baleful Aura",
+    "description": "Increases magic skill damage and attack damage for all nearby party members."
+  },
+  {
+    "id": "barrage_of_rockets",
+    "name": "Barrage of Rockets",
+    "description": "Cast to launch 4 rockets towards nearest enemies dealing Damage on impact."
+  },
+  {
+    "id": "benediction",
+    "name": "Benediction",
+    "description": "When healed by your abilities, smite monsters around you with holy lightning."
+  },
+  {
+    "id": "berserk",
+    "name": "Berserk",
+    "description": "Every successful hit with berserk increases your attack damage, attack speed and movement speed for berserk stacking up to 8 times."
+  },
+  {
+    "id": "blazing_trail",
+    "name": "Blazing Trail",
+    "description": "Leave behind a trail of fire dealing fire damage to monsters."
+  },
+  {
+    "id": "blood_surge",
+    "name": "Blood Surge",
+    "description": "Channel a massive surge of blood towards target direction dealing arcane damage to enemies in its path."
+  },
+  {
+    "id": "blood_tendrils",
+    "name": "Blood Tendrils",
+    "description": "Blood surge now causes its target to release blood tendrils for a portion of its damage."
+  },
+  {
+    "id": "bluescreen_of_death",
+    "name": "Bluescreen of Death",
+    "description": "Stun and deal Damage to literally everything on the screen."
+  },
+  {
+    "id": "bone_spirit",
+    "name": "Bone Spirit",
+    "description": "Spawn a bone spirit that seeks out the nearest monster and explodes on impact, causing an Arcane damage explosion, then seeks out other mobs after the first impact."
+  },
+  {
+    "id": "bone_storm",
+    "name": "Bone Storm",
+    "description": "Summon a storm of bone and cartilage surrounding you dealing arcane damage."
+  },
+  {
+    "id": "boost_of_energy",
+    "name": "Boost of Energy",
+    "description": "Cast to drink cola that increases your Movement Speed for short period."
+  },
+  {
+    "id": "booster_shot",
+    "name": "Booster Shot",
+    "description": "When attacking have a chance to inject yourself with a mRNA gene altering shot temporarily increasing your attack damage and movement speed."
+  },
+  {
+    "id": "bouncing_spikeball",
+    "name": "Bouncing Spikeball",
+    "description": "Launch a bouncing spike ball towards target location dealing Damage on impact."
+  },
+  {
+    "id": "burst_of_speed",
+    "name": "Burst of Speed",
+    "description": "Gain increased movement speed for a short period after killing a monster."
+  },
+  {
+    "id": "call_of_steve",
+    "name": "Call of Steve",
+    "description": "Cast to summon Stickman Steve to attack nearest enemies dealing Damage."
+  },
+  {
+    "id": "candy_basket",
+    "name": "Candy Basket",
+    "description": "Cast to summon a candy basket on target location that explodes after some time launching candy in air that deal Damage."
+  },
+  {
+    "id": "candy_crush",
+    "name": "Candy Crush",
+    "description": "Cast to launch candy around you exploding and dealing Magic Damage."
+  },
+  {
+    "id": "cannon_turret",
+    "name": "Cannon Turret",
+    "description": "Build a cannon turret that launches cannonballs towards the nearest monster that explode into shrapnel, dealing area of effect arcane damage."
+  },
+  {
+    "id": "card_throw",
+    "name": "Card Throw",
+    "description": "chance to throw a reverse card towards target on hit dealing a portion of the damage."
+  },
+  {
+    "id": "celestial_creation",
+    "name": "Celestial Creation",
+    "description": "Chance on kill to cast your last used sentry skill."
+  },
+  {
+    "id": "celestial_might",
+    "name": "Celestial Might",
+    "description": "All Elemental Skill damage increases are converted to Arcane."
+  },
+  {
+    "id": "chain_trap",
+    "name": "Chain Trap",
+    "description": "Throw a chain trap into the target location dealing arcane damage and hooking nearby monsters with chains."
+  },
+  {
+    "id": "chainsaw_massacre",
+    "name": "Chainsaw Massacre",
+    "description": "Violently spin your chainsaw dealing damage to monsters around you. Going the full distance unleashes a whirl attack with increased damage and area of effect."
+  },
+  {
+    "id": "chainsaw_mastery",
+    "name": "Chainsaw Mastery",
+    "description": "Increases your damage and attack rating when using a chainsaw."
+  },
+  {
+    "id": "chaos_unleashed",
+    "name": "Chaos Unleashed",
+    "description": "Causes your skills to rain down comets dealing fire damage for a short period of time"
+  },
+  {
+    "id": "charmed_blood",
+    "name": "Charmed Blood",
+    "description": "Your life leech lasts for longer without penalty."
+  },
+  {
+    "id": "classic_tunes",
+    "name": "Classic Tunes",
+    "description": "Cast to play incredible solo that explodes in small AOE (because it’s so good) and deals Damage."
+  },
+  {
+    "id": "combat_orders",
+    "name": "Combat Orders",
+    "description": "Powerful warcry which buffs your and your party members maximum life and mana."
+  },
+  {
+    "id": "commander_s_valor",
+    "name": "Commander´s Valor",
+    "description": "Summons gain increased critical strike chance and critical strike damage."
+  },
+  {
+    "id": "commanding_power",
+    "name": "Commanding Power",
+    "description": "Shuts down any nearby portals.."
+  },
+  {
+    "id": "conjured_replenishment",
+    "name": "Conjured Replenishment",
+    "description": "Instantly recover full life and Mana, increasing your life replenish and mana replenish for a short period of time"
+  },
+  {
+    "id": "cornered",
+    "name": "Cornered",
+    "description": "Your attacks cause monsters to get knocked back with increased damage, if they are knocked into the wall they get stunned."
+  },
+  {
+    "id": "crippling_cold",
+    "name": "Crippling Cold",
+    "description": "Cast to strike enemies around you with Crippling Cold freezing and dealing Cold Damage."
+  },
+  {
+    "id": "crushing_lance",
+    "name": "Crushing Lance",
+    "description": "Call a crushing lance down from the sky smashing the target location dealing area of effect physical damage."
+  },
+  {
+    "id": "cursed_ground",
+    "name": "Cursed Ground",
+    "description": "Corrupt the ground in the target area inflicting poison break on monsters affected area."
+  },
+  {
+    "id": "damage_reflect",
+    "name": "Damage Reflect",
+    "description": "Increases your damage return."
+  },
+  {
+    "id": "dare_to_read",
+    "name": "Dare to Read?",
+    "description": "Holds a curse against Anubis.. Use with caution."
+  },
+  {
+    "id": "deadly_whirl",
+    "name": "Deadly Whirl",
+    "description": "Throw your weapon at the closest monster when striking a monster with Whirlwind or Chainsaw Massacre dealing physical damage."
+  },
+  {
+    "id": "demolition_expert",
+    "name": "Demolition Expert",
+    "description": "chance to throw additional grenades."
+  },
+  {
+    "id": "devout_doctor",
+    "name": "Devout Doctor",
+    "description": "Gain physical damage based on your maximum life."
+  },
+  {
+    "id": "dissipation",
+    "name": "Dissipation",
+    "description": "Sand Guardians explode upon expiration dealing area of effect arcane damage."
+  },
+  {
+    "id": "divine_healing",
+    "name": "Divine Healing",
+    "description": "Using flash heal temporarily increases your life replenish."
+  },
+  {
+    "id": "dragon_s_presence",
+    "name": "Dragon's Presence",
+    "description": "Inflicts monsters on flames when struck."
+  },
+  {
+    "id": "dragon_s_wrath",
+    "name": "Dragon's Wrath",
+    "description": "Executes monsters below a threshold."
+  },
+  {
+    "id": "duck_throw",
+    "name": "Duck Throw",
+    "description": "Throw a duck over your head that explodes in small AOE Magic Damage."
+  },
+  {
+    "id": "empowered_sucking_power",
+    "name": "Empowered Sucking Power",
+    "description": "Cast to suck in black holes."
+  },
+  {
+    "id": "enraged_mania",
+    "name": "Enraged Mania",
+    "description": "Increase attack area of effect range and attack speed."
+  },
+  {
+    "id": "execute",
+    "name": "Execute",
+    "description": "Deal extra attack damage to monsters below 30% Life."
+  },
+  {
+    "id": "execution",
+    "name": "Execution",
+    "description": "Your melee physical attacks have a chance to execute low health monsters."
+  },
+  {
+    "id": "explosive_kunai",
+    "name": "Explosive Kunai",
+    "description": "Throw an explosive kunai that explodes and splits on impact, causing smaller explosions that deal Arcane damage."
+  },
+  {
+    "id": "extract_heads",
+    "name": "Extract Heads",
+    "description": "I argue that this talent does not exist."
+  },
+  {
+    "id": "eye_of_the_storm",
+    "name": "Eye of the Storm",
+    "description": "Increases your lightning skill damage."
+  },
+  {
+    "id": "face_breakers",
+    "name": "Face Breakers",
+    "description": "Increases your attack damage"
+  },
+  {
+    "id": "fallen_justice",
+    "name": "Fallen Justice",
+    "description": "When hitting monsters with a skill or an attack you have a chance to unleash a powerful earth shock at the target location dealing damage on a large radius."
+  },
+  {
+    "id": "fanaticism_aura",
+    "name": "Fanaticism Aura",
+    "description": "When active, increases your and your party members attack speed."
+  },
+  {
+    "id": "fast_slices",
+    "name": "Fast Slices",
+    "description": "Perform a series of dashing attacks, dealing area of effect physical damage on second attack and stunning monsters around you on the final attack."
+  },
+  {
+    "id": "fire_enchant",
+    "name": "Fire Enchant",
+    "description": "Enchant your attacks with additive fire damage inflicting burning on monsters. Your spells also apply a stack of Ignite. "
+  },
+  {
+    "id": "flail_mastery",
+    "name": "Flail Mastery",
+    "description": "Increase attack speed, attack damage and cast rate when using mace weapons."
+  },
+  {
+    "id": "flailstrike",
+    "name": "Flailstrike",
+    "description": "Cast to start spinning a flail dealing Damage to enemies hit."
+  },
+  {
+    "id": "flash_heal",
+    "name": "Flash Heal",
+    "description": "Heal yourself and any nearby allies."
+  },
+  {
+    "id": "fleet_footwork",
+    "name": "Fleet Footwork",
+    "description": "Increases your movement speed and gives you Phasing for a short period of time"
+  },
+  {
+    "id": "flying_darts",
+    "name": "Flying Darts",
+    "description": "Cast to throw darts in a circle around you dealing Damage on hit."
+  },
+  {
+    "id": "fortunate_aura",
+    "name": "Fortunate Aura",
+    "description": "Increases magic find and experience gain for all nearby party members."
+  },
+  {
+    "id": "frag_grenade",
+    "name": "Frag Grenade",
+    "description": "Throw a frag grenade dealing area of effect arcane damage launching shrapnel around."
+  },
+  {
+    "id": "freezing_touch",
+    "name": "Freezing Touch",
+    "description": "Chance on any hit to freeze monsters. Get frozen your self when struck by anything. Cannot Be Frozen no longer works."
+  },
+  {
+    "id": "frost_sunder",
+    "name": "Frost Sunder",
+    "description": "Unleash a barrage of piercing icicles dealing cold and physical damage freezing on hit."
+  },
+  {
+    "id": "gamma_pulse",
+    "name": "Gamma Pulse",
+    "description": "Send a wave of radiation that destroys nearby cloaking devices."
+  },
+  {
+    "id": "gladiator_s_roll",
+    "name": "Gladiator's Roll",
+    "description": "Roll the dice when attacking for a random effect."
+  },
+  {
+    "id": "goburin_s_greed",
+    "name": "Goburin's Greed",
+    "description": "Gain a stack of goburin´s greed after monster kill increasing your magic find for a short duration."
+  },
+  {
+    "id": "gunner_drone",
+    "name": "Gunner Drone",
+    "description": "Build a gunner drone which follows you and shoots bullets that bounce from monster to monster dealing arcane damage."
+  },
+  {
+    "id": "hasteful_aura",
+    "name": "Hasteful Aura",
+    "description": "Increases movement speed and cast rate for all nearby party members."
+  },
+  {
+    "id": "healing_touch",
+    "name": "Healing Touch",
+    "description": "Heals your self on cast."
+  },
+  {
+    "id": "heavy_weight",
+    "name": "Heavy Weight",
+    "description": "Cast to drop a 1000kg weight on target location dealing Damage."
+  },
+  {
+    "id": "hex_beast",
+    "name": "Hex Beast",
+    "description": "Follower projectiles explode on impact dealing additional damage on a large radius."
+  },
+  {
+    "id": "holy_hammer",
+    "name": "Holy Hammer",
+    "description": "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
+  },
+  {
+    "id": "homing_missile",
+    "name": "Homing Missile",
+    "description": "Launch a barrage of homing missiles which seeks down its target dealing area of effect arcane and physical damage."
+  },
+  {
+    "id": "honed_defenses",
+    "name": "Honed Defenses",
+    "description": "Every time you get hit by a monster attack gain stacks. At maximum stacks unleash a huge area of effect pulse dealing arcane damage to monsters around you. Can also be casted early to consume the stacks.       "
+  },
+  {
+    "id": "jagged_gauntlet",
+    "name": "Jagged Gauntlet",
+    "description": "Spells and attacks have a chance to deal increased damage based on your critical strike damage. This effect does not count as a critical hit. Your critical chance is halved and your critical damage is capped."
+  },
+  {
+    "id": "lance_thrust",
+    "name": "Lance Thrust",
+    "description": "Perform a long ranged lance attack piercing monsters in a line dealing physical damage. If the lance comes in contact with a commending banner you get dragged to the banner smashing the ground stunning monsters on impact."
+  },
+  {
+    "id": "laser_sight",
+    "name": "Laser Sight",
+    "description": "Provides a visual reference point for better accuracy."
+  },
+  {
+    "id": "last_stand",
+    "name": "Last Stand",
+    "description": "Restore yourself to full life and temporarily gain increased magic skill damage and physical damage reduction."
+  },
+  {
+    "id": "lightning_fury",
+    "name": "Lightning Fury",
+    "description": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage."
+  },
+  {
+    "id": "lingering_frost",
+    "name": "Lingering Frost",
+    "description": "Converts all elemental skill damage to cold skill damage. All skills now scale from cold damage."
+  },
+  {
+    "id": "liquid_containers",
+    "name": "Liquid Containers",
+    "description": "Your left foremost potions are now permanently active with a portion of the power. You can no longer use potions."
+  },
+  {
+    "id": "lost_at_sea",
+    "name": "Lost at Sea",
+    "description": "Gives Walson a chance to cast Tsunami when attacking."
+  },
+  {
+    "id": "lucky_dice",
+    "name": "Lucky Dice",
+    "description": "Cast to drop a Casino Dice on target location exploding and dealing Damage."
+  },
+  {
+    "id": "lunar_aura",
+    "name": "Lunar Aura",
+    "description": "Increases your attack rating, additive arcane damage and all resistances"
+  },
+  {
+    "id": "magnum_opus",
+    "name": "Magnum Opus",
+    "description": "You can now roll critical strike multiple times until failure, every consequent critical strike roll lowers the chance of the next one."
+  },
+  {
+    "id": "mana_bender",
+    "name": "Mana Bender",
+    "description": "Converts a portion of your Energy into Magic damage."
+  },
+  {
+    "id": "manalicious",
+    "name": "Manalicious",
+    "description": "Cast to instantly restore some Mana."
+  },
+  {
+    "id": "manapool_aura",
+    "name": "Manapool Aura",
+    "description": "When active, increases your and your party members mana replenish."
+  },
+  {
+    "id": "mass_hex",
+    "name": "Mass Hex",
+    "description": "Cast to quickly poison all targets around you dealing Poison Damage."
+  },
+  {
+    "id": "master_poisoner",
+    "name": "Master Poisoner",
+    "description": "Increases your poison skill damage."
+  },
+  {
+    "id": "meat_hook",
+    "name": "Meat Hook",
+    "description": "Cast to hook and pull the nearest enemy closer to you stunning them and dealing Damage."
+  },
+  {
+    "id": "memes",
+    "name": "Memes",
+    "description": "Cast to read a random meme."
+  },
+  {
+    "id": "molten_breath",
+    "name": "Molten Breath",
+    "description": "Cast to breath fire towards target location dealing Fire Damage."
+  },
+  {
+    "id": "molten_toothache",
+    "name": "Molten Toothache",
+    "description": "Cast to set enemies around you in flames for a short period dealing Fire Damage."
+  },
+  {
+    "id": "mystic_sand",
+    "name": "Mystic Sand",
+    "description": "Increases your arcane skill damage and cast rate."
+  },
+  {
+    "id": "nasty_flies",
+    "name": "Nasty Flies",
+    "description": "Cast to release a fly from the jar to your close proximity dealing Damage on hit."
+  },
+  {
+    "id": "ninja_hooks",
+    "name": "Ninja Hooks",
+    "description": "Cast to hook and pull 3 closest enemies towards you dealing Damage."
+  },
+  {
+    "id": "noxious_strike",
+    "name": "Noxious Strike",
+    "description": "Unleash a poisonous strike dealing physical damage and  poison damage. Every third strike sends out piercing poisonous projectiles dealing damage and inflicting Poisoned on hit."
+  },
+  {
+    "id": "oil_spill",
+    "name": "Oil Spill",
+    "description": "Spill oil on the ground slowing and lowering monster attack rating. Oil also ignites into flames when coming in contact with Moonshine Molotov dealing additional burning damage."
+  },
+  {
+    "id": "ominous_aura",
+    "name": "Ominous Aura",
+    "description": "When active, increases your and your party members arcane skill damage."
+  },
+  {
+    "id": "omnislash",
+    "name": "Omnislash",
+    "description": "Become untargetable and rapidly strike monsters multiple times with increased attack rating dealing increased damage."
+  },
+  {
+    "id": "parrot",
+    "name": "Parrot",
+    "description": "Summon a parrot to peck your monsters dealing cold damage."
+  },
+  {
+    "id": "parry",
+    "name": "Parry",
+    "description": "Gives you a chance to parry incoming attacks."
+  },
+  {
+    "id": "phoenix_flight",
+    "name": "Phoenix Flight",
+    "description": "Charge forward through the air dealing area of effect fire damage when landing."
+  },
+  {
+    "id": "pipe_diver",
+    "name": "Pipe Diver",
+    "description": "Cast to teleport a short distance to target location."
+  },
+  {
+    "id": "poison_breath",
+    "name": "Poison Breath",
+    "description": "Unleash a rotten breath of toxins dealing poison damage."
+  },
+  {
+    "id": "poison_nova",
+    "name": "Poison Nova",
+    "description": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
+  },
+  {
+    "id": "portal_of_ice",
+    "name": "Portal of Ice",
+    "description": "Teleport to the target location and release a frost nova dealing cold damage."
+  },
+  {
+    "id": "power_of_the_ancients",
+    "name": "Power of the Ancients",
+    "description": "Gain additional cold skill damage based on your mana."
+  },
+  {
+    "id": "programmer_s_delirium",
+    "name": "Programmer´s Delirium",
+    "description": "Increases the power of stats on your ring slots."
+  },
+  {
+    "id": "pyro_technician",
+    "name": "Pyro Technician",
+    "description": "Blink into the closest monster to target location unleashing an area of effect attack dealing physical and fire damage."
+  },
+  {
+    "id": "radiant_power",
+    "name": "Radiant Power",
+    "description": "Gain magic skill damage based on your maximum mana for a short duration."
+  },
+  {
+    "id": "rainbow_drool",
+    "name": "Rainbow Drool",
+    "description": "Cast a rainbow beam forward that deals Magic Damage."
+  },
+  {
+    "id": "raise_skeleton",
+    "name": "Raise Skeleton",
+    "description": "Raise a skeleton warrior from target corpse to fight on your side."
+  },
+  {
+    "id": "raise_skeleton_mage",
+    "name": "Raise Skeleton Mage",
+    "description": "Raise a skeleton mage from target corpse to fight on your side."
+  },
+  {
+    "id": "reaper_s_culling",
+    "name": "Reaper's Culling",
+    "description": "You can no longer critically hit or miss the target and now deal increased physical damage."
+  },
+  {
+    "id": "remiges",
+    "name": "Remiges",
+    "description": "Increases your parrots cold damage and attack speed.       "
+  },
+  {
+    "id": "returning_projectiles",
+    "name": "Returning Projectiles",
+    "description": "Projectiles return after a short delay with reduced damage."
+  },
+  {
+    "id": "revved_up",
+    "name": "Revved Up",
+    "description": "Temporarily increases your attack speed and damage."
+  },
+  {
+    "id": "ricochet",
+    "name": "Ricochet",
+    "description": "Projectiles with physical damage bounce off of walls."
+  },
+  {
+    "id": "rimskin_assassin",
+    "name": "Rimskin Assassin",
+    "description": "Your melee physical attacks have a chance to uppercut monsters launching them in to air stunning and dealing area of effect damage when landing."
+  },
+  {
+    "id": "rocket_turret",
+    "name": "Rocket Turret",
+    "description": "Build a rocket turret that shoots rockets towards the nearest monster dealing area of effect arcane damage."
+  },
+  {
+    "id": "sand_entombment",
+    "name": "Sand Entombment",
+    "description": "Chance on kill to unleash a pulse of sand dealing arcane area of effect damage."
+  },
+  {
+    "id": "sand_gush",
+    "name": "Sand Gush",
+    "description": "Unleash a gush of sand that spawns tornadoes dealing arcane damage."
+  },
+  {
+    "id": "sand_vortex",
+    "name": "Sand Vortex",
+    "description": "Summon a massive vortex of quick sand that pulls monsters inside dealing arcane damage."
+  },
+  {
+    "id": "sands_of_time",
+    "name": "Sands of Time",
+    "description": "Temporarily increase your arcane skill damage and cast rate."
+  },
+  {
+    "id": "satanic_chant",
+    "name": "Satanic Chant",
+    "description": "When cast, temporarily boost your Damage."
+  },
+  {
+    "id": "shadow_weave",
+    "name": "Shadow Weave",
+    "description": "Increases your Skill damage"
+  },
+  {
+    "id": "shield_slam",
+    "name": "Shield Slam",
+    "description": "Strike with your shield dealing physical damage based on the defense of your shield."
+  },
+  {
+    "id": "shocker_9000",
+    "name": "Shocker 9000",
+    "description": "Cast to launch an electric charge towards target location socking the enemy."
+  },
+  {
+    "id": "single_out",
+    "name": "Single Out",
+    "description": "Monsters that have no other monsters around them take increased arcane damage."
+  },
+  {
+    "id": "so_good",
+    "name": "So Good",
+    "description": "Cast to summon a pie on the ground that explodes after some time dealing Damage."
+  },
+  {
+    "id": "soul_burst",
+    "name": "Soul Burst",
+    "description": "Chance on kill to randomly gain increased movement speed, attack speed or faster cast rate."
+  },
+  {
+    "id": "spontaneous_combustion",
+    "name": "Spontaneous Combustion",
+    "description": "When igniting oil in flames, also make the monsters combust dealing area of effect fire damage around them."
+  },
+  {
+    "id": "stoneskin_aura",
+    "name": "Stoneskin Aura",
+    "description": "Increases damage reduction for all nearby party members."
+  },
+  {
+    "id": "storm_totem",
+    "name": "Storm Totem",
+    "description": "Summon a totem that releases chain lightning on nearby monsters dealing lightning damage."
+  },
+  {
+    "id": "stormy_javelin",
+    "name": "Stormy Javelin",
+    "description": "Cast to throw a storm javelin towards target location that casts chain lightning dealing Lightning Damage."
+  },
+  {
+    "id": "sucking_power",
+    "name": "Sucking Power",
+    "description": "Cast to suck in enemies."
+  },
+  {
+    "id": "suicidal_pig",
+    "name": "Suicidal Pig",
+    "description": "Cast to summon Squishy the Suicidal Pig to run towards nearest enemy and drop a stone on itself dealing Damage."
+  },
+  {
+    "id": "summon_mastery",
+    "name": "Summon Mastery",
+    "description": "Increases the life and arcane damage of all your summons."
+  },
+  {
+    "id": "symphony_of_thunder",
+    "name": "Symphony of Thunder",
+    "description": "Gain increased lightning damage for a short period of time also zapping all monsters with thunderbolts when hit by a lightning skill."
+  },
+  {
+    "id": "temporal_heroes",
+    "name": "Temporal Heroes",
+    "description": "Summon a fractal Viking, Pyromancer and Marksman to fight on your side."
+  },
+  {
+    "id": "the_shop_is_open",
+    "name": "The Shop is Open",
+    "description": "Summon Torstein and his toys"
+  },
+  {
+    "id": "thorn_of_vitality",
+    "name": "Thorn of Vitality",
+    "description": "Converts every point of Vitality into damage return."
+  },
+  {
+    "id": "thunder_goddesses_chosen",
+    "name": "Thunder Goddesses Chosen",
+    "description": "Increases lightning skill damage."
+  },
+  {
+    "id": "to_the_moon",
+    "name": "To the Moon",
+    "description": "Cast on target location to summon a Doge rocket that flies off and collides with the moon which causes moon fragments to rain back down dealing Damage. Much Wow."
+  },
+  {
+    "id": "trampling_force",
+    "name": "Trampling Force",
+    "description": "Portion of over capped movement speed added as attack damage and magic skill damage."
+  },
+  {
+    "id": "trap_the_fish",
+    "name": "Trap the Fish",
+    "description": "Cast to throw a net on the ground that catches fish."
+  },
+  {
+    "id": "treasure_hunter",
+    "name": "Treasure Hunter",
+    "description": "Search for a treasure from the corpses of dead monsters with additional magic find.       "
+  },
+  {
+    "id": "unbound_power",
+    "name": "Unbound Power",
+    "description": "Enables equipping any type of weapon."
+  },
+  {
+    "id": "vector_shroud",
+    "name": "Vector Shroud",
+    "description": "Emits a portion of your total damage return to monsters within the auras range."
+  },
+  {
+    "id": "walson_s_aid",
+    "name": "Walson's Aid",
+    "description": "Walson orbits you and attacks monsters stunning and dealing area of effect cold damage."
+  },
+  {
+    "id": "whirlwind",
+    "name": "Whirlwind",
+    "description": "Spin your weapons around you dealing damage to monsters struck."
+  },
+  {
+    "id": "wizard_s_roll",
+    "name": "Wizard's Roll",
+    "description": "Roll the dice when casting for a random effect."
+  },
+  {
+    "id": "wrecking_ball",
+    "name": "Wrecking Ball",
+    "description": "Increases the damage and range of Heavy Ball."
+  },
+  {
+    "id": "zoooooom",
+    "name": "Zoooooom",
+    "description": "Zoom Zoom Zoom!"
   }
 ]

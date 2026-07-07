@@ -17,11 +17,12 @@
         5
       ],
       "crushing_blow_chance": 25,
-      "defense_ignored": 25
-    },
-    "uniqueEffects": [
-      "Max Crushing Blow Stacks"
-    ]
+      "defense_ignored": 25,
+      "max_crushing_blow_stacks": [
+        4,
+        5
+      ]
+    }
   },
   {
     "id": "ring_angelic_st_aaron_s_eternal_rage",
