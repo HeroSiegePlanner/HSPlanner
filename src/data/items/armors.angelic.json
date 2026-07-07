@@ -24,15 +24,24 @@
         35,
         50
       ],
-      "all_resistances": 30
+      "all_resistances": 30,
+      "summon_attack_speed": [
+        35,
+        50
+      ],
+      "enemy_all_resist": [
+        20,
+        25
+      ]
     },
     "sockets": 6,
     "maxSockets": 6,
-    "uniqueEffects": [
-      "Grant Spell: Commander´s Valor",
-      "Summon Attack Speed",
-      "Enemy All Resist"
-    ]
+    "skillBonuses": {
+      "Commander´s Valor": [
+        6,
+        20
+      ]
+    }
   },
   {
     "id": "body_armor_angelic_tayrel_s_chestplate",
@@ -61,16 +70,21 @@
       "all_resistances": [
         50,
         75
-      ]
+      ],
+      "life_based_on_level": 2500,
+      "max_all_resistances": -15,
+      "vitality_based_on_level": 300
     },
     "sockets": 6,
     "maxSockets": 6,
     "uniqueEffects": [
-      "Grant Spell: Fallen Justice",
-      "Lifed On Level",
-      "Vitalityd On Level",
-      "Max All Resist",
-      "Cannot Be Frozen None"
-    ]
+      "Cannot be Frozen"
+    ],
+    "skillBonuses": {
+      "Fallen Justice": [
+        3,
+        10
+      ]
+    }
   }
 ]

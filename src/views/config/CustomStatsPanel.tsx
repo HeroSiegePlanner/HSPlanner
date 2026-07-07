@@ -16,7 +16,6 @@ export default function CustomStatsPanel() {
   const addCustomStat = useBuild((s) => s.addCustomStat)
   const updateCustomStat = useBuild((s) => s.updateCustomStat)
   const removeCustomStat = useBuild((s) => s.removeCustomStat)
-  const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const parsedCustomValues = useCalcResult<([number, number] | null)[]>(
     () =>
@@ -92,7 +91,6 @@ export default function CustomStatsPanel() {
                       placeholder="Pick stat…"
                       onChange={(id) => {
                         updateCustomStat(i, { statKey: id ?? '' })
-                        commitActiveProfile()
                       }}
                     />
                   </div>
@@ -110,14 +108,12 @@ export default function CustomStatsPanel() {
                       onChange={(e) =>
                         updateCustomStat(i, { value: e.target.value })
                       }
-                      onBlur={() => commitActiveProfile()}
                       className="w-full bg-transparent text-right font-mono text-[12px] tabular-nums text-text outline-none"
                     />
                   </div>
                   <button
                     onClick={() => {
                       removeCustomStat(i)
-                      commitActiveProfile()
                     }}
                     className="rounded-[3px] border border-border-2 bg-transparent px-2 py-1 font-mono text-[12px] text-muted transition-colors hover:border-stat-red hover:text-stat-red"
                     title="Remove"

@@ -4,7 +4,7 @@ import { DAMAGE_COLORS } from '../../utils/damageColors'
 import { rangedMax, rangedMin } from '../../utils/item/stats'
 import type { AttributeKey, RangedStatMap, RangedValue, Skill } from '../../types'
 import type { NativeSkillDamageInput } from '../../utils/nativeDamage'
-import { formatDecimal, formatRange, formatRangeInt } from './format'
+import { formatDecimal, formatRange, useFormatRangeInt } from './format'
 import { DamageBreakdown } from './DamageBreakdown'
 
 export function SkillCard({
@@ -38,6 +38,7 @@ export function SkillCard({
   skillProjectiles: Record<string, number>
   isMain: boolean
 }) {
+  const formatRangeInt = useFormatRangeInt()
   const rank1 = skill.ranks[0]
   const baseMana = rank1?.manaCost
   const mcrMin = rangedMin(mcrRange)

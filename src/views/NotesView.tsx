@@ -16,7 +16,6 @@ const PRESET_COLORS = [
 export default function NotesView() {
   const notes = useBuild((s) => s.notes)
   const setNotes = useBuild((s) => s.setNotes)
-  const commitBuildNotes = useBuild((s) => s.commitBuildNotes)
   const editorRef = useRef<HTMLDivElement | null>(null)
   const [linkOpen, setLinkOpen] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
@@ -46,7 +45,6 @@ export default function NotesView() {
 
   const handleBlur = () => {
     persist()
-    commitBuildNotes()
   }
 
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {

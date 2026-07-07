@@ -172,6 +172,10 @@ export function getItemGrantedSkillByName(
 ): ItemGrantedSkill | undefined {
   return itemGrantedSkillByName.get(name.trim().toLowerCase())
 }
+
+export function conditionalItemGrantedSkills(): ItemGrantedSkill[] {
+  return itemGrantedSkills.filter((s) => !!s.condition)
+}
 export const augments: AngelicAugment[] = patchedList(augmentsJson as AngelicAugment[], seasonPatches.augments, 'augments')
 export const treeNodeInfo: Record<string, TreeNodeInfo> = patched(
   treeNodesJson as Record<string, TreeNodeInfo>,

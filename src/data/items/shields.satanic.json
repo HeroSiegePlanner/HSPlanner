@@ -23,11 +23,12 @@
       "to_intelligence": [
         10,
         15
+      ],
+      "random_skill_element": [
+        1,
+        3
       ]
-    },
-    "uniqueEffects": [
-      "Random Skill Element"
-    ]
+    }
   },
   {
     "id": "shield_satanic_aztec_ward",
@@ -167,10 +168,19 @@
         4,
         8
       ],
-      "all_resistances": 10
+      "all_resistances": 10,
+      "all_damage_taken_reduced_pct": [
+        4,
+        8
+      ]
     },
-    "uniqueEffects": [
-      "Chance When Casting: Holy Hammer"
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 20,
+        "description": "cast Holy Hammer Level 20",
+        "details": "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
+      }
     ]
   },
   {
@@ -205,8 +215,13 @@
         30
       ]
     },
-    "uniqueEffects": [
-      "Chance When Struck: Chainsaw Massacre"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Chainsaw Massacre Level 40",
+        "details": "Violently spin your chainsaw dealing damage to monsters around you. Going the full distance unleashes a whirl attack with increased damage and area of effect."
+      }
     ]
   },
   {
@@ -301,13 +316,11 @@
       "magic_find": [
         20,
         35
-      ]
+      ],
+      "defense_vs_missiles": 75
     },
     "sockets": 1,
-    "maxSockets": 1,
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    "maxSockets": 1
   },
   {
     "id": "shield_satanic_flame_diviner_s_ward",
@@ -407,14 +420,12 @@
       "to_dexterity": [
         20,
         35
-      ]
+      ],
+      "enhanced_damage_based_on_level": 75
     },
     "sockets": 1,
     "maxSockets": 1,
-    "setId": "gladiator_s_glory",
-    "uniqueEffects": [
-      "Enhanced Dmgd On Level"
-    ]
+    "setId": "gladiator_s_glory"
   },
   {
     "id": "shield_satanic_heaven_s_champion",
@@ -477,8 +488,13 @@
     },
     "sockets": 1,
     "maxSockets": 1,
-    "uniqueEffects": [
-      "Chance After Blocking: Last Stand"
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 8,
+        "description": "cast Last Stand Level 11",
+        "details": "Restore yourself to full life and temporarily gain increased magic skill damage and physical damage reduction."
+      }
     ]
   },
   {
@@ -578,13 +594,18 @@
       "magic_damage_reduction": [
         10,
         15
+      ],
+      "defense_vs_missiles": [
+        50,
+        75
+      ],
+      "defense": [
+        3,
+        5
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    "maxSockets": 1
   },
   {
     "id": "shield_satanic_leprechauns_greed",
@@ -609,13 +630,11 @@
       "magic_find": [
         20,
         40
-      ]
+      ],
+      "magic_find_based_on_level": 35
     },
     "sockets": 3,
-    "maxSockets": 3,
-    "uniqueEffects": [
-      "Magic Findd On Level"
-    ]
+    "maxSockets": 3
   },
   {
     "id": "shield_satanic_lost_wizard_s_barrier",
@@ -672,8 +691,13 @@
     },
     "sockets": 1,
     "maxSockets": 1,
-    "uniqueEffects": [
-      "Chance After Blocking: Meat Bomb"
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 18,
+        "description": "cast Meat Bomb Level 32",
+        "details": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
+      }
     ]
   },
   {
@@ -698,13 +722,11 @@
       "magic_find": [
         10,
         20
-      ]
+      ],
+      "magic_find_based_on_level": 25
     },
     "sockets": 1,
-    "maxSockets": 1,
-    "uniqueEffects": [
-      "Magic Findd On Level"
-    ]
+    "maxSockets": 1
   },
   {
     "id": "shield_satanic_pandemic_shield",
@@ -734,11 +756,18 @@
       "poison_resistance": [
         40,
         75
-      ]
+      ],
+      "poison_length_reduced": 25
     },
-    "uniqueEffects": [
-      "Chance After Blocking: Poison Nova",
-      "Poison Length Reduced"
+    "sockets": 0,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 15,
+        "description": "cast Poison Nova Level 24",
+        "details": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
+      }
     ]
   },
   {
@@ -889,8 +918,13 @@
         100
       ]
     },
-    "uniqueEffects": [
-      "Chance After Blocking: Fan of Knives"
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 18,
+        "description": "cast Fan of Knives Level 10",
+        "details": "Attacks have a chance to throw knives around you dealing damage physical damage to nearby monsters. Additionally the knives have a chance to ricochet to nearby monsters."
+      }
     ]
   },
   {
@@ -926,14 +960,17 @@
       "life": [
         750,
         1
-      ]
+      ],
+      "increased_attack_rating": 10,
+      "life_replenish": [
+        30,
+        50
+      ],
+      "life_based_on_level": 650
     },
     "sockets": 1,
     "maxSockets": 1,
-    "setId": "wall_of_god",
-    "uniqueEffects": [
-      "Lifed On Level"
-    ]
+    "setId": "wall_of_god"
   },
   {
     "id": "shield_satanic_shadow_buckler",
@@ -1015,10 +1052,7 @@
     },
     "sockets": 1,
     "maxSockets": 1,
-    "setId": "shield_bearer_s_sanctuary",
-    "uniqueEffects": [
-      "All Skills Class"
-    ]
+    "setId": "shield_bearer_s_sanctuary"
   },
   {
     "id": "shield_satanic_shield_of_shattered_elements",
@@ -1120,8 +1154,15 @@
       ],
       "lightning_resistance": 50
     },
-    "uniqueEffects": [
-      "Chance After Blocking: Lightning Fury"
+    "sockets": 0,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 10,
+        "description": "cast Lightning Fury Level 12",
+        "details": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage."
+      }
     ]
   },
   {
@@ -1287,11 +1328,11 @@
         15,
         20
       ],
-      "faster_hit_recovery": 75
+      "faster_hit_recovery": 75,
+      "reduced_movement_diminish": 20
     },
-    "uniqueEffects": [
-      "Skill Movement Diminish"
-    ]
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_vagabond_s_ward",
@@ -1351,12 +1392,16 @@
       "lightning_resistance": [
         40,
         65
+      ],
+      "increased_attack_speed": 25,
+      "all_resistances": [
+        15,
+        25
       ]
     },
     "setId": "valkyrie_s_battle_gear",
-    "uniqueEffects": [
-      "All Skills Class"
-    ]
+    "sockets": 1,
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_visage_of_relentless_rage",
@@ -1411,13 +1456,14 @@
       "to_strength": 20,
       "to_vitality": 30,
       "faster_hit_recovery": 75,
-      "all_resistances": 40
+      "all_resistances": 40,
+      "defense_vs_missiles": [
+        350,
+        400
+      ]
     },
     "sockets": 6,
-    "maxSockets": 6,
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    "maxSockets": 6
   },
   {
     "id": "shield_satanic_ward_of_blood",
@@ -1455,9 +1501,12 @@
     },
     "sockets": 3,
     "maxSockets": 3,
-    "uniqueEffects": [
-      "Grant Spell: Devout Doctor"
-    ]
+    "skillBonuses": {
+      "Devout Doctor": [
+        8,
+        20
+      ]
+    }
   },
   {
     "id": "shield_satanic_ward_of_toxicity",
@@ -1488,10 +1537,10 @@
         25
       ],
       "all_resistances": 15,
-      "poison_resistance": 50
+      "poison_resistance": 50,
+      "poison_length_reduced": 25
     },
-    "uniqueEffects": [
-      "Poison Length Reduced"
-    ]
+    "sockets": 0,
+    "maxSockets": 4
   }
 ]

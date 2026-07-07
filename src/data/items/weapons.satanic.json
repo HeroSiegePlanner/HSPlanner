@@ -22,20 +22,35 @@
         100
       ],
       "open_wounds": 25,
-      "slow_target": 75
+      "slow_target": 75,
+      "strength_based_on_level": 100,
+      "dexterity_based_on_level": 50,
+      "melee_range": [
+        25,
+        40
+      ],
+      "open_wound_chance": 25
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Bone Storm",
-      "Chance When Striking: Chainslice",
-      "Attack Range",
-      "Unholy None",
-      "Strengthd On Level",
-      "Dexterityd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Unholy",
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 10,
+        "description": "cast Bone Storm Level 40",
+        "details": "Summon a storm of bone and cartilage surrounding you dealing arcane damage."
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 1,
+        "description": "cast Chainslice Level 125",
+        "details": "Perform an enhanced attack that causes a sharp blade to chain between nearby monsters dealing damage."
+      }
+    ]
   },
   {
     "id": "flask_satanic_ancient_mucus",
@@ -61,11 +76,9 @@
       "mana_per_kill": [
         10,
         15
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+      ],
+      "mana_replenish": 25
+    }
   },
   {
     "id": "staff_satanic_ancient_sun_beacon",
@@ -86,15 +99,21 @@
         40
       ],
       "ignore_lightning_res": 15,
-      "mana_replenish_pct": 50
+      "mana_replenish_pct": 50,
+      "ignore_fire_res": 15,
+      "mana_replenish": 50,
+      "energy_based_on_level": 35,
+      "intelligence_based_on_level": 75
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Fireball",
-      "Energyd On Level",
-      "Intelligenced On Level"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 35,
+        "description": "cast Fireball Level 28",
+        "details": "Cast a fireball dealing fire damage to monsters."
+      }
+    ]
   },
   {
     "id": "gun_satanic_angel",
@@ -120,11 +139,9 @@
       "defense_ignored": 35,
       "to_dexterity": 25,
       "life_per_kill": 8,
-      "mana_per_kill": 5
+      "mana_per_kill": 5,
+      "increased_attack_rating": 3
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "gabriel_s_devotion"
   },
   {
@@ -143,13 +160,16 @@
         40
       ],
       "mana_replenish_pct": 30,
-      "fire_resistance": 50
+      "fire_resistance": 50,
+      "mana_replenish": 30
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Armageddon"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Armageddon": [
+        10,
+        20
+      ]
+    }
   },
   {
     "id": "staff_satanic_archangel_staff",
@@ -177,16 +197,35 @@
       "arcane_skill_damage": [
         20,
         40
+      ],
+      "cooldown_recovery": [
+        20,
+        30
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Master Poisoner",
-      "Grant Spell: Flash Heal",
-      "Grant Spell: Divine Healing",
-      "Grant Spell: Benediction"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Flash Heal": [
+        3,
+        6
+      ],
+      "Divine Healing": [
+        3,
+        6
+      ],
+      "Benediction": [
+        3,
+        8
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Arch Angel's Fury Level 19",
+        "details": "Cast to unleash apocalypse on small AOE around you dealing Magic Damage."
+      }
+    ]
   },
   {
     "id": "sword_satanic_ashbringer",
@@ -217,13 +256,19 @@
       "fire_resistance": [
         25,
         40
-      ]
+      ],
+      "increased_attack_rating": 15,
+      "flat_fire_skill_damage": [
+        22,
+        42
+      ],
+      "damage_based_on_level": 65
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attack Dmgd On Level",
-      "Attacks Hit Multiple Enemies None"
-    ]
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 2,
+    "maxSockets": 4
   },
   {
     "id": "sword_satanic_azure_s_wrath",
@@ -260,11 +305,12 @@
         20,
         35
       ],
-      "light_radius": 3
+      "light_radius": 3,
+      "flat_fire_skill_damage": [
+        18,
+        28
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "sockets": 3,
     "maxSockets": 3
   },
@@ -295,11 +341,22 @@
       "increased_life": [
         3,
         8
+      ],
+      "to_vitality": [
+        20,
+        30
+      ],
+      "mana_costs_decreased": [
+        4,
+        10
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        4,
+        8
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 1,
+    "maxSockets": 3
   },
   {
     "id": "book_satanic_book_of_revelations",
@@ -328,8 +385,15 @@
       "mana": 25,
       "mana_per_kill": 5
     },
-    "uniqueEffects": [
-      "Attack Dmg"
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Satan's Mark Level 14",
+        "details": "Mark the monsters on target area for satan causing them to unleash pulses of arcane damage when struck by other abilities and attacks. "
+      }
     ]
   },
   {
@@ -353,14 +417,35 @@
         40
       ],
       "to_strength": 20,
-      "to_dexterity": 20
+      "to_dexterity": 20,
+      "all_skills": [
+        1,
+        2
+      ],
+      "increased_attack_rating": 15,
+      "additive_physical_damage": [
+        20,
+        40
+      ],
+      "increased_dexterity": [
+        5,
+        10
+      ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Trigger Finger",
-      "Piercing Attack None"
+      "Piercing Attack"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 3,
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Trigger Finger Level 17",
+        "details": "Fire a burst shot dealing physical damage."
+      }
+    ]
   },
   {
     "id": "cane_satanic_cane_of_the_tundra",
@@ -398,13 +483,17 @@
         60
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Blizzard"
-    ],
     "sockets": 3,
     "maxSockets": 3,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Blizzard Level 44",
+        "details": "Cast a freezing blizzard dealing area of effect cold damage and freezing monsters in the target area."
+      }
+    ]
   },
   {
     "id": "dagger_satanic_ceremonial_dagger",
@@ -440,12 +529,16 @@
       "increased_life": -10,
       "magic_find": 30
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Poison Nova"
-    ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Poison Nova Level 54",
+        "details": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
+      }
+    ]
   },
   {
     "id": "polearm_satanic_champion_s_flag_lance",
@@ -479,16 +572,18 @@
       "damage_return": [
         75,
         125
-      ]
+      ],
+      "defense_vs_missiles": 125,
+      "life_based_on_level": 300
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Honed Defenses",
-      "Defense Vs Missiles",
-      "Lifed On Level"
-    ],
     "setId": "champion_s_valor",
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Honed Defenses": [
+        4,
+        8
+      ]
+    }
   },
   {
     "id": "gun_satanic_chills_of_war",
@@ -523,10 +618,7 @@
         8,
         12
       ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    }
   },
   {
     "id": "wand_satanic_clafaxier",
@@ -554,11 +646,14 @@
       "poison_resistance": [
         40,
         60
+      ],
+      "extra_damage_poisoned": [
+        15,
+        25
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 1,
+    "maxSockets": 4
   },
   {
     "id": "flask_satanic_cobra_blood_vial",
@@ -588,11 +683,9 @@
         10,
         15
       ],
-      "mana_replenish_pct": 35
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+      "mana_replenish_pct": 35,
+      "mana_replenish": 35
+    }
   },
   {
     "id": "polearm_satanic_crusader_halberd",
@@ -625,15 +718,23 @@
       "all_resistances": [
         20,
         30
+      ],
+      "life_replenish": [
+        10,
+        15
+      ],
+      "life_based_on_level": 25,
+      "damage_based_on_level": 50
+    },
+    "twoHanded": true,
+    "skillBonuses": {
+      "Fanaticism Aura": [
+        8,
+        12
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Lifed On Level",
-      "Attack Dmgd On Level",
-      "Grant Aura: Fanaticism Aura"
-    ],
-    "twoHanded": true
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "cane_satanic_crystal_cane_of_ice",
@@ -661,12 +762,26 @@
       "all_resistances": [
         10,
         20
-      ]
+      ],
+      "cold_skills": [
+        2,
+        3
+      ],
+      "to_energy": [
+        5,
+        10
+      ],
+      "flat_cold_skill_damage": [
+        12,
+        20
+      ],
+      "frostbite_damage": [
+        20,
+        30
+      ],
+      "ailment_crit_chance": 20,
+      "ailment_crit_damage": 25
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Struck: Avalanche"
-    ],
     "twoHanded": true
   },
   {
@@ -690,9 +805,8 @@
       "life_per_kill": 3,
       "mana_per_kill": 3
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "gun_satanic_crystal_infused_pistol",
@@ -721,9 +835,8 @@
         25
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "sword_satanic_crystal_infused_sword",
@@ -750,12 +863,17 @@
       ],
       "life_steal": 5,
       "to_strength": 10,
-      "life_per_kill": 10
+      "life_per_kill": 10,
+      "increased_attack_rating": [
+        3,
+        6
+      ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
-    ]
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "wand_satanic_crystal_infused_wand",
@@ -783,11 +901,16 @@
       "arcane_resistance": [
         30,
         50
-      ]
+      ],
+      "all_skills": 1,
+      "flat_magic_skill_damage": [
+        8,
+        15
+      ],
+      "magic_skill_damage": 15
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "sword_satanic_daisy",
@@ -828,13 +951,19 @@
       "life_per_kill": [
         15,
         30
-      ]
+      ],
+      "increased_bleeding_damage": [
+        25,
+        45
+      ],
+      "increased_attack_rating": 30
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "setId": "blood_bond"
+    "setId": "blood_bond",
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "book_satanic_damien_s_head",
@@ -858,11 +987,14 @@
       "all_resistances": [
         5,
         15
+      ],
+      "projectile_speed": 1.5,
+      "to_intelligence": 25,
+      "increased_intelligence": [
+        3,
+        5
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "damien_s_legacy",
     "sockets": 1,
     "maxSockets": 1
@@ -893,11 +1025,11 @@
       "attack_damage": [
         20,
         30
-      ]
+      ],
+      "open_wound_chance": 25
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "setId": "dante_s_nightmare",
     "sockets": 3,
@@ -928,9 +1060,8 @@
       "to_strength": 10,
       "to_dexterity": 15
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "dagger_satanic_death_s_mirror",
@@ -954,12 +1085,9 @@
       "magic_find": [
         25,
         40
-      ]
+      ],
+      "magic_find_based_on_level": 50
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Magic Findd On Level"
-    ],
     "sockets": 2,
     "maxSockets": 2
   },
@@ -995,11 +1123,16 @@
         3
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "death_s_toll",
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Agility Level 30",
+        "details": "Temporarily increases your movement speed and attack speed."
+      }
+    ]
   },
   {
     "id": "gun_satanic_demon",
@@ -1025,11 +1158,9 @@
       "defense_ignored": 35,
       "to_dexterity": 25,
       "life_per_kill": 8,
-      "mana_per_kill": 5
+      "mana_per_kill": 5,
+      "increased_attack_rating": 3
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "gabriel_s_devotion"
   },
   {
@@ -1052,11 +1183,9 @@
         150,
         200
       ],
-      "mana_per_kill": 15
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+      "mana_per_kill": 15,
+      "mana_replenish": 25
+    }
   },
   {
     "id": "flask_satanic_doctor_s_potion",
@@ -1096,9 +1225,6 @@
       "mana_per_kill": 15,
       "magic_find": 20
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "doctor_s_medkit"
   },
   {
@@ -1128,8 +1254,7 @@
       "defense_ignored": 50
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
     "maxSockets": 2
@@ -1164,14 +1289,23 @@
         5,
         15
       ],
-      "ignore_lightning_res": 30
+      "ignore_lightning_res": 30,
+      "ignore_fire_res": 30
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Chainsaw Slash",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Chainsaw Slash Level 14",
+        "details": "Perform an area of effect attack attaching a spinning chainsaw on monsters for a short period of time."
+      }
+    ]
   },
   {
     "id": "flask_satanic_doomweed_vial",
@@ -1208,11 +1342,12 @@
       "mana_replenish_pct": [
         25,
         45
+      ],
+      "mana_replenish": [
+        25,
+        45
       ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    }
   },
   {
     "id": "chainsaw_satanic_doublesaw_4000",
@@ -1242,16 +1377,23 @@
       "life_per_kill": [
         8,
         14
-      ]
+      ],
+      "open_wound_chance": 20
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Revved Up",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
     "maxSockets": 3,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Revved Up Level 8",
+        "details": "Temporarily increases your attack speed and damage."
+      }
+    ]
   },
   {
     "id": "mace_satanic_dragon_knight_s_flail",
@@ -1284,11 +1426,13 @@
         10,
         15
       ],
-      "all_resistances": 25
+      "all_resistances": 25,
+      "flat_magic_skill_damage": [
+        22,
+        40
+      ],
+      "ignore_arcane_res": 25
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "sockets": 4,
     "maxSockets": 4
   },
@@ -1321,12 +1465,16 @@
         35
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Breath of Fire"
-    ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Breath of Fire Level 59",
+        "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
+      }
+    ]
   },
   {
     "id": "claw_satanic_earth_shaper_s_talons",
@@ -1348,13 +1496,18 @@
       ],
       "mana_replenish_pct": 25,
       "mana": 560,
-      "all_resistances": 25
+      "all_resistances": 25,
+      "mana_replenish": 25
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Earth Bind"
-    ],
-    "setId": "earth_shaper_s_pride"
+    "setId": "earth_shaper_s_pride",
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Earth Bind Level 27",
+        "details": "Raise vines from the ground dealing poison damage, poisoning and rooting monsters in place."
+      }
+    ]
   },
   {
     "id": "bow_satanic_electro",
@@ -1392,12 +1545,23 @@
         10
       ],
       "lightning_resistance": 50,
-      "max_lightning_resistance": 5
+      "max_lightning_resistance": 5,
+      "flat_lightning_skill_damage": [
+        22,
+        44
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 18,
+        "description": "cast Storm Bolt Level 27",
+        "details": "Unleash a bolt of lightning dealing area of effect lightning damage."
+      }
+    ]
   },
   {
     "id": "claw_satanic_elemental_claws",
@@ -1436,9 +1600,8 @@
       "life_per_kill": 3,
       "mana_per_kill": 3
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "sword_satanic_eternal_glaive",
@@ -1477,11 +1640,15 @@
         30
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Chainslice"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 52,
+        "description": "cast Chainslice Level 47",
+        "details": "Perform an enhanced attack that causes a sharp blade to chain between nearby monsters dealing damage."
+      }
+    ]
   },
   {
     "id": "gun_satanic_f4_tactical_rifle",
@@ -1519,9 +1686,6 @@
       ],
       "defense_ignored": 25
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "sockets": 2,
     "maxSockets": 2,
     "twoHanded": true
@@ -1563,14 +1727,27 @@
       "mana_per_kill": [
         8,
         15
+      ],
+      "ignore_fire_res": [
+        8,
+        15
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Blazing Trail",
-      "Grant Spell: Phoenix Flight"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Phoenix Flight": [
+        8,
+        15
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 7,
+        "description": "cast Blazing Trail Level 16",
+        "details": "Leave behind a trail of fire dealing fire damage to monsters."
+      }
+    ]
   },
   {
     "id": "bow_satanic_flamebringer",
@@ -1595,15 +1772,25 @@
         1350
       ],
       "fire_skill_damage": 15,
-      "ignore_lightning_res": 25
+      "ignore_lightning_res": 25,
+      "to_strength": 30,
+      "flat_fire_skill_damage": [
+        22,
+        46
+      ],
+      "ignore_fire_res": 25
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Explosive Bullets"
-    ],
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Comet Level 22",
+        "details": "Call down a huge comet exploding on impact dealing area of effect fire damage."
+      }
+    ]
   },
   {
     "id": "gun_satanic_flamecannon",
@@ -1628,15 +1815,20 @@
         600
       ],
       "fire_skill_damage": 50,
-      "ignore_lightning_res": 35
+      "ignore_lightning_res": 35,
+      "ignore_fire_res": 35
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Fireball"
-    ],
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 50,
+        "description": "cast Fireball Level 60",
+        "details": "Cast a fireball dealing fire damage to monsters."
+      }
+    ]
   },
   {
     "id": "gun_satanic_fred",
@@ -1668,10 +1860,7 @@
         8,
         12
       ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    }
   },
   {
     "id": "mace_satanic_frozen_carver",
@@ -1707,9 +1896,17 @@
       "cold_resistance": 50
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Flash Freeze",
-      "Cannot Be Frozen None"
+      "Cannot be Frozen"
+    ],
+    "sockets": 1,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Flash Freeze Level 14",
+        "details": "Perform an attack enhanced with ice that unleashes a chaining orb of ice, exploding into icicles at the end dealing additional cold damage."
+      }
     ]
   },
   {
@@ -1740,16 +1937,22 @@
         15,
         40
       ],
-      "to_vitality": 40
+      "to_vitality": 40,
+      "increased_attack_rating": 25
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Empires Slash",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "setId": "genji_s_battle_gear",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 16,
+        "description": "cast Empires Slash Level 44"
+      }
+    ]
   },
   {
     "id": "mace_satanic_gladiator_s_skullcrusher",
@@ -1779,15 +1982,27 @@
       "life_replenish_pct": [
         10,
         15
+      ],
+      "increased_attack_rating": [
+        5,
+        10
+      ],
+      "life_replenish": [
+        35,
+        50
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Fast Slices",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "skillBonuses": {
+      "Fast Slices": [
+        4,
+        8
+      ]
+    }
   },
   {
     "id": "mace_satanic_gladiator_s_wrecking_ball",
@@ -1815,11 +2030,15 @@
       ],
       "all_attributes": 15
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Wrecking Ball"
-    ],
-    "setId": "gladiator_s_glory"
+    "setId": "gladiator_s_glory",
+    "skillBonuses": {
+      "Wrecking Ball": [
+        10,
+        15
+      ]
+    },
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "bow_satanic_glimmerfury",
@@ -1847,12 +2066,31 @@
         15
       ],
       "mana_per_kill": 8,
-      "cold_resistance": 40
+      "cold_resistance": 40,
+      "increased_attack_speed": [
+        20,
+        40
+      ],
+      "increased_attack_rating": 10,
+      "additive_physical_damage": [
+        10,
+        15
+      ]
     },
     "uniqueEffects": [
-      "Attack Dmg"
+      "Piercing Attack"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 1,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 18,
+        "description": "cast Frozen Boulder Level 15",
+        "details": "Throw a frozen boulder dealing cold damage to monsters on its path."
+      }
+    ]
   },
   {
     "id": "book_satanic_god_s_benevolence",
@@ -1866,11 +2104,29 @@
       "attacks_per_second": 1.75,
       "magic_skill_damage": 10,
       "faster_hit_recovery": 20,
-      "physical_damage_reduction": 15
+      "physical_damage_reduction": 15,
+      "all_skills": [
+        1,
+        2
+      ],
+      "cooldown_recovery": [
+        20,
+        30
+      ],
+      "flat_magic_skill_damage": [
+        17,
+        30
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Struck: Flash Heal"
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Chain of Holy Lightning Level 27",
+        "details": "Cast a holy lightning jumping from monster to monster dealing arcane damage."
+      }
     ]
   },
   {
@@ -1904,12 +2160,12 @@
       "life": [
         40,
         50
-      ]
+      ],
+      "increased_attack_rating": 20,
+      "enhanced_damage_based_on_level": 200
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Enhanced Dmgd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 6,
     "maxSockets": 6
@@ -1944,15 +2200,25 @@
       "mana_per_kill": [
         8,
         12
-      ]
+      ],
+      "life_replenish": [
+        10,
+        15
+      ],
+      "defense_vs_missiles": 15,
+      "life_based_on_level": 20
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Flash Heal",
-      "Defense Vs Missiles",
-      "Lifed On Level"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 8,
+        "description": "cast Flash Heal Level 12",
+        "details": "Heal yourself and any nearby allies."
+      }
+    ]
   },
   {
     "id": "mace_satanic_gurag_s_stone_crusher",
@@ -1975,14 +2241,24 @@
         25,
         35
       ],
-      "magic_find": 20
+      "magic_find": 20,
+      "all_skills": [
+        2,
+        7
+      ],
+      "defense_ignored": [
+        25,
+        35
+      ],
+      "cast_when_attacking": 1,
+      "vitality_converted_to_attack_dmg": 15
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Lifed On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "setId": "gurag_s_fury"
+    "setId": "gurag_s_fury",
+    "sockets": 6,
+    "maxSockets": 6
   },
   {
     "id": "sword_satanic_gut_s_bfs",
@@ -2010,11 +2286,19 @@
       "to_vitality": 10
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Whirlwind",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Whirlwind Level 22",
+        "details": "Spin your weapons around you dealing damage to monsters struck."
+      }
+    ]
   },
   {
     "id": "sword_satanic_gut_s_hfs",
@@ -2042,13 +2326,19 @@
       "to_vitality": 25
     },
     "uniqueEffects": [
-      "Chance When Attacking: Whirlwind",
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 35,
+        "description": "cast Whirlwind Level 42",
+        "details": "Spin your weapons around you dealing damage to monsters struck."
+      }
+    ]
   },
   {
     "id": "sword_satanic_hanzo_s_flaming_katana",
@@ -2081,15 +2371,23 @@
       "fire_skill_damage": [
         25,
         40
-      ]
+      ],
+      "cast_after_kill": 100
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Cast After Kill: Scorching Flames",
-      "Chance When Striking: Fire Nova",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 18,
+        "description": "cast Fire Nova Level 27",
+        "details": "Cast a nova of fire around you dealing fire damage."
+      }
+    ]
   },
   {
     "id": "bow_satanic_hellspawn_eradicator",
@@ -2117,16 +2415,27 @@
         20,
         30
       ],
-      "life_per_kill": 20
+      "life_per_kill": 20,
+      "flat_cold_skill_damage": [
+        22,
+        46
+      ],
+      "extra_dmg_to_deep_frozen": [
+        20,
+        35
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Orb of Frost",
-      "Piercing Attack None"
-    ],
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 12,
+        "description": "cast Orb of Frost Level 49",
+        "details": "Cast a frozen orb traveling in target direction releasing icicles, freezing and dealing cold damage to monsters on its path."
+      }
+    ]
   },
   {
     "id": "claw_satanic_hemorrhage",
@@ -2149,9 +2458,15 @@
       "life_per_kill": 14,
       "damage_return": 125
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Rupture"
+    "sockets": 0,
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Rupture Level 33",
+        "details": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
+      }
     ]
   },
   {
@@ -2184,13 +2499,18 @@
       "to_strength": [
         10,
         15
+      ],
+      "increased_attack_rating": [
+        5,
+        10
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "sword_satanic_holy_warrior_s_phase_blade",
@@ -2224,13 +2544,19 @@
         20
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Holy Hammer",
-      "Grant Spell: Holy Hammer"
-    ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "skillBonuses": {
+      "Holy Hammer": 5
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Holy Hammer Level 29",
+        "details": "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
+      }
+    ]
   },
   {
     "id": "mace_satanic_icy_crusher",
@@ -2268,12 +2594,16 @@
       ],
       "increased_life": 3
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Frozen Boulder"
-    ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 12,
+        "description": "cast Frozen Boulder Level 22",
+        "details": "Throw a frozen boulder dealing cold damage to monsters on its path."
+      }
+    ]
   },
   {
     "id": "dagger_satanic_icy_shank",
@@ -2301,9 +2631,15 @@
         15
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Orb of Frost"
+    "sockets": 0,
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Orb of Frost Level 19",
+        "details": "Cast a frozen orb traveling in target direction releasing icicles, freezing and dealing cold damage to monsters on its path."
+      }
     ]
   },
   {
@@ -2324,18 +2660,22 @@
       "life": [
         425,
         735
-      ]
+      ],
+      "enhanced_damage_based_on_level": 300,
+      "strength_based_on_level": 65,
+      "vitality_based_on_level": 50
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Deadly Whirl",
-      "Enhanced Dmgd On Level",
-      "Strengthd On Level",
-      "Vitalityd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "skillBonuses": {
+      "Deadly Whirl": [
+        35,
+        50
+      ]
+    }
   },
   {
     "id": "gun_satanic_jack",
@@ -2367,10 +2707,7 @@
         8,
         12
       ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    }
   },
   {
     "id": "sword_satanic_jade_warrior_s_gladius",
@@ -2399,9 +2736,10 @@
       "life_per_kill": 5
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
-    ]
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "polearm_satanic_jousting_lance",
@@ -2433,12 +2771,21 @@
       ],
       "all_resistances": 15
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Struck: Combat Orders",
-      "Grant Spell: Damage Reflect"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Damage Reflect": [
+        3,
+        6
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 12,
+        "description": "cast Combat Orders Level 10",
+        "details": "Powerful warcry which buffs your and your party members maximum life and mana."
+      }
+    ]
   },
   {
     "id": "polearm_satanic_lancer_s_glory",
@@ -2466,11 +2813,9 @@
       "attack_damage": [
         25,
         40
-      ]
+      ],
+      "open_wound_chance": 20
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "wall_of_god",
     "twoHanded": true
   },
@@ -2508,13 +2853,20 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Chainsaw Mastery",
-      "Grant Spell: Revved Up",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "setId": "lumberjack_s_forestry_gear",
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Chainsaw Mastery": [
+        2,
+        4
+      ],
+      "Revved Up": [
+        2,
+        5
+      ]
+    }
   },
   {
     "id": "gun_satanic_marine_s_buddy",
@@ -2549,11 +2901,11 @@
       "mana_per_kill": [
         6,
         10
-      ]
+      ],
+      "increased_attack_rating": 10
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "bow_satanic_marksman_s_hunting_bow",
@@ -2585,13 +2937,16 @@
       ],
       "to_strength": 20,
       "to_dexterity": 20,
-      "mana_per_kill": 12
+      "mana_per_kill": 12,
+      "increased_strength": [
+        5,
+        10
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "marksman_s_hunting_gear",
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "sword_satanic_masamune",
@@ -2612,14 +2967,18 @@
       "attack_rating": 825,
       "to_dexterity": 30
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Zeal"
-    ],
     "setId": "masamura",
     "sockets": 3,
     "maxSockets": 3,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Zeal Level 28",
+        "details": "Strike three fast and powerful attacks with increased attack rating."
+      }
+    ]
   },
   {
     "id": "mace_satanic_metal_vocalist_s_warlock",
@@ -2641,9 +3000,7 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "All Skills Class",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 4,
     "maxSockets": 4
@@ -2676,9 +3033,8 @@
       "all_resistances": 10,
       "fire_resistance": 40
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 1
   },
   {
     "id": "mace_satanic_molten_hammer",
@@ -2714,14 +3070,19 @@
         25,
         35
       ],
-      "ignore_lightning_res": 20
+      "ignore_lightning_res": 20,
+      "ignore_fire_res": 20
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Scorching Whip"
-    ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 18,
+        "description": "cast Scorching Whip Level 44",
+        "details": "Cast a scorching solar flare that whips forward dealing fire damage to monsters hit."
+      }
+    ]
   },
   {
     "id": "claw_satanic_molten_paw",
@@ -2748,10 +3109,12 @@
       ],
       "mana_per_kill": 8
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Fire Enchant"
-    ]
+    "skillBonuses": {
+      "Fire Enchant": [
+        15,
+        30
+      ]
+    }
   },
   {
     "id": "sword_satanic_molten_sword",
@@ -2786,8 +3149,7 @@
       "fire_skill_damage": 15
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ]
   },
   {
@@ -2810,16 +3172,21 @@
       "attack_damage": [
         15,
         25
-      ]
+      ],
+      "increased_attack_rating": 15
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Battle Glance"
-    ],
     "setId": "masamura",
     "sockets": 3,
     "maxSockets": 3,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Battle Glance Level 27",
+        "details": "Perform an area of effect attack with increased damage and attack rating."
+      }
+    ]
   },
   {
     "id": "staff_satanic_necrobutcher_s_curse",
@@ -2838,19 +3205,38 @@
       "all_skills": [
         2,
         4
+      ],
+      "summon_attack_speed": [
+        20,
+        28
+      ],
+      "summon_damage": [
+        15,
+        30
+      ],
+      "summon_life": [
+        15,
+        20
+      ],
+      "summon_amount": 1
+    },
+    "twoHanded": true,
+    "skillBonuses": {
+      "Raise Skeleton": [
+        8,
+        12
+      ],
+      "Raise Skeleton Mage": [
+        8,
+        12
+      ],
+      "Summon Mastery": [
+        8,
+        12
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Raise Skeleton",
-      "Grant Spell: Raise Skeleton Mage",
-      "Grant Spell: Summon Mastery",
-      "Summon Amount",
-      "Summon Attack Speed",
-      "Summon Dmg",
-      "Summon Life"
-    ],
-    "twoHanded": true
+    "sockets": 4,
+    "maxSockets": 6
   },
   {
     "id": "mace_satanic_nightmare_slasher",
@@ -2877,12 +3263,9 @@
       "all_resistances": [
         10,
         15
-      ]
+      ],
+      "enemy_all_resist": 10
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Enemy All Resist"
-    ],
     "sockets": 2,
     "maxSockets": 2
   },
@@ -2920,10 +3303,11 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "setId": "nobunaga_s_empire"
+    "setId": "nobunaga_s_empire",
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "sword_satanic_nomad_s_sandslicer",
@@ -2951,11 +3335,11 @@
       "attack_damage": [
         15,
         30
-      ]
+      ],
+      "increased_attack_rating": 25
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "setId": "elder_of_mos_arathim",
     "sockets": 3,
@@ -2978,19 +3362,25 @@
       "additive_physical_damage": [
         18,
         38
-      ]
+      ],
+      "enhanced_damage_based_on_level": 200,
+      "magic_find_based_on_level": 30,
+      "vitality_based_on_level": 100
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Shockwave",
-      "Magic Findd On Level",
-      "Enhanced Dmgd On Level",
-      "Vitalityd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 1,
     "maxSockets": 1,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Shockwave Level 17",
+        "details": "Smash the ground causing a shockwave that deals area of effect damage and stuns monsters. "
+      }
+    ]
   },
   {
     "id": "polearm_satanic_odin_s_battle_spear",
@@ -3023,14 +3413,21 @@
         975
       ],
       "damage_recouped_as_mana": 15,
-      "all_resistances": 25
+      "all_resistances": 25,
+      "damage_based_on_level": 100,
+      "damage_drained_from_mana": 15
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Vengeance",
-      "Attack Dmgd On Level"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 2,
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Vengeance Level 14",
+        "details": "Strike monsters with a lightning shock that splits towards nearby monsters, dealing physical damage and lightning damage."
+      }
+    ]
   },
   {
     "id": "mace_satanic_pillar_of_niflheim",
@@ -3051,17 +3448,32 @@
         10,
         20
       ],
-      "life_replenish_pct": 8
+      "life_replenish_pct": 8,
+      "all_skills": [
+        1,
+        3
+      ],
+      "life_replenish": 8,
+      "strength_based_on_level": 150,
+      "vitality_based_on_level": 75,
+      "open_wound_chance": [
+        10,
+        20
+      ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Struck: Shockwave",
-      "Strengthd On Level",
-      "Vitalityd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 15,
+        "description": "cast Shockwave Level 32",
+        "details": "Smash the ground causing a shockwave that deals area of effect damage and stuns monsters. "
+      }
+    ]
   },
   {
     "id": "mace_satanic_pit_fighter_s_brutalizer",
@@ -3092,8 +3504,7 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Movement Phasing None"
+      "Movement Phasing"
     ],
     "sockets": 2,
     "maxSockets": 2
@@ -3118,11 +3529,12 @@
         30
       ],
       "slow_target": 75,
-      "extra_damage_bleeding": 50
+      "extra_damage_bleeding": 50,
+      "increased_attack_speed": [
+        15,
+        20
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "sockets": 3,
     "maxSockets": 3
   },
@@ -3154,12 +3566,31 @@
         5,
         15
       ],
-      "poison_resistance": 50
+      "poison_resistance": 50,
+      "extra_damage_poisoned": [
+        10,
+        20
+      ],
+      "flat_poison_skill_damage": [
+        12,
+        22
+      ],
+      "increased_poisoned_frequency": [
+        10,
+        15
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 1,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Death from Above Level 22",
+        "details": "Call down a rain of falling spears on target location dealing poison damage and slowing monsters struck."
+      }
+    ]
   },
   {
     "id": "polearm_satanic_poseidon_s_might",
@@ -3195,10 +3626,9 @@
         75
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "staff_satanic_raise_of_the_dead",
@@ -3213,18 +3643,35 @@
       "summon_skills": [
         1,
         2
+      ],
+      "summon_attack_speed": [
+        10,
+        20
+      ],
+      "summon_damage": [
+        5,
+        15
+      ],
+      "summon_life": [
+        5,
+        10
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Raise Skeleton",
-      "Grant Spell: Raise Skeleton Mage",
-      "Grant Spell: Summon Mastery",
-      "Summon Attack Speed",
-      "Summon Dmg",
-      "Summon Life"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Raise Skeleton": [
+        2,
+        4
+      ],
+      "Raise Skeleton Mage": [
+        2,
+        4
+      ],
+      "Summon Mastery": [
+        2,
+        4
+      ]
+    }
   },
   {
     "id": "mace_satanic_revenant_s_lasher",
@@ -3262,12 +3709,27 @@
         25
       ],
       "lightning_absorption": 15,
-      "lightning_resistance": 60
+      "lightning_resistance": 60,
+      "increased_attack_rating": [
+        6,
+        15
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Vengeance",
-      "Grant Spell: Lightning Fury"
+    "skillBonuses": {
+      "Lightning Fury": [
+        5,
+        10
+      ]
+    },
+    "sockets": 4,
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Symphony of Thunder Level 20",
+        "details": "Gain increased lightning damage for a short period of time also zapping all monsters with thunderbolts when hit by a lightning skill."
+      }
     ]
   },
   {
@@ -3298,9 +3760,10 @@
       "experience_gain": 5
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
-    ]
+      "Attacks can hit multiple enemies"
+    ],
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "chainsaw_satanic_royal_decapitator",
@@ -3329,17 +3792,21 @@
       "magic_skill_damage": [
         10,
         20
-      ]
+      ],
+      "strength_based_on_level": 100
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Chainsaw Massacre",
-      "Strengthd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Chainsaw Massacre": [
+        3,
+        6
+      ]
+    }
   },
   {
     "id": "gun_satanic_rt_xqc_4910",
@@ -3367,12 +3834,12 @@
         7
       ],
       "defense_ignored": 25,
-      "slow_target": 30
+      "slow_target": 30,
+      "melee_range": [
+        15,
+        30
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Attack Range"
-    ],
     "sockets": 5,
     "maxSockets": 5
   },
@@ -3407,9 +3874,8 @@
         35
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "sword_satanic_sand_crusader_s_scimitar",
@@ -3439,9 +3905,6 @@
         10
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "sockets": 2,
     "maxSockets": 2
   },
@@ -3477,11 +3940,11 @@
       "life_per_kill": [
         8,
         15
-      ]
+      ],
+      "open_wound_chance": 20
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "book_satanic_sands_of_time",
@@ -3499,12 +3962,19 @@
       "arcane_skill_damage": [
         5,
         10
+      ],
+      "cooldown_recovery": 25,
+      "guardian_damage": [
+        25,
+        35
+      ],
+      "guardian_attack_range": [
+        15,
+        25
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Sands of Time"
-    ]
+    "sockets": 3,
+    "maxSockets": 4
   },
   {
     "id": "sword_satanic_sanguine_blade",
@@ -3532,11 +4002,10 @@
       "to_vitality": 6,
       "life_replenish_pct": 8,
       "life": 15,
-      "life_per_kill": 8
+      "life_per_kill": 8,
+      "increased_attack_rating": 5,
+      "life_replenish": 8
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "sockets": 2,
     "maxSockets": 2
   },
@@ -3558,10 +4027,23 @@
       "mana_replenish_pct": 25,
       "increased_life": -10,
       "physical_damage_reduction": -10,
-      "all_resistances": -50
+      "all_resistances": -50,
+      "flat_magic_skill_damage": [
+        15,
+        25
+      ],
+      "mana_replenish": 100,
+      "enemy_all_resist": -10
     },
-    "uniqueEffects": [
-      "Attack Dmg"
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Soul Spurn Level 18",
+        "details": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana."
+      }
     ]
   },
   {
@@ -3594,13 +4076,17 @@
       "defense_ignored": 40,
       "to_dexterity": 10
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Trigger Finger"
-    ],
     "sockets": 1,
     "maxSockets": 1,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Trigger Finger Level 15",
+        "details": "Fire a burst shot dealing physical damage."
+      }
+    ]
   },
   {
     "id": "sword_satanic_shattered_dimensions",
@@ -3622,12 +4108,11 @@
       "to_strength": [
         30,
         45
-      ]
+      ],
+      "magic_find_based_on_level": 30
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Magic Findd On Level",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ]
   },
   {
@@ -3653,16 +4138,24 @@
         15,
         25
       ],
-      "mana_replenish_pct": 100
+      "mana_replenish_pct": 100,
+      "cooldown_recovery": [
+        15,
+        20
+      ],
+      "mana_replenish": 100
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Solar Flare",
-      "All Skills Class"
-    ],
     "setId": "guardian_of_the_sun_temple",
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 10,
+        "description": "cast Solar Flare Level 60",
+        "details": "Unleash solar flare projectiles that homes towards monsters."
+      }
+    ]
   },
   {
     "id": "spellblade_satanic_spellshard",
@@ -3698,10 +4191,7 @@
         10,
         15
       ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    }
   },
   {
     "id": "flask_satanic_spirit_urn",
@@ -3722,12 +4212,14 @@
         2,
         5
       ],
-      "mana_replenish_pct": 15
-    },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Manad On Level"
-    ]
+      "mana_replenish_pct": 15,
+      "to_intelligence": [
+        20,
+        30
+      ],
+      "mana_replenish": 15,
+      "mana_based_on_level": 50
+    }
   },
   {
     "id": "claw_satanic_spirit_walker_s_guide",
@@ -3750,11 +4242,9 @@
         25
       ],
       "mana_replenish_pct": 10,
-      "mana": 35
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+      "mana": 35,
+      "mana_replenish": 10
+    }
   },
   {
     "id": "mace_satanic_spiritus",
@@ -3795,12 +4285,16 @@
         1350
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Flash Heal"
-    ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Flash Heal Level 31",
+        "details": "Heal yourself and any nearby allies."
+      }
+    ]
   },
   {
     "id": "staff_satanic_staff_of_nether_flame",
@@ -3828,11 +4322,13 @@
       ],
       "mana_per_kill": 40
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Aura: Ominous Aura"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Ominous Aura": [
+        8,
+        16
+      ]
+    }
   },
   {
     "id": "gun_satanic_steve_s_bang",
@@ -3876,11 +4372,15 @@
         30
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Steve's Itchy Sack"
-    ],
-    "setId": "stickman_steve_s_destruction"
+    "setId": "stickman_steve_s_destruction",
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 18,
+        "description": "cast Steve's Itchy Sack Level 59",
+        "details": "Send’s Stickman Steve on the offense dealing arcane damage"
+      }
+    ]
   },
   {
     "id": "sword_satanic_steve_s_mighty_sword",
@@ -3930,13 +4430,17 @@
         1420
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Steve's Itchy Sack"
-    ],
     "setId": "stickman_steve_s_destruction",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Steve's Itchy Sack Level 39",
+        "details": "Send’s Stickman Steve on the offense dealing arcane damage"
+      }
+    ]
   },
   {
     "id": "bow_satanic_steve_s_punchbow",
@@ -3972,13 +4476,30 @@
       "additive_cold_damage": [
         550,
         575
+      ],
+      "crushing_blow_chance": 25,
+      "increased_attack_rating": 20,
+      "additive_physical_damage": [
+        22,
+        46
+      ],
+      "flat_magic_skill_damage": [
+        22,
+        46
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "stickman_steve_s_destruction",
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 2,
+    "maxSockets": 4,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Impale Level 22",
+        "details": "Summon spikes from the ground impaling monsters in a target area dealing arcane damage and knocking them up."
+      }
+    ]
   },
   {
     "id": "wand_satanic_steve_s_wand_of_fortune",
@@ -4009,15 +4530,22 @@
       "magic_skill_damage": [
         35,
         50
+      ],
+      "faster_cast_rate": [
+        35,
+        55
       ]
     },
-    "uniqueEffects": [
-      "Chance When Casting: Steves Itchy Sack",
-      "Attack Dmg"
-    ],
     "setId": "stickman_steve_s_destruction",
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 20,
+        "description": "cast Steves Itchy Sack Level 70"
+      }
+    ]
   },
   {
     "id": "sword_satanic_storm_katana",
@@ -4052,13 +4580,19 @@
       "life_per_kill": 5
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Lightning Fury",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Lightning Fury Level 13",
+        "details": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage."
+      }
+    ]
   },
   {
     "id": "claw_satanic_talons_of_wisdom",
@@ -4090,11 +4624,12 @@
       "mana": [
         125,
         130
+      ],
+      "mana_replenish": [
+        15,
+        25
       ]
-    },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ]
+    }
   },
   {
     "id": "chainsaw_satanic_the_annihilator",
@@ -4128,10 +4663,11 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "staff_satanic_the_iris",
@@ -4173,9 +4709,6 @@
         40
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "twoHanded": true
   },
   {
@@ -4208,8 +4741,7 @@
       "physical_damage_reduction": 15
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
     "maxSockets": 2
@@ -4243,11 +4775,9 @@
         12,
         20
       ],
-      "arcane_resistance": 75
+      "arcane_resistance": 75,
+      "mana_replenish": 30
     },
-    "uniqueEffects": [
-      "Attack Dmg"
-    ],
     "setId": "thor_s_thunder_hammer",
     "sockets": 3,
     "maxSockets": 3
@@ -4278,15 +4808,21 @@
         8,
         15
       ],
-      "increased_mana": 10
+      "increased_mana": 10,
+      "ailment_damage_all": [
+        15,
+        25
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Odins Demise",
-      "Ailment Damage"
-    ],
     "setId": "odin_s_demise",
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 35,
+        "description": "cast Odins Demise Level 73"
+      }
+    ]
   },
   {
     "id": "polearm_satanic_thorn_of_noxus",
@@ -4314,17 +4850,27 @@
       "poison_skill_damage": [
         60,
         80
-      ]
+      ],
+      "increased_attack_speed_more": -60,
+      "less_dmg_with_cd_skills": 85
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Envenom",
-      "Grant Spell: Noxious Strike",
-      "Less Dmg With Cd Skills"
-    ],
     "sockets": 6,
     "maxSockets": 6,
-    "twoHanded": true
+    "twoHanded": true,
+    "skillBonuses": {
+      "Noxious Strike": [
+        40,
+        60
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Envenom Level 34",
+        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
+      }
+    ]
   },
   {
     "id": "dagger_satanic_thunder_dagger",
@@ -4354,9 +4900,15 @@
         25
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Lightning Surge"
+    "sockets": 0,
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 10,
+        "description": "cast Lightning Surge Level 32",
+        "details": "Unleash a surge of lightning dealing lightning damage."
+      }
     ]
   },
   {
@@ -4391,14 +4943,23 @@
       ],
       "increased_life": -15,
       "increased_mana": -25,
-      "all_resistances": -50
+      "all_resistances": -50,
+      "explosion_aoe": [
+        25,
+        40
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Casting: Arcane Infused Psychosis",
-      "Explosion Area Of Effect"
-    ],
-    "setId": "uabel_s_majesty"
+    "setId": "uabel_s_majesty",
+    "sockets": 2,
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 10,
+        "description": "cast Arcane Infused Psychosis Level 2",
+        "details": "Breaks target’s Arcane Resistance causing all skills to deal increased arcane damage"
+      }
+    ]
   },
   {
     "id": "mace_satanic_unholy_god_s_flail",
@@ -4430,12 +4991,12 @@
       "life": [
         400,
         600
+      ],
+      "grant_aura_holder_only": [
+        25,
+        35
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Aura Holder Only: Dark Oath"
-    ],
     "sockets": 1,
     "maxSockets": 1
   },
@@ -4468,13 +5029,20 @@
       ],
       "defense_ignored": 50,
       "open_wounds": 15,
-      "life_per_kill": 10
+      "life_per_kill": 10,
+      "damage_based_on_level": 100,
+      "melee_range": [
+        15,
+        30
+      ],
+      "open_wound_chance": 15,
+      "vitality_converted_to_attack_dmg": [
+        2,
+        5
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Attack Range",
-      "Attack Dmgd On Level"
-    ]
+    "sockets": 2,
+    "maxSockets": 5
   },
   {
     "id": "polearm_satanic_vanguard_s_lance",
@@ -4509,13 +5077,12 @@
       "mana_per_kill": [
         6,
         12
-      ]
+      ],
+      "attack_rating_based_on_level": 75
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Attack Ratingd On Level"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "axe_satanic_viking_s_sacred_axe",
@@ -4543,13 +5110,17 @@
       ]
     },
     "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Berserk",
-      "Attacks Hit Multiple Enemies None"
+      "Attacks can hit multiple enemies"
     ],
     "setId": "viking_s_demise",
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "skillBonuses": {
+      "Berserk": [
+        6,
+        8
+      ]
+    }
   },
   {
     "id": "wand_satanic_voodoo_magician_s_skull",
@@ -4573,13 +5144,16 @@
       "all_attributes": [
         10,
         20
+      ],
+      "summon_damage": [
+        10,
+        20
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        6,
+        10
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Intelligence Converted To Magic Skill Dmg",
-      "Summon Dmg"
-    ],
     "sockets": 1,
     "maxSockets": 1
   },
@@ -4614,13 +5188,29 @@
       "life_per_kill": [
         6,
         8
+      ],
+      "crit_chance": 20,
+      "deadly_blow": 33,
+      "additive_physical_damage": [
+        30,
+        60
+      ],
+      "crit_damage": [
+        30,
+        45
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Striking: Slice of Shadows"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 4,
+    "maxSockets": 5,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Slice of Shadows Level 28",
+        "details": "Perform an attack that releases a wave of shadow dealing physical damage."
+      }
+    ]
   },
   {
     "id": "polearm_satanic_war_god_s_lance",
@@ -4642,13 +5232,12 @@
       ],
       "crushing_blow_chance": 15,
       "attack_rating": 60,
-      "all_attributes": 3
+      "all_attributes": 3,
+      "damage_based_on_level": 50
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Attack Dmgd On Level"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "gun_satanic_warbringer",
@@ -4679,11 +5268,17 @@
         8
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Attacking: Trigger Finger"
-    ],
-    "twoHanded": true
+    "twoHanded": true,
+    "sockets": 0,
+    "maxSockets": 2,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 25,
+        "description": "cast Trigger Finger Level 8",
+        "details": "Fire a burst shot dealing physical damage."
+      }
+    ]
   },
   {
     "id": "sword_satanic_wind_guardian_s_gladius",
@@ -4715,11 +5310,16 @@
       "additive_lightning_damage": [
         530,
         645
-      ]
+      ],
+      "open_wound_chance": 20
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance When Struck: Sand Guardians"
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 5,
+        "description": "cast Sand Guardians Level 15",
+        "details": "Conjure a Sand Guardian that attacks nearby monsters dealing arcane damage. "
+      }
     ]
   },
   {
@@ -4745,16 +5345,20 @@
         7
       ],
       "to_strength": 40,
-      "to_dexterity": 40
+      "to_dexterity": 40,
+      "damage_based_on_level": 125
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Chance After Each Kill: Rapid Fire",
-      "Attack Dmgd On Level"
-    ],
     "sockets": 3,
     "maxSockets": 3,
-    "twoHanded": true
+    "twoHanded": true,
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 5,
+        "description": "cast Rapid Fire Level 10",
+        "details": "Temporarily increase your attack speed and physical damage."
+      }
+    ]
   },
   {
     "id": "wand_satanic_witch_s_wand",
@@ -4766,16 +5370,25 @@
     "requiresLevel": 100,
     "implicit": {
       "attacks_per_second": 1.5,
-      "faster_cast_rate": -50
+      "faster_cast_rate": -50,
+      "faster_cast_rate_more": -50,
+      "follower_relic_damage": [
+        75,
+        125
+      ],
+      "follower_relic_attack_speed": [
+        10,
+        20
+      ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Hex Beast",
-      "Follower Relic Damage",
-      "Follower Relic Attack Speed"
-    ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "skillBonuses": {
+      "Hex Beast": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "spellblade_satanic_wormclaw",
@@ -4799,12 +5412,9 @@
         12,
         24
       ],
-      "poison_skill_damage": 20
+      "poison_skill_damage": 20,
+      "increased_poisoned_frequency": 10
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Poison Tick Frequency"
-    ],
     "sockets": 1,
     "maxSockets": 1
   },
@@ -4822,13 +5432,18 @@
       "all_attributes": [
         10,
         20
+      ],
+      "summon_attack_speed": [
+        15,
+        25
+      ],
+      "summon_all_resist": [
+        3,
+        5
       ]
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Summon Attack Speed",
-      "Summon All Resist"
-    ]
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "claw_satanic_yoshi_s_throat_cutters",
@@ -4856,14 +5471,17 @@
       "life_steal": 6,
       "to_strength": 45,
       "to_dexterity": 45,
-      "faster_hit_recovery": 75
+      "faster_hit_recovery": 75,
+      "increased_attack_rating": 35
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Omnislash"
-    ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "skillBonuses": {
+      "Omnislash": [
+        15,
+        20
+      ]
+    }
   },
   {
     "id": "book_satanic_zealot_s_book_of_prophecy",
@@ -4884,12 +5502,23 @@
         15
       ],
       "mana_replenish_pct": 15,
-      "mana": 35
+      "mana": 35,
+      "cooldown_recovery": [
+        10,
+        20
+      ],
+      "flat_arcane_skill_damage": [
+        24,
+        64
+      ],
+      "mana_replenish": 100
     },
-    "uniqueEffects": [
-      "Attack Dmg",
-      "Grant Spell: Satans Mark"
-    ],
-    "setId": "zealot_s_prophecy"
+    "setId": "zealot_s_prophecy",
+    "skillBonuses": {
+      "Satans Mark": [
+        7,
+        12
+      ]
+    }
   }
 ]

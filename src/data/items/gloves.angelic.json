@@ -34,14 +34,20 @@
         35,
         50
       ],
-      "arcane_resistance": 35
+      "arcane_resistance": 35,
+      "max_arcane_resistance": 5,
+      "phys_dmg_taken_as_arcane": [
+        40,
+        50
+      ]
     },
     "sockets": 1,
     "maxSockets": 3,
-    "uniqueEffects": [
-      "Grant Spell: Jagged Gauntlet",
-      "Phys Dmg Taken As Arcane",
-      "Max Arcane Resist"
-    ]
+    "skillBonuses": {
+      "Jagged Gauntlet": [
+        2,
+        4
+      ]
+    }
   }
 ]

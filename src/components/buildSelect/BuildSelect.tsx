@@ -43,7 +43,7 @@ export default function BuildSelect({
 
   const importBuildSnapshot = useBuild((s) => s.importBuildSnapshot)
   const saveCurrentAsNewBuild = useBuild((s) => s.saveCurrentAsNewBuild)
-  const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
+  const saveBuildNow = useBuild((s) => s.saveBuildNow)
   const duplicateSavedBuild = useBuild((s) => s.duplicateSavedBuild)
   const renameSavedBuild = useBuild((s) => s.renameSavedBuild)
   const deleteSavedBuild = useBuild((s) => s.deleteSavedBuild)
@@ -602,7 +602,7 @@ export default function BuildSelect({
         canOverwrite={!!activeBuildId}
         onImport={handleImport}
         onOverwrite={() => {
-          if (commitActiveProfile()) flash('Updated active profile')
+          if (saveBuildNow()) flash('Updated active profile')
           setOverlay(null)
         }}
         onSaveAsNew={handleSaveCurrent}

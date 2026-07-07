@@ -704,6 +704,102 @@
       "format": "percent"
     },
     {
+      "key": "mana_based_on_level",
+      "name": "to Mana (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "life_based_on_level",
+      "name": "to Life (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "damage_based_on_level",
+      "name": "to Damage (Based on Level)",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "enhanced_damage_based_on_level",
+      "name": "Enhanced Damage (Based on Level)",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enhanced_defense_based_on_level",
+      "name": "Enhanced Defense (Based on Level)",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "magic_find_based_on_level",
+      "name": "Magic Find (Based on Level)",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "attack_rating_based_on_level",
+      "name": "to Attack Rating (Based on Level)",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "strength_based_on_level",
+      "name": "to Strength (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "dexterity_based_on_level",
+      "name": "to Dexterity (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "vitality_based_on_level",
+      "name": "to Vitality (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "energy_based_on_level",
+      "name": "to Energy (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "intelligence_based_on_level",
+      "name": "to Intelligence (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "armor_based_on_level",
+      "name": "to Armor (Based on Level)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "open_wound_chance",
+      "name": "Chance to Open Wound",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_fire_dmg_to_burning",
+      "name": "Extra Fire Damage to Burning",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "defense_based_on_level",
+      "name": "Defense (Based on Level)",
+      "category": "defense",
+      "format": "flat"
+    },
+    {
       "key": "dot_duration",
       "name": "Damage Over Time Duration",
       "category": "offense",
@@ -2668,6 +2764,667 @@
       "category": "defense",
       "format": "percent",
       "itemOnly": true
+    }
+  ,
+    {
+      "key": "projectile_skills",
+      "name": "Projectile Skills",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "extra_dmg_to_monsters_afflicted_with_ailments",
+      "name": "Extra Dmg To Monsters Afflicted With Ailments",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "enemy_all_resist",
+      "name": "Enemy All Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "intelligence_converted_to_magic_skill_dmg",
+      "name": "Intelligence Converted To Magic Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sentry_amount",
+      "name": "Sentry Amount",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "random_skill_element",
+      "name": "Random Skill Element",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "extra_physical_dmg_to_bleeding",
+      "name": "Extra Physical Dmg To Bleeding",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "vitality_converted_to_magic_skill_dmg",
+      "name": "Vitality Converted To Magic Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_arcane_dmg_to_shadowburn",
+      "name": "Extra Arcane Dmg To Shadowburn",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_cold_dmg_to_frostbitten",
+      "name": "Extra Cold Dmg To Frostbitten",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "sentry_skills",
+      "name": "Sentry Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "extra_lightning_dmg_to_stasis",
+      "name": "Extra Lightning Dmg To Stasis",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_poison_dmg_to_poisoned",
+      "name": "Extra Poison Dmg To Poisoned",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "mirror_ring",
+      "name": "Mirror Ring",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "random_signet_affix",
+      "name": "Random Signet Affix",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "mana_costs_decreased",
+      "name": "Mana Costs Decreased",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_dmg_to_shadowburn",
+      "name": "Extra Dmg To Shadowburn",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "increased_experience_gain_below_100",
+      "name": "Increased Experience Gain Below 100",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "armor_converted_to_magic_skill_dmg",
+      "name": "Armor Converted To Magic Skill Damage",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "energy_converted_to_magic_skill_dmg",
+      "name": "Energy Converted To Magic Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "phys_dmg_taken_as_cold",
+      "name": "Phys Dmg Taken As Cold",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "armor_converted_to_attack_dmg",
+      "name": "Armor Converted To Attack Damage",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "vitality_converted_to_attack_dmg",
+      "name": "Vitality Converted To Attack Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "intelligence_converted_to_lightning_skill_dmg",
+      "name": "Intelligence Converted To Lightning Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "energy_converted_to_cold_skill_dmg",
+      "name": "Energy Converted To Cold Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_dmg_to_deep_frozen",
+      "name": "Extra Dmg To Deep Frozen",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "intelligence_converted_to_fire_skill_dmg",
+      "name": "Intelligence Converted To Fire Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "energy_converted_to_lightning_skill_dmg",
+      "name": "Energy Converted To Lightning Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "intelligence_converted_to_cold_skill_dmg",
+      "name": "Intelligence Converted To Cold Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "grant_aura_holder_only",
+      "name": "Grant Aura Holder Only",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "potion_cooldown_recovery",
+      "name": "Potion Cooldown Recovery",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "extra_dmg_to_frostbitten",
+      "name": "Extra Dmg To Frostbitten",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "dmg_taken_over_four_seconds",
+      "name": "Dmg Taken Over Four Seconds",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "guardian_additional_attack",
+      "name": "Guardian Additional Attack",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "melee_skills",
+      "name": "Melee Skills",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "faster_cast_rate_percent_converted_to_movement_speed",
+      "name": "Faster Cast Rate Percent Converted To Movement Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "guardian_attack_range",
+      "name": "Guardian Attack Range",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "unbreakable",
+      "name": "Unbreakable",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "random_skill",
+      "name": "Random Skill",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "summon_movement_speed",
+      "name": "Summon Movement Speed",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "summon_all_resist",
+      "name": "Summon All Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "summon_reduced_dmg_taken",
+      "name": "Summon Reduced Dmg Taken",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "decreased_merchant_prices",
+      "name": "Decreased Merchant Prices",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "orbiting_relic_radius_increase",
+      "name": "Orbiting Relic Radius Increase",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orbiting_relic_amount",
+      "name": "Orbiting Relic Amount",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "orbiting_relic_damage",
+      "name": "Orbiting Relic Damage",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "monsters_rest_in_peace",
+      "name": "Monsters Rest In Peace",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "follower_relic_attack_speed",
+      "name": "Follower Relic Attack Speed",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "follower_relic_projectiles",
+      "name": "Follower Relic Projectiles",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "follower_relic_damage",
+      "name": "Follower Relic Damage",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "skill_relic_damage",
+      "name": "Skill Relic Damage",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "skill_relic_projectiles",
+      "name": "Skill Relic Projectiles",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "grant_subskills",
+      "name": "Grant Subskills",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orb_legion_respawn",
+      "name": "Orb Legion Respawn",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_heroic",
+      "name": "Orb Heroic",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_ancient_spawn",
+      "name": "Orb Ancient Spawn",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_chaos_effect",
+      "name": "Codex Chaos Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_attack_damage",
+      "name": "Orb Attack Damage",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_cast_rate",
+      "name": "Orb Cast Rate",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_movement_speed",
+      "name": "Orb Movement Speed",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_incarnation_effect",
+      "name": "Codex Incarnation Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_magic_skill_damage",
+      "name": "Orb Magic Skill Damage",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_treasure_chance",
+      "name": "Orb Treasure Chance",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_relic_chance",
+      "name": "Orb Relic Chance",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_relic_feast_effect",
+      "name": "Codex Relic Feast Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_gold",
+      "name": "Orb Gold",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_experience",
+      "name": "Codex Experience",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_rift_effect",
+      "name": "Codex Rift Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_experience_effect",
+      "name": "Codex Experience Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_rune",
+      "name": "Orb Rune",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_all_recovery",
+      "name": "Orb All Recovery",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "codex_spelunker_effect",
+      "name": "Codex Spelunker Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "aoe_skills",
+      "name": "Aoe Skills",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "aoe_size",
+      "name": "Aoe Size",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "phys_dmg_taken_as_arcane",
+      "name": "Phys Dmg Taken As Arcane",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "cast_when_attacking",
+      "name": "Cast When Attacking",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "less_dmg_with_cd_skills",
+      "name": "Less Dmg With Cd Skills",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "orb_attack_speed",
+      "name": "Orb Attack Speed",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_angelic",
+      "name": "Orb Angelic",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_critical_strike_damage",
+      "name": "Orb Critical Strike Damage",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orb_loot_amount",
+      "name": "Orb Loot Amount",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "orb_magic_find",
+      "name": "Orb Magic Find",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "proc_non_buff_relic_chance",
+      "name": "Proc Non Buff Relic Chance",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "effectiveness_of_non_buff_proc_relics",
+      "name": "Effectiveness Of Non Buff Proc Relics",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_damage_increase",
+      "name": "Projectile Damage Increase",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_size_increase",
+      "name": "Projectile Size Increase",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_random_direction",
+      "name": "Projectile Random Direction",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_return",
+      "name": "Projectile Return",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_weapon_damage",
+      "name": "Max Weapon Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cast_after_kill",
+      "name": "Cast After Kill",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "min_weapon_damage",
+      "name": "Min Weapon Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "codex_mimic_effect",
+      "name": "Codex Mimic Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "intelligence_converted_to_arcane_skill_dmg",
+      "name": "Intelligence Converted To Arcane Skill Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "damage_from_resist",
+      "name": "Damage From Resist",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "codex_tarot_deck_effect",
+      "name": "Codex Tarot Deck Effect",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "skill_relic_projectile_size",
+      "name": "Skill Relic Projectile Size",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "skill_relic_additional_casts",
+      "name": "Skill Relic Additional Casts",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "skill_relic_cooldown",
+      "name": "Skill Relic Cooldown",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orbiting_relic_size",
+      "name": "Orbiting Relic Size",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orbiting_relic_execute_below_health",
+      "name": "Orbiting Relic Execute Below Health",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "orbit_skills",
+      "name": "Orbit Skills",
+      "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "orbital_projectile_duration_increased",
+      "name": "Orbital Projectile Duration Increased",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "self_inflicted_chance_when_casting",
+      "name": "Self Inflicted Chance When Casting",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "self_inflicted_damage_from_casting",
+      "name": "Self Inflicted Damage From Casting",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "self_inflicted_chance_when_attacking",
+      "name": "Self Inflicted Chance When Attacking",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "self_inflicted_damage_from_attacking",
+      "name": "Self Inflicted Damage From Attacking",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "aoe_damage",
+      "name": "Aoe Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "ranged_skills",
+      "name": "Ranged Skills",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "buffing_aura_range_increased",
+      "name": "Buffing Aura Range Increased",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "buffing_aura_effectiveness_increased",
+      "name": "Buffing Aura Effectiveness Increased",
+      "category": "offense",
+      "format": "percent"
     }
   ],
   "slots": [

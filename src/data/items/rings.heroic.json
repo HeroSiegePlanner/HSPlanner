@@ -96,11 +96,9 @@
       "to_strength": [
         35,
         50
-      ]
-    },
-    "uniqueEffects": [
-      "Attack Ratingd On Level"
-    ]
+      ],
+      "attack_rating_based_on_level": 300
+    }
   },
   {
     "id": "ring_heroic_mana_bender_s_will",
@@ -128,9 +126,12 @@
         10
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Mana Bender"
-    ]
+    "skillBonuses": {
+      "Mana Bender": [
+        1,
+        5
+      ]
+    }
   },
   {
     "id": "ring_heroic_quickening_zephyr",
@@ -150,10 +151,7 @@
         25,
         35
       ]
-    },
-    "uniqueEffects": [
-      "All Skills Class"
-    ]
+    }
   },
   {
     "id": "ring_heroic_scourge_loop",
@@ -202,7 +200,7 @@
       "experience_gain": 12
     },
     "uniqueEffects": [
-      "Herobound None"
+      "Herobound"
     ],
     "sockets": 1,
     "maxSockets": 1
@@ -249,11 +247,15 @@
       "magic_skill_damage": [
         35,
         65
+      ],
+      "mana_costs_decreased": [
+        7,
+        15
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Unbound Power"
-    ]
+    "skillBonuses": {
+      "Unbound Power": 1
+    }
   },
   {
     "id": "ring_heroic_the_downfall_of_felps",
@@ -267,14 +269,18 @@
       "all_attributes": [
         25,
         35
-      ]
-    },
-    "uniqueEffects": [
-      "Projectile Damage Increase",
-      "Projectile Size Increase",
-      "Projectile Random Direction",
-      "Projectile Return"
-    ]
+      ],
+      "projectile_damage_increase": [
+        5,
+        10
+      ],
+      "projectile_size_increase": [
+        25,
+        40
+      ],
+      "projectile_random_direction": 1,
+      "projectile_return": 1
+    }
   },
   {
     "id": "ring_heroic_void_bomba",
@@ -304,12 +310,23 @@
       "explosion_aoe": [
         15,
         30
+      ],
+      "aoe_skills": [
+        2,
+        4
+      ],
+      "aoe_damage": [
+        15,
+        25
+      ],
+      "aoe_size": [
+        15,
+        25
       ]
     },
-    "uniqueEffects": [
-      "Aoe Skills",
-      "Grant Spell: Void Pull"
-    ]
+    "skillBonuses": {
+      "Void Pull": 1
+    }
   },
   {
     "id": "ring_heroic_arcanis",
@@ -416,12 +433,14 @@
       {
         "trigger": "on_hit",
         "chance": 2,
-        "description": "cast Armageddon Level 83"
+        "description": "cast Armageddon Level 83",
+        "details": "Call down a rain of meteors from the sky dealing area of effect fire damage to monsters struck."
       },
       {
         "trigger": "on_hit",
         "chance": 3,
-        "description": "cast Demon Form Level 17"
+        "description": "cast Demon Form Level 17",
+        "details": "Temporarily turn into a demon gaining increased attack damage and attack speed."
       }
     ]
   },
@@ -460,9 +479,7 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 98,
-    "uniqueEffects": [
-      "Mirror Other Ring"
-    ]
+    "implicit": {}
   },
   {
     "id": "ring_heroic_signet_of_corruption",

@@ -15,11 +15,18 @@
       "all_resistances": [
         15,
         25
+      ],
+      "explosion_aoe": [
+        50,
+        75
       ]
     },
-    "uniqueEffects": [
-      "Chance After Each Kill: Liliths Rage",
-      "Explosion Area Of Effect"
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 2,
+        "description": "cast Liliths Rage Level 1"
+      }
     ]
   }
 ]

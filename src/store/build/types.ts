@@ -115,6 +115,7 @@ export interface BuildActions {
   changeActiveSeason: (season: string) => void
   switchActiveProfile: (profileId: string) => boolean
   commitActiveProfile: () => boolean
+  saveBuildNow: () => boolean
   addProfileToActiveBuild: (name: string) => string | null
   duplicateActiveProfile: (profileId: string) => string | null
   renameActiveProfile: (profileId: string, name: string) => boolean

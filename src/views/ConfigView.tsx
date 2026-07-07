@@ -5,6 +5,7 @@ import ActiveAuraPanel from './config/ActiveAuraPanel'
 import ProcsPanel from './config/ProcsPanel'
 import EnemyConditionsPanel from './config/EnemyConditionsPanel'
 import PlayerConditionsPanel from './config/PlayerConditionsPanel'
+import ItemBlessingsPanel from './config/ItemBlessingsPanel'
 import ResistancesPanel from './config/ResistancesPanel'
 import SkillProjectilesPanel from './config/SkillProjectilesPanel'
 import CustomStatsPanel from './config/CustomStatsPanel'
@@ -48,6 +49,7 @@ export default function ConfigView() {
         <ProcsPanel />
         <EnemyConditionsPanel />
         <PlayerConditionsPanel />
+        <ItemBlessingsPanel />
         <ResistancesPanel />
         <SkillProjectilesPanel />
         <CustomStatsPanel />

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { gameConfig, getClass, getSkillsByClass } from "../data";
 import { compactRange } from "../utils/compactNumber";
+import { useSettings } from "../store/settings";
 import {
   attrPointsFor,
   skillPointsFor,
@@ -97,6 +98,7 @@ export default function LeftStatsPanel() {
   const skillRanks = useBuild((s) => s.skillRanks);
   const activeSkillIds = useBuild((s) => s.activeSkillIds);
   const toggleActiveSkill = useBuild((s) => s.toggleActiveSkill);
+  const numberScale = useSettings((s) => s.numberScale);
 
   const buildDeps = useBuildPerformanceDeps();
   const performance = useCalcResult<BuildPerformance | null>(
@@ -256,7 +258,7 @@ export default function LeftStatsPanel() {
                   const ps = performance?.perSkill?.find((p) => p.id === id);
                   const dps =
                     ps?.hitDpsMin !== undefined && ps?.hitDpsMax !== undefined
-                      ? compactRange(ps.hitDpsMin, ps.hitDpsMax)
+                      ? compactRange(ps.hitDpsMin, ps.hitDpsMax, numberScale)
                       : "—";
                   return (
                     <button
@@ -404,7 +406,7 @@ export default function LeftStatsPanel() {
                   value={
                     damage ? (
                       <span className="text-text">
-                        {formatNumRange(damage.finalMin, damage.finalMax)}
+                        {compactRange(damage.finalMin, damage.finalMax, numberScale)}
                       </span>
                     ) : (
                       <span className="text-muted">—</span>
@@ -416,10 +418,7 @@ export default function LeftStatsPanel() {
                   value={
                     hitDpsMin !== undefined && hitDpsMax !== undefined ? (
                       <span className="text-accent-hot">
-                        {formatNumRange(
-                          Math.round(hitDpsMin),
-                          Math.round(hitDpsMax),
-                        )}
+                        {compactRange(hitDpsMin, hitDpsMax, numberScale)}
                       </span>
                     ) : (
                       <span className="text-muted">—</span>
@@ -438,10 +437,7 @@ export default function LeftStatsPanel() {
                             "0 0 10px rgba(224,184,100,0.25)",
                         }}
                       >
-                        {formatNumRange(
-                          Math.round(combinedDpsMin),
-                          Math.round(combinedDpsMax),
-                        )}
+                        {compactRange(combinedDpsMin, combinedDpsMax, numberScale)}
                       </span>
                     ) : (
                       <span className="text-muted">—</span>

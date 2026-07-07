@@ -14,7 +14,6 @@ export default function ProcsPanel() {
   const killsPerSec = useBuild((s) => s.killsPerSec)
   const setKillsPerSec = useBuild((s) => s.setKillsPerSec)
   const subskillRanks = useBuild((s) => s.subskillRanks)
-  const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const procSkills = useMemo(() => {
     if (!classId) return []
@@ -114,13 +113,11 @@ export default function ProcsPanel() {
                   const raw = e.target.value
                   if (raw === '') {
                     setKillsPerSec(0)
-                    commitActiveProfile()
                     return
                   }
                   const n = Number(raw)
                   if (!Number.isFinite(n)) return
                   setKillsPerSec(Math.max(0, n))
-                  commitActiveProfile()
                 }}
                 className="w-full bg-transparent text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"
               />
@@ -156,7 +153,6 @@ export default function ProcsPanel() {
                         checked={checked}
                         onChange={(e) => {
                           setProcToggle(p.id, e.target.checked)
-                          commitActiveProfile()
                         }}
                         disabled={!ready}
                       />
@@ -227,7 +223,6 @@ export default function ProcsPanel() {
                                 entry.toggleKey,
                                 e.target.checked,
                               )
-                              commitActiveProfile()
                             }}
                             disabled={!ready}
                           />

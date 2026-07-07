@@ -300,6 +300,8 @@ pub struct ItemGrantedSkill {
     pub passive_stats: Option<PassiveStatsSpec>,
     #[serde(default)]
     pub passive_converts: Option<PassiveConverts>,
+    #[serde(default)]
+    pub condition: Option<String>,
 }
 
 // ---------- character class ----------

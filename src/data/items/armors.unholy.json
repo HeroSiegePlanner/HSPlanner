@@ -32,7 +32,9 @@
         25,
         50
       ],
-      "max_all_resistances": -10
+      "max_all_resistances": -10,
+      "mana_based_on_level": 3500,
+      "energy_based_on_level": 300
     },
     "sockets": 6,
     "maxSockets": 6,
@@ -41,11 +43,6 @@
         5,
         15
       ]
-    },
-    "uniqueEffects": [
-      "Grant Spell: Radiant Power",
-      "Manad On Level",
-      "Energyd On Level"
-    ]
+    }
   }
 ]

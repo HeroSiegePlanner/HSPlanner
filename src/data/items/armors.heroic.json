@@ -31,13 +31,21 @@
         20,
         25
       ],
-      "all_resistances": 35
+      "all_resistances": 35,
+      "intelligence_converted_to_arcane_skill_dmg": [
+        2,
+        5
+      ]
     },
     "sockets": 3,
     "maxSockets": 3,
-    "uniqueEffects": [
-      "Chance When Casting: Arcane Wrath",
-      "Intelligence Converted To Arcane Skill Dmg"
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 3,
+        "description": "cast Arcane Wrath Level 18",
+        "details": "Causes your arcane damage skills to inflict shadow burn on monsters for a short period."
+      }
     ]
   },
   {
@@ -69,7 +77,12 @@
         6,
         12
       ],
-      "to_strength": 50
+      "to_strength": 50,
+      "enhanced_damage_based_on_level": 275,
+      "melee_skills": [
+        6,
+        12
+      ]
     },
     "sockets": 2,
     "maxSockets": 4,
@@ -77,12 +90,9 @@
       {
         "trigger": "on_hit",
         "chance": 4,
-        "description": "cast Warrior's Path Level 14"
+        "description": "cast Warrior's Path Level 14",
+        "details": "Increases your attack damage and magic skill damage for a short period."
       }
-    ],
-    "uniqueEffects": [
-      "Melee Skills",
-      "Enhanced Dmgd On Level"
     ]
   },
   {
@@ -151,7 +161,8 @@
       {
         "trigger": "when_struck",
         "chance": 5,
-        "description": "cast Combat Orders Level 33"
+        "description": "cast Combat Orders Level 33",
+        "details": "Powerful warcry which buffs your and your party members maximum life and mana."
       }
     ],
     "skillBonuses": {
@@ -208,7 +219,8 @@
       {
         "trigger": "when_struck",
         "chance": 15,
-        "description": "cast Volcano Level 53"
+        "description": "cast Volcano Level 53",
+        "details": "Spawn a molten volcano that deals fire damage around it and spews out burning rocks that explode on hit."
       }
     ]
   },
@@ -240,15 +252,23 @@
         6,
         12
       ],
-      "to_strength": 50
+      "to_strength": 50,
+      "projectile_speed": 15,
+      "enhanced_damage_based_on_level": 275,
+      "ranged_skills": [
+        6,
+        12
+      ]
     },
     "sockets": 2,
     "maxSockets": 2,
-    "uniqueEffects": [
-      "Chance When Striking: Warrior's Path",
-      "Ranged Skills",
-      "Projectile Speed",
-      "Enhanced Dmgd On Level"
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Warrior's Path Level 12",
+        "details": "Increases your attack damage and magic skill damage for a short period."
+      }
     ]
   },
   {
@@ -298,7 +318,8 @@
       {
         "trigger": "on_hit",
         "chance": 15,
-        "description": "cast Symphony of Thunder Level 26"
+        "description": "cast Symphony of Thunder Level 26",
+        "details": "Gain increased lightning damage for a short period of time also zapping all monsters with thunderbolts when hit by a lightning skill."
       }
     ]
   },
@@ -349,7 +370,8 @@
       {
         "trigger": "when_struck",
         "chance": 35,
-        "description": "cast Set Sail Level 24"
+        "description": "cast Set Sail Level 24",
+        "details": "Temporarily increases your cold skill damage and mana replenish.       "
       }
     ]
   },
@@ -400,7 +422,8 @@
       {
         "trigger": "on_cast",
         "chance": 20,
-        "description": "cast Poison Nova Level 66"
+        "description": "cast Poison Nova Level 66",
+        "details": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
       }
     ]
   },
@@ -479,6 +502,10 @@
       "damage_return": [
         1250,
         1500
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        10,
+        15
       ]
     },
     "sockets": 6,
@@ -488,10 +515,7 @@
         1,
         3
       ]
-    },
-    "uniqueEffects": [
-      "Vitality To Magic Skill Damage"
-    ]
+    }
   },
   {
     "id": "body_armor_heroic_grimbone_s_ribcage",
@@ -531,13 +555,15 @@
       "all_resistances": [
         25,
         40
-      ]
+      ],
+      "mana_replenish": [
+        3,
+        6
+      ],
+      "life_based_on_level": 475
     },
     "sockets": 4,
-    "maxSockets": 6,
-    "uniqueEffects": [
-      "Life On Level 475"
-    ]
+    "maxSockets": 6
   },
   {
     "id": "body_armor_heroic_noxious_hunter_s_reward",

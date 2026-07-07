@@ -24,9 +24,14 @@
         30
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Liquid Containers"
-    ]
+    "skillBonuses": {
+      "Liquid Containers": [
+        2,
+        4
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "belt_angelic_majorie_s_belt",
@@ -59,12 +64,10 @@
         10,
         15
       ],
-      "all_resistances": 25
+      "all_resistances": 25,
+      "dmg_taken_over_four_seconds": 25
     },
     "sockets": 2,
-    "maxSockets": 3,
-    "uniqueEffects": [
-      "Incoming Damage Over Time 25%"
-    ]
+    "maxSockets": 3
   }
 ]

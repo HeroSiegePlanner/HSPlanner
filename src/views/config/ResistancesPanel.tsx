@@ -5,7 +5,6 @@ import { ENEMY_RESISTANCE_TYPES, RESIST_COLOR } from './constants'
 export default function ResistancesPanel() {
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const setEnemyResistance = useBuild((s) => s.setEnemyResistance)
-  const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const activeResistanceCount = ENEMY_RESISTANCE_TYPES.filter(
     (r) => enemyResistances[r.key] !== undefined && enemyResistances[r.key] !== null,
@@ -58,13 +57,11 @@ export default function ResistancesPanel() {
                     const raw = e.target.value
                     if (raw === '') {
                       setEnemyResistance(r.key, null)
-                      commitActiveProfile()
                       return
                     }
                     const n = Number(raw)
                     if (!Number.isFinite(n)) return
                     setEnemyResistance(r.key, n)
-                    commitActiveProfile()
                   }}
                   className="w-12 bg-transparent py-0.5 text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"
                 />

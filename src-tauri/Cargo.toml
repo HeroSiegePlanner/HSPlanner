@@ -1,6 +1,6 @@
 [package]
 name = "HSPlanner"
-version = "0.9.1"
+version = "0.9.1" # inert: app version comes from package.json (see tauri.conf.json)
 description = "HSPlanner"
 authors = ["zium1337"]
 license = ""

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import changelogMd from '../../CHANGELOG.md?raw'
 import { useBuild } from '../store/build'
+import { useSettings } from '../store/settings'
 import {
   inTauriRuntime,
   installUpdateOnQuit,
@@ -233,14 +234,7 @@ export default function BottomBar() {
         <KofiIcon className="h-3 w-3" />
         Support on Ko-fi
       </a>
-      <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
-        <span
-          aria-hidden
-          className="h-1.5 w-1.5 rounded-full bg-stat-green"
-          style={{ boxShadow: '0 0 8px rgba(116,201,138,0.65)' }}
-        />
-        Auto-saved
-      </span>
+      <SaveBadge />
       <span aria-hidden className="hidden h-4 w-px bg-border sm:block" />
       <span className="hidden items-center gap-1.5 sm:flex">
         <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
@@ -251,6 +245,66 @@ export default function BottomBar() {
         </span>
       </span>
     </footer>
+  )
+}
+
+const IS_MAC =
+  typeof navigator !== 'undefined' && /Mac/i.test(navigator.platform)
+const SAVE_SHORTCUT = IS_MAC ? '⌘S' : 'Ctrl+S'
+const SAVED_FLASH_MS = 1600
+
+function SaveBadge() {
+  const autoSave = useSettings((s) => s.autoSave)
+  const savedBuildsVersion = useBuild((s) => s.savedBuildsVersion)
+  const [flash, setFlash] = useState(false)
+  const seenVersion = useRef(savedBuildsVersion)
+
+  useEffect(() => {
+    if (seenVersion.current === savedBuildsVersion) return
+    seenVersion.current = savedBuildsVersion
+    setFlash(true)
+    const t = window.setTimeout(() => setFlash(false), SAVED_FLASH_MS)
+    return () => window.clearTimeout(t)
+  }, [savedBuildsVersion])
+
+  if (autoSave) {
+    return (
+      <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-stat-green"
+          style={{ boxShadow: '0 0 8px rgba(116,201,138,0.65)' }}
+        />
+        Auto-saved
+      </span>
+    )
+  }
+
+  if (flash) {
+    return (
+      <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-stat-green">
+        <span
+          aria-hidden
+          className="h-1.5 w-1.5 rounded-full bg-stat-green"
+          style={{ boxShadow: '0 0 8px rgba(116,201,138,0.65)' }}
+        />
+        Saved
+      </span>
+    )
+  }
+
+  return (
+    <span
+      title={`Auto-save is off — press ${SAVE_SHORTCUT} to save`}
+      className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot"
+    >
+      <span
+        aria-hidden
+        className="h-1.5 w-1.5 rounded-full bg-accent-hot"
+        style={{ boxShadow: '0 0 8px rgba(224,184,100,0.65)' }}
+      />
+      Manual · {SAVE_SHORTCUT}
+    </span>
   )
 }
 

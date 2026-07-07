@@ -1316,6 +1316,7 @@ pub fn apply_attribute_divided_stats(
 pub fn apply_item_granted_passive_stats(
     inventory: &Inventory,
     extra_ranks: Option<&HashMap<String, Ranged>>,
+    player_conditions: &HashMap<String, bool>,
     attr_sources: &mut SourceMap,
     stat_sources: &mut SourceMap,
 ) -> HashMap<String, Ranged> {
@@ -1337,6 +1338,12 @@ pub fn apply_item_granted_passive_stats(
         let Some(passive) = granted.passive_stats.as_ref() else {
             continue;
         };
+        // Conditional blessings only apply when their config toggle is on.
+        if let Some(cond) = granted.condition.as_ref() {
+            if !player_conditions.get(cond.as_str()).copied().unwrap_or(false) {
+                continue;
+            }
+        }
         let mut out: HashMap<String, Ranged> = HashMap::new();
         if let Some(base) = passive.base.as_ref() {
             for (k, &v) in base.iter() {
@@ -1437,6 +1444,53 @@ pub fn apply_damage_per_resist(stat_sources: &mut SourceMap) {
             forge: None,
         },
     );
+}
+
+// Item "X (Based on Level)": the stored value is the level-100 amount; the granted
+// stat scales linearly with character level (e.g. 525 → 483 at level 92).
+pub fn apply_stats_based_on_level(
+    level: u32,
+    attr_sources: &mut SourceMap,
+    stat_sources: &mut SourceMap,
+) {
+    // (item display key, target key, label, target is an attribute → attr_sources)
+    const MAP: [(&str, &str, &str, bool); 13] = [
+        ("mana_based_on_level", "mana", "Mana (Based on Level)", false),
+        ("life_based_on_level", "life", "Life (Based on Level)", false),
+        ("damage_based_on_level", "additive_physical_damage", "Damage (Based on Level)", false),
+        ("enhanced_damage_based_on_level", "enhanced_damage", "Enhanced Damage (Based on Level)", false),
+        ("enhanced_defense_based_on_level", "enhanced_defense", "Enhanced Defense (Based on Level)", false),
+        ("magic_find_based_on_level", "magic_find", "Magic Find (Based on Level)", false),
+        ("attack_rating_based_on_level", "attack_rating", "Attack Rating (Based on Level)", false),
+        ("strength_based_on_level", "strength", "Strength (Based on Level)", true),
+        ("dexterity_based_on_level", "dexterity", "Dexterity (Based on Level)", true),
+        ("vitality_based_on_level", "vitality", "Vitality (Based on Level)", true),
+        ("energy_based_on_level", "energy", "Energy (Based on Level)", true),
+        ("intelligence_based_on_level", "intelligence", "Intelligence (Based on Level)", true),
+        ("armor_based_on_level", "armor", "Armor (Based on Level)", true),
+    ];
+    let f = level as f64 / 100.0;
+    for (source, target, label, is_attr) in MAP.iter() {
+        let per100 = match stat_sources.get(*source) {
+            Some(list) => sum_contributions(list),
+            None => continue,
+        };
+        if per100.0 == 0.0 && per100.1 == 0.0 {
+            continue;
+        }
+        let bonus = (per100.0 * f, per100.1 * f);
+        let dest = if *is_attr { &mut *attr_sources } else { &mut *stat_sources };
+        push_source(
+            dest,
+            target,
+            SourceContribution {
+                label: label.to_string(),
+                source_type: SourceType::Item,
+                value: bonus,
+                forge: None,
+            },
+        );
+    }
 }
 
 // ---------- finalization helpers ----------
@@ -1666,6 +1720,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 6. Default/class base stats + per-level
     apply_class_baseline(input.class_id, input.level, weapon_has_aps, &mut stat_sources);
 
+    // 6b. Item mana/life "Based on Level" scaled by character level.
+    apply_stats_based_on_level(input.level, &mut attr_sources, &mut stat_sources);
+
     // 7. Custom user-defined stats
     apply_custom_stats(input.custom_stats, &mut attr_sources, &mut stat_sources);
 
@@ -1708,6 +1765,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     let item_granted_ranks = apply_item_granted_passive_stats(
         input.inventory,
         input.granted_skill_ranks,
+        input.player_conditions,
         &mut attr_sources,
         &mut stat_sources,
     );
@@ -3341,6 +3399,104 @@ mod tests {
         apply_damage_per_resist(&mut neg);
         let edn = sum_ranged_from_map(&neg, "enhanced_damage");
         assert!((edn.0 + 120.0).abs() < 1e-9, "negative: got {edn:?}");
+    }
+
+    #[test]
+    fn stats_based_on_level_scale_with_character_level() {
+        let seed = |m: &mut SourceMap, key: &str, v: f64| {
+            m.entry(key.to_string())
+                .or_default()
+                .push(SourceContribution {
+                    label: "test".to_string(),
+                    source_type: SourceType::Item,
+                    value: (v, v),
+                    forge: None,
+                });
+        };
+        // Level 100: full value (mana 525, life 475).
+        let mut at100: SourceMap = HashMap::new();
+        seed(&mut at100, "mana_based_on_level", 525.0);
+        seed(&mut at100, "life_based_on_level", 475.0);
+        seed(&mut at100, "damage_based_on_level", 100.0);
+        seed(&mut at100, "enhanced_damage_based_on_level", 75.0);
+        seed(&mut at100, "strength_based_on_level", 40.0);
+        let mut attr100: SourceMap = HashMap::new();
+        apply_stats_based_on_level(100, &mut attr100, &mut at100);
+        assert!((sum_contributions(at100.get("mana").unwrap()).0 - 525.0).abs() < 1e-9);
+        assert!((sum_contributions(at100.get("life").unwrap()).0 - 475.0).abs() < 1e-9);
+        assert!(
+            (sum_contributions(at100.get("additive_physical_damage").unwrap()).0 - 100.0).abs()
+                < 1e-9
+        );
+        assert!(
+            (sum_contributions(at100.get("enhanced_damage").unwrap()).0 - 75.0).abs() < 1e-9
+        );
+        assert!(
+            (sum_contributions(attr100.get("strength").unwrap()).0 - 40.0).abs() < 1e-9,
+            "strength attr routed"
+        );
+
+        // Level 92: 525*0.92=483, 475*0.92=437, 100*0.92=92.
+        let mut at92: SourceMap = HashMap::new();
+        seed(&mut at92, "mana_based_on_level", 525.0);
+        seed(&mut at92, "life_based_on_level", 475.0);
+        seed(&mut at92, "damage_based_on_level", 100.0);
+        seed(&mut at92, "enhanced_damage_based_on_level", 75.0);
+        let mut attr92: SourceMap = HashMap::new();
+        apply_stats_based_on_level(92, &mut attr92, &mut at92);
+        assert!((sum_contributions(at92.get("mana").unwrap()).0 - 483.0).abs() < 1e-9);
+        assert!((sum_contributions(at92.get("life").unwrap()).0 - 437.0).abs() < 1e-9);
+        assert!(
+            (sum_contributions(at92.get("additive_physical_damage").unwrap()).0 - 92.0).abs() < 1e-9
+        );
+        assert!(
+            (sum_contributions(at92.get("enhanced_damage").unwrap()).0 - 69.0).abs() < 1e-9
+        );
+    }
+
+    #[test]
+    fn item_granted_conditional_blessing_gated_by_toggle() {
+        let granted = data::item_granted_skills()
+            .iter()
+            .find(|g| g.condition.is_some() && g.passive_stats.is_some());
+        let Some(granted) = granted else {
+            eprintln!("no conditional granted skill in data; skipping");
+            return;
+        };
+        let cond = granted.condition.clone().unwrap();
+        let inv: Inventory = HashMap::new();
+        let mut extra = HashMap::new();
+        extra.insert(granted.name.clone(), (1.0, 1.0));
+
+        // Toggle OFF → blessing not applied.
+        let mut off_attr: SourceMap = HashMap::new();
+        let mut off_stat: SourceMap = HashMap::new();
+        apply_item_granted_passive_stats(
+            &inv,
+            Some(&extra),
+            &HashMap::new(),
+            &mut off_attr,
+            &mut off_stat,
+        );
+        let off = off_attr.values().map(|v| v.len()).sum::<usize>()
+            + off_stat.values().map(|v| v.len()).sum::<usize>();
+        assert_eq!(off, 0, "blessing must not apply while toggle is off");
+
+        // Toggle ON → blessing applied.
+        let mut on_cond = HashMap::new();
+        on_cond.insert(cond, true);
+        let mut on_attr: SourceMap = HashMap::new();
+        let mut on_stat: SourceMap = HashMap::new();
+        apply_item_granted_passive_stats(
+            &inv,
+            Some(&extra),
+            &on_cond,
+            &mut on_attr,
+            &mut on_stat,
+        );
+        let on = on_attr.values().map(|v| v.len()).sum::<usize>()
+            + on_stat.values().map(|v| v.len()).sum::<usize>();
+        assert!(on > 0, "blessing must apply while toggle is on");
     }
 
     #[test]

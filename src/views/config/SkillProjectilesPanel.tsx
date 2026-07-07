@@ -9,7 +9,6 @@ export default function SkillProjectilesPanel() {
   const skillRanks = useBuild((s) => s.skillRanks)
   const skillProjectiles = useBuild((s) => s.skillProjectiles)
   const setSkillProjectiles = useBuild((s) => s.setSkillProjectiles)
-  const commitActiveProfile = useBuild((s) => s.commitActiveProfile)
 
   const damageSkills = useMemo(() => {
     if (!classId) return []
@@ -98,13 +97,11 @@ export default function SkillProjectilesPanel() {
                         const raw = e.target.value
                         if (raw === '') {
                           setSkillProjectiles(s.id, null)
-                          commitActiveProfile()
                           return
                         }
                         const n = Number(raw)
                         if (!Number.isFinite(n)) return
                         setSkillProjectiles(s.id, Math.max(1, Math.min(99, Math.floor(n))))
-                        commitActiveProfile()
                       }}
                       className="w-10 bg-transparent py-0.5 text-right font-mono text-[12px] tabular-nums text-accent-hot outline-none"
                     />

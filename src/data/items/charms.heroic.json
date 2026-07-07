@@ -12,15 +12,19 @@
     "width": 2,
     "implicit": {
       "all_skills": 3,
-      "all_attributes": [25, 50],
+      "all_attributes": [
+        25,
+        50
+      ],
       "all_resistances": -50,
       "max_all_resistances": -10
     },
-    "uniqueEffects": [
-      "+[6-10] to Random Skill",
-      "+[6-10] to Random Skill",
-      "+[6-10] to Random Skill"
-    ]
+    "skillBonuses": {
+      "Random Skill": [
+        6,
+        10
+      ]
+    }
   },
   {
     "id": "charm_heroic_fulgurite",
@@ -31,10 +35,22 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": [1, 2],
-      "all_attributes": [1, 25],
-      "magic_skill_damage": [10, 40],
-      "all_resistances": [3, 25]
+      "all_skills": [
+        1,
+        2
+      ],
+      "all_attributes": [
+        1,
+        25
+      ],
+      "magic_skill_damage": [
+        10,
+        40
+      ],
+      "all_resistances": [
+        3,
+        25
+      ]
     },
     "width": 1,
     "height": 2
@@ -48,17 +64,27 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "fire_skills": [4, 6]
+      "fire_skills": [
+        4,
+        6
+      ]
     },
     "skillBonuses": {
-      "Oil Spill": [5, 10]
+      "Oil Spill": [
+        5,
+        10
+      ]
     },
-    "uniqueEffects": [
-      "Chance When Casting: Fuel the Flames!!",
-      "Grant Spell: Oil Spill"
-    ],
     "width": 2,
-    "height": 2
+    "height": 2,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Fuel the Flames!! Level 3",
+        "details": "Throw oil all around you on a large area."
+      }
+    ]
   },
   {
     "id": "charm_heroic_gladiator_s_dice",
@@ -69,11 +95,14 @@
     "grade": "SS",
     "requiresLevel": 100,
     "skillBonuses": {
-      "Gladiator's Roll": [1, 5]
+      "Gladiator's Roll": [
+        1,
+        5
+      ]
     },
-    "uniqueEffects": ["Grant Spell: Gladiator's Roll"],
     "width": 1,
-    "height": 1
+    "height": 1,
+    "implicit": {}
   },
   {
     "id": "charm_heroic_graxy_s_mom_lure",
@@ -86,13 +115,21 @@
     "implicit": {
       "all_resistances": -35,
       "max_all_resistances": -10,
-      "magic_find": [100, 150],
-      "experience_gain": [1, 5]
+      "magic_find": [
+        100,
+        150
+      ],
+      "experience_gain": [
+        1,
+        5
+      ]
     },
     "skillBonuses": {
-      "Treasure Hunter": [10, 15]
+      "Treasure Hunter": [
+        10,
+        15
+      ]
     },
-    "uniqueEffects": ["Grant Spell: Treasure Hunter"],
     "width": 3,
     "height": 1
   },
@@ -107,9 +144,14 @@
     "implicit": {
       "all_skills": 2
     },
-    "uniqueEffects": ["Grant Spell: Random Skill", "+12 to Random Spell Skill"],
     "width": 2,
-    "height": 2
+    "height": 2,
+    "skillBonuses": {
+      "Random Skill": [
+        4,
+        12
+      ]
+    }
   },
   {
     "id": "charm_heroic_storm_in_a_vial",
@@ -122,15 +164,26 @@
     "width": 3,
     "height": 1,
     "implicit": {
-      "faster_cast_rate": [10, 15]
+      "faster_cast_rate": [
+        10,
+        15
+      ],
+      "flat_lightning_skill_damage": [
+        45,
+        60
+      ],
+      "ignore_lightning_res": [
+        5,
+        20
+      ],
+      "grant_subskills": 1
     },
     "skillBonuses": {
-      "Apocalyptic Thunder": [10, 15]
-    },
-    "uniqueEffects": [
-      "Grant Subskills: Apocalyptic Thunder",
-      "Grant Spell: Apocalyptic Thunder"
-    ]
+      "Apocalyptic Thunder": [
+        10,
+        15
+      ]
+    }
   },
   {
     "id": "charm_heroic_tablet_of_awakening",
@@ -156,7 +209,10 @@
     "implicit": {
       "all_skills": 1,
       "faster_cast_rate": 15,
-      "skill_haste": [15, 30]
+      "skill_haste": [
+        15,
+        30
+      ]
     },
     "width": 2,
     "height": 2
@@ -171,14 +227,22 @@
     "requiresLevel": 100,
     "implicit": {
       "all_skills": 1,
-      "all_attributes": [5, 10],
-      "all_resistances": [5, 10],
-      "gold_find": [8, 15]
+      "all_attributes": [
+        5,
+        10
+      ],
+      "all_resistances": [
+        5,
+        10
+      ],
+      "gold_find": [
+        8,
+        15
+      ]
     },
     "skillBonuses": {
       "The Shop is Open": 1
     },
-    "uniqueEffects": ["Grant Spell: The Shop is Open"],
     "width": 1,
     "height": 1
   },
@@ -191,11 +255,14 @@
     "grade": "SS",
     "requiresLevel": 100,
     "skillBonuses": {
-      "Wizard's Roll": [1, 5]
+      "Wizard's Roll": [
+        1,
+        5
+      ]
     },
-    "uniqueEffects": ["Grant Spell: Wizard's Roll"],
     "width": 1,
-    "height": 1
+    "height": 1,
+    "implicit": {}
   },
   {
     "id": "charm_heroic_chaos_gemstone",
@@ -210,8 +277,9 @@
     "height": 2,
     "implicit": {
       "all_skills": [
-        1, 
-        2]
+        1,
+        2
+      ]
     },
     "maxAffixes": 3,
     "randomAffixGroupId": "random_unholy"
@@ -225,16 +293,27 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "light_radius": 8
+      "light_radius": 8,
+      "summon_damage": [
+        50,
+        75
+      ],
+      "poison_length_reduced": 50,
+      "random_skill_element": [
+        2,
+        3
+      ]
     },
-    "uniqueEffects": [
-      "Chance When Casting: Shade of Sobek",
-      "Random Skill Element",
-      "Summon Dmg",
-      "Poison Length Reduced"
-    ],
     "width": 3,
-    "height": 1
+    "height": 1,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Shade of Sobek Level 1",
+        "details": "Chance on cast to summon the shade of sobek to fight by your side for a short duration."
+      }
+    ]
   },
   {
     "id": "charm_heroic_voodoo_doll",
@@ -244,14 +323,20 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Self Inflicted Chance When Casting",
-      "Self Inflicted Damage From Casting",
-      "Self Inflicted Chance When Attacking",
-      "Self Inflicted Damage From Attacking"
-    ],
     "width": 1,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "self_inflicted_chance_when_casting": 10,
+      "self_inflicted_damage_from_casting": [
+        80,
+        280
+      ],
+      "self_inflicted_chance_when_attacking": 10,
+      "self_inflicted_damage_from_attacking": [
+        150,
+        350
+      ]
+    }
   },
   {
     "id": "charm_heroic_plague_shot",
@@ -262,13 +347,14 @@
     "grade": "SS",
     "requiresLevel": 92,
     "skillBonuses": {
-      "Booster Shot": [6, 15]
+      "Booster Shot": [
+        6,
+        15
+      ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Booster Shot"
-    ],
     "width": 2,
-    "height": 1
+    "height": 1,
+    "implicit": {}
   },
   {
     "id": "charm_heroic_dragon_s_heart",
@@ -298,13 +384,22 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_attributes": [15, 20],
+      "all_attributes": [
+        15,
+        20
+      ],
       "defense_vs_missiles": 60,
-      "light_radius": [6, 8],
+      "light_radius": [
+        6,
+        8
+      ],
       "experience_gain": 5
     },
     "skillBonuses": {
-      "Combat Orders": [3, 8]
+      "Combat Orders": [
+        3,
+        8
+      ]
     },
     "width": 2,
     "height": 2
@@ -318,12 +413,23 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": [1, 3],
-      "all_attributes": [20, 30],
+      "all_skills": [
+        1,
+        3
+      ],
+      "all_attributes": [
+        20,
+        30
+      ],
       "light_radius": 8,
-      "all_resistances": [10, 20]
+      "all_resistances": [
+        10,
+        20
+      ]
     },
-    "uniqueEffects": ["All Skills Class"],
+    "uniqueEffects": [
+      "All Skills Class"
+    ],
     "width": 1,
     "height": 2
   }

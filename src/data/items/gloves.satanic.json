@@ -45,13 +45,18 @@
       "magic_skill_damage": [
         15,
         25
-      ]
-    },
-    "uniqueEffects": [
-      "Explosion Area Of Effect",
-      "Defense Vs Missiles",
-      "Energyd On Level"
-    ]
+      ],
+      "cooldown_recovery": [
+        15,
+        25
+      ],
+      "explosion_aoe": 8,
+      "defense_vs_missiles": [
+        30,
+        45
+      ],
+      "energy_based_on_level": 20
+    }
   },
   {
     "id": "gloves_satanic_battle_worn_gauntlets",
@@ -158,12 +163,10 @@
       "to_vitality": [
         10,
         15
-      ]
+      ],
+      "strength_based_on_level": 35
     },
-    "setId": "champion_s_valor",
-    "uniqueEffects": [
-      "Strengthd On Level"
-    ]
+    "setId": "champion_s_valor"
   },
   {
     "id": "gloves_satanic_conjurer_mitts",
@@ -251,8 +254,13 @@
       ]
     },
     "setId": "death_s_toll",
-    "uniqueEffects": [
-      "Chance When Striking: Life Tap"
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 5,
+        "description": "cast Life Tap Level 10",
+        "details": "Curse monsters in the target area increasing any attackers life steal when striking the target."
+      }
     ]
   },
   {
@@ -271,12 +279,16 @@
         30
       ],
       "skill_haste": 15,
-      "to_intelligence": 10
+      "to_intelligence": 10,
+      "cooldown_recovery": 15
     },
-    "uniqueEffects": [
-      "Grant Spell: Bone Storm",
-      "Grant Spell: Single Out"
-    ]
+    "skillBonuses": {
+      "Bone Storm": [
+        3,
+        5
+      ],
+      "Single Out": 3
+    }
   },
   {
     "id": "gloves_satanic_devil_s_grasp",
@@ -355,12 +367,13 @@
         715,
         775
       ],
-      "cold_resistance": 40
+      "cold_resistance": 40,
+      "extra_dmg_to_deep_frozen": [
+        8,
+        20
+      ]
     },
-    "setId": "einar_s_rage",
-    "uniqueEffects": [
-      "Extra Dmg To Deep Frozen"
-    ]
+    "setId": "einar_s_rage"
   },
   {
     "id": "gloves_satanic_gloves_of_wilderness",
@@ -479,9 +492,12 @@
       "all_resistances": 15
     },
     "setId": "wall_of_god",
-    "uniqueEffects": [
-      "Grant Spell: Spiked Shields"
-    ]
+    "skillBonuses": {
+      "Spiked Shields": [
+        2,
+        4
+      ]
+    }
   },
   {
     "id": "gloves_satanic_lifeward_gauntlets",
@@ -559,9 +575,12 @@
       ]
     },
     "setId": "lumberjack_s_forestry_gear",
-    "uniqueEffects": [
-      "Grant Spell: Revved Up"
-    ]
+    "skillBonuses": {
+      "Revved Up": [
+        2,
+        4
+      ]
+    }
   },
   {
     "id": "gloves_satanic_marksman_s_hunting_gloves",
@@ -665,9 +684,9 @@
         25
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Random Skill"
-    ]
+    "skillBonuses": {
+      "Random Skill": 3
+    }
   },
   {
     "id": "gloves_satanic_plated_crimson_defenders",
@@ -786,12 +805,25 @@
         5,
         15
       ],
-      "mana_replenish_pct": 25
+      "mana_replenish_pct": 25,
+      "increased_attack_speed": [
+        15,
+        50
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        2,
+        5
+      ]
     },
     "setId": "guardian_s_of_the_sands",
-    "uniqueEffects": [
-      "Grant Spell: Dissipation"
-    ]
+    "skillBonuses": {
+      "Dissipation": [
+        7,
+        12
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 3
   },
   {
     "id": "gloves_satanic_scuttle_crab_gauntlets",
@@ -819,11 +851,11 @@
       "magic_damage_reduction": [
         7,
         15
-      ]
+      ],
+      "defense_vs_missiles": 40
     },
     "uniqueEffects": [
-      "Defense Vs Missiles",
-      "Half Freeze Duration None"
+      "Half Freeze Duration"
     ]
   },
   {
@@ -849,12 +881,16 @@
       "flat_arcane_skill_damage": [
         12,
         24
+      ],
+      "guardian_attack_speed": [
+        25,
+        40
+      ],
+      "guardian_attack_range": [
+        15,
+        30
       ]
-    },
-    "uniqueEffects": [
-      "Guardian Attack Speed",
-      "Guardian Attack Range"
-    ]
+    }
   },
   {
     "id": "gloves_satanic_shadow_s_grasp",
@@ -879,11 +915,10 @@
       "arcane_resistance": [
         30,
         50
-      ]
-    },
-    "uniqueEffects": [
-      "Energyd On Level"
-    ]
+      ],
+      "cooldown_recovery": 20,
+      "energy_based_on_level": 30
+    }
   },
   {
     "id": "gloves_satanic_shinobi_s_deadwraps",
@@ -933,12 +968,10 @@
       "all_resistances": [
         10,
         15
-      ]
-    },
-    "uniqueEffects": [
-      "Defense Vs Missiles",
-      "Enhanced Dmgd On Level"
-    ]
+      ],
+      "defense_vs_missiles": 30,
+      "enhanced_damage_based_on_level": 50
+    }
   },
   {
     "id": "gloves_satanic_skinwalkers_paw",
@@ -1015,12 +1048,20 @@
         10,
         20
       ],
-      "mana": 125
+      "mana": 125,
+      "arcane_skills": [
+        1,
+        2
+      ],
+      "all_resistances": 15
     },
     "setId": "thor_s_thunder_hammer",
-    "uniqueEffects": [
-      "Grant Spell: Holy Aura"
-    ]
+    "skillBonuses": {
+      "Holy Aura": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "gloves_satanic_thorned_wristguards",
@@ -1160,9 +1201,12 @@
       "poison_resistance": 40
     },
     "setId": "venom_s_frame",
-    "uniqueEffects": [
-      "Grant Spell: Poison Breath"
-    ]
+    "skillBonuses": {
+      "Poison Breath": [
+        2,
+        4
+      ]
+    }
   },
   {
     "id": "gloves_satanic_venomburned_gauntlets",
@@ -1189,11 +1233,13 @@
       ],
       "fire_absorption": 8,
       "poison_absorption": 8,
-      "all_resistances": 15
-    },
-    "uniqueEffects": [
-      "Poison Length Reduced"
-    ]
+      "all_resistances": 15,
+      "mana_replenish": [
+        3,
+        5
+      ],
+      "poison_length_reduced": 50
+    }
   },
   {
     "id": "gloves_satanic_vigorous_lifegrips",

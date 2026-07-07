@@ -13,7 +13,7 @@ import type {
   RangedValue,
   Skill,
 } from '../../types'
-import { formatDecimal, formatRange, formatRangeInt } from './format'
+import { formatDecimal, formatRange, useFormatRangeInt } from './format'
 import { BDLine, BDSection, HeroStat, Panel } from './primitives'
 import { DamageBreakdown } from './DamageBreakdown'
 
@@ -143,6 +143,7 @@ function SkillDamageHero({
   fcrRange: RangedValue
   mcrRange: RangedValue
 }) {
+  const formatRangeInt = useFormatRangeInt()
   const hasCrit = breakdown.critChance > 0
   const baseMana = skill.ranks[0]?.manaCost
   const mcrMin = rangedMin(mcrRange)
@@ -258,6 +259,7 @@ function SkillDamageHero({
 }
 
 function DamageHero({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
+  const formatRangeInt = useFormatRangeInt()
   const b = breakdown
   return (
     <div
@@ -316,6 +318,7 @@ function DamageHero({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
 }
 
 function DamageBuildup({ breakdown }: { breakdown: WeaponDamageBreakdown }) {
+  const formatRangeInt = useFormatRangeInt()
   const b = breakdown
   return (
     <div className="mt-2 border-t border-dashed border-border pt-2.5">

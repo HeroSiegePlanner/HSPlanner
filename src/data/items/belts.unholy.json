@@ -13,11 +13,14 @@
       "enhanced_defense": [
         300,
         350
-      ]
+      ],
+      "potion_cooldown_recovery": 25
     },
-    "uniqueEffects": [
-      "Potion Cooldown Recovery",
-      "Grant Spell: Programmer´s Delirium"
-    ]
+    "skillBonuses": {
+      "Programmer´s Delirium": [
+        1,
+        3
+      ]
+    }
   }
 ]

@@ -1,6 +1,7 @@
 import { getClass, getClassIcon, skills } from '../../data'
 import { rangedMax, rangedMin } from '../../utils/item/stats'
 import { compact } from '../../utils/compactNumber'
+import { useSettings } from '../../store/settings'
 import type { RangedValue } from '../../types'
 import type { SavedBuild } from '../../utils/build/savedBuilds'
 import type { BuildMeta } from './useBuildLibrary'
@@ -87,6 +88,7 @@ export function BuildPreview({
   onRemoveProfile,
 }: BuildPreviewProps) {
   const preview = usePreviewStats(build)
+  const numberScale = useSettings((s) => s.numberScale)
 
   if (!build) {
     return (
@@ -132,7 +134,9 @@ export function BuildPreview({
 
   const dps =
     perf?.combinedDpsMin !== undefined && perf?.combinedDpsMax !== undefined
-      ? range(perf.combinedDpsMin, perf.combinedDpsMax, compact)
+      ? range(perf.combinedDpsMin, perf.combinedDpsMax, (n) =>
+          compact(n, numberScale),
+        )
       : '—'
 
   const resists = ['fire', 'cold', 'lightning', 'poison']
@@ -217,12 +221,12 @@ export function BuildPreview({
           <StatCell label="DPS" value={dps} tone="text-accent-hot" />
           <StatCell
             label="Life"
-            value={rangeText(stats.life, (n) => compact(n))}
+            value={rangeText(stats.life, (n) => compact(n, numberScale))}
             tone="text-stat-red"
           />
           <StatCell
             label="Mana"
-            value={rangeText(stats.mana, (n) => compact(n))}
+            value={rangeText(stats.mana, (n) => compact(n, numberScale))}
             tone="text-stat-purple"
           />
           <StatCell

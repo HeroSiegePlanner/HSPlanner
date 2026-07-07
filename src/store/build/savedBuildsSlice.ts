@@ -6,6 +6,7 @@ import {
   reloadIntoSeason,
 } from '../../data/seasons/registry'
 import { guardStorage } from '../storageError'
+import { useSettings } from '../settings'
 import { sanitizeHtml } from '../../utils/sanitizeHtml'
 import {
   addProfile as storeAddProfile,
@@ -60,6 +61,7 @@ type SavedBuildsSlice = Pick<
   | 'changeActiveSeason'
   | 'switchActiveProfile'
   | 'commitActiveProfile'
+  | 'saveBuildNow'
   | 'addProfileToActiveBuild'
   | 'duplicateActiveProfile'
   | 'renameActiveProfile'
@@ -260,13 +262,25 @@ export const createSavedBuildsSlice: StateCreator<
       },
     ),
 
+  saveBuildNow: () => {
+    const s = get()
+    if (!s.activeBuildId || !s.activeProfileId) return false
+    const ok = s.commitActiveProfile()
+    s.commitBuildNotes()
+    return ok
+  },
+
   loadSavedBuild: (buildId, profileId) =>
     guardStorage(
       (m) => set({ storageError: m }),
       false,
       () => {
         const cur = get()
-        if (cur.activeBuildId && cur.activeProfileId) {
+        if (
+          useSettings.getState().autoSave &&
+          cur.activeBuildId &&
+          cur.activeProfileId
+        ) {
           storeCommitProfile(
             cur.activeBuildId,
             cur.activeProfileId,
@@ -303,11 +317,13 @@ export const createSavedBuildsSlice: StateCreator<
       () => {
         const s = get()
         if (s.activeBuildId && s.activeProfileId) {
-          storeCommitProfile(
-            s.activeBuildId,
-            s.activeProfileId,
-            s.exportBuildSnapshot(),
-          )
+          if (useSettings.getState().autoSave) {
+            storeCommitProfile(
+              s.activeBuildId,
+              s.activeProfileId,
+              s.exportBuildSnapshot(),
+            )
+          }
           storeSetBuildSeason(s.activeBuildId, season)
           reloadIntoSeason(
             season,
@@ -330,7 +346,7 @@ export const createSavedBuildsSlice: StateCreator<
         const s = get()
         if (!s.activeBuildId) return false
         if (s.activeProfileId === profileId) return true
-        if (s.activeProfileId) {
+        if (s.activeProfileId && useSettings.getState().autoSave) {
           storeCommitProfile(
             s.activeBuildId,
             s.activeProfileId,
@@ -356,7 +372,7 @@ export const createSavedBuildsSlice: StateCreator<
       () => {
         const s = get()
         if (!s.activeBuildId) return null
-        if (s.activeProfileId) {
+        if (s.activeProfileId && useSettings.getState().autoSave) {
           storeCommitProfile(
             s.activeBuildId,
             s.activeProfileId,
@@ -385,7 +401,7 @@ export const createSavedBuildsSlice: StateCreator<
       () => {
         const s = get()
         if (!s.activeBuildId) return null
-        if (s.activeProfileId) {
+        if (s.activeProfileId && useSettings.getState().autoSave) {
           storeCommitProfile(
             s.activeBuildId,
             s.activeProfileId,
@@ -539,7 +555,11 @@ export const createSavedBuildsSlice: StateCreator<
       null,
       () => {
         const s = get()
-        if (buildId === s.activeBuildId && s.activeProfileId) {
+        if (
+          buildId === s.activeBuildId &&
+          s.activeProfileId &&
+          useSettings.getState().autoSave
+        ) {
           storeCommitProfile(buildId, s.activeProfileId, s.exportBuildSnapshot())
         }
         const build = getSavedBuild(buildId)

@@ -5,7 +5,7 @@ import {
 } from '../../utils/item/stats'
 import type { SkillDamageBreakdown } from '../../utils/item/stats'
 import type { AttributeKey, RangedValue, Skill } from '../../types'
-import { formatDecimal, formatRange, formatRangeInt } from './format'
+import { formatDecimal, formatRange, useFormatRangeInt } from './format'
 import { BDLine, BDSection } from './primitives'
 
 export function DamageBreakdown({
@@ -25,6 +25,7 @@ export function DamageBreakdown({
   skillsByNormalizedName: Record<string, Skill>
   rankBonuses: Record<string, [number, number]>
 }) {
+  const formatRangeInt = useFormatRangeInt()
   const synergyLines: Array<{ label: string; pctMin: number; pctMax: number }> =
     []
   for (const b of skill.bonusSources ?? []) {

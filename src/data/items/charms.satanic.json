@@ -7,13 +7,19 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 84,
-    "uniqueEffects": [
-      "Summon Attack Speed",
-      "Summon Movement Speed"
-    ],
     "setId": "abomination_s_defiled_organs",
     "width": 1,
-    "height": 1
+    "height": 1,
+    "implicit": {
+      "summon_attack_speed": [
+        10,
+        20
+      ],
+      "summon_movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "charm_satanic_abomination_s_eye",
@@ -23,13 +29,19 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 78,
-    "uniqueEffects": [
-      "Summon All Resist",
-      "Summon Reduced Dmg Taken"
-    ],
     "setId": "abomination_s_defiled_organs",
     "width": 1,
-    "height": 1
+    "height": 1,
+    "implicit": {
+      "summon_all_resist": [
+        15,
+        30
+      ],
+      "summon_reduced_dmg_taken": [
+        5,
+        10
+      ]
+    }
   },
   {
     "id": "charm_satanic_abomination_s_heart",
@@ -43,11 +55,12 @@
       "summon_skills": [
         1,
         3
+      ],
+      "summon_life": [
+        4,
+        12
       ]
     },
-    "uniqueEffects": [
-      "Summon Life"
-    ],
     "setId": "abomination_s_defiled_organs",
     "width": 1,
     "height": 2
@@ -64,11 +77,12 @@
       "increased_attack_speed": [
         12,
         20
+      ],
+      "melee_range": [
+        10,
+        20
       ]
     },
-    "uniqueEffects": [
-      "Attack Range"
-    ],
     "width": 1,
     "height": 2
   },
@@ -83,11 +97,9 @@
     "skillBonuses": {
       "Aimbot": 1
     },
-    "uniqueEffects": [
-      "Grant Spell: Aimbot"
-    ],
     "width": 1,
-    "height": 1
+    "height": 1,
+    "implicit": {}
   },
   {
     "id": "charm_satanic_anubis_ankh_charm",
@@ -152,12 +164,13 @@
       "gold_find": [
         5,
         10
-      ]
+      ],
+      "max_poison_resistance": [
+        3,
+        5
+      ],
+      "poison_length_reduced": 25
     },
-    "uniqueEffects": [
-      "Max Poison Resist",
-      "Poison Length Reduced"
-    ],
     "width": 2,
     "height": 2
   },
@@ -173,11 +186,12 @@
       "all_skills": [
         1,
         2
+      ],
+      "random_skill": [
+        1,
+        3
       ]
     },
-    "uniqueEffects": [
-      "Random Skill"
-    ],
     "setId": "aztec_s_mystery",
     "width": 2,
     "height": 2
@@ -202,11 +216,12 @@
       "experience_gain": [
         1,
         5
+      ],
+      "decreased_merchant_prices": [
+        1,
+        5
       ]
     },
-    "uniqueEffects": [
-      "Decreased Merchant Prices"
-    ],
     "width": 2,
     "height": 2
   },
@@ -218,12 +233,15 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 57,
-    "uniqueEffects": [
-      "Explosion Damage"
-    ],
     "setId": "demolition_expert",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "explosion_damage": [
+        15,
+        40
+      ]
+    }
   },
   {
     "id": "charm_satanic_beetle_of_life",
@@ -267,13 +285,16 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Explosion Damage",
-      "Explosion Area Of Effect"
-    ],
     "setId": "grenadier_s_explosive",
     "width": 1,
-    "height": 1
+    "height": 1,
+    "implicit": {
+      "explosion_damage": 30,
+      "explosion_aoe": [
+        5,
+        40
+      ]
+    }
   },
   {
     "id": "charm_satanic_bone_conjurer_s_trophy",
@@ -283,13 +304,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 74,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "bone_conjurer_s_regalia",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_bulls_eye",
@@ -299,12 +322,15 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Ranged Skills"
-    ],
     "setId": "sniper_s_kit",
     "width": 1,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "ranged_skills": [
+        3,
+        8
+      ]
+    }
   },
   {
     "id": "charm_satanic_canopic_jar_of_blood",
@@ -324,9 +350,6 @@
         30
       ]
     },
-    "uniqueEffects": [
-      "All Skills Class"
-    ],
     "setId": "guardian_s_of_the_sands",
     "width": 2,
     "height": 2
@@ -339,13 +362,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 73,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "champion_s_valor",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_cold_giant_s_charm",
@@ -397,13 +422,20 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": 1
+      "all_skills": 1,
+      "orbiting_relic_radius_increase": [
+        200,
+        300
+      ],
+      "orbiting_relic_amount": [
+        1,
+        3
+      ],
+      "orbiting_relic_damage": [
+        300,
+        450
+      ]
     },
-    "uniqueEffects": [
-      "Orbiting Relic Radius Increase",
-      "Orbiting Relic Amount",
-      "Orbiting Relic Damage"
-    ],
     "width": 2,
     "height": 2
   },
@@ -442,13 +474,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 62,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "death_lord_s_legacy",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_dibbik_box",
@@ -458,14 +492,23 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Ailment Damage",
-      "Follower Relic Attack Speed",
-      "Follower Relic Projectiles"
-    ],
     "setId": "witching",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "ailment_damage_all": [
+        15,
+        25
+      ],
+      "follower_relic_attack_speed": [
+        35,
+        50
+      ],
+      "follower_relic_projectiles": [
+        1,
+        2
+      ]
+    }
   },
   {
     "id": "charm_satanic_doctor_s_mask_in_a_jar",
@@ -475,13 +518,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 67,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "doctor_s_medkit",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_engineer_s_mini_drone",
@@ -495,13 +540,17 @@
       "all_skills": [
         1,
         2
+      ],
+      "sentry_attack_speed": 15,
+      "sentry_damage": [
+        20,
+        35
+      ],
+      "random_skill": [
+        1,
+        3
       ]
     },
-    "uniqueEffects": [
-      "Random Skill",
-      "Sentry Attack Speed",
-      "Sentry Damage"
-    ],
     "setId": "engineer_s_combat_gear",
     "width": 2,
     "height": 2
@@ -536,11 +585,12 @@
       "all_skills": [
         1,
         2
+      ],
+      "random_skill": [
+        7,
+        12
       ]
     },
-    "uniqueEffects": [
-      "Random Skill"
-    ],
     "setId": "flames_of_the_apocalypse",
     "width": 2,
     "height": 2
@@ -605,13 +655,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 64,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "satan_s_redemption",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_hello_its_me_steve",
@@ -651,11 +703,12 @@
       "life_per_kill": [
         10,
         20
+      ],
+      "explosion_aoe": [
+        8,
+        15
       ]
     },
-    "uniqueEffects": [
-      "Explosion Area Of Effect"
-    ],
     "width": 2,
     "height": 2
   },
@@ -679,11 +732,12 @@
       "life_steal": [
         4,
         8
+      ],
+      "defense_ignored": [
+        20,
+        30
       ]
     },
-    "uniqueEffects": [
-      "Target Defense Ignored"
-    ],
     "width": 2,
     "height": 2
   },
@@ -695,13 +749,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 66,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "marksman_s_hunting_gear",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_moonshard",
@@ -737,12 +793,12 @@
       "all_attributes": [
         25,
         40
+      ],
+      "follower_relic_damage": [
+        350,
+        500
       ]
     },
-    "uniqueEffects": [
-      "Follower Relic Damage",
-      "Follower Relic Damage"
-    ],
     "setId": "witching",
     "width": 2,
     "height": 1
@@ -755,13 +811,18 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Skill Relic Damage",
-      "Skill Relic Damage",
-      "Skill Relic Projectiles"
-    ],
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "skill_relic_damage": [
+        280,
+        400
+      ],
+      "skill_relic_projectiles": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_orange_grayon",
@@ -771,14 +832,26 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Sentry Skills",
-      "Sentry Amount",
-      "Sentry Attack Speed",
-      "Sentry Damage"
-    ],
     "width": 1,
-    "height": 3
+    "height": 3,
+    "implicit": {
+      "sentry_attack_speed": [
+        20,
+        25
+      ],
+      "sentry_damage": [
+        35,
+        45
+      ],
+      "sentry_skills": [
+        6,
+        8
+      ],
+      "sentry_amount": [
+        1,
+        2
+      ]
+    }
   },
   {
     "id": "charm_satanic_pirate_captain_s_flag",
@@ -788,13 +861,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 68,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "black_beard_s_remains",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        7,
+        12
+      ]
+    }
   },
   {
     "id": "charm_satanic_plunderer_s_gunpowder_bag",
@@ -804,13 +879,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 72,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "plunderer_s_ensemble",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_raider_s_torch",
@@ -845,13 +922,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 65,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "redneck_s_work_gear",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    }
   },
   {
     "id": "charm_satanic_sacred_owl",
@@ -861,13 +940,15 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 68,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "the_holy_one",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        7,
+        12
+      ]
+    }
   },
   {
     "id": "charm_satanic_sassy_s_dislocated_foot",
@@ -887,7 +968,8 @@
       "ignore_poison_res": [
         5,
         10
-      ]
+      ],
+      "poison_length_reduced": 50
     },
     "skillBonuses": {
       "Poison Nova": [
@@ -895,10 +977,6 @@
         20
       ]
     },
-    "uniqueEffects": [
-      "Grant Spell: Poison Nova",
-      "Poison Length Reduced"
-    ],
     "width": 1,
     "height": 3
   },
@@ -940,11 +1018,9 @@
       "magic_skill_damage": [
         25,
         35
-      ]
+      ],
+      "enemy_all_resist": 10
     },
-    "uniqueEffects": [
-      "Enemy All Resist"
-    ],
     "setId": "sheep_king_s_kingdom",
     "width": 2,
     "height": 2
@@ -982,10 +1058,13 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Projectile Damage Increase"
-    ],
-    "setId": "sniper_s_kit"
+    "setId": "sniper_s_kit",
+    "implicit": {
+      "projectile_damage_increase": [
+        10,
+        20
+      ]
+    }
   },
   {
     "id": "charm_satanic_solar_charm",
@@ -1053,9 +1132,6 @@
         12
       ]
     },
-    "uniqueEffects": [
-      "All Skills Class"
-    ],
     "setId": "temporal_mastery",
     "width": 2,
     "height": 2
@@ -1098,12 +1174,15 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Orbit Skills"
-    ],
     "setId": "orbital_gravity",
     "width": 1,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "orbit_skills": [
+        3,
+        8
+      ]
+    }
   },
   {
     "id": "charm_satanic_the_detonator",
@@ -1131,10 +1210,13 @@
     "rarity": "satanic_set",
     "grade": "SS",
     "requiresLevel": 100,
-    "uniqueEffects": [
-      "Orbital Projectile Duration Increased"
-    ],
-    "setId": "orbital_gravity"
+    "setId": "orbital_gravity",
+    "implicit": {
+      "orbital_projectile_duration_increased": [
+        15,
+        25
+      ]
+    }
   },
   {
     "id": "charm_satanic_traveler_s_map_journal",
@@ -1231,12 +1313,18 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 76,
-    "uniqueEffects": [
-      "All Skills Class",
-      "Random Skill"
-    ],
     "setId": "zealot_s_prophecy",
     "width": 2,
-    "height": 2
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        7,
+        12
+      ],
+      "extra_dmg_to_shadowburn": [
+        25,
+        40
+      ]
+    }
   }
 ]

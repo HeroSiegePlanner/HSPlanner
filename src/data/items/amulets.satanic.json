@@ -90,11 +90,13 @@
       "mana_replenish_pct": [
         25,
         40
+      ],
+      "mana_replenish": 100,
+      "increased_experience_gain_below_100": [
+        25,
+        50
       ]
     },
-    "uniqueEffects": [
-      "Increased Experience Gain Below 100"
-    ],
     "setId": "arc_s_blessed_faith"
   },
   {
@@ -156,13 +158,18 @@
       "poison_resistance": [
         40,
         60
-      ]
+      ],
+      "increased_poisoned_damage": [
+        20,
+        40
+      ],
+      "to_dexterity": [
+        5,
+        30
+      ],
+      "poison_length_reduced": 50,
+      "increased_dexterity": 10
     },
-    "uniqueEffects": [
-      "Dexterityd On Level",
-      "Max Poison Resist",
-      "Poison Length Reduced"
-    ],
     "setId": "aztec_s_mystery"
   },
   {
@@ -261,11 +268,16 @@
         20,
         35
       ],
-      "to_dexterity": 25
-    },
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+      "to_dexterity": 25,
+      "increased_dexterity": [
+        4,
+        8
+      ],
+      "damage_reduced": [
+        75,
+        125
+      ]
+    }
   },
   {
     "id": "amulet_satanic_chronomancer_s_curio_of_time",
@@ -399,11 +411,12 @@
       "cold_skill_damage": [
         10,
         15
+      ],
+      "phys_dmg_taken_as_cold": [
+        5,
+        10
       ]
-    },
-    "uniqueEffects": [
-      "Phys Dmg Taken As Cold"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_damien_s_soulstone",
@@ -425,7 +438,7 @@
       ]
     },
     "uniqueEffects": [
-      "Unholy None"
+      "Unholy"
     ],
     "setId": "damien_s_legacy"
   },
@@ -473,11 +486,16 @@
       "arcane_resistance": [
         40,
         60
+      ],
+      "to_intelligence": [
+        25,
+        50
+      ],
+      "increased_intelligence": [
+        1,
+        5
       ]
     },
-    "uniqueEffects": [
-      "Energyd On Level"
-    ],
     "setId": "satan_s_redemption"
   },
   {
@@ -674,11 +692,13 @@
       "additive_cold_damage": [
         450,
         480
+      ],
+      "vitality_based_on_level": 50,
+      "vitality_converted_to_attack_dmg": [
+        6,
+        10
       ]
-    },
-    "uniqueEffects": [
-      "Defense Vs Missiles"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_insignia_of_the_burning_legion",
@@ -693,10 +713,23 @@
         10,
         20
       ],
-      "life_per_kill": 15
+      "life_per_kill": 15,
+      "increased_burning_damage": [
+        10,
+        20
+      ],
+      "flat_fire_skill_damage": [
+        10,
+        15
+      ]
     },
-    "uniqueEffects": [
-      "Chance When Attacking: Fire Enchant"
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 6,
+        "description": "cast Fire Enchant Level 11",
+        "details": "Enchant your attacks with additive fire damage inflicting burning on monsters. Your spells also apply a stack of Ignite. "
+      }
     ]
   },
   {
@@ -719,11 +752,12 @@
       "attack_damage": [
         4,
         8
+      ],
+      "melee_range": [
+        5,
+        15
       ]
     },
-    "uniqueEffects": [
-      "Attack Range"
-    ],
     "setId": "gabriel_s_devotion"
   },
   {
@@ -772,11 +806,9 @@
       "lightning_resistance": [
         30,
         40
-      ]
-    },
-    "uniqueEffects": [
-      "Enhanced Dmgd On Level"
-    ]
+      ],
+      "enhanced_damage_based_on_level": 37.5
+    }
   },
   {
     "id": "amulet_satanic_lifeblood_infuser",
@@ -792,11 +824,12 @@
       "to_vitality": [
         10,
         15
+      ],
+      "vitality_converted_to_attack_dmg": [
+        4,
+        7
       ]
-    },
-    "uniqueEffects": [
-      "Vitality Converted To Attack Dmg"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_light_bringer_s_mark",
@@ -870,11 +903,12 @@
       "to_intelligence": [
         30,
         40
+      ],
+      "intelligence_converted_to_lightning_skill_dmg": [
+        4,
+        8
       ]
-    },
-    "uniqueEffects": [
-      "Intelligence Converted To Lightning Skill Dmg"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_nobunaga_s_warrior_spirit",
@@ -1053,12 +1087,13 @@
       "to_energy": [
         5,
         40
+      ],
+      "increased_energy": 8,
+      "energy_converted_to_magic_skill_dmg": [
+        1,
+        12
       ]
-    },
-    "uniqueEffects": [
-      "Energy Converted To Magic Skill Dmg",
-      "Energy Increase"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_sacred_pendant",
@@ -1077,11 +1112,18 @@
       "mana_per_kill": [
         12,
         24
+      ],
+      "all_skills": 2,
+      "cooldown_recovery": 30,
+      "flat_magic_skill_damage": [
+        18,
+        46
+      ],
+      "ignore_arcane_res": [
+        10,
+        30
       ]
     },
-    "uniqueEffects": [
-      "Manad On Level"
-    ],
     "setId": "the_holy_one"
   },
   {
@@ -1149,11 +1191,12 @@
         15,
         35
       ],
-      "poison_resistance": 50
-    },
-    "uniqueEffects": [
-      "Max Poison Resist"
-    ]
+      "poison_resistance": 50,
+      "max_poison_resistance": [
+        3,
+        5
+      ]
+    }
   },
   {
     "id": "amulet_satanic_shining_pearl",
@@ -1165,12 +1208,24 @@
     "requiresLevel": 91,
     "implicit": {
       "all_attributes": 30,
-      "magic_skill_damage": 20
-    },
-    "uniqueEffects": [
-      "Manad On Level",
-      "Lifed On Level"
-    ]
+      "magic_skill_damage": 20,
+      "all_skills": [
+        1,
+        2
+      ],
+      "to_vitality": [
+        5,
+        30
+      ],
+      "increased_vitality": [
+        5,
+        10
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        6,
+        10
+      ]
+    }
   },
   {
     "id": "amulet_satanic_skinwalkers_claw",
@@ -1191,9 +1246,6 @@
         40
       ]
     },
-    "uniqueEffects": [
-      "All Attributes"
-    ],
     "setId": "skinwalker_s_bloodlust"
   },
   {
@@ -1310,11 +1362,12 @@
       "flat_lightning_skill_damage": [
         15,
         25
+      ],
+      "energy_converted_to_lightning_skill_dmg": [
+        6,
+        10
       ]
-    },
-    "uniqueEffects": [
-      "Energy Converted To Lightning Skill Dmg"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_tal_s_pendant",
@@ -1437,11 +1490,12 @@
       "magic_skill_damage": [
         17,
         30
+      ],
+      "increased_intelligence": [
+        2,
+        5
       ]
-    },
-    "uniqueEffects": [
-      "Intelligence Increase"
-    ]
+    }
   },
   {
     "id": "amulet_satanic_venom_s_necklace",
@@ -1462,9 +1516,6 @@
       ],
       "ignore_poison_res": 15
     },
-    "uniqueEffects": [
-      "All Skills Class"
-    ],
     "setId": "venom_s_frame"
   },
   {
@@ -1502,12 +1553,16 @@
         20
       ],
       "life": 300,
-      "mana_per_kill": 15
+      "mana_per_kill": 15,
+      "increased_intelligence": [
+        4,
+        8
+      ],
+      "intelligence_converted_to_cold_skill_dmg": [
+        6,
+        10
+      ]
     },
-    "uniqueEffects": [
-      "Intelligence Converted To Cold Skill Dmg",
-      "Intelligence Increase"
-    ],
     "setId": "ymir_s_wisdom"
   }
 ]

@@ -13,10 +13,12 @@ import Logo from "./components/Logo";
 import SeasonErrorBanner from "./components/SeasonErrorBanner";
 import SeasonSwitcher from "./components/SeasonSwitcher";
 import SeasonToast from "./components/SeasonToast";
+import SettingsModal from "./components/SettingsModal";
 import ShareButton from "./components/ShareButton";
 import StorageErrorBanner from "./components/StorageErrorBanner";
 import { activeSeasonId, classes, getClass } from "./data";
 import { PENDING_BUILD_KEY, PENDING_IMPORT_KEY } from "./data/seasons/registry";
+import { initAutoSave } from "./store/autoSave";
 import { useBuild } from "./store/build";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
 import { decodeShareToBuild } from "./utils/build/shareBuild";
@@ -88,6 +90,7 @@ function ViewLoadingFallback() {
 function App() {
   const [section, setSection] = useState<Section>(readInitialSection);
   const [screen, setScreen] = useState<Screen>("library");
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     const MIN_DISPLAY_MS = 500;
@@ -167,8 +170,15 @@ function App() {
     writeStorage(SECTION_KEY, section);
   }, [section]);
 
+  useEffect(() => initAutoSave(), []);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        useBuild.getState().saveBuildNow();
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "f") {
         e.preventDefault();
         if (section === "tree" || section === "ether" || section === "stats") {
@@ -325,6 +335,27 @@ function App() {
             <span aria-hidden className="h-6 w-px bg-border" />
             <BuildsMenu onOpenLibrary={() => setScreen("library")} />
             <ShareButton />
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              title="Settings"
+              aria-label="Settings"
+              className="rounded-[3px] border border-border-2 p-1.5 text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+                className="h-3.5 w-3.5"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </button>
           </div>
         </header>
 
@@ -356,6 +387,7 @@ function App() {
         <BottomBar />
       </div>
 
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
       <StorageErrorBanner />
     </HoverProvider>
   );

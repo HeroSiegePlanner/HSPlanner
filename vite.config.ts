@@ -12,7 +12,14 @@ const pkg = JSON.parse(
 const host = process.env.TAURI_DEV_HOST
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    {
+      name: 'splash-version',
+      transformIndexHtml: (html) => html.replaceAll('__APP_VERSION__', pkg.version),
+    },
+  ],
   clearScreen: false,
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
