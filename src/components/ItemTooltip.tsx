@@ -588,7 +588,7 @@ export function ItemTooltipBody({
                   {p.description}
                 </span>
                 {p.details && (
-                  <div className="text-[10px] text-muted uppercase tracking-[0.12em] leading-relaxed mt-0.5">
+                  <div className="text-[10px] text-muted italic leading-snug mt-0.5">
                     {p.details}
                   </div>
                 )}
@@ -598,23 +598,57 @@ export function ItemTooltipBody({
         </TooltipSection>
       )}
 
-      {base.uniqueEffects && base.uniqueEffects.length > 0 && (
-        <TooltipSection>
-          <TooltipSectionHeader tone="muted">
-            Not Yet Supported
-          </TooltipSectionHeader>
-          <ul className="space-y-0.5 text-[12px]">
-            {base.uniqueEffects.map((effect, idx) => (
-              <li key={idx} className={`${TONE_TEXT.angelic} opacity-70`}>
-                {effect}
-              </li>
-            ))}
-          </ul>
-          <p className="text-[10px] text-muted/70 italic mt-1">
-            These mods are not yet calculated by the planner.
-          </p>
-        </TooltipSection>
-      )}
+      {base.uniqueEffects &&
+        base.uniqueEffects.length > 0 &&
+        (() => {
+          // Qualitative gameplay flags have no stat/DPS effect to compute; show
+          // them as recognized special effects rather than "not yet supported".
+          const RECOGNIZED = new Set([
+            'attacks can hit multiple enemies',
+            'cannot be frozen',
+            'unholy',
+            'movement phasing',
+            'piercing attack',
+            'half freeze duration',
+            'double jump',
+            'herobound',
+            'all skills class',
+          ])
+          const effects = base.uniqueEffects ?? []
+          const special = effects.filter((e) => RECOGNIZED.has(e.trim().toLowerCase()))
+          const notSupported = effects.filter((e) => !RECOGNIZED.has(e.trim().toLowerCase()))
+          return (
+            <>
+              {special.length > 0 && (
+                <TooltipSection>
+                  <TooltipSectionHeader tone="gold">Special Effects</TooltipSectionHeader>
+                  <ul className="space-y-0.5 text-[12px]">
+                    {special.map((effect, idx) => (
+                      <li key={idx} className="text-accent-hot">
+                        {effect}
+                      </li>
+                    ))}
+                  </ul>
+                </TooltipSection>
+              )}
+              {notSupported.length > 0 && (
+                <TooltipSection>
+                  <TooltipSectionHeader tone="muted">Not Yet Supported</TooltipSectionHeader>
+                  <ul className="space-y-0.5 text-[12px]">
+                    {notSupported.map((effect, idx) => (
+                      <li key={idx} className={`${TONE_TEXT.angelic} opacity-70`}>
+                        {effect}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-[10px] text-muted/70 italic mt-1">
+                    These mods are not yet calculated by the planner.
+                  </p>
+                </TooltipSection>
+              )}
+            </>
+          )
+        })()}
 
       {(base.description || base.flavor) && (
         <TooltipSection>

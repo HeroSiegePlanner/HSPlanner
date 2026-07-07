@@ -5,6 +5,8 @@ import {
   gameConfig,
   getClass,
   getClassIcon,
+  getItem,
+  getItemGrantedSkillByName,
   getSkillsByClass,
   resolveSkillIcon,
 } from '../data'
@@ -94,6 +96,8 @@ export default function CharacterView() {
   const procToggles = useBuild((s) => s.procToggles)
   const subskillRanks = useBuild((s) => s.subskillRanks)
   const activeBuildId = useBuild((s) => s.activeBuildId)
+  const inventory = useBuild((s) => s.inventory)
+  const playerConditions = useBuild((s) => s.playerConditions)
 
   const buildDeps = useBuildPerformanceDeps()
   const performance = useCalcResult<BuildPerformance | null>(
@@ -131,6 +135,36 @@ export default function CharacterView() {
     [allClassSkills, activeBuffs],
   )
 
+  // Opted-in, calc-neutral granted spells (e.g. Teleport) from equipped items.
+  const grantedSpells: LoadoutEntry[] = useMemo(() => {
+    const out: LoadoutEntry[] = []
+    const seen = new Set<string>()
+    for (const equipped of Object.values(inventory)) {
+      const base = equipped && getItem(equipped.baseId)
+      if (!base?.skillBonuses) continue
+      for (const name of Object.keys(base.skillBonuses)) {
+        const skill = getItemGrantedSkillByName(name)
+        if (
+          !skill?.condition ||
+          skill.passiveStats ||
+          skill.passiveConverts ||
+          skill.aura
+        )
+          continue
+        if (!playerConditions[skill.condition] || seen.has(skill.id)) continue
+        seen.add(skill.id)
+        out.push({
+          key: `granted-${skill.id}`,
+          icon: undefined,
+          name: skill.name,
+          sub: 'Granted',
+          detail: '',
+        })
+      }
+    }
+    return out
+  }, [inventory, playerConditions])
+
   const activeSkills: LoadoutEntry[] = [
     ...mainSkills.map((s, i) => ({
       key: `main-${s.id}`,
@@ -150,6 +184,7 @@ export default function CharacterView() {
           },
         ]
       : []),
+    ...grantedSpells,
   ]
 
   const buffs: LoadoutEntry[] = buffList.map((s) => ({
