@@ -80,6 +80,17 @@ describe('S10 class changes', () => {
     expect((fx.perRank as Rec).area_of_effect).toBe(25)
   })
 
+  it('Tire Fire carries the full in-game tag list (Attack + Melee restored)', () => {
+    expect(patchedSkill('tire_fire').tags).toEqual([
+      'Attack',
+      'Active',
+      'Melee',
+      'Spell',
+      'Projectile',
+      'Explosion',
+    ])
+  })
+
   it('Death from Above becomes an attack with the Ranged tag', () => {
     const dfa = patchedSkill('death_from_above')
     expect(dfa.usesAttackSpeed).toBe(true)

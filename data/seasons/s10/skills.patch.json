@@ -8376,6 +8376,7 @@
       ]
     },
     "tire_fire": {
+      "tags": ["Attack", "Active", "Melee", "Spell", "Projectile", "Explosion"],
       "bonusSources": [
         {
           "source": "Hillbilly Rage",
