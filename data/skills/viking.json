@@ -1,0 +1,2532 @@
+[
+  {
+    "id": "weapon_master",
+    "classId": "viking",
+    "name": "Weapon Master",
+    "kind": "passive",
+    "description": "Increases your attack damage and attack rating when you are using weapons without a shield.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 8,
+        "attack_rating": 1
+      },
+      "perRank": {
+        "attack_damage": 8,
+        "attack_rating": 1
+      }
+    }
+  },
+  {
+    "id": "charge",
+    "classId": "viking",
+    "name": "Charge",
+    "kind": "active",
+    "description": "Charge forward dealing arcane damage and stunning monsters on impact.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 21.75
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Devastating Charge",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Odin's Fury",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Agility",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "charge_core",
+        "positionIndex": 0,
+        "name": "Charge",
+        "description": "Core of the Charge subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "power_charge",
+        "positionIndex": 1,
+        "name": "Power Charge",
+        "description": "Increases the damage dealt by charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "hyperfocus",
+        "positionIndex": 2,
+        "name": "Hyperfocus",
+        "description": "Increases the duration of charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "bodyslam",
+        "positionIndex": 3,
+        "name": "Bodyslam",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "resilience",
+        "positionIndex": 4,
+        "name": "Resilience",
+        "description": "Take reduced damage while charging and shortly after.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 10 }
+        }
+      },
+      {
+        "id": "overconfidence",
+        "positionIndex": 5,
+        "name": "Overconfidence",
+        "description": "Increases the area of effect radius of charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 17.5 }
+        }
+      },
+      {
+        "id": "spirit_breaker",
+        "positionIndex": 6,
+        "name": "Spirit Breaker",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "violent_momentum",
+        "positionIndex": 7,
+        "name": "Violent Momentum",
+        "description": "Increases the impact damage dealt by charge for each second spent charging.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "berserking_ram",
+        "positionIndex": 8,
+        "name": "Berserking Ram",
+        "description": "Increases the speed of your charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 20 }
+        }
+      },
+      {
+        "id": "crushing_impact",
+        "positionIndex": 9,
+        "name": "Crushing Impact",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 4, "crit_damage": 35 }
+        }
+      },
+      {
+        "id": "frenzied_mind",
+        "positionIndex": 10,
+        "name": "Frenzied Mind",
+        "description": "Stack a buff increasing your arcane skill damage when hitting monsters with charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 2 }
+        }
+      },
+      {
+        "id": "forceful_grab",
+        "positionIndex": 11,
+        "name": "Forceful Grab",
+        "description": "Grab monsters on your path dealing damage and stunning them when you crash into terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "arcane_skill_damage": 0 },
+          "perRank": { "area_of_effect": 25, "arcane_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "crashquake",
+        "positionIndex": 12,
+        "name": "Crashquake",
+        "description": "Unleash powerful shockwaves when crashing into monsters or terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 3, "arcane_skill_damage": 45 }
+        }
+      },
+      {
+        "id": "whirling_charge",
+        "positionIndex": 13,
+        "name": "Whirling Charge",
+        "description": "Charge forward in a straight line unleashing a massive whirlwind around you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "arcane_skill_damage": 0 },
+          "perRank": { "area_of_effect": 50, "arcane_skill_damage": 120 }
+        }
+      },
+      {
+        "id": "mountain_fall",
+        "positionIndex": 14,
+        "name": "Mountain Fall",
+        "description": "The mountain breaks and huge boulders fall down on monsters around you when crashing into monsters or terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "arcane_skill_damage": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "stoneskin",
+    "classId": "viking",
+    "name": "Stoneskin",
+    "kind": "passive",
+    "description": "Increases your defense rating.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "defense": 10.5
+      },
+      "perRank": {
+        "defense": 3
+      }
+    }
+  },
+  {
+    "id": "devastating_charge",
+    "classId": "viking",
+    "name": "Devastating Charge",
+    "kind": "passive",
+    "description": "When hitting monsters with Charge release a pulse dealing additional arcane damage and decreasing monster attack rating.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "damageType": "arcane",
+    "passiveStats": {
+      "base": {
+        "arcane_skill_damage": 30,
+        "attack_rating": 2
+      },
+      "perRank": {
+        "arcane_skill_damage": 5,
+        "attack_rating": 2
+      }
+    }
+  },
+  {
+    "id": "norse_resistance",
+    "classId": "viking",
+    "name": "Norse Resistance",
+    "kind": "passive",
+    "description": "Increases all of your resistances.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "all_resistances": 5
+      },
+      "perRank": {
+        "all_resistances": 0.5
+      }
+    }
+  },
+  {
+    "id": "defensive_shout",
+    "classId": "viking",
+    "name": "Defensive Shout",
+    "kind": "buff",
+    "description": "Powerful warcry which buffs your and your party members defense rating.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 100,
+    "movementDuringUse": 85,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "defense": 10
+      },
+      "perRank": {
+        "defense": 2
+      }
+    }
+  },
+  {
+    "id": "odins_fury",
+    "classId": "viking",
+    "name": "Odin's Fury",
+    "kind": "active",
+    "description": "Powerful warcry which deals arcane damage and stuns monsters around you.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 18.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 2,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Defensive Shout",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Combat Orders",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Stoneskin",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.2,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "odins_fury_core",
+        "positionIndex": 0,
+        "name": "Odin's Fury",
+        "description": "Core of the Odin's Fury subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "crippling_shout",
+        "positionIndex": 1,
+        "name": "Crippling Shout",
+        "description": "Increases the damage dealt by odin´s fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "howling_cry",
+        "positionIndex": 2,
+        "name": "Howling Cry",
+        "description": "Increases the stun duration of odin's fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "stun_duration_pct": 0 },
+          "perRank": { "stun_duration_pct": 50 }
+        }
+      },
+      {
+        "id": "mind_tactics",
+        "positionIndex": 3,
+        "name": "Mind Tactics",
+        "description": "Decreases the mana cost of odin´s fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7.5 }
+        }
+      },
+      {
+        "id": "flaming_fury",
+        "positionIndex": 4,
+        "name": "Flaming Fury",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "echoing_roar",
+        "positionIndex": 5,
+        "name": "Echoing Roar",
+        "description": "Increases the area of effect radius of odin´s fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "tormenting_shout",
+        "positionIndex": 6,
+        "name": "Tormenting Shout",
+        "description": "Increases the damage of odin's fury based on your maximum life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_max_life": 0 },
+          "perRank": { "conversion_max_life": 0.425 }
+        }
+      },
+      {
+        "id": "emotional_damage",
+        "positionIndex": 7,
+        "name": "Emotional Damage",
+        "description": "Inflicts bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "echo_of_duality",
+        "positionIndex": 8,
+        "name": "Echo of Duality",
+        "description": "Chance on cast to unleash an additional shout.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "multicast_chance": 0 },
+          "perRank": { "multicast_chance": 15 }
+        }
+      },
+      {
+        "id": "shout_of_the_hunt",
+        "positionIndex": 9,
+        "name": "Shout of the Hunt",
+        "description": "Increases your movement speed for a short period of time after using odin's fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 25 }
+        }
+      },
+      {
+        "id": "dominating_howl",
+        "positionIndex": 10,
+        "name": "Dominating Howl",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 8 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 8 } }
+          ]
+        }
+      },
+      {
+        "id": "warcry",
+        "positionIndex": 11,
+        "name": "Warcry",
+        "description": "Odin’s fury now knocks back monsters and if they hit a wall or an object they take extra damage, get stunned and are pulled back to the player.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "pulsing_echo",
+        "positionIndex": 12,
+        "name": "Pulsing Echo",
+        "description": "Now performs an echoing shout pulsating multiple times dealing increased damage with each pulse.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 20, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "trembling_roar",
+        "positionIndex": 13,
+        "name": "Trembling Roar",
+        "description": "Gain a buff dealing extra damage to burning and bleeding monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "extra_damage_burning": 0, "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_burning": 30, "extra_damage_bleeding": 30 }
+        }
+      },
+      {
+        "id": "roaring_carnage",
+        "positionIndex": 14,
+        "name": "Roaring Carnage",
+        "description": "Knock up monsters causing them to take damage when they land.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "battle_agility",
+    "classId": "viking",
+    "name": "Battle Agility",
+    "kind": "passive",
+    "description": "Increases your movement speed.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "movement_speed": 5
+      },
+      "perRank": {
+        "movement_speed": 1
+      }
+    }
+  },
+  {
+    "id": "combat_orders",
+    "classId": "viking",
+    "name": "Combat Orders",
+    "kind": "buff",
+    "description": "Powerful warcry which buffs your and your party members maximum life and mana.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
+    "tree": "Shield Bearer",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 100,
+    "movementDuringUse": 85,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "life": 5,
+        "mana": 5
+      },
+      "perRank": {
+        "life": 1.25,
+        "mana": 1.25
+      }
+    }
+  },
+  {
+    "id": "seismic_slam",
+    "classId": "viking",
+    "name": "Seismic Slam",
+    "kind": "active",
+    "description": "Smash monsters in front of you dealing damage and knocking them up and stunning them.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "effectDuration": 2,
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 126,
+        "perLevel": 24
+      },
+      "flatPhysicalMin": {
+        "base": 5,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 14,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 6
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Brute Force",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shockwave",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "seismic_slam_core",
+        "positionIndex": 0,
+        "name": "Seismic Slam",
+        "description": "Core of the Seismic Slam subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "colossal_smash",
+        "positionIndex": 1,
+        "name": "Colossal Smash",
+        "description": "Increases the area of effect radius of seismic slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "seismic_energy",
+        "positionIndex": 2,
+        "name": "Seismic Energy",
+        "description": "Increases the damage dealt by seismic slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "lethal_crush",
+        "positionIndex": 3,
+        "name": "Lethal Crush",
+        "description": "Increases critical strike damage dealt by seismic slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "cheap_slam",
+        "positionIndex": 4,
+        "name": "Cheap Slam",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "seismic_aftershock",
+        "positionIndex": 5,
+        "name": "Seismic Aftershock",
+        "description": "Targets have a chance to slam the ground on death dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_kill", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "power_slam",
+        "positionIndex": 6,
+        "name": "Power Slam",
+        "description": "Knocks targets back dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "earth_root",
+        "positionIndex": 7,
+        "name": "Earth Root",
+        "description": "Chance to root targets in place on hit dealing additional damage over time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 40 }
+          },
+          "appliesStates": ["root"]
+        }
+      },
+      {
+        "id": "slamming_flurry",
+        "positionIndex": 8,
+        "name": "Slamming Flurry",
+        "description": "Chance on hit to increase your attack speed for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "increased_attack_speed": 0 },
+            "perRank": { "increased_attack_speed": 6 }
+          }
+        }
+      },
+      {
+        "id": "defiling_carcass",
+        "positionIndex": 9,
+        "name": "Defiling Carcass",
+        "description": "Hitting a corpse with seismic slam causes it to explode dealing increased area of effect damage to nearby targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 3, "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "shattered_earth",
+        "positionIndex": 10,
+        "name": "Shattered Earth",
+        "description": "Chance to strike target with an earth pillar on hit knocking them airborne dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "polar_shift",
+        "positionIndex": 11,
+        "name": "Polar Shift",
+        "description": "Leap a short distance to smash the ground with massive force dealing increased damage with huge aoe.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 150, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "echoing_slam",
+        "positionIndex": 12,
+        "name": "Echoing Slam",
+        "description": "Slam multiple waves on a short distance increasing damage with each wave.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 35, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "seismic_crack",
+        "positionIndex": 13,
+        "name": "Seismic Crack",
+        "description": "Now smash in front of you in a long narrow line knocking monsters in air causing them to unleash an aoe pulse upon landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "younger_dryas",
+        "positionIndex": 14,
+        "name": "Younger Dryas",
+        "description": "Smashing the ground now drops a massive asteroid from the sky sending a huge tsunami dealing increased damage. Seismic Slam now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "brute_force",
+    "classId": "viking",
+    "name": "Brute Force",
+    "kind": "passive",
+    "description": "Increases your chance of critical strike and critical strike damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "crit_damage": 2,
+        "crit_chance": 5.25
+      },
+      "perRank": {
+        "crit_damage": 2,
+        "crit_chance": 0.25
+      }
+    }
+  },
+  {
+    "id": "throw",
+    "classId": "viking",
+    "name": "Throw!",
+    "kind": "active",
+    "description": "Pick up and throw a monster which deals area of effect arcane damage and stuns monsters upon landing.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 27
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "effectDuration": 3,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Seismic Slam",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Stoneskin",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Charge",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "throw_core",
+        "positionIndex": 0,
+        "name": "Throw!",
+        "description": "Core of the Throw! subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "home_run",
+        "positionIndex": 1,
+        "name": "Home Run",
+        "description": "Increases the range of throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "raging_power",
+        "positionIndex": 2,
+        "name": "Raging Power",
+        "description": "Increases the damage dealt by throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "power_throw",
+        "positionIndex": 3,
+        "name": "Power Throw",
+        "description": "Increases the projectile speed of throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "colossal_liftoff",
+        "positionIndex": 4,
+        "name": "Colossal Liftoff",
+        "description": "Increases throw's damage by a portion of your maximum life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_max_life": 0 },
+          "perRank": { "conversion_max_life": 2 }
+        }
+      },
+      {
+        "id": "flipper",
+        "positionIndex": 5,
+        "name": "Flipper",
+        "description": "Thrown monsters bounce off of walls increasing damage dealt with every bounce.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "power_fall",
+        "positionIndex": 6,
+        "name": "Power Fall",
+        "description": "Thrown monsters smash into the ground with force causing ground fragments to fly around dealing damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "breaking_fall",
+        "positionIndex": 7,
+        "name": "Breaking Fall",
+        "description": "Thrown monsters inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "bouncing_around",
+        "positionIndex": 8,
+        "name": "Bouncing Around",
+        "description": "Thrown monster bounce off the ground dealing increased damage with every bounce.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "arcane_skill_damage": 5, "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "bulls_eye",
+        "positionIndex": 9,
+        "name": "Bulls Eye",
+        "description": "When directly hitting another monster, cause the monster to be knocked up dealing area of effect damage when landing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "dive_bomb",
+        "positionIndex": 10,
+        "name": "Dive Bomb",
+        "description": "Increases landing area of effect radius of throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "ragesling",
+        "positionIndex": 11,
+        "name": "Ragesling",
+        "description": "Throws the monster faster, dealing massively increased damage to it and causing it to explode into meat chunks that deal damage to nearby monsters if it dies from the throw.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 50, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "vacuum_pitch",
+        "positionIndex": 12,
+        "name": "Vacuum Pitch",
+        "description": "When thrown monster lands it pulls nearby monsters towards it.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0, "arcane_skill_damage": 0 },
+          "perRank": { "skill_range": 25, "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "dimensional_pitch",
+        "positionIndex": 13,
+        "name": "Dimensional Pitch",
+        "description": "Additionally throw shadow copies of the monster with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 40, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "echoing_throw",
+        "positionIndex": 14,
+        "name": "Echoing Throw",
+        "description": "When thrown monster lands it shocks the ground multiple times with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 25, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "zeal",
+    "classId": "viking",
+    "name": "Zeal",
+    "kind": "active",
+    "description": "Strike three fast and powerful attacks with increased attack rating.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 75,
+        "perLevel": 25
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Odin's Fury",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Weapon Master",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Agility",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "zeal_core",
+        "positionIndex": 0,
+        "name": "Zeal",
+        "description": "Core of the Zeal subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "rapid_striking",
+        "positionIndex": 1,
+        "name": "Rapid Striking",
+        "description": "Increases the amount of attacks done by zeal.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "fatal_blows",
+        "positionIndex": 2,
+        "name": "Fatal Blows",
+        "description": "Increases the damage dealt by zeal.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "weapon_marksman",
+        "positionIndex": 3,
+        "name": "Weapon Marksman",
+        "description": "Zeal now works with throwing weapons gaining increased attack range and damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 10, "skill_range": 5 }
+        }
+      },
+      {
+        "id": "brutal_slashes",
+        "positionIndex": 4,
+        "name": "Brutal Slashes",
+        "description": "Increases critical strike damage dealt by zeal.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 10 }
+        }
+      },
+      {
+        "id": "axes_more_axes",
+        "positionIndex": 5,
+        "name": "Axes, More Axes!",
+        "description": "Chance to summon an orbiting axe around the target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "slicing_perfection",
+        "positionIndex": 6,
+        "name": "Slicing Perfection",
+        "description": "Increases attack rating when using zeal.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "hemorrhaging_blows",
+        "positionIndex": 7,
+        "name": "Hemorrhaging Blows",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "bleeding_out",
+        "positionIndex": 8,
+        "name": "Bleeding Out",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "finish_them",
+        "positionIndex": 9,
+        "name": "Finish Them!",
+        "description": "Zeal now executes targets below a certain percentage of life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1.5 }
+        }
+      },
+      {
+        "id": "cleaving_zeal",
+        "positionIndex": 10,
+        "name": "Cleaving Zeal",
+        "description": "Zeal now always hits multiple targets with increased attack area of effect.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 8 }
+        }
+      },
+      {
+        "id": "throwing_fury",
+        "positionIndex": 11,
+        "name": "Throwing Fury",
+        "description": "Zeal now throws multiple projectiles with increased damage when using throwing weapons.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 25, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "blood_ripple",
+        "positionIndex": 12,
+        "name": "Blood Ripple",
+        "description": "Each strike has a chance to unleash a ripple of blood dealing area of effect damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 50, "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "sundering_strikes",
+        "positionIndex": 13,
+        "name": "Sundering Strikes",
+        "description": "Zeal inflicts stacking armor break on the target increasing with each strike.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 4 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 4 } }
+          ]
+        }
+      },
+      {
+        "id": "zealing_blow",
+        "positionIndex": 14,
+        "name": "Zealing Blow",
+        "description": "Your last zeal strike deals increased damage stunning the target taunting nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "skill_range": 0,
+            "stun_duration_pct": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 100,
+            "skill_range": 25,
+            "stun_duration_pct": 1.5
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "ymirs_champion",
+    "classId": "viking",
+    "name": "Ymir's Champion",
+    "kind": "active",
+    "description": "Perform a cold enhanced strike with additive cold damage, increased attack damage and attack rating. Attacks also freeze monsters and summons a spinning axe that deals additional damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "damageType": "cold",
+    "attackKind": "attack",
+    "effectDuration": 2,
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 18
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 8,
+        "perLevel": 15
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Seismic Slam",
+        "stat": "cold_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Agility",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 7.5,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "ymirs_champion_core",
+        "positionIndex": 0,
+        "name": "Ymir's Champion",
+        "description": "Core of the Ymir's Champion subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "vikings_carnage",
+        "positionIndex": 1,
+        "name": "Viking´s Carnage",
+        "description": "Increases the damage dealt by ymir's champion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "raging_sustain",
+        "positionIndex": 2,
+        "name": "Raging Sustain",
+        "description": "Increases the duration of axes.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 12 }
+        }
+      },
+      {
+        "id": "slashing_cleavers",
+        "positionIndex": 3,
+        "name": "Slashing Cleavers",
+        "description": "Increases the size of axes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 8 }
+        }
+      },
+      {
+        "id": "rimeforged_hatchet",
+        "positionIndex": 4,
+        "name": "Rimeforged Hatchet",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 8 }
+        }
+      },
+      {
+        "id": "ymirs_focus",
+        "positionIndex": 5,
+        "name": "Ymir´s Focus",
+        "description": "Increases attack rating when using ymir's champion.",
+        "maxRank": 6,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "expanding_territory",
+        "positionIndex": 6,
+        "name": "Expanding Territory",
+        "description": "Increases the orbit radius of axes.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "rapid_spinning",
+        "positionIndex": 7,
+        "name": "Rapid Spinning",
+        "description": "Increases the projectile speed of axes.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 8.5 }
+        }
+      },
+      {
+        "id": "frosted_blow",
+        "positionIndex": 8,
+        "name": "Frosted Blow",
+        "description": "Chance to unleash an ice nova on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "cold_skill_damage": 0 },
+            "perRank": { "cold_skill_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "rending_hatchet",
+        "positionIndex": 9,
+        "name": "Rending Hatchet",
+        "description": "Increases critical strike damage dealt by ymir's champion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 25 }
+        }
+      },
+      {
+        "id": "power_of_multitude",
+        "positionIndex": 10,
+        "name": "Power of Multitude",
+        "description": "Increases axes amount but damage dealt is split between axes summoned.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "collateral_damage",
+        "positionIndex": 11,
+        "name": "Collateral Damage",
+        "description": "Whenever the axes hit a target they send another piercing axe outwards in a straight line towards the target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 60 }
+        }
+      },
+      {
+        "id": "chainslicing_tomahawk",
+        "positionIndex": 12,
+        "name": "Chainslicing Tomahawk",
+        "description": "Axes now chain through monsters and then return back to you dealing damage to monsters in its path.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "cold_skill_damage": 35, "projectile_bounces": 3 }
+        }
+      },
+      {
+        "id": "scattering_battlegear",
+        "positionIndex": 13,
+        "name": "Scattering Battlegear",
+        "description": "Axes now fly into a random spot in a cone in front of you and start spinning on the ground dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "shattering_axes",
+        "positionIndex": 14,
+        "name": "Shattering Axes",
+        "description": "At the end of their duration the axes shatter into weapon shards dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "whirlwind",
+    "classId": "viking",
+    "name": "Whirlwind",
+    "kind": "active",
+    "description": "Spin your weapons around you dealing damage to monsters struck.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 50,
+        "perLevel": 44
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 3
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Brute Force",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Demolishing Winds",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "whirlwind_core",
+        "positionIndex": 0,
+        "name": "Whirlwind",
+        "description": "Core of the Whirlwind subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharp_winds",
+        "positionIndex": 1,
+        "name": "Sharp Winds",
+        "description": "Increases attack rating when using whirlwind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 8 }
+        }
+      },
+      {
+        "id": "wounding_spin",
+        "positionIndex": 2,
+        "name": "Wounding Spin",
+        "description": "Increases the damage dealt by whirlwind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "deadly_blow",
+        "positionIndex": 3,
+        "name": "Deadly Blow",
+        "description": "Increases critical strike damage when using whirlwind.",
+        "maxRank": 6,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 25 }
+        }
+      },
+      {
+        "id": "typhoon",
+        "positionIndex": 4,
+        "name": "Typhoon",
+        "description": "Increases the area of effect radius of whirlwind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 12.5 }
+        }
+      },
+      {
+        "id": "airborne_debris",
+        "positionIndex": 5,
+        "name": "Airborne Debris",
+        "description": "Increases the critical strike chance when using whirlwind.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 15 }
+        }
+      },
+      {
+        "id": "cycloning_step",
+        "positionIndex": 6,
+        "name": "Cycloning Step",
+        "description": "Increases your movement speed while using whirlwind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 10 }
+        }
+      },
+      {
+        "id": "second_wind",
+        "positionIndex": 7,
+        "name": "Second Wind",
+        "description": "Chance on hit to unleash a twister.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 22 }
+          }
+        }
+      },
+      {
+        "id": "burning_air",
+        "positionIndex": 8,
+        "name": "Burning Air",
+        "description": "Chance on hit to inflict burning dealing damage based on your total attack speed.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "conversion_attack_speed": 0 },
+            "perRank": { "conversion_attack_speed": 0.25 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "trail_of_fire",
+        "positionIndex": 9,
+        "name": "Trail of Fire",
+        "description": "Leave a trail of fire behind you inflicting monsters with burning.",
+        "maxRank": 6,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "area_of_effect": 0 },
+          "perRank": { "increased_burning_damage": 30, "area_of_effect": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "scorching_heat",
+        "positionIndex": 10,
+        "name": "Scorching Heat",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 12 }
+        }
+      },
+      {
+        "id": "sharpened_blades",
+        "positionIndex": 11,
+        "name": "Sharpened Blades",
+        "description": "Greatly increases area of effect radius dealing increased damage at the outer edge.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 50, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "detonation",
+        "positionIndex": 12,
+        "name": "Detonation",
+        "description": "Store damage dealt to monsters unleashing it when whirlwind ends dealing damage on a large radius around you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 15 }
+        }
+      },
+      {
+        "id": "negative_pressure",
+        "positionIndex": 13,
+        "name": "Negative Pressure",
+        "description": "monsters at the edge of the whirlwind radius are sucked within the whirlwind.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "armor_break": 0, "area_of_effect": 0 },
+          "perRank": { "armor_break": 35, "area_of_effect": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "airborne",
+        "positionIndex": 14,
+        "name": "Airborne",
+        "description": "Knock monsters high into air causing them to take increased damage upon landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "shockwave",
+    "classId": "viking",
+    "name": "Shockwave",
+    "kind": "active",
+    "description": "Smash the ground causing a shockwave that deals area of effect damage and stuns monsters.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "effectDuration": 2,
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 91,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Seismic Slam",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Throw!",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Brute Force",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "shockwave_core",
+        "positionIndex": 0,
+        "name": "Shockwave",
+        "description": "Core of the Shockwave subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "richter_scale",
+        "positionIndex": 1,
+        "name": "Richter Scale",
+        "description": "Increases shockwave travel distance.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 1 }
+        }
+      },
+      {
+        "id": "earth_shaker",
+        "positionIndex": 2,
+        "name": "Earth Shaker",
+        "description": "Increases the damage dealt by shockwave.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 6 }
+        }
+      },
+      {
+        "id": "ground_fissure",
+        "positionIndex": 3,
+        "name": "Ground Fissure",
+        "description": "Chance on hit to knockup monsters dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "shocking_crust",
+        "positionIndex": 4,
+        "name": "Shocking Crust",
+        "description": "Increases critical strike damage dealt by shockwave.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "multi_trail",
+        "positionIndex": 5,
+        "name": "Multi Trail",
+        "description": "Adds an additional trail but decreases damage dealt by each shockwave.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "trail_count": 0, "of_total_damage": 0 },
+          "perRank": { "trail_count": 1, "of_total_damage": -25 }
+        }
+      },
+      {
+        "id": "cracked_earth",
+        "positionIndex": 6,
+        "name": "Cracked Earth",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "meteorology",
+        "positionIndex": 7,
+        "name": "Meteorology",
+        "description": "Chance on hit to drop a meteor on the target dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "duck_and_cover",
+        "positionIndex": 8,
+        "name": "Duck and Cover",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 12.5 }
+        }
+      },
+      {
+        "id": "afterquake",
+        "positionIndex": 9,
+        "name": "Afterquake",
+        "description": "Chance on cast to unleash an additional shockwave.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "land_mass",
+        "positionIndex": 10,
+        "name": "Land Mass",
+        "description": "Increases the area of effect radius of shockwave.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 8 }
+        }
+      },
+      {
+        "id": "trembling_trail",
+        "positionIndex": 11,
+        "name": "Trembling Trail",
+        "description": "Smash the ground in front of you creating a shockwave that travels a short distance and then splits into all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "cataclysmic_smash",
+        "positionIndex": 12,
+        "name": "Cataclysmic Smash",
+        "description": "Smashing the ground now creates shockwaves in every direction. Shockwave now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "trail_count": 0 },
+          "perRank": { "physical_skill_damage": 125, "trail_count": 4 }
+        }
+      },
+      {
+        "id": "forking_crust",
+        "positionIndex": 13,
+        "name": "Forking Crust",
+        "description": "Each wave has a chance to fork into a smaller trail.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 45 }
+          }
+        }
+      },
+      {
+        "id": "earthen_maelstrom",
+        "positionIndex": 14,
+        "name": "Earthen Maelstrom",
+        "description": "Shockwaves twirl outwards around you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "projectile_count": 0,
+            "trail_count": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 35,
+            "projectile_count": 6,
+            "trail_count": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "berserk",
+    "classId": "viking",
+    "name": "Berserk",
+    "kind": "active",
+    "description": "Every successful hit with berserk increases your attack damage, attack speed and movement speed for berserk stacking up to 8 times.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 2,
+        "perLevel": 3
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6,
+        "perLevel": 0
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 4
+      }
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 2,
+        "movement_speed": 0.4
+      },
+      "perRank": {
+        "increased_attack_speed": 0.5,
+        "movement_speed": 0.4
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Zeal",
+        "stat": "attack_damage",
+        "value": 1,
+        "per": "skill_level"
+      },
+      {
+        "source": "Weapon Master",
+        "stat": "attack_damage",
+        "value": 1,
+        "per": "skill_level"
+      },
+      {
+        "source": "Ymir's Champion",
+        "stat": "attack_damage",
+        "value": 1,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "berserk_core",
+        "positionIndex": 0,
+        "name": "Berserk",
+        "description": "Core of the Berserk subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "insanity",
+        "positionIndex": 1,
+        "name": "Insanity",
+        "description": "Increases the damage dealt by berserk.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "restless_feet",
+        "positionIndex": 2,
+        "name": "Restless Feet",
+        "description": "Increases the movement speed bonus from berserk.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 8 }
+        }
+      },
+      {
+        "id": "dual_swing",
+        "positionIndex": 3,
+        "name": "Dual Swing",
+        "description": "Chance on attack to perform an additional attack.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "fearless_focus",
+        "positionIndex": 4,
+        "name": "Fearless Focus",
+        "description": "Increases attack rating when using berserk.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "brutalize",
+        "positionIndex": 5,
+        "name": "Brutalize",
+        "description": "Chance to strike the monster with force causing pieces of it to scatter around and damage nearby targets.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "axe_throw",
+        "positionIndex": 6,
+        "name": "Axe Throw",
+        "description": "Chance on hit to throw a piercing axe towards your target inflicting armor break to all monsters hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 5 } }
+          ]
+        }
+      },
+      {
+        "id": "bursting_madness",
+        "positionIndex": 7,
+        "name": "Bursting Madness",
+        "description": "Every strike now stacks to an additional buff unleashing a powerful area of effect pulse when reaching max stacks.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 3 }
+        }
+      },
+      {
+        "id": "berserkers_reach",
+        "positionIndex": 8,
+        "name": "Berserker´s Reach",
+        "description": "Chance on berserk attack to increase its area of effect.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "area_of_effect": 0 },
+            "perRank": { "area_of_effect": 10 }
+          }
+        }
+      },
+      {
+        "id": "heavy_hitter",
+        "positionIndex": 9,
+        "name": "Heavy Hitter",
+        "description": "Increases critical strike damage dealt when using berserk.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 10 }
+        }
+      },
+      {
+        "id": "bring_me_another_one",
+        "positionIndex": 10,
+        "name": "Bring Me Another One!",
+        "description": "Pull nearby monsters to the targets corpse on kill.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "berserkers_insanity",
+        "positionIndex": 11,
+        "name": "Berserker´s Insanity",
+        "description": "Increases berserk stat bonuses and max stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_all_attributes": 0, "max_skill_stacks": 0 },
+          "perRank": { "increased_all_attributes": 10, "max_skill_stacks": 3 }
+        }
+      },
+      {
+        "id": "deadly_advantage",
+        "positionIndex": 12,
+        "name": "Deadly Advantage",
+        "description": "Berserk no longer requires a melee weapon dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 45 }
+        }
+      },
+      {
+        "id": "graaaaagh",
+        "positionIndex": 13,
+        "name": "GRAAAAAGH!",
+        "description": "Every time you reach full stacks unleash a trembling pulse dealing increased damage scaling with full stat scaling consuming all stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 0.1 }
+        }
+      },
+      {
+        "id": "giants_grasp",
+        "positionIndex": 14,
+        "name": "Giant´s Grasp",
+        "description": "Increases the power of attack damage from berserk stacks lowering attack speed scaling.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 150 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "demolishing_winds",
+    "classId": "viking",
+    "name": "Demolishing Winds",
+    "kind": "passive",
+    "description": "Whirlwind now unleashes tornadoes dealing portion of the Whirlwinds damage to monsters struck.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Berserker",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "damageType": "physical",
+    "passiveStats": {
+      "base": {
+        "physical_skill_damage": 20
+      },
+      "perRank": {
+        "physical_skill_damage": 4
+      }
+    }
+  }
+]

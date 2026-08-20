@@ -21,6 +21,11 @@ export default defineConfig({
     },
   ],
   clearScreen: false,
+  resolve: {
+    alias: {
+      '@data': fileURLToPath(new URL('./data', import.meta.url)),
+    },
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
@@ -34,13 +39,13 @@ export default defineConfig({
     hmr: host
       ? { protocol: 'ws', host, port: 5174 }
       : undefined,
-    watch: { ignored: ['**/src-tauri/**'] },
+    watch: { ignored: ['**/engine/**'] },
   },
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    setupFiles: ['./frontend/test/setup.ts'],
+    include: ['{frontend,data}/**/*.{test,spec}.{ts,tsx}'],
     css: false,
   },
 })

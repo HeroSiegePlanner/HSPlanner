@@ -1,0 +1,1929 @@
+[
+  {
+    "id": "glorious_strike",
+    "classId": "shield_lancer",
+    "name": "Glorious Strike",
+    "kind": "active",
+    "description": "Perform a powerful attack dealing physical area of effect damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Champion",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 77.5, "perLevel": 22.5 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Lance Thrust", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Battle Charge", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Crushing Lance", "stat": "attack_damage", "value": 2, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "glorious_strike_core",
+        "positionIndex": 0,
+        "name": "Glorious Strike",
+        "description": "Core of the Glorious Strike subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "radiant_glory",
+        "positionIndex": 1,
+        "name": "Radiant Glory",
+        "description": "Increases the damage dealt by glorious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "lance_training",
+        "positionIndex": 2,
+        "name": "Lance Training",
+        "description": "Increases attack rating when using glorious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "jousting_master",
+        "positionIndex": 3,
+        "name": "Jousting Master",
+        "description": "Increases attack area of effect radius of glorious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "piercing_thrust",
+        "positionIndex": 4,
+        "name": "Piercing Thrust",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "brutal_knight",
+        "positionIndex": 5,
+        "name": "Brutal Knight",
+        "description": "Increases the critical strike damage of glorious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 25 }
+        }
+      },
+      {
+        "id": "blood_satiable",
+        "positionIndex": 6,
+        "name": "Blood Satiable",
+        "description": "Recover a portion of your maximum life when killing monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 2 }
+        }
+      },
+      {
+        "id": "heroic_onslaught",
+        "positionIndex": 7,
+        "name": "Heroic Onslaught",
+        "description": "Gain a stack of heroic onslaught after killing monsters increasing your damage and armor.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_armor": 0 },
+          "perRank": { "physical_skill_damage": 2, "increased_armor": 1 }
+        }
+      },
+      {
+        "id": "leave_no_survivors",
+        "positionIndex": 8,
+        "name": "Leave no Survivors",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "sparring_haste",
+        "positionIndex": 9,
+        "name": "Sparring Haste",
+        "description": "Increases attack speed when using glorious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
+        }
+      },
+      {
+        "id": "high_reach",
+        "positionIndex": 10,
+        "name": "High Reach",
+        "description": "Increases glorious strike attack range when using polearms.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "punisher",
+        "positionIndex": 11,
+        "name": "Punisher",
+        "description": "Chance on attack to gain increased area of effect radius. Impale targets on hit dealing damage over time.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 55, "area_of_effect": 33 }
+          }
+        }
+      },
+      {
+        "id": "unstoppable_piker",
+        "positionIndex": 12,
+        "name": "Unstoppable Piker",
+        "description": "Strike with a long narrow hitbox pushing monsters towards the tip on hit. Monsters hit by the tip take increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 125 }
+        }
+      },
+      {
+        "id": "javelin_harbinger",
+        "positionIndex": 13,
+        "name": "Javelin Harbinger",
+        "description": "Increases the range of glorious strike significantly. Chance on attack to throw a piercing javelin inflicting bleeding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 65 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 65 } }
+          ]
+        }
+      },
+      {
+        "id": "valiant_combo",
+        "positionIndex": 14,
+        "name": "Valiant Combo",
+        "description": "Glorious strike performs a burst of three attacks. The last strike sends a slashing wave knocking monsters back dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 60 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "battle_charge",
+    "classId": "shield_lancer",
+    "name": "Battle Charge",
+    "kind": "active",
+    "description": "Charge towards target location knocking monsters up and dealing arcane damage on impact.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Movement"],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Champion",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Glorious Strike", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Armor Crush", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Crushing Lance", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "battle_charge_core",
+        "positionIndex": 0,
+        "name": "Battle Charge",
+        "description": "Core of the Battle Charge subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "battle_charged",
+        "positionIndex": 1,
+        "name": "Battle Charged",
+        "description": "Increases the damage dealt by battle charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "arena_glider",
+        "positionIndex": 2,
+        "name": "Arena Glider",
+        "description": "Increases the range of battle charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "concrete_wall",
+        "positionIndex": 3,
+        "name": "Concrete Wall",
+        "description": "Increases the damage dealt by battle charge according to your armor.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_armor": 0 },
+          "perRank": { "conversion_armor": 10 }
+        }
+      },
+      {
+        "id": "rampaging_assault",
+        "positionIndex": 4,
+        "name": "Rampaging Assault",
+        "description": "Chance to knock monsters up dealing increased damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "turtle_armor",
+        "positionIndex": 5,
+        "name": "Turtle Armor",
+        "description": "Increases damage reduction for a short duration when using battle charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 6 }
+        }
+      },
+      {
+        "id": "rocket_boots",
+        "positionIndex": 6,
+        "name": "Rocket Boots",
+        "description": "Increases the speed of battle charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "shoulder_slam",
+        "positionIndex": 7,
+        "name": "Shoulder Slam",
+        "description": "Chance to stun targets on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "spear_dasher",
+        "positionIndex": 8,
+        "name": "Spear Dasher",
+        "description": "Throw lances around you as you charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 40, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "bluntforce_trauma",
+        "positionIndex": 9,
+        "name": "Bluntforce Trauma",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "provoking_arrival",
+        "positionIndex": 10,
+        "name": "Provoking Arrival",
+        "description": "Taunt nearby monsters at the end of your charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "bulldozer",
+        "positionIndex": 11,
+        "name": "Bulldozer",
+        "description": "Pull monsters infront of you on hit while charging impaling them when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 45, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "hyper_assault",
+        "positionIndex": 12,
+        "name": "Hyper Assault",
+        "description": "Charge multiple times in high speed at the target area, dealing area of effect damage damage before falling from the sky smashing the ground, knocking monsters up with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 125 }
+        }
+      },
+      {
+        "id": "ground_slammer",
+        "positionIndex": 13,
+        "name": "Ground Slammer",
+        "description": "As you charge through monsters, leave the ground quaking for a small duration inflicting elemental break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "elemental_break": 0 },
+          "perRank": { "of_total_damage": 90, "elemental_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 25 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "call_of_the_fallen_heroes",
+        "positionIndex": 14,
+        "name": "Call of the Fallen Heroes",
+        "description": "Call upon fallen heroes to charge by your side, dealing increased damage on a larger radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "summon_max_amount": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "summon_max_amount": 4,
+            "arcane_skill_damage": 80
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "commending_banner",
+    "classId": "shield_lancer",
+    "name": "Commending Banner",
+    "kind": "buff",
+    "description": "Place a commending banner on the target location increasing nearby players attack speed and attack rating.",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Champion",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "attack_rating_pct": 1 },
+      "perRank": { "increased_attack_speed": 1, "attack_rating_pct": 1 }
+    }
+  },
+  {
+    "id": "parry",
+    "classId": "shield_lancer",
+    "name": "Parry",
+    "kind": "passive",
+    "description": "Gives you a chance to parry incoming attacks.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Champion",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "parry_chance": 1 },
+      "perRank": { "parry_chance": 1 }
+    }
+  },
+  {
+    "id": "crushing_lance",
+    "classId": "shield_lancer",
+    "name": "Crushing Lance",
+    "kind": "active",
+    "description": "Call a crushing lance down from the sky smashing the target location dealing area of effect physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
+    "movementDuringUse": 65,
+    "range": 360,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Champion",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 60, "perLevel": 24 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 10, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Lance Thrust", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Lance Throw", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Parry", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "crushing_lance_core",
+        "positionIndex": 0,
+        "name": "Crushing Lance",
+        "description": "Core of the Crushing Lance subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharp_point",
+        "positionIndex": 1,
+        "name": "Sharp Point",
+        "description": "Increases the damage dealt by crushing lance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "devastating_impact",
+        "positionIndex": 2,
+        "name": "Devastating Impact",
+        "description": "Increases the area of effect radius of crushing lance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "precision_blow",
+        "positionIndex": 3,
+        "name": "Precision Blow",
+        "description": "Increases attack rating when using crushing lance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "dormant_javelin",
+        "positionIndex": 4,
+        "name": "Dormant Javelin",
+        "description": "Every third attack with crushing lance is empowered increasing area of effect radius and damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 12, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "finishing_stagger",
+        "positionIndex": 5,
+        "name": "Finishing Stagger",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "two_for_one",
+        "positionIndex": 6,
+        "name": "Two for One",
+        "description": "Chance to unleash an additional crushing lance from the target to a nearby monster on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "rapidcast_artillery",
+        "positionIndex": 7,
+        "name": "Rapidcast Artillery",
+        "description": "Increases attack speed when using crushing lance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
+        }
+      },
+      {
+        "id": "landspike",
+        "positionIndex": 8,
+        "name": "Landspike",
+        "description": "Increases the critical strike damage dealt by crushing lance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "pulverizing_shock",
+        "positionIndex": 9,
+        "name": "Pulverizing Shock",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "scorching_quake",
+        "positionIndex": 10,
+        "name": "Scorching Quake",
+        "description": "Chance on cast to empower crushing lance causing it to echo an additional time inflicting burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "annihilating_salvo",
+        "positionIndex": 11,
+        "name": "Annihilating Salvo",
+        "description": "Unleash a shockwave of crushing lances towards target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "magnetized_glaive",
+        "positionIndex": 12,
+        "name": "Magnetized Glaive",
+        "description": "The lance remains on the ground for a short duration frequently pulsating and pulling monsters towards it on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0, "faster_cast_rate": 0 },
+          "perRank": { "skill_duration": 25, "faster_cast_rate": 25 }
+        }
+      },
+      {
+        "id": "seismic_perforation",
+        "positionIndex": 13,
+        "name": "Seismic Perforation",
+        "description": "Crushing lance hits the ground with force unleashing shockwaves into all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "trail_count": 0, "projectile_count": 0 },
+          "perRank": { "trail_count": 3, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "marked_for_javelinstrike",
+        "positionIndex": 14,
+        "name": "Marked for Javelinstrike",
+        "description": "Throw piercing javelins at monsters hit by crushing lance for a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "lance_thrust",
+    "classId": "shield_lancer",
+    "name": "Lance Thrust",
+    "kind": "active",
+    "description": "Perform a long ranged lance attack piercing monsters in a line dealing physical damage. If the lance comes in contact with a commending banner you get dragged to the banner smashing the ground stunning monsters on impact.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "range": 560,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Champion",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 57, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Glorious Strike", "stat": "attack_damage", "value": 5, "per": "skill_level" },
+      { "source": "Commending Banner", "stat": "attack_damage", "value": 7, "per": "skill_level" },
+      { "source": "Armor Crush", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "lance_thrust_core",
+        "positionIndex": 0,
+        "name": "Lance Thrust",
+        "description": "Core of the Lance Thrust subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "battle_experienced",
+        "positionIndex": 1,
+        "name": "Battle Experienced",
+        "description": "Increases the damage dealt by lance thrust.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "pole_reach",
+        "positionIndex": 2,
+        "name": "Pole Reach",
+        "description": "Increases the range of lance thrust.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "heroic_arrival",
+        "positionIndex": 3,
+        "name": "Heroic Arrival",
+        "description": "Increases stun duration and damage when colliding with commending banner.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "stun_duration_pct": 0 },
+          "perRank": { "physical_skill_damage": 12, "stun_duration_pct": 20 }
+        }
+      },
+      {
+        "id": "punctured_organs",
+        "positionIndex": 4,
+        "name": "Punctured Organs",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "tactical_distancing",
+        "positionIndex": 5,
+        "name": "Tactical Distancing",
+        "description": "Knock monsters back on hit dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "swift_striking",
+        "positionIndex": 6,
+        "name": "Swift Striking",
+        "description": "Chance to gain a stack of swift strikes on hit increasing your attack speed and attack rating.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "increased_attack_speed": 0, "attack_rating_pct": 0 },
+            "perRank": { "increased_attack_speed": 1, "attack_rating_pct": 2 }
+          }
+        }
+      },
+      {
+        "id": "polearm_expertise",
+        "positionIndex": 7,
+        "name": "Polearm Expertise",
+        "description": "Increases the critical strike damage dealt by lance thrust when using polearms.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 27.5 }
+        }
+      },
+      {
+        "id": "blood_harvester",
+        "positionIndex": 8,
+        "name": "Blood Harvester",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "stab_sequence",
+        "positionIndex": 9,
+        "name": "Stab Sequence",
+        "description": "Every third attack with lance thrust is empowered increasing range and damage slowing monsters on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 15, "skill_range": 15 }
+        }
+      },
+      {
+        "id": "volatile_irontip",
+        "positionIndex": 10,
+        "name": "Volatile Irontip",
+        "description": "Collision with commending banner causes it to explode dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 10, "area_of_effect": 6 }
+        }
+      },
+      {
+        "id": "head_collector",
+        "positionIndex": 11,
+        "name": "Head Collector",
+        "description": "Lance thrust pulls monsters towards you and stuns them on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 25, "skill_range": 20 }
+        }
+      },
+      {
+        "id": "legion_exterminator",
+        "positionIndex": 12,
+        "name": "Legion Exterminator",
+        "description": "Unleash a whirl attack with increased area of effect radius. Lance thrust no longer collides with commending banner.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 25, "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "trust_in_the_thrust",
+        "positionIndex": 13,
+        "name": "Trust in the Thrust",
+        "description": "Unleash a circle of lances thrusting the first target on hit from all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 50, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "commend_to_onslaught",
+        "positionIndex": 14,
+        "name": "Commend to Onslaught",
+        "description": "Unleash additional lance thrusts towards nearby monsters from commending banner on banner impact.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 5 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "lance_throw",
+    "classId": "shield_lancer",
+    "name": "Lance Throw",
+    "kind": "passive",
+    "description": "When using any of the abilities, you have a chance to throw a piercing lance at a nearby monster dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Passive", "Projectile", "Strike"],
+    "movementDuringUse": 10,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Champion",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Lance Thrust", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Glory", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Glorious Strike", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ]
+  },
+  {
+    "id": "armor_crush",
+    "classId": "shield_lancer",
+    "name": "Armor Crush",
+    "kind": "passive",
+    "description": "Battle charge inflicts armor break and lowers monster attack rating on hit.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Champion",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "armor_break": 2, "attack_rating_pct": 1 },
+      "perRank": { "armor_break": 2, "attack_rating_pct": 1 }
+    }
+  },
+  {
+    "id": "glory",
+    "classId": "shield_lancer",
+    "name": "Glory",
+    "kind": "buff",
+    "description": "Gain increased attack damage and magic skill damage for a short period.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Champion",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "attack_damage": 3.5, "magic_skill_damage": 3 },
+      "perRank": { "attack_damage": 3.5, "magic_skill_damage": 3 }
+    }
+  },
+  {
+    "id": "shield_slam",
+    "classId": "shield_lancer",
+    "name": "Shield Slam",
+    "kind": "active",
+    "description": "Strike with your shield dealing physical damage based on the defense of your shield.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Shield", "Strike"],
+    "movementDuringUse": 85,
+    "effectDuration": 2,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Knight",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 160, "perLevel": 40 },
+      "flatPhysicalMin": { "base": 6, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 16, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 4 }
+    },
+    "bonusSources": [
+      { "source": "Shield Wall", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Knight's Vigor", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Parry", "stat": "attack_damage", "value": 15, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "shield_slam_core",
+        "positionIndex": 0,
+        "name": "Shield Slam",
+        "description": "Core of the Shield Slam subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "obsidian_shield",
+        "positionIndex": 1,
+        "name": "Obsidian Shield",
+        "description": "Increases the damage dealt by shield slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "gradient_strikes",
+        "positionIndex": 2,
+        "name": "Gradient Strikes",
+        "description": "Increases the attack rating of shield slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "concussive_bash",
+        "positionIndex": 3,
+        "name": "Concussive Bash",
+        "description": "Chance to stun enemies on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "skull_fracture",
+        "positionIndex": 4,
+        "name": "Skull Fracture",
+        "description": "Increases damage dealt to stunned enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "offensive_safeguard",
+        "positionIndex": 5,
+        "name": "Offensive Safeguard",
+        "description": "Deal increased damage based on the block rating of your shield.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_block_rating": 0 },
+          "perRank": { "conversion_block_rating": 50 }
+        }
+      },
+      {
+        "id": "field_coverage",
+        "positionIndex": 6,
+        "name": "Field Coverage",
+        "description": "Increases the area of effect of shield slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "violent_bash",
+        "positionIndex": 7,
+        "name": "Violent Bash",
+        "description": "Chance on attack to increase the damage and area of effect radius of shield slam.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 10, "area_of_effect": 10 }
+          }
+        }
+      },
+      {
+        "id": "hardening_stance",
+        "positionIndex": 8,
+        "name": "Hardening Stance",
+        "description": "Chance to increase your damage return on hit for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "damage_return": 0 },
+            "perRank": { "damage_return": 10 }
+          }
+        }
+      },
+      {
+        "id": "vanguard",
+        "positionIndex": 9,
+        "name": "Vanguard",
+        "description": "Gain a stack of vanguard on hit increasing your damage reduction for a short duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 0.35 }
+        }
+      },
+      {
+        "id": "rogue_shield",
+        "positionIndex": 10,
+        "name": "Rogue Shield",
+        "description": "Chance to summon an orbiting shield on hit for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "groundquake_bulwark",
+        "positionIndex": 11,
+        "name": "Groundquake Bulwark",
+        "description": "Smash your shield into the ground unleashing an earthquake pulling monsters towards you on hit. Earthquake damage and area of effect radius are increased based on your armor. Shield slam now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_armor": 0 },
+          "perRank": { "conversion_armor": 6 }
+        }
+      },
+      {
+        "id": "knights_templar",
+        "positionIndex": 12,
+        "name": "Knight´s Templar",
+        "description": "Throw your shield with force causing it to bounce from the ground and terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "physical_skill_damage": 60, "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "thorned_aegis",
+        "positionIndex": 13,
+        "name": "Thorned Aegis",
+        "description": "Chance to gain a stack of thorned aegis on hit. Throw shields at monsters when taking damage while thorned aegis is active.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 25 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "max_skill_stacks": 0 },
+            "perRank": { "physical_skill_damage": 10, "max_skill_stacks": 5 }
+          }
+        }
+      },
+      {
+        "id": "captain_tarethiel",
+        "positionIndex": 14,
+        "name": "Captain Tarethiel",
+        "description": "Throw your shield with increased size and damage. The shield returns to you after a short duration dealing additional damage. Shield slam now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 175, "area_of_effect": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "taunt",
+    "classId": "shield_lancer",
+    "name": "Taunt",
+    "kind": "active",
+    "description": "Taunt monsters to attack you. Additional points increase the monster amount and duration.",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Knight",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "targets": 3, "duration": 5 },
+      "perRank": { "targets": 1, "duration": 0.4 }
+    }
+  },
+  {
+    "id": "honed_defenses",
+    "classId": "shield_lancer",
+    "name": "Honed Defenses",
+    "kind": "active",
+    "description": "Every time you get hit by a monster attack gain stacks. At maximum stacks unleash a huge area of effect pulse dealing arcane damage to monsters around you. Can also be casted early to consume the stacks.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Knight",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.25, "perLevel": 4.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Shield Slam", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Shield Wall", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Counter", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" },
+      { "source": "Armor", "stat": "arcane_skill_damage", "value": 4, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "honed_defenses_core",
+        "positionIndex": 0,
+        "name": "Honed Defenses",
+        "description": "Core of the Honed Defenses subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "fortified_bastion",
+        "positionIndex": 1,
+        "name": "Fortified Bastion",
+        "description": "Increases the damage dealt by honed defenses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "lucky_defense",
+        "positionIndex": 2,
+        "name": "Lucky Defense",
+        "description": "Chance to increase the amount of stacks gained when struck.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "max_skill_stacks": 0 },
+            "perRank": { "max_skill_stacks": 1 }
+          }
+        }
+      },
+      {
+        "id": "engulfing_wave",
+        "positionIndex": 3,
+        "name": "Engulfing Wave",
+        "description": "Increases the area of effect radius of honed defenses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "thorn_surge",
+        "positionIndex": 4,
+        "name": "Thorn Surge",
+        "description": "Increases damage return per stack of honed defenses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "damage_return": 0 },
+          "perRank": { "damage_return": 2 }
+        }
+      },
+      {
+        "id": "deadly_resistance",
+        "positionIndex": 5,
+        "name": "Deadly Resistance",
+        "description": "Increases the damage dealt by honed defenses based on your armor.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_armor": 0 },
+          "perRank": { "conversion_armor": 5 }
+        }
+      },
+      {
+        "id": "hold",
+        "positionIndex": 6,
+        "name": "Hold!",
+        "description": "Increases the duration of honed defenses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "optimized_safeguard",
+        "positionIndex": 7,
+        "name": "Optimized Safeguard",
+        "description": "Increases the maximum amount of stacks for honed defenses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_skill_stacks": 0 },
+          "perRank": { "max_skill_stacks": 2 }
+        }
+      },
+      {
+        "id": "weakening_counter",
+        "positionIndex": 8,
+        "name": "Weakening Counter",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "oppresive_countermeasure",
+        "positionIndex": 9,
+        "name": "Oppresive Countermeasure",
+        "description": "Chance to unleash a ground slam on the attacker when struck dealing damage based on honed defenses stacks.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 5 }
+          }
+        }
+      },
+      {
+        "id": "deflective_fortification",
+        "positionIndex": 10,
+        "name": "Deflective Fortification",
+        "description": "Gain increased damage return per stack of honed defenses decreasing its damage dealt.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "damage_return": 0 },
+          "perRank": { "damage_return": 10 }
+        }
+      },
+      {
+        "id": "sky_bulwark",
+        "positionIndex": 11,
+        "name": "Sky Bulwark",
+        "description": "Giant bulwarks fall down from the sky on hit dealing increased area of effect damage inflicting elemental break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "elemental_break": 0 },
+          "perRank": { "elemental_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 35 }
+          },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 20 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "hauling_surge",
+        "positionIndex": 12,
+        "name": "Hauling Surge",
+        "description": "Pull monsters towards you dealing increased damage and stunning them when reaching maximum stacks of honed defenses.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 18 }
+        }
+      },
+      {
+        "id": "risen_guards",
+        "positionIndex": 13,
+        "name": "Risen Guards",
+        "description": "Increases the amount of maximum stacks. At maximum stacks honed defenses calls forth a legion of skeleton warriors fighting on your side for a short duration dealing 10% of the damage of honed defenses.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "max_skill_stacks": 0,
+            "summon_max_amount": 0
+          },
+          "perRank": {
+            "max_skill_stacks": 50,
+            "summon_max_amount": 3
+          }
+        }
+      },
+      {
+        "id": "unstoppable_goliath",
+        "positionIndex": 14,
+        "name": "Unstoppable Goliath",
+        "description": "Honed defenses no longer causes ground slam at maximum stacks increasing your maximum life, damage return and life replenish for each stack.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_life": 0,
+            "damage_return": 0,
+            "life_replenish_pct": 0
+          },
+          "perRank": {
+            "increased_life": 2,
+            "damage_return": 10,
+            "life_replenish_pct": 15
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "knights_resilience",
+    "classId": "shield_lancer",
+    "name": "Knight's Resilience",
+    "kind": "passive",
+    "description": "Increases your life and all resistances.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Knight",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1, "all_resistances": 5 },
+      "perRank": { "life": 1, "all_resistances": 0.5 }
+    }
+  },
+  {
+    "id": "shield_wall",
+    "classId": "shield_lancer",
+    "name": "Shield Wall",
+    "kind": "buff",
+    "description": "Cast a wall of shields around you blocking monster projectiles dealing arcane and physical damage on hit. Hitting an enemy with Shield Wall generates a Honed Defenses stack.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Shield", "Orbital"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Knight",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 15, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 }
+    },
+    "passiveStats": {
+      "base": { "life": 10 },
+      "perRank": { "life": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Last Stand", "stat": "arcane_skill_damage", "value": 16.5, "per": "skill_level" },
+      { "source": "Honed Defenses", "stat": "arcane_skill_damage", "value": 16.5, "per": "skill_level" },
+      { "source": "Shield Slam", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" },
+      { "source": "Armor", "stat": "arcane_skill_damage", "value": 5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "shield_wall_core",
+        "positionIndex": 0,
+        "name": "Shield Wall",
+        "description": "Core of the Shield Wall subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "spiked_shields",
+        "positionIndex": 1,
+        "name": "Spiked Shields",
+        "description": "Increases the damage dealt by shield wall.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "durable_wall",
+        "positionIndex": 2,
+        "name": "Durable Wall",
+        "description": "Increases the durability and duration of shield wall.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0, "skill_duration": 0 },
+          "perRank": { "summon_life": 3, "skill_duration": 12 }
+        }
+      },
+      {
+        "id": "more_shields",
+        "positionIndex": 3,
+        "name": "More Shields!",
+        "description": "Increases the amount of shields in shield wall.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "split_reflection",
+        "positionIndex": 4,
+        "name": "Split Reflection",
+        "description": "Chance to unleash spikes dealing damage towards the attacker when blocking a projectile.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "defensive_radius",
+        "positionIndex": 5,
+        "name": "Defensive Radius",
+        "description": "Increases the orbiting radius of shield wall.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "shield_growth",
+        "positionIndex": 6,
+        "name": "Shield Growth",
+        "description": "Increases the size of shield wall.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "critical_thorn",
+        "positionIndex": 7,
+        "name": "Critical Thorn",
+        "description": "Chance to critically hit dealing increased critical strike damage with shield wall.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "noxious_shields",
+        "positionIndex": 8,
+        "name": "Noxious Shields",
+        "description": "Chance to inflict poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "breaking_spikes",
+        "positionIndex": 9,
+        "name": "Breaking Spikes",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "dissolving_corrosion",
+        "positionIndex": 10,
+        "name": "Dissolving Corrosion",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 30 }
+        }
+      },
+      {
+        "id": "gravitational_aegis",
+        "positionIndex": 11,
+        "name": "Gravitational Aegis",
+        "description": "Shield wall orbits in an orbit around you with increased projectile speed and increased amount of shields.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "orbital_skill_speed": 0,
+            "projectile_count": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "orbital_skill_speed": 25,
+            "projectile_count": 1,
+            "arcane_skill_damage": 20
+          }
+        }
+      },
+      {
+        "id": "porkupine_carapace",
+        "positionIndex": 12,
+        "name": "Porkupine Carapace",
+        "description": "Chance to inflict bleeding on hit with increased bleeding frequency.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_bleeding_damage": 0,
+            "increased_bleeding_frequency": 0
+          },
+          "perRank": {
+            "increased_bleeding_damage": 80,
+            "increased_bleeding_frequency": 25
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 80 } }
+          ]
+        }
+      },
+      {
+        "id": "shield_vortex",
+        "positionIndex": 13,
+        "name": "Shield Vortex",
+        "description": "Unleash a tornado of shields towards target location pulling nearby monsters towards it.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 25, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "insatiable_bulwark",
+        "positionIndex": 14,
+        "name": "Insatiable Bulwark",
+        "description": "Blocking projectiles and attacks buff the shields increasing damage and size.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "projectile_size": 0,
+            "max_skill_stacks": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 6,
+            "projectile_size": 4.5,
+            "max_skill_stacks": 8
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "damage_reflect",
+    "classId": "shield_lancer",
+    "name": "Damage Reflect",
+    "kind": "passive",
+    "description": "Increases your damage return.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Knight",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage_return": 15, "total_damage_return": 5 },
+      "perRank": { "damage_return": 15, "total_damage_return": 5 }
+    }
+  },
+  {
+    "id": "knights_vigor",
+    "classId": "shield_lancer",
+    "name": "Knight's Vigor",
+    "kind": "passive",
+    "description": "Gain increased maximum life and vitality.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Knight",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1, "vitality": 1 },
+      "perRank": { "life": 1, "vitality": 1 }
+    }
+  },
+  {
+    "id": "counter",
+    "classId": "shield_lancer",
+    "name": "Counter",
+    "kind": "active",
+    "description": "When active all monster attacks get countered with thrusting lances dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Shield", "Projectile"],
+    "movementDuringUse": 100,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "effectDuration": 6,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Knight",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 24.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Taunt", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Damage Reflect", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Knight's Resilience", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" },
+      { "source": "Armor", "stat": "arcane_skill_damage", "value": 8, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "counter_core",
+        "positionIndex": 0,
+        "name": "Counter",
+        "description": "Core of the Counter subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharp_vengeance",
+        "positionIndex": 1,
+        "name": "Sharp Vengeance",
+        "description": "Increases the damage dealt by counter.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "vengeful_hit",
+        "positionIndex": 2,
+        "name": "Vengeful Hit",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "double_edge",
+        "positionIndex": 3,
+        "name": "Double Edge",
+        "description": "Chance to throw additional lances when struck.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "rupturing_lance",
+        "positionIndex": 4,
+        "name": "Rupturing Lance",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "spell_reflection",
+        "positionIndex": 5,
+        "name": "Spell Reflection",
+        "description": "Counter also reflects non-physical projectiles and attacks dealing a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 15 }
+        }
+      },
+      {
+        "id": "battle_magus",
+        "positionIndex": 6,
+        "name": "Battle Magus",
+        "description": "Increases the duration of counter.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "lusting_blood",
+        "positionIndex": 7,
+        "name": "Lusting Blood",
+        "description": "Chance to replenish a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "life_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "stunning_lance",
+        "positionIndex": 8,
+        "name": "Stunning Lance",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "cheap_counter",
+        "positionIndex": 9,
+        "name": "Cheap Counter",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "bursting_lances",
+        "positionIndex": 10,
+        "name": "Bursting Lances",
+        "description": "Chance to throw multiple piercing lances around you when struck.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 2 }
+          }
+        }
+      },
+      {
+        "id": "insatiable_challenger",
+        "positionIndex": 11,
+        "name": "Insatiable Challenger",
+        "description": "Casting counter taunts all nearby monsters inflicting armor break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "armor_break": 0, "skill_range": 0 },
+          "perRank": { "armor_break": 25, "skill_range": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "volley_build_up",
+        "positionIndex": 12,
+        "name": "Volley Build-up",
+        "description": "During its duration counter stores all damage taken. When expiring throw javelins at nearby monsters unleashing the stored damage taken.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "give_no_quarter",
+        "positionIndex": 13,
+        "name": "Give No Quarter",
+        "description": "Counter no longer has a duration but instead frequently drains your life and mana. Counter can be activated and deactivated and no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "increased_life": 0,
+            "increased_mana": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 45,
+            "increased_life": -2.5,
+            "increased_mana": -2.5
+          }
+        }
+      },
+      {
+        "id": "versus_the_world",
+        "positionIndex": 14,
+        "name": "Versus the World",
+        "description": "Counter no longer throws lances at monsters but gives you a chance to block incoming damage reflecting it back to the attacker with intense power.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "damage_return": 0 },
+            "perRank": { "damage_return": 750 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "last_stand",
+    "classId": "shield_lancer",
+    "name": "Last Stand",
+    "kind": "buff",
+    "description": "Restore yourself to full life and temporarily gain increased magic skill damage and physical damage reduction.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Knight",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "magic_skill_damage": 3.5, "physical_damage_reduction": 1.25 },
+      "perRank": { "magic_skill_damage": 3.5, "physical_damage_reduction": 1.25 }
+    }
+  }
+]

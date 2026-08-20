@@ -10,21 +10,16 @@ A desktop build planner for **Hero Siege** - a calculator for the talent tree, g
 
 ## Features
 
-- [x] **Talent tree** - interactive pan/zoom graph view with auto-pathfinding, path preview on hover, and reset
-- [x] **Skills** - point allocation that respects skill prerequisites and per-level caps
-- [x] **Gear** - slots for weapons, armor, charms, jewelry with sockets (gems/runes) and runeword detection
-- [x] **Affixes** - add affixes with tier and adjustable roll
-- [x] **Stats** - aggregated bonuses from tree, gear, attributes, and runewords
-- [x] **Custom stats** - free-text user-entered stats for things outside the data model
-- [x] **Notes** - sanitized WYSIWYG editor (per build), preserved across share links
-- [x] **Builds menu** - multiple saved builds, each with multiple profiles
-- [x] **Share** - export the entire build to a compressed URL (lz-string)
-- [x] **Update check** - opt-in update check via GitHub Releases
-
-### TODO:
-
-- [ ] Sub-skills
-- [ ] Correct affixes on oncut jewels
+- [x] **Talent tree** — interactive pan/zoom graph view with auto-pathfinding, path preview on hover, and reset
+- [x] **Skills** — point allocation that respects skill prerequisites and per-level caps
+- [x] **Gear** — slots for weapons, armor, charms, jewelry with sockets (gems/runes) and runeword detection
+- [x] **Affixes** — add affixes with tier and adjustable roll
+- [x] **Stats** — aggregated bonuses from tree, gear, attributes, and runewords
+- [x] **Custom stats** — free-text user-entered stats for things outside the data model
+- [x] **Notes** — sanitized WYSIWYG editor (per build), preserved across share links
+- [x] **Builds menu** — multiple saved builds, each with multiple profiles
+- [x] **Share** — export the entire build to a compressed URL (lz-string)
+- [x] **Update check** — opt-in update check via GitHub Releases
 
 <img width="1710" height="1041" alt="image" src="https://github.com/user-attachments/assets/1bed9cf0-fbff-4231-b7bd-42ae25968938" />
 
@@ -55,7 +50,7 @@ Download the installer / binary for your platform from Releases. The app is self
 |---|---|---|
 | **Node.js** | 20.x LTS or newer | Frontend (Vite + React) |
 | **npm** | 10.x (ships with Node 20+) | Package manager |
-| **Rust toolchain** | `rustup` with `stable` (≥ 1.77) | Tauri backend |
+| **Rust toolchain** | `rustup` with `stable` (≥ 1.77) | Tauri engine |
 | **Tauri prerequisites** | see below per OS | Linker, system libraries |
 
 ### Build
@@ -84,9 +79,8 @@ sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev
 
 For more information about tauri see [official Tauri guide](https://tauri.app/start/prerequisites/)
 
-
 ## FAQ
 
 **Q:** *Can i import my save file from game to planner?*
 
-**A:** *No you can't. It is agaist to EULA/TOS*
+**A:** *No you can't. It is against the EULA/TOS.*

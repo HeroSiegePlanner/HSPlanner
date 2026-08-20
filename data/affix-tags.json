@@ -1,0 +1,49 @@
+{
+  "sentry_skills": { "tags": ["Sentry"], "effect": "rank" },
+  "sentry_damage": { "tags": ["Sentry"], "effect": "damage" },
+  "sentry_damage_more": { "tags": ["Sentry"], "effect": "damage_more" },
+  "sentry_attack_speed": { "tags": ["Sentry"], "effect": "attack_speed" },
+  "sentry_max_amount": { "tags": ["Sentry"], "effect": "max_amount" },
+  "sentry_duration": { "tags": ["Sentry"], "effect": "none" },
+  "sentry_extra_projectile_chance": { "tags": ["Sentry"], "effect": "none" },
+
+  "summon_skills": { "tags": ["Summon"], "effect": "rank" },
+  "summon_damage": { "tags": ["Summon"], "effect": "damage" },
+  "summon_attack_speed": { "tags": ["Summon"], "effect": "attack_speed" },
+  "summon_max_amount": { "tags": ["Summon"], "effect": "max_amount" },
+  "summon_projectile_damage": { "tags": ["Summon", "Projectile"], "effect": "damage" },
+  "summon_projectile_damage_more": { "tags": ["Summon", "Projectile"], "effect": "damage_more" },
+  "summon_melee_damage": { "tags": ["Summon", "Melee"], "effect": "damage" },
+
+  "guardian_damage": { "tags": ["Guardian"], "effect": "flat_damage" },
+  "guardian_attack_speed": { "tags": ["Guardian"], "effect": "attack_speed" },
+  "max_summoned_guardians": { "tags": ["Guardian"], "effect": "max_amount" },
+  "guardian_duration": { "tags": ["Guardian"], "effect": "none" },
+  "extra_guardian_chance": { "tags": ["Guardian"], "effect": "none" },
+
+  "projectile_skills": { "tags": ["Projectile"], "effect": "rank" },
+  "projectile_speed": { "tags": ["Projectile"], "effect": "none" },
+
+  "explosion_skills": { "tags": ["Explosion"], "effect": "rank" },
+  "explosion_damage": { "tags": ["Explosion"], "effect": "damage" },
+  "explosion_aoe": { "tags": ["Explosion"], "effect": "none" },
+
+  "orbital_skill_damage": { "tags": ["Orbital"], "effect": "damage" },
+  "orbital_skill_damage_more": { "tags": ["Orbital"], "effect": "damage_more" },
+  "orbital_skill_duration": { "tags": ["Orbital"], "effect": "none" },
+  "orbital_skill_size": { "tags": ["Orbital"], "effect": "none" },
+  "orbital_skill_speed": { "tags": ["Orbital"], "effect": "none" },
+
+  "spell_aoe_damage": { "tags": ["Spell", "Area of Effect"], "effect": "damage" },
+  "spell_aoe_damage_more": { "tags": ["Spell", "Area of Effect"], "effect": "damage_more" },
+  "spell_aoe_radius": { "tags": ["Spell", "Area of Effect"], "effect": "none" },
+
+  "spell_projectile_damage": { "tags": ["Spell", "Projectile"], "effect": "damage" },
+  "spell_projectile_size": { "tags": ["Spell", "Projectile"], "effect": "none" },
+  "additional_spell_projectile": { "tags": ["Spell", "Projectile"], "effect": "none" },
+  "extra_spell_projectiles_pct": { "tags": ["Spell", "Projectile"], "effect": "none" },
+  "two_handed_spell_projectile_damage": { "tags": ["Spell", "Projectile"], "effect": "none" },
+
+  "ranged_projectile_damage": { "tags": ["Ranged", "Projectile"], "effect": "damage" },
+  "ranged_projectile_damage_more": { "tags": ["Ranged", "Projectile"], "effect": "damage_more" }
+}

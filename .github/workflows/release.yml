@@ -42,7 +42,7 @@ jobs:
             patchelf
 
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -53,7 +53,7 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: './engine -> target'
 
       - name: Install npm dependencies
         run: npm ci
@@ -80,6 +80,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_GIST_TOKEN: ${{ secrets.VITE_GIST_TOKEN }}
+          VITE_WEB_SHARE_CREATE_URL: ${{ vars.VITE_WEB_SHARE_CREATE_URL }}
+          VITE_WEB_SHARE_GET_URL: ${{ vars.VITE_WEB_SHARE_GET_URL }}
         with:
           tagName: ${{ inputs.tag }}
           releaseName: ${{ inputs.tag }}

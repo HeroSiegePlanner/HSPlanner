@@ -1,0 +1,2873 @@
+[
+  {
+    "id": "battle_glance",
+    "classId": "samurai",
+    "name": "Battle Glance",
+    "kind": "active",
+    "description": "Perform an area of effect attack with increased damage and attack rating.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Strike"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 24,
+        "perLevel": 26
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Quickslash",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Bushido",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Live by the Sword",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "battle_glance_core",
+        "positionIndex": 0,
+        "name": "Battle Glance",
+        "description": "Core of the Battle Glance subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "quick_strike",
+        "positionIndex": 1,
+        "name": "Quick Strike",
+        "description": "Increases the amount of attacks performed by battle glance.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "honed_blade",
+        "positionIndex": 2,
+        "name": "Honed Blade",
+        "description": "Increases the damage dealt by battle glance.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "refined_technique",
+        "positionIndex": 3,
+        "name": "Refined Technique",
+        "description": "Increases the area of effect radius of battle glance.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "intanglible",
+        "positionIndex": 4,
+        "name": "Intanglible",
+        "description": "Chance on hit to gain increased dodge chance for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "dodge_chance": 0 },
+            "perRank": { "dodge_chance": 12 }
+          }
+        }
+      },
+      {
+        "id": "execution",
+        "positionIndex": 5,
+        "name": "Execution",
+        "description": "Execute monsters with low life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "restorative_strikes",
+        "positionIndex": 6,
+        "name": "Restorative Strikes",
+        "description": "Leech life and mana on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_steal": 0, "mana_steal": 0 },
+          "perRank": { "life_steal": 4, "mana_steal": 2 }
+        }
+      },
+      {
+        "id": "spinning_katanas",
+        "positionIndex": 7,
+        "name": "Spinning Katanas",
+        "description": "Chance on attack to summon a rotating blade orbiting around you for a short period inflicting bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "from_behind",
+        "positionIndex": 8,
+        "name": "From Behind",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "guided_swing",
+        "positionIndex": 9,
+        "name": "Guided Swing",
+        "description": "Increases critical strike damage by battle glance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "burst_of_speed",
+        "positionIndex": 10,
+        "name": "Burst of Speed",
+        "description": "Chance on kill to gain increased movement speed for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_kill",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "movement_speed": 0 },
+            "perRank": { "movement_speed": 15 }
+          }
+        }
+      },
+      {
+        "id": "shadow_from_within",
+        "positionIndex": 11,
+        "name": "Shadow From Within",
+        "description": "Chance on attack to unleash a shadowy ball of energy traveling towards your blade causing monsters to be cloned to harm them selves on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 75, "area_of_effect": 33 }
+          }
+        }
+      },
+      {
+        "id": "blood_harvest",
+        "positionIndex": 12,
+        "name": "Blood Harvest",
+        "description": "Gain stacks of blood harvest when killing monsters. At maximum stacks gain increased damage and attack speed based on your vitality.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_attack_speed": 0 },
+          "perRank": {
+            "physical_skill_damage": 35,
+            "increased_attack_speed": 1
+          }
+        }
+      },
+      {
+        "id": "perfection",
+        "positionIndex": 13,
+        "name": "Perfection",
+        "description": "Battle Glance now deals increased cleave damage to all monsters within your blade’s reach.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 60, "area_of_effect": 50 }
+        }
+      },
+      {
+        "id": "evasive_prodigy",
+        "positionIndex": 14,
+        "name": "Evasive Prodigy",
+        "description": "Dodging or blocking an attack causes your next battle glance to unleash bouncing katanas in an arc infront of you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 7, "projectile_count": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "shuriken_throw",
+    "classId": "samurai",
+    "name": "Shuriken Throw",
+    "kind": "active",
+    "description": "Throw three piercing Shurikens at your target dealing increased damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Attack",
+      "Active",
+      "Ranged",
+      "Projectile",
+      "Strike"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "damageType": "physical",
+    "range": 320,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 35.5,
+        "perLevel": 17.5
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Battle Glance",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Kunai",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Warriors Spirit",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "shuriken_throw_core",
+        "positionIndex": 0,
+        "name": "Shuriken Throw",
+        "description": "Core of the Shuriken Throw subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "pointy_edges",
+        "positionIndex": 1,
+        "name": "Pointy Edges",
+        "description": "Increases critical strike chance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 7 }
+        }
+      },
+      {
+        "id": "quickthrow",
+        "positionIndex": 2,
+        "name": "Quickthrow",
+        "description": "Increases projectile speed.",
+        "maxRank": 7,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 12 }
+        }
+      },
+      {
+        "id": "forceful_flight",
+        "positionIndex": 3,
+        "name": "Forceful Flight",
+        "description": "Increases damage dealt by shurikens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "twin_shurikens",
+        "positionIndex": 4,
+        "name": "Twin Shurikens",
+        "description": "Throw additional shurikens with increased mana cost.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "shady_trickster",
+        "positionIndex": 5,
+        "name": "Shady Trickster",
+        "description": "While standing in smoke bomb thrown shurikens grant you a brief moment of invisibility and increased dodge chance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "dodge_chance": 0, "skill_duration": 0 },
+          "perRank": { "dodge_chance": 10, "skill_duration": 1 }
+        }
+      },
+      {
+        "id": "starstruck",
+        "positionIndex": 6,
+        "name": "Starstruck",
+        "description": "Chance on critical strikes to split shurikens into smaller shurikens in a cone behind the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "empowering_shurikens",
+        "positionIndex": 7,
+        "name": "Empowering Shurikens",
+        "description": "Chance on hit to increase your attack speed and attack damage for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "increased_attack_speed": 0 },
+            "perRank": {
+              "physical_skill_damage": 15,
+              "increased_attack_speed": 7
+            }
+          }
+        }
+      },
+      {
+        "id": "sharp_stars",
+        "positionIndex": 8,
+        "name": "Sharp stars",
+        "description": "Increases critical strike damage dealt by shurikens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "throwing_profiency",
+        "positionIndex": 9,
+        "name": "Throwing Profiency",
+        "description": "Increases attack rating while wielding a throwing weapon.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 15 }
+        }
+      },
+      {
+        "id": "manainfused_shurikens",
+        "positionIndex": 10,
+        "name": "Manainfused Shurikens",
+        "description": "Increases the damage dealt by shurikens according to mana spent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_max_mana": 0 },
+          "perRank": { "conversion_max_mana": 20 }
+        }
+      },
+      {
+        "id": "shadow_shuriken",
+        "positionIndex": 11,
+        "name": "Shadow Shuriken",
+        "description": "Throw a single big shuriken dealing increased damage, stunning and returning to you. If re-casted while shuriken exists, teleport to the shurikens position throwing smaller shurikens in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 75, "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "cutting_field",
+        "positionIndex": 12,
+        "name": "Cutting Field",
+        "description": "Shurikens now stop mid air and float for a short period and explode into sharp metal shrapnel around it dealing damage and slowing on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 60, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "ripping_flesh",
+        "positionIndex": 13,
+        "name": "Ripping Flesh",
+        "description": "Shurikens now attach to monsters on hit and are ripped off back to the samurai after a short period or if the samurai moves far away enough. Shuriken throw now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 1 }
+        }
+      },
+      {
+        "id": "slicing_ricochet",
+        "positionIndex": 14,
+        "name": "Slicing Ricochet",
+        "description": "Shurikens now ricochet from monster hits and terrain inflicting bleeding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "quickslash",
+    "classId": "samurai",
+    "name": "Quickslash",
+    "kind": "active",
+    "description": "Perform a quick dash unleashing area of effect slash dealing increased physical damage and knocking up monsters.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Movement",
+      "Strike"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 8,
+        "perLevel": 23.5
+      },
+      "flatPhysicalMin": {
+        "base": 1,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 5,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Battle Glance",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shuriken Throw",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Evasion",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "quickslash_core",
+        "positionIndex": 0,
+        "name": "Quickslash",
+        "description": "Core of the Quickslash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lightspeed",
+        "positionIndex": 1,
+        "name": "Lightspeed",
+        "description": "Increases dash speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 10 }
+        }
+      },
+      {
+        "id": "greater_slash",
+        "positionIndex": 2,
+        "name": "Greater Slash",
+        "description": "Increases quickslash area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "dual_hit",
+        "positionIndex": 3,
+        "name": "Dual Hit",
+        "description": "Increases the amount of performed slashes.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "exposed_weakness",
+        "positionIndex": 4,
+        "name": "Exposed Weakness",
+        "description": "Chance on hit to stun the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "top_to_bottom",
+        "positionIndex": 5,
+        "name": "Top to Bottom",
+        "description": "Increases attack rating when using quickslash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "exploitation",
+        "positionIndex": 6,
+        "name": "Exploitation",
+        "description": "Increases the damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "spirit_double",
+        "positionIndex": 7,
+        "name": "Spirit Double",
+        "description": "Summon shadow performing quickslash towards a nearby monster dealing a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 20 }
+        }
+      },
+      {
+        "id": "origin_point",
+        "positionIndex": 8,
+        "name": "Origin Point",
+        "description": "Leave a shadow behind slashing monsters around it dealing a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 25 }
+        }
+      },
+      {
+        "id": "lost_teachings",
+        "positionIndex": 9,
+        "name": "Lost Teachings",
+        "description": "Increases the range of quickslash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "switch_it_up",
+        "positionIndex": 10,
+        "name": "Switch it Up",
+        "description": "Quickslash no longer deals damage in a circle and instead deals damage to the closest target and a cone behind them firing multiple piercing kunai.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 10, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "plan_ahead",
+        "positionIndex": 11,
+        "name": "Plan Ahead",
+        "description": "Summon a shadow dashing towards your aim multiple times dealing damage to all monsters hit. After it expires you quickly dash following the same path with massively increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 80 }
+        }
+      },
+      {
+        "id": "multiplicative_duality",
+        "positionIndex": 12,
+        "name": "Multiplicative Duality",
+        "description": "Spirit double now spawns multiple shadows dashing with increased speed and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "projectile_speed": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 30,
+            "projectile_speed": 20,
+            "projectile_count": 1
+          }
+        }
+      },
+      {
+        "id": "mechanical_advantage",
+        "positionIndex": 13,
+        "name": "Mechanical Advantage",
+        "description": "Dash an increased range sending explosive kunai in an aura at your wake.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 15, "skill_range": 35 }
+        }
+      },
+      {
+        "id": "now_you_see_me",
+        "positionIndex": 14,
+        "name": "Now You See Me",
+        "description": "Slash with increased area of effect radius and damage dropping a smoke bomb at target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 40, "area_of_effect": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "evasion",
+    "classId": "samurai",
+    "name": "Evasion",
+    "kind": "passive",
+    "description": "Gain a chance to evade melee and ranged attacks.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "dodge_chance": 1
+      },
+      "perRank": {
+        "dodge_chance": 1
+      }
+    }
+  },
+  {
+    "id": "smoke_bomb",
+    "classId": "samurai",
+    "name": "Smoke Bomb",
+    "kind": "active",
+    "description": "Explode a smoke bomb dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 27.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Evasion",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Quickslash",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Bushido",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "smoke_bomb_core",
+        "positionIndex": 0,
+        "name": "Smoke Bomb",
+        "description": "Core of the Smoke Bomb subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "weakening_powder",
+        "positionIndex": 1,
+        "name": "Weakening Powder",
+        "description": "Slows and reduces attack rating of targets hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "shocked", "amount": { "base": 0, "perRank": 3 } }
+          ]
+        }
+      },
+      {
+        "id": "key_to_precision",
+        "positionIndex": 2,
+        "name": "Key to Precision",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "acidic_component",
+        "positionIndex": 3,
+        "name": "Acidic Component",
+        "description": "Chance on hit to inflict armor break.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "thick_clouds",
+        "positionIndex": 4,
+        "name": "Thick Clouds",
+        "description": "Increases smoke bomb area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "mindfulness",
+        "positionIndex": 5,
+        "name": "Mindfulness",
+        "description": "Inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "greater_impact",
+        "positionIndex": 6,
+        "name": "Greater Impact",
+        "description": "Increases damage dealt by smoke bomb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "preparation",
+        "positionIndex": 7,
+        "name": "Preparation",
+        "description": "Smoke bomb has a chance to bounce releasing an additional smoke cloud.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "swift_deploy",
+        "positionIndex": 8,
+        "name": "Swift Deploy",
+        "description": "Increases cast rate when using smoke bomb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "feel_the_heat",
+        "positionIndex": 9,
+        "name": "Feel the Heat",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "burning_weakness",
+        "positionIndex": 10,
+        "name": "Burning Weakness",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "adjusted_formula",
+        "positionIndex": 11,
+        "name": "Adjusted Formula",
+        "description": "Significantly reduce enemy attack rating and increase monster damage taken when inside smoke bomb.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "enemy_damage_taken_increased": 0 },
+          "perRank": { "enemy_damage_taken_increased": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "shocked", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "stealth_zone",
+        "positionIndex": 12,
+        "name": "Stealth Zone",
+        "description": "Throw out smoke bombs in all directions forming a massive cloud increasing your movement speed inside of it. Smoke bomb now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "movement_speed": 0 },
+          "perRank": { "arcane_skill_damage": 75, "movement_speed": 35 }
+        }
+      },
+      {
+        "id": "monster_cleansing",
+        "positionIndex": 13,
+        "name": "Monster Cleansing",
+        "description": "Smoke bomb consumes damage over time debuffs from monsters inside of it dealing full damage instantly.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 50 }
+        }
+      },
+      {
+        "id": "smoke_trail",
+        "positionIndex": 14,
+        "name": "Smoke Trail",
+        "description": "Smoke bomb now leaves a trail of smoke behind you dealing increased damage. Smoke bomb now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "explosive_kunai",
+    "classId": "samurai",
+    "name": "Explosive Kunai",
+    "kind": "active",
+    "description": "Throw an explosive kunai that explodes and splits on impact, causing smaller explosions that deal Arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Projectile",
+      "Explosion",
+      "Spell"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "usesAttackSpeed": true,
+    "effectDuration": 2,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 16.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Warriors Spirit",
+        "stat": "arcane_skill_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Live by the Sword",
+        "stat": "arcane_skill_damage",
+        "value": 16.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Smoke Bomb",
+        "stat": "arcane_skill_damage",
+        "value": 13,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 9,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "explosive_kunai_core",
+        "positionIndex": 0,
+        "name": "Explosive Kunai",
+        "description": "Core of the Explosive Kunai subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "stronger_explosives",
+        "positionIndex": 1,
+        "name": "Stronger Explosives",
+        "description": "Increases damage dealt by explosive kunai.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "packed_up_kunai",
+        "positionIndex": 2,
+        "name": "Packed Up Kunai",
+        "description": "Increases kunai explosion area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "satisfaction",
+        "positionIndex": 3,
+        "name": "Satisfaction",
+        "description": "Decreases the mana cost of explosive kunai.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 8 }
+        }
+      },
+      {
+        "id": "split_up",
+        "positionIndex": 4,
+        "name": "Split Up",
+        "description": "Chance on hit to split into additional kunais.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "willful_sacrifice",
+        "positionIndex": 5,
+        "name": "Willful Sacrifice",
+        "description": "Now consumes a percentage of your maximum life each cast giving your kunai increased speed and explosion aoe. Maximum life damage is non-lethal.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "projectile_speed": 0, "area_of_effect": 0 },
+          "perRank": { "projectile_speed": 30, "area_of_effect": 35 }
+        }
+      },
+      {
+        "id": "first_is_best",
+        "positionIndex": 6,
+        "name": "First Is Best",
+        "description": "Increases the damage dealt and explosion area of effect radius kunai.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 5, "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "ronins_curse",
+        "positionIndex": 7,
+        "name": "Ronin's Curse",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "doubleblast",
+        "positionIndex": 8,
+        "name": "Doubleblast",
+        "description": "Chance on hit for the kunai to explode an additional time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "bouncy_kunai",
+        "positionIndex": 9,
+        "name": "Bouncy Kunai",
+        "description": "Kunais have a chance to bounce off of terrain and stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "concussive_explosions",
+        "positionIndex": 10,
+        "name": "Concussive Explosions",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "doubleforking_kunai",
+        "positionIndex": 11,
+        "name": "Doubleforking Kunai",
+        "description": "Explosive kunai split an additional time dealing increased damage each time they split.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 3 }
+        }
+      },
+      {
+        "id": "penetration_volley",
+        "positionIndex": 12,
+        "name": "Penetration Volley",
+        "description": "Throw a spread of piercing kunai that explode on each enemy hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "arcane_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "chainsplosions",
+        "positionIndex": 13,
+        "name": "Chainsplosions",
+        "description": "Split kunais chain on the first enemy hit exploding on each enemy chained to.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_bounces": 2, "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "little_slicers",
+        "positionIndex": 14,
+        "name": "Little Slicers",
+        "description": "Explosive kunai no longer explode but instead pierces with increased projectile speed slicing monsters inflicting bleeding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0, "projectile_speed": 0 },
+          "perRank": { "increased_bleeding_damage": 50, "projectile_speed": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "warriors_spirit",
+    "classId": "samurai",
+    "name": "Warriors Spirit",
+    "kind": "passive",
+    "description": "Increases your attack speed.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 5,
+        "crit_damage": 10
+      },
+      "perRank": {
+        "increased_attack_speed": 0.5,
+        "crit_damage": 0.5
+      }
+    }
+  },
+  {
+    "id": "bushido",
+    "classId": "samurai",
+    "name": "Bushido",
+    "kind": "buff",
+    "description": "Activate to gain a buff that increases your attack damage for every 10% of missing Life.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "baseCastRate": 1,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "attack_damage": 3.5
+      },
+      "perRank": {
+        "attack_damage": 3.5
+      }
+    }
+  },
+  {
+    "id": "live_by_the_sword",
+    "classId": "samurai",
+    "name": "Live by the Sword",
+    "kind": "buff",
+    "description": "Temporarily increases your attack speed and movement speed.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "tree": "Ronin",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "movement_speed": 30
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "movement_speed": 1
+      }
+    }
+  },
+  {
+    "id": "blade_barrier",
+    "classId": "samurai",
+    "name": "Blade Barrier",
+    "kind": "active",
+    "description": "Summon a barrier of rotating blades around you dealing Physical Damage and additional Arcane Damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Orbital",
+      "Strike"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "damageType": "arcane",
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "effectDuration": 6,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 6
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 0,
+        "perLevel": 11
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 5,
+        "perLevel": 1
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Fan of Knives",
+        "stat": "arcane_skill_damage",
+        "value": 25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Battle Glance",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "blade_barrier_core",
+        "positionIndex": 0,
+        "name": "Blade Barrier",
+        "description": "Core of the Blade Barrier subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "rotational_force",
+        "positionIndex": 1,
+        "name": "Rotational Force",
+        "description": "Increases blade barriers rotation speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "cursed_blades",
+        "positionIndex": 2,
+        "name": "Cursed Blades",
+        "description": "Blade barrier has a chance to shoot out a blade when hitting a target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 12 }
+          }
+        }
+      },
+      {
+        "id": "barrier_extension",
+        "positionIndex": 3,
+        "name": "Barrier Extension",
+        "description": "Increases duration of blade barrier.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "damascus_steel_blades",
+        "positionIndex": 4,
+        "name": "Damascus Steel Blades",
+        "description": "Increases physical damage dealt by blade barrier but reduces arcane damage dealt.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_damage": 0, "arcane_skill_damage": 0 },
+          "perRank": { "attack_damage": 12.5, "arcane_skill_damage": -15 }
+        }
+      },
+      {
+        "id": "infinite_potential",
+        "positionIndex": 5,
+        "name": "Infinite Potential",
+        "description": "Increases the amount of blades in the barrier.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "battle_wounds",
+        "positionIndex": 6,
+        "name": "Battle Wounds",
+        "description": "Chance to cause monsters to bleed on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "crippling_hits",
+        "positionIndex": 7,
+        "name": "Crippling Hits",
+        "description": "Slows monsters on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "slow_target": 0 },
+          "perRank": { "slow_target": 10 }
+        }
+      },
+      {
+        "id": "laceration",
+        "positionIndex": 8,
+        "name": "Laceration",
+        "description": "Increases damage dealt to bleeding enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "sharp_greeting",
+        "positionIndex": 9,
+        "name": "Sharp Greeting",
+        "description": "Blade barrier deals increased damage to monsters with full life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "spirit_fire",
+        "positionIndex": 10,
+        "name": "Spirit Fire",
+        "description": "Physical scaling is converted to burning. Blade barrier now only deals arcane damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "twin_barriers",
+        "positionIndex": 11,
+        "name": "Twin Barriers",
+        "description": "Blade barrier now summons an outer and an inner barrier. The inner barrier deals increased damage and the out barrier is guaranteed to proc cursed blades on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "forgotten_arts",
+        "positionIndex": 12,
+        "name": "Forgotten Arts",
+        "description": "Hitting an enemy refreshes blade barrier duration. Gain increased damage for each active blade barrier you have.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0, "arcane_skill_damage": 0 },
+          "perRank": { "skill_duration": 0.05, "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "body_and_soul",
+        "positionIndex": 13,
+        "name": "Body And Soul",
+        "description": "Blades seek out and stick on nearby monsters dealing increased damage. Blades return to the player if the target is too far away or the monster dies.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "spinning_armory",
+        "positionIndex": 14,
+        "name": "Spinning Armory",
+        "description": "Adds an additional orbital layer of blades.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": -10, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "exploding_bolas",
+    "classId": "samurai",
+    "name": "Exploding Bolas",
+    "kind": "active",
+    "description": "Throw bolas that deal arcane damage on impact and again when they explode after a short delay.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Melee",
+      "Projectile",
+      "Explosion",
+      "Strike"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "baseCastRate": 1,
+    "effectDuration": 3,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 11
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Shuriken Throw",
+        "stat": "arcane_skill_damage",
+        "value": 16,
+        "per": "skill_level"
+      },
+      {
+        "source": "Fan of Knives",
+        "stat": "arcane_skill_damage",
+        "value": 13.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Kunai",
+        "stat": "arcane_skill_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "exploding_bolas_core",
+        "positionIndex": 0,
+        "name": "Exploding Bolas",
+        "description": "Core of the Exploding Bolas subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "explosive_outburst",
+        "positionIndex": 1,
+        "name": "Explosive Outburst",
+        "description": "Increases the explosion area of effect radius of exploding bolas.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "improved_design",
+        "positionIndex": 2,
+        "name": "Improved Design",
+        "description": "Increases the damage dealt by exploding bolas.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "close_impact",
+        "positionIndex": 3,
+        "name": "Close Impact",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "fastbol",
+        "positionIndex": 4,
+        "name": "Fastbol",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "multibolas",
+        "positionIndex": 5,
+        "name": "Multibolas",
+        "description": "Throw multiple bolas in an arc.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "low_blow",
+        "positionIndex": 6,
+        "name": "Low Blow",
+        "description": "Bolas have a chance on hit to stun the enemy.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "another_one",
+        "positionIndex": 7,
+        "name": "Another One",
+        "description": "Chance for bolas to explode an additional time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "tough_fall",
+        "positionIndex": 8,
+        "name": "Tough Fall",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "speedslinger",
+        "positionIndex": 9,
+        "name": "Speedslinger",
+        "description": "Increases cast rate when using exploding bolas.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 8 }
+        }
+      },
+      {
+        "id": "longer_ropes",
+        "positionIndex": 10,
+        "name": "Longer Ropes",
+        "description": "Bolas now pierce allowing them to attach to multiple targets dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 20 }
+        }
+      },
+      {
+        "id": "loaded_charge",
+        "positionIndex": 11,
+        "name": "Loaded Charge",
+        "description": "Bolas are stuck on enemies for a longer period of time, dealing damage to them during this period causes the explosion to gain increased damage & size up to 5 times.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 15, "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "clusterducks",
+        "positionIndex": 12,
+        "name": "Clusterducks",
+        "description": "Throw multiple explosive rubberducks that bounce towards a nearby target before exploding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 75, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "magnetic_string",
+        "positionIndex": 13,
+        "name": "Magnetic String",
+        "description": "Monsters caught by bolas are pulled towards the first target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 20, "skill_range": 25 }
+        }
+      },
+      {
+        "id": "bolad_stasis",
+        "positionIndex": 14,
+        "name": "Bola'd Stasis",
+        "description": "Bola now grabs all enemies on its path and pulls nearby enemies towards it when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 15, "skill_range": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fan_of_knives",
+    "classId": "samurai",
+    "name": "Fan of Knives",
+    "kind": "passive",
+    "description": "Attacks have a chance to throw knives around you dealing physical damage to nearby monsters. Additionally the knives have a chance to ricochet to nearby monsters.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive",
+      "Projectile",
+      "Strike"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "damageType": "physical",
+    "range": 320,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 34,
+        "perLevel": 20
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "passiveStats": {
+      "base": {
+        "ricochet_chance": 5
+      },
+      "perRank": {
+        "ricochet_chance": 0.33
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Shuriken Throw",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Blade Barrier",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      }
+    ]
+  },
+  {
+    "id": "for_honor",
+    "classId": "samurai",
+    "name": "For Honor",
+    "kind": "buff",
+    "description": "Temporarily increases your attack damage and movement speed.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "attack_damage": 4.75,
+        "movement_speed": 2.5
+      },
+      "perRank": {
+        "attack_damage": 4.75,
+        "movement_speed": 2.5
+      }
+    }
+  },
+  {
+    "id": "omnislash",
+    "classId": "samurai",
+    "name": "Omnislash",
+    "kind": "active",
+    "description": "Become untargetable and rapidly strike monsters multiple times with increased attack rating dealing increased damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Chain Lightning",
+      "Strike"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "damageType": "physical",
+    "range": 320,
+    "baseCooldown": 5,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 82,
+        "perLevel": 22
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "For Honor",
+        "stat": "attack_damage",
+        "value": 2,
+        "per": "skill_level"
+      },
+      {
+        "source": "Blade Barrier",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Empires Slash",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "omnislash_core",
+        "positionIndex": 0,
+        "name": "Omnislash",
+        "description": "Core of the Omnislash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "clean_hits",
+        "positionIndex": 1,
+        "name": "Clean Hits",
+        "description": "Increases attack rating when using omnislash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "extra_cut",
+        "positionIndex": 2,
+        "name": "Extra Cut",
+        "description": "Increases the amount of slashes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 2 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "no_hesitation",
+        "positionIndex": 3,
+        "name": "No Hesitation",
+        "description": "Reduces the cooldown of omnislash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "powerful_slashes",
+        "positionIndex": 4,
+        "name": "Powerful Slashes",
+        "description": "Increases the damage dealt by omnislash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "looming_cover",
+        "positionIndex": 5,
+        "name": "Looming Cover",
+        "description": "When cast inside a smoke bomb invulnerability lasts for a small duration after omnislash ends.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "nail_in_the_coffin",
+        "positionIndex": 6,
+        "name": "Nail In The Coffin",
+        "description": "Throw a piercing kunai at a nearby enemy with reduced damage each strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12.5 }
+        }
+      },
+      {
+        "id": "emperors_orders",
+        "positionIndex": 7,
+        "name": "Emperor's Orders",
+        "description": "Striking monsters with Omnislash has a chance to cast empires slash.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "killstrike",
+        "positionIndex": 8,
+        "name": "Killstrike",
+        "description": "Increases critical chance with omnislash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "thirst_for_death",
+        "positionIndex": 9,
+        "name": "Thirst For Death",
+        "description": "Chance to increase the amount of slashes depending on your critical strike chance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "cutting_machine",
+        "positionIndex": 10,
+        "name": "Cutting Machine",
+        "description": "Increases critical strike damage dealt by omnislash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "lucky_strikes",
+        "positionIndex": 11,
+        "name": "Lucky Strikes",
+        "description": "Omnislash now always procs all your striking effects on hit with halved amount of slashes and decreased damage. Omnislash cooldown is increased.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": -20 }
+        }
+      },
+      {
+        "id": "rain_of_chaos",
+        "positionIndex": 12,
+        "name": "Rain Of Chaos",
+        "description": "Each slash now drops a shadow meteor down from the sky dealing area of effect damage when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "poison_coated_daggers",
+        "positionIndex": 13,
+        "name": "Poison Coated Daggers",
+        "description": "Throw poison coated daggers around with each slash inflicting poisoned and dealing increased damage to poisoned targets.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0, "extra_damage_poisoned": 0 },
+          "perRank": {
+            "increased_poisoned_damage": 45,
+            "extra_damage_poisoned": 25
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 45 } }
+          ]
+        }
+      },
+      {
+        "id": "thunder_slashes",
+        "positionIndex": 14,
+        "name": "Thunder Slashes",
+        "description": "Unleash chain lightning with each slash inflicting lightning break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "lightning_break": 0 },
+          "perRank": { "of_total_damage": 50, "lightning_break": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 50 }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "burst_of_speed",
+    "classId": "samurai",
+    "name": "Burst of Speed",
+    "kind": "passive",
+    "description": "Gain increased movement speed for a short period after killing a monster.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "movement_speed": 1.5
+      },
+      "perRank": {
+        "movement_speed": 1.5
+      }
+    }
+  },
+  {
+    "id": "shadow_step",
+    "classId": "samurai",
+    "name": "Shadow Step",
+    "kind": "active",
+    "description": "Step into the shadows, re-appearing at the target location dealing Arcane Damage to all nearby monsters.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 9
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Movement",
+      "Blink",
+      "Area of Effect",
+      "Strike"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "damageType": "arcane",
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 1.25,
+    "effectDuration": 2,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 18.5
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 12,
+        "perLevel": 24
+      },
+      "flatPhysicalMin": {
+        "base": 1,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 7,
+        "perLevel": 1
+      }
+    },
+    "manaCostFormula": {
+      "base": 9,
+      "perLevel": 1
+    },
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Fan of Knives",
+        "stat": "arcane_skill_damage",
+        "value": 22.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Way of the Warrior",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.45,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "shadow_step_core",
+        "positionIndex": 0,
+        "name": "Shadow Step",
+        "description": "Core of the Shadow Step subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "traversal",
+        "positionIndex": 1,
+        "name": "Traversal",
+        "description": "Increases teleport distance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "calm_and_collected",
+        "positionIndex": 2,
+        "name": "Calm And Collected",
+        "description": "Decreases the mana cost of shadow step.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "groundshaker",
+        "positionIndex": 3,
+        "name": "Groundshaker",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "improved_lethality",
+        "positionIndex": 4,
+        "name": "Improved Lethality",
+        "description": "Increases damage dealt to stunned enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "shadow_ally",
+        "positionIndex": 5,
+        "name": "Shadow Ally",
+        "description": "Chance on cast to summon shadow clones to mimic your shadow step on a nearby target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "summon_max_amount": 0 },
+            "perRank": { "summon_max_amount": 1 }
+          }
+        }
+      },
+      {
+        "id": "stepping_stone",
+        "positionIndex": 6,
+        "name": "Stepping Stone",
+        "description": "Stunning an enemy with shadow step has a chance to increase your damage & cast rate for a short period stacking up to eight times.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "arcane_skill_damage": 2, "faster_cast_rate": 1 }
+        }
+      },
+      {
+        "id": "sonic_boom",
+        "positionIndex": 7,
+        "name": "Sonic Boom",
+        "description": "Chance on cast to deal damage additional times upon arrival.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "crushing_step",
+        "positionIndex": 8,
+        "name": "Crushing Step",
+        "description": "Inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "planned_out",
+        "positionIndex": 9,
+        "name": "Planned Out",
+        "description": "Increases cast rate when using shadow step.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "speed_demon",
+        "positionIndex": 10,
+        "name": "Speed Demon",
+        "description": "Increases area of effect radius for a portion of your bonus movement speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 7.5 }
+        }
+      },
+      {
+        "id": "daggerstorms",
+        "positionIndex": 11,
+        "name": "Daggerstorms",
+        "description": "Additionally summons a storm of daggers from the sky on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 30, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "bargain_with_demons",
+        "positionIndex": 12,
+        "name": "Bargain With Demons",
+        "description": "When landing nearby corpses are consumed to unleash a shadow explosion dealing area of effect damage and inflict burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "corpse_count": 0 },
+          "perRank": { "increased_burning_damage": 75, "corpse_count": 4 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "vortex_step",
+        "positionIndex": 13,
+        "name": "Vortex Step",
+        "description": "Pull nearby monsters towards you unleashing bolts of shadow energy into all directions when landing dealing additional damage and stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 30, "skill_range": 25 }
+        }
+      },
+      {
+        "id": "pulsating_shadows",
+        "positionIndex": 14,
+        "name": "Pulsating Shadows",
+        "description": "Shadow step now pulsates additional times inflicting arcane break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_break": 0, "projectile_count": 0 },
+          "perRank": { "arcane_break": 20, "projectile_count": 1 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "way_of_the_warrior",
+    "classId": "samurai",
+    "name": "Way of the Warrior",
+    "kind": "passive",
+    "description": "Increases your attack damage and magic skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 3.75,
+        "magic_skill_damage": 2.8
+      },
+      "perRank": {
+        "attack_damage": 3.75,
+        "magic_skill_damage": 2.8
+      }
+    }
+  },
+  {
+    "id": "empires_slash",
+    "classId": "samurai",
+    "name": "Empires Slash",
+    "kind": "active",
+    "description": "Perform an area of effect attack blinking a short distance and dealing physical damage to monsters in its path. Empire slash lowers Omnislashes cooldown when it strikes a monster.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 14
+      }
+    ],
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Movement",
+      "Blink",
+      "Area of Effect",
+      "Strike"
+    ],
+    "tree": "Emperor's Blade",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "damageType": "physical",
+    "range": 320,
+    "baseCooldown": 1.25,
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 6,
+        "perLevel": 22.5
+      },
+      "flatPhysicalMin": {
+        "base": 1,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 5,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 14,
+      "perLevel": 2
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Omnislash",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Quickslash",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Step",
+        "stat": "attack_damage",
+        "value": 2,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "empires_slash_core",
+        "positionIndex": 0,
+        "name": "Empires Slash",
+        "description": "Core of the Empires Slash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "steel_cutter",
+        "positionIndex": 1,
+        "name": "Steel Cutter",
+        "description": "Increases the damage dealt by empire´s slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "destructive_force",
+        "positionIndex": 2,
+        "name": "Destructive Force",
+        "description": "Increases the area of effect of empire´s slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 5 }
+        }
+      },
+      {
+        "id": "mastering_the_sword",
+        "positionIndex": 3,
+        "name": "Mastering The Sword",
+        "description": "Increases the attack speed of empire’s slash when wielding a 2-handed weapon.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 3.5 }
+        }
+      },
+      {
+        "id": "on_the_mark",
+        "positionIndex": 4,
+        "name": "On The Mark",
+        "description": "Increases the attack rating when using empire´s slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "emperors_command",
+        "positionIndex": 5,
+        "name": "Emperor's Command",
+        "description": "Executes monsters after a threshold.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "piercing_backslash",
+        "positionIndex": 6,
+        "name": "Piercing Backslash",
+        "description": "Gain additional critical strike damage when using empire’s slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "slithering_blade",
+        "positionIndex": 7,
+        "name": "Slithering Blade",
+        "description": "Gain additional critical strike chance when using empire’s slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "absorb_life",
+        "positionIndex": 8,
+        "name": "Absorb Life",
+        "description": "Increases life steal when using empire´s slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_steal": 0 },
+          "perRank": { "life_steal": 3 }
+        }
+      },
+      {
+        "id": "wounding_slash",
+        "positionIndex": 9,
+        "name": "Wounding Slash",
+        "description": "Chance to inflict bleed on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "time_to_spare",
+        "positionIndex": 10,
+        "name": "Time To Spare",
+        "description": "Increases the blink range.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "unbridled_rage",
+        "positionIndex": 11,
+        "name": "Unbridled Rage",
+        "description": "Perform a series of slashes in multiple directions after teleporting.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 15, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "bloodcovered_edge",
+        "positionIndex": 12,
+        "name": "Bloodcovered Edge",
+        "description": "Monsters hit by empire´s slash rebound an additional empire´s slash towards a nearby monster. Empire´s slash now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 5 }
+        }
+      },
+      {
+        "id": "cone_of_death",
+        "positionIndex": 13,
+        "name": "Cone Of Death",
+        "description": "Empire slash no longer teleports and attacks with multiple smaller slashes in a cone infront of you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 30, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "muda_muda_muda_muda_muda",
+        "positionIndex": 14,
+        "name": "Muda Muda Muda Muda Muda",
+        "description": "Perform a huge attack covering the whole screen dealing high damage. Empire´s slash no longer teleports you and now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 300 }
+        }
+      }
+    ]
+  }
+]

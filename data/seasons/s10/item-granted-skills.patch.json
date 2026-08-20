@@ -1,0 +1,18 @@
+{
+  "change": {
+    "Fallen God's Bloodlust": {
+      "passiveConverts": {
+        "perRank": [
+          {
+            "from": "increased_attack_speed",
+            "to": "faster_cast_rate",
+            "pct": 7
+          }
+        ]
+      }
+    },
+    "Reaper's Culling": {
+      "description": "You can no longer critically hit or miss the target and now deal increased physical damage. Culling is always 100% and no longer scales with star or skill levels."
+    }
+  }
+}

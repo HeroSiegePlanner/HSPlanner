@@ -1,0 +1,398 @@
+[
+  {
+    "id": "potion_angelic_gold_inlaid_mysterious_potion",
+    "name": "Gold Inlaid Mysterious Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "magic_find": 325,
+      "gold_find": 32
+    },
+    "skillBonuses": {
+      "Endless Wealth": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_blood_of_spartan",
+    "name": "Blood of Spartan",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "defenseMin": 37,
+    "defenseMax": 37,
+    "implicit": {
+      "damage_return": 275
+    },
+    "skillBonuses": {
+      "Spartan Defense": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_bottle_of_radogate",
+    "name": "Bottle of Radogate",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "movement_speed": 40
+    },
+    "skillBonuses": {
+      "Fleet Footwork": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_bottle_of_sake",
+    "name": "Bottle of Sake",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "attack_damage": 32,
+      "crit_damage": 32
+    },
+    "skillBonuses": {
+      "Drunken Kung Fu": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_caffeinated_coffee_container",
+    "name": "Caffeinated Coffee Container",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "extra_damage_burning": 42
+    },
+    "skillBonuses": {
+      "The Fragrance of Dark Coffee": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_dark_vial_of_corrosion",
+    "name": "Dark Vial of Corrosion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "increased_poisoned_damage": 52
+    },
+    "skillBonuses": {
+      "Corrosion of Darkness": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_elixir_of_death",
+    "name": "Elixir of Death",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "attack_damage": 42,
+      "magic_skill_damage": 42
+    },
+    "skillBonuses": {
+      "Berserker's Rage": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_empty_bottle_of_vodka",
+    "name": "Empty Bottle of Vodka",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": 5
+    },
+    "skillBonuses": {
+      "Drunken Infused Wisdom": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_ghostly_potion",
+    "name": "Ghostly Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "magic_skill_damage": 57
+    },
+    "skillBonuses": {
+      "Parallel Dimension": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_maggot_eye_elixir",
+    "name": "Maggot Eye Elixir",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "increased_attack_speed": 42,
+      "attack_rating_pct": 42
+    },
+    "skillBonuses": {
+      "Absolute Power": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_power_of_void",
+    "name": "Power of Void",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {},
+    "skillBonuses": {
+      "Chaos Unleashed": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_praetorian_blood",
+    "name": "Praetorian Blood",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "life_steal": 38
+    },
+    "skillBonuses": {
+      "Vampirism": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_prismatic_potion",
+    "name": "Prismatic Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_resistances": 62
+    },
+    "skillBonuses": {
+      "Prismatic Skin": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_protein_shake",
+    "name": "Protein Shake",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "to_strength": 95,
+      "to_vitality": 60
+    },
+    "skillBonuses": {
+      "Flexing": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_radbull",
+    "name": "Radbull",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "increased_attack_speed": 42,
+      "movement_speed": 32
+    },
+    "skillBonuses": {
+      "Hyper Activity": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_sarcasters_coffee_mug",
+    "name": "Sarcasters Coffee Mug",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 1,
+    "implicit": {
+      "movement_speed": 60
+    }
+  },
+  {
+    "id": "potion_satanic_surstr_mming",
+    "name": "Surströmming",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "life_replenish_pct": 280,
+      "mana_replenish_pct": 280
+    },
+    "skillBonuses": {
+      "Taste of Heaven": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_witches_potion",
+    "name": "Witches Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "life_replenish_pct": 160,
+      "mana_replenish_pct": 160
+    },
+    "skillBonuses": {
+      "Conjured Replenishment": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_satanic_wizard_potion",
+    "name": "Wizard Potion",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "faster_cast_rate": 38
+    },
+    "skillBonuses": {
+      "Rapidcaster": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_unholy_amun_ras_demise",
+    "name": "Amun Ra's Demise",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {},
+    "skillBonuses": {
+      "Amun Ra's Demise": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "potion_unholy_elixir_of_unworldly_cognition",
+    "name": "Elixir of Unworldly Cognition",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "experience_gain": 56
+    },
+    "skillBonuses": {
+      "Untamed Knowledge": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "potion_unholy_sung_lees_flask_of_carnage",
+    "name": "Sung Lee's Flask of Carnage",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "increased_bleeding_damage": 40
+    },
+    "skillBonuses": {
+      "Momentary Insanity": [
+        1,
+        5
+      ]
+    }
+  }
+]

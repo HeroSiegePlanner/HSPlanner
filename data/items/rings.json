@@ -1,0 +1,1604 @@
+[
+  {
+    "id": "ring_angelic_fury_of_tarethiel",
+    "name": "Fury of Tarethiel",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "enhanced_damage": [
+        45,
+        65
+      ],
+      "physical_skills": [
+        3,
+        5
+      ],
+      "crushing_blow_chance": 25,
+      "defense_ignored": 25,
+      "max_crushing_blow_stacks": [
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "id": "ring_angelic_st_aaron_s_eternal_rage",
+    "name": "St. Aaron's Eternal Rage",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        3,
+        4
+      ],
+      "ignore_fire_res": [
+        15,
+        25
+      ],
+      "ignore_cold_res": [
+        15,
+        25
+      ],
+      "ignore_lightning_res": [
+        15,
+        25
+      ],
+      "ignore_poison_res": [
+        15,
+        25
+      ],
+      "ignore_arcane_res": [
+        15,
+        25
+      ],
+      "magic_skill_damage": [
+        40,
+        50
+      ],
+      "mana_replenish_pct": 30,
+      "life": 350,
+      "magic_find": [
+        40,
+        65
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_azazel_s_despair",
+    "name": "Azazel's Despair",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1,
+    "socketTransforms": {
+      "gem_damien_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "poison_skill_damage": 40,
+        "ignore_poison_res": 25,
+        "poison_resistance": 60
+      },
+      "gem_anubis_soulgem": {
+        "increased_attack_speed": 20,
+        "crit_chance": 20,
+        "crushing_blow_chance": 5,
+        "attack_rating_pct": 25,
+        "to_strength": 25,
+        "attack_damage": 25
+      },
+      "gem_death_s_soulgem": {
+        "mana_replenish": 16,
+        "to_energy": 25,
+        "mana_replenish_pct": 25,
+        "mana": 535,
+        "increased_mana": 25,
+        "all_resistances": 10
+      },
+      "gem_gurag_s_soulgem": {
+        "to_vitality": 25,
+        "life_replenish_pct": 45,
+        "life": 500,
+        "damage_return": 250,
+        "damage_taken_reduced": 10
+      },
+      "gem_karp_king_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "lightning_skill_damage": 40,
+        "ignore_lightning_res": 25,
+        "lightning_resistance": 60
+      },
+      "gem_mevius_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "arcane_skill_damage": 40,
+        "ignore_arcane_res": 25,
+        "arcane_resistance": 60
+      },
+      "gem_odin_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "cold_skill_damage": 40,
+        "ignore_cold_res": 25,
+        "cold_resistance": 60
+      },
+      "gem_satan_s_soulgem": {
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "fire_skill_damage": 40,
+        "ignore_fire_res": 25,
+        "fire_resistance": 60
+      }
+    }
+  },
+  {
+    "id": "ring_heroic_giant_s_band_of_strength",
+    "name": "Giant's Band of Strength",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "crit_chance": [
+        4,
+        12
+      ],
+      "to_strength": [
+        35,
+        50
+      ],
+      "attack_rating_based_on_level": 300
+    }
+  },
+  {
+    "id": "ring_heroic_mana_bender_s_will",
+    "name": "Mana Bender's Will",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "mana_replenish": [
+        8,
+        15
+      ],
+      "to_energy": [
+        70,
+        105
+      ],
+      "mana_replenish_pct": [
+        45,
+        75
+      ],
+      "increased_life": [
+        5,
+        10
+      ]
+    },
+    "skillBonuses": {
+      "Mana Bender": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_quickening_zephyr",
+    "name": "Quickening Zephyr",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "movement_speed": 30,
+      "increased_attack_speed": [
+        35,
+        50
+      ],
+      "all_attributes": [
+        25,
+        35
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_scourge_loop",
+    "name": "Scourge Loop",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "ailment_damage_all": [
+        15,
+        30
+      ],
+      "ailment_crit_chance": [
+        5,
+        10
+      ],
+      "ailment_crit_damage": [
+        25,
+        40
+      ],
+      "ignore_fire_res": 15,
+      "ignore_cold_res": 15,
+      "ignore_lightning_res": 15,
+      "ignore_poison_res": 15,
+      "ignore_arcane_res": 15
+    }
+  },
+  {
+    "id": "ring_heroic_soulforged_ring",
+    "name": "Soulforged Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": 2,
+      "faster_cast_rate": 15,
+      "increased_attack_speed": 15,
+      "all_attributes": 25,
+      "increased_life": 15,
+      "increased_mana": 15,
+      "all_resistances": 15,
+      "experience_gain": 12
+    },
+    "uniqueEffects": [
+      "Herobound"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "ring_heroic_stone_of_premonition",
+    "name": "Stone of Premonition",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "ailment_damage_all": [
+        10,
+        40
+      ],
+      "mana_replenish_pct": 15,
+      "mana": [
+        550,
+        900
+      ],
+      "increased_mana": 25
+    }
+  },
+  {
+    "id": "ring_heroic_the_absence_of_constraint",
+    "name": "The Absence of Constraint",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 54,
+    "implicit": {
+      "all_skills": 2,
+      "mana_cost_reduction": [
+        7,
+        15
+      ],
+      "magic_skill_damage": [
+        35,
+        65
+      ],
+      "mana_costs_decreased": [
+        7,
+        15
+      ]
+    },
+    "skillBonuses": {
+      "Unbound Power": 1
+    }
+  },
+  {
+    "id": "ring_heroic_the_downfall_of_felps",
+    "name": "The Downfall of Felps",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "all_attributes": [
+        25,
+        35
+      ],
+      "projectile_damage_increase": [
+        5,
+        10
+      ],
+      "projectile_size_increase": [
+        25,
+        40
+      ],
+      "projectile_random_direction": 1,
+      "projectile_return": 1
+    }
+  },
+  {
+    "id": "ring_heroic_void_bomba",
+    "name": "Void Bomba",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "explosion_skills": [
+        2,
+        4
+      ],
+      "spell_aoe_damage": [
+        15,
+        25
+      ],
+      "spell_aoe_radius": [
+        15,
+        25
+      ],
+      "explosion_damage": [
+        20,
+        30
+      ],
+      "explosion_aoe": [
+        15,
+        30
+      ],
+      "aoe_skills": [
+        2,
+        4
+      ],
+      "aoe_damage": [
+        15,
+        25
+      ],
+      "aoe_size": [
+        15,
+        25
+      ]
+    },
+    "skillBonuses": {
+      "Void Pull": 1
+    }
+  },
+  {
+    "id": "ring_heroic_arcanis",
+    "name": "Arcanis",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "increased_shadow_burning_damage": [
+        10,
+        20
+      ],
+      "arcane_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_arcane_res": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_destroyer_s_end",
+    "name": "Destroyer's End",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "enhanced_damage": [
+        40,
+        120
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "crit_chance": [
+        10,
+        15
+      ],
+      "defense_ignored": 25,
+      "to_strength": 35,
+      "life": [
+        120,
+        220
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_dragon_s_blessing",
+    "name": "Dragon's Blessing",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_attributes": 35,
+      "magic_find": [
+        20,
+        200
+      ],
+      "experience_gain": [
+        3,
+        8
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "ring_heroic_emblem_of_the_daemon",
+    "name": "Emblem of the Daemon",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": 2,
+      "crit_chance": [
+        3,
+        8
+      ],
+      "mana_steal": [
+        4,
+        8
+      ],
+      "extra_damage_burning": [
+        10,
+        30
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 2,
+        "description": "cast Armageddon Level 83",
+        "details": "Call down a rain of meteors from the sky dealing area of effect fire damage to monsters struck."
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Demon Form Level 17",
+        "details": "Temporarily turn into a demon gaining increased attack damage and attack speed."
+      }
+    ]
+  },
+  {
+    "id": "ring_heroic_hellfire_halo",
+    "name": "Hellfire Halo",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "fire_skills": [
+        3,
+        5
+      ],
+      "increased_burning_damage": [
+        10,
+        20
+      ],
+      "fire_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_fire_res": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_rakhul_s_ritual_band",
+    "name": "Rakhul's Ritual Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {}
+  },
+  {
+    "id": "ring_heroic_signet_of_corruption",
+    "name": "Signet of Corruption",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "poison_skills": [
+        3,
+        5
+      ],
+      "increased_poisoned_damage": [
+        10,
+        20
+      ],
+      "poison_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_poison_res": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_signet_of_harbringer",
+    "name": "Signet of Harbringer",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "cold_skills": [
+        3,
+        5
+      ],
+      "increased_frost_bite_damage": [
+        10,
+        20
+      ],
+      "cold_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_cold_res": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_signet_of_shadows_arcane",
+    "name": "Signet of Shadows (Arcane)",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "arcane_skills": 4,
+      "flat_arcane_skill_damage": 33,
+      "arcane_skill_damage": 15
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "ring_heroic_signet_of_shadows_cold",
+    "name": "Signet of Shadows (Cold)",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "cold_skills": 4,
+      "flat_cold_skill_damage": 33,
+      "cold_skill_damage": 15
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "ring_heroic_signet_of_shadows_fire",
+    "name": "Signet of Shadows (Fire)",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "fire_skills": 4,
+      "flat_fire_skill_damage": 33,
+      "fire_skill_damage": 15
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "ring_heroic_signet_of_shadows_lightning",
+    "name": "Signet of Shadows (Lightning)",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "lightning_skills": 4,
+      "flat_lightning_skill_damage": 33,
+      "lightning_skill_damage": 15
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "ring_heroic_signet_of_shadows_physical",
+    "name": "Signet of Shadows (Physical)",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "physical_skills": 4,
+      "additive_physical_damage": 33,
+      "attack_damage": 15
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "ring_heroic_signet_of_shadows_poison",
+    "name": "Signet of Shadows (Poison)",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "poison_skills": 4,
+      "flat_poison_skill_damage": 33,
+      "poison_skill_damage": 15
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "ring_heroic_stormloop",
+    "name": "Stormloop",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "implicit": {
+      "lightning_skills": [
+        3,
+        5
+      ],
+      "increased_stasis_damage": [
+        10,
+        20
+      ],
+      "lightning_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_lightning_res": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "ring_heroic_sung_lee_s_unleashed_rage",
+    "name": "Sung Lee's Unleashed Rage",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "physical_skills": [
+        1,
+        3
+      ],
+      "increased_attack_speed": [
+        20,
+        30
+      ],
+      "crushing_blow_chance": [
+        10,
+        20
+      ],
+      "additive_physical_damage": [
+        22,
+        50
+      ],
+      "to_strength": [
+        20,
+        25
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_apex_striker_s_ring",
+    "name": "Apex Striker's Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 8,
+    "implicit": {
+      "additive_physical_damage": [
+        5,
+        20
+      ],
+      "to_dexterity": [
+        5,
+        10
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_archer_s_story",
+    "name": "Archer's Story",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 54,
+    "implicit": {
+      "attack_rating": [
+        85,
+        110
+      ],
+      "to_dexterity": [
+        15,
+        25
+      ],
+      "faster_hit_recovery": [
+        10,
+        20
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_astrope_s_signed_of_blessing",
+    "name": "Astrope's Signed of Blessing",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 29,
+    "implicit": {
+      "increased_attack_speed": 15,
+      "flat_lightning_skill_damage": [
+        5,
+        10
+      ],
+      "lightning_skill_damage": [
+        8,
+        15
+      ],
+      "lightning_resistance": 33
+    }
+  },
+  {
+    "id": "ring_satanic_circle_of_nature",
+    "name": "Circle of Nature",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 34,
+    "implicit": {
+      "flat_lightning_skill_damage": [
+        1,
+        30
+      ],
+      "flat_poison_skill_damage": [
+        1,
+        30
+      ],
+      "flat_fire_skill_damage": [
+        1,
+        30
+      ],
+      "flat_cold_skill_damage": [
+        1,
+        30
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_colossus_circle_of_vitality",
+    "name": "Colossus Circle of Vitality",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 20,
+    "implicit": {
+      "to_vitality": [
+        10,
+        25
+      ],
+      "physical_damage_reduction": [
+        2,
+        4
+      ],
+      "magic_damage_reduction": [
+        2,
+        4
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_cursed_artifact",
+    "name": "Cursed Artifact",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "proc_non_buff_relic_chance": [
+        35,
+        50
+      ],
+      "effectiveness_of_non_buff_proc_relics": [
+        100,
+        250
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_demon_eye_ring",
+    "name": "Demon Eye Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 36,
+    "implicit": {
+      "enhanced_damage": 25,
+      "additive_physical_damage": [
+        7,
+        18
+      ],
+      "to_strength": [
+        15,
+        30
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 6,
+        "description": "cast Revved Up Level 9",
+        "details": "Temporarily increases your attack speed and damage."
+      }
+    ]
+  },
+  {
+    "id": "ring_satanic_dragonsteel_ring",
+    "name": "Dragonsteel Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "to_armor": [
+        35,
+        45
+      ],
+      "damage_return": [
+        100,
+        150
+      ],
+      "physical_damage_reduction": [
+        5,
+        10
+      ],
+      "magic_damage_reduction": [
+        5,
+        10
+      ]
+    },
+    "uniqueEffects": [
+      "Cannot be Frozen"
+    ]
+  },
+  {
+    "id": "ring_satanic_elven_grace",
+    "name": "Elven Grace",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "crit_chance": 10,
+      "crit_damage": [
+        15,
+        30
+      ],
+      "ailment_damage_all": [
+        10,
+        20
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_gargantuans_soul",
+    "name": "Gargantuan's Soul",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "skill_relic_damage": [
+        150,
+        250
+      ],
+      "skill_relic_additional_casts": [
+        1,
+        3
+      ],
+      "skill_relic_cooldown": 100
+    }
+  },
+  {
+    "id": "ring_satanic_hellspawn_curse",
+    "name": "Hellspawn's Curse",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "skill_relic_damage": [
+        75,
+        125
+      ],
+      "skill_relic_projectile_size": [
+        100,
+        200
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_iron_ring_of_prometheus",
+    "name": "Iron Ring of Prometheus",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "faster_cast_rate": [
+        20,
+        30
+      ],
+      "to_energy": [
+        25,
+        35
+      ],
+      "magic_skill_damage": [
+        12,
+        20
+      ],
+      "magic_find": [
+        1,
+        40
+      ],
+      "ailment_damage_all": [
+        8,
+        15
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_khodo_s_wedding_band",
+    "name": "Khodo's Wedding Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "all_skills": 2,
+      "movement_speed": [
+        20,
+        40
+      ],
+      "life_steal": [
+        6,
+        10
+      ],
+      "life_based_on_level": 300
+    }
+  },
+  {
+    "id": "ring_satanic_lunar_prophet_s_band",
+    "name": "Lunar Prophet's Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 82,
+    "implicit": {
+      "cold_skills": 1,
+      "increased_frost_bite_damage": [
+        15,
+        25
+      ],
+      "cold_skill_damage": [
+        8,
+        15
+      ],
+      "increased_mana": [
+        2,
+        4
+      ]
+    },
+    "setId": "the_lunar_eclipse"
+  },
+  {
+    "id": "ring_satanic_mark_of_ferocity",
+    "name": "Mark of Ferocity",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 54,
+    "implicit": {
+      "increased_poisoned_damage": [
+        20,
+        25
+      ],
+      "poison_skill_damage": [
+        13,
+        20
+      ],
+      "poison_resistance": 50,
+      "increased_poisoned_frequency": [
+        8,
+        15
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_merlock_s_halo",
+    "name": "Merlock's Halo",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 38,
+    "implicit": {
+      "mana_cost_reduction": [
+        8,
+        15
+      ],
+      "to_intelligence": [
+        15,
+        25
+      ],
+      "mana": [
+        75,
+        125
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_metal_vocalist_s_fame",
+    "name": "Metal Vocalist's Fame",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 83,
+    "implicit": {
+      "flat_lightning_skill_damage": [
+        22,
+        40
+      ],
+      "to_energy": 40,
+      "to_intelligence": 50,
+      "ailment_damage_all": [
+        10,
+        20
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_molten_ring",
+    "name": "Molten Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "increased_burning_damage": [
+        15,
+        22
+      ],
+      "flat_fire_skill_damage": [
+        20,
+        35
+      ],
+      "increased_life": [
+        3,
+        5
+      ],
+      "fire_resistance": 35
+    }
+  },
+  {
+    "id": "ring_satanic_onyx_slayer_s_band",
+    "name": "Onyx Slayer's Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 54,
+    "implicit": {
+      "deadly_blow": [
+        10,
+        15
+      ],
+      "faster_hit_recovery": [
+        25,
+        40
+      ],
+      "damage_return": [
+        45,
+        70
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_orbital_loop",
+    "name": "Orbital Loop",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "orbiting_relic_damage": [
+        75,
+        125
+      ],
+      "orbiting_relic_size": [
+        100,
+        250
+      ],
+      "orbiting_relic_execute_below_health": [
+        2,
+        10
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_pit_fighter_s_carnage",
+    "name": "Pit Fighter's Carnage",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 83,
+    "implicit": {
+      "enhanced_damage": [
+        35,
+        45
+      ],
+      "additive_physical_damage": [
+        22,
+        40
+      ],
+      "all_resistances": 20
+    }
+  },
+  {
+    "id": "ring_satanic_prophets_pinecone",
+    "name": "Prophet's Pinecone",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 76,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "poison_absorption": [
+        7,
+        10
+      ],
+      "poison_resistance": [
+        27,
+        35
+      ]
+    },
+    "setId": "mystic_of_the_forest"
+  },
+  {
+    "id": "ring_satanic_ra_s_band",
+    "name": "Ra's Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 37,
+    "implicit": {
+      "to_vitality": [
+        15,
+        25
+      ],
+      "fire_resistance": 35,
+      "magic_find": [
+        25,
+        35
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_ring_of_tallus",
+    "name": "Ring of Tallus",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 44,
+    "implicit": {
+      "all_skills": 1,
+      "mana_replenish_pct": 30,
+      "life": [
+        1,
+        200
+      ],
+      "increased_life": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_ring_of_the_cowraven",
+    "name": "Ring of the Cowraven",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 24,
+    "implicit": {
+      "enhanced_damage": [
+        10,
+        20
+      ],
+      "crit_chance": 8,
+      "life_steal": [
+        2,
+        3
+      ],
+      "crit_damage": [
+        6,
+        15
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_sanguine_bloodstone",
+    "name": "Sanguine Bloodstone",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "implicit": {
+      "to_vitality": 40,
+      "life_replenish_pct": [
+        25,
+        35
+      ],
+      "life": [
+        225,
+        300
+      ],
+      "life_replenish": [
+        25,
+        35
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        10,
+        15
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_satanic_eye",
+    "name": "Satanic Eye",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 33,
+    "implicit": {
+      "all_attributes": [
+        7,
+        15
+      ],
+      "all_resistances": [
+        10,
+        30
+      ],
+      "ailment_damage_all": [
+        12,
+        20
+      ]
+    }
+  },
+  {
+    "id": "ring_satanic_signet_of_bifr_st",
+    "name": "Signet of Bifröst",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "cold_skill_damage": [
+        25,
+        35
+      ]
+    },
+    "uniqueEffects": [
+      "Cannot be Frozen",
+      "Herobound"
+    ],
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "ring_satanic_skinwalkers_sigil",
+    "name": "Skinwalker's Sigil",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 76,
+    "implicit": {
+      "enhanced_damage": [
+        25,
+        40
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "movement_speed": [
+        30,
+        45
+      ],
+      "increased_attack_speed": 5,
+      "increased_attack_speed_more": 5,
+      "extra_dmg_to_monsters_afflicted_with_ailments": 10
+    },
+    "setId": "skinwalker_s_bloodlust"
+  },
+  {
+    "id": "ring_satanic_solar_prophet_s_signet",
+    "name": "Solar Prophet's Signet",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 84,
+    "implicit": {
+      "fire_skills": 1,
+      "increased_burning_damage": [
+        12,
+        20
+      ],
+      "fire_skill_damage": [
+        5,
+        15
+      ],
+      "increased_mana": [
+        2,
+        4
+      ]
+    },
+    "setId": "guardian_of_the_sun_temple"
+  },
+  {
+    "id": "ring_satanic_soul_funneling_loop",
+    "name": "Soul Funneling Loop",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 14,
+    "implicit": {
+      "life_steal": [
+        2,
+        4
+      ],
+      "mana_steal": [
+        2,
+        4
+      ],
+      "all_attributes": 5
+    }
+  },
+  {
+    "id": "ring_satanic_swiftsoul_band",
+    "name": "Swiftsoul Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 11,
+    "implicit": {
+      "faster_cast_rate": [
+        10,
+        15
+      ],
+      "magic_skill_damage": [
+        3,
+        5
+      ],
+      "life_replenish_pct": 15
+    }
+  },
+  {
+    "id": "ring_satanic_tectonic_frequency",
+    "name": "Tectonic Frequency",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "increased_stasis_damage": [
+        15,
+        25
+      ],
+      "lightning_skill_damage": [
+        15,
+        25
+      ],
+      "ignore_lightning_res": 15,
+      "lightning_resistance": 50
+    }
+  },
+  {
+    "id": "ring_satanic_templar_s_faith",
+    "name": "Templar's Faith",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 54,
+    "implicit": {
+      "damage_return": [
+        50,
+        75
+      ],
+      "physical_damage_reduction": 5
+    },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Odin's Fury Level 20"
+      }
+    ]
+  },
+  {
+    "id": "ring_satanic_viper_s_seal_of_corrosion",
+    "name": "Viper's Seal of Corrosion",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 22,
+    "implicit": {
+      "increased_poisoned_damage": 10,
+      "poison_skill_damage": [
+        10,
+        20
+      ],
+      "poison_resistance": 40
+    }
+  },
+  {
+    "id": "ring_unholy_absolute_zero",
+    "name": "Absolute Zero",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "faster_cast_rate": [
+        25,
+        35
+      ],
+      "increased_attack_speed": [
+        25,
+        35
+      ],
+      "physical_to_cold": [
+        15,
+        25
+      ],
+      "cold_resistance": -66,
+      "max_cold_resistance": -5,
+      "phys_dmg_taken_as_cold": [
+        15,
+        25
+      ]
+    },
+    "skillBonuses": {
+      "Freezing Touch": 1
+    }
+  }
+]

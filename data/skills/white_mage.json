@@ -1,0 +1,2873 @@
+[
+  {
+    "id": "martyr",
+    "classId": "white_mage",
+    "name": "Martyr",
+    "kind": "passive",
+    "description": "Sacrifice your own blood when taking damage from any source temporarily increasing your life and mana replenish.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "passiveStats": {
+      "base": {
+        "life_replenish": 3.5,
+        "mana_replenish": 3.5,
+        "arcane_skill_damage": 2
+      },
+      "perRank": {
+        "life_replenish": 3.5,
+        "mana_replenish": 3.5,
+        "arcane_skill_damage": 2
+      }
+    },
+    "tree": "Zealot",
+    "position": {
+      "row": 0,
+      "col": 0
+    }
+  },
+  {
+    "id": "shadow_bolt",
+    "classId": "white_mage",
+    "name": "Shadow Bolt",
+    "kind": "active",
+    "description": "Gather your inner darkness and unleash a powerful piercing shadow bolt that deals arcane damage to monsters on its path. The shadow bolt slows down after hitting a target.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Projectile"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 6,
+      "perLevel": 14
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Restless Spirits",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Digest Souls",
+        "stat": "arcane_skill_damage",
+        "value": 13.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Black Mass",
+        "stat": "arcane_skill_damage",
+        "value": 14.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "subskills": [
+      {
+        "id": "shadow_bolt_core",
+        "positionIndex": 0,
+        "name": "Shadow Bolt",
+        "description": "Core of the Shadow Bolt subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "consuming_flames",
+        "positionIndex": 1,
+        "name": "Consuming Flames",
+        "description": "Chance to inflict shadow burn on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_shadow_burning_damage": 0 },
+          "perRank": { "increased_shadow_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "shadow_burn", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "arcane_surge",
+        "positionIndex": 2,
+        "name": "Arcane Surge",
+        "description": "Increases damage dealt by shadow bolt.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 12.5 }
+        }
+      },
+      {
+        "id": "power_of_the_dark_side",
+        "positionIndex": 3,
+        "name": "Power of the Dark Side",
+        "description": "Decreases mana cost of shadow bolt.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "dark_conjurer",
+        "positionIndex": 4,
+        "name": "Dark Conjurer",
+        "description": "Chance on cast to unleash an additional shadow bolt.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "taunting_shadows",
+        "positionIndex": 5,
+        "name": "Taunting Shadows",
+        "description": "Chance to taunt monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["taunt"]
+        }
+      },
+      {
+        "id": "inner_corruption",
+        "positionIndex": 6,
+        "name": "Inner Corruption",
+        "description": "Increases the size of shadow bolts.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 18 }
+        }
+      },
+      {
+        "id": "shadows_dispair",
+        "positionIndex": 7,
+        "name": "Shadows Dispair",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "flames_of_corruption",
+        "positionIndex": 8,
+        "name": "Flames of Corruption",
+        "description": "Increases damage dealt to shadow burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_shadow_burning": 0 },
+          "perRank": { "extra_damage_shadow_burning": 20 }
+        }
+      },
+      {
+        "id": "warlock_from_the_shadows",
+        "positionIndex": 9,
+        "name": "Warlock from the Shadows",
+        "description": "Chance on hit to critically hit with increased critical damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "warlocks_might",
+        "positionIndex": 10,
+        "name": "Warlocks Might",
+        "description": "Increases the projectile speed of shadow bolt.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "shadow_flame",
+        "positionIndex": 11,
+        "name": "Shadow Flame",
+        "description": "Shadow bolt bursts into a shadow nova on hit with increased damage and area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 75, "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "shadow_beams",
+        "positionIndex": 12,
+        "name": "Shadow Beams",
+        "description": "Unleash beams of shadows towards monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 50 }
+        }
+      },
+      {
+        "id": "shadows_grasp",
+        "positionIndex": 13,
+        "name": "Shadows Grasp",
+        "description": "Unleash a grasping shadow hand pulling monsters towards you inflicting arcane break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "shadow_cascade",
+        "positionIndex": 14,
+        "name": "Shadow Cascade",
+        "description": "Shadow bolt has a chance to burst into smaller shadow bolts on hit. This effect can occur infinitely.",
+        "maxRank": 3,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      }
+    ]
+  },
+  {
+    "id": "digest_souls",
+    "classId": "white_mage",
+    "name": "Digest Souls",
+    "kind": "passive",
+    "description": "By sacrificing your victims to the devil temporarily gain increased movement speed and arcane skill damage after killing a monster.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "passiveStats": {
+      "base": {
+        "movement_speed": 1,
+        "arcane_skill_damage": 5
+      },
+      "perRank": {
+        "movement_speed": 1,
+        "arcane_skill_damage": 5
+      }
+    },
+    "tree": "Zealot",
+    "position": {
+      "row": 1,
+      "col": 0
+    }
+  },
+  {
+    "id": "soul_spurn",
+    "classId": "white_mage",
+    "name": "Soul Spurn",
+    "kind": "active",
+    "description": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 420,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 13.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "healing": 2,
+        "mana_restored": 1
+      },
+      "perRank": {
+        "healing": 2,
+        "mana_restored": 1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Restless Spirits",
+        "stat": "arcane_skill_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Digest Souls",
+        "stat": "arcane_skill_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Dark Oath",
+        "stat": "arcane_skill_damage",
+        "value": 13.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.5,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "subskills": [
+      {
+        "id": "soul_spurn_core",
+        "positionIndex": 0,
+        "name": "Soul Spurn",
+        "description": "Core of the Soul Spurn subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "last_mortal_act",
+        "positionIndex": 1,
+        "name": "Last Mortal Act",
+        "description": "Ripped souls deal a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 10 }
+        }
+      },
+      {
+        "id": "solidify",
+        "positionIndex": 2,
+        "name": "Solidify",
+        "description": "Increases the damage dealt by soul spurn.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "repeating_reaping",
+        "positionIndex": 3,
+        "name": "Repeating Reaping",
+        "description": "Chance on cast to deal increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "consume",
+        "positionIndex": 4,
+        "name": "Consume",
+        "description": "Chance on cast to unleash an additional soul spurn.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "highway_to_purgatory",
+        "positionIndex": 5,
+        "name": "Highway to Purgatory",
+        "description": "Increases the speed of ripped souls.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 30 }
+        }
+      },
+      {
+        "id": "restore",
+        "positionIndex": 6,
+        "name": "Restore",
+        "description": "Soul spurn recovers a portion of your maximum mana on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_replenish_pct": 0 },
+          "perRank": { "mana_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "revitalise",
+        "positionIndex": 7,
+        "name": "Revitalise",
+        "description": "Soul spurn recovers a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 0.4 }
+        }
+      },
+      {
+        "id": "floating_cultist",
+        "positionIndex": 8,
+        "name": "Floating Cultist",
+        "description": "Reduces movement diminish when using soul spurn.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "shattering_destruction",
+        "positionIndex": 9,
+        "name": "Shattering Destruction",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "corrupted_rapture",
+        "positionIndex": 10,
+        "name": "Corrupted Rapture",
+        "description": "Increases the area of effect radius of soul spurn.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "soulfilled_tradeoff",
+        "positionIndex": 11,
+        "name": "Soulfilled Tradeoff",
+        "description": "Increases the damage dealt by soul spurn but decreases the area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 80, "area_of_effect": -10 }
+        }
+      },
+      {
+        "id": "purgatory",
+        "positionIndex": 12,
+        "name": "Purgatory",
+        "description": "Soul spurn becomes a toggle skill ripping souls from monsters around you draining a portion of your maximum life frequently.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "area_of_effect": 0,
+            "life_drain_pct": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "area_of_effect": 35,
+            "life_drain_pct": 3,
+            "arcane_skill_damage": 40
+          }
+        }
+      },
+      {
+        "id": "lifeline_tether",
+        "positionIndex": 13,
+        "name": "Lifeline Tether",
+        "description": "Rip souls for all nearby allies restoring their mana and life.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1, "mana_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "harvest_the_damned",
+        "positionIndex": 14,
+        "name": "Harvest the Damned",
+        "description": "Monsters killed by soul spurn inflicts you with a buff increasing your arcane damage, life replenish and mana replenish for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "life_replenish_pct": 0,
+            "mana_replenish_pct": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 10,
+            "life_replenish_pct": 5,
+            "mana_replenish_pct": 5
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "restless_spirits",
+    "classId": "white_mage",
+    "name": "Restless Spirits",
+    "kind": "active",
+    "description": "Unleash restless spirits from an unholy dimension to seek new hosts inflicting arcane damage to the target.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Projectile"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Soul Spurn",
+        "stat": "arcane_skill_damage",
+        "value": 14,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Digest Souls",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 6.25,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "subskills": [
+      {
+        "id": "restless_spirits_core",
+        "positionIndex": 0,
+        "name": "Restless Spirits",
+        "description": "Core of the Restless Spirits subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "arcane_echoes",
+        "positionIndex": 1,
+        "name": "Arcane Echoes",
+        "description": "Increases damage dealt by restless spirits.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "shadowflame_affliction",
+        "positionIndex": 2,
+        "name": "Shadowflame Affliction",
+        "description": "Chance to inflict shadow burn on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_shadow_burning_damage": 0 },
+          "perRank": { "increased_shadow_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "shadow_burn", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "spiritual_expansion",
+        "positionIndex": 3,
+        "name": "Spiritual Expansion",
+        "description": "Increases the size of restless spirits.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "wraiths_call",
+        "positionIndex": 4,
+        "name": "Wraiths Call",
+        "description": "Increases the amount of restless spirits.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "spectral_efficiency",
+        "positionIndex": 5,
+        "name": "Spectral Efficiency",
+        "description": "Decreases the mana cost of restless spirits.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 15 }
+        }
+      },
+      {
+        "id": "phantom_step",
+        "positionIndex": 6,
+        "name": "Phantom Step",
+        "description": "Decreases movement diminish when using restless spirits.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "hexbound_spirits",
+        "positionIndex": 7,
+        "name": "Hexbound Spirits",
+        "description": "Chance to summon orbiting souls at target location on hit dealing damage for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0, "projectile_count": 0 },
+            "perRank": { "of_total_damage": 40, "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "wraiths_fury",
+        "positionIndex": 8,
+        "name": "Wraiths Fury",
+        "description": "Increases the damage dealt by restless spirits over time.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 3 }
+        }
+      },
+      {
+        "id": "shattering_spirits",
+        "positionIndex": 9,
+        "name": "Shattering Spirits",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "spectral_velocity",
+        "positionIndex": 10,
+        "name": "Spectral Velocity",
+        "description": "Increases the projectile speed of restless spirits.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 30 }
+        }
+      },
+      {
+        "id": "spirit_circle",
+        "positionIndex": 11,
+        "name": "Spirit Circle",
+        "description": "Restless spirits now orbit you for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0, "projectile_count": 0 },
+          "perRank": { "skill_duration": 33, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "master_of_spirits",
+        "positionIndex": 12,
+        "name": "Master of Spirits",
+        "description": "Summon multiple spirit servants following you and unleashing shadow bolts towards nearby monsters. Restless Spirits now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "summon_max_amount": 0,
+            "skill_duration": 0
+          },
+          "perRank": {
+            "summon_max_amount": 3,
+            "skill_duration": 50
+          }
+        }
+      },
+      {
+        "id": "soul_termination",
+        "positionIndex": 13,
+        "name": "Soul Termination",
+        "description": "Restless spirits explode on hit dealing a portion of their damage as area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 75 }
+        }
+      },
+      {
+        "id": "feast_on_the_harvest",
+        "positionIndex": 14,
+        "name": "Feast on the Harvest",
+        "description": "Increases the amount of restless spirits according to the stack amount of harvest the damned consuming the buff.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dark_oath",
+    "classId": "white_mage",
+    "name": "Dark Oath",
+    "kind": "aura",
+    "description": "Conjure an aura that unleashes waves of unholy energy around you inflicting arcane damage to nearby monsters.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Aura"
+    ],
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 13
+    },
+    "bonusSources": [
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Martyr",
+        "stat": "arcane_skill_damage",
+        "value": 11.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Malediction",
+        "stat": "arcane_skill_damage",
+        "value": 13.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "subskills": [
+      {
+        "id": "dark_oath_core",
+        "positionIndex": 0,
+        "name": "Dark Oath",
+        "description": "Core of the Dark Oath subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "soulburn",
+        "positionIndex": 1,
+        "name": "Soulburn",
+        "description": "Increases the tick frequency of dark oath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "oath_amplifier",
+        "positionIndex": 2,
+        "name": "Oath Amplifier",
+        "description": "Increases the damage dealt by dark oath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "healing_corruption",
+        "positionIndex": 3,
+        "name": "Healing Corruption",
+        "description": "Chance to recover a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "life_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 0.4 }
+          }
+        }
+      },
+      {
+        "id": "shadows_reach",
+        "positionIndex": 4,
+        "name": "Shadows Reach",
+        "description": "Increases the area of effect radius of dark oath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "covens_oath",
+        "positionIndex": 5,
+        "name": "Covens Oath",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "pulse_of_vitality",
+        "positionIndex": 6,
+        "name": "Pulse of Vitality",
+        "description": "Chance to increase your life and mana replenish on hit for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 15, "mana_replenish_pct": 15 }
+          }
+        }
+      },
+      {
+        "id": "lust_for_power",
+        "positionIndex": 7,
+        "name": "Lust for Power",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "shadowsteps",
+        "positionIndex": 8,
+        "name": "Shadowsteps",
+        "description": "Chance to increase your movement speed on hit for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "movement_speed": 0 },
+            "perRank": { "movement_speed": 10 }
+          }
+        }
+      },
+      {
+        "id": "intrusive_corruption",
+        "positionIndex": 9,
+        "name": "Intrusive Corruption",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "devastating_pulse",
+        "positionIndex": 10,
+        "name": "Devastating Pulse",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "sacrificial_oath",
+        "positionIndex": 11,
+        "name": "Sacrificial Oath",
+        "description": "Each pulse unleashes multiple restless spirits.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "soul_collector",
+        "positionIndex": 12,
+        "name": "Soul Collector",
+        "description": "Dark oath pulses collect souls from monsters. After reaching the maximum stack of souls the next pulse will deal increased damage with increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 2, "area_of_effect": 0.25 }
+        }
+      },
+      {
+        "id": "corrupting_pulse",
+        "positionIndex": 13,
+        "name": "Corrupting Pulse",
+        "description": "Chance to unleash additional pulses of dark oath from monsters on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "burning_darkness",
+        "positionIndex": 14,
+        "name": "Burning Darkness",
+        "description": "Inflicts shadow burn and slow on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_shadow_burning_damage": 0 },
+          "perRank": { "increased_shadow_burning_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "shadow_burn", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "satans_mark",
+    "classId": "white_mage",
+    "name": "Satans Mark",
+    "kind": "active",
+    "description": "Mark the monsters on target area for satan causing them to unleash pulses of arcane damage when struck by other abilities and attacks.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Explosion"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 3,
+    "effectDuration": 5,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 14.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Restless Spirits",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Dark Oath",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "subskills": [
+      {
+        "id": "satans_mark_core",
+        "positionIndex": 0,
+        "name": "Satans Mark",
+        "description": "Core of the Satans Mark subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "heil_satan",
+        "positionIndex": 1,
+        "name": "Heil Satan",
+        "description": "Increases the damage dealt by satan´s mark.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "long_lasting_darkness",
+        "positionIndex": 2,
+        "name": "Long Lasting Darkness",
+        "description": "Increases the duration of satan´s mark.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "mark_of_the_beast",
+        "positionIndex": 3,
+        "name": "Mark of the Beast",
+        "description": "Chance on cast to spawn crows circling around the target location for a short duration dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": {
+              "of_total_damage": 0,
+              "summon_max_amount": 0
+            },
+            "perRank": {
+              "of_total_damage": 25,
+              "summon_max_amount": 3
+            }
+          }
+        }
+      },
+      {
+        "id": "grasp_of_lucifer",
+        "positionIndex": 4,
+        "name": "Grasp of Lucifer",
+        "description": "Increases the area of effect radius of satan´s mark.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "satanic_transe",
+        "positionIndex": 5,
+        "name": "Satanic Transe",
+        "description": "Increases the amount of stacks applied to targets.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "max_skill_stacks": 0 },
+          "perRank": { "max_skill_stacks": 2 }
+        }
+      },
+      {
+        "id": "blood_ritual",
+        "positionIndex": 6,
+        "name": "Blood Ritual",
+        "description": "Increases the blood ripple area of effect radius of satan´s mark.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "the_black_bible",
+        "positionIndex": 7,
+        "name": "The Black Bible",
+        "description": "Chance to apply satan´s mark to nearby monsters on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "messenger_of_satan",
+        "positionIndex": 8,
+        "name": "Messenger of Satan",
+        "description": "Decreases the cooldown of satan´s mark.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 15 }
+        }
+      },
+      {
+        "id": "reach_of_darkness",
+        "positionIndex": 9,
+        "name": "Reach of Darkness",
+        "description": "Increases the maximum cast range of satan´s mark.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "false_prophecy",
+        "positionIndex": 10,
+        "name": "False Prophecy",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "the_black_mass",
+        "positionIndex": 11,
+        "name": "The Black Mass",
+        "description": "Satan´s mark unleashes chains of unholy lightning when struck by black mass executing low life monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "projectile_bounces": 0,
+            "execute_below": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 25,
+            "projectile_bounces": 3,
+            "execute_below": 2.5
+          }
+        }
+      },
+      {
+        "id": "the_rapture",
+        "positionIndex": 12,
+        "name": "The Rapture",
+        "description": "Satan´s mark is applied to monsters around you on a large radius with increased stacks. Satan´s mark now has an increased cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "max_skill_stacks": 0 },
+          "perRank": { "area_of_effect": 100, "max_skill_stacks": 3 }
+        }
+      },
+      {
+        "id": "the_devil_in_i",
+        "positionIndex": 13,
+        "name": "The Devil In I",
+        "description": "Stuns monsters affected by satan´s mark inflicting arcane break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "stun_duration_pct": 0, "arcane_break": 0 },
+          "perRank": { "stun_duration_pct": 2, "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "soul_combustion",
+        "positionIndex": 14,
+        "name": "Soul Combustion",
+        "description": "Satan´s mark causes target souls to explode after a short delay dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "malediction",
+    "classId": "white_mage",
+    "name": "Malediction",
+    "kind": "passive",
+    "description": "Your unholy essence drives birds into insanity, casts have a chance to send crows towards random nearby monsters exploding into arcane damage on impact.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive",
+      "Explosion"
+    ],
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 28
+    },
+    "bonusSources": [
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Satans Mark",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Soul Spurn",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 11.5,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 3,
+      "col": 2
+    }
+  },
+  {
+    "id": "black_mass",
+    "classId": "white_mage",
+    "name": "Black Mass",
+    "kind": "active",
+    "description": "Summon all the coven's cultists to march in the name of satan inflicting arcane damage to monsters on their path.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Area of Effect",
+      "Projectile"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 14,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 24
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Martyr",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Satans Mark",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Shadow Bolt",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.5,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Zealot",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "subskills": [
+      {
+        "id": "black_mass_core",
+        "positionIndex": 0,
+        "name": "Black Mass",
+        "description": "Core of the Black Mass subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "dark_gathering",
+        "positionIndex": 1,
+        "name": "Dark Gathering",
+        "description": "Increases the amount of cultists.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 3 }
+        }
+      },
+      {
+        "id": "cults_migration",
+        "positionIndex": 2,
+        "name": "Cult's Migration",
+        "description": "Increases the movement speed of cultists.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "loyal_followers",
+        "positionIndex": 3,
+        "name": "Loyal Followers",
+        "description": "Decreases the cooldown of black mass.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "raise_morale",
+        "positionIndex": 4,
+        "name": "Raise Morale",
+        "description": "Decreases the mana costs of black mass.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "the_devil_within",
+        "positionIndex": 5,
+        "name": "The Devil Within",
+        "description": "Chance to unleash a ripple of blood on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "darkness_infused",
+        "positionIndex": 6,
+        "name": "Darkness Infused",
+        "description": "Increases the damage dealt by black mass.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "bloated_followers",
+        "positionIndex": 7,
+        "name": "Bloated Followers",
+        "description": "Increases the size of cultists.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 10 }
+        }
+      },
+      {
+        "id": "crowd_stomp",
+        "positionIndex": 8,
+        "name": "Crowd Stomp",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "eternal_corruption",
+        "positionIndex": 9,
+        "name": "Eternal Corruption",
+        "description": "Chance on cast to summon an additional black mass.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "murder_frenzy",
+        "positionIndex": 10,
+        "name": "Murder Frenzy",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "shadow_puppets",
+        "positionIndex": 11,
+        "name": "Shadow Puppets",
+        "description": "Summon a static cultist. The cultist emmits a portion of all damage taken to nearby monsters as area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "damage_return": 0 },
+          "perRank": { "damage_return": 8000 }
+        }
+      },
+      {
+        "id": "protective_circle",
+        "positionIndex": 12,
+        "name": "Protective Circle",
+        "description": "Increased amount of cultists are now summoned in a circle around target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "loyal_followers_13",
+        "positionIndex": 13,
+        "name": "Loyal Followers",
+        "description": "Summon a horde of static cultists at target location for a short duration dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "cult_bishops",
+        "positionIndex": 14,
+        "name": "Cult Bishops",
+        "description": "Send forward a cult bishop inflicting burning, dealing increased damage according to your energy and stunning monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "conversion_energy": 0 },
+          "perRank": { "increased_burning_damage": 50, "conversion_energy": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "heavenly_fire",
+    "classId": "white_mage",
+    "name": "Heavenly Fire",
+    "kind": "active",
+    "description": "Light the target location into holy fire dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 240,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 6,
+      "perLevel": 6.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Martyr",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Benediction",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 6.75,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Divine Being",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "subskills": [
+      {
+        "id": "heavenly_fire_core",
+        "positionIndex": 0,
+        "name": "Heavenly Fire",
+        "description": "Core of the Heavenly Fire subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lamb_of_god",
+        "positionIndex": 1,
+        "name": "Lamb of God",
+        "description": "Chance on hit to set monsters on fire causing them to spread flames while moving.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 10 }
+          }
+        }
+      },
+      {
+        "id": "flame_of_the_heavens",
+        "positionIndex": 2,
+        "name": "Flame of the Heavens",
+        "description": "Increases the tick frequency of heavenly fire.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 8 }
+        }
+      },
+      {
+        "id": "heavens_burn",
+        "positionIndex": 3,
+        "name": "Heaven's Burn",
+        "description": "Increases the damage dealt by heavenly fire.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "scorched_retribution",
+        "positionIndex": 4,
+        "name": "Scorched Retribution",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "heavens_blessing",
+        "positionIndex": 5,
+        "name": "Heaven's Blessing",
+        "description": "Decreases the mana cost of heavenly fire.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "heavenly_smite",
+        "positionIndex": 6,
+        "name": "Heavenly Smite",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "inner_ignition",
+        "positionIndex": 7,
+        "name": "Inner Ignition",
+        "description": "Chance to increase your arcane damage on hit for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "shattering_flames",
+        "positionIndex": 8,
+        "name": "Shattering Flames",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "ethereal_burn",
+        "positionIndex": 9,
+        "name": "Ethereal Burn",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "word_of_god",
+        "positionIndex": 10,
+        "name": "Word of God",
+        "description": "Increases the area of effect radius of heavenly fire.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "essence_of_heavens",
+        "positionIndex": 11,
+        "name": "Essence of Heavens",
+        "description": "Unleash a heavenly orb scorching the ground below leaving behind a trail of burning flames.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 40, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "chain_of_fire",
+        "positionIndex": 12,
+        "name": "Chain of Fire",
+        "description": "Chance to unleash a chain of fire on hit dealing increased damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+            "perRank": { "arcane_skill_damage": 25, "projectile_bounces": 3 }
+          }
+        }
+      },
+      {
+        "id": "righteous_path",
+        "positionIndex": 13,
+        "name": "Righteous Path",
+        "description": "Leave behind a trail of heavenly fire for a short duration inflicting elemental break on hit. Heavenly Fire now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "elemental_break": 0, "skill_duration": 0 },
+          "perRank": { "elemental_break": 30, "skill_duration": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "ascendant_flame",
+        "positionIndex": 14,
+        "name": "Ascendant Flame",
+        "description": "Increases the size and tick frequency of heavenly fire over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_size": 0, "faster_cast_rate": 0 },
+          "perRank": { "projectile_size": 5, "faster_cast_rate": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "flash_heal",
+    "classId": "white_mage",
+    "name": "Flash Heal",
+    "kind": "active",
+    "description": "Heal yourself and any nearby allies.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell"
+    ],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "healing": 7
+      },
+      "perRank": {
+        "healing": 0.5
+      }
+    },
+    "tree": "Divine Being",
+    "position": {
+      "row": 0,
+      "col": 2
+    }
+  },
+  {
+    "id": "burst_of_light",
+    "classId": "white_mage",
+    "name": "Burst of Light",
+    "kind": "active",
+    "description": "Cast a ray of divine light dealing arcane damage and lights monsters on heavenly fire.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 11
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Heavenly Fire",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Divine Healing",
+        "stat": "arcane_skill_damage",
+        "value": 14,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Divine Being",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "subskills": [
+      {
+        "id": "burst_of_light_core",
+        "positionIndex": 0,
+        "name": "Burst of Light",
+        "description": "Core of the Burst of Light subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "manabinded_cast",
+        "positionIndex": 1,
+        "name": "Manabinded Cast",
+        "description": "Chance to smite monsters with a pillar of searing light on hit dealing additional damage according to your energy.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "conversion_energy": 0 },
+            "perRank": { "conversion_energy": 15 }
+          }
+        }
+      },
+      {
+        "id": "solar_infusion",
+        "positionIndex": 2,
+        "name": "Solar Infusion",
+        "description": "Increases damage dealt by burst of light and a chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": {
+            "arcane_skill_damage": 8,
+            "increased_burning_damage": 20
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "piercing_ray",
+        "positionIndex": 3,
+        "name": "Piercing Ray",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "heavens_brightness",
+        "positionIndex": 4,
+        "name": "Heaven's Brightness",
+        "description": "Chance to replenish a portion of your maximum mana on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "mana_replenish_pct": 0 },
+            "perRank": { "mana_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "total_illumination",
+        "positionIndex": 5,
+        "name": "Total Illumination",
+        "description": "Chance on cast to unleash additional bursts in an arc.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "forking_glare",
+        "positionIndex": 6,
+        "name": "Forking Glare",
+        "description": "Chance to unleash an additional burst of light from a nearby monster on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "lens_flare",
+        "positionIndex": 7,
+        "name": "Lens Flare",
+        "description": "Increases the range of burst of light.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "light_orb",
+        "positionIndex": 8,
+        "name": "Light Orb",
+        "description": "Chance on cast to unleash an orb of light briefly bursting into a burst of light.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_cast", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "blazing_light",
+        "positionIndex": 9,
+        "name": "Blazing Light",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "blinding_light",
+        "positionIndex": 10,
+        "name": "Blinding Light",
+        "description": "Chance to inflict stun and deal increased damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 40 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "holy_beam",
+        "positionIndex": 11,
+        "name": "Holy Beam",
+        "description": "Unleash multiple bursts of light in an arc on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "burning_smite",
+        "positionIndex": 12,
+        "name": "Burning Smite",
+        "description": "Unleash burst of light with increased size leaving the ground burning and inflicting slow on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+            "perRank": { "arcane_skill_damage": 100, "projectile_size": 100 }
+          },
+          "appliesStates": ["burning", "slow"]
+        }
+      },
+      {
+        "id": "purification",
+        "positionIndex": 13,
+        "name": "Purification",
+        "description": "Inflict monsters with a stack of purification on hit increasing the damage dealt by burst of light.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "light_within",
+        "positionIndex": 14,
+        "name": "Light Within",
+        "description": "Burst of light unleashes as a nova of light around you with increased area of effect radius and dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 35, "area_of_effect": 20 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "divine_healing",
+    "classId": "white_mage",
+    "name": "Divine Healing",
+    "kind": "passive",
+    "description": "Using flash heal temporarily increases your life replenish.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "effectDuration": 3,
+    "passiveStats": {
+      "base": {
+        "life_replenish": 3
+      },
+      "perRank": {
+        "life_replenish": 3
+      }
+    },
+    "tree": "Divine Being",
+    "position": {
+      "row": 1,
+      "col": 2
+    }
+  },
+  {
+    "id": "chain_of_holy_lightning",
+    "classId": "white_mage",
+    "name": "Chain of Holy Lightning",
+    "kind": "active",
+    "description": "Cast a holy lightning jumping from monster to monster dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Chain Lightning"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 12
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Heavenly Fire",
+        "stat": "arcane_skill_damage",
+        "value": 14.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 16.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Benediction",
+        "stat": "arcane_skill_damage",
+        "value": 12.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Divine Being",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "subskills": [
+      {
+        "id": "chain_of_holy_lightning_core",
+        "positionIndex": 0,
+        "name": "Chain of Holy Lightning",
+        "description": "Core of the Chain of Holy Lightning subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "holy_velocity",
+        "positionIndex": 1,
+        "name": "Holy Velocity",
+        "description": "Increases the projectile speed of chain of holy light.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 25 }
+        }
+      },
+      {
+        "id": "plasma_burst",
+        "positionIndex": 2,
+        "name": "Plasma Burst",
+        "description": "Increases the damage dealt by chain of holy light.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "holy_discharge",
+        "positionIndex": 3,
+        "name": "Holy Discharge",
+        "description": "Chance to smite monsters with holy lightning on hit dealing additional damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "divine_divergence",
+        "positionIndex": 4,
+        "name": "Divine Divergence",
+        "description": "Chance to unleash an additional chain of holy light on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "amplifying_prayer",
+        "positionIndex": 5,
+        "name": "Amplifying Prayer",
+        "description": "Increases the damage dealt by chain of holy light with each bounce.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 3 }
+        }
+      },
+      {
+        "id": "spellbreak_prayer",
+        "positionIndex": 6,
+        "name": "Spellbreak Prayer",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "celestial_light",
+        "positionIndex": 7,
+        "name": "Celestial Light",
+        "description": "Increases the amount of bounces.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 3 }
+        }
+      },
+      {
+        "id": "sacred_steps",
+        "positionIndex": 8,
+        "name": "Sacred Steps",
+        "description": "Decreases movement diminish when using chain of holy light.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "lightened_path",
+        "positionIndex": 9,
+        "name": "Lightened Path",
+        "description": "Decreases the mana cost of chain of holy light.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 15 }
+        }
+      },
+      {
+        "id": "lights_embrace",
+        "positionIndex": 10,
+        "name": "Light's Embrace",
+        "description": "Chain of holy light heals you for a portion of your maximum life when hitting its last target.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "gods_altar",
+        "positionIndex": 11,
+        "name": "God´s Altar",
+        "description": "Summon an altar of light unleashing chain of holy light on nearby monsters. Chain of holy light now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 25 }
+        }
+      },
+      {
+        "id": "recursive_light",
+        "positionIndex": 12,
+        "name": "Recursive Light",
+        "description": "Chain of holy light strikes the same target multiple times if there are no monsters nearby dealing a portion of its damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 60 }
+        }
+      },
+      {
+        "id": "echo_of_heavens",
+        "positionIndex": 13,
+        "name": "Echo of Heavens",
+        "description": "Unleash holy bolts towards targets on hit with a chance to proc heavenly fire on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 50 }
+        }
+      },
+      {
+        "id": "gods_grasp",
+        "positionIndex": 14,
+        "name": "God's Grasp",
+        "description": "Pull monsters towards the first target on hit unleashing a divine explosion dealing increased damage with increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 90, "area_of_effect": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "holy_shield",
+    "classId": "white_mage",
+    "name": "Holy Shield",
+    "kind": "buff",
+    "description": "By the power of god bless yourself and any nearby allies with immortality for a short period.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Buff"
+    ],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 300,
+    "effectDuration": 1.5,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "immortality_duration": 1.5
+      },
+      "perRank": {
+        "immortality_duration": 0.2
+      }
+    },
+    "tree": "Divine Being",
+    "position": {
+      "row": 2,
+      "col": 2
+    }
+  },
+  {
+    "id": "benediction",
+    "classId": "white_mage",
+    "name": "Benediction",
+    "kind": "passive",
+    "description": "When healed by your abilities, smite monsters around you with holy lightning.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "damageType": "arcane",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 24
+    },
+    "passiveStats": {
+      "base": {
+        "projectiles": 5
+      },
+      "perRank": {
+        "projectiles": 0.25
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Flash Heal",
+        "stat": "arcane_skill_damage",
+        "value": 13.26,
+        "per": "skill_level"
+      },
+      {
+        "source": "Healing Zone",
+        "stat": "arcane_skill_damage",
+        "value": 11.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Burst of Light",
+        "stat": "arcane_skill_damage",
+        "value": 15.26,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Divine Being",
+    "position": {
+      "row": 3,
+      "col": 0
+    }
+  },
+  {
+    "id": "healing_zone",
+    "classId": "white_mage",
+    "name": "Healing Zone",
+    "kind": "active",
+    "description": "Bless the area around you with divine energy healing yourself and nearby allies.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 14,
+    "effectDuration": 8,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "healing": 3
+      },
+      "perRank": {
+        "healing": 0.5
+      }
+    },
+    "tree": "Divine Being",
+    "position": {
+      "row": 3,
+      "col": 2
+    }
+  },
+  {
+    "id": "mana_orb",
+    "classId": "white_mage",
+    "name": "Mana Orb",
+    "kind": "active",
+    "description": "Summon a pulsating orb of mana that replenishes mana for players and deals arcane damage to monsters.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "damageType": "arcane",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 19.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "mana_restored": 1
+      },
+      "perRank": {
+        "mana_restored": 0.1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Chain of Holy Lightning",
+        "stat": "arcane_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Healing Zone",
+        "stat": "arcane_skill_damage",
+        "value": 13.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Heavenly Fire",
+        "stat": "arcane_skill_damage",
+        "value": 14.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ],
+    "tree": "Divine Being",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "subskills": [
+      {
+        "id": "mana_orb_core",
+        "positionIndex": 0,
+        "name": "Mana Orb",
+        "description": "Core of the Mana Orb subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "conduit",
+        "positionIndex": 1,
+        "name": "Conduit",
+        "description": "Increases the mana replenish from mana orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_replenish_pct": 0 },
+          "perRank": { "mana_replenish_pct": 2 }
+        }
+      },
+      {
+        "id": "mana_incursion",
+        "positionIndex": 2,
+        "name": "Mana Incursion",
+        "description": "Increases the damage dealt by mana orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "burst_of_energy",
+        "positionIndex": 3,
+        "name": "Burst of Energy",
+        "description": "Chance to critically hit dealing increased critical strike damage according to your energy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "conversion_energy": 0 },
+          "perRank": { "spell_crit_chance": 3, "conversion_energy": 15 }
+        }
+      },
+      {
+        "id": "energy_charges",
+        "positionIndex": 4,
+        "name": "Energy Charges",
+        "description": "Increases the duration of mana orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "corrupting_manapulse",
+        "positionIndex": 5,
+        "name": "Corrupting Manapulse",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "meditation",
+        "positionIndex": 6,
+        "name": "Meditation",
+        "description": "Reduces the cooldown of mana orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "mages_might",
+        "positionIndex": 7,
+        "name": "Mage's Might",
+        "description": "Increases the area of effect radius of mana orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "amplified_magic",
+        "positionIndex": 8,
+        "name": "Amplified Magic",
+        "description": "Increases the tick frequency of mana orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "heavens_aid",
+        "positionIndex": 9,
+        "name": "Heaven's Aid",
+        "description": "Chance to summon an additional mana orb at target location on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "energy_fountain",
+        "positionIndex": 10,
+        "name": "Energy Fountain",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "energy_orbit",
+        "positionIndex": 11,
+        "name": "Energy Orbit",
+        "description": "Summon multiple mana orbs orbitting you and dealing damage based on your energy. Consumes all of your mana on cast.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_energy": 0, "projectile_count": 0 },
+          "perRank": { "conversion_energy": 50, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "chosen_one",
+        "positionIndex": 12,
+        "name": "Chosen One",
+        "description": "Summon a mana orb within you gaining increased life replenish, mana replenish and arcane damage for the duration of mana orb.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "life_replenish_pct": 0,
+            "mana_replenish_pct": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 50,
+            "life_replenish_pct": 75,
+            "mana_replenish_pct": 75
+          }
+        }
+      },
+      {
+        "id": "hauling_manawell",
+        "positionIndex": 13,
+        "name": "Hauling Manawell",
+        "description": "Conjure a flying mana orb pulling monsters into its core on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 30, "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "compacting_power",
+        "positionIndex": 14,
+        "name": "Compacting Power",
+        "description": "Summon a mana orb with increased duration and size. Each mana pulse now increases its damage but shrinks it in size.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "skill_duration": 0,
+            "projectile_size": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "skill_duration": 30,
+            "projectile_size": 25,
+            "arcane_skill_damage": 4
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,2907 @@
+[
+  {
+    "id": "master_poisoner",
+    "classId": "amazon",
+    "name": "Master Poisoner",
+    "kind": "passive",
+    "description": "Increases your poison skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Huntress",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "poison_skill_damage": 10
+      },
+      "perRank": {
+        "poison_skill_damage": 3.75
+      }
+    }
+  },
+  {
+    "id": "noxious_strike",
+    "classId": "amazon",
+    "name": "Noxious Strike",
+    "kind": "active",
+    "description": "Unleash a poisonous strike dealing physical damage and poison damage. Every third strike sends out piercing poisonous projectiles dealing damage and inflicting Poisoned on hit.",
+    "damageType": "poison",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Projectile",
+      "Strike",
+      "Poison",
+      "Physical"
+    ],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Huntress",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Noxious_Strike.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "damageFormula": {
+      "base": 11,
+      "perLevel": 15
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 85,
+        "perLevel": 35
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Master Poisoner",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Envenom",
+        "stat": "poison_skill_damage",
+        "value": 22.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Toxic Remains",
+        "stat": "attack_rating",
+        "value": 2.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "noxious_strike_core",
+        "positionIndex": 0,
+        "name": "Noxious Strike",
+        "description": "Core of the Noxious Strike subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "corrosive_force",
+        "positionIndex": 1,
+        "name": "Corrosive Force",
+        "description": "Increases damage dealt by noxious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "touch_of_noxus",
+        "positionIndex": 2,
+        "name": "Touch of Noxus",
+        "description": "Increases poisoned damage inflicted by noxious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "empowered_toxins",
+        "positionIndex": 3,
+        "name": "Empowered Toxins",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 10 }
+        }
+      },
+      {
+        "id": "noxious_bolts",
+        "positionIndex": 4,
+        "name": "Noxious Bolts",
+        "description": "Increases projectile count on your third attack.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "noxian_slash",
+        "positionIndex": 5,
+        "name": "Noxian Slash",
+        "description": "Increases the damage and area of effect of your third attack.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 4, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "corrosive_reach",
+        "positionIndex": 6,
+        "name": "Corrosive Reach",
+        "description": "Increased attack damage and attack range while wielding a polearm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "poison_skill_damage": 4, "skill_range": 10 }
+        }
+      },
+      {
+        "id": "envenoming_empowerment",
+        "positionIndex": 7,
+        "name": "Envenoming Empowerment",
+        "description": "Killing a monster with noxious strike grants you a burst of movement speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "glimmering_venom",
+        "positionIndex": 8,
+        "name": "Glimmering Venom",
+        "description": "Increases poison damage dealt by noxious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "crushing_corrosion",
+        "positionIndex": 9,
+        "name": "Crushing Corrosion",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "noxious_duality",
+        "positionIndex": 10,
+        "name": "Noxious Duality",
+        "description": "Chance on attack to perform an additional noxious strike.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "spinning_speartips",
+        "positionIndex": 11,
+        "name": "Spinning Speartips",
+        "description": "Throw multiple spears on your third attack in an arc. The spears start spinning when hitting the ground dealing area of effect damage for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "explosive_toxins",
+        "positionIndex": 12,
+        "name": "Explosive Toxins",
+        "description": "Poison projectiles explode on hit, dissolving into an acidic pool inflicting poison break and dealing additional damage. Acidic pool area of effect radius is increased based on your dexterity.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_break": 0, "area_of_effect": 0 },
+          "perRank": { "poison_break": 20, "area_of_effect": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "elemental_fragmentation",
+        "positionIndex": 13,
+        "name": "Elemental Fragmentation",
+        "description": "Increases damage dealt by noxious strike and inflicts stacking elemental break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "elemental_break": 0 },
+          "perRank": { "poison_skill_damage": 40, "elemental_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 35 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "noxious_sequence",
+        "positionIndex": 14,
+        "name": "Noxious Sequence",
+        "description": "Perform additional spin attacks after the third one.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "leaping_ambush",
+    "classId": "amazon",
+    "name": "Leaping Ambush",
+    "kind": "active",
+    "description": "Jump towards target location dealing poison damage and knocking up monsters around you upon landing.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Movement",
+      "Poison"
+    ],
+    "movementDuringUse": 0,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Huntress",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Leaping_Ambush.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 37
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Noxious Strike",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Caustic Spearhead",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Jungle Camouflage",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 9.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "leaping_ambush_core",
+        "positionIndex": 0,
+        "name": "Leaping Ambush",
+        "description": "Core of the Leaping Ambush subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "power_quads",
+        "positionIndex": 1,
+        "name": "Power Quads",
+        "description": "Increases maximum leap distance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "heavyweight_slam",
+        "positionIndex": 2,
+        "name": "Heavyweight Slam",
+        "description": "Increases damage dealt by leaping ambush.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "tribal_spearnage",
+        "positionIndex": 3,
+        "name": "Tribal Spearnage",
+        "description": "Chance to rain down falling spears on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "landing_blast",
+        "positionIndex": 4,
+        "name": "Landing Blast",
+        "description": "Increases the area of effect radius of leaping ambush.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "stunning_smash",
+        "positionIndex": 5,
+        "name": "Stunning Smash",
+        "description": "Chance on hit to stun the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "crippling_the_weak",
+        "positionIndex": 6,
+        "name": "Crippling the Weak",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "venomous_blastwave",
+        "positionIndex": 7,
+        "name": "Venomous Blastwave",
+        "description": "Chance on hit to inflict poisoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "adrenaline_rush",
+        "positionIndex": 8,
+        "name": "Adrenaline Rush",
+        "description": "Landing grants you a burst of attack speed and cast rate.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0, "faster_cast_rate": 0 },
+          "perRank": { "increased_attack_speed": 6, "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "anti_antidote",
+        "positionIndex": 9,
+        "name": "Anti-Antidote",
+        "description": "Inflicts poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "stoneskinned_warrior",
+        "positionIndex": 10,
+        "name": "Stoneskinned Warrior",
+        "description": "Gain increased damage reduction when leaping.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 10 }
+        }
+      },
+      {
+        "id": "envenomous_groundslam",
+        "positionIndex": 11,
+        "name": "Envenomous Groundslam",
+        "description": "Unleash a burst of poison from the ground on hit dealing increased damage and inflicting poisoned.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "increased_poisoned_damage": 0 },
+          "perRank": {
+            "poison_skill_damage": 35,
+            "increased_poisoned_damage": 25
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "master_of_agility",
+        "positionIndex": 12,
+        "name": "Master of Agility",
+        "description": "Leaping ambush can now be casted through terrain with decreased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": -30 }
+        }
+      },
+      {
+        "id": "arc_of_spears",
+        "positionIndex": 13,
+        "name": "Arc of Spears",
+        "description": "Throw multiple piercing spears around you upon landing dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "poison_skill_damage": 30, "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "ground_stomper",
+        "positionIndex": 14,
+        "name": "Ground Stomper",
+        "description": "When landing, stomp the ground multiple times with increased area of effect radius and dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "poison_skill_damage": 0,
+            "area_of_effect": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "poison_skill_damage": 40,
+            "area_of_effect": 33,
+            "projectile_count": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "caustic_spearhead",
+    "classId": "amazon",
+    "name": "Caustic Spearhead",
+    "kind": "active",
+    "description": "Perform a burst attack dealing increased damage, additional poison damage and inflicting Poisoned on hit.",
+    "damageType": "poison",
+    "tags": [
+      "Attack",
+      "Active",
+      "Ranged",
+      "Projectile",
+      "Strike",
+      "Poison",
+      "Physical"
+    ],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Huntress",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Caustic_Spearhead.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 1
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 88,
+        "perLevel": 30
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Noxious Strike",
+        "stat": "attack_damage",
+        "value": 2.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Envenom",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Jungle Camouflage",
+        "stat": "attack_rating",
+        "value": 2.25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 6.85,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "caustic_spearhead_core",
+        "positionIndex": 0,
+        "name": "Caustic Spearhead",
+        "description": "Core of the Caustic Spearhead subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "stocked_quiver",
+        "positionIndex": 1,
+        "name": "Stocked Quiver",
+        "description": "Increases projectile amount.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "caustic_liquid",
+        "positionIndex": 2,
+        "name": "Caustic Liquid",
+        "description": "Increases poisoned damage inflicted by caustic spearhead.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "fierce_spearheads",
+        "positionIndex": 3,
+        "name": "Fierce Spearheads",
+        "description": "Increases damage dealt by caustic spearhead.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "venomous_touch",
+        "positionIndex": 4,
+        "name": "Venomous Touch",
+        "description": "Inflicts the target with stacks of venom on hit increasing damage dealt by poisoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "splintering_arrows",
+        "positionIndex": 5,
+        "name": "Splintering Arrows",
+        "description": "Spearheads have a chance to fork on hit with increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "tribal_hunters_aim",
+        "positionIndex": 6,
+        "name": "Tribal Hunter's Aim",
+        "description": "Increases attack rating when using caustic spearhead.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "rapid_arrows",
+        "positionIndex": 7,
+        "name": "Rapid Arrows",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "additional_venom",
+        "positionIndex": 8,
+        "name": "Additional Venom",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "arrow_wound",
+        "positionIndex": 9,
+        "name": "Arrow Wound",
+        "description": "Chance for spearheads to get stuck on enemies dealing damage over time for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "erupting_spearheads",
+        "positionIndex": 10,
+        "name": "Erupting Spearheads",
+        "description": "Chance for spearheads to explode on hit dealing increased damage with increased area of effect radius.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "poison_skill_damage": 15, "area_of_effect": 15 }
+          }
+        }
+      },
+      {
+        "id": "caustic_arc",
+        "positionIndex": 11,
+        "name": "Caustic Arc",
+        "description": "Split spearheads into multiple arrows in a circle around the target on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "caustic_rampage",
+        "positionIndex": 12,
+        "name": "Caustic Rampage",
+        "description": "Fire additional smaller spearheads in a tighter spread increasing chance of dealing critical strikes and dealing increased critical strike damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "crit_chance": 0, "crit_damage": 0 },
+          "perRank": {
+            "projectile_count": 1,
+            "crit_chance": 10,
+            "crit_damage": 35
+          }
+        }
+      },
+      {
+        "id": "toxic_spores",
+        "positionIndex": 13,
+        "name": "Toxic Spores",
+        "description": "Caustic spearhead leaves spores behind seeking nearby monsters and exploding on hit dealing additional damage and inflicting poisoned.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "splash_of_total_damage": 0,
+            "increased_poisoned_damage": 0
+          },
+          "perRank": {
+            "splash_of_total_damage": 10,
+            "increased_poisoned_damage": 40
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "venomous_burst",
+        "positionIndex": 14,
+        "name": "Venomous Burst",
+        "description": "Whenever a monster reaches maximum stacks of venom it unleashes a burst of poison dealing the full damage of venom consuming it.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "jungle_camouflage",
+    "classId": "amazon",
+    "name": "Jungle Camouflage",
+    "kind": "buff",
+    "description": "Temporarily increases your poison skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 1
+      }
+    ],
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "tree": "Huntress",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "movementDuringUse": 85,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "poison_skill_damage": 4,
+        "attack_damage": 4
+      },
+      "perRank": {
+        "poison_skill_damage": 4,
+        "attack_damage": 4
+      }
+    }
+  },
+  {
+    "id": "thrill_of_the_hunt",
+    "classId": "amazon",
+    "name": "Thrill of the Hunt",
+    "kind": "passive",
+    "description": "Increases your movement speed.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Huntress",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "movement_speed": 2
+      },
+      "perRank": {
+        "movement_speed": 2
+      }
+    }
+  },
+  {
+    "id": "toxic_remains",
+    "classId": "amazon",
+    "name": "Toxic Remains",
+    "kind": "passive",
+    "description": "Killing a monster causes them to explode into toxic gas inflicting Poisoned on monsters hit.",
+    "damageType": "poison",
+    "tags": [
+      "Passive",
+      "Poison"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tree": "Huntress",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 23
+    },
+    "proc": {
+      "chance": 20,
+      "trigger": "on_kill",
+      "target": "Toxic Remains"
+    },
+    "bonusSources": [
+      {
+        "source": "Jungle Camouflage",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Master Poisoner",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Noxious Strike",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "death_from_above",
+    "classId": "amazon",
+    "name": "Death from Above",
+    "kind": "active",
+    "description": "Call down a rain of falling spears on target location dealing poison damage and slowing monsters struck.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect",
+      "Poison"
+    ],
+    "movementDuringUse": 65,
+    "range": 240,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Huntress",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Death_from_Above.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 32
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Noxious Strike",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Thrill of the Hunt",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Caustic Spearhead",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.5,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "death_from_above_core",
+        "positionIndex": 0,
+        "name": "Death from Above",
+        "description": "Core of the Death from Above subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "rapid_spearhandling",
+        "positionIndex": 1,
+        "name": "Rapid Spearhandling",
+        "description": "Increases cast rate when using death from above.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "heavy_spears",
+        "positionIndex": 2,
+        "name": "Heavy Spears",
+        "description": "Increases falling speed and damage dealt by death from above.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "poison_skill_damage": 10, "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "icebreaking_spearshower",
+        "positionIndex": 3,
+        "name": "Icebreaking Spearshower",
+        "description": "Increases damage dealt by death from above to monsters at maximum life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "spearhandlers_intellect",
+        "positionIndex": 4,
+        "name": "Spearhandler's Intellect",
+        "description": "Decreases mana cost when using death from above.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "need_for_speed",
+        "positionIndex": 5,
+        "name": "Need for Speed",
+        "description": "Death from above deals additional damage based on your bonus movement speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_movement_speed": 0 },
+          "perRank": { "conversion_movement_speed": 10 }
+        }
+      },
+      {
+        "id": "beast_slayer",
+        "positionIndex": 6,
+        "name": "Beast Slayer",
+        "description": "Increases damage dealt to bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 10 }
+        }
+      },
+      {
+        "id": "safeheaven",
+        "positionIndex": 7,
+        "name": "Safeheaven",
+        "description": "If there are no nearby enemies, death from above covers a larger area with increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 15, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "critical_arrowfall",
+        "positionIndex": 8,
+        "name": "Critical Arrowfall",
+        "description": "Now has a chance to critically strike dealing increased damage based on your critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0 },
+          "perRank": { "spell_crit_chance": 5 }
+        }
+      },
+      {
+        "id": "stacking_life",
+        "positionIndex": 9,
+        "name": "Stacking Life",
+        "description": "Increase your maximum life and mana on hit for a short period.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_life": 0, "increased_mana": 0 },
+          "perRank": { "increased_life": 0.5, "increased_mana": 0.5 }
+        }
+      },
+      {
+        "id": "dual_spearshower",
+        "positionIndex": 10,
+        "name": "Dual Spearshower",
+        "description": "Chance to fire an additional death from above.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "spear_delivery",
+        "positionIndex": 11,
+        "name": "Spear Delivery",
+        "description": "Throw multiple spears in an arc unleashing death from above on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "ancient_device",
+        "positionIndex": 12,
+        "name": "Ancient Device",
+        "description": "Summon an ancient device periodically firing death from above on nearby targets based on your cooldown recovery.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "detonation_shower",
+        "positionIndex": 13,
+        "name": "Detonation Shower",
+        "description": "Chance on landing for spears to explode dealing increased damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 50 }
+          }
+        }
+      },
+      {
+        "id": "storm_of_spears",
+        "positionIndex": 14,
+        "name": "Storm of Spears",
+        "description": "Multiple waves of spears rain down over time in a larger area that slowly follows the closest enemy. Death from above now has a small cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "projectile_count": 0 },
+          "perRank": { "area_of_effect": 35, "projectile_count": 4 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "envenom",
+    "classId": "amazon",
+    "name": "Envenom",
+    "kind": "passive",
+    "description": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned.",
+    "damageType": "poison",
+    "tags": [
+      "Passive",
+      "Explosion",
+      "Poison"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tree": "Huntress",
+    "position": {
+      "row": 4,
+      "col": 0
+    },
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 26
+    },
+    "passiveStats": {
+      "base": {
+        "extra_damage_poisoned": 50
+      }
+    },
+    "proc": {
+      "chance": 8,
+      "trigger": "on_hit",
+      "target": "Envenom"
+    },
+    "bonusSources": [
+      {
+        "source": "Jungle Camouflage",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Toxic Remains",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Master Poisoner",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 9.5,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "envenom_core",
+        "positionIndex": 0,
+        "name": "Envenom",
+        "description": "Core of the Envenom subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "toxic_fortune",
+        "positionIndex": 1,
+        "name": "Toxic Fortune",
+        "description": "Increases envenom proc chance.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "empowered_toxin",
+        "positionIndex": 2,
+        "name": "Empowered Toxin",
+        "description": "Increases poisoned damage inflicted by envenom.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 22.5 } }
+          ]
+        }
+      },
+      {
+        "id": "toxic_afterburst",
+        "positionIndex": 3,
+        "name": "Toxic Afterburst",
+        "description": "Chance for a fissure to burst twice on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "corrosive_liquid",
+        "positionIndex": 4,
+        "name": "Corrosive Liquid",
+        "description": "Increases damage dealt by envenom.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "lifesap",
+        "positionIndex": 5,
+        "name": "Lifesap",
+        "description": "Chance to unleash a venomous nova dealing poison damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "toxic_reach",
+        "positionIndex": 6,
+        "name": "Toxic Reach",
+        "description": "Increases the area of effect radius of envenom.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "spreading_disease",
+        "positionIndex": 7,
+        "name": "Spreading Disease",
+        "description": "Chance to unleash an additional envenom on a nearby monster on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "crippling_poison",
+        "positionIndex": 8,
+        "name": "Crippling Poison",
+        "description": "Inflicts slow on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "slow_target": 0 },
+          "perRank": { "slow_target": 15 }
+        }
+      },
+      {
+        "id": "added_venom",
+        "positionIndex": 9,
+        "name": "Added Venom",
+        "description": "Increases damage to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 15 }
+        }
+      },
+      {
+        "id": "venom_overflow",
+        "positionIndex": 10,
+        "name": "Venom Overflow",
+        "description": "Chance to increase poisoned damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "stacked_weakness",
+        "positionIndex": 11,
+        "name": "Stacked Weakness",
+        "description": "Inflict stacking poison break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 2 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 2 } }
+          ]
+        }
+      },
+      {
+        "id": "rapid_end",
+        "positionIndex": 12,
+        "name": "Rapid End",
+        "description": "Increases poisoned damage and the tick frequency of poisoned.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_poisoned_damage": 0,
+            "increased_poisoned_frequency": 0
+          },
+          "perRank": {
+            "increased_poisoned_damage": 25,
+            "increased_poisoned_frequency": 15
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "envenova",
+        "positionIndex": 13,
+        "name": "Envenova",
+        "description": "Unleash a poisonous nova instead with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 35, "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "venomwave",
+        "positionIndex": 14,
+        "name": "Venomwave",
+        "description": "Unleash waves of fissures from targets dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "astropes_gift",
+    "classId": "amazon",
+    "name": "Astrope's Gift",
+    "kind": "active",
+    "description": "Perform a lightning enhanced attack dealing physical damage and lightning damage.",
+    "damageType": "lightning",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Ranged",
+      "Strike",
+      "Lightning",
+      "Physical"
+    ],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Valkyrie",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Astropes_Gift.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 10,
+      "perLevel": 9
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 0,
+        "perLevel": 28
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Rebound",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Storm Dash",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Feint",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "astropes_gift_core",
+        "positionIndex": 0,
+        "name": "Astrope's Gift",
+        "description": "Core of the Astrope's Gift subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "master_of_javelin",
+        "positionIndex": 1,
+        "name": "Master of Javelin",
+        "description": "Fire additional projectiles when using a throwing weapon.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "power_current",
+        "positionIndex": 2,
+        "name": "Power Current",
+        "description": "Increases damage dealt by astrope’s gift.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "astropes_curse",
+        "positionIndex": 3,
+        "name": "Astrope's Curse",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 25 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "astropes_revenge",
+        "positionIndex": 4,
+        "name": "Astrope's Revenge",
+        "description": "Chance to unleash an additional lightning bolt on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "rapid_momentum",
+        "positionIndex": 5,
+        "name": "Rapid Momentum",
+        "description": "Grants you a stacking attack speed buff on hit. All stacks are lost if you miss.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 1.5 }
+        }
+      },
+      {
+        "id": "powerstasis",
+        "positionIndex": 6,
+        "name": "Powerstasis",
+        "description": "Lightning bolts have a chance to deal double damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "ending_fate",
+        "positionIndex": 7,
+        "name": "Ending Fate",
+        "description": "Increases damage to bosses when using polearms or throwing weapons.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 12.5 }
+        }
+      },
+      {
+        "id": "astropes_agility",
+        "positionIndex": 8,
+        "name": "Astrope's Agility",
+        "description": "Decreases movement diminish when using astrope’s gift.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "astropes_dexterity",
+        "positionIndex": 9,
+        "name": "Astrope's Dexterity",
+        "description": "Increases attack rating when using astrope’s gift.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "zapping_voltage",
+        "positionIndex": 10,
+        "name": "Zapping Voltage",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "surging_stormbolt",
+        "positionIndex": 11,
+        "name": "Surging Stormbolt",
+        "description": "Lightning strikes now unleash an AoE pulse with increased area of effect radius and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 75, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "thundering_storm",
+        "positionIndex": 12,
+        "name": "Thundering Storm",
+        "description": "Summons a thundering storm dealing area of effect damage for a short period instead of a lightning bolt.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 45 }
+        }
+      },
+      {
+        "id": "critical_thunderbolt",
+        "positionIndex": 13,
+        "name": "Critical Thunderbolt",
+        "description": "Lightning bolts can critically hit dealing increased critical strike damage when using polearms or throwing weapons.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 10, "crit_damage": 100 }
+        }
+      },
+      {
+        "id": "eye_of_storm",
+        "positionIndex": 14,
+        "name": "Eye of Storm",
+        "description": "Summon a storm following you and rapidly shrinking. Hitting a monster causes the storm to grow in size.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "feint",
+    "classId": "amazon",
+    "name": "Feint",
+    "kind": "passive",
+    "description": "Gain a chance to evade melee and ranged attacks.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Valkyrie",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "dodge_chance": 5
+      },
+      "perRank": {
+        "dodge_chance": 1
+      }
+    }
+  },
+  {
+    "id": "chooser_of_the_slain",
+    "classId": "amazon",
+    "name": "Chooser of the Slain",
+    "kind": "passive",
+    "description": "Increases your life and mana after kill.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Valkyrie",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "life_per_kill": 1,
+        "mana_per_kill": 1
+      },
+      "perRank": {
+        "life_per_kill": 1,
+        "mana_per_kill": 1
+      }
+    }
+  },
+  {
+    "id": "rebound",
+    "classId": "amazon",
+    "name": "Rebound",
+    "kind": "active",
+    "description": "Perform an attack dealing physical damage and lightning damage that rebounds to the closest monster.",
+    "damageType": "lightning",
+    "tags": [
+      "Attack",
+      "Active",
+      "Ranged",
+      "Projectile",
+      "Chaining",
+      "Strike",
+      "Lightning",
+      "Physical"
+    ],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Valkyrie",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Rebound.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 0,
+        "perLevel": 17
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 2.5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Astrope's Gift",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Spearnage",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Feint",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "rebound_core",
+        "positionIndex": 0,
+        "name": "Rebound",
+        "description": "Core of the Rebound subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "jumping_spear",
+        "positionIndex": 1,
+        "name": "Jumping Spear",
+        "description": "Increases the amount of rebounds.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "damascus_speartip",
+        "positionIndex": 2,
+        "name": "Damascus Speartip",
+        "description": "Increases the damage dealt by rebound.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "reaching_ricochet",
+        "positionIndex": 3,
+        "name": "Reaching Ricochet",
+        "description": "Increases the maximum range of rebound.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "splitting_speartip",
+        "positionIndex": 4,
+        "name": "Splitting Speartip",
+        "description": "Chance on hit for the rebound projectile to split into an additional rebound.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "multi_rebound",
+        "positionIndex": 5,
+        "name": "Multi Rebound",
+        "description": "Chance on chain hit to unleash projectiles in an arc dealing decreased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0, "lightning_skill_damage": 0 },
+            "perRank": { "projectile_count": 1, "lightning_skill_damage": -7 }
+          }
+        }
+      },
+      {
+        "id": "accurate_spearshot",
+        "positionIndex": 6,
+        "name": "Accurate Spearshot",
+        "description": "Increases attack rating when using rebound.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "increasing_odds",
+        "positionIndex": 7,
+        "name": "Increasing Odds",
+        "description": "Rebound gains additional crit damage on each bounce.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0, "crit_chance": 0 },
+          "perRank": { "crit_damage": 25, "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "penetrating_rebound",
+        "positionIndex": 8,
+        "name": "Penetrating Rebound",
+        "description": "Chance to lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 25 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "marksmanship",
+        "positionIndex": 9,
+        "name": "Marksmanship",
+        "description": "Increases attack speed when using a bow with rebound.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
+        }
+      },
+      {
+        "id": "rapidfly",
+        "positionIndex": 10,
+        "name": "Rapidfly",
+        "description": "Increases the projectile speed of rebound.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "electrocharged_rebound",
+        "positionIndex": 11,
+        "name": "Electrocharged Rebound",
+        "description": "Chance to strike targets with bolts of lightning on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 65 }
+          }
+        }
+      },
+      {
+        "id": "rebomb",
+        "positionIndex": 12,
+        "name": "Rebomb",
+        "description": "Rebound now increases its damage and size with every bounce and explodes at the end dealing damage on a large radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "lightning_skill_damage": 8, "area_of_effect": 8 }
+        }
+      },
+      {
+        "id": "orbital_rebound",
+        "positionIndex": 13,
+        "name": "Orbital Rebound",
+        "description": "When hitting an enemy spawn the rebound projectile orbiting you until it hits a monster.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "kickback_projectile",
+        "positionIndex": 14,
+        "name": "Kickback Projectile",
+        "description": "Rebound projectiles now return to you instead of expiring dealing increased damage to monsters on its path.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "spearnage",
+    "classId": "amazon",
+    "name": "Spearnage",
+    "kind": "active",
+    "description": "Furiously throw lightning enchanted spears towards target location.",
+    "damageType": "lightning",
+    "tags": [
+      "Attack",
+      "Active",
+      "Ranged",
+      "Projectile",
+      "Strike",
+      "Lightning",
+      "Physical"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Valkyrie",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Spearnage.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 16
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 7,
+        "perLevel": 23
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Thunder Fury",
+        "stat": "lightning_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Storm Dash",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Rebound",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "spearnage_core",
+        "positionIndex": 0,
+        "name": "Spearnage",
+        "description": "Core of the Spearnage subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lethal_spearstorm",
+        "positionIndex": 1,
+        "name": "Lethal Spearstorm",
+        "description": "Increases the physical damage dealt by spearnage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "spear_storm",
+        "positionIndex": 2,
+        "name": "Spear Storm",
+        "description": "Increases the amount of spears thrown.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "accurate_spearing",
+        "positionIndex": 3,
+        "name": "Accurate Spearing",
+        "description": "Increases attack rating when using spearnage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "thundertips",
+        "positionIndex": 4,
+        "name": "Thundertips",
+        "description": "Increases lightning damage dealt by spearnage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "timefunneling_spears",
+        "positionIndex": 5,
+        "name": "Timefunneling Spears",
+        "description": "Spears grow in size and gain increased damage while traveling.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "lightning_skill_damage": 4, "projectile_size": 8 }
+        }
+      },
+      {
+        "id": "pointy_ends",
+        "positionIndex": 6,
+        "name": "Pointy Ends",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "swift_glaives",
+        "positionIndex": 7,
+        "name": "Swift Glaives",
+        "description": "Increases spearnage projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "swiftstepping",
+        "positionIndex": 8,
+        "name": "Swiftstepping",
+        "description": "Decreases movement diminish when using spearnage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "conqueror_of_light",
+        "positionIndex": 9,
+        "name": "Conqueror of Light",
+        "description": "Increases damage dealt to bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 20 }
+        }
+      },
+      {
+        "id": "sudden_flank",
+        "positionIndex": 10,
+        "name": "Sudden Flank",
+        "description": "Spears have a chance to ricochet towards another target on hit.",
+        "maxRank": 3,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "spinning_to_win",
+        "positionIndex": 11,
+        "name": "Spinning to Win",
+        "description": "Rapidly throw spears around you for a short duration dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "lightning_ball",
+        "positionIndex": 12,
+        "name": "Lightning Ball",
+        "description": "Chance on hit to spawn a ball of lightning traveling forward dealing increased lightning damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 70 }
+          }
+        }
+      },
+      {
+        "id": "boomerang_spears",
+        "positionIndex": 13,
+        "name": "Boomerang Spears",
+        "description": "Spears now return to you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "explosive_speartips",
+        "positionIndex": 14,
+        "name": "Explosive Speartips",
+        "description": "Spears have a chance to explode on hit dealing area of effect damage on an increased radius.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "lightning_skill_damage": 60, "area_of_effect": 30 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "storm_dash",
+    "classId": "amazon",
+    "name": "Storm Dash",
+    "kind": "active",
+    "description": "Dash towards target location striking nearby monsters with chain lightning.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Movement",
+      "Chaining",
+      "Lightning"
+    ],
+    "movementDuringUse": 0,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Valkyrie",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Storm_Dash.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 16
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Astrope's Gift",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Feint",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Rebound",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "storm_dash_core",
+        "positionIndex": 0,
+        "name": "Storm Dash",
+        "description": "Core of the Storm Dash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "agile_zapper",
+        "positionIndex": 1,
+        "name": "Agile Zapper",
+        "description": "Increases the frequency of chain lightnings.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6.25 }
+        }
+      },
+      {
+        "id": "zapping_force",
+        "positionIndex": 2,
+        "name": "Zapping Force",
+        "description": "Increases damage dealt by storm dash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "bouncing_current",
+        "positionIndex": 3,
+        "name": "Bouncing Current",
+        "description": "Increases the amount of chain lightning bounces.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "thunderfall",
+        "positionIndex": 4,
+        "name": "Thunderfall",
+        "description": "Chain lightning has a chance to call down a thunderbolt on the target dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "hopping_surge",
+        "positionIndex": 5,
+        "name": "Hopping Surge",
+        "description": "Increases the maximum range of storm dash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "landing_surge",
+        "positionIndex": 6,
+        "name": "Landing Surge",
+        "description": "When landing unleash a lightning explosion for additional area of effect damage and stunning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "lightning_strikes",
+        "positionIndex": 7,
+        "name": "Lightning Strikes",
+        "description": "Unleash lightning strikes on nearby monsters when landing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "voltage_struck",
+        "positionIndex": 8,
+        "name": "Voltage Struck",
+        "description": "Chance to stun on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "electric_current",
+        "positionIndex": 9,
+        "name": "Electric Current",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "agility_over_power",
+        "positionIndex": 10,
+        "name": "Agility Over Power",
+        "description": "You can now travel through terrain but the damage of storm dash is reduced.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": -15 }
+        }
+      },
+      {
+        "id": "lightning_trail",
+        "positionIndex": 11,
+        "name": "Lightning Trail",
+        "description": "Leave behind a trail of lightning inflicting electrified and lightning break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_stasis_damage": 0, "lightning_break": 0 },
+          "perRank": { "increased_stasis_damage": 15, "lightning_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 15 } },
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 20 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "storm_orbs",
+        "positionIndex": 12,
+        "name": "Storm Orbs",
+        "description": "Landing on monsters summons lightning bolts orbiting around you continuously zapping nearby monsters with chain lightning. Storm dash now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "storm_gates",
+        "positionIndex": 13,
+        "name": "Storm Gates",
+        "description": "Blink to target location summoning a lightning storm unleashing chain lightning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 25 }
+        }
+      },
+      {
+        "id": "pillar_of_storm",
+        "positionIndex": 14,
+        "name": "Pillar of Storm",
+        "description": "Leave behind a pillar of storm. Pillars of storm are linked with a chain of lightning dealing damage and inflicting stasis on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_stasis_damage": 0, "skill_duration": 0 },
+          "perRank": { "increased_stasis_damage": 40, "skill_duration": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "thunder_fury",
+    "classId": "amazon",
+    "name": "Thunder Fury",
+    "kind": "active",
+    "description": "Perform an attack dealing physical damage that spreads lightning behind the target.",
+    "damageType": "lightning",
+    "tags": [
+      "Attack",
+      "Active",
+      "Ranged",
+      "Projectile",
+      "Strike",
+      "Lightning",
+      "Physical"
+    ],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Valkyrie",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Thunder_Fury.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 19
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "attackKind": "attack",
+    "attackScaling": {
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Spearnage",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Rebound",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Storm Dash",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.5,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "thunder_fury_core",
+        "positionIndex": 0,
+        "name": "Thunder Fury",
+        "description": "Core of the Thunder Fury subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "roaring_thunder",
+        "positionIndex": 1,
+        "name": "Roaring Thunder",
+        "description": "Increases lightning damage dealt by thunder fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "breaking_thunder",
+        "positionIndex": 2,
+        "name": "Breaking Thunder",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "photonic_transfer",
+        "positionIndex": 3,
+        "name": "Photonic Transfer",
+        "description": "Recover a portion of your life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "thunderstep",
+        "positionIndex": 4,
+        "name": "Thunderstep",
+        "description": "Decreases movement speed diminish when using thunder fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "storms_wisdom",
+        "positionIndex": 5,
+        "name": "Storm´s Wisdom",
+        "description": "Chance to critically hit dealing increased damage based on your intelligence.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "crit_chance": 0, "conversion_intelligence": 0 },
+          "perRank": { "crit_chance": 5, "conversion_intelligence": 25 }
+        }
+      },
+      {
+        "id": "tectonic_hit",
+        "positionIndex": 6,
+        "name": "Tectonic Hit",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "tectonic_tremors",
+        "positionIndex": 7,
+        "name": "Tectonic Tremors",
+        "description": "Increases damage to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "executioneers_fury",
+        "positionIndex": 8,
+        "name": "Executioneer´s Fury",
+        "description": "Execute low life monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1.5 }
+        }
+      },
+      {
+        "id": "tectonic_impact",
+        "positionIndex": 9,
+        "name": "Tectonic Impact",
+        "description": "Stunned targets unleash an exploding lightning pulse on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 30 }
+        }
+      },
+      {
+        "id": "thunders_reach",
+        "positionIndex": 10,
+        "name": "Thunder´s Reach",
+        "description": "Increases the range of thunder fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "arc_lightning",
+        "positionIndex": 11,
+        "name": "Arc Lightning",
+        "description": "Thunder bolts unleash an arc of additional bolts behind the target on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 2, "lightning_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "lightning_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "leaping_thunder",
+        "positionIndex": 12,
+        "name": "Leaping Thunder",
+        "description": "Release chain lightning on hit with an increased number of bounces.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0, "lightning_skill_damage": 0 },
+          "perRank": { "projectile_bounces": 2, "lightning_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "vacuuming_thunder",
+        "positionIndex": 13,
+        "name": "Vacuuming Thunder",
+        "description": "Thunder bolts pull targets to the initial point of impact followed by a surge of lightning dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "lightning_skill_damage": 45, "skill_range": 35 }
+        }
+      },
+      {
+        "id": "electric_essence",
+        "positionIndex": 14,
+        "name": "Electric Essence",
+        "description": "Inflict lightning break and stasis to targets on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_stasis_damage": 0, "lightning_break": 0 },
+          "perRank": { "increased_stasis_damage": 75, "lightning_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 75 } },
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 20 }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "thunder_goddesses_chosen",
+    "classId": "amazon",
+    "name": "Thunder Goddesses Chosen",
+    "kind": "passive",
+    "description": "Increases lightning skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Valkyrie",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 4,
+        "attack_rating": 18
+      },
+      "perRank": {
+        "lightning_skill_damage": 4,
+        "attack_rating": 18
+      }
+    }
+  },
+  {
+    "id": "astropes_battle_maiden",
+    "classId": "amazon",
+    "name": "Astrope's Battle Maiden",
+    "kind": "buff",
+    "description": "Temporarily increases your lightning skill damage and attack speed.",
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Valkyrie",
+    "position": {
+      "row": 4,
+      "col": 0
+    },
+    "icon": "https://herosiege.wiki.gg/images/Amazon_Astropes_Battle_Maiden.png",
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 10
+      }
+    ],
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "movementDuringUse": 85,
+    "manaCostFormula": {
+      "base": 10,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 3.5,
+        "increased_attack_speed": 20
+      },
+      "perRank": {
+        "lightning_skill_damage": 3.5,
+        "increased_attack_speed": 1
+      }
+    }
+  }
+]

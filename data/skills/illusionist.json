@@ -1,0 +1,1325 @@
+[
+  {
+    "id": "sand_guardians",
+    "classId": "illusionist",
+    "name": "Sand Guardians",
+    "kind": "active",
+    "description": "Conjure a Sand Guardian that attacks nearby monsters dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Guardian", "Summon"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "effectDuration": 7,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Sand Manipulator",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 15, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Call For War", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Circle of Guardians", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Link of Sand", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "sand_guardians_core",
+        "positionIndex": 0,
+        "name": "Sand Guardians",
+        "description": "Core of the Sand Guardians subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hardened_sandstone",
+        "positionIndex": 1,
+        "name": "Hardened Sandstone",
+        "description": "Increases the damage dealt by sand guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "durable_sand",
+        "positionIndex": 2,
+        "name": "Durable Sand",
+        "description": "Increases the duration of sand guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "deserts_gladiators",
+        "positionIndex": 3,
+        "name": "Deserts Gladiators",
+        "description": "Chance to unleash an additional attack.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "sand_frenzy",
+        "positionIndex": 4,
+        "name": "Sand Frenzy",
+        "description": "Increases the attack speed of sand guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 12 }
+        }
+      },
+      {
+        "id": "battle_iq",
+        "positionIndex": 5,
+        "name": "Battle IQ",
+        "description": "Sand guardians periodically dash a short distance towards the closest monster if not in combat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "reserve_army",
+        "positionIndex": 6,
+        "name": "Reserve Army",
+        "description": "Chance to summon an additional sand guardian on cast.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "lunge_attack",
+        "positionIndex": 7,
+        "name": "Lunge Attack",
+        "description": "Increases the attack range of sand guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 12.5 }
+        }
+      },
+      {
+        "id": "dashing_sandstrike",
+        "positionIndex": 8,
+        "name": "Dashing Sandstrike",
+        "description": "Chance on attack to dash through the target monster dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 45 }
+          }
+        }
+      },
+      {
+        "id": "sands_edge",
+        "positionIndex": 9,
+        "name": "Sand´s Edge",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "deadly_guardians",
+        "positionIndex": 10,
+        "name": "Deadly Guardians",
+        "description": "Increases the size and damage dealt by sand guardians, decreasing the duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "projectile_size": 0,
+            "skill_duration": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 15,
+            "projectile_size": 10,
+            "skill_duration": -10
+          }
+        }
+      },
+      {
+        "id": "guardian_nevermore",
+        "positionIndex": 11,
+        "name": "Guardian Nevermore",
+        "description": "Sand guardians now move around with you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "movement_speed": 0 },
+          "perRank": { "arcane_skill_damage": 40, "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "sand_mages",
+        "positionIndex": 12,
+        "name": "Sand Mages",
+        "description": "Summon sand mages zapping monsters from afar with arcane surges.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 32.5, "skill_range": 17.5 }
+        }
+      },
+      {
+        "id": "sacrifice_for_the_throne",
+        "positionIndex": 13,
+        "name": "Sacrifice for the Throne",
+        "description": "Sand guardians immediately seek the nearest monster, charging towards it, exploding, and dealing increased damage, inflicting arcane break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "arcane_break": 0 },
+          "perRank": { "arcane_skill_damage": 75, "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "guardians_of_the_orbital_sand",
+        "positionIndex": 14,
+        "name": "Guardians of the Orbital Sand",
+        "description": "Sand guardians now orbit around you, striking nearby monsters. Sand guardians now have a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "summon_max_amount": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 50,
+            "summon_max_amount": 5
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "call_for_war",
+    "classId": "illusionist",
+    "name": "Call For War",
+    "kind": "active",
+    "description": "Command all Sand Guardians to charge to target area. Passively increases Sand Guardian dash range.",
+    "tags": ["Cast", "Active", "Spell"],
+    "range": 360,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Sand Manipulator",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "range": 15 },
+      "perRank": { "range": 3 }
+    }
+  },
+  {
+    "id": "piercing_sand",
+    "classId": "illusionist",
+    "name": "Piercing Sand",
+    "kind": "passive",
+    "description": "Sand Guardians break monster arcane resistances on attack.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Sand Manipulator",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_break": 2 },
+      "perRank": { "arcane_break": 2 }
+    }
+  },
+  {
+    "id": "link_of_sand",
+    "classId": "illusionist",
+    "name": "Link of Sand",
+    "kind": "active",
+    "description": "Pull yourself into the closest Sand Guardian in the target location temporarily empowering all nearby Sand Guardians arcane damage.",
+    "tags": ["Cast", "Active", "Spell"],
+    "baseCastRate": 1,
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Sand Manipulator",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2.5 },
+      "perRank": { "arcane_skill_damage": 2.5 }
+    }
+  },
+  {
+    "id": "circle_of_guardians",
+    "classId": "illusionist",
+    "name": "Circle of Guardians",
+    "kind": "active",
+    "description": "Conjure a circle of Sand Guardians around you increasing Sand Guardians' arcane damage.",
+    "tags": ["Cast", "Active", "Spell", "Guardian", "Summon"],
+    "baseCastRate": 1,
+    "effectDuration": 10,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Sand Manipulator",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 14 }],
+    "manaCostFormula": { "base": 14, "perLevel": 2 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10 },
+      "perRank": { "arcane_skill_damage": 1 }
+    },
+    "subskills": [
+      {
+        "id": "circle_of_guardians_core",
+        "positionIndex": 0,
+        "name": "Circle of Guardians",
+        "description": "Core of the Circle of Guardians subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "rapid_deployment",
+        "positionIndex": 1,
+        "name": "Rapid Deployment",
+        "description": "Decreases the cooldown of circle of guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "peer_pressure",
+        "positionIndex": 2,
+        "name": "Peer Pressure",
+        "description": "Increases the damage dealt by circle of guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "magic_skill_damage": 0 },
+          "perRank": { "magic_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "battalion_of_guardians",
+        "positionIndex": 3,
+        "name": "Battalion of Guardians",
+        "description": "Increases the amount of sand guardians summoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_max_amount": 2 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "devastating_lunge",
+        "positionIndex": 4,
+        "name": "Devastating Lunge",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "lasting_sand_kingdom",
+        "positionIndex": 5,
+        "name": "Lasting Sand Kingdom",
+        "description": "Increases the duration of circle of guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "well_trained_troops",
+        "positionIndex": 6,
+        "name": "Well Trained Troops",
+        "description": "Increases the attack speed of circle of guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "magic_infused_blade",
+        "positionIndex": 7,
+        "name": "Magic Infused Blade",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "far_reaching_spears",
+        "positionIndex": 8,
+        "name": "Far Reaching Spears",
+        "description": "Increases the attack range of circle of guardians.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "everflowing_sands",
+        "positionIndex": 9,
+        "name": "Everflowing Sands",
+        "description": "Sand guardians gain increased duration based on your energy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 3 }
+        }
+      },
+      {
+        "id": "manipulation",
+        "positionIndex": 10,
+        "name": "Manipulation",
+        "description": "Increases the damage dealt by circle of guardians but each active guardian drains your mana when attacking.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "magic_skill_damage": 0, "mana_drain_pct": 0 },
+          "perRank": { "magic_skill_damage": 1, "mana_drain_pct": 0.5 }
+        }
+      },
+      {
+        "id": "deserts_army",
+        "positionIndex": 11,
+        "name": "Desert´s Army",
+        "description": "Summon a wall of guardians marching forward dealing increased damage, knocking monsters back on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "magic_skill_damage": 0,
+            "summon_max_amount": 0
+          },
+          "perRank": {
+            "magic_skill_damage": 75,
+            "summon_max_amount": 3
+          }
+        }
+      },
+      {
+        "id": "ancient_sand_goliath",
+        "positionIndex": 12,
+        "name": "Ancient Sand Goliath",
+        "description": "Summon an ancient sand goliath with increased size and damage based on summon amount for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_size": 0 },
+          "perRank": { "of_total_damage": 40, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "arcanic_sand_tether",
+        "positionIndex": 13,
+        "name": "Arcanic Sand Tether",
+        "description": "Create an arcanic sand tether between you and the circle of guardians dealing damage over time to monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "magic_skill_damage": 0, "summon_attack_speed": 0 },
+          "perRank": { "magic_skill_damage": 35, "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "seven_nation_army",
+        "positionIndex": 14,
+        "name": "Seven Nation Army",
+        "description": "Increases the amount and damage of circle of guardians.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "magic_skill_damage": 0,
+            "summon_max_amount": 0
+          },
+          "perRank": {
+            "magic_skill_damage": 45,
+            "summon_max_amount": 2
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dissipation",
+    "classId": "illusionist",
+    "name": "Dissipation",
+    "kind": "passive",
+    "description": "Sand Guardians explode upon expiration dealing area of effect arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Passive", "Explosion"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Sand Manipulator",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.5, "perLevel": 16.5 },
+    "bonusSources": [
+      { "source": "Piercing Sand", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Call For War", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Cheapshot", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "cheapshot",
+    "classId": "illusionist",
+    "name": "Cheapshot",
+    "kind": "passive",
+    "description": "Sand Guardians gain a chance to deal a deadly attack with increased arcane damage and stunning their target.",
+    "tags": ["Passive", "Area of Effect"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Sand Manipulator",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2.5, "stun_duration": 1, "proc_chance": 22 },
+      "perRank": { "arcane_skill_damage": 2.5, "stun_duration": 0.1, "proc_chance": 0 }
+    }
+  },
+  {
+    "id": "spirit_link",
+    "classId": "illusionist",
+    "name": "Spirit Link",
+    "kind": "passive",
+    "description": "Link of Sand increases your magic skill damage and physical damage reduction for a short period.",
+    "tags": ["Passive"],
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Sand Manipulator",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3, "physical_damage_reduction": 1 },
+      "perRank": { "arcane_skill_damage": 3, "physical_damage_reduction": 1 }
+    }
+  },
+  {
+    "id": "combat_order",
+    "classId": "illusionist",
+    "name": "Combat Order",
+    "kind": "passive",
+    "description": "Sand Guardians gain a chance to perform an area of effect attack dealing arcane damage.",
+    "tags": ["Passive", "Area of Effect"],
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Sand Manipulator",
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10, "proc_chance": 15 },
+      "perRank": { "arcane_skill_damage": 1.5, "proc_chance": 0 }
+    }
+  },
+  {
+    "id": "age_proliferation",
+    "classId": "illusionist",
+    "name": "Age Proliferation",
+    "kind": "active",
+    "description": "Channel waves of fractal energy on the target monster sending pulses out dealing arcane damage to nearby monsters.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "effectDuration": 2.5,
+    "range": 256,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Chronomancer",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 16, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Dimensional Displacement", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Temporal Heroes", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Expansive Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "age_proliferation_core",
+        "positionIndex": 0,
+        "name": "Age Proliferation",
+        "description": "Core of the Age Proliferation subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "ancient_magic",
+        "positionIndex": 1,
+        "name": "Ancient Magic",
+        "description": "Increases the damage dealt by age proliferation.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "eons_ago",
+        "positionIndex": 2,
+        "name": "Eons Ago",
+        "description": "Increases the duration of age proliferation.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 20 }
+        }
+      },
+      {
+        "id": "bridge_between_reality",
+        "positionIndex": 3,
+        "name": "Bridge Between Reality",
+        "description": "Increases the range of age proliferation.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 30 }
+        }
+      },
+      {
+        "id": "restoring_proliferation",
+        "positionIndex": 4,
+        "name": "Restoring Proliferation",
+        "description": "Chance to restore a portion of your maximum mana on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "mana_replenish_pct": 0 },
+            "perRank": { "mana_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "breaking_the_cycle",
+        "positionIndex": 5,
+        "name": "Breaking The Cycle",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "effortless_path",
+        "positionIndex": 6,
+        "name": "Effortless Path",
+        "description": "Decreases movement diminish with age proliferation.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "additional_faith",
+        "positionIndex": 7,
+        "name": "Additional Faith",
+        "description": "Chance on cast to unleash an additional beam on a nearby monster.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 12.5 }
+        }
+      },
+      {
+        "id": "rapid_aging",
+        "positionIndex": 8,
+        "name": "Rapid Aging",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 25 }
+        }
+      },
+      {
+        "id": "burning_aging",
+        "positionIndex": 9,
+        "name": "Burning Aging",
+        "description": "Chance to inflict shadow burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_shadow_burning_damage": 0 },
+          "perRank": { "increased_shadow_burning_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "shadow_burn", "amount": { "base": 0, "perRank": 50 } },
+            "burning"
+          ]
+        }
+      },
+      {
+        "id": "centuries_within_seconds",
+        "positionIndex": 10,
+        "name": "Centuries Within Seconds",
+        "description": "Increases the tick frequency of age proliferation.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
+          "perRank": { "faster_cast_rate": 8, "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "growing_old",
+        "positionIndex": 11,
+        "name": "Growing Old",
+        "description": "Age proliferation grows in size and deals increased damage with every pulse.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 7.5, "area_of_effect": 2.5 }
+        }
+      },
+      {
+        "id": "age_multiliferation",
+        "positionIndex": 12,
+        "name": "Age Multiliferation",
+        "description": "Unleash age proliferation at multiple nearby monsters splitting the damage between beams.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "max_targets": 0 },
+          "perRank": { "arcane_skill_damage": 85, "max_targets": 1 }
+        }
+      },
+      {
+        "id": "arcane_echo",
+        "positionIndex": 13,
+        "name": "Arcane Echo",
+        "description": "Summon an arcane echo of your self casting age proliferation at nearby targets. Age proliferation now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "arcane_skill_damage": 65, "faster_cast_rate": 7.5 }
+        }
+      },
+      {
+        "id": "scorching_magic",
+        "positionIndex": 14,
+        "name": "Scorching Magic",
+        "description": "Age proliferation now unleashes scorching fire balls towards monsters on hit inflicting burning and slowing them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 100 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 2 }
+          },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } },
+            "slow"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "gravitation_slam",
+    "classId": "illusionist",
+    "name": "Gravitation Slam",
+    "kind": "active",
+    "description": "Raise monsters in target location into the air smashing them down with quantum force dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "range": 240,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Chronomancer",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 6, "perLevel": 15.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Age Proliferation", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Precognition", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Time Deceleration", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "gravitation_slam_core",
+        "positionIndex": 0,
+        "name": "Gravitation Slam",
+        "description": "Core of the Gravitation Slam subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "earths_pull",
+        "positionIndex": 1,
+        "name": "Earth´s Pull",
+        "description": "Increases the damage dealt by gravitation slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "astral_chaos",
+        "positionIndex": 2,
+        "name": "Astral Chaos",
+        "description": "Gravitation slam executes monsters below a threshold.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 2 }
+        }
+      },
+      {
+        "id": "shaken_with_magic",
+        "positionIndex": 3,
+        "name": "Shaken With Magic",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "gravity_at_will",
+        "positionIndex": 4,
+        "name": "Gravity at Will",
+        "description": "Increases cast rate when using gravitation slam.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "floating_range",
+        "positionIndex": 5,
+        "name": "Floating Range",
+        "description": "Increases the area of effect radius of gravitation slam.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "self_help",
+        "positionIndex": 6,
+        "name": "Self-help",
+        "description": "Chance to knock monsters into air on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "stunned_by_force",
+        "positionIndex": 7,
+        "name": "Stunned by Force",
+        "description": "Chance to stun targets on hit.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "gravitational_radius",
+        "positionIndex": 8,
+        "name": "Gravitational Radius",
+        "description": "Increases the maximum cast range of gravitation slam.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "deep_slam",
+        "positionIndex": 9,
+        "name": "Deep Slam",
+        "description": "Chance to critically hit dealing increased damage equal to your arcane skill damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 8, "spell_crit_damage": 40 }
+        }
+      },
+      {
+        "id": "force_of_gravity",
+        "positionIndex": 10,
+        "name": "Force of Gravity",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "void_slam",
+        "positionIndex": 11,
+        "name": "Void Slam",
+        "description": "Increases the area of effect radius pulling monsters towards the center of mass on hit inflicting shadow burning. Gravitation slam now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_shadow_burning_damage": 0, "area_of_effect": 0 },
+          "perRank": {
+            "increased_shadow_burning_damage": 150,
+            "area_of_effect": 40
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "shadow_burn", "amount": { "base": 0, "perRank": 150 } }
+          ]
+        }
+      },
+      {
+        "id": "gravitation_wave",
+        "positionIndex": 12,
+        "name": "Gravitation Wave",
+        "description": "Unleash a shockwave of gravitation slams towards target direction with increased radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "area_of_effect": 0,
+            "projectile_count": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "area_of_effect": 25,
+            "projectile_count": 3,
+            "arcane_skill_damage": 10
+          }
+        }
+      },
+      {
+        "id": "dimensional_slam",
+        "positionIndex": 13,
+        "name": "Dimensional Slam",
+        "description": "Smash monsters into a black hole causing them to re-appear from an additional white hole knocked up dealing increased area of effect damage when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "antigravity_slam",
+        "positionIndex": 14,
+        "name": "Antigravity Slam",
+        "description": "Knock monsters back from the center of impact with force unleashing homing void souls seeking nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "arcane_skill_damage": 80, "projectile_speed": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "split_reality",
+    "classId": "illusionist",
+    "name": "Split Reality",
+    "kind": "active",
+    "description": "Detach from your quantum self leaving your fractal self behind that explodes when coming in contact with a monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Chronomancer",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "stun_duration": 1.2 },
+      "perRank": { "stun_duration": 0.2 }
+    },
+    "bonusSources": [
+      { "source": "Gravitation Slam", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Sands of Time", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Precognition", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "time_deceleration",
+    "classId": "illusionist",
+    "name": "Time Deceleration",
+    "kind": "active",
+    "description": "Break time and space causing all nearby monsters to take arcane damage and Slowing them.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Chronomancer",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 15 }],
+    "damageFormula": { "base": 0, "perLevel": 15 },
+    "manaCostFormula": { "base": 15, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "slow_duration": 1.5 },
+      "perRank": { "slow_duration": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Gravitation Slam", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Age Proliferation", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Dimensional Displacement", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "dimensional_displacement",
+    "classId": "illusionist",
+    "name": "Dimensional Displacement",
+    "kind": "active",
+    "description": "Warp a short distance towards target location temporarily gaining increased movement speed.",
+    "tags": ["Cast", "Active", "Movement", "Blink"],
+    "baseCastRate": 1,
+    "effectDuration": 2,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Chronomancer",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "movement_speed": 3 },
+      "perRank": { "movement_speed": 3 }
+    }
+  },
+  {
+    "id": "sands_of_time",
+    "classId": "illusionist",
+    "name": "Sands of Time",
+    "kind": "active",
+    "description": "Temporarily increase your arcane skill damage and cast rate.",
+    "tags": ["Cast", "Active", "Buff"],
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Chronomancer",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3, "cast_rate": 1.5 },
+      "perRank": { "arcane_skill_damage": 3, "cast_rate": 1.5 }
+    }
+  },
+  {
+    "id": "expansive_mind",
+    "classId": "illusionist",
+    "name": "Expansive Mind",
+    "kind": "passive",
+    "description": "Increases your mana and mana replenish.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Chronomancer",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana": 0.5, "mana_replenish": 1 },
+      "perRank": { "mana": 0.5, "mana_replenish": 1 }
+    }
+  },
+  {
+    "id": "precognition",
+    "classId": "illusionist",
+    "name": "Precognition",
+    "kind": "passive",
+    "description": "Increases your arcane skill damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Chronomancer",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3 },
+      "perRank": { "arcane_skill_damage": 3 }
+    }
+  },
+  {
+    "id": "temporal_heroes",
+    "classId": "illusionist",
+    "name": "Temporal Heroes",
+    "kind": "active",
+    "description": "Summon a fractal Viking, Pyromancer and Marksman to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Chronomancer",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 14 }],
+    "damageFormula": { "base": 1, "perLevel": 11 },
+    "manaCostFormula": { "base": 14, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Expansive Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Precognition", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Sands of Time", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "temporal_heroes_core",
+        "positionIndex": 0,
+        "name": "Temporal Heroes",
+        "description": "Core of the Temporal Heroes subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "mirror_image",
+        "positionIndex": 1,
+        "name": "Mirror Image",
+        "description": "Increases the damage dealt by temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "summon_carnage",
+        "positionIndex": 2,
+        "name": "Summon Carnage",
+        "description": "Increases the attack speed of temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "larger_than_life",
+        "positionIndex": 3,
+        "name": "Larger Than Life",
+        "description": "Increases the life of temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 10 }
+        }
+      },
+      {
+        "id": "quantum_immortality",
+        "positionIndex": 4,
+        "name": "Quantum Immortality",
+        "description": "Increases the duration of temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "more_aid",
+        "positionIndex": 5,
+        "name": "More Aid",
+        "description": "Decreases the cooldown of temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "accurate_clone",
+        "positionIndex": 6,
+        "name": "Accurate Clone",
+        "description": "Increases the skill levels of temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_skill_level": 0 },
+          "perRank": { "summon_skill_level": 1 }
+        }
+      },
+      {
+        "id": "tough_bones",
+        "positionIndex": 7,
+        "name": "Tough Bones",
+        "description": "Increases all resistances for temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_resistances": 0 },
+          "perRank": { "all_resistances": 6 }
+        }
+      },
+      {
+        "id": "heroes_of_the_ether",
+        "positionIndex": 8,
+        "name": "Heroes of the Ether",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "fractured_reality",
+        "positionIndex": 9,
+        "name": "Fractured Reality",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "evasive_strategy",
+        "positionIndex": 10,
+        "name": "Evasive Strategy",
+        "description": "Increases the dodge chance of temporal heroes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_dodge_chance": 0 },
+          "perRank": { "summon_dodge_chance": 10 }
+        }
+      },
+      {
+        "id": "augmented_heroics",
+        "positionIndex": 11,
+        "name": "Augmented Heroics",
+        "description": "Temporal heroes gain augmented skills and increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "summon_skill_level": 0 },
+          "perRank": { "arcane_skill_damage": 15, "summon_skill_level": 1 }
+        }
+      },
+      {
+        "id": "the_four_horsemen",
+        "positionIndex": 12,
+        "name": "The Four Horsemen",
+        "description": "Gain an additional temporal hero increasing the damage, life and movement speed of all temporal heroes.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "summon_life": 0,
+            "summon_movement_speed": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 20,
+            "summon_life": 25,
+            "summon_movement_speed": 20
+          }
+        }
+      },
+      {
+        "id": "the_singularity",
+        "positionIndex": 13,
+        "name": "The Singularity",
+        "description": "Summon a temporal demonspawn with increased stats.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "summon_life": 0 },
+          "perRank": { "arcane_skill_damage": 100, "summon_life": 100 }
+        }
+      },
+      {
+        "id": "summon_support",
+        "positionIndex": 14,
+        "name": "Summon Support",
+        "description": "Temporal heroes cast buffs when summoned. Viking casts combat orders, pyromancer casts fire shield and marksman casts agility.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_skill_level": 0 },
+          "perRank": { "summon_skill_level": 20 }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,2444 @@
+[
+  {
+    "id": "sand_carver",
+    "classId": "nomad",
+    "name": "Sand Carver",
+    "kind": "active",
+    "description": "Perform an attack that flings piercing sand at monsters.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Projectile", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Wanderer",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 106, "perLevel": 32 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 12, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Sand Entombment", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Oasis Aura", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "sand_carver_core",
+        "positionIndex": 0,
+        "name": "Sand Carver",
+        "description": "Core of the Sand Carver subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "desert_mix",
+        "positionIndex": 1,
+        "name": "Desert Mix",
+        "description": "Increases the amount of sand thrown.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "concentrated_sand",
+        "positionIndex": 2,
+        "name": "Concentrated Sand",
+        "description": "Increases the damage dealt by sand carver.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "glass_shards",
+        "positionIndex": 3,
+        "name": "Glass Shards",
+        "description": "Thrown sand has a chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "special_pouch",
+        "positionIndex": 4,
+        "name": "Special Pouch",
+        "description": "Increases the damage dealt to bosses by sand carver.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 10 }
+        }
+      },
+      {
+        "id": "vortex_master",
+        "positionIndex": 5,
+        "name": "Vortex Master",
+        "description": "Chance on kill to spawn a small sand vortex.",
+        "maxRank": 4,
+        "proc": { "trigger": "on_kill", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "combat_skills",
+        "positionIndex": 6,
+        "name": "Combat Skills",
+        "description": "Chance on hit to gain increased dodge chance for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "dodge_chance": 0 },
+            "perRank": { "dodge_chance": 15 }
+          }
+        }
+      },
+      {
+        "id": "swift_strikes",
+        "positionIndex": 7,
+        "name": "Swift Strikes",
+        "description": "Increases attack speed when using sand carver.",
+        "maxRank": 6,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 8 }
+        }
+      },
+      {
+        "id": "raw_power",
+        "positionIndex": 8,
+        "name": "Raw Power",
+        "description": "Increases attack damage dealt by sand carver.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "headwind",
+        "positionIndex": 9,
+        "name": "Headwind",
+        "description": "Increases the projectile speed of sand thrown.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "sand_infusion",
+        "positionIndex": 10,
+        "name": "Sand Infusion",
+        "description": "Chance to inflict armor break and arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0, "armor_break": 0 },
+          "perRank": { "arcane_break": 25, "armor_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } },
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "eviscerate",
+        "positionIndex": 11,
+        "name": "Eviscerate",
+        "description": "Critical strikes cause the nomad to throw sand in a circle around him stunning and dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 45, "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "parasitical_sand",
+        "positionIndex": 12,
+        "name": "Parasitical Sand",
+        "description": "Thrown sand now sticks to the targets dealing damage over time for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "piercing_sands",
+        "positionIndex": 13,
+        "name": "Piercing Sands",
+        "description": "Thrown sand is now piercing and has a chance to fork on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "deserts_blade",
+        "positionIndex": 14,
+        "name": "Desert´s Blade",
+        "description": "Chance on attack to summon a big tornado pulling in and dealing additional damage to nearby monsters.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 75 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "cloud_of_sand",
+    "classId": "nomad",
+    "name": "Cloud of Sand",
+    "kind": "active",
+    "description": "Unleash a cloud of sand that travels forwards dealing arcane damage, by casting the skill again Nomad will re-locate on the sand clouds position dealing area of effect arcane damage and stunning nearby monsters.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Movement", "Blink"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Wanderer",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 6, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Sand Carver", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Sand Entombment", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Sand Tremors", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "cloud_of_sand_core",
+        "positionIndex": 0,
+        "name": "Cloud of Sand",
+        "description": "Core of the Cloud of Sand subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "breeze",
+        "positionIndex": 1,
+        "name": "Breeze",
+        "description": "Decreases movement diminish when using cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "deserts_spirit",
+        "positionIndex": 2,
+        "name": "Desert's Spirit",
+        "description": "Increases cast rate when using cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "sand_twisters",
+        "positionIndex": 3,
+        "name": "Sand Twisters",
+        "description": "Teleporting into the cloud now unleashes multiple sand tornados around the cloud.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 20, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "deserts_will",
+        "positionIndex": 4,
+        "name": "Desert's Will",
+        "description": "Decreases mana cost when using cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "deserts_endurance",
+        "positionIndex": 5,
+        "name": "Desert's Endurance",
+        "description": "Increases the duration of cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "sandbender",
+        "positionIndex": 6,
+        "name": "Sandbender",
+        "description": "Cloud of sand now leaves behind a trail of tornados.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 20 }
+        }
+      },
+      {
+        "id": "zephyr",
+        "positionIndex": 7,
+        "name": "Zephyr",
+        "description": "Increases the projectile speed of cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "heavy_sand",
+        "positionIndex": 8,
+        "name": "Heavy Sand",
+        "description": "Increases the damage dealt by cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "dust_storm",
+        "positionIndex": 9,
+        "name": "Dust Storm",
+        "description": "Increases the size of cloud of sand.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "hand_of_the_oasis",
+        "positionIndex": 10,
+        "name": "Hand of the Oasis",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "cloud_bender",
+        "positionIndex": 11,
+        "name": "Cloud Bender",
+        "description": "The cloud is now under your control gaining increased size and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 35, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "field_of_quicksand",
+        "positionIndex": 12,
+        "name": "Field of Quicksand",
+        "description": "Teleporting to the cloud now summons multiple small sand vortexes around it.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 20, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "deserts_echo",
+        "positionIndex": 13,
+        "name": "Desert´s Echo",
+        "description": "Summon multiple clouds dealing increased damage. You are no longer able to teleport into the cloud.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 15, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "ascension",
+        "positionIndex": 14,
+        "name": "Ascension",
+        "description": "Teleporting to the cloud now renders you immortal for a short period. Cloud of sand now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 0.5 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sand_tremors",
+    "classId": "nomad",
+    "name": "Sand Tremors",
+    "kind": "active",
+    "description": "Strike a target causing sand tremors to hit nearby monsters dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Wanderer",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 46.5, "perLevel": 16.5 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 4.5 }
+    },
+    "bonusSources": [
+      { "source": "Sand Carver", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Oasis Aura", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Dissipating Tornado", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "sand_tremors_core",
+        "positionIndex": 0,
+        "name": "Sand Tremors",
+        "description": "Core of the Sand Tremors subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "amplified_frequency",
+        "positionIndex": 1,
+        "name": "Amplified Frequency",
+        "description": "Chance on attack to spawn additional tremors.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "light_footwork",
+        "positionIndex": 2,
+        "name": "Light Footwork",
+        "description": "Decreases movement diminish when using sand tremors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "oasis_impaler",
+        "positionIndex": 3,
+        "name": "Oasis Impaler",
+        "description": "Chance on hit to inflict bleeding for a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "internal_bleeding",
+        "positionIndex": 4,
+        "name": "Internal Bleeding",
+        "description": "Increases damage to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "waves_of_despair",
+        "positionIndex": 5,
+        "name": "Waves of Despair",
+        "description": "Increases the area of effect radius of sand tremors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "shock_therapy",
+        "positionIndex": 6,
+        "name": "Shock Therapy",
+        "description": "Increases the damage dealt by sand tremors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "tremors_reach",
+        "positionIndex": 7,
+        "name": "Tremor´s Reach",
+        "description": "Increases attack range and area of effect radius when using sand tremors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0, "area_of_effect": 0 },
+          "perRank": { "skill_range": 25, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "conjuring_winds",
+        "positionIndex": 8,
+        "name": "Conjuring Winds",
+        "description": "Chance on hit to send a sand tornado towards the target dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 12 }
+          }
+        }
+      },
+      {
+        "id": "exchange_of_life",
+        "positionIndex": 9,
+        "name": "Exchange of Life",
+        "description": "Killing monsters with sand tremors restores your life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "area_of_impact",
+        "positionIndex": 10,
+        "name": "Area of Impact",
+        "description": "Increases critical strike damage dealt by sand tremors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 18 }
+        }
+      },
+      {
+        "id": "shrouding_sand",
+        "positionIndex": 11,
+        "name": "Shrouding Sand",
+        "description": "Striking monsters now enshrouds you in a sandstorm which gradually shrinks and disappears. Striking additional enemies causes it to grow larger and last longer.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "physical_skill_damage": 35, "skill_duration": 8 }
+        }
+      },
+      {
+        "id": "pulsating_tremors",
+        "positionIndex": 12,
+        "name": "Pulsating Tremors",
+        "description": "Tremors now travel a short distance dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 1 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "night_at_the_desert",
+        "positionIndex": 13,
+        "name": "Night at the Desert",
+        "description": "Tremors deal increased damage and inflict permafrost on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "increased_permafrost_damage": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 30,
+            "increased_permafrost_damage": 115
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "permafrost", "amount": { "base": 0, "perRank": 115 } }
+          ]
+        }
+      },
+      {
+        "id": "dune_warrior",
+        "positionIndex": 14,
+        "name": "Dune Warrior",
+        "description": "Striking monsters adds a stack of dune warrior sending multiple tornados dealing additional damage in an arc upon reaching maximum stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 3, "projectile_count": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sand_entombment",
+    "classId": "nomad",
+    "name": "Sand Entombment",
+    "kind": "passive",
+    "description": "Chance on kill to unleash a pulse of sand dealing arcane area of effect damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Wanderer",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage": 15, "area_of_effect": 10, "proc_chance": 10 },
+      "perRank": { "damage": 15, "area_of_effect": 1, "proc_chance": 0.25 }
+    }
+  },
+  {
+    "id": "mystic_sand",
+    "classId": "nomad",
+    "name": "Mystic Sand",
+    "kind": "passive",
+    "description": "Increases your arcane skill damage and cast rate.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Wanderer",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2.5, "cast_rate": 5 },
+      "perRank": { "arcane_skill_damage": 2.5, "cast_rate": 0.5 }
+    }
+  },
+  {
+    "id": "sand_gush",
+    "classId": "nomad",
+    "name": "Sand Gush",
+    "kind": "active",
+    "description": "Unleash a gush of sand that spawns tornadoes dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Wanderer",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Sand Entombment", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Sand Vortex", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Dissipating Tornado", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.1, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "sand_gush_core",
+        "positionIndex": 0,
+        "name": "Sand Gush",
+        "description": "Core of the Sand Gush subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "deserts_sand",
+        "positionIndex": 1,
+        "name": "Desert´s Sand",
+        "description": "Increases the area of effect radius of sand gush.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 16 }
+        }
+      },
+      {
+        "id": "gushing_winds",
+        "positionIndex": 2,
+        "name": "Gushing Winds",
+        "description": "Chance on cast to increase the size and damage of tornados.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 14 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "arcane_skill_damage": 14, "area_of_effect": 15 }
+          }
+        }
+      },
+      {
+        "id": "piercing_sand",
+        "positionIndex": 3,
+        "name": "Piercing Sand",
+        "description": "Increases the damage dealt by sand gush.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "stranded_impact",
+        "positionIndex": 4,
+        "name": "Stranded Impact",
+        "description": "Increases damage dealt to bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 7.5 }
+        }
+      },
+      {
+        "id": "armor_piercing_flow",
+        "positionIndex": 5,
+        "name": "Armor Piercing Flow",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "gusting_winds",
+        "positionIndex": 6,
+        "name": "Gusting Winds",
+        "description": "Increases the speed of sand tornados.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "desert_storm",
+        "positionIndex": 7,
+        "name": "Desert Storm",
+        "description": "Increases the amount of sand tornados.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "arcane_skill_damage": 4 }
+        }
+      },
+      {
+        "id": "overwhelming_sand",
+        "positionIndex": 8,
+        "name": "Overwhelming Sand",
+        "description": "Tornados have a chance on hit to inflict bleeding for a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "tamed_winds",
+        "positionIndex": 9,
+        "name": "Tamed Winds",
+        "description": "Tornados now spin outwards following the nomad.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "contaminated_wounds",
+        "positionIndex": 10,
+        "name": "Contaminated Wounds",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 20 }
+        }
+      },
+      {
+        "id": "desert_cyclones",
+        "positionIndex": 11,
+        "name": "Desert Cyclones",
+        "description": "Tornados spawn multiple small cyclones on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 50, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "sandstorm",
+        "positionIndex": 12,
+        "name": "Sandstorm",
+        "description": "Cast continuous gushes around you for a short period with increased radius and damage. Sand Gush now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 30, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "sand_tornado",
+        "positionIndex": 13,
+        "name": "Sand Tornado",
+        "description": "Send out a sand tornado casting sand gush continuously.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 45 }
+        }
+      },
+      {
+        "id": "dust_devils",
+        "positionIndex": 14,
+        "name": "Dust Devils",
+        "description": "Unleash small dust devils bouncing off of walls and unleashing a pulse of sand on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "projectile_speed": 0,
+            "projectile_count": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "projectile_speed": 10,
+            "projectile_count": 2,
+            "arcane_skill_damage": 65
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "dissipating_tornado",
+    "classId": "nomad",
+    "name": "Dissipating Tornado",
+    "kind": "active",
+    "description": "Summon a dissipating tornado around you that pulls nearby monsters and causes you to dodge all attacks and unleash sand at monsters when they strike you dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 12,
+    "effectDuration": 3,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Wanderer",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 22 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Sand Gush", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Sand Entombment", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Sand Tremors", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "oasis_aura",
+    "classId": "nomad",
+    "name": "Oasis Aura",
+    "kind": "aura",
+    "description": "When active, increases your and your party members attack rating, movement speed and arcane damage.",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Wanderer",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_rating_pct": 4, "movement_speed": 1, "arcane_skill_damage": 2 },
+      "perRank": { "attack_rating_pct": 4, "movement_speed": 1, "arcane_skill_damage": 2 }
+    }
+  },
+  {
+    "id": "sand_vortex",
+    "classId": "nomad",
+    "name": "Sand Vortex",
+    "kind": "active",
+    "description": "Summon a massive vortex of quick sand that pulls monsters inside dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Wanderer",
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 17 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Cloud of Sand", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Dissipating Tornado", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Sand Gush", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "sand_vortex_core",
+        "positionIndex": 0,
+        "name": "Sand Vortex",
+        "description": "Core of the Sand Vortex subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "desert_mass",
+        "positionIndex": 1,
+        "name": "Desert Mass",
+        "description": "Increases the area of effect radius of sand vortex.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "quicksand",
+        "positionIndex": 2,
+        "name": "Quicksand",
+        "description": "Increases pulling strength.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "pull_strength": 0 },
+          "perRank": { "pull_strength": 20 }
+        }
+      },
+      {
+        "id": "shredding_sand",
+        "positionIndex": 3,
+        "name": "Shredding Sand",
+        "description": "Increases the damage dealt by sand vortex.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "locust_whirlpool",
+        "positionIndex": 4,
+        "name": "Locust Whirlpool",
+        "description": "Restores mana on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_replenish_pct": 0 },
+          "perRank": { "mana_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "stuttering_pull",
+        "positionIndex": 5,
+        "name": "Stuttering Pull",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "desert_control",
+        "positionIndex": 6,
+        "name": "Desert Control",
+        "description": "Reduces the cooldown of sand vortex.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "lasting_whirlpool",
+        "positionIndex": 7,
+        "name": "Lasting Whirlpool",
+        "description": "Increases the duration of sand vortex.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 12 }
+        }
+      },
+      {
+        "id": "veil_of_sand",
+        "positionIndex": 8,
+        "name": "Veil of Sand",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 12 }
+        }
+      },
+      {
+        "id": "breaking_sands",
+        "positionIndex": 9,
+        "name": "Breaking Sands",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "brain_damaging_whirl",
+        "positionIndex": 10,
+        "name": "Brain Damaging Whirl",
+        "description": "Sand vortex now executes targets below a certain percentage of life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 2 }
+        }
+      },
+      {
+        "id": "sunken_field",
+        "positionIndex": 11,
+        "name": "Sunken Field",
+        "description": "Summon multiple small sand vortexes around target location with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 35, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "accelerated_sand",
+        "positionIndex": 12,
+        "name": "Accelerated Sand",
+        "description": "Sand vortex size and tick rate increases rapidly but lasts for a shorter duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "area_of_effect": 0 },
+          "perRank": { "faster_cast_rate": 25, "area_of_effect": 60 }
+        }
+      },
+      {
+        "id": "cycloning_kraken",
+        "positionIndex": 13,
+        "name": "Cycloning Kraken",
+        "description": "Sand vortex now spawns cycling tornados from its center.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
+          "perRank": { "faster_cast_rate": 15, "arcane_skill_damage": 80 }
+        }
+      },
+      {
+        "id": "slow_burn",
+        "positionIndex": 14,
+        "name": "Slow Burn",
+        "description": "Sand vortex now doesn’t pull monsters but slows them and inflicts burning for a portion of the damage on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 80 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 80 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "blade_strike",
+    "classId": "nomad",
+    "name": "Blade Strike",
+    "kind": "active",
+    "description": "Perform a cleave attack with increased chance for critical strike and critical strike damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Vagabond",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 67.5, "perLevel": 22.5 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 10, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "passiveStats": {
+      "base": { "crit_chance": 50 },
+      "perRank": {}
+    },
+    "subskills": [
+      {
+        "id": "blade_strike_core",
+        "positionIndex": 0,
+        "name": "Blade Strike",
+        "description": "Core of the Blade Strike subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "ferocious_swipe",
+        "positionIndex": 1,
+        "name": "Ferocious Swipe",
+        "description": "Increases critical strike chance when using blade strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "blades_edge",
+        "positionIndex": 2,
+        "name": "Blade´s Edge",
+        "description": "Increases critical strike damage when using blade strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 5 }
+        }
+      },
+      {
+        "id": "lethal_swing",
+        "positionIndex": 3,
+        "name": "Lethal Swing",
+        "description": "Increases damage dealt by blade strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "blade_master",
+        "positionIndex": 4,
+        "name": "Blade Master",
+        "description": "Increases attack rating when using blade strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "gut_slicer",
+        "positionIndex": 5,
+        "name": "Gut Slicer",
+        "description": "Inflicts armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "catch_up_blade",
+        "positionIndex": 6,
+        "name": "Catch Up Blade",
+        "description": "Chance on attack to throw your weapon with force dealing additional damage and bouncing from terrain.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 10 }
+          }
+        }
+      },
+      {
+        "id": "cleaving_slash",
+        "positionIndex": 7,
+        "name": "Cleaving Slash",
+        "description": "Increases the area of effect of blade strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "agile_striker",
+        "positionIndex": 8,
+        "name": "Agile Striker",
+        "description": "Chance on attack to strike additional times.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "bounty_hunting",
+        "positionIndex": 9,
+        "name": "Bounty Hunting",
+        "description": "Chance on hit to increase your strength for a short period of time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "increased_strength": 0 },
+            "perRank": { "increased_strength": 6 }
+          }
+        }
+      },
+      {
+        "id": "tribal_commander",
+        "positionIndex": 10,
+        "name": "Tribal Commander",
+        "description": "Gain a portion of your strength as all attributes.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "all_attributes": 0 },
+            "perRank": { "all_attributes": 4 }
+          }
+        }
+      },
+      {
+        "id": "skewering_blades",
+        "positionIndex": 11,
+        "name": "Skewering Blades",
+        "description": "Unleash flying blades on monster hit dealing area of effect damage and inflict bleeding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "brutalizing_cleave",
+        "positionIndex": 12,
+        "name": "Brutalizing Cleave",
+        "description": "Gain increased attack range and damage slightly knocking enemies back stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 225, "skill_range": 50 }
+        }
+      },
+      {
+        "id": "stacked_blade",
+        "positionIndex": 13,
+        "name": "Stacked Blade",
+        "description": "Striking a monster applies a debuff which when reaching max stacks will unleash multiple blades dealing additional damage and bouncing from terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 8, "projectile_count": 6 }
+        }
+      },
+      {
+        "id": "giant_slayer",
+        "positionIndex": 14,
+        "name": "Giant Slayer",
+        "description": "Critical strike damage by blade strike is increased based on your vitality.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_vitality": 0 },
+          "perRank": { "conversion_vitality": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "eye_of_ra",
+    "classId": "nomad",
+    "name": "Eye of Ra",
+    "kind": "active",
+    "description": "Perform a light enchanted attack bringing rays of sun down to nearby monsters dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Chaining", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Vagabond",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 88, "perLevel": 24 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 10, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Healing Sunrays", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Mystic Sand", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "eye_of_ra_core",
+        "positionIndex": 0,
+        "name": "Eye of Ra",
+        "description": "Core of the Eye of Ra subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sunburn",
+        "positionIndex": 1,
+        "name": "Sunburn",
+        "description": "Increases the maximum targets per hit being affected by eye of ra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 2 }
+        }
+      },
+      {
+        "id": "rays_of_wisdom",
+        "positionIndex": 2,
+        "name": "Ray´s of Wisdom",
+        "description": "Increases damage dealt by sun rays based on your energy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_energy": 0 },
+          "perRank": { "conversion_energy": 2 }
+        }
+      },
+      {
+        "id": "solar_flow",
+        "positionIndex": 3,
+        "name": "Solar Flow",
+        "description": "Increases the range of the sun rays.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "ultra_violet_radiation",
+        "positionIndex": 4,
+        "name": "Ultra Violet Radiation",
+        "description": "Chance on hit to inflict burning for a portion of the damage dealt by eye of ra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "scorching_sun",
+        "positionIndex": 5,
+        "name": "Scorching Sun",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "ras_wrath",
+        "positionIndex": 6,
+        "name": "Ra´s Wrath",
+        "description": "Increases the amount of sun rays additionally inflicting slow on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "heat_paralysis",
+        "positionIndex": 7,
+        "name": "Heat Paralysis",
+        "description": "Inflicts elemental break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "elemental_break": 0 },
+          "perRank": { "elemental_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 10 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "piercing_sunlight",
+        "positionIndex": 8,
+        "name": "Piercing Sunlight",
+        "description": "Increases critical strike damage dealt by eye of ra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "armed_light",
+        "positionIndex": 9,
+        "name": "Armed Light",
+        "description": "Increases attack rating when using eye of ra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "piercing_radiation",
+        "positionIndex": 10,
+        "name": "Piercing Radiation",
+        "description": "Inflicts armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 12.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 12.5 } }
+          ]
+        }
+      },
+      {
+        "id": "god_of_gods",
+        "positionIndex": 11,
+        "name": "God of Gods",
+        "description": "Unleash eye of ra on all nearby monsters. Eye of Ra now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 100 }
+        }
+      },
+      {
+        "id": "pillar_of_light",
+        "positionIndex": 12,
+        "name": "Pillar of Light",
+        "description": "Unleash pillars of light in a narrow line each dealing damage over time and slowing on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 30, "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "orbiting_the_sun",
+        "positionIndex": 13,
+        "name": "Orbiting the Sun",
+        "description": "Unleash multiple light pillars orbiting you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "lightbringer",
+        "positionIndex": 14,
+        "name": "Lightbringer",
+        "description": "Eye of Ra unleashes a storm of light pillars at the last target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "skill_duration": 0 },
+          "perRank": { "of_total_damage": 30, "skill_duration": 20 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "flying_scimitar",
+    "classId": "nomad",
+    "name": "Flying Scimitar",
+    "kind": "active",
+    "description": "Throw a huge piercing scimitar dealing increased damage to monsters in its path which returns back to you after a short delay.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Projectile", "Strike"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Vagabond",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 93, "perLevel": 26 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 12, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Phantom Blade", "stat": "attack_damage", "value": 3.5, "per": "skill_level" },
+      { "source": "Healing Sunrays", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "flying_scimitar_core",
+        "positionIndex": 0,
+        "name": "Flying Scimitar",
+        "description": "Core of the Flying Scimitar subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "afterslice",
+        "positionIndex": 1,
+        "name": "Afterslice",
+        "description": "Chance on attack to cast another scimitar.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 6 } }
+      },
+      {
+        "id": "sharpened_blade",
+        "positionIndex": 2,
+        "name": "Sharpened Blade",
+        "description": "Increases the damage dealt by flying scimitar.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "slice_and_flight",
+        "positionIndex": 3,
+        "name": "Slice and Flight",
+        "description": "Increases the projectile speed of flying scimitar.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 7 }
+        }
+      },
+      {
+        "id": "widened_blade",
+        "positionIndex": 4,
+        "name": "Widened Blade",
+        "description": "Increases the size of the scimitars.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 10 }
+        }
+      },
+      {
+        "id": "blades_vengeance",
+        "positionIndex": 5,
+        "name": "Blade´s Vengeance",
+        "description": "Returning scimitars pull enemies towards you with a chance to slow them.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 20 },
+          "appliesStates": ["slow"]
+        }
+      },
+      {
+        "id": "rupturing_flyby",
+        "positionIndex": 6,
+        "name": "Rupturing Flyby",
+        "description": "Chance on attack for flying scimitar to inflict bleeding on hit.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 70 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12.5 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 70 } }
+          ]
+        }
+      },
+      {
+        "id": "scimitars_edge",
+        "positionIndex": 7,
+        "name": "Scimitar´s Edge",
+        "description": "Increases critical strike chance when using flying scimitar.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "maiming_scimitar",
+        "positionIndex": 8,
+        "name": "Maiming Scimitar",
+        "description": "Increases critical strike damage dealt by flying scimitar.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "last_wish",
+        "positionIndex": 9,
+        "name": "Last Wish",
+        "description": "Flying scimitar now executes targets below a certain percentage of life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 2 }
+        }
+      },
+      {
+        "id": "salted_blade",
+        "positionIndex": 10,
+        "name": "Salted Blade",
+        "description": "Increases damage to bleeding targets.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "flying_swarm",
+        "positionIndex": 11,
+        "name": "Flying Swarm",
+        "description": "Throw multiple smaller scimitars with decreased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "splash_of_total_damage": 60, "projectile_count": 0 },
+          "perRank": { "splash_of_total_damage": 40, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "sticking_blade",
+        "positionIndex": 12,
+        "name": "Sticking Blade",
+        "description": "Scimitars now attach to the first target for a short period dealing damage over time and returning back to the nomad.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "physical_skill_damage": 50, "faster_cast_rate": 25 }
+        }
+      },
+      {
+        "id": "league_of_nomad",
+        "positionIndex": 13,
+        "name": "League of Nomad",
+        "description": "Scimitars now return to their spawning location. Successfully catching the returning scimitars increases your damage for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 7 }
+        }
+      },
+      {
+        "id": "orbital_blade_strike",
+        "positionIndex": 14,
+        "name": "Orbital Blade Strike",
+        "description": "Scimitars are now spawned in a circle around the nomad with increased projectile speed and pulled back dealing increased damage. Scimitar Throw now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "of_total_damage": 0,
+            "projectile_speed": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "of_total_damage": 50,
+            "projectile_speed": 10,
+            "projectile_count": 4
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "healing_sunrays",
+    "classId": "nomad",
+    "name": "Healing Sunrays",
+    "kind": "passive",
+    "description": "Increases your life and mana stolen per hit.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Vagabond",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_steal": 3, "mana_steal": 3 },
+      "perRank": { "life_steal": 0.5, "mana_steal": 0.5 }
+    }
+  },
+  {
+    "id": "chainslice",
+    "classId": "nomad",
+    "name": "Chainslice",
+    "kind": "active",
+    "description": "Perform an enhanced attack that causes a sharp blade to chain between nearby monsters dealing damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Chaining", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Vagabond",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 133, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 5, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 14, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Flying Scimitar", "stat": "attack_damage", "value": 5.5, "per": "skill_level" },
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 2.5, "per": "skill_level" },
+      { "source": "Scimitar Charge", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "chainslice_core",
+        "positionIndex": 0,
+        "name": "Chainslice",
+        "description": "Core of the Chainslice subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "slice_and_dice",
+        "positionIndex": 1,
+        "name": "Slice and Dice",
+        "description": "Increases the amount of bounces for chainslice.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 4 }
+        }
+      },
+      {
+        "id": "slicing_accuracy",
+        "positionIndex": 2,
+        "name": "Slicing Accuracy",
+        "description": "Increases attack rating when using chainslice.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 15 }
+        }
+      },
+      {
+        "id": "penetrating_flesh",
+        "positionIndex": 3,
+        "name": "Penetrating Flesh",
+        "description": "Inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "field_cover",
+        "positionIndex": 4,
+        "name": "Field Cover",
+        "description": "Increases the range of chainslice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "vagabond_quickblades",
+        "positionIndex": 5,
+        "name": "Vagabond Quickblades",
+        "description": "Increases the projectile speed of chainslice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "extended_blade",
+        "positionIndex": 6,
+        "name": "Extended Blade",
+        "description": "Increases the size of chainslice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "poisoned_shiv",
+        "positionIndex": 7,
+        "name": "Poisoned Shiv",
+        "description": "Chance on hit to inflict poisoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "master_slicer",
+        "positionIndex": 8,
+        "name": "Master Slicer",
+        "description": "Increases damage dealt by chainslice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "agile_footwork",
+        "positionIndex": 9,
+        "name": "Agile Footwork",
+        "description": "Decreases movement diminish when using chainslice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 15 }
+        }
+      },
+      {
+        "id": "infected_wounds",
+        "positionIndex": 10,
+        "name": "Infected Wounds",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 14 }
+        }
+      },
+      {
+        "id": "bloodburn",
+        "positionIndex": 11,
+        "name": "Bloodburn",
+        "description": "Unleash small blood novas on hit dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 75, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "ghost_blade",
+        "positionIndex": 12,
+        "name": "Ghost Blade",
+        "description": "Each chainslice hit scatters a flying blade spawning a phantom blade when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 50 }
+        }
+      },
+      {
+        "id": "critical_shred",
+        "positionIndex": 13,
+        "name": "Critical Shred",
+        "description": "When chainslice critically strikes it sends out additional scimitars in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 40, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "chainception",
+        "positionIndex": 14,
+        "name": "Chainception",
+        "description": "Chance on hit to release an additional chainslice.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 25 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "rupture",
+    "classId": "nomad",
+    "name": "Rupture",
+    "kind": "active",
+    "description": "Perform a rupturing area of effect attack inflicting bleed to targets on hit.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Vagabond",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 77.5, "perLevel": 22.5 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Chainslice", "stat": "attack_damage", "value": 3.5, "per": "skill_level" },
+      { "source": "Hemorrhage", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 5.75, "per": "skill_level" }
+    ]
+  },
+  {
+    "id": "scimitar_charge",
+    "classId": "nomad",
+    "name": "Scimitar Charge",
+    "kind": "active",
+    "description": "Charge a short distance unleashing scimitar strike around you dealing increased damage to monsters struck.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Movement", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Vagabond",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 8, "perLevel": 23.5 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Chainslice", "stat": "attack_damage", "value": 5, "per": "skill_level" },
+      { "source": "Sand Carver", "stat": "attack_damage", "value": 7, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "scimitar_charge_core",
+        "positionIndex": 0,
+        "name": "Scimitar Charge",
+        "description": "Core of the Scimitar Charge subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharpened_dash",
+        "positionIndex": 1,
+        "name": "Sharpened Dash",
+        "description": "Increases damage dealt by scimitar charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "whirling_radius",
+        "positionIndex": 2,
+        "name": "Whirling Radius",
+        "description": "Increases the area of effect radius of scimitar charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "lethal_reach",
+        "positionIndex": 3,
+        "name": "Lethal Reach",
+        "description": "Increases the traveling distance of scimitar charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 10 }
+        }
+      },
+      {
+        "id": "dashing_reflexes",
+        "positionIndex": 4,
+        "name": "Dashing Reflexes",
+        "description": "Increases attack rating when using scimitar charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "keep_the_distance",
+        "positionIndex": 5,
+        "name": "Keep the Distance",
+        "description": "Knock monsters back dealing increased damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "deadly_rush",
+        "positionIndex": 6,
+        "name": "Deadly Rush",
+        "description": "Increases travel speed when using scimitar charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 12 }
+        }
+      },
+      {
+        "id": "mind_over_matter",
+        "positionIndex": 7,
+        "name": "Mind Over Matter",
+        "description": "Decreases the mana cost of scimitar charge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "doubleslash",
+        "positionIndex": 8,
+        "name": "Doubleslash",
+        "description": "Chance to swirl an additional time on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "debilitating_swirl",
+        "positionIndex": 9,
+        "name": "Debilitating Swirl",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "unhinged_slash",
+        "positionIndex": 10,
+        "name": "Unhinged Slash",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "scimitar_storm",
+        "positionIndex": 11,
+        "name": "Scimitar Storm",
+        "description": "Throw multiple scimitars in a circle around you on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "slow_painful_death",
+        "positionIndex": 12,
+        "name": "Slow Painful Death",
+        "description": "Deal a portion of your damage as bleeding with increased effectiveness.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 75 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "static_blade_vortex",
+        "positionIndex": 13,
+        "name": "Static Blade Vortex",
+        "description": "Scimitar charge now slows enemies on hit leaving behind a pulsating whirl for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 25 }
+        }
+      },
+      {
+        "id": "phantom_charge",
+        "positionIndex": 14,
+        "name": "Phantom Charge",
+        "description": "Mark the point of impact sending phantom nomads from random directions towards the mark casting scimitar charge for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0, "faster_cast_rate": 0 },
+          "perRank": { "skill_duration": 25, "faster_cast_rate": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "hemorrhage",
+    "classId": "nomad",
+    "name": "Hemorrhage",
+    "kind": "passive",
+    "description": "Rupture inflicts armor break on all bleeding targets.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Vagabond",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "armor_break": 1.75 },
+      "perRank": { "armor_break": 1.75 }
+    }
+  },
+  {
+    "id": "phantom_blade",
+    "classId": "nomad",
+    "name": "Phantom Blade",
+    "kind": "active",
+    "description": "Spawn a ghostly blade that attacks nearby monsters dealing physical damage and additional arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Strike"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Vagabond",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 0, "perLevel": 33 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 10, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Blade Strike", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Chainslice", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Flying Scimitar", "stat": "arcane_skill_damage", "value": 25, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "phantom_blade_core",
+        "positionIndex": 0,
+        "name": "Phantom Blade",
+        "description": "Core of the Phantom Blade subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "paranormal_activity",
+        "positionIndex": 1,
+        "name": "Paranormal Activity",
+        "description": "Increases the maximum amount of phantom blades.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "phantom_agility",
+        "positionIndex": 2,
+        "name": "Phantom Agility",
+        "description": "Increases the attack speed of phantom blades.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_attack_speed": 0 },
+          "perRank": { "sentry_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "dimensional_intellect",
+        "positionIndex": 3,
+        "name": "Dimensional Intellect",
+        "description": "Decreases the mana cost of phantom blade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "ghostly_reach",
+        "positionIndex": 4,
+        "name": "Ghostly Reach",
+        "description": "Increases the attack range of phantom blades.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 10 }
+        }
+      },
+      {
+        "id": "malicious_essence",
+        "positionIndex": 5,
+        "name": "Malicious Essence",
+        "description": "Increases the damage dealt by phantom blades.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "essence_of_time",
+        "positionIndex": 6,
+        "name": "Essence of Time",
+        "description": "Increases the duration of phantom blade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "malevolent_pulse",
+        "positionIndex": 7,
+        "name": "Malevolent Pulse",
+        "description": "Increases the area of effect radius of phantom blades attacks.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "twice_the_price",
+        "positionIndex": 8,
+        "name": "Twice The Price",
+        "description": "Chance for phantomblades to swing an additional time on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "ghost_dimension",
+        "positionIndex": 9,
+        "name": "Ghost Dimension",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "psychosis",
+        "positionIndex": 10,
+        "name": "Psychosis",
+        "description": "Inflicts bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "spirit_blades",
+        "positionIndex": 11,
+        "name": "Spirit Blades",
+        "description": "Phantom blades now orbit you and attack the closest monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "terrorized_mind",
+        "positionIndex": 12,
+        "name": "Terrorized Mind",
+        "description": "When a phantom blade strikes a bleeding target the bleeding is consumed unleashing a vorpal pulse dealing increased damage based on the bleeding value.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 60, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "spectral_ghostblade",
+        "positionIndex": 13,
+        "name": "Spectral Ghostblade",
+        "description": "Phantom blades deal increased damage based on your energy.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_energy": 0 },
+          "perRank": { "conversion_energy": 4 }
+        }
+      },
+      {
+        "id": "dimensional_ghostblade",
+        "positionIndex": 14,
+        "name": "Dimensional Ghostblade",
+        "description": "Phantom blades no longer attack but throw flying scimitars with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 20, "projectile_count": 1 }
+        }
+      }
+    ]
+  }
+]

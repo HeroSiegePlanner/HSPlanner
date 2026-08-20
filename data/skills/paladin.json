@@ -1,0 +1,2111 @@
+[
+  {
+    "id": "vengeance",
+    "classId": "paladin",
+    "name": "Vengeance",
+    "kind": "active",
+    "description": "Strike monsters with a lightning shock that splits towards nearby monsters, dealing physical damage and lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Justiciar",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 6.2, "perLevel": 74.2 },
+    "manaCostFormula": { "base": 4.5, "perLevel": 0.75 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 22.5, "perLevel": 17.5 },
+      "flatPhysicalMin": { "base": 1.63, "perLevel": 0.37 },
+      "flatPhysicalMax": { "base": 6.95, "perLevel": 1.05 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Holy Shock Aura", "stat": "lightning_skill_damage", "value": 17, "per": "skill_level" },
+      { "source": "Thunder Shield", "stat": "lightning_skill_damage", "value": 17, "per": "skill_level" },
+      { "source": "Eye of the Storm", "stat": "attack_damage", "value": 9, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 9.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "vengeance_core",
+        "positionIndex": 0,
+        "name": "Vengeance",
+        "description": "Core of the Vengeance subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "higher_frequency",
+        "positionIndex": 1,
+        "name": "Higher Frequency",
+        "description": "Increases attack speed when using vengeance.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "uncontrolled_spike",
+        "positionIndex": 2,
+        "name": "Uncontrolled Spike",
+        "description": "Increases the amount of lightning bolts from vengeance.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "amped_amps",
+        "positionIndex": 3,
+        "name": "Amped Amps",
+        "description": "Increases the lightning damage dealt by vengeance.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "power_surge",
+        "positionIndex": 4,
+        "name": "Power Surge",
+        "description": "Increases the attack damage dealt by vengeance according to your strength.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_damage": 0 },
+          "perRank": { "attack_damage": 15 }
+        }
+      },
+      {
+        "id": "recharging_strike",
+        "positionIndex": 5,
+        "name": "Recharging Strike",
+        "description": "Vengeance restores a portion of damage dealt as mana on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_replenish_pct": 0 },
+          "perRank": { "mana_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "overclock",
+        "positionIndex": 6,
+        "name": "Overclock",
+        "description": "Vengeance has increased attack range. No longer requires hitting a target.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "copper_plated_blade_edge",
+        "positionIndex": 7,
+        "name": "Copper-plated Blade Edge",
+        "description": "Chance to critically spell hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 4, "crit_damage": 30 }
+        }
+      },
+      {
+        "id": "direct_current",
+        "positionIndex": 8,
+        "name": "Direct Current",
+        "description": "Increases the length of lightning bolts.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "destructive_voltage",
+        "positionIndex": 9,
+        "name": "Destructive Voltage",
+        "description": "Vengeance's lightning bolts have a chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 35 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "alternative_current",
+        "positionIndex": 10,
+        "name": "Alternative Current",
+        "description": "Vengeance's lightning bolts have a chance to zap monsters on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "charge_release",
+        "positionIndex": 11,
+        "name": "Charge Release",
+        "description": "Lightning now releases pulses of lightning on hit dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 80 }
+        }
+      },
+      {
+        "id": "thunderbolt",
+        "positionIndex": 12,
+        "name": "Thunderbolt",
+        "description": "Strike monsters with additional bolts of thunder on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
+            "perRank": { "lightning_skill_damage": 100, "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "electric_pillars",
+        "positionIndex": 13,
+        "name": "Electric Pillars",
+        "description": "Summon pillars of electricity to nearby monsters on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "max_targets": 0, "lightning_skill_damage": 0 },
+            "perRank": { "max_targets": 1, "lightning_skill_damage": 100 }
+          }
+        }
+      },
+      {
+        "id": "self_shock",
+        "positionIndex": 14,
+        "name": "Self Shock",
+        "description": "Lightning bolts now inflict a portion of your total damage return as lightning damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_damage_return": 0 },
+          "perRank": { "conversion_damage_return": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "thunder_shield",
+    "classId": "paladin",
+    "name": "Thunder Shield",
+    "kind": "buff",
+    "description": "Cast a shield of thunder reducing damage taken and shocking monsters attacking you dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 30,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Justiciar",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 56.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "damage_reduction": 5 },
+      "perRank": { "damage_reduction": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Holy Shock Aura", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ball Lightning", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "divine_storm",
+    "classId": "paladin",
+    "name": "Divine Storm",
+    "kind": "active",
+    "description": "Turn your attack into a divine storm dealing area of effect lightning damage around you.",
+    "damageType": "lightning",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Justiciar",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 86 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Lightning Fury", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Eye of the Storm", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "divine_storm_core",
+        "positionIndex": 0,
+        "name": "Divine Storm",
+        "description": "Core of the Divine Storm subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "overloaded_coil",
+        "positionIndex": 1,
+        "name": "Overloaded Coil",
+        "description": "Increases the area of effect radius of divine storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "charged_cells",
+        "positionIndex": 2,
+        "name": "Charged Cells",
+        "description": "Chance on hit to inflict stasis for a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "divine_ionization",
+        "positionIndex": 3,
+        "name": "Divine Ionization",
+        "description": "Chance to inflict elemental break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "elemental_break": 0 },
+          "perRank": { "elemental_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 25 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "voltage_charge",
+        "positionIndex": 4,
+        "name": "Voltage Charge",
+        "description": "Chance to gain increased damage return on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "damage_return": 0 },
+            "perRank": { "damage_return": 40 }
+          }
+        }
+      },
+      {
+        "id": "electron_jump",
+        "positionIndex": 5,
+        "name": "Electron Jump",
+        "description": "Chance on hit to gain increased defense for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "enhanced_defense": 0 },
+            "perRank": { "enhanced_defense": 25 }
+          }
+        }
+      },
+      {
+        "id": "heavens_interference",
+        "positionIndex": 6,
+        "name": "Heaven's Interference",
+        "description": "Chance on cast to perform an additional storm.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "blow_the_fuse",
+        "positionIndex": 7,
+        "name": "Blow the Fuse",
+        "description": "Chance on cast to zap enemies hit with lightning bolts.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "overwhelming_power",
+        "positionIndex": 8,
+        "name": "Overwhelming Power",
+        "description": "Increases damage dealt by divine storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "precision_of_the_storm",
+        "positionIndex": 9,
+        "name": "Precision of the Storm",
+        "description": "Increases attack speed when using divine storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "dashing_flow",
+        "positionIndex": 10,
+        "name": "Dashing Flow",
+        "description": "Divine storm now travels forward for a short distance.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "chaining_storm",
+        "positionIndex": 11,
+        "name": "Chaining Storm",
+        "description": "Divine Storm inflicts monsters with zapper causing attacks on the monster to unleash chain lightning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "eye_of_the_storm",
+        "positionIndex": 12,
+        "name": "Eye of the Storm",
+        "description": "Unleash a storm around you dealing area of effect damage and inflicting lightning break. Divine storm now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "lightning_break": 0 },
+          "perRank": { "lightning_skill_damage": 50, "lightning_break": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 50 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "bad_omens",
+        "positionIndex": 13,
+        "name": "Bad Omens",
+        "description": "Divine Storm slowly expands from it's casting area unleashing chain lightning on hit. Divine storm now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "charged_hurricane",
+        "positionIndex": 14,
+        "name": "Charged Hurricane",
+        "description": "Divine Storm now forms an electrically charged hurricane that whirls to a random direction.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fanaticism_aura",
+    "classId": "paladin",
+    "name": "Fanaticism Aura",
+    "kind": "aura",
+    "description": "When active, increases your and your party members attack speed.",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Justiciar",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "increased_attack_speed": 10, "movement_speed": 10 },
+      "perRank": { "increased_attack_speed": 0.5, "movement_speed": 0.5 }
+    }
+  },
+  {
+    "id": "holy_shock_aura",
+    "classId": "paladin",
+    "name": "Holy Shock Aura",
+    "kind": "aura",
+    "description": "When active shock monsters around you dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Justiciar",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 1, "perLevel": 48 },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Thunder Shield", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ball Lightning", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "holy_shock_aura_core",
+        "positionIndex": 0,
+        "name": "Holy Shock Aura",
+        "description": "Core of the Holy Shock Aura subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "adjusted_fuses",
+        "positionIndex": 1,
+        "name": "Adjusted Fuses",
+        "description": "Chance to trigger a lightning explosion dealing additional damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "larger_grid",
+        "positionIndex": 2,
+        "name": "Larger Grid",
+        "description": "Increases the area of effect radius of holy shock aura.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "double_the_hz",
+        "positionIndex": 3,
+        "name": "Double the Hz",
+        "description": "Increases the hit frequency of holy shock aura.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "voltage_increase",
+        "positionIndex": 4,
+        "name": "Voltage Increase",
+        "description": "Increases damage dealt by holy shock aura.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "rupturing_lightning",
+        "positionIndex": 5,
+        "name": "Rupturing Lightning",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "concentrated_aura",
+        "positionIndex": 6,
+        "name": "Concentrated Aura",
+        "description": "Holy shock aura now deals increased damage in a cone in front of you instead.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 12.5 }
+        }
+      },
+      {
+        "id": "charge_mark",
+        "positionIndex": 7,
+        "name": "Charge Mark",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "conduit",
+        "positionIndex": 8,
+        "name": "Conduit",
+        "description": "Increases damage dealt to bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 20 }
+        }
+      },
+      {
+        "id": "friendly_electron_flow",
+        "positionIndex": 9,
+        "name": "Friendly Electron Flow",
+        "description": "Gain a stacking buff increasing lightning damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 2 }
+        }
+      },
+      {
+        "id": "defensive_charge",
+        "positionIndex": 10,
+        "name": "Defensive Charge",
+        "description": "Chance to increase your defense and lightning resistance on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "enhanced_defense": 0, "lightning_resistance": 0 },
+            "perRank": { "enhanced_defense": 5, "lightning_resistance": 5 }
+          }
+        }
+      },
+      {
+        "id": "surging_wrath",
+        "positionIndex": 11,
+        "name": "Surging Wrath",
+        "description": "Increases the hit frequency and damage dealt by holy shock aura.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "lightning_skill_damage": 0 },
+          "perRank": { "faster_cast_rate": 30, "lightning_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "lightning_tether",
+        "positionIndex": 12,
+        "name": "Lightning Tether",
+        "description": "Holy shock aura no longer deals periodical damage. Instead creates a tether of lightning between you and all monsters inside its radius dealing constant damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 33 }
+        }
+      },
+      {
+        "id": "chain_thunder",
+        "positionIndex": 13,
+        "name": "Chain Thunder",
+        "description": "Unleash chain lightning on hit dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "lightning_skill_damage": 100, "projectile_bounces": 3 }
+        }
+      },
+      {
+        "id": "gathering_storm",
+        "positionIndex": 14,
+        "name": "Gathering Storm",
+        "description": "Stack up static energy from monsters inside the aura radius and release a massive storm of lightning novas dealing damage on an increased radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 50 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "ball_lightning",
+    "classId": "paladin",
+    "name": "Ball Lightning",
+    "kind": "active",
+    "description": "Turn into a ball of lightning and dash towards to the target location, dealing lightning damage to nearby monsters upon landing.",
+    "damageType": "lightning",
+    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 3,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Justiciar",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 127.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Divine Storm", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Thunder Shield", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Shock Aura", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "ball_lightning_core",
+        "positionIndex": 0,
+        "name": "Ball Lightning",
+        "description": "Core of the Ball Lightning subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "outbursting_charge",
+        "positionIndex": 1,
+        "name": "Outbursting Charge",
+        "description": "Increases the damage dealt by ball lightning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "thicker_coil",
+        "positionIndex": 2,
+        "name": "Thicker Coil",
+        "description": "Gain increased lightning resistance when using ball lightning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_resistance": 0 },
+          "perRank": { "lightning_resistance": 5 }
+        }
+      },
+      {
+        "id": "flash_from_the_sky",
+        "positionIndex": 3,
+        "name": "Flash from the Sky",
+        "description": "Increases the critical strike damage when using ball lightning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "overcharge",
+        "positionIndex": 4,
+        "name": "Overcharge",
+        "description": "Chance to critically hit when using ball lightning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0 },
+          "perRank": { "spell_crit_chance": 5 }
+        }
+      },
+      {
+        "id": "rapid_retreat",
+        "positionIndex": 5,
+        "name": "Rapid Retreat",
+        "description": "When landing gain increased movement speed and defense for a short period.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0, "enhanced_defense": 0 },
+          "perRank": { "movement_speed": 8, "enhanced_defense": 4 }
+        }
+      },
+      {
+        "id": "charged_bolts",
+        "positionIndex": 6,
+        "name": "Charged Bolts",
+        "description": "When landing additionally unleash multiple charged bolts bouncing off of terrain dealing additional damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 25, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "phantom_ball",
+        "positionIndex": 7,
+        "name": "Phantom Ball",
+        "description": "Chance when casting to summon phantom illusions jumping into nearby monsters dealing additional damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 35 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "within_the_storm",
+        "positionIndex": 8,
+        "name": "Within the Storm",
+        "description": "Chance when landing to render you immune to all damage for a short period.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 1 },
+          "effects": {
+            "base": { "skill_duration": 0 },
+            "perRank": { "skill_duration": 1 }
+          }
+        }
+      },
+      {
+        "id": "efficient_vains",
+        "positionIndex": 9,
+        "name": "Efficient Vains",
+        "description": "Decreases the mana cost of ball lightning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "angelic_interference",
+        "positionIndex": 10,
+        "name": "Angelic Interference",
+        "description": "When below 25% life ball lightning gains increased speed, damage, area of effect and knocks monsters into the air.",
+        "maxRank": 5,
+        "effects": {
+          "base": {
+            "movement_speed": 0,
+            "lightning_skill_damage": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "movement_speed": 15,
+            "lightning_skill_damage": 15,
+            "area_of_effect": 15
+          }
+        }
+      },
+      {
+        "id": "hovering_bolt",
+        "positionIndex": 11,
+        "name": "Hovering Bolt",
+        "description": "Become an orb of lightning and hover to the target location unleashing chain lightning on nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "lightning_skill_damage": 35, "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "pulsating_thunderball",
+        "positionIndex": 12,
+        "name": "Pulsating Thunderball",
+        "description": "When landing you instead bounce multiple times releasing electrified pulses with increased damage and area of effect radius when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "lightning_skill_damage": 0,
+            "area_of_effect": 0,
+            "projectile_bounces": 0
+          },
+          "perRank": {
+            "lightning_skill_damage": 40,
+            "area_of_effect": 25,
+            "projectile_bounces": 1
+          }
+        }
+      },
+      {
+        "id": "righteous_leap",
+        "positionIndex": 13,
+        "name": "Righteous Leap",
+        "description": "When landing taunt nearby monsters and increases your damage return for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "damage_return": 0 },
+          "perRank": { "damage_return": 33.5 }
+        }
+      },
+      {
+        "id": "charging_ball",
+        "positionIndex": 14,
+        "name": "Charging Ball",
+        "description": "Unleash a charged storm of lightning on nearby monsters when landing dealing increased damage with increased area of effect radius. Ball lightning now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "lightning_skill_damage": 125, "area_of_effect": 33 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "lightning_fury",
+    "classId": "paladin",
+    "name": "Lightning Fury",
+    "kind": "active",
+    "description": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": ["Attack", "Active", "Melee", "Chain Lightning", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Justiciar",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 1, "perLevel": 113 },
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Vengeance", "stat": "lightning_skill_damage", "value": 22.5, "per": "skill_level" },
+      { "source": "Divine Storm", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Eye of the Storm", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "lightning_fury_core",
+        "positionIndex": 0,
+        "name": "Lightning Fury",
+        "description": "Core of the Lightning Fury subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lightning_stasis",
+        "positionIndex": 1,
+        "name": "Lightning Stasis",
+        "description": "Increases the amount of bounces.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 2 }
+        }
+      },
+      {
+        "id": "retribution",
+        "positionIndex": 2,
+        "name": "Retribution",
+        "description": "Increases damage dealt by lightning fury based on your strength.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_strength": 0 },
+          "perRank": { "conversion_strength": 3 }
+        }
+      },
+      {
+        "id": "million_volt_charge",
+        "positionIndex": 3,
+        "name": "Million Volt Charge",
+        "description": "Increases lightning damage dealt by lightning fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "crackling_thunder",
+        "positionIndex": 4,
+        "name": "Crackling Thunder",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 35 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "breaking_soundbarrier",
+        "positionIndex": 5,
+        "name": "Breaking Soundbarrier",
+        "description": "Chance on attack to increase the amount of bounces.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "max_targets": 0 },
+            "perRank": { "max_targets": 1 }
+          }
+        }
+      },
+      {
+        "id": "electro_pulse",
+        "positionIndex": 6,
+        "name": "Electro Pulse",
+        "description": "Chance on chain lightning hit to unleash electric pulses dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "forking_bolt",
+        "positionIndex": 7,
+        "name": "Forking Bolt",
+        "description": "Chance on hit to fork into an additional chain lightning.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "low_resistance",
+        "positionIndex": 8,
+        "name": "Low Resistance",
+        "description": "Increases attack speed when using lightning fury.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
+        }
+      },
+      {
+        "id": "double_conduit",
+        "positionIndex": 9,
+        "name": "Double Conduit",
+        "description": "Chance to call down bolts of thunder on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "maximize_fury",
+        "positionIndex": 10,
+        "name": "Maximize Fury",
+        "description": "Increases spell critical chance and damage when using lightning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 25 }
+        }
+      },
+      {
+        "id": "storm_surge",
+        "positionIndex": 11,
+        "name": "Storm Surge",
+        "description": "Unleash a wide surge of lightning on hit with increased area of effect and dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "lightning_skill_damage": 20, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "concentrated_fury",
+        "positionIndex": 12,
+        "name": "Concentrated Fury",
+        "description": "Summon an orb of lightning orbiting you and zapping nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "ionizing_fury",
+        "positionIndex": 13,
+        "name": "Ionizing Fury",
+        "description": "Chance on hit to halve the damage but double the amount of bounces and inflicting stasis.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 75 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "projectile_bounces": 0 },
+            "perRank": { "projectile_bounces": 4 }
+          },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "fury_within",
+        "positionIndex": 14,
+        "name": "Fury Within",
+        "description": "Lightning fury now triggers without hitting enemies increasing its range and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "lightning_skill_damage": 25, "skill_range": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "eye_of_the_storm",
+    "classId": "paladin",
+    "name": "Eye of the Storm",
+    "kind": "passive",
+    "description": "Increases your lightning skill damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Justiciar",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "lightning_skill_damage": 3.25 },
+      "perRank": { "lightning_skill_damage": 3.25 }
+    }
+  },
+  {
+    "id": "thors_fury",
+    "classId": "paladin",
+    "name": "Thor's Fury",
+    "kind": "buff",
+    "description": "Temporarily increases your attack speed and lightning skill damage.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 48.11,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Justiciar",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "lightning_skill_damage": 4 },
+      "perRank": { "increased_attack_speed": 1, "lightning_skill_damage": 4 }
+    }
+  },
+  {
+    "id": "divine_wisdom",
+    "classId": "paladin",
+    "name": "Divine Wisdom",
+    "kind": "passive",
+    "description": "Increases your mana and mana replenish.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Lionheart",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana": 30, "mana_replenish": 4 },
+      "perRank": { "mana": 4, "mana_replenish": 4 }
+    }
+  },
+  {
+    "id": "holy_bolt",
+    "classId": "paladin",
+    "name": "Holy Bolt",
+    "kind": "active",
+    "description": "Cast a piercing bolt of holy light dealing arcane damage to monsters hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Lionheart",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 12, "perLevel": 75 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Fist of the Heavens", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Light's Embrace", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Nova", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "holy_bolt_core",
+        "positionIndex": 0,
+        "name": "Holy Bolt",
+        "description": "Core of the Holy Bolt subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "divine_combustion",
+        "positionIndex": 1,
+        "name": "Divine Combustion",
+        "description": "Inflicts burning for a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 22.5 } }
+          ]
+        }
+      },
+      {
+        "id": "heavens_help",
+        "positionIndex": 2,
+        "name": "Heaven's Help",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "lightforce",
+        "positionIndex": 3,
+        "name": "Lightforce",
+        "description": "Unleash a pulse of holy essence dealing area of effect damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "bolt_rampage",
+        "positionIndex": 4,
+        "name": "Bolt Rampage",
+        "description": "Unleash multiple holy bolts with halved damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "rewarded_by_the_angels",
+        "positionIndex": 5,
+        "name": "Rewarded by the Angels",
+        "description": "Chance to replenish a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "life_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "call_of_justice",
+        "positionIndex": 6,
+        "name": "Call of Justice",
+        "description": "Chance to ricochet into a nerby monster with increased damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "strengthened_will",
+        "positionIndex": 7,
+        "name": "Strengthened Will",
+        "description": "Increases damage dealt by holy bolt.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "spoils_of_holy_war",
+        "positionIndex": 8,
+        "name": "Spoils of Holy War",
+        "description": "Chance on kill to drop increased amount of gold.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_kill",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "gold_find": 0 },
+            "perRank": { "gold_find": 25 }
+          }
+        }
+      },
+      {
+        "id": "illumination",
+        "positionIndex": 9,
+        "name": "Illumination",
+        "description": "Chance on hit to summon a pillar of light inflicting arcane break and dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 1 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "reveal_the_sinners",
+        "positionIndex": 10,
+        "name": "Reveal the Sinners",
+        "description": "Mark targets as sinners on hit. Damaging a sinner unleashes holy smite dealing additional arcane damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "rolling_judgement",
+        "positionIndex": 11,
+        "name": "Rolling Judgement",
+        "description": "Holy bolt travels slower but grows larger over time ticking faster and dealing increased damage based on it´s size.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 22.5, "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "touch_of_righteousness",
+        "positionIndex": 12,
+        "name": "Touch of Righteousness",
+        "description": "Unleash a holy nova on allied impact healing allies and damaging foes.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "life_replenish_pct": 0 },
+          "perRank": { "arcane_skill_damage": 45, "life_replenish_pct": 0.5 }
+        }
+      },
+      {
+        "id": "righteous_path",
+        "positionIndex": 13,
+        "name": "Righteous Path",
+        "description": "Unleash a barrage of holy bolts dealing increased damage. Holy bolt now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 50, "projectile_count": 10 }
+        }
+      },
+      {
+        "id": "divine_assbeating",
+        "positionIndex": 14,
+        "name": "Divine Assbeating",
+        "description": "Unleash righteous fists instead attaching on to monsters on hit dealing damage over time and exploding dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "lights_embrace",
+    "classId": "paladin",
+    "name": "Light's Embrace",
+    "kind": "passive",
+    "description": "Increases your cast rate.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Lionheart",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "cast_rate": 5 },
+      "perRank": { "cast_rate": 0.5 }
+    }
+  },
+  {
+    "id": "holy_retribution",
+    "classId": "paladin",
+    "name": "Holy Retribution",
+    "kind": "passive",
+    "description": "Increases your mana after kill.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Lionheart",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana_after_kill": 2 },
+      "perRank": { "mana_after_kill": 2 }
+    }
+  },
+  {
+    "id": "holy_nova",
+    "classId": "paladin",
+    "name": "Holy Nova",
+    "kind": "active",
+    "description": "Cast a nova of holy light dealing arcane damage to monsters and healing all allies hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Lionheart",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 97 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "healing": 2 },
+      "perRank": { "healing": 0.25 }
+    },
+    "bonusSources": [
+      { "source": "Divine Wisdom", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Holy Bolt", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Fist of the Heavens", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "holy_nova_core",
+        "positionIndex": 0,
+        "name": "Holy Nova",
+        "description": "Core of the Holy Nova subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "crusade_allies",
+        "positionIndex": 1,
+        "name": "Crusade Allies",
+        "description": "Allies healed by holy nova take reduced damage for a short period.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 5 }
+        }
+      },
+      {
+        "id": "practical_punishment",
+        "positionIndex": 2,
+        "name": "Practical Punishment",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "strength_prayer",
+        "positionIndex": 3,
+        "name": "Strength Prayer",
+        "description": "Increases area of effect radius of holy nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "strong_faith",
+        "positionIndex": 4,
+        "name": "Strong Faith",
+        "description": "Increases the damage dealt by holy nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 12.5 }
+        }
+      },
+      {
+        "id": "spiritual_awakening",
+        "positionIndex": 5,
+        "name": "Spiritual Awakening",
+        "description": "Holy nova no longer heals you or your allies but recovers a portion of your maximum mana instead.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_replenish_pct": 0 },
+          "perRank": { "mana_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "restore_light",
+        "positionIndex": 6,
+        "name": "Restore Light",
+        "description": "Holy nova heals you for a portion of your missing life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "blessing_buff",
+        "positionIndex": 7,
+        "name": "Blessing Buff",
+        "description": "Chance on cast to increase your and allied arcane damage and magic find for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "magic_find": 0 },
+            "perRank": { "arcane_skill_damage": 10, "magic_find": 15 }
+          }
+        }
+      },
+      {
+        "id": "warriors_light",
+        "positionIndex": 8,
+        "name": "Warrior's Light",
+        "description": "Increases damage dealt by holy nova scaling with your vitality.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_vitality": 0 },
+          "perRank": { "conversion_vitality": 2.5 }
+        }
+      },
+      {
+        "id": "deliver_consequences",
+        "positionIndex": 9,
+        "name": "Deliver Consequences",
+        "description": "Increases damage dealt by holy nova and gives a chance to instantly execute non-boss targets affected by mark of judgement.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 6 }
+        }
+      },
+      {
+        "id": "heavens_chosen",
+        "positionIndex": 10,
+        "name": "Heaven's Chosen",
+        "description": "Chance on cast to unleash an additional holy nova.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "righteous_transaction",
+        "positionIndex": 11,
+        "name": "Righteous Transaction",
+        "description": "Steal a portion of target life on hit over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "life_replenish_pct": 0, "arcane_skill_damage": 0 },
+          "perRank": { "life_replenish_pct": 0.2, "arcane_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "mark_of_judgement",
+        "positionIndex": 12,
+        "name": "Mark of Judgement",
+        "description": "Mark target monsters with judgement on hit causing them to take increased damage on hit consuming the mark.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 65 }
+        }
+      },
+      {
+        "id": "remote_prayer",
+        "positionIndex": 13,
+        "name": "Remote Prayer",
+        "description": "Holy nova now heals all allies within the same area with increased power.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 5 }
+        }
+      },
+      {
+        "id": "faiths_winds",
+        "positionIndex": 14,
+        "name": "Faith's Winds",
+        "description": "Unleash multiple smaller orbiting novas around you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "arcane_skill_damage": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "holy_hammer",
+    "classId": "paladin",
+    "name": "Holy Hammer",
+    "kind": "active",
+    "description": "Summon a holy hammer that spirals outwards dealing arcane damage on hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Orbital"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "effectDuration": 4.5,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Lionheart",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 70 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Light's Embrace", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Holy Aura", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Retribution", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "holy_hammer_core",
+        "positionIndex": 0,
+        "name": "Holy Hammer",
+        "description": "Core of the Holy Hammer subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "anvil_smash",
+        "positionIndex": 1,
+        "name": "Anvil Smash",
+        "description": "Increases holy hammer projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 12.5 }
+        }
+      },
+      {
+        "id": "blessed_light",
+        "positionIndex": 2,
+        "name": "Blessed Light",
+        "description": "Increases damage dealt by holy hammer.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "divine_prayer",
+        "positionIndex": 3,
+        "name": "Divine Prayer",
+        "description": "Decreases holy hammer mana cost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "free_of_sin",
+        "positionIndex": 4,
+        "name": "Free of Sin",
+        "description": "Decreases movement diminish when using holy hammer.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "smite",
+        "positionIndex": 5,
+        "name": "Smite",
+        "description": "Chance on hit to ricochet an additional hammer into the closest monster.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "double_forge",
+        "positionIndex": 6,
+        "name": "Double Forge",
+        "description": "Chance on cast to unleash an additional hammer.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "thors_revenge",
+        "positionIndex": 7,
+        "name": "Thor’s Revenge",
+        "description": "Chance on hit to drop a hammer down from the sky dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "sacred_hammer",
+        "positionIndex": 8,
+        "name": "Sacred Hammer",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "colossus_hammer",
+        "positionIndex": 9,
+        "name": "Colossus Hammer",
+        "description": "Increases the size of holy hammers.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "slamming_mallet",
+        "positionIndex": 10,
+        "name": "Slamming Mallet",
+        "description": "Hammers now knock monsters back unleashing a holy pulse on hit dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "divine_lightning",
+        "positionIndex": 11,
+        "name": "Divine Lightning",
+        "description": "Hammers unleash a chain of divine lightning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "arcane_skill_damage": 45, "projectile_bounces": 3 }
+        }
+      },
+      {
+        "id": "returning_lightforge",
+        "positionIndex": 12,
+        "name": "Returning Lightforge",
+        "description": "Throw multiple hammers traveling in a straight line and returning to you. Hammers no longer orbit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 60, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "orbital_light",
+        "positionIndex": 13,
+        "name": "Orbital Light",
+        "description": "Hammers now follow you with increased radius and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 35, "projectile_size": 30 }
+        }
+      },
+      {
+        "id": "chaining_mallet",
+        "positionIndex": 14,
+        "name": "Chaining Mallet",
+        "description": "Throw hammers that chain on hit dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "projectile_bounces": 0,
+            "projectile_size": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "projectile_bounces": 3,
+            "projectile_size": 30,
+            "arcane_skill_damage": 25
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "holy_aura",
+    "classId": "paladin",
+    "name": "Holy Aura",
+    "kind": "aura",
+    "description": "When active, increases your and your party members attack damage and magic skill damage.",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Lionheart",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 2, "magic_skill_damage": 2.5 },
+      "perRank": { "attack_damage": 2, "magic_skill_damage": 2.5 }
+    }
+  },
+  {
+    "id": "fist_of_the_heavens",
+    "classId": "paladin",
+    "name": "Fist of the Heavens",
+    "kind": "active",
+    "description": "Call down a fist of divine energy exploding into multiple Holy Bolts dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Lionheart",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 112 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Holy Aura", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "The Venerated One", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Holy Bolt", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "fist_of_the_heavens_core",
+        "positionIndex": 0,
+        "name": "Fist of the Heavens",
+        "description": "Core of the Fist of the Heavens subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "one_with_the_faith",
+        "positionIndex": 1,
+        "name": "One with the Faith",
+        "description": "Increases the amount of projectiles.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "guardian_angels",
+        "positionIndex": 2,
+        "name": "Guardian Angels",
+        "description": "Increases damage dealt by fist of the heavens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "punish_the_sinners",
+        "positionIndex": 3,
+        "name": "Punish the Sinners",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "trust_in_faith",
+        "positionIndex": 4,
+        "name": "Trust in Faith",
+        "description": "Decreases fist of the heavens mana cost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "heavens_wrath",
+        "positionIndex": 5,
+        "name": "Heaven's Wrath",
+        "description": "Holy bolts now return back to the point of impact dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "heavens_might",
+        "positionIndex": 6,
+        "name": "Heaven's Might",
+        "description": "Chance to stun target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 1 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "divine_reach",
+        "positionIndex": 7,
+        "name": "Divine Reach",
+        "description": "Increases cast rate when using fist of the heavens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "crusader_of_heavens",
+        "positionIndex": 8,
+        "name": "Crusader of Heavens",
+        "description": "Chance on cast to summon an additional fist.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "halting_luminosity",
+        "positionIndex": 9,
+        "name": "Halting Luminosity",
+        "description": "Inflicts slow on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "slow_target": 0 },
+          "perRank": { "slow_target": 10 }
+        }
+      },
+      {
+        "id": "blessed_one",
+        "positionIndex": 10,
+        "name": "Blessed One",
+        "description": "Fist of the heavens no longer fires holy bolts. Instead unleash a holy nova scaling its damage based on projectile amount.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 10 }
+        }
+      },
+      {
+        "id": "divine_explosion",
+        "positionIndex": 11,
+        "name": "Divine Explosion",
+        "description": "Fist of heavens grows in size according to the amount of projectiles shocking the ground dealing damage in an increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 50, "projectile_size": 5 }
+        }
+      },
+      {
+        "id": "forceful_salvation",
+        "positionIndex": 12,
+        "name": "Forceful Salvation",
+        "description": "Unleash the fist towards target location pulsating holy bolts as it travels and then returns back to you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "arcane_break": 0 },
+          "perRank": { "arcane_skill_damage": 65, "arcane_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "immaculate_warrior",
+        "positionIndex": 13,
+        "name": "Immaculate Warrior",
+        "description": "Smash with the fist dealing increased damage based on projectile amount inflicting arcane break and knocking back targets.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "arcane_break": 0 },
+          "perRank": { "arcane_skill_damage": 60, "arcane_break": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "tiring_combat",
+        "positionIndex": 14,
+        "name": "Tiring Combat",
+        "description": "Summon multiple smaller fist of the heavens orbiting you and unleashing holy bolts on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 15, "perRank": 5 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+            "perRank": { "arcane_skill_damage": 40, "projectile_count": 1 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "the_venerated_one",
+    "classId": "paladin",
+    "name": "The Venerated One",
+    "kind": "buff",
+    "description": "Temporarily increases your cast rate and mana replenish.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 48.11,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Lionheart",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "cast_rate": 18, "mana_replenish": 4 },
+      "perRank": { "cast_rate": 2, "mana_replenish": 4 }
+    }
+  }
+]

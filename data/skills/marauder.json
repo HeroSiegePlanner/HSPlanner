@@ -1,0 +1,2270 @@
+[
+  {
+    "id": "bouncing_grenade",
+    "classId": "marauder",
+    "name": "Bouncing Grenade",
+    "kind": "active",
+    "description": "Throw a grenade that bounces exploding into shrapnel on impact, dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Juggernaut",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Heavy Ball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bombardment", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bouncing_grenade_core",
+        "positionIndex": 0,
+        "name": "Bouncing Grenade",
+        "description": "Core of the Bouncing Grenade subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "pressurized_bombs",
+        "positionIndex": 1,
+        "name": "Pressurized Bombs",
+        "description": "Increases area of effect radius of bouncing grenade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "strong_lats",
+        "positionIndex": 2,
+        "name": "Strong Lats",
+        "description": "Increased the projecile speed of bouncing grenade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "nitroglycerine_solution",
+        "positionIndex": 3,
+        "name": "Nitroglycerine Solution",
+        "description": "Increases the damage dealt by bouncing grenade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "elastic_cover",
+        "positionIndex": 4,
+        "name": "Elastic Cover",
+        "description": "Increases the amount of bounces for bouncing grenade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "ace_up_your_sleeve",
+        "positionIndex": 5,
+        "name": "Ace Up Your Sleeve",
+        "description": "Chance on cast to unleash an additional bouncing grenade.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "big_boy_bombs",
+        "positionIndex": 6,
+        "name": "Big Boy Bombs",
+        "description": "Increases the size of bouncing grenade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "heavy_weight",
+        "positionIndex": 7,
+        "name": "Heavy Weight",
+        "description": "Decreases the distance between bounces.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": -10 }
+        }
+      },
+      {
+        "id": "rubber_coated_shell",
+        "positionIndex": 8,
+        "name": "Rubber Coated Shell",
+        "description": "Chance for bouncing grenades to bounce off of terrain.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "sharp_shrapnels",
+        "positionIndex": 9,
+        "name": "Sharp Shrapnels",
+        "description": "Chance to inflict fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "flammable_charge",
+        "positionIndex": 10,
+        "name": "Flammable Charge",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "resetting_fuse",
+        "positionIndex": 11,
+        "name": "Resetting Fuse",
+        "description": "Bouncing from terrain resets the duration of bouncing grenade.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "duration_resets": 0 },
+          "perRank": { "fire_skill_damage": 50, "duration_resets": 2 }
+        }
+      },
+      {
+        "id": "blazing_rebound",
+        "positionIndex": 12,
+        "name": "Blazing Rebound",
+        "description": "Hitting a monster causes bouncing grenade to bounce towards another nearby monster increasing its damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "fire_skill_damage": 42.5, "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "fiery_charge",
+        "positionIndex": 13,
+        "name": "Fiery Charge",
+        "description": "Each bounce increases the size of the molten trail. Unleash flames on a large radius inflicting burning after exploding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "increased_burning_damage": 0 },
+          "perRank": { "area_of_effect": 10, "increased_burning_damage": 80 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 80 } }
+          ]
+        }
+      },
+      {
+        "id": "coast_to_coast",
+        "positionIndex": 14,
+        "name": "Coast to Coast",
+        "description": "Throw multiple bouncing grenades in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "fire_skill_damage": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "heavy_ball",
+    "classId": "marauder",
+    "name": "Heavy Ball",
+    "kind": "active",
+    "description": "Flail a big chained spike ball dealing physical damage to monsters on its path.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 80,
+    "range": 320,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Juggernaut",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 34, "perLevel": 12 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Crazy Grapple", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Flail Mastery", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Force Overwhelming", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "heavy_ball_core",
+        "positionIndex": 0,
+        "name": "Heavy Ball",
+        "description": "Core of the Heavy Ball subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "the_bigger_the_better",
+        "positionIndex": 1,
+        "name": "The Bigger the Better",
+        "description": "Increases the size of heavy ball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "log_sized_arms",
+        "positionIndex": 2,
+        "name": "Log Sized Arms",
+        "description": "Increased projectile speed for heavy ball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "surprise_bombing",
+        "positionIndex": 3,
+        "name": "Surprise Bombing",
+        "description": "Chance to unleash a big bo-om on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "fire_frenzy",
+        "positionIndex": 4,
+        "name": "Fire Frenzy",
+        "description": "Chance to unleash burning flames below the target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 15, "area_of_effect": 12.5 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "multi_wield",
+        "positionIndex": 5,
+        "name": "Multi Wield",
+        "description": "Increases the amount of heavy balls.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "machine_drilled_spikes",
+        "positionIndex": 6,
+        "name": "Machine Drilled Spikes",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "gladiators_strength",
+        "positionIndex": 7,
+        "name": "Gladiator's Strength",
+        "description": "Increases the range of heavy ball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 7 }
+        }
+      },
+      {
+        "id": "precision_and_power",
+        "positionIndex": 8,
+        "name": "Precision and Power",
+        "description": "Increases the attack rating and damage dealt by heavy ball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0, "physical_skill_damage": 0 },
+          "perRank": { "attack_rating_pct": 5, "physical_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "full_body_training",
+        "positionIndex": 9,
+        "name": "Full Body Training",
+        "description": "Decreased movement diminish when using heavy ball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "critical_mass",
+        "positionIndex": 10,
+        "name": "Critical Mass",
+        "description": "Increases the critical strike chance of heavy ball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 5, "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "heavy_swing",
+        "positionIndex": 11,
+        "name": "Heavy Swing",
+        "description": "Swing the heavy ball around you dealing increased damage and critical strike damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "crit_damage": 0 },
+          "perRank": { "physical_skill_damage": 35, "crit_damage": 40 }
+        }
+      },
+      {
+        "id": "sharpened_spikes",
+        "positionIndex": 12,
+        "name": "Sharpened Spikes",
+        "description": "Unleash multiple smaller heavy balls dealing a portion of the damage dealing increased damage to bleeding targets.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "of_total_damage": 0,
+            "projectile_count": 1,
+            "increased_bleeding_damage": 0
+          },
+          "perRank": {
+            "of_total_damage": 40,
+            "projectile_count": 1,
+            "increased_bleeding_damage": 50
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "warlord_lees_apprentice",
+        "positionIndex": 13,
+        "name": "Warlord Lee's Apprentice",
+        "description": "Summon multiple heavy balls permanently dragging them behind you. When attacking or casting unleash the heavy balls towards a nearby enemy. Using this skill again will destroy the heavy balls.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 35, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "terrain_collision",
+        "positionIndex": 14,
+        "name": "Terrain Collision",
+        "description": "Hitting terrain or monsters with heavy ball unleashes fiery shockwaves into all directions inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "trail_count": 1 },
+          "perRank": { "increased_burning_damage": 75, "trail_count": 1 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "the_big_boom",
+    "classId": "marauder",
+    "name": "The Big Bo-oM",
+    "kind": "active",
+    "description": "Throw a huge bo-omb scattering into shrapnel on impact dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 260,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Juggernaut",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 16.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Bombardment", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Unstable Bomb", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "the_big_boom_core",
+        "positionIndex": 0,
+        "name": "The Big Bo-oM",
+        "description": "Core of the The Big Bo-oM subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "boomage",
+        "positionIndex": 1,
+        "name": "Boomage",
+        "description": "Increases the damage dealt by big bo-om.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "even_bigger_bo_om",
+        "positionIndex": 2,
+        "name": "Even Bigger Bo-oM!",
+        "description": "Increases the area of effect radius of big bo-om.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "leg_day",
+        "positionIndex": 3,
+        "name": "Leg Day",
+        "description": "Decreases movement diminish when using big bo-om.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "wider_armory",
+        "positionIndex": 4,
+        "name": "Wider Armory",
+        "description": "Decreases the mana cost of big bo-om.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "double_charges",
+        "positionIndex": 5,
+        "name": "Double Charges!",
+        "description": "Big bo-om bounces once when hitting the ground dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "pyro_enthusiast",
+        "positionIndex": 6,
+        "name": "Pyro Enthusiast",
+        "description": "Chance to inflict fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "swift_bo_ombing",
+        "positionIndex": 7,
+        "name": "Swift Bo-ombing",
+        "description": "Increased projectile speed for the big bo-om.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "burn_the_arena",
+        "positionIndex": 8,
+        "name": "Burn the Arena",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "more_heat",
+        "positionIndex": 9,
+        "name": "More Heat!",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 15 }
+        }
+      },
+      {
+        "id": "rollin_rollin_rollin",
+        "positionIndex": 10,
+        "name": "Rollin' Rollin' Rollin'",
+        "description": "Big bo-om rolls on the ground leaving behind a trail of burning flames.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "bouncing_boom",
+        "positionIndex": 11,
+        "name": "Bouncing Boom",
+        "description": "Unleash additional bombs traveling forward in an arc after exploding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 2 },
+          "perRank": { "fire_skill_damage": 45, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "crashboom",
+        "positionIndex": 12,
+        "name": "Crashboom",
+        "description": "Throw big bo-om high into the air scattering additional bombs into all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 75, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "scattering_boom",
+        "positionIndex": 13,
+        "name": "Scattering Boom",
+        "description": "Hitting a monster with big bo-om unleashes an explosion and causes it to ricochet towards another nearby monster with increased damage and area of effect radius. Big bo-om now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 50, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "molten_boom",
+        "positionIndex": 14,
+        "name": "Molten Boom",
+        "description": "Unleashes multiple burning trails of fire in random directions after exploding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "trail_count": 0 },
+          "perRank": { "increased_burning_damage": 75, "trail_count": 2 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "crazy_grapple",
+    "classId": "marauder",
+    "name": "Crazy Grapple",
+    "kind": "active",
+    "description": "Throw a massive spike ball into target location dealing area of effect fire damage and dragging yourself towards it through the air.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Movement"],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Juggernaut",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Heavy Ball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Flail Mastery", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "crazy_grapple_core",
+        "positionIndex": 0,
+        "name": "Crazy Grapple",
+        "description": "Core of the Crazy Grapple subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "high_rpm_reel",
+        "positionIndex": 1,
+        "name": "High RPM Reel",
+        "description": "Increases the projectile speed of crazy grapple.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "thornspikes",
+        "positionIndex": 2,
+        "name": "Thornspikes",
+        "description": "Increases the damage dealt by crazy grapple.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "efficient_grappling",
+        "positionIndex": 3,
+        "name": "Efficient Grappling",
+        "description": "Decreases the mana cost of crazy grapple.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "the_most_the_best",
+        "positionIndex": 4,
+        "name": "The Most the Best",
+        "description": "Increases the area of effect radius of crazy grapple.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "heatdash",
+        "positionIndex": 5,
+        "name": "Heatdash",
+        "description": "Increases the damage dealt by crazy grapple decreasing the maximum range.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "fire_skill_damage": 10, "skill_range": -10 }
+        }
+      },
+      {
+        "id": "in_flames",
+        "positionIndex": 6,
+        "name": "In Flames",
+        "description": "Scorch the ground around the point of impact dealing damage over time.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 25 }
+        }
+      },
+      {
+        "id": "burning_spikeball",
+        "positionIndex": 7,
+        "name": "Burning Spikeball",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "spikey_grappler",
+        "positionIndex": 8,
+        "name": "Spikey Grappler",
+        "description": "Increases the maximum range of crazy grapple.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "blue_flames",
+        "positionIndex": 9,
+        "name": "Blue Flames",
+        "description": "Chance to inflict fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "slingshot",
+        "positionIndex": 10,
+        "name": "Slingshot",
+        "description": "Fly over the point of impact with increased range.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "thorns_of_sorrow",
+        "positionIndex": 11,
+        "name": "Thorns of Sorrow",
+        "description": "Leave a trail of metal thorns on your path inflicting slow and bleeding for a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 100 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      },
+      {
+        "id": "cannonade_grapple",
+        "positionIndex": 12,
+        "name": "Cannonade Grapple",
+        "description": "Throw bombs around you while flying towards the ball.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "arena_master",
+        "positionIndex": 13,
+        "name": "Arena Master",
+        "description": "Sweep your surroundings with the spike ball gathering monsters on hit and bringing them back in front of you stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "explosive_grapple",
+        "positionIndex": 14,
+        "name": "Explosive Grapple",
+        "description": "Crazy grapple inflicts fire break on hit and a fiery explosion once you reach it dealing increased damage on an increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_break": 0, "area_of_effect": 0 },
+          "perRank": { "fire_break": 40, "area_of_effect": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "unstable_bomb",
+    "classId": "marauder",
+    "name": "Unstable Bomb",
+    "kind": "passive",
+    "description": "All bombs scatter small bombs around when exploding dealing fire damage.",
+    "damageType": "fire",
+    "tags": ["Passive", "Explosion"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Juggernaut",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0, "perLevel": 19 },
+    "passiveStats": {
+      "base": { "proc_chance": 35 },
+      "perRank": { "proc_chance": 0 }
+    },
+    "bonusSources": [
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Crazy Grapple", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "wrecking_ball",
+    "classId": "marauder",
+    "name": "Wrecking Ball",
+    "kind": "passive",
+    "description": "Increases the damage and range of Heavy Ball.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Juggernaut",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 5, "range": 5 },
+      "perRank": { "attack_damage": 4, "range": 0.5 }
+    }
+  },
+  {
+    "id": "force_overwhelming",
+    "classId": "marauder",
+    "name": "Force Overwhelming",
+    "kind": "buff",
+    "description": "Temporarily increase your attack damage, attack rating and attack speed.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Juggernaut",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "attack_damage": 3, "attack_rating_pct": 3, "increased_attack_speed": 30 },
+      "perRank": { "attack_damage": 3, "attack_rating_pct": 3, "increased_attack_speed": 1 }
+    }
+  },
+  {
+    "id": "flail_mastery",
+    "classId": "marauder",
+    "name": "Flail Mastery",
+    "kind": "passive",
+    "description": "Increase attack speed, attack damage and cast rate when using mace weapons.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Juggernaut",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "increased_attack_speed": 5, "attack_damage": 1.25, "cast_rate": 5 },
+      "perRank": { "increased_attack_speed": 0.5, "attack_damage": 1.25, "cast_rate": 0.5 }
+    }
+  },
+  {
+    "id": "bombardment",
+    "classId": "marauder",
+    "name": "Bombardment",
+    "kind": "active",
+    "description": "Rapidly throw a barrage of small bombs in target direction dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "baseCooldown": 3,
+    "range": 320,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Juggernaut",
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 24.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Unstable Bomb", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 8, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bombardment_core",
+        "positionIndex": 0,
+        "name": "Bombardment",
+        "description": "Core of the Bombardment subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "double_the_fuel",
+        "positionIndex": 1,
+        "name": "Double the Fuel",
+        "description": "Increases the damage dealt by bombardment.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "spikeballrdment",
+        "positionIndex": 2,
+        "name": "Spikeballrdment",
+        "description": "Chance for bombs to turn into spike balls dealing increased physical damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "efficient_reload",
+        "positionIndex": 3,
+        "name": "Efficient Reload",
+        "description": "Decreases the cooldown of bombardment.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "full_body_workout",
+        "positionIndex": 4,
+        "name": "Full Body Workout",
+        "description": "Increases the projectile speed of bombardment.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "massive_strike",
+        "positionIndex": 5,
+        "name": "Massive Strike",
+        "description": "Increases the damage dealt by bombardment also increasing the cooldown.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "skill_haste": 0 },
+          "perRank": { "fire_skill_damage": 15, "skill_haste": -12 }
+        }
+      },
+      {
+        "id": "fire_charges",
+        "positionIndex": 6,
+        "name": "Fire Charges",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "factory_upgrade",
+        "positionIndex": 7,
+        "name": "Factory Upgrade",
+        "description": "Increases the projectile size of bombardment.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "efficient_production",
+        "positionIndex": 8,
+        "name": "Efficient Production",
+        "description": "Increases the projectile amount of bombardment.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "solid_explosive_fuel",
+        "positionIndex": 9,
+        "name": "Solid Explosive Fuel",
+        "description": "Increases the area of effect radius of bombardment explosions.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "casual_bombing",
+        "positionIndex": 10,
+        "name": "Casual Bombing",
+        "description": "Throw a single wave of bombs removing the cooldown from bombardment.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "all_around_annihilation",
+        "positionIndex": 11,
+        "name": "All Around Annihilation",
+        "description": "Unleash bombardment in a circle around you increasing bomb damage over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 13, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "clusterbombing",
+        "positionIndex": 12,
+        "name": "Clusterbombing",
+        "description": "Call down raining bombs on multiple nearby monsters. The raining bombs have a chance to unleash smaller bombs after exploding.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "projectile_count": 4 },
+            "perRank": { "projectile_count": 3 }
+          }
+        }
+      },
+      {
+        "id": "big_bo_ombing",
+        "positionIndex": 13,
+        "name": "Big Bo-Ombing",
+        "description": "Unleash a single trail of big bo-oms with increased damage and area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "area_of_effect": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 30,
+            "area_of_effect": 20,
+            "projectile_count": 3
+          }
+        }
+      },
+      {
+        "id": "icbm",
+        "positionIndex": 14,
+        "name": "ICBM",
+        "description": "Launch an intercontinental ballistic missile towards target location dealing damage on a large radius leaving the ground blazing with flames dealing a portion of the damage over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 60, "area_of_effect": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "serrated_chains",
+    "classId": "marauder",
+    "name": "Serrated Chains",
+    "kind": "active",
+    "description": "Perform an area of effect attack with increased attack rating and damage attaching serrated chains to monsters.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Gladiator",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 20, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Titanium Chains", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Rend Flesh", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Retiarius Net", "stat": "attack_damage", "value": 1.6, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "serrated_chains_core",
+        "positionIndex": 0,
+        "name": "Serrated Chains",
+        "description": "Core of the Serrated Chains subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "more_reach",
+        "positionIndex": 1,
+        "name": "More Reach",
+        "description": "Increases the area of effect radius of serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 17.5 }
+        }
+      },
+      {
+        "id": "effective_steel",
+        "positionIndex": 2,
+        "name": "Effective Steel",
+        "description": "Increases the damage dealt by serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "open_their_wounds",
+        "positionIndex": 3,
+        "name": "Open Their Wounds",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 17.5 }
+        }
+      },
+      {
+        "id": "rust_poisoning",
+        "positionIndex": 4,
+        "name": "Rust Poisoning",
+        "description": "Chance to increase the tick frequency of serrated chains.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "faster_cast_rate": 0 },
+            "perRank": { "faster_cast_rate": 2 }
+          },
+          "appliesStates": ["serrated_chains"]
+        }
+      },
+      {
+        "id": "power_over_precision",
+        "positionIndex": 5,
+        "name": "Power over Precision",
+        "description": "Increases the damage dealt by serrated chains decreasing attack rating.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "attack_rating_pct": 0 },
+          "perRank": { "physical_skill_damage": 15, "attack_rating_pct": -6 }
+        }
+      },
+      {
+        "id": "experienced_gladiator",
+        "positionIndex": 6,
+        "name": "Experienced Gladiator",
+        "description": "Increases attack rating when using serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "precision_over_power",
+        "positionIndex": 7,
+        "name": "Precision over Power",
+        "description": "Ignore a portion of target defense when using serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "defense_ignored": 0 },
+          "perRank": { "defense_ignored": 10 }
+        }
+      },
+      {
+        "id": "sweeping_slash",
+        "positionIndex": 8,
+        "name": "Sweeping Slash",
+        "description": "Increases the area of effect width decreasing the length of serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "pierce_the_plating",
+        "positionIndex": 9,
+        "name": "Pierce the Plating",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 22.5 } }
+          ]
+        }
+      },
+      {
+        "id": "bouncing_chains",
+        "positionIndex": 10,
+        "name": "Bouncing Chains",
+        "description": "Chance to unleash chains bouncing between multiple monsters on hit inflicting serrated chains.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_bounces": 0 },
+            "perRank": { "projectile_bounces": 2 }
+          },
+          "appliesStates": ["serrated_chains"]
+        }
+      },
+      {
+        "id": "thousand_wounds",
+        "positionIndex": 11,
+        "name": "Thousand Wounds",
+        "description": "Serrated chains now stack ripping them off violently when reaching maximum stacks inflicting bleeding on the target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "max_skill_stacks": 0, "increased_bleeding_damage": 0 },
+          "perRank": { "max_skill_stacks": 4, "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "rawest_power",
+        "positionIndex": 12,
+        "name": "Rawest Power",
+        "description": "Perform a whirling attack hitting monsters around you with increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "physical_skill_damage": 0 },
+          "perRank": { "area_of_effect": 60, "physical_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "gladiators_dash",
+        "positionIndex": 13,
+        "name": "Gladiator's Dash",
+        "description": "Dash forward a short distance before performing an area of effect attack dealing increased damagee.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 75, "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "rusted_throns",
+        "positionIndex": 14,
+        "name": "Rusted Throns",
+        "description": "Increases the tick frequency of serrated chains.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "physical_skill_damage": 0 },
+          "perRank": { "faster_cast_rate": 18, "physical_skill_damage": 5 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "rend_flesh",
+    "classId": "marauder",
+    "name": "Rend Flesh",
+    "kind": "passive",
+    "description": "Attacks have a chance to inflict bleeding on monsters in a small area around the target.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Gladiator",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "bleeding_damage": 5, "proc_chance": 15 },
+      "perRank": { "bleeding_damage": 5, "proc_chance": 0 }
+    }
+  },
+  {
+    "id": "titanium_chains",
+    "classId": "marauder",
+    "name": "Titanium Chains",
+    "kind": "passive",
+    "description": "Monsters affected by Serrated Chains explode upon death dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Passive", "Explosion"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Gladiator",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "attackScaling": {
+      "weaponDamagePct": { "base": 25.5, "perLevel": 0.5 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 0 }
+    },
+    "bonusSources": [
+      { "source": "Serrated Chains", "stat": "attack_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rend Flesh", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Madness Control", "stat": "attack_damage", "value": 15, "per": "skill_level" }
+    ]
+  },
+  {
+    "id": "retiarius_net",
+    "classId": "marauder",
+    "name": "Retiarius Net",
+    "kind": "active",
+    "description": "Throw a retiarius net dealing area of effect arcane damage and stunning monsters hit.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 300,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Gladiator",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Serrated Chains", "stat": "arcane_skill_damage", "value": 7.8, "per": "skill_level" },
+      { "source": "Chain Trap", "stat": "arcane_skill_damage", "value": 9.6, "per": "skill_level" },
+      { "source": "Annihilation", "stat": "arcane_skill_damage", "value": 11.2, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 5.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "retiarius_net_core",
+        "positionIndex": 0,
+        "name": "Retiarius Net",
+        "description": "Core of the Retiarius Net subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bigger_web",
+        "positionIndex": 1,
+        "name": "Bigger Web",
+        "description": "Increases the area of effect radius of retiarius net.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "well_knitted_net",
+        "positionIndex": 2,
+        "name": "Well Knitted Net",
+        "description": "Increases the damage dealt by retiarius net.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "gladiators_resilience",
+        "positionIndex": 3,
+        "name": "Gladiators Resilience",
+        "description": "Decreases movement diminish when using retiarius net.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "throwing_technique",
+        "positionIndex": 4,
+        "name": "Throwing Technique",
+        "description": "Increases the projectile speed of retiarius net.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "bouncing_net",
+        "positionIndex": 5,
+        "name": "Bouncing Net",
+        "description": "Chance to bounce towards a nearby monster when landing.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "target_for_destruction",
+        "positionIndex": 6,
+        "name": "Target for Destruction",
+        "description": "Chance to rain down a spike ball on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "sharp_string_net",
+        "positionIndex": 7,
+        "name": "Sharp String Net",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "multinet_throw",
+        "positionIndex": 8,
+        "name": "Multinet Throw",
+        "description": "Chance on cast to unleash an additional retiarius net.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "devastating_net",
+        "positionIndex": 9,
+        "name": "Devastating Net",
+        "description": "Increases damage to targets inflicted with serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_serrated_chains": 0 },
+          "perRank": { "extra_damage_serrated_chains": 10 }
+        }
+      },
+      {
+        "id": "elastic_strings",
+        "positionIndex": 10,
+        "name": "Elastic Strings",
+        "description": "Chance to pull nearby monsters towards the point of impact when landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "area_of_effect": 0 },
+            "perRank": { "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "rocket_boosted_net",
+        "positionIndex": 11,
+        "name": "Rocket Boosted Net",
+        "description": "Throw retiarius net towards the nearest monsters with increased speed dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "arcane_skill_damage": 50, "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "metal_net",
+        "positionIndex": 12,
+        "name": "Metal Net",
+        "description": "Increases the area of effect radius and damage slowing monsters on hit instead of rooting them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 125, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "ricocheting_net",
+        "positionIndex": 13,
+        "name": "Ricocheting Net",
+        "description": "Retiarius net bounces between multiple monsters increasing its damage dealt with every bounce.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "arcane_skill_damage": 8, "projectile_bounces": 4 }
+        }
+      },
+      {
+        "id": "arena_dominator",
+        "positionIndex": 14,
+        "name": "Arena Dominator",
+        "description": "Pull nearby monsters towards you rooting them in place. Retiarius net now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "resilient_gladiator",
+    "classId": "marauder",
+    "name": "Resilient Gladiator",
+    "kind": "passive",
+    "description": "Increases your physical damage reduction and life.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Gladiator",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 1, "life": 1 },
+      "perRank": { "physical_damage_reduction": 0.5, "life": 1 }
+    }
+  },
+  {
+    "id": "chain_trap",
+    "classId": "marauder",
+    "name": "Chain Trap",
+    "kind": "active",
+    "description": "Throw a chain trap into the target location dealing arcane damage and hooking nearby monsters with chains.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Gladiator",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Retiarius Net", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Rend Flesh", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Master Trap Maker", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "chain_trap_core",
+        "positionIndex": 0,
+        "name": "Chain Trap",
+        "description": "Core of the Chain Trap subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "absolute_unit",
+        "positionIndex": 1,
+        "name": "Absolute Unit",
+        "description": "Increases the cast range of chain trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "rusty_chaintip",
+        "positionIndex": 2,
+        "name": "Rusty Chaintip",
+        "description": "Chance to inflict serrated chains on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "serrated_chains",
+              "amount": { "base": 0, "perRank": 15 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "arcane_shattering_force",
+        "positionIndex": 3,
+        "name": "Arcane Shattering Force",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "target_hungry",
+        "positionIndex": 4,
+        "name": "Target Hungry",
+        "description": "Increases the amount of targets for chain trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 2 }
+        }
+      },
+      {
+        "id": "double_trouble",
+        "positionIndex": 5,
+        "name": "Double Trouble",
+        "description": "Chance on cast to unleash an additional chain trap.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "serrated_chaintrap",
+        "positionIndex": 6,
+        "name": "Serrated Chaintrap",
+        "description": "Increases damage dealt to targets inflicted with serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_serrated_chains": 0 },
+          "perRank": { "extra_damage_serrated_chains": 10 }
+        }
+      },
+      {
+        "id": "sharpened_chaintip",
+        "positionIndex": 7,
+        "name": "Sharpened Chaintip",
+        "description": "Increases the damage dealt by chain trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "efficient_reel",
+        "positionIndex": 8,
+        "name": "Efficient Reel",
+        "description": "Increases the hooking speed of chain trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "longer_chains",
+        "positionIndex": 9,
+        "name": "Longer Chains",
+        "description": "Increases the hooking ranged of chain trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "c4_charged_trap",
+        "positionIndex": 10,
+        "name": "C4 Charged Trap",
+        "description": "After hooking monsters cause chain trap to explode dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "sharpened_tip",
+        "positionIndex": 11,
+        "name": "Sharpened Tip",
+        "description": "Increases damage dealt inflicting bleeding and stunning targets on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "increased_bleeding_damage": 0 },
+          "perRank": {
+            "arcane_skill_damage": 50,
+            "increased_bleeding_damage": 45
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 45 } }
+          ]
+        }
+      },
+      {
+        "id": "spinning_trap",
+        "positionIndex": 12,
+        "name": "Spinning Trap",
+        "description": "Chain trap spins its chains dealing increased damage in a large radius. No longer hooks monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 25, "skill_range": 20 }
+        }
+      },
+      {
+        "id": "betrayal",
+        "positionIndex": 13,
+        "name": "Betrayal",
+        "description": "Chain trap now attaches to a monster on hit causing the monster to explode dealing increased damage after hooking nearby monsters in.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "wait_for_the_prey",
+        "positionIndex": 14,
+        "name": "Wait for the Prey",
+        "description": "Throw multiple deactivated chain traps. Casting chain trap again will cause the traps to activate.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "annihilation",
+    "classId": "marauder",
+    "name": "Annihilation",
+    "kind": "active",
+    "description": "Violently rip all serrated chains out of monsters dealing area of effect damage. Targets affected by retiarius net take increased damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Explosion", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 5,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Gladiator",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 3, "perLevel": 15 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 0 }
+    },
+    "passiveStats": {
+      "base": { "damage_multiplier": 2.5 },
+      "perRank": { "damage_multiplier": 2.5 }
+    },
+    "bonusSources": [
+      { "source": "Serrated Chains", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Titanium Chains", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Chain Trap", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "annihilation_core",
+        "positionIndex": 0,
+        "name": "Annihilation",
+        "description": "Core of the Annihilation subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "forceful_rip",
+        "positionIndex": 1,
+        "name": "Forceful Rip",
+        "description": "Increases the area of effect radius of annihilation.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "attack_force_by_force",
+        "positionIndex": 2,
+        "name": "Attack Force by Force",
+        "description": "Increases the damage dealt by annihilation.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "more_violence",
+        "positionIndex": 3,
+        "name": "More Violence!",
+        "description": "Decreases the cooldown of annihilation.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "serrated_annihilation",
+        "positionIndex": 4,
+        "name": "Serrated Annihilation",
+        "description": "Increases damage dealt to targets inflicted with serrated chains.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_serrated_chains": 0 },
+          "perRank": { "extra_damage_serrated_chains": 10 }
+        }
+      },
+      {
+        "id": "arena_controller",
+        "positionIndex": 5,
+        "name": "Arena Controller",
+        "description": "Annihilation pulls monsters towards you with increased force.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "brutal_reach",
+        "positionIndex": 6,
+        "name": "Brutal Reach",
+        "description": "Increases the critical strike damage dealt by annihilation.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "everyone_gets_it",
+        "positionIndex": 7,
+        "name": "Everyone Gets it!",
+        "description": "Increases the amount of annihilated targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 2 }
+        }
+      },
+      {
+        "id": "rip_the_wounds",
+        "positionIndex": 8,
+        "name": "Rip the Wounds",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "deep_cuts",
+        "positionIndex": 9,
+        "name": "Deep Cuts",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "explosive_delivery",
+        "positionIndex": 10,
+        "name": "Explosive Delivery",
+        "description": "Chance to unleash a bloody explosion on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "rusted_chains",
+        "positionIndex": 11,
+        "name": "Rusted Chains",
+        "description": "Increases damage based on targets current life and executes monsters below a life threshold.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_life": 0, "execute_below": 0 },
+          "perRank": { "increased_life": 1, "execute_below": 2 }
+        }
+      },
+      {
+        "id": "symphony_of_chains",
+        "positionIndex": 12,
+        "name": "Symphony of Chains",
+        "description": "Unleash multiple spinning chains around you inflicting bleeding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "increased_bleeding_damage": 0 },
+          "perRank": { "projectile_count": 2, "increased_bleeding_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "megadeath",
+        "positionIndex": 13,
+        "name": "Megadeath",
+        "description": "Rain down large bombs at monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 20, "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "total_annihilation",
+        "positionIndex": 14,
+        "name": "Total Annihilation",
+        "description": "Spin a large chain around you for a short duration dealing increased damage and stunning monsters on hit. The outer edge of the chain always critically hits.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "spell_crit_damage": 0 },
+          "perRank": { "physical_skill_damage": 50, "spell_crit_damage": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "master_trap_maker",
+    "classId": "marauder",
+    "name": "Master Trap Maker",
+    "kind": "passive",
+    "description": "Passively increases the arcane damage dealt by chain traps and provides a chance for critical hits as well as a proc chance for traps to activate rapidly causing the trap and its hooks to travel faster.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Gladiator",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2, "crit_damage": 25, "crit_chance": 15, "proc_chance": 15 },
+      "perRank": { "arcane_skill_damage": 2, "crit_damage": 1, "crit_chance": 0, "proc_chance": 0 }
+    }
+  },
+  {
+    "id": "madness_control",
+    "classId": "marauder",
+    "name": "Madness Control",
+    "kind": "active",
+    "description": "Hook nearby monsters towards you stunning them and dealing arcane damage. Additionally summon a bomb from the sky onto your location creating an explosion that deals arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Gladiator",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Chain Trap", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Annihilation", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "The Big Bo-oM", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "madness_control_core",
+        "positionIndex": 0,
+        "name": "Madness Control",
+        "description": "Core of the Madness Control subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "mad_rampage",
+        "positionIndex": 1,
+        "name": "Mad Rampage",
+        "description": "Increases the damage dealt by madness control.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "ground_zero",
+        "positionIndex": 2,
+        "name": "Ground Zero",
+        "description": "Increases the area of effect radius of madness control.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "powerful_chainstrike",
+        "positionIndex": 3,
+        "name": "Powerful Chainstrike",
+        "description": "Inflicts stun with increased duration on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "arena_police",
+        "positionIndex": 4,
+        "name": "Arena Police",
+        "description": "Decreases the cooldown of madness control.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "we_are_all_mad_here",
+        "positionIndex": 5,
+        "name": "We Are All Mad Here",
+        "description": "Increases the amount of hooked targets with madness control.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 2 }
+        }
+      },
+      {
+        "id": "napalm_charge",
+        "positionIndex": 6,
+        "name": "Napalm Charge",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "boom_boom_boom",
+        "positionIndex": 7,
+        "name": "Boom Boom BOOM",
+        "description": "Chance to rain down additional bombs at targets on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "capture_and_punish",
+        "positionIndex": 8,
+        "name": "Capture and Punish",
+        "description": "Chance to deal increased damage inflicting slow on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          },
+          "appliesStates": ["slow"]
+        }
+      },
+      {
+        "id": "effective_control",
+        "positionIndex": 9,
+        "name": "Effective Control",
+        "description": "Increases the hooking speed of madness control.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "keep_sane_among_mad",
+        "positionIndex": 10,
+        "name": "Keep Sane among Mad",
+        "description": "Decreases movement diminish when using madness control.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "surging_madness",
+        "positionIndex": 11,
+        "name": "Surging Madness",
+        "description": "After hooking monsters in knock them back with intense force dealing increased damage stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "area_control",
+        "positionIndex": 12,
+        "name": "Area Control",
+        "description": "Madness control can be casted at target location with increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 60 }
+        }
+      },
+      {
+        "id": "evasive_move",
+        "positionIndex": 13,
+        "name": "Evasive Move",
+        "description": "Become immortal for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "blink_and_you_are_dead",
+        "positionIndex": 14,
+        "name": "Blink and you are dead",
+        "description": "Teleport a short distance unleashing madness control at the initial location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 35, "skill_range": 25 }
+        }
+      }
+    ]
+  }
+]

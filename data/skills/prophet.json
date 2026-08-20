@@ -1,0 +1,3419 @@
+[
+  {
+    "id": "summon_raven",
+    "classId": "prophet",
+    "name": "Summon Raven",
+    "kind": "active",
+    "description": "Summon a raven circling around you attacking nearby monsters.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 12
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Deep Rooted",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 9.15,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "summon_raven_core",
+        "positionIndex": 0,
+        "name": "Summon Raven",
+        "description": "Core of the Summon Raven subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "power_of_the_flock",
+        "positionIndex": 1,
+        "name": "Power of the Flock",
+        "description": "Increases the maximum amount of ravens you can summon.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "cadaver_pecking",
+        "positionIndex": 2,
+        "name": "Cadaver Pecking",
+        "description": "Increases the damage dealt by ravens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "frenzied_bird",
+        "positionIndex": 3,
+        "name": "Frenzied Bird",
+        "description": "Increases the attack speed of ravens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "raven_eye",
+        "positionIndex": 4,
+        "name": "Raven Eye",
+        "description": "Increases the detection range of ravens and its initial charge damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "poison_skill_damage": 25, "skill_range": 20 }
+        }
+      },
+      {
+        "id": "master_of_ravens",
+        "positionIndex": 5,
+        "name": "Master of Ravens",
+        "description": "Increases the maximum amount of ravens you can summon but decreases the damage dealt.",
+        "maxRank": 5,
+        "effects": {
+          "base": {
+            "summon_max_amount": 0,
+            "poison_skill_damage": -30
+          },
+          "perRank": {
+            "summon_max_amount": 1,
+            "poison_skill_damage": 0
+          }
+        }
+      },
+      {
+        "id": "ravens_flight",
+        "positionIndex": 6,
+        "name": "Ravens Flight",
+        "description": "Increases the movement speed and damage dealt by ravens.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "summon_movement_speed": 0 },
+          "perRank": { "poison_skill_damage": 5, "summon_movement_speed": 15 }
+        }
+      },
+      {
+        "id": "battle_screech",
+        "positionIndex": 7,
+        "name": "Battle Screech",
+        "description": "Chance on attack to unleash a battle screech dealing area of effect damage in a cone in front of the raven.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "poison_skill_damage": 20, "area_of_effect": 15 }
+          }
+        }
+      },
+      {
+        "id": "wounding_advantage",
+        "positionIndex": 8,
+        "name": "Wounding Advantage",
+        "description": "Increases damage dealt to monsters inflicted by bleed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "wounds_ripped_open",
+        "positionIndex": 9,
+        "name": "Wounds Ripped Open",
+        "description": "Chance on hit to cause bleeding, converting all other damage over time ailments to bleeding.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 25 }
+          },
+          "appliesStates": ["bleeding"]
+        }
+      },
+      {
+        "id": "summon_the_flock",
+        "positionIndex": 10,
+        "name": "Summon The Flock",
+        "description": "Summons all ravens at once with increased movement speed and damage for a short duration. Summon Raven now has a cooldown.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "movement_speed": 0 },
+          "perRank": { "poison_skill_damage": 15, "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "honey_stinger",
+        "positionIndex": 11,
+        "name": "Honey Stinger",
+        "description": "Ravens turn into wasps firing multiple projectiles per attack.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 2, "poison_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "flock_of_feathers",
+        "positionIndex": 12,
+        "name": "Flock of Feathers",
+        "description": "Summon an increased amount of ravens.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 4 }
+        }
+      },
+      {
+        "id": "rupturing_pull",
+        "positionIndex": 13,
+        "name": "Rupturing Pull",
+        "description": "Chance on attack to pull nearby monsters towards the raven inflicting bleeding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 75 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "tempest_of_ravens",
+        "positionIndex": 14,
+        "name": "Tempest of Ravens",
+        "description": "Ravens now orbit you dealing increased damage on hit. Summon Raven now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "thorned_roots",
+    "classId": "prophet",
+    "name": "Thorned Roots",
+    "kind": "active",
+    "description": "Unleash a swarm of roots dealing poison damage on hit.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Thorned Branch",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "thorned_roots_core",
+        "positionIndex": 0,
+        "name": "Thorned Roots",
+        "description": "Core of the Thorned Roots subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "strangulating_branches",
+        "positionIndex": 1,
+        "name": "Strangulating Branches",
+        "description": "Increases poisoned frequency by thorned roots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_frequency": 0 },
+          "perRank": { "increased_poisoned_frequency": 8 }
+        }
+      },
+      {
+        "id": "painful_thorns",
+        "positionIndex": 2,
+        "name": "Painful Thorns",
+        "description": "Increases damage dealt by thorned roots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "toxic_amplification",
+        "positionIndex": 3,
+        "name": "Toxic Amplification",
+        "description": "Increases damage dealt to monsters inflicted by poisoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 15 }
+        }
+      },
+      {
+        "id": "thorned_wrath",
+        "positionIndex": 4,
+        "name": "Thorned Wrath",
+        "description": "Increases faster cast rate when using thorned roots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "poison_ivy",
+        "positionIndex": 5,
+        "name": "Poison Ivy",
+        "description": "Chance on monster kill to summon a poison ivy which shoots pores at nearby monsters inflicting poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "magnitude_of_roots",
+        "positionIndex": 6,
+        "name": "Magnitude of Roots",
+        "description": "Increases the size and area of effect radius of thorned roots",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "venomous_strangulation",
+        "positionIndex": 7,
+        "name": "Venomous Strangulation",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 25 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "extended_roots",
+        "positionIndex": 8,
+        "name": "Extended Roots",
+        "description": "Increases the duration of thorned roots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "asphyxiating_grasp",
+        "positionIndex": 9,
+        "name": "Asphyxiating Grasp",
+        "description": "Chance on hit to deal double damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "rooted_essence",
+        "positionIndex": 10,
+        "name": "Rooted Essence",
+        "description": "Decreases mana cost and movement diminish when using thorned roots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0, "reduced_movement_diminish": 0 },
+          "perRank": {
+            "mana_cost_reduction": 8,
+            "reduced_movement_diminish": 10
+          }
+        }
+      },
+      {
+        "id": "natures_path",
+        "positionIndex": 11,
+        "name": "Nature´s Path",
+        "description": "Unleash an additional trail of roots.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "trail_count": 0, "poison_skill_damage": 0 },
+          "perRank": { "trail_count": 1, "poison_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "gigathorn",
+        "positionIndex": 12,
+        "name": "Gigathorn",
+        "description": "Unleash a massive thorn that sends roots in all directions on hit. Thorned Roots now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_size": 80 },
+          "perRank": { "poison_skill_damage": 50, "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "poison_roots",
+        "positionIndex": 13,
+        "name": "Poison Roots",
+        "description": "Increases the stacks of poisoned thorned roots can apply on monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "max_skill_stacks": 0 },
+          "perRank": { "max_skill_stacks": 1 }
+        }
+      },
+      {
+        "id": "hungering_hive_mind",
+        "positionIndex": 14,
+        "name": "Hungering Hive Mind",
+        "description": "Roots travel towards the next closest target after each hit unleashing an area of effect pulse.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "poison_skill_damage": 60, "projectile_size": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "carrion_worm",
+    "classId": "prophet",
+    "name": "Carrion Worm",
+    "kind": "active",
+    "description": "Summons a carrion worm frequently attacking nearby monsters.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 18
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Summon Raven",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent Colossus",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 9.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "carrion_worm_core",
+        "positionIndex": 0,
+        "name": "Carrion Worm",
+        "description": "Core of the Carrion Worm subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "empowered_nervous_system",
+        "positionIndex": 1,
+        "name": "Empowered Nervous System",
+        "description": "Increases the carrion worm´s attack frequency.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 12.5 }
+        }
+      },
+      {
+        "id": "lingering_mass",
+        "positionIndex": 2,
+        "name": "Lingering Mass",
+        "description": "Increases damage dealt by carrion worm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "wormtoxins",
+        "positionIndex": 3,
+        "name": "Wormtoxins",
+        "description": "Increases poisoned damage inflicted by carrion worm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "inflammatory_touch",
+        "positionIndex": 4,
+        "name": "Inflammatory Touch",
+        "description": "Deal increased damage to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 15 }
+        }
+      },
+      {
+        "id": "worm_steroids",
+        "positionIndex": 5,
+        "name": "Worm Steroids",
+        "description": "Increases the size of the carrion worm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "burrowing_monstrosity",
+        "positionIndex": 6,
+        "name": "Burrowing Monstrosity",
+        "description": "Chance on hit to knock monsters up stunning and dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 25 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "parasitic_aftershock",
+        "positionIndex": 7,
+        "name": "Parasitic Aftershock",
+        "description": "Monsters hit by the carrion worm have a chance to explode when killed dealing increased damage on a large radius.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "linked_nervous_systems",
+        "positionIndex": 8,
+        "name": "Linked Nervous Systems",
+        "description": "Chance to unleash a toxic chain inflicting poisoned on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 20 }
+          },
+          "appliesStates": ["poisoned"]
+        }
+      },
+      {
+        "id": "pulsating_touch",
+        "positionIndex": 9,
+        "name": "Pulsating Touch",
+        "description": "Chance for carrion worm´s attacks to echo an additional time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "lingering_worm",
+        "positionIndex": 10,
+        "name": "Lingering Worm",
+        "description": "Increases the movement speed and attack radius of the carrion worm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0, "area_of_effect": 0 },
+          "perRank": { "movement_speed": 10, "area_of_effect": 12.5 }
+        }
+      },
+      {
+        "id": "parasitic_aura",
+        "positionIndex": 11,
+        "name": "Parasitic Aura",
+        "description": "Deal a portion of the damage to all nearby monsters slowing them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "splash_of_total_damage": 0, "summon_attack_speed": 0 },
+          "perRank": { "splash_of_total_damage": 75, "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "earthworm",
+        "positionIndex": 12,
+        "name": "Earthworm",
+        "description": "Increases the size and damage of the carrion worm.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_size": 75 },
+          "perRank": { "poison_skill_damage": 40, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "conjured_branches",
+        "positionIndex": 13,
+        "name": "Conjured Branches",
+        "description": "Thorned Branches orbit around the carrion worm dealing damage to monsters stunning them on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_count": 3 },
+          "perRank": { "poison_skill_damage": 25, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "devouring_worm",
+        "positionIndex": 14,
+        "name": "Devouring Worm",
+        "description": "Carrion worm devours nearby corpses unleashing a large explosion dealing damage and providing you with increased life and life replenish for a short duration stacking up to 10.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "increased_life": 0, "life_replenish_pct": 0 },
+            "perRank": { "increased_life": 5, "life_replenish_pct": 25 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "blessed_nature",
+    "classId": "prophet",
+    "name": "Blessed Nature",
+    "kind": "passive",
+    "description": "Increases poison skill damage.",
+    "damageType": "poison",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "poison_skill_damage": 11
+      },
+      "perRank": {
+        "poison_skill_damage": 4.5
+      }
+    }
+  },
+  {
+    "id": "thorned_branch",
+    "classId": "prophet",
+    "name": "Thorned Branch",
+    "kind": "active",
+    "description": "Throw a thorned branch dealing poison damage on hit.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Projectile"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 20
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Thorned Roots",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "thorned_branch_core",
+        "positionIndex": 0,
+        "name": "Thorned Branch",
+        "description": "Core of the Thorned Branch subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharper_thorns",
+        "positionIndex": 1,
+        "name": "Sharper Thorns",
+        "description": "Increases the damage dealt by thorned branch",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "conjurer_of_branches",
+        "positionIndex": 2,
+        "name": "Conjurer of Branches",
+        "description": "Increases faster cast rate when using thorned branch.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 12.5 }
+        }
+      },
+      {
+        "id": "critically_sharp_thorns",
+        "positionIndex": 3,
+        "name": "Critically Sharp Thorns",
+        "description": "Chance to critically hit with thorned branch dealing increased critical spell damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "thorned_splinters",
+        "positionIndex": 4,
+        "name": "Thorned Splinters",
+        "description": "Chance for the branch to break when expiring unleashing splinters in all directions inflicting poisoned and dealing additional damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 30 }
+          },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "bouncing_branch",
+        "positionIndex": 5,
+        "name": "Bouncing Branch",
+        "description": "Chance on hit to change trajectory and gaining increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 10 }
+          }
+        }
+      },
+      {
+        "id": "concussive_branchblow",
+        "positionIndex": 6,
+        "name": "Concussive Branchblow",
+        "description": "Chance on hit to deal double damage and stun the target for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "venom_infusion",
+        "positionIndex": 7,
+        "name": "Venom Infusion",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 30 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "amplified_venoms",
+        "positionIndex": 8,
+        "name": "Amplified Venoms",
+        "description": "Increases the poisoned damage inflicted by thorned branch.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "infecting_the_wounds",
+        "positionIndex": 9,
+        "name": "Infecting the Wounds",
+        "description": "Deal increased damage to targets inflicted by poisoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 15 }
+        }
+      },
+      {
+        "id": "wooden_equilibrium",
+        "positionIndex": 10,
+        "name": "Wooden Equilibrium",
+        "description": "Reduces mana cost and movement diminish when using thorned branch",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0, "reduced_movement_diminish": 0 },
+          "perRank": {
+            "mana_cost_reduction": 8,
+            "reduced_movement_diminish": 10
+          }
+        }
+      },
+      {
+        "id": "branched_multitude",
+        "positionIndex": 11,
+        "name": "Branched Multitude",
+        "description": "Throw multiple branches in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_count": 2 },
+          "perRank": { "poison_skill_damage": 15, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "forking_branches",
+        "positionIndex": 12,
+        "name": "Forking Branches",
+        "description": "Thorned branch forks each time it hits a monster.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 12, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "growth_of_death",
+        "positionIndex": 13,
+        "name": "Growth of Death",
+        "description": "Each time you hit a monster with thorned branch, there is a chance a tree is grown which then falls on the nearest monster.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 65 }
+          }
+        }
+      },
+      {
+        "id": "falling_branches",
+        "positionIndex": 14,
+        "name": "Falling Branches",
+        "description": "While traveling summon falling branches on its path dealing area of effect damage upon landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 50, "area_of_effect": 20 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summon_ent_colossus",
+    "classId": "prophet",
+    "name": "Summon Ent Colossus",
+    "kind": "active",
+    "description": "Summons an ent colossus to fight by your side.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 36
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Summon Raven",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "summon_ent_colossus_core",
+        "positionIndex": 0,
+        "name": "Summon Ent Colossus",
+        "description": "Core of the Summon Ent Colossus subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "carrying_weight",
+        "positionIndex": 1,
+        "name": "Carrying Weight",
+        "description": "Increases the damage dealt by ent colossus.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "colossal_bark_smash",
+        "positionIndex": 2,
+        "name": "Colossal Bark Smash",
+        "description": "Chance for ent colossus to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 35 }
+        }
+      },
+      {
+        "id": "ancient_bark",
+        "positionIndex": 3,
+        "name": "Ancient Bark",
+        "description": "Increases ent colossus damage reduction from all sources.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 10 }
+        }
+      },
+      {
+        "id": "executing_branches",
+        "positionIndex": 4,
+        "name": "Executing Branches",
+        "description": "Execute targets below a threshold.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 3 }
+        }
+      },
+      {
+        "id": "scorched_bark",
+        "positionIndex": 5,
+        "name": "Scorched Bark",
+        "description": "Chance on attack for ent colossus to unleash a powerful fiery smash knocking monsters back on a large radius inflicting burning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "loaded_branch",
+        "positionIndex": 6,
+        "name": "Loaded Branch",
+        "description": "Chance on attack to unleash a shockwave dealing damage and stunning monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 25 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "ancient_vitality",
+        "positionIndex": 7,
+        "name": "Ancient Vitality",
+        "description": "Increases the maximum life of ent colossus.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 10 }
+        }
+      },
+      {
+        "id": "unleash_the_roots",
+        "positionIndex": 8,
+        "name": "Unleash The Roots",
+        "description": "Chance on attack for ent colossus to cast Thorned Roots (Prophet Skill).",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 1 } }
+      },
+      {
+        "id": "aged_tree_bark",
+        "positionIndex": 9,
+        "name": "Aged Tree Bark",
+        "description": "Chance for ent colossus to block all incoming damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "center_of_the_forest",
+        "positionIndex": 10,
+        "name": "Center of the Forest",
+        "description": "Rotating branches orbit the ent colossus dealing damage and rooting monsters in place on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "scorched_branchsmash",
+        "positionIndex": 11,
+        "name": "Scorched Branchsmash",
+        "description": "Chance when attacking to smash the ground unleashing burning fissures knocking monsters in air and inflicting burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 80 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 25 }
+          },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 80 } }
+          ]
+        }
+      },
+      {
+        "id": "colossal_canopy",
+        "positionIndex": 12,
+        "name": "Colossal Canopy",
+        "description": "Increases ent colossus damage based on its life. Ent colossus gains increased life.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_summon_life": 0, "summon_life": 0 },
+          "perRank": { "conversion_summon_life": 1, "summon_life": 10 }
+        }
+      },
+      {
+        "id": "blood_hungry_roots",
+        "positionIndex": 13,
+        "name": "Blood Hungry Roots",
+        "description": "Ent colossus constantly sends roots towards nearby monsters dealing damage and rooting them for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "summon_attack_speed": 0 },
+          "perRank": { "poison_skill_damage": 40, "summon_attack_speed": 12.5 }
+        }
+      },
+      {
+        "id": "trunk_crusher",
+        "positionIndex": 14,
+        "name": "Trunk Crusher",
+        "description": "Ent Colossus throws a huge tree trunk with each attack dealing increased damage and knocking monsters back on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "deep_rooted",
+    "classId": "prophet",
+    "name": "Deep Rooted",
+    "kind": "passive",
+    "description": "Increases all resistances.",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "all_resistances": 5
+      },
+      "perRank": {
+        "all_resistances": 0.5
+      }
+    }
+  },
+  {
+    "id": "summon_ent",
+    "classId": "prophet",
+    "name": "Summon Ent",
+    "kind": "active",
+    "description": "Summons an ent to fight by your side.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent Colossus",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "summon_ent_core",
+        "positionIndex": 0,
+        "name": "Summon Ent",
+        "description": "Core of the Summon Ent subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "power_of_the_forest",
+        "positionIndex": 1,
+        "name": "Power of the Forest",
+        "description": "Increases the maximum amount of ents you can summon.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "shielding_bark",
+        "positionIndex": 2,
+        "name": "Shielding Bark",
+        "description": "Increases the ent´s damage reduction from all sources.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 8 }
+        }
+      },
+      {
+        "id": "elders_branches",
+        "positionIndex": 3,
+        "name": "Elder´s Branches",
+        "description": "Increases the damage dealt by the ent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "aging_branch",
+        "positionIndex": 4,
+        "name": "Aging Branch",
+        "description": "Increases the maximum life of the ent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 8 }
+        }
+      },
+      {
+        "id": "blood_hungering_bark",
+        "positionIndex": 5,
+        "name": "Blood Hungering Bark",
+        "description": "Increases damage dealt by the ent but also decreases its maximum life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "summon_life": 0 },
+          "perRank": { "poison_skill_damage": 15, "summon_life": -6 }
+        }
+      },
+      {
+        "id": "quicker_roots",
+        "positionIndex": 6,
+        "name": "Quicker Roots",
+        "description": "Increases the movement speed of the ent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_movement_speed": 0 },
+          "perRank": { "summon_movement_speed": 15 }
+        }
+      },
+      {
+        "id": "poisoning_bark_smash",
+        "positionIndex": 7,
+        "name": "Poisoning Bark Smash",
+        "description": "Chance on hit to inflict poisoned and dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 15 }
+          },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "canopy_growth",
+        "positionIndex": 8,
+        "name": "Canopy Growth",
+        "description": "Increases the size and life of the ent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0, "summon_life": 0 },
+          "perRank": { "projectile_size": 15, "summon_life": 4 }
+        }
+      },
+      {
+        "id": "penetrating_branches",
+        "positionIndex": 9,
+        "name": "Penetrating Branches",
+        "description": "Ents execute targets below a threshold.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "throwing_branches",
+        "positionIndex": 10,
+        "name": "Throwing Branches",
+        "description": "Chance on attack for ents to cast Thorned Branch (Prophet Skill).",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 1 } }
+      },
+      {
+        "id": "saplings",
+        "positionIndex": 11,
+        "name": "Saplings",
+        "description": "Summon increased amount of smaller ent saplings that gain increased attack speed and movement speed. Summon Ent now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "summon_max_amount": 2,
+            "summon_attack_speed": 0,
+            "movement_speed": 0
+          },
+          "perRank": {
+            "summon_max_amount": 1,
+            "summon_attack_speed": 25,
+            "movement_speed": 20
+          }
+        }
+      },
+      {
+        "id": "charging_forest",
+        "positionIndex": 12,
+        "name": "Charging Forest",
+        "description": "Ents charge towards nearest monsters if far away from target unleashing a strong area of effect pulse on hit dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "poison_skill_damage": 0,
+            "skill_range": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "poison_skill_damage": 150,
+            "skill_range": 35,
+            "area_of_effect": 25
+          }
+        }
+      },
+      {
+        "id": "link_of_nature",
+        "positionIndex": 13,
+        "name": "Link of Nature",
+        "description": "Ents are tethered to each other by a chain which inflicts poisoned and deals damage to monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "increased_poisoned_damage": 0 },
+          "perRank": {
+            "poison_skill_damage": 45,
+            "increased_poisoned_damage": 75
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "flaming_branch",
+        "positionIndex": 14,
+        "name": "Flaming Branch",
+        "description": "Ents have a chance on attack to unleash a fiery pulse knocking monsters back dealing damage and inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 100 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 30 }
+          },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "summon_spirit_of_the_forest",
+    "classId": "prophet",
+    "name": "Summon Spirit of The Forest",
+    "kind": "active",
+    "description": "Summons a spirit of the forest increasing life and mana for you and your party.",
+    "damageType": "poison",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon",
+      "Chain Lightning"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "effectDuration": 120,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Forest Mystic",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 7.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "spirits_presence_buff": 5
+      },
+      "perRank": {
+        "spirits_presence_buff": 0.2
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Carrion Worm",
+        "stat": "poison_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Blessed Nature",
+        "stat": "poison_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Summon Ent",
+        "stat": "poison_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "poison_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "summon_spirit_of_the_forest_core",
+        "positionIndex": 0,
+        "name": "Summon Spirit of The Forest",
+        "description": "Core of the Summon Spirit of The Forest subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "vitality_of_wilderness",
+        "positionIndex": 1,
+        "name": "Vitality of Wilderness",
+        "description": "Adds maximum life to you and your party members (Flat)",
+        "maxRank": 5,
+        "effects": { "base": { "life": 0 }, "perRank": { "life": 150 } }
+      },
+      {
+        "id": "longer_lasting_harmony",
+        "positionIndex": 2,
+        "name": "Longer Lasting Harmony",
+        "description": "Increases the duration of spirit of the forest",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 50 }
+        }
+      },
+      {
+        "id": "defense_of_wilderness",
+        "positionIndex": 3,
+        "name": "Defense of Wilderness",
+        "description": "Increases the defense of you and your party members",
+        "maxRank": 5,
+        "effects": {
+          "base": { "enhanced_defense": 0 },
+          "perRank": { "enhanced_defense": 4 }
+        }
+      },
+      {
+        "id": "recuperating_mantra",
+        "positionIndex": 4,
+        "name": "Recuperating Mantra",
+        "description": "Increases the life and mana replenish for you and your party members.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 25, "mana_replenish_pct": 25 }
+        }
+      },
+      {
+        "id": "prayer_of_nature",
+        "positionIndex": 5,
+        "name": "Prayer of Nature",
+        "description": "Increases all skills for you and your party members.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_skills": 0 },
+          "perRank": { "all_skills": 1 }
+        }
+      },
+      {
+        "id": "manawell_of_wilderness",
+        "positionIndex": 6,
+        "name": "Manawell of Wilderness",
+        "description": "Adds maximum mana to you and your party members (Flat)",
+        "maxRank": 5,
+        "effects": { "base": { "mana": 0 }, "perRank": { "mana": 150 } }
+      },
+      {
+        "id": "essence_of_danger",
+        "positionIndex": 7,
+        "name": "Essence of Danger",
+        "description": "Increases attack speed and faster cast rate for you and your party members.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0, "faster_cast_rate": 0 },
+          "perRank": { "increased_attack_speed": 10, "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "blessing_of_wilderness",
+        "positionIndex": 8,
+        "name": "Blessing of Wilderness",
+        "description": "Increases magic skill damage and attack damage for you and your party.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "magic_skill_damage": 0, "attack_damage": 0 },
+          "perRank": { "magic_skill_damage": 8, "attack_damage": 12 }
+        }
+      },
+      {
+        "id": "purified_terrain",
+        "positionIndex": 9,
+        "name": "Purified Terrain",
+        "description": "Increases the movement speed for you and your party members.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 12.5 }
+        }
+      },
+      {
+        "id": "oaks_heart",
+        "positionIndex": 10,
+        "name": "Oak´s Heart",
+        "description": "Increases damage return for you and your party members.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "damage_return": 0 },
+          "perRank": { "damage_return": 250 }
+        }
+      },
+      {
+        "id": "cursed_spirit",
+        "positionIndex": 11,
+        "name": "Cursed Spirit",
+        "description": "Increases ailment damage for you and your party members.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "ailment_damage_all": 0 },
+          "perRank": { "ailment_damage_all": 15 }
+        }
+      },
+      {
+        "id": "forests_blessing",
+        "positionIndex": 12,
+        "name": "Forest´s Blessing",
+        "description": "Increases the amount of life spirit of the forest provides to you and your party.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_life": 0 },
+          "perRank": { "increased_life": 5 }
+        }
+      },
+      {
+        "id": "mystic_voodoo",
+        "positionIndex": 13,
+        "name": "Mystic Voodoo",
+        "description": "Spirit of the Forest fires thorns at nearby monsters when you or your party member takes damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "malevolent_spirit",
+        "positionIndex": 14,
+        "name": "Malevolent Spirit",
+        "description": "Increases attack damage and attack rating for you and your party.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "attack_damage": 0, "attack_rating_pct": 0 },
+          "perRank": { "attack_damage": 125, "attack_rating_pct": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "skinwalker",
+    "classId": "prophet",
+    "name": "Skinwalker",
+    "kind": "passive",
+    "description": "A portion of your life is added as physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "life": 100,
+        "attack_damage": 1
+      },
+      "perRank": {
+        "life": 0,
+        "attack_damage": 0.2
+      }
+    }
+  },
+  {
+    "id": "wounding_paw",
+    "classId": "prophet",
+    "name": "Wounding Paw",
+    "kind": "active",
+    "description": "Strike monsters with increased damage with a chance to unleash a ripple of blood.",
+    "damageType": "physical",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Strike"
+    ],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 80,
+        "perLevel": 20
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 45,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Spirit of The Wendigo",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Skinwalker",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Leaping Charge",
+        "stat": "attack_damage",
+        "value": 7,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "wounding_paw_core",
+        "positionIndex": 0,
+        "name": "Wounding Paw",
+        "description": "Core of the Wounding Paw subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharper_claws",
+        "positionIndex": 1,
+        "name": "Sharper Claws",
+        "description": "Increases damage when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "accurate_slash",
+        "positionIndex": 2,
+        "name": "Accurate Slash",
+        "description": "Increases attack rating when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "shredding_claws",
+        "positionIndex": 3,
+        "name": "Shredding Claws",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "disorienting_crush",
+        "positionIndex": 4,
+        "name": "Disorienting Crush",
+        "description": "Chance to stun monsters on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 20 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "pummeling_the_disoriented",
+        "positionIndex": 5,
+        "name": "Pummeling The Disoriented",
+        "description": "Gain increased damage to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "amplified_rabies",
+        "positionIndex": 6,
+        "name": "Amplified Rabies",
+        "description": "Increased attack speed when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 12.5 }
+        }
+      },
+      {
+        "id": "slick_movement",
+        "positionIndex": 7,
+        "name": "Slick Movement",
+        "description": "Decreased movement diminish and mana cost when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0, "mana_cost_reduction": 0 },
+          "perRank": {
+            "reduced_movement_diminish": 10,
+            "mana_cost_reduction": 8
+          }
+        }
+      },
+      {
+        "id": "critical_slashing",
+        "positionIndex": 8,
+        "name": "Critical Slashing",
+        "description": "Increased critical strike chance when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "slashing_with_accuracy",
+        "positionIndex": 9,
+        "name": "Slashing with Accuracy",
+        "description": "Increases critical strike damage when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "vital_siphoning",
+        "positionIndex": 10,
+        "name": "Vital Siphoning",
+        "description": "Increases life steal and mana steal when using wounding paw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_steal": 0, "mana_steal": 0 },
+          "perRank": { "life_steal": 3, "mana_steal": 3 }
+        }
+      },
+      {
+        "id": "accelerated_slash",
+        "positionIndex": 11,
+        "name": "Accelerated Slash",
+        "description": "Every fourth attack is empowered dealing increased damage on a larger radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 75 },
+          "perRank": { "physical_skill_damage": 80, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "brutalizing_decomposition",
+        "positionIndex": 12,
+        "name": "Brutalizing Decomposition",
+        "description": "Chance on monster kill to unleash a ripple of blood dealing damage on a large radius.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 14 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 25, "area_of_effect": 22.5 }
+          }
+        }
+      },
+      {
+        "id": "slashing_momentum",
+        "positionIndex": 13,
+        "name": "Slashing Momentum",
+        "description": "Gain a stack of slashing momentum on hit increasing your attack speed and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "increased_attack_speed": 0,
+            "max_skill_stacks": 2
+          },
+          "perRank": {
+            "physical_skill_damage": 10,
+            "increased_attack_speed": 10,
+            "max_skill_stacks": 1
+          }
+        }
+      },
+      {
+        "id": "animal_siphoning",
+        "positionIndex": 14,
+        "name": "Animal Siphoning",
+        "description": "Gain increased life steal, critical strike damage and movement speed on kill.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "life_steal": 0, "crit_damage": 0, "movement_speed": 0 },
+          "perRank": {
+            "life_steal": 15,
+            "crit_damage": 25,
+            "movement_speed": 35
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "leaping_charge",
+    "classId": "prophet",
+    "name": "Leaping Charge",
+    "kind": "active",
+    "description": "Perform a charging leap forward inflicting physical damage to monsters on hit.",
+    "damageType": "physical",
+    "tags": [
+      "Cast",
+      "Active",
+      "Melee",
+      "Movement"
+    ],
+    "movementDuringUse": 65,
+    "range": 280,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 76,
+        "perLevel": 28
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Wounding Paw",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "leaping_charge_core",
+        "positionIndex": 0,
+        "name": "Leaping Charge",
+        "description": "Core of the Leaping Charge subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "deadly_slashes",
+        "positionIndex": 1,
+        "name": "Deadly Slashes",
+        "description": "Increases damage dealt by charging leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "wide_slashing",
+        "positionIndex": 2,
+        "name": "Wide Slashing",
+        "description": "Increases the area of effect radius of the slashes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "rupturing_charge",
+        "positionIndex": 3,
+        "name": "Rupturing Charge",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "nurturing_slashes",
+        "positionIndex": 4,
+        "name": "Nurturing Slashes",
+        "description": "Increases life stolen per hit when using charging leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_steal": 0 },
+          "perRank": { "life_steal": 4 }
+        }
+      },
+      {
+        "id": "long_reaching_claws",
+        "positionIndex": 5,
+        "name": "Long Reaching Claws",
+        "description": "Increases the maximum range of charging leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "punctured_skin",
+        "positionIndex": 6,
+        "name": "Punctured Skin",
+        "description": "Increases damage dealt to targets inflicted with bleeding.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "fatal_slashing",
+        "positionIndex": 7,
+        "name": "Fatal Slashing",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 4, "crit_damage": 25 }
+        }
+      },
+      {
+        "id": "deadly_slash",
+        "positionIndex": 8,
+        "name": "Deadly Slash",
+        "description": "Chance to deal a deadly blow with increased effectiveness.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "deadly_blow": 0, "deadly_blow_effectiveness": 0 },
+          "perRank": { "deadly_blow": 5, "deadly_blow_effectiveness": 12.5 }
+        }
+      },
+      {
+        "id": "raging_slash",
+        "positionIndex": 9,
+        "name": "Raging Slash",
+        "description": "Chance on hit to gain a stack of rage when using charging leap, increasing your attack speed.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "max_rage_stacks": 0 },
+            "perRank": { "max_rage_stacks": 1 }
+          }
+        }
+      },
+      {
+        "id": "elusive_leap",
+        "positionIndex": 10,
+        "name": "Elusive Leap",
+        "description": "Reduces charging leaps damage but ignores terrain.",
+        "maxRank": 1,
+        "effects": {
+          "base": { "physical_skill_damage": -40, "terrain_ignored": 100 },
+          "perRank": { "physical_skill_damage": 0, "terrain_ignored": 0 }
+        }
+      },
+      {
+        "id": "skipping_claws",
+        "positionIndex": 11,
+        "name": "Skipping Claws",
+        "description": "Unleash multiple flying claws that deal damage and bounce off terrain while using charging leap.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 1 },
+          "perRank": { "physical_skill_damage": 30, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "trail_of_agony",
+        "positionIndex": 12,
+        "name": "Trail of Agony",
+        "description": "Leave behind a trail of blood dealing area of effect damage on your path.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 50, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "shuriken_of_claws",
+        "positionIndex": 13,
+        "name": "Shuriken of Claws",
+        "description": "Throw a shuriken of claws dealing damage to monsters on hit and forcing you to charge towards it after a short delay.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 60, "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "herald_of_bones",
+        "positionIndex": 14,
+        "name": "Herald of Bones",
+        "description": "Chance on monster kill to unleash multiple sharp bones bouncing off terrain and dealing damage on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "projectile_count": 4 },
+            "perRank": { "physical_skill_damage": 30, "projectile_count": 1 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "storm_hawk",
+    "classId": "prophet",
+    "name": "Storm Hawk",
+    "kind": "active",
+    "description": "Morph into a storm hawk gaining flying and convert a portion of your physical damage into lightning damage. Your attacks now unleash a chain lightning.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Shape Shift",
+      "Projectile",
+      "Chain Lightning"
+    ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 35,
+      "perLevel": 15
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Manadwelling",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "storm_hawk_core",
+        "positionIndex": 0,
+        "name": "Storm Hawk",
+        "description": "Core of the Storm Hawk subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hawks_eye",
+        "positionIndex": 1,
+        "name": "Hawk´s Eye",
+        "description": "Increases attack range while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "hawks_surge",
+        "positionIndex": 2,
+        "name": "Hawk´s Surge",
+        "description": "Increases damage dealt while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "hawks_storm",
+        "positionIndex": 3,
+        "name": "Hawk´s Storm",
+        "description": "Increases lightning bounces while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "hawks_focus",
+        "positionIndex": 4,
+        "name": "Hawk´s Focus",
+        "description": "Chance on hit to strike the target with a lightning bolt while in hawk form.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "hawks_flight",
+        "positionIndex": 5,
+        "name": "Hawk´s Flight",
+        "description": "Increases movement speed while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "hawks_agility",
+        "positionIndex": 6,
+        "name": "Hawk´s Agility",
+        "description": "Increases attack speed while in hawk form.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "hawks_stasis",
+        "positionIndex": 7,
+        "name": "Hawk´s Stasis",
+        "description": "Chance to inflict stasis on hit while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "hawks_hunger",
+        "positionIndex": 8,
+        "name": "Hawk´s Hunger",
+        "description": "Chance to critical hit dealing increased critical damage while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 4, "crit_damage": 25 }
+        }
+      },
+      {
+        "id": "hawks_mind",
+        "positionIndex": 9,
+        "name": "Hawk´s Mind",
+        "description": "Chance to inflict lightning break on hit while in hawk form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "hawks_shadow",
+        "positionIndex": 10,
+        "name": "Hawk´s Shadow",
+        "description": "Gain the ability to fly over terrain, but decreases your total movement speed while in hawk form.",
+        "maxRank": 1,
+        "effects": {
+          "base": { "movement_speed": -25 },
+          "perRank": { "movement_speed": 0 }
+        }
+      },
+      {
+        "id": "stormbolts",
+        "positionIndex": 11,
+        "name": "Stormbolts",
+        "description": "When attacking fire multiple stormbolts in an arc while in hawk form.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 2 },
+          "perRank": { "lightning_skill_damage": 15, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "bird_of_thunder",
+        "positionIndex": 12,
+        "name": "Bird of Thunder",
+        "description": "Increases stasis inflicted while in hawk form with increased stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_stasis_damage": 0, "max_skill_stacks": 0 },
+          "perRank": { "increased_stasis_damage": 40, "max_skill_stacks": 1 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "thundering_bolt",
+        "positionIndex": 13,
+        "name": "Thundering Bolt",
+        "description": "Storm bolts call down bolts of lightning while traveling dealing damage on a large radius while in hawk form. Projectiles are now piercing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "lightning_skill_damage": 50, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "electric_screech",
+        "positionIndex": 14,
+        "name": "Electric Screech",
+        "description": "Chance when attacking in hawk form to unleash an electric screech causing monsters to be struck by lightning bolts on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "lightning_skill_damage": 35, "area_of_effect": 15 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "spirit_of_the_ent",
+    "classId": "prophet",
+    "name": "Spirit of the Ent",
+    "kind": "active",
+    "description": "Morph into an Ent with a chance to knock monsters back on hit stunning and dealing additional damage when colliding with terrain.",
+    "damageType": "physical",
+    "tags": [
+      "Cast",
+      "Active",
+      "Shape Shift"
+    ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 6.5,
+      "perLevel": 1.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "life": 15
+      },
+      "perRank": {
+        "life": 1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Swamp's Essence",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "spirit_of_the_ent_core",
+        "positionIndex": 0,
+        "name": "Spirit of the Ent",
+        "description": "Core of the Spirit of the Ent subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "ents_rage",
+        "positionIndex": 1,
+        "name": "Ent´s Rage",
+        "description": "Increases damage while in ent form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "ents_bark",
+        "positionIndex": 2,
+        "name": "Ent´s Bark",
+        "description": "Increases damage reduction from all sources while in ent form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 4 }
+        }
+      },
+      {
+        "id": "ents_vitality",
+        "positionIndex": 3,
+        "name": "Ent´s Vitality",
+        "description": "Increases maximum life while in ent form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_life": 0 },
+          "perRank": { "increased_life": 4 }
+        }
+      },
+      {
+        "id": "ents_weight",
+        "positionIndex": 4,
+        "name": "Ent´s Weight",
+        "description": "Chance to deal double damage on hit while in ent form.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "ents_thorns",
+        "positionIndex": 5,
+        "name": "Ent´s Thorns",
+        "description": "Increases damage return while in ent form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "damage_return": 0 },
+          "perRank": { "damage_return": 250 }
+        }
+      },
+      {
+        "id": "ents_wisdom",
+        "positionIndex": 6,
+        "name": "Ent´s Wisdom",
+        "description": "Increases all resistances while in ent form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_resistances": 0 },
+          "perRank": { "all_resistances": 10 }
+        }
+      },
+      {
+        "id": "ents_roots",
+        "positionIndex": 7,
+        "name": "Ent´s Roots",
+        "description": "Chance on hit to root monsters in place dealing damage over time while in ent form..",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 15 }
+          },
+          "appliesStates": ["root"]
+        }
+      },
+      {
+        "id": "ents_trunk",
+        "positionIndex": 8,
+        "name": "Ent´s Trunk",
+        "description": "Chance to block all incoming damage while in ent form.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "ents_heart",
+        "positionIndex": 9,
+        "name": "Ent´s Heart",
+        "description": "Chance to replenish a portion of your maximum life when struck while in ent form.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "life_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "ents_intellect",
+        "positionIndex": 10,
+        "name": "Ent´s Intellect",
+        "description": "Increases magic skill damage while in ent form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "magic_skill_damage": 0 },
+          "perRank": { "magic_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "reflecting_branches",
+        "positionIndex": 11,
+        "name": "Reflecting Branches",
+        "description": "Chance to throw a huge branch towards monsters when struck while in ent form.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 17 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 100 }
+          }
+        }
+      },
+      {
+        "id": "grizzly",
+        "positionIndex": 12,
+        "name": "Grizzly",
+        "description": "Morph into a grizzly bear and gain increased damage based on your maximum life while in ent form.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_max_life_per500": 0 },
+          "perRank": { "conversion_max_life_per500": 1 }
+        }
+      },
+      {
+        "id": "dominos_of_trunks",
+        "positionIndex": 13,
+        "name": "Dominos of Trunks",
+        "description": "Chance when struck to summon a sequence of falling tree trunks towards the target while in ent form.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "projectile_count": 2 },
+            "perRank": { "physical_skill_damage": 40, "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "crushing_trunksmash",
+        "positionIndex": 14,
+        "name": "Crushing Trunksmash",
+        "description": "Knock monsters back on hit while in ent form causing them to take increased damage when colliding with terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "maelstrom_of_frost",
+    "classId": "prophet",
+    "name": "Maelstrom of Frost",
+    "kind": "active",
+    "description": "Summon a maelstrom of frost around you inflicting cold and physical damage on hit.",
+    "damageType": "cold",
+    "tags": [
+      "Cast",
+      "Active",
+      "Melee",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 30,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 10
+      }
+    ],
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 16
+    },
+    "manaCostFormula": {
+      "base": 10,
+      "perLevel": 2
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 82,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 11,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Manadwelling",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Leaping Charge",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Wounding Paw",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "maelstrom_of_frost_core",
+        "positionIndex": 0,
+        "name": "Maelstrom of Frost",
+        "description": "Core of the Maelstrom of Frost subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "freezing_wind",
+        "positionIndex": 1,
+        "name": "Freezing Wind",
+        "description": "Chance to freeze target on hit dealing increased damage.",
+        "maxRank": 4,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 25 },
+          "effects": {
+            "base": { "cold_skill_damage": 0 },
+            "perRank": { "cold_skill_damage": 5 }
+          },
+          "appliesStates": ["frozen"]
+        }
+      },
+      {
+        "id": "maelstroms_magnitude",
+        "positionIndex": 2,
+        "name": "Maelstroms Magnitude",
+        "description": "Increases the area of effect radius of maelstrom of frost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "frostburning_temperature",
+        "positionIndex": 3,
+        "name": "Frostburning Temperature",
+        "description": "Increases the damage dealt by maelstrom of frost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "coldsnapping_breeze",
+        "positionIndex": 4,
+        "name": "Coldsnapping Breeze",
+        "description": "Chance to inflict frostbite on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0 },
+          "perRank": { "increased_frost_bite_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "hypothermic_snap",
+        "positionIndex": 5,
+        "name": "Hypothermic Snap",
+        "description": "Chance to deal double damage on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "intense_temperature",
+        "positionIndex": 6,
+        "name": "Intense Temperature",
+        "description": "Increases the tick frequency of maelstrom of frost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "frosted_bones",
+        "positionIndex": 7,
+        "name": "Frosted Bones",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 15 }
+        }
+      },
+      {
+        "id": "leeching_from_frost",
+        "positionIndex": 8,
+        "name": "Leeching from Frost",
+        "description": "Chance to replenish a portion of your maximum life on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "life_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "shattering_permafrost",
+        "positionIndex": 9,
+        "name": "Shattering Permafrost",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "chaotic_growth",
+        "positionIndex": 10,
+        "name": "Chaotic Growth",
+        "description": "Chance on monster kill to increase the area of effect radius of maelstrom of frost for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "area_of_effect": 0 },
+            "perRank": { "area_of_effect": 4 }
+          }
+        }
+      },
+      {
+        "id": "endless_blizzard",
+        "positionIndex": 11,
+        "name": "Endless Blizzard",
+        "description": "Maelstrom of frost no longer expires draining your mana over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "mana_cost_reduction": 8 },
+          "perRank": { "cold_skill_damage": 15, "mana_cost_reduction": 2 }
+        }
+      },
+      {
+        "id": "meteor_of_ice",
+        "positionIndex": 12,
+        "name": "Meteor of Ice",
+        "description": "Chance on hit to drop a meteor of ice on its location dealing increased damage on a large radius.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "cold_skill_damage": 50, "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "the_frozen_layer_of_hell",
+        "positionIndex": 13,
+        "name": "The Frozen Layer of Hell",
+        "description": "Increases the area of effect radius of maelstrom of frost and executing monsters below a threshold.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "execute_below": 0 },
+          "perRank": { "area_of_effect": 25, "execute_below": 2 }
+        }
+      },
+      {
+        "id": "storm_of_frost",
+        "positionIndex": 14,
+        "name": "Storm of Frost",
+        "description": "The maelstrom drops chunks of ice on a radius around you dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "cold_skill_damage": 0,
+            "area_of_effect": 0,
+            "faster_cast_rate": 0
+          },
+          "perRank": {
+            "cold_skill_damage": 15,
+            "area_of_effect": 30,
+            "faster_cast_rate": 15
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "swamps_essence",
+    "classId": "prophet",
+    "name": "Swamp's Essence",
+    "kind": "passive",
+    "description": "Increases your maximum life.",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "life": 5
+      },
+      "perRank": {
+        "life": 0.25
+      }
+    }
+  },
+  {
+    "id": "manadwelling",
+    "classId": "prophet",
+    "name": "Manadwelling",
+    "kind": "passive",
+    "description": "Adds a portion of your mana as physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "mana": 100,
+        "attack_damage": 1
+      },
+      "perRank": {
+        "mana": 0,
+        "attack_damage": 0.2
+      }
+    }
+  },
+  {
+    "id": "spirit_of_the_wendigo",
+    "classId": "prophet",
+    "name": "Spirit of The Wendigo",
+    "kind": "active",
+    "description": "Morph into a wendigo gaining increased combat stats.",
+    "damageType": "physical",
+    "tags": [
+      "Cast",
+      "Active",
+      "Shape Shift"
+    ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Skinwalker",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 8,
+      "perLevel": 2
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "movement_speed": 25
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "movement_speed": 0
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Wounding Paw",
+        "stat": "attack_damage",
+        "value": 3,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "spirit_of_the_wendigo_core",
+        "positionIndex": 0,
+        "name": "Spirit of The Wendigo",
+        "description": "Core of the Spirit of The Wendigo subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "wendigos_rage",
+        "positionIndex": 1,
+        "name": "Wendigo´s Rage",
+        "description": "Increases physical damage while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "wendigos_hunger",
+        "positionIndex": 2,
+        "name": "Wendigo´s Hunger",
+        "description": "Increases attack speed while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 15 }
+        }
+      },
+      {
+        "id": "wendigos_agility",
+        "positionIndex": 3,
+        "name": "Wendigo´s Agility",
+        "description": "Increases movement speed while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 12.5 }
+        }
+      },
+      {
+        "id": "wendigos_skin",
+        "positionIndex": 4,
+        "name": "Wendigo´s Skin",
+        "description": "Increases resistances while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_resistances": 0 },
+          "perRank": { "all_resistances": 5 }
+        }
+      },
+      {
+        "id": "wendigos_focus",
+        "positionIndex": 5,
+        "name": "Wendigo´s Focus",
+        "description": "Increases critical strike damage while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 22.5 }
+        }
+      },
+      {
+        "id": "wendigos_claws",
+        "positionIndex": 6,
+        "name": "Wendigo´s Claws",
+        "description": "Increases bleed damage inflicted while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "wendigos_paw",
+        "positionIndex": 7,
+        "name": "Wendigo´s Paw",
+        "description": "Increases the attack radius while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "wendigos_recuperation",
+        "positionIndex": 8,
+        "name": "Wendigo´s Recuperation",
+        "description": "Increases life replenish while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 50 }
+        }
+      },
+      {
+        "id": "wendigos_bloodlust",
+        "positionIndex": 9,
+        "name": "Wendigo´s Bloodlust",
+        "description": "Gain a stack of bloodlust after monster kill increasing your damage dealt while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "max_skill_stacks": 0 },
+          "perRank": { "physical_skill_damage": 2, "max_skill_stacks": 2 }
+        }
+      },
+      {
+        "id": "wendigos_endurance",
+        "positionIndex": 10,
+        "name": "Wendigo´s Endurance",
+        "description": "Increases your defense while in wendigo form.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "enhanced_defense": 0 },
+          "perRank": { "enhanced_defense": 5 }
+        }
+      },
+      {
+        "id": "blood_thirsty_skinwalker",
+        "positionIndex": 11,
+        "name": "Blood Thirsty Skinwalker",
+        "description": "Increases life steal, life steal frequency and damage while in wendigo form.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "life_steal": 0,
+            "faster_cast_rate": 0,
+            "physical_skill_damage": 0
+          },
+          "perRank": {
+            "life_steal": 20,
+            "faster_cast_rate": 15,
+            "physical_skill_damage": 30
+          }
+        }
+      },
+      {
+        "id": "clawarang",
+        "positionIndex": 12,
+        "name": "Clawarang",
+        "description": "Throw a boomerang of claws when attacking while in vendigo form. Catching the boomerang increases your damage for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 40, "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "flesh_ripping_beast",
+        "positionIndex": 13,
+        "name": "Flesh Ripping Beast",
+        "description": "Chance to inflict bleeding on hit with increased stacks of bleeding while in wendigo form.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "max_skill_stacks": 0 },
+            "perRank": { "max_skill_stacks": 1 }
+          },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "blood_carnage",
+        "positionIndex": 14,
+        "name": "Blood Carnage",
+        "description": "Every attack adds a stack of blood carnage, at maximum stacks become empowered unleashing ripples of blood on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "max_skill_stacks": 4 },
+          "perRank": { "physical_skill_damage": 15, "max_skill_stacks": 1 }
+        }
+      }
+    ]
+  }
+]

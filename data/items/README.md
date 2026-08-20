@@ -1,0 +1,1 @@
+Every single mod exist in [game-config.json](../game-config.json) so if you are looking for add more items or edit existing one please check this file.

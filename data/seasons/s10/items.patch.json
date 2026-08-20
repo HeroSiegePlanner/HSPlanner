@@ -1,0 +1,561 @@
+{
+  "add": [
+    {
+      "id": "s10_captains_anchor",
+      "name": "Captain's Anchor",
+      "baseType": "Charm",
+      "slot": "charm_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_ghastly_skull",
+      "name": "Ghastly Skull",
+      "baseType": "Charm",
+      "slot": "charm_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_grimtides_necklace",
+      "name": "Grimtide's Necklace",
+      "baseType": "Amulet",
+      "slot": "amulet",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_skeleton_crews_band",
+      "name": "Skeleton Crew's Band",
+      "baseType": "Ring",
+      "slot": "ring_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_ethereal_musket",
+      "name": "Ethereal Musket",
+      "baseType": "Rifle Gun",
+      "slot": "weapon",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_grimtides_scimitar",
+      "name": "Grimtide's Scimitar",
+      "baseType": "Sword",
+      "slot": "weapon",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_ghostplunderers_marchers",
+      "name": "Ghostplunderer's Marchers",
+      "baseType": "Boots",
+      "slot": "boots",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_captains_attire",
+      "name": "Captain's Attire",
+      "baseType": "Body Armor",
+      "slot": "armor",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_parasitic_heart",
+      "name": "Parasitic Heart",
+      "baseType": "Charm",
+      "slot": "charm_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_parasite_queens_tiara",
+      "name": "Parasite Queen's Tiara",
+      "baseType": "Helmet",
+      "slot": "helmet",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_blood_maggot_pendant",
+      "name": "Blood Maggot Pendant",
+      "baseType": "Amulet",
+      "slot": "amulet",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_conjured_tentacle",
+      "name": "Conjured Tentacle",
+      "baseType": "Wand",
+      "slot": "weapon",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_overgrowth",
+      "name": "Overgrowth",
+      "baseType": "Shield",
+      "slot": "offhand",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_infected_grasp",
+      "name": "Infected Grasp",
+      "baseType": "Gloves",
+      "slot": "gloves",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_jar_of_parasites",
+      "name": "Jar of Parasites",
+      "baseType": "Charm",
+      "slot": "charm_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_parasite_loop",
+      "name": "Parasite Loop",
+      "baseType": "Ring",
+      "slot": "ring_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_ghost_armada",
+      "name": "Ghost Armada",
+      "baseType": "Charm",
+      "slot": "charm_1",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_phantom_scimitar",
+      "name": "Phantom Scimitar",
+      "baseType": "Sword",
+      "slot": "weapon",
+      "rarity": "heroic",
+      "twoHanded": true
+    },
+    {
+      "id": "s10_leviathans_crown",
+      "name": "Leviathan's Crown",
+      "baseType": "Helmet",
+      "slot": "helmet",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_phantom_strike",
+      "name": "Phantom Strike",
+      "baseType": "Bow",
+      "slot": "weapon",
+      "rarity": "heroic",
+      "twoHanded": true
+    },
+    {
+      "id": "s10_leviathans_spine",
+      "name": "Leviathan's Spine",
+      "baseType": "Cane",
+      "slot": "weapon",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_leviathans_ribcage",
+      "name": "Leviathan's Ribcage",
+      "baseType": "Body Armor",
+      "slot": "armor",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_phantoms_step",
+      "name": "Phantom's Step",
+      "baseType": "Boots",
+      "slot": "boots",
+      "rarity": "heroic"
+    },
+    {
+      "id": "s10_leviathans_blood",
+      "name": "Leviathan's Blood",
+      "baseType": "Potion",
+      "slot": "potion_1",
+      "rarity": "heroic"
+    }
+  ],
+  "change": {
+    "weapons_heroic_ukkos_revenge": {
+      "implicit": {
+        "enhanced_damage": [
+          420,
+          525
+        ],
+        "all_skills": [
+          2,
+          3
+        ],
+        "lightning_skills": [
+          3,
+          5
+        ],
+        "faster_cast_rate": [
+          35,
+          55
+        ],
+        "extra_lightning_dmg_stasis": [
+          20,
+          30
+        ],
+        "to_intelligence": 25,
+        "lightning_skill_damage": [
+          25,
+          40
+        ],
+        "ignore_lightning_res": [
+          15,
+          25
+        ],
+        "max_lightning_resistance": 5
+      }
+    },
+    "boots_heroic_chaoswalkers": {
+      "implicit": {
+        "enhanced_defense": [
+          180,
+          225
+        ],
+        "all_skills": [
+          4,
+          6
+        ],
+        "movement_speed": [
+          65,
+          80
+        ],
+        "extra_damage_ailments": [
+          8,
+          15
+        ],
+        "all_attributes": 40,
+        "magic_skill_damage": [
+          30,
+          40
+        ],
+        "faster_hit_recovery": 75
+      }
+    },
+    "claw_heroic_glacier_talons": {
+      "procs": [
+        {
+          "trigger": "on_kill",
+          "chance": 4,
+          "description": "cast Blizzard Level 80",
+          "details": "Cast a freezing blizzard dealing area of effect cold damage and freezing monsters in the target area."
+        }
+      ],
+      "implicit": {
+        "enhanced_damage": [
+          380,
+          420
+        ],
+        "all_skills": [
+          2,
+          3
+        ],
+        "cold_skills": [
+          5,
+          6
+        ],
+        "faster_cast_rate": 50,
+        "flat_cold_skill_damage": [
+          15,
+          30
+        ],
+        "cold_skill_damage": [
+          45,
+          70
+        ],
+        "energy_based_on_level": 40,
+        "intelligence_based_on_level": 75,
+        "reduced_movement_diminish": 50,
+        "extra_dmg_to_deep_frozen": [
+          25,
+          40
+        ]
+      }
+    },
+    "ring_heroic_soulforged_ring": {
+      "implicit": {
+        "all_skills": 2,
+        "faster_cast_rate": 15,
+        "increased_attack_speed": 15,
+        "all_attributes": 25,
+        "increased_life": 15,
+        "increased_mana": 15,
+        "all_resistances": 15,
+        "increased_experience_gain_below_100": 25
+      }
+    },
+    "ring_unholy_absolute_zero": {
+      "implicit": {
+        "all_skills": [
+          2,
+          3
+        ],
+        "faster_cast_rate": [
+          25,
+          35
+        ],
+        "increased_attack_speed": [
+          25,
+          35
+        ],
+        "physical_to_cold": [
+          15,
+          25
+        ],
+        "cold_resistance": -30,
+        "phys_dmg_taken_as_cold": [
+          15,
+          25
+        ]
+      }
+    },
+    "boots_unholy_peg_leg": {
+      "implicit": {
+        "all_skills": [
+          1,
+          2
+        ],
+        "cold_skills": [
+          2,
+          3
+        ],
+        "movement_speed": [
+          45,
+          75
+        ],
+        "cold_skill_damage": [
+          25,
+          45
+        ],
+        "summon_attack_speed": [
+          15,
+          25
+        ],
+        "summon_life": [
+          5,
+          10
+        ],
+        "grant_subskills": 1,
+        "summon_movement_speed": [
+          20,
+          40
+        ],
+        "summon_all_resist": 25,
+        "summon_reduced_dmg_taken": 20,
+        "cold_resistance_converted_to_cold_damage": 20
+      }
+    },
+    "sword_gabriel_s_broken_resolve": {
+      "implicit": {
+        "enhanced_damage": [
+          890,
+          975
+        ],
+        "all_skills": 3,
+        "life_steal": [
+          10,
+          15
+        ],
+        "defense_ignored": 40,
+        "to_strength": 35,
+        "all_attributes": [
+          25,
+          40
+        ],
+        "crit_chance": 15,
+        "crit_damage": 35
+      }
+    },
+    "ring_heroic_dragon_s_blessing": {
+      "implicit": {
+        "all_attributes": 35,
+        "magic_find": [
+          1,
+          150
+        ],
+        "experience_gain": [
+          1,
+          5
+        ]
+      }
+    },
+    "dagger_heroic_serpent_s_tooth": {
+      "implicit": {
+        "enhanced_damage": [
+          420,
+          560
+        ],
+        "all_skills": [
+          1,
+          2
+        ],
+        "poison_skills": [
+          3,
+          5
+        ],
+        "movement_speed": 35,
+        "extra_damage_poisoned": [
+          15,
+          30
+        ],
+        "flat_poison_skill_damage": [
+          22,
+          35
+        ],
+        "poison_skill_damage": [
+          20,
+          45
+        ],
+        "ignore_poison_res": 25,
+        "extra_poison_dmg_to_poisoned": [
+          15,
+          30
+        ],
+        "increased_attack_speed": [
+          30,
+          45
+        ]
+      },
+      "procs": [],
+      "skillBonuses": {
+        "Envenom": [
+          15,
+          20
+        ]
+      }
+    },
+    "boots_unholy_marcher_s_of_hatred": {
+      "uniqueEffects": [
+        "Unholy",
+        "Unholy",
+        "Killing Spree: gain stacks of Movement Speed and Attack Speed after each kill, up to 100 stacks"
+      ]
+    },
+    "helmet_heroic_face_of_existence": {
+      "skillBonuses": {
+        "Space Equilibrium": 1,
+        "Last Stand": [
+          15,
+          20
+        ],
+        "Random Buff Skill": [
+          20,
+          30
+        ]
+      }
+    },
+    "cane_heroic_cane_of_creation": {
+      "implicit": {
+        "fire_skills": 6,
+        "lightning_skills": 6,
+        "arcane_skills": 6,
+        "sentry_attack_speed": [
+          40,
+          60
+        ],
+        "extra_damage_ailments": [
+          25,
+          45
+        ],
+        "projectile_speed": 2,
+        "magic_skill_damage": [
+          25,
+          60
+        ],
+        "extra_dmg_to_monsters_afflicted_with_ailments": [
+          25,
+          45
+        ],
+        "enemy_all_resist": 35
+      }
+    },
+    "helmet_heroic_nikita_s_kj_33_helmet": {
+      "implicit": {
+        "enhanced_defense": [
+          150,
+          165
+        ],
+        "all_skills": [
+          1,
+          2
+        ],
+        "physical_skills": 3,
+        "increased_bleeding_damage": [
+          20,
+          30
+        ],
+        "deadly_blow": 40,
+        "crushing_blow_chance": [
+          15,
+          25
+        ],
+        "life_steal": [
+          5,
+          8
+        ],
+        "defense_ignored": [
+          30,
+          40
+        ],
+        "damage_based_on_level": 100,
+        "enhanced_damage": [
+          100,
+          150
+        ]
+      }
+    },
+    "amulet_unholy_lilith_s_scorn": {
+      "procs": [
+        {
+          "trigger": "on_kill",
+          "chance": 10,
+          "description": "cast Liliths Rage Level 1"
+        }
+      ]
+    },
+    "ring_satanic_ra_s_band": {
+      "rarity": "heroic",
+      "grade": "SS"
+    },
+    "helmet_angelic_mask_of_the_celestial": {
+      "implicit": {
+        "enhanced_defense": [
+          450,
+          500
+        ],
+        "life": [
+          280,
+          380
+        ],
+        "increased_life": [
+          10,
+          20
+        ],
+        "physical_damage_reduction": [
+          10,
+          20
+        ],
+        "all_resistances": [
+          30,
+          40
+        ],
+        "buffing_aura_range": [
+          55,
+          75
+        ],
+        "buffing_aura_effectiveness": [
+          80,
+          125
+        ],
+        "all_skills": 3
+      }
+    },
+    "charm_heroic_tablet_of_awakening": {
+      "rainbowSockets": [
+        2,
+        3,
+        4
+      ]
+    }
+  }
+}

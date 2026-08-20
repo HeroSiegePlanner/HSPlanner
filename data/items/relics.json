@@ -1,0 +1,1988 @@
+[
+  {
+    "id": "relic_relic_1000_kg",
+    "name": "1000 KG",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Heavy Weight": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_a_wizard_s_hat",
+    "name": "A Wizard's Hat",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Manalicious": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_aaron_s_staff",
+    "name": "Aaron's Staff",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Healing Touch": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_amazon_s_spears",
+    "name": "Amazon's Spears",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Poisonous Hit Level 10"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_ancient_rock",
+    "name": "Ancient Rock",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Ancient Rock": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_angel_staff_of_apocalypse",
+    "name": "Angel Staff of Apocalypse",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Arch Angel's Fury": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_apple",
+    "name": "Apple",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Apple Blast": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_arcane_globe",
+    "name": "Arcane Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "arcane_skills": 5,
+      "arcane_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_assassin_s_shuriken",
+    "name": "Assassin's Shuriken",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Shruken Strike Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_balalayka",
+    "name": "Balalayka",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Classic Tunes": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_barbed_shield",
+    "name": "Barbed Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "damage_return": 100
+    }
+  },
+  {
+    "id": "relic_relic_basilisk_s_tooth",
+    "name": "Basilisk's Tooth",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 6,
+        "description": "cast Stoned Level 1"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_blazing_boots",
+    "name": "Blazing Boots",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Blazing Trail": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_bomb",
+    "name": "Bomb",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "explosion_damage": 50
+    },
+    "skillBonuses": {
+      "Naval Bomb": [
+        1,
+        1
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_bonsai_tree",
+    "name": "Bonsai Tree",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "skill_haste": 40
+    }
+  },
+  {
+    "id": "relic_relic_book_of_belial",
+    "name": "Book of Belial",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Satanic Chant": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_book_of_command",
+    "name": "Book of Command",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Commanding Power": 1
+    }
+  },
+  {
+    "id": "relic_relic_boomerang",
+    "name": "Boomerang",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Australian Sport": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_bouncy",
+    "name": "Bouncy",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Bouncing Spikeball": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_bracer_of_life",
+    "name": "Bracer of Life",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life_replenish_pct": 50,
+      "increased_life": 15
+    }
+  },
+  {
+    "id": "relic_relic_butcher_s_knife",
+    "name": "Butcher's Knife",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Meat Bomb Level 50",
+        "details": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_butterfly_knife",
+    "name": "Butterfly Knife",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 10,
+      "crit_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_cactus",
+    "name": "Cactus",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Spiky Plant Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_cake",
+    "name": "Cake",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_life": 20
+    }
+  },
+  {
+    "id": "relic_relic_candy_basket",
+    "name": "Candy Basket",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Candy Basket": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_candy_crusher",
+    "name": "Candy Crusher",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Candy Crush": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_casino_die",
+    "name": "Casino Die",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Lucky Dice": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_charmed_blood",
+    "name": "Charmed Blood",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life_steal": 10
+    },
+    "skillBonuses": {
+      "Charmed Blood": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_cheese_burger",
+    "name": "Cheese Burger",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life": 1000,
+      "life_replenish_pct": 50
+    }
+  },
+  {
+    "id": "relic_relic_chicken_mask",
+    "name": "Chicken Mask",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "All Them Chickens": 1
+    }
+  },
+  {
+    "id": "relic_relic_commander_s_sword",
+    "name": "Commander's Sword",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "attack_damage": 100,
+      "movement_speed": -20
+    }
+  },
+  {
+    "id": "relic_relic_cookies_milk",
+    "name": "Cookies & Milk",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "physical_damage_reduction": 10,
+      "magic_damage_reduction": 10
+    }
+  },
+  {
+    "id": "relic_relic_cursed_book",
+    "name": "Cursed Book",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Dare to Read?": 1
+    }
+  },
+  {
+    "id": "relic_relic_damned_buckler",
+    "name": "Damned Buckler",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_armor": 50,
+      "faster_hit_recovery": 20
+    }
+  },
+  {
+    "id": "relic_relic_daplayer_s_dislocated_head",
+    "name": "DaPlayer's Dislocated Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Rotting Carcas Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_darts",
+    "name": "Darts",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Flying Darts": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_death_s_scythe",
+    "name": "Death's Scythe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Agility Level 30",
+        "details": "Temporarily increases your movement speed and attack speed."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_delicious_pie",
+    "name": "Delicious Pie",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "So Good": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_demon_sheep",
+    "name": "Demon Sheep",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Demon Sheep": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_devil_horn",
+    "name": "Devil's Horn",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "description": "cast Satanic Replenishment",
+        "details": "Gain increased Life Replenish for a short period!"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_devil_skull",
+    "name": "Devil Skull",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Burst of Rage Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_dirge",
+    "name": "Dirge",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "additive_physical_damage": 40,
+      "defense_ignored": 30
+    }
+  },
+  {
+    "id": "relic_relic_dislocated_eye",
+    "name": "Dislocated Eye",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Crippling Cold": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_doggo",
+    "name": "Doggo",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "To the Moon": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_doom_flute",
+    "name": "Doom Flute",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Holy Aura": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_double_scythe",
+    "name": "Double Scythe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Flying Scythe": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_dragon_shield",
+    "name": "Dragon Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Breath of Fire Level 50",
+        "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_dragon_s_head",
+    "name": "Dragon's Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Molten Breath": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_es_energy",
+    "name": "ES Energy",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Jonnen Valinta": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_f_e_t_u_s",
+    "name": "F.E.T.U.S.",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "F.E.T.U.S.": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_fire_ice",
+    "name": "Fire & Ice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 5,
+        "description": "cast Frostburn Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_fire_globe",
+    "name": "Fire Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "fire_skills": 5,
+      "fire_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_fish_net",
+    "name": "Fish Net",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Trap the Fish": 1
+    }
+  },
+  {
+    "id": "relic_relic_flail",
+    "name": "Flail",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Flailstrike": 1
+    }
+  },
+  {
+    "id": "relic_relic_fly_swatter",
+    "name": "Fly Swatter",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Memes": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_fortune_card",
+    "name": "Fortune Card",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "gold_find": 30,
+      "magic_find": 30
+    }
+  },
+  {
+    "id": "relic_relic_frozen_orb",
+    "name": "Frozen Orb",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Chilling Strike Level 50",
+        "details": "Perform a chilling AOE strike dealing extra damage and freezing enemies."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_gamma_pulser",
+    "name": "Gamma Pulser",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Gamma Pulse": 1
+    }
+  },
+  {
+    "id": "relic_relic_guardian_angel",
+    "name": "Guardian Angel",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Guardian Angel": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_half_eaten_mochi",
+    "name": "Half Eaten Mochi",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "vitality_converted_to_magic_skill_dmg": 10
+    }
+  },
+  {
+    "id": "relic_relic_hand_of_midas",
+    "name": "Hand of Midas",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "gold_find": 40
+    }
+  },
+  {
+    "id": "relic_relic_hand_scythe",
+    "name": "Hand Scythe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 20,
+      "deadly_blow": 30
+    }
+  },
+  {
+    "id": "relic_relic_head_extractor",
+    "name": "Head Extractor",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Extract Heads": 1
+    }
+  },
+  {
+    "id": "relic_relic_hellscream_axe",
+    "name": "Hellscream Axe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "crushing_blow_chance": 30,
+      "additive_physical_damage": 30
+    }
+  },
+  {
+    "id": "relic_relic_helm_of_chaos",
+    "name": "Helm of Chaos",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 5,
+        "description": "cast Odin's Fury Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_honey_bee",
+    "name": "Honey Bee",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Honey Bee": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_horned_mask",
+    "name": "Horned Mask",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "energy_converted_to_magic_skill_dmg": 10
+    }
+  },
+  {
+    "id": "relic_relic_hungering_blade_of_frost",
+    "name": "Hungering Blade of Frost",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Breath of Ice Level 50",
+        "details": "Breathe glacial air freezing and dealing cold damage to monsters."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_ice_globe",
+    "name": "Ice Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "cold_skills": 5,
+      "cold_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_jar_of_flies",
+    "name": "Jar of Flies",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Nasty Flies": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_jefre_s_subscription",
+    "name": "Jefre's Subscription",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "light_radius": 10,
+      "magic_find": 40
+    }
+  },
+  {
+    "id": "relic_relic_jungle_vial",
+    "name": "Jungle Vial",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Envenom Level 50",
+        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_karp_head",
+    "name": "Karp Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Karp Head": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_keygen_exe",
+    "name": "Keygen.exe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Bluescreen of Death": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_king_s_crown",
+    "name": "King's Crown",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "gold_find": 30
+    }
+  },
+  {
+    "id": "relic_relic_large_beer",
+    "name": "Large Beer",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Nausea": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_light_cola",
+    "name": "Light Cola",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Boost of Energy": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_light_katana",
+    "name": "Light Katana",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 20
+    }
+  },
+  {
+    "id": "relic_relic_lightning_globe",
+    "name": "Lightning Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "lightning_skills": 5,
+      "lightning_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_lost_wand",
+    "name": "Lost Wand",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_energy": 50,
+      "faster_cast_rate": 20
+    }
+  },
+  {
+    "id": "relic_relic_lottery_ticket",
+    "name": "Lottery Ticket",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 2,
+        "description": "cast Lucky Numbers Level 10"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_magic_mushroom",
+    "name": "Magic Mushroom",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 30
+    }
+  },
+  {
+    "id": "relic_relic_mana_dice",
+    "name": "Mana Dice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 10,
+        "description": "cast Mana Recovery Level 20",
+        "details": "Chance on cast to replenish a portion of your maximum mana."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_maryo_s_pipe",
+    "name": "Maryo's Pipe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Pipe Diver": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_mayo_s_old_sock",
+    "name": "Mayo's Old Sock",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "life": 100,
+      "to_vitality": 20
+    }
+  },
+  {
+    "id": "relic_relic_meat_hook",
+    "name": "Meat Hook",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Meat Hook": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_metal_detector",
+    "name": "Metal Detector",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Node Detection": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_minisect",
+    "name": "Minisect",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Minisect": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_monkey_king_bar",
+    "name": "Monkey King Bar",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "attack_damage": 50,
+      "movement_speed": 30
+    }
+  },
+  {
+    "id": "relic_relic_necromancer_s_finger",
+    "name": "Necromancer's Finger",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Bone Spirit": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_newt_tail",
+    "name": "Newt Tail",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_find": 30,
+      "movement_speed": 30
+    }
+  },
+  {
+    "id": "relic_relic_ninja_hook",
+    "name": "Ninja Hook",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Ninja Hooks": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_nunchucks",
+    "name": "Nunchucks",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_attack_speed": 20,
+      "crit_damage": 30
+    }
+  },
+  {
+    "id": "relic_relic_odd_book_of_spells",
+    "name": "Odd Book of Spells",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_skill_damage": 30
+    }
+  },
+  {
+    "id": "relic_relic_odin_s_sword",
+    "name": "Odin's Sword",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Divine Scorch Level 10",
+        "details": "Perform a fiery attack setting enemies on fire."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_ogre_club",
+    "name": "Ogre Club",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "extra_damage_stunned": 30
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Me Smash Level 10"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_orb_of_chaos",
+    "name": "Orb of Chaos",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_arcane_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_fire",
+    "name": "Orb of Fire",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_fire_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_ice",
+    "name": "Orb of Ice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_cold_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_lightning",
+    "name": "Orb of Lightning",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_lightning_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_orb_of_poison",
+    "name": "Orb of Poison",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "ignore_poison_res": 30
+    }
+  },
+  {
+    "id": "relic_relic_pickled_brain",
+    "name": "Pickled Brain",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Aldo's Rotten Brain": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_poison_globe",
+    "name": "Poison Globe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "requiresLevel": 1,
+    "implicit": {
+      "poison_skills": 5,
+      "poison_skill_damage": 20
+    }
+  },
+  {
+    "id": "relic_relic_rainbow_gate",
+    "name": "Rainbow Gate",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Rainbow Drool": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_razer_blade",
+    "name": "Razer Blade",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "crit_damage": 50
+    }
+  },
+  {
+    "id": "relic_relic_razer_headset",
+    "name": "Razer Headset",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Sonar Pulse": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_razor_leaf",
+    "name": "Razor Leaf",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Razor Leaves Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_razorwire",
+    "name": "Razorwire",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_bleeding_damage": 30
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Rupture Level 20",
+        "details": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_rice_chopsticks",
+    "name": "Rice & Chopsticks",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Disarming Strike Level 50"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_rock_belt",
+    "name": "Rock Belt",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "movement_speed": 30,
+      "all_attributes": 20
+    }
+  },
+  {
+    "id": "relic_relic_rocket_barrage",
+    "name": "Rocket Barrage",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Barrage of Rockets": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_rotten_apple",
+    "name": "Rotten Apple",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Mass Hex": [
+        1,
+        10
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_rubber_duck",
+    "name": "Rubber Duck",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Duck Throw": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_satan_s_eye",
+    "name": "Satan's Eye",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Burning Vision": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_satan_s_horn",
+    "name": "Satan's Horn",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Satanic Groundsmash": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_satan_s_tooth",
+    "name": "Satan's Tooth",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Molten Toothache": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_sausage",
+    "name": "Sausage",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "increased_life": 15,
+      "increased_mana": 15
+    }
+  },
+  {
+    "id": "relic_relic_shade_of_death",
+    "name": "Shade of Death",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "reduced_movement_diminish": 100
+    }
+  },
+  {
+    "id": "relic_relic_shattered_katana",
+    "name": "Shattered Katana",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Gust of Wind": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_shiv",
+    "name": "Shiv",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Live by the Sword Level 30",
+        "details": "Temporarily increases your attack speed and movement speed."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_shocker_3000",
+    "name": "Shocker-3000",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Shocker 9000": 1
+    }
+  },
+  {
+    "id": "relic_relic_shredder",
+    "name": "Shredder",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Shredder": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_shrunken_head",
+    "name": "Shrunken Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "poison_skill_damage": [
+        12,
+        25
+      ],
+      "ignore_poison_res": 10
+    },
+    "skillBonuses": {
+      "Shrunken Head": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_skull_axe",
+    "name": "Skull Axe",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "attack_rating": 250,
+      "to_strength": 40
+    }
+  },
+  {
+    "id": "relic_relic_skullbat",
+    "name": "Skullbat",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Skull Bat": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_spirit_skull",
+    "name": "Spirit Skull",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "to_strength": 30,
+      "to_vitality": 30
+    }
+  },
+  {
+    "id": "relic_relic_squishy_the_suicidal_pig",
+    "name": "Squishy the Suicidal Pig",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Suicidal Pig": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_steam_sale",
+    "name": "Steam Sale",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "decreased_merchant_prices": 10
+    }
+  },
+  {
+    "id": "relic_relic_steve_s_dirty_head",
+    "name": "Steve's Dirty Head",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Steves Dirty Head": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_stickman_steve",
+    "name": "Stickman Steve",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Call of Steve": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_stigmata",
+    "name": "Stigmata",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "mana_cost_reduction": 30,
+      "mana_replenish_pct": 10
+    }
+  },
+  {
+    "id": "relic_relic_storm_dagger",
+    "name": "Storm Dagger",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Lightning Strike Level 50",
+        "details": "Perform a charged attack striking enemies with thunder bolts."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_sucker_5000",
+    "name": "Sucker-5000",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Sucking Power": 1
+    }
+  },
+  {
+    "id": "relic_relic_sucker_5000_b",
+    "name": "Sucker-5000-B",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Empowered Sucking Power": 1
+    }
+  },
+  {
+    "id": "relic_relic_templar_shield",
+    "name": "Templar Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Templar Shield": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_tequila",
+    "name": "Tequila!!!",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Drunken Arson": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_the_allmighty_fedora",
+    "name": "The Allmighty Fedora",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "The Almighty Fedora": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_the_amputation_kit",
+    "name": "The Amputation Kit",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "movement_speed": 50
+    }
+  },
+  {
+    "id": "relic_relic_the_eye",
+    "name": "The Eye",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "The Eye": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_the_holy_bible",
+    "name": "The Holy Bible",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 10,
+      "all_skills": 2
+    }
+  },
+  {
+    "id": "relic_relic_the_holy_grail",
+    "name": "The Holy Grail",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Heaven’s Light Level 10"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_the_mighty_sushi",
+    "name": "The Mighty Sushi",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Tasty Explosion": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_the_spoon",
+    "name": "The Spoon",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "mana": 50,
+      "mana_replenish_pct": 30
+    }
+  },
+  {
+    "id": "relic_relic_token_of_luck",
+    "name": "Token of Luck",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "magic_find": 50
+    }
+  },
+  {
+    "id": "relic_relic_triforce",
+    "name": "Triforce",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "all_attributes": 20,
+      "all_resistances": 10
+    }
+  },
+  {
+    "id": "relic_relic_twin_blade",
+    "name": "Twin Blade",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "crit_chance": 10,
+      "crit_damage": 30
+    }
+  },
+  {
+    "id": "relic_relic_vadjra",
+    "name": "Vadjra",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "Stormy Javelin": [
+        2,
+        50
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_war_zeppelin",
+    "name": "War Zeppelin",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "skillBonuses": {
+      "War Zeppelin": [
+        1,
+        85
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_whip",
+    "name": "Whip",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {
+      "additive_physical_damage": 23,
+      "increased_attack_speed": 10
+    }
+  },
+  {
+    "id": "relic_relic_winner_s_drug",
+    "name": "Winner's Drug",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Dopium! Level 10",
+        "details": "Chance on cast to increase your magic skill damage and faster cast rate for a short duration."
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_witch_claw",
+    "name": "Witch Claw",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Hexing Strike Level 10"
+      }
+    ]
+  },
+  {
+    "id": "relic_relic_zombie_s_face",
+    "name": "Zombie's Face",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Disease Level 50"
+      }
+    ]
+  }
+]

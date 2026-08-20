@@ -1,0 +1,1902 @@
+[
+  {
+    "id": "slicing_throw",
+    "classId": "butcher",
+    "name": "Slicing Throw",
+    "kind": "active",
+    "description": "Throw your weapon like a boomerang returning back to you dealing physical damage to monsters on its path. You can activate Daisy's Call to re-appear where the last thrown slicing throw is at any point in the flight.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Melee", "Projectile", "Strike"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Face of Duality",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 170, "perLevel": 30 },
+      "flatPhysicalMin": { "base": 6, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 17, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Furious Strike", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Ending Fate", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Insatiable Hunger", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "slicing_throw_core",
+        "positionIndex": 0,
+        "name": "Slicing Throw",
+        "description": "Core of the Slicing Throw subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "cut_in_half",
+        "positionIndex": 1,
+        "name": "Cut In Half",
+        "description": "Increases the damage of slicing throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "precision_blade",
+        "positionIndex": 2,
+        "name": "Precision Blade",
+        "description": "Passively increases your dexterity.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "to_dexterity": 0, "increased_dexterity": 0 },
+          "perRank": { "to_dexterity": 10, "increased_dexterity": 1 }
+        }
+      },
+      {
+        "id": "one_swift_strike",
+        "positionIndex": 3,
+        "name": "One Swift Strike",
+        "description": "Increases the critical strike damage and projectile speed of slicing throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0, "projectile_speed": 0 },
+          "perRank": { "crit_damage": 20, "projectile_speed": 12.5 }
+        }
+      },
+      {
+        "id": "cuts_and_wounds",
+        "positionIndex": 4,
+        "name": "Cuts and Wounds",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "splitting_chain",
+        "positionIndex": 5,
+        "name": "Splitting Chain",
+        "description": "Chance to unleash an additional chaining blade on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "burn_the_corpses",
+        "positionIndex": 6,
+        "name": "Burn the Corpses!",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "daisys_insight",
+        "positionIndex": 7,
+        "name": "Daisy´s Insight",
+        "description": "Reduced the cooldown of slicing throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "executioners_apprentice",
+        "positionIndex": 8,
+        "name": "Executioner's Apprentice",
+        "description": "Slicing throw executes monsters below a threshold.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1.3 }
+        }
+      },
+      {
+        "id": "bladestorm",
+        "positionIndex": 9,
+        "name": "Bladestorm",
+        "description": "Increases the size and spinning speed of slicing throw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0, "spin_speed": 0 },
+          "perRank": { "projectile_size": 15, "spin_speed": 15 }
+        }
+      },
+      {
+        "id": "bloody_combustion",
+        "positionIndex": 10,
+        "name": "Bloody Combustion",
+        "description": "Chance to unleash a ripple of blood from burning monsters on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 30 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "splitting_blade",
+        "positionIndex": 11,
+        "name": "Splitting blade",
+        "description": "Slicing throw splits into multiple orbiting blades spiraling outwards and returning to the initial location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 2 },
+          "perRank": { "physical_skill_damage": 40, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "slicing_vortex",
+        "positionIndex": 12,
+        "name": "Slicing Vortex",
+        "description": "Slicing throw now orbits you with increased projectile speed and increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "physical_skill_damage": 50, "projectile_speed": 35 }
+        }
+      },
+      {
+        "id": "bladesaw_massacre",
+        "positionIndex": 13,
+        "name": "Bladesaw Massacre",
+        "description": "Throw multiple blades forming a huge chainsaw that can be controlled. Slicing throw cooldown is now increased.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 4 },
+          "perRank": { "physical_skill_damage": 35, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "daisys_regards",
+        "positionIndex": 14,
+        "name": "Daisy´s Regards",
+        "description": "Slicing throw explodes into a fiery pentagram inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": {
+            "physical_skill_damage": 30,
+            "increased_burning_damage": 125
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 125 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "furious_strike",
+    "classId": "butcher",
+    "name": "Furious Strike",
+    "kind": "active",
+    "description": "Perform a powerful area of effect attack dealing physical damage and infecting monsters struck with a stack of rabies. Each stack of rabies increases attack damage dealt to the monster.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Face of Duality",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 168, "perLevel": 32 },
+      "flatPhysicalMin": { "base": 6, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 17, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "passiveStats": {
+      "base": { "rabies_damage": 15 },
+      "perRank": { "rabies_damage": 0.2 }
+    },
+    "bonusSources": [
+      { "source": "Unholy Form", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Sacrilegious Scorn", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Awakening Fury", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "furious_strike_core",
+        "positionIndex": 0,
+        "name": "Furious Strike",
+        "description": "Core of the Furious Strike subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "wide_spread_epidemic",
+        "positionIndex": 1,
+        "name": "Wide Spread Epidemic",
+        "description": "Increases the power of rabies from furious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_rabies_damage": 0 },
+          "perRank": { "increased_rabies_damage": 7 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "rabies", "amount": { "base": 0, "perRank": 7 } }
+          ]
+        }
+      },
+      {
+        "id": "down_with_sickness",
+        "positionIndex": 2,
+        "name": "Down with Sickness",
+        "description": "Chance to inflict poison on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "furious_reach",
+        "positionIndex": 3,
+        "name": "Furious Reach",
+        "description": "Increases the attack range of furious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "strike_of_hate",
+        "positionIndex": 4,
+        "name": "Strike of Hate",
+        "description": "Increases the damage dealt by furious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12.5 }
+        }
+      },
+      {
+        "id": "blade_uppercut",
+        "positionIndex": 5,
+        "name": "Blade Uppercut",
+        "description": "Chance to slice monsters stunning and knocking them up dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 50 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "serious_fever",
+        "positionIndex": 6,
+        "name": "Serious Fever",
+        "description": "Increases the maximum amount of rabies stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "max_skill_stacks": 2 },
+          "perRank": { "max_skill_stacks": 1 }
+        }
+      },
+      {
+        "id": "fueled_anger",
+        "positionIndex": 7,
+        "name": "Fueled Anger",
+        "description": "Increases attack speed when using furious strike.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "mediocre_unit",
+        "positionIndex": 8,
+        "name": "Mediocre Unit",
+        "description": "Chance to spawn healing orbs from targets on hit when in holy form. Chance to unleash piercing enraged rats spreading rabies on hit when in unholy form.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 8 } }
+      },
+      {
+        "id": "stay_still",
+        "positionIndex": 9,
+        "name": "Stay Still!",
+        "description": "Increases damage dealt to stunned target.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "spread_the_word",
+        "positionIndex": 10,
+        "name": "Spread the Word",
+        "description": "Chance to summon enraged flies on hit orbiting you and inflicting rabies.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "consumed_by_hatred",
+        "positionIndex": 11,
+        "name": "Consumed by Hatred",
+        "description": "Striking monsters with maximum stacks of rabies consumes them ripping and crushing the monster unleashing its bones in an arc behind it dealing damage according to the rabies stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 35 }
+        }
+      },
+      {
+        "id": "flames_of_fury",
+        "positionIndex": 12,
+        "name": "Flames of Fury",
+        "description": "Striking a monster inflicted with rabies causes flaming cinders to fly around the target lightning the ground on fire. Striking a monster with maximum stacks of rabies additionally consumes the stacks unleashing a scorching nova inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "increased_burning_damage": 0 },
+          "perRank": { "of_total_damage": 25, "increased_burning_damage": 60 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 60 } }
+          ]
+        }
+      },
+      {
+        "id": "sick_to_the_core",
+        "positionIndex": 13,
+        "name": "Sick to the Core",
+        "description": "Increases the maximum stacks of rabies and damage dealt by furious strike.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "max_skill_stacks": 2 },
+          "perRank": { "physical_skill_damage": 42.5, "max_skill_stacks": 1 }
+        }
+      },
+      {
+        "id": "the_absolute_unit",
+        "positionIndex": 14,
+        "name": "The Absolute Unit",
+        "description": "Striking a monster causes it to emmit fire damage based on your life replenish over time for a short duration on a radius around it when using holy form. Striking a monster unleashes impaling spikes dealing additional damage and a chance to replenish a portion of your maximum life on hit when using unholy form.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 15 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "holy_form",
+    "classId": "butcher",
+    "name": "Holy Form",
+    "kind": "buff",
+    "description": "Activate Holy Form gaining increased life replenish and life steal at the cost of damage dealt. Any damage dealt while in this form is decreased.",
+    "tags": ["Active", "Buff"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Face of Duality",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_replenish": 20, "life_steal": 20, "damage": -50 },
+      "perRank": { "life_replenish": 8, "life_steal": 5, "damage": 0 }
+    }
+  },
+  {
+    "id": "unholy_form",
+    "classId": "butcher",
+    "name": "Unholy Form",
+    "kind": "buff",
+    "description": "Activate Unholy Form gaining increased damage at the cost inflicting a portion of your max life as damage to your self every time you cast, attack or proc something. Any life replenish when in this form is lowered.",
+    "tags": ["Active", "Buff"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Face of Duality",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage": 20, "life_replenish": -95, "life_steal": -95 },
+      "perRank": { "damage": 1.5, "life_replenish": 0, "life_steal": 0 }
+    }
+  },
+  {
+    "id": "sacrilegious_scorn",
+    "classId": "butcher",
+    "name": "Sacrilegious Scorn",
+    "kind": "passive",
+    "description": "While in Holy Form gain increased attack speed and while in Unholy Form gain increased Critical damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Face of Duality",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "crit_damage": 1 },
+      "perRank": { "increased_attack_speed": 0.5, "crit_damage": 1 }
+    }
+  },
+  {
+    "id": "ending_fate",
+    "classId": "butcher",
+    "name": "Ending Fate",
+    "kind": "passive",
+    "description": "While in Holy Form gain increased base life regen after killing a monster and while in Unholy Form rip the monster apart after killing a monster causing huge area of effect damage.",
+    "tags": ["Passive", "Explosion"],
+    "range": 33,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Face of Duality",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_replenish": 50, "attack_damage": 22.5 },
+      "perRank": { "life_replenish": 8, "attack_damage": 22.5 }
+    }
+  },
+  {
+    "id": "spiritual_duality",
+    "classId": "butcher",
+    "name": "Spiritual Duality",
+    "kind": "passive",
+    "description": "While in Holy Form increases your life Per Hit and while in Unholy Form increases your attack damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Face of Duality",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_steal": 5, "attack_damage": 1.5 },
+      "perRank": { "life_steal": 1, "attack_damage": 1.5 }
+    }
+  },
+  {
+    "id": "awakening_fury",
+    "classId": "butcher",
+    "name": "Awakening Fury",
+    "kind": "passive",
+    "description": "On hit gain a chance to increase your attack damage for a short duration.",
+    "tags": ["Passive"],
+    "effectDuration": 4,
+    "range": 8,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Face of Duality",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 20 },
+      "perRank": { "attack_damage": 7 }
+    }
+  },
+  {
+    "id": "insatiable_hunger",
+    "classId": "butcher",
+    "name": "Insatiable Hunger",
+    "kind": "buff",
+    "description": "Awaken the full potential of both holy and unholy to gain both benefits for a short period of time with increased effectiveness.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 100,
+    "baseCastRate": 1,
+    "baseCooldown": 50,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Face of Duality",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "effectiveness": 1 },
+      "perRank": { "effectiveness": 0.25 }
+    }
+  },
+  {
+    "id": "chain_rip",
+    "classId": "butcher",
+    "name": "Chain Rip",
+    "kind": "active",
+    "description": "Perform a powerful attack pulling all nearby monsters infront of you.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 2,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Flesh Ripper",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 16, "perLevel": 24 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 1 }
+    },
+    "bonusSources": [
+      { "source": "Brutalizing Slash", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Hunger For Blood", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Blender", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "chain_rip_core",
+        "positionIndex": 0,
+        "name": "Chain Rip",
+        "description": "Core of the Chain Rip subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "ranged_suffering",
+        "positionIndex": 1,
+        "name": "Ranged Suffering",
+        "description": "Increases the range of chain rip.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 17.5 }
+        }
+      },
+      {
+        "id": "chains_of_hatred",
+        "positionIndex": 2,
+        "name": "Chains of Hatred",
+        "description": "Increases the damage dealt by chain rip.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "torture_the_skin",
+        "positionIndex": 3,
+        "name": "Torture the Skin",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "break_the_flesh",
+        "positionIndex": 4,
+        "name": "Break the Flesh",
+        "description": "Inflicts armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "the_real_monster",
+        "positionIndex": 5,
+        "name": "The Real Monster",
+        "description": "Replenish a portion of your maximum life and maximum mana on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 0.5, "mana_replenish_pct": 0.5 }
+        }
+      },
+      {
+        "id": "shift_of_power",
+        "positionIndex": 6,
+        "name": "Shift of Power",
+        "description": "Decreases monster attack rating inflicting slow on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "shocked", "amount": { "base": 0, "perRank": 12.5 } }
+          ]
+        }
+      },
+      {
+        "id": "rocket_propelled_chains",
+        "positionIndex": 7,
+        "name": "Rocket Propelled Chains",
+        "description": "Increases the projectile speed of chain rip.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "chains_unchained",
+        "positionIndex": 8,
+        "name": "Chains Unchained",
+        "description": "Decreases the cooldown of chain rip.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "rage_trance",
+        "positionIndex": 9,
+        "name": "Rage Trance",
+        "description": "Gain increased damage reduction for a short duration when using chain rip.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 8 }
+        }
+      },
+      {
+        "id": "they_never_know_what_hit_them",
+        "positionIndex": 10,
+        "name": "They Never Know What Hit Them",
+        "description": "Chance to stun targets on hit dealing increased damage to stunned targets.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "extra_damage_stunned": 0 },
+            "perRank": { "extra_damage_stunned": 35 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "chains_attached",
+        "positionIndex": 11,
+        "name": "Chains Attached",
+        "description": "Increases the range and damage of chain rip greatly. Cooldown is increased.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 75, "skill_range": 40 }
+        }
+      },
+      {
+        "id": "chainfueled_hunting",
+        "positionIndex": 12,
+        "name": "Chainfueled Hunting",
+        "description": "Rapidly throw multiple piercing chains in a cone towards target location dealing increased damage. Chain rip no longer pulls enemies.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 50, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "prey_on_the_weak",
+        "positionIndex": 13,
+        "name": "Prey on the Weak",
+        "description": "Chain rip stuns targets on hit buffing your and nearby allies damage to stunned targets for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "extra_damage_stunned": 0, "crit_damage": 0 },
+          "perRank": { "extra_damage_stunned": 15, "crit_damage": 100 }
+        }
+      },
+      {
+        "id": "carcass_rip",
+        "positionIndex": 14,
+        "name": "Carcass Rip",
+        "description": "Chain rip chains into additional nearby monsters on hit pulling them towards the target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 35, "area_of_effect": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "brutalizing_slash",
+    "classId": "butcher",
+    "name": "Brutalizing Slash",
+    "kind": "active",
+    "description": "Attack with brutalizing area of effect attack causing monsters to bleed.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Flesh Ripper",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 30, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "passiveStats": {
+      "base": { "bleeding_damage": 20, "ripple_damage": 30 },
+      "perRank": { "bleeding_damage": 4, "ripple_damage": 2 }
+    },
+    "bonusSources": [
+      { "source": "Fuel to Fire", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Hunger For Blood", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Butchers Hook", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "brutalizing_slash_core",
+        "positionIndex": 0,
+        "name": "Brutalizing Slash",
+        "description": "Core of the Brutalizing Slash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bucthering_skill",
+        "positionIndex": 1,
+        "name": "Bucthering Skill",
+        "description": "Increases attack rating when using brutalizing slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0, "crit_chance": 0 },
+          "perRank": { "attack_rating_pct": 10, "crit_chance": 3 }
+        }
+      },
+      {
+        "id": "bonebreaker",
+        "positionIndex": 2,
+        "name": "Bonebreaker",
+        "description": "Increases the damage dealt by brutalizing slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "unstoppable_rage",
+        "positionIndex": 3,
+        "name": "Unstoppable Rage",
+        "description": "Decreases movement diminish when using brutalizing slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "descent_to_madness",
+        "positionIndex": 4,
+        "name": "Descent to Madness",
+        "description": "Increases attack speed when using brutalizing slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 7.5 }
+        }
+      },
+      {
+        "id": "with_2_hands",
+        "positionIndex": 5,
+        "name": "With 2 Hands",
+        "description": "Chance on attack to unleash an additional brutalizing slash.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "skullsplitter",
+        "positionIndex": 6,
+        "name": "Skullsplitter",
+        "description": "Increases the critical strike damage dealt by brutalizing slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 30 }
+        }
+      },
+      {
+        "id": "afterlife_burner",
+        "positionIndex": 7,
+        "name": "Afterlife Burner",
+        "description": "Chance on kill for the target to explode into a pile of corpses.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_kill",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "corpse_count": 0 },
+            "perRank": { "corpse_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "precision_equals_power",
+        "positionIndex": 8,
+        "name": "Precision Equals Power",
+        "description": "Increases the damage dealt by brutalizing slash based on your dexterity.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_dexterity": 0 },
+          "perRank": { "conversion_dexterity": 6 }
+        }
+      },
+      {
+        "id": "for_the_weak",
+        "positionIndex": 9,
+        "name": "For the Weak",
+        "description": "Increases the attack range of brutalizing slash based on your strength.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 2.5 }
+        }
+      },
+      {
+        "id": "bleeding_the_prey",
+        "positionIndex": 10,
+        "name": "Bleeding the Prey",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "pummeling_slashwave",
+        "positionIndex": 11,
+        "name": "Pummeling Slashwave",
+        "description": "Unleash a slash wave on attack inflicting increased bleeding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_bleeding_damage": 0 },
+          "perRank": {
+            "physical_skill_damage": 22.5,
+            "increased_bleeding_damage": 30
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "painmongering",
+        "positionIndex": 12,
+        "name": "Painmongering",
+        "description": "Gain a stack of painmongering on hit increasing the tick frequency of bleed.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_frequency": 0, "max_skill_stacks": 0 },
+          "perRank": {
+            "increased_bleeding_frequency": 25,
+            "max_skill_stacks": 1
+          }
+        }
+      },
+      {
+        "id": "gutting_frenzy",
+        "positionIndex": 13,
+        "name": "Gutting Frenzy",
+        "description": "Chance to unleashes a ripple of blood on hit dealing increased critical damage based on your strength.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "conversion_strength": 0 },
+            "perRank": { "conversion_strength": 15 }
+          }
+        }
+      },
+      {
+        "id": "meet_daisy",
+        "positionIndex": 14,
+        "name": "Meet Daisy",
+        "description": "Every third attack unleashes daisy with increased damage and critical strike damage. The size of daisy is increased based on your missing life.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "crit_damage": 0,
+            "projectile_size": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 50,
+            "crit_damage": 50,
+            "projectile_size": 25
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fuel_to_fire",
+    "classId": "butcher",
+    "name": "Fuel to Fire",
+    "kind": "buff",
+    "description": "Increase your damage dealt for a short period of time. Every corpse close to you will be siphoned for additional damage.",
+    "tags": ["Cast", "Active", "Buff"],
+    "baseCastRate": 1,
+    "baseCooldown": 50,
+    "movementDuringUse": 65,
+    "effectDuration": 12,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Flesh Ripper",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "damage": 20 },
+      "perRank": { "damage": 1.5 }
+    }
+  },
+  {
+    "id": "hunger_for_blood",
+    "classId": "butcher",
+    "name": "Hunger For Blood",
+    "kind": "passive",
+    "description": "Deal increased damage to bleeding targets.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Flesh Ripper",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "damage": 1.25 },
+      "perRank": { "damage": 1.25 }
+    }
+  },
+  {
+    "id": "butchers_hook",
+    "classId": "butcher",
+    "name": "Butchers Hook",
+    "kind": "active",
+    "description": "Flail a huge meat hook around you gathering all monsters struck then pulling and stunning them infront of you.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Orbital"],
+    "movementDuringUse": 85,
+    "baseCooldown": 5,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Flesh Ripper",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 25, "perLevel": 25 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Brutalizing Slash", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Submerged Knives", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Enraged Mania", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "butchers_hook_core",
+        "positionIndex": 0,
+        "name": "Butchers Hook",
+        "description": "Core of the Butchers Hook subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "everlasting_anger",
+        "positionIndex": 1,
+        "name": "Everlasting Anger",
+        "description": "Increases the duration of butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "backed_by_rage",
+        "positionIndex": 2,
+        "name": "Backed by Rage",
+        "description": "Increases the projectile speed of butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "hook_discharge",
+        "positionIndex": 3,
+        "name": "Hook Discharge",
+        "description": "Chance on cast to unleash an additional butchers hook.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "carcass_carrier",
+        "positionIndex": 4,
+        "name": "Carcass Carrier",
+        "description": "Increases the size of butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "fresh_meat",
+        "positionIndex": 5,
+        "name": "Fresh Meat",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "pierce_the_torso",
+        "positionIndex": 6,
+        "name": "Pierce the Torso",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "spin_of_death",
+        "positionIndex": 7,
+        "name": "Spin of Death",
+        "description": "Increases the damage dealt by butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "hellsent",
+        "positionIndex": 8,
+        "name": "Hellsent",
+        "description": "Gain increased movement speed and phasing when using butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "immaculate_butcher",
+        "positionIndex": 9,
+        "name": "Immaculate Butcher",
+        "description": "Increases the critical strike damage dealt by butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "bring_the_carnage",
+        "positionIndex": 10,
+        "name": "Bring the Carnage",
+        "description": "Decreases the cooldown of butchers hook.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "concussive_blow",
+        "positionIndex": 11,
+        "name": "Concussive Blow",
+        "description": "Butchers hook circles onces and slams into target location unleashing a corpse explosion with increased size and damage based on the amount of enemies captured in the hook.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 2.5, "projectile_size": 1.25 }
+        }
+      },
+      {
+        "id": "critical_velocity",
+        "positionIndex": 12,
+        "name": "Critical Velocity",
+        "description": "Increases the velocity of butchers hook over time causing it to deal damage more frequently.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0, "skill_duration": 0 },
+          "perRank": { "projectile_speed": 5, "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "master_of_meat_hooks",
+        "positionIndex": 13,
+        "name": "Master of Meat Hooks",
+        "description": "Unleash multiple smaller hooks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 15, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "welcome_to_hell",
+        "positionIndex": 14,
+        "name": "Welcome to Hell",
+        "description": "Unleash butchers hook towards target location with increased range and damage returning back after a short duration. Butchers hook no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 40, "skill_range": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "chain_swing",
+    "classId": "butcher",
+    "name": "Chain Swing",
+    "kind": "active",
+    "description": "Throw a meat hook that pulls you into it when connecting with monster or environment. Additionally fires chains to nearby monsters when landing.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Movement", "Strike"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 2.5,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Flesh Ripper",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 27, "perLevel": 26 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Hunger For Blood", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Chain Rip", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Blender", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "chain_swing_core",
+        "positionIndex": 0,
+        "name": "Chain Swing",
+        "description": "Core of the Chain Swing subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "the_huntsman",
+        "positionIndex": 1,
+        "name": "The Huntsman",
+        "description": "Increases the projectile speed of chain swing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "immobilizing_hit",
+        "positionIndex": 2,
+        "name": "Immobilizing Hit",
+        "description": "Chance to stun targets on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "no_quarter",
+        "positionIndex": 3,
+        "name": "No Quarter",
+        "description": "Reduces the mana cost of chain swing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "demonic_chains",
+        "positionIndex": 4,
+        "name": "Demonic Chains",
+        "description": "Increases the damage dealt by chain swing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "introduce_fear",
+        "positionIndex": 5,
+        "name": "Introduce Fear",
+        "description": "Pull monsters towards you from an increased radius after landing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "physical_torture",
+        "positionIndex": 6,
+        "name": "Physical Torture",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "killing_spree",
+        "positionIndex": 7,
+        "name": "Killing Spree",
+        "description": "Grants you a burst of attack speed after landing for a short duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 8 }
+        }
+      },
+      {
+        "id": "scent_of_prey",
+        "positionIndex": 8,
+        "name": "Scent of Prey",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "entry_frenzy",
+        "positionIndex": 9,
+        "name": "Entry Frenzy",
+        "description": "Increases the critical strike damage dealt by chain swing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "unblessed_path",
+        "positionIndex": 10,
+        "name": "Unblessed Path",
+        "description": "Increases the maximum cast range. Chain swing now ignores terrain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "warm_welcome",
+        "positionIndex": 11,
+        "name": "Warm Welcome",
+        "description": "Unleash burning fissures at nearby monsters when landing inflicting burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "hookstorm",
+        "positionIndex": 12,
+        "name": "Hookstorm",
+        "description": "Swing hooks around while travelling dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 30, "skill_range": 15 }
+        }
+      },
+      {
+        "id": "prey_of_the_day",
+        "positionIndex": 13,
+        "name": "Prey of the Day",
+        "description": "Connecting with a monster causes chain swing to pull all monsters nearby the target towards you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 15, "skill_range": 30 }
+        }
+      },
+      {
+        "id": "centrifugal_force",
+        "positionIndex": 14,
+        "name": "Centrifugal Force",
+        "description": "Chain swing maximum length is significantly shorter but can be targeted. Spin around the target ignoring collision. Monsters hit by the chain take increased damage on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 125 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "submerged_knives",
+    "classId": "butcher",
+    "name": "Submerged Knives",
+    "kind": "active",
+    "description": "Smash the ground pushing waves of butchers knives out of the ground dealing massive damage and knocking them up. Deals extra damage to bleeding targets.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 2.5,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Flesh Ripper",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 42, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 9, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fuel to Fire", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Butchers Hook", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Enraged Mania", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "submerged_knives_core",
+        "positionIndex": 0,
+        "name": "Submerged Knives",
+        "description": "Core of the Submerged Knives subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "impaling_horde",
+        "positionIndex": 1,
+        "name": "Impaling Horde",
+        "description": "Increases the amount of waves of submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "agravating_wounds",
+        "positionIndex": 2,
+        "name": "Agravating Wounds",
+        "description": "Increases the damage dealt by submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 11 }
+        }
+      },
+      {
+        "id": "sharp_edges",
+        "positionIndex": 3,
+        "name": "Sharp Edges",
+        "description": "Increases attack rating when using submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "encased_cutters",
+        "positionIndex": 4,
+        "name": "Encased Cutters",
+        "description": "Increases the area of effect radius of submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "jugular_cut",
+        "positionIndex": 5,
+        "name": "Jugular Cut",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "the_bigger_they_are",
+        "positionIndex": 6,
+        "name": "The Bigger They Are",
+        "description": "Increases damage dealt to bosses when using submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 25 }
+        }
+      },
+      {
+        "id": "blunt_cleaver",
+        "positionIndex": 7,
+        "name": "Blunt Cleaver",
+        "description": "Chance to stun targets hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "extended_gutting",
+        "positionIndex": 8,
+        "name": "Extended Gutting",
+        "description": "Increases the maximum cast range of submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "nimble_handcraft",
+        "positionIndex": 9,
+        "name": "Nimble Handcraft",
+        "description": "Reduces the cooldown of submerged knives.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "meat_skewer",
+        "positionIndex": 10,
+        "name": "Meat Skewer",
+        "description": "Chance to impale targets on hit dealing damage over time.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "tidal_knives",
+        "positionIndex": 11,
+        "name": "Tidal Knives",
+        "description": "Unleash a shockwave of submerged knives towards target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 3 },
+          "perRank": { "physical_skill_damage": 15, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "sudden_chaining",
+        "positionIndex": 12,
+        "name": "Sudden Chaining",
+        "description": "Chance to unleash chains towards target on hit dealing additional damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "knifehoarder",
+        "positionIndex": 13,
+        "name": "Knifehoarder",
+        "description": "Submerged knives can be activated/deactivated. While active periodically unleash submerged knives at nearby monsters inflicting bleeding. Drains a portion of your maximum mana while active.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_bleeding_damage": 0,
+            "area_of_effect": 0,
+            "mana_drain_pct": 0
+          },
+          "perRank": {
+            "increased_bleeding_damage": 75,
+            "area_of_effect": 30,
+            "mana_drain_pct": 5
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "bone_daggers",
+        "positionIndex": 14,
+        "name": "Bone Daggers",
+        "description": "Consume corpses hit by submerged knives unleashing piercing gutting knives towards nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 100 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "enraged_mania",
+    "classId": "butcher",
+    "name": "Enraged Mania",
+    "kind": "passive",
+    "description": "Increase attack area of effect range and attack speed.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Flesh Ripper",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "area_of_effect": 8, "increased_attack_speed": 0.5 },
+      "perRank": { "area_of_effect": 1, "increased_attack_speed": 0.5 }
+    }
+  },
+  {
+    "id": "blender",
+    "classId": "butcher",
+    "name": "Blender",
+    "kind": "active",
+    "description": "Swing two huge butchers knives around you dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Melee", "Orbital", "Strike"],
+    "movementDuringUse": 85,
+    "baseCooldown": 5,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Flesh Ripper",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 37.5, "perLevel": 17.5 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Brutalizing Slash", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Enraged Mania", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Butchers Hook", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "blender_core",
+        "positionIndex": 0,
+        "name": "Blender",
+        "description": "Core of the Blender subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharpened_cleavers",
+        "positionIndex": 1,
+        "name": "Sharpened Cleavers",
+        "description": "Increases the damage dealt by blender.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "industrial_sized",
+        "positionIndex": 2,
+        "name": "Industrial Sized",
+        "description": "Increases the area of effect radius of blender.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 17.5 }
+        }
+      },
+      {
+        "id": "no_bits_nor_pieces",
+        "positionIndex": 3,
+        "name": "No Bits Nor Pieces",
+        "description": "Increases attack rating when using blender.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "ragefueled_energy",
+        "positionIndex": 4,
+        "name": "Ragefueled Energy",
+        "description": "Increases the duration of blender.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "extra_cleaver_addon",
+        "positionIndex": 5,
+        "name": "Extra Cleaver Addon",
+        "description": "Increases the amount of blades on blender.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "obsidian_blades",
+        "positionIndex": 6,
+        "name": "Obsidian Blades",
+        "description": "Increases the critical strike damage dealt by blender.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 32.5 }
+        }
+      },
+      {
+        "id": "attachment_malfunction",
+        "positionIndex": 7,
+        "name": "Attachment Malfunction",
+        "description": "Chance to send blades towards target on hit briefly returning back to you.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 10 } }
+      },
+      {
+        "id": "it_will_blend",
+        "positionIndex": 8,
+        "name": "It Will Blend",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 17.5 }
+        }
+      },
+      {
+        "id": "blood_thirsting_killing_machine",
+        "positionIndex": 9,
+        "name": "Blood Thirsting Killing Machine",
+        "description": "Chance to gain a stack of blood thirst on hit increasing your movement speed for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "movement_speed": 0 },
+            "perRank": { "movement_speed": 4 }
+          }
+        }
+      },
+      {
+        "id": "will_it_blend",
+        "positionIndex": 10,
+        "name": "Will it Blend?",
+        "description": "Knock monsters back dealing increased damage and slowing them.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "a_i_empowered_nanoblenders",
+        "positionIndex": 11,
+        "name": "A.I. Empowered Nanoblenders",
+        "description": "Summon multiple small blenders orbiting around you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 2 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "blenderang",
+        "positionIndex": 12,
+        "name": "Blenderang",
+        "description": "Throw a traveling blender towards target location returning back to you shortly. Blender cooldown is reduced.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "skill_range": 0,
+            "skill_haste": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 50,
+            "skill_range": 30,
+            "skill_haste": 25
+          }
+        }
+      },
+      {
+        "id": "attachable_microblades",
+        "positionIndex": 13,
+        "name": "Attachable Microblades",
+        "description": "Chance to conjure a small blender at target location on hit dealing additional damage for a short duration.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "blending_blood_pact",
+        "positionIndex": 14,
+        "name": "Blending Blood Pact",
+        "description": "Blender gains increased damage but killing monsters drains a portion of your maximum life. This effect is non-lethal and will de-activate blender if you cannot sacrifice your life anymore.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "life_drain_pct": 0 },
+          "perRank": { "physical_skill_damage": 75, "life_drain_pct": 4 }
+        }
+      }
+    ]
+  }
+]

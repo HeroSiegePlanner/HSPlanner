@@ -1,0 +1,3428 @@
+[
+  {
+    "id": "anubi_s_eternal_life",
+    "name": "Anubi's Eternal Life",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Anubis Oculus",
+        "itemId": "amulet_satanic_anubis_oculus"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Anubis Torso",
+        "itemId": "body_armor_satanic_anubis_torso"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Anubis' Mighty Hands",
+        "itemId": "gloves_satanic_anubis_mighty_hands"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life_replenish_pct": 30,
+          "fire_resistance": 75
+        },
+        "descriptions": [
+          "+30% Life Replenished based on Maximum Life",
+          "+75% Fire Resistance"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "max_fire_resistance": 10,
+          "all_resistances": 35,
+          "life": 1250
+        },
+        "descriptions": [
+          "+10% to Maximum Fire Resist",
+          "+35% All Resistances",
+          "+1250 Life"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "abomination_s_defiled_organs",
+    "name": "Abomination's Defiled Organs",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Abomination's Heart",
+        "itemId": "charm_satanic_abomination_s_heart"
+      },
+      {
+        "slot": "Charm",
+        "name": "Abomination's Eye",
+        "itemId": "charm_satanic_abomination_s_eye"
+      },
+      {
+        "slot": "Charm",
+        "name": "Abomination's Brain",
+        "itemId": "charm_satanic_abomination_s_brain"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "summon_damage": 15,
+          "summon_reduced_dmg_taken": 20
+        },
+        "descriptions": [
+          "+15% Increased Summon Damage",
+          "+20% Summon Reduced Dmg Taken"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "skill_haste": 25,
+          "summon_max_amount": 1
+        },
+        "descriptions": [
+          "+25% Skill Haste",
+          "+1 Maximum Summon Amount",
+          "+1 to Summon Abomination"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "arc_s_blessed_faith",
+    "name": "Arc's Blessed Faith",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Arc's Sigil",
+        "itemId": "amulet_satanic_arc_s_sigil"
+      },
+      {
+        "slot": "Boots",
+        "name": "Arc's Walkers",
+        "itemId": "boots_satanic_arc_s_walkers"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "experience_gain": 15,
+          "skill_haste": 40
+        },
+        "descriptions": [
+          "+15% Increased Experience Gain",
+          "+40% Skill Haste"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gurag_s_fury",
+    "name": "Gurag's Fury",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Gurag's Pebble",
+        "itemId": "amulet_satanic_gurag_s_pebble"
+      },
+      {
+        "slot": "Charm",
+        "name": "Gurag's Heart Charm",
+        "itemId": "charm_satanic_gurag_s_heart_charm"
+      },
+      {
+        "slot": "Mace",
+        "name": "Gurag's Stone Crusher",
+        "itemId": "mace_satanic_gurag_s_stone_crusher"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life": 575
+        },
+        "descriptions": [
+          "+575 Life"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "all_skills": 4,
+          "physical_damage_reduction": 30
+        },
+        "descriptions": [
+          "+4 to All Skills",
+          "+30% Physical Damage Reduction"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "aztec_s_mystery",
+    "name": "Aztec's Mystery",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Aztec Necklace",
+        "itemId": "amulet_satanic_aztec_necklace"
+      },
+      {
+        "slot": "Charm",
+        "name": "Aztec Devil",
+        "itemId": "charm_satanic_aztec_devil"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Aztec Crown",
+        "itemId": "helmet_satanic_aztec_crown"
+      },
+      {
+        "slot": "Shield",
+        "name": "Aztec Ward",
+        "itemId": "shield_satanic_aztec_ward"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "additive_poison_damage": 650
+        },
+        "descriptions": [
+          "+650 Additive Poison Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "skill_haste": 25,
+          "increased_attack_speed": 50
+        },
+        "descriptions": [
+          "+25% Skill Haste",
+          "+50% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3,
+          "ignore_poison_res": 25
+        },
+        "descriptions": [
+          "+3 to All Skills (Amazon)",
+          "+25% Ignore Poison Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "demolition_expert",
+    "name": "Demolition Expert",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "The Detonator",
+        "itemId": "charm_satanic_the_detonator"
+      },
+      {
+        "slot": "Charm",
+        "name": "Barrel of Explosives",
+        "itemId": "charm_satanic_barrel_of_explosives"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "explosion_aoe": 30,
+          "explosion_damage": 25,
+          "skill_haste": 25
+        },
+        "descriptions": [
+          "+30% Explosion AoE",
+          "+25% Explosion Damage",
+          "+25% Skill Haste"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gladiator_s_glory",
+    "name": "Gladiator's Glory",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Gladiator's Battle Sandals",
+        "itemId": "boots_satanic_gladiator_s_battle_sandals"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Gladiator's Skullet",
+        "itemId": "helmet_satanic_gladiator_s_skullet"
+      },
+      {
+        "slot": "Mace",
+        "name": "Gladiator's Wrecking Ball",
+        "itemId": "mace_satanic_gladiator_s_wrecking_ball"
+      },
+      {
+        "slot": "Shield",
+        "name": "Gladiator's Wall",
+        "itemId": "shield_satanic_gladiator_s_wall"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "movement_speed": 25
+        },
+        "descriptions": [
+          "+25% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "additive_physical_damage": 65,
+          "increased_attack_speed": 30
+        },
+        "descriptions": [
+          "+65 Additive Physical Damage",
+          "+30% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "to_dexterity": 35,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+35 to Dexterity",
+          "+4 to All Skills (Marauder)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "juggernaut_s_rampart",
+    "name": "Juggernaut's Rampart",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Juggernaut's Emblem",
+        "itemId": "amulet_satanic_juggernaut_s_emblem"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Juggernaut's Glorious Plate",
+        "itemId": "body_armor_satanic_juggernaut_s_glorious_plate"
+      },
+      {
+        "slot": "Boots",
+        "name": "Juggernaut's Victory Marchers",
+        "itemId": "boots_satanic_juggernaut_s_victory_marchers"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Juggernaut's Siege Helm",
+        "itemId": "helmet_satanic_juggernaut_s_siege_helm"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "explosion_aoe": 40
+        },
+        "descriptions": [
+          "+40% Explosion AoE"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana": 250,
+          "faster_cast_rate": 30
+        },
+        "descriptions": [
+          "+250 Mana",
+          "+30% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_resistances": 50,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+50% All Resistances",
+          "+4 to All Skills (Marauder)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "blood_letter_s_armament",
+    "name": "Blood-letter's Armament",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Blood-letter's Plate Body",
+        "itemId": "body_armor_satanic_blood_letter_s_plate_body"
+      },
+      {
+        "slot": "Boots",
+        "name": "Blood-letter's Plated Boots",
+        "itemId": "boots_satanic_blood_letter_s_plated_boots"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Blood-letter's Plated Gauntlet",
+        "itemId": "gloves_satanic_blood_letter_s_plated_gauntlet"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Blood-letter's Crown",
+        "itemId": "helmet_satanic_blood_letter_s_crown"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "attack_rating_pct": 15
+        },
+        "descriptions": [
+          "+15% Increased Attack Rating"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "to_vitality": 20,
+          "life_replenish_pct": 25
+        },
+        "descriptions": [
+          "+20 to Vitality",
+          "+25% Life Replenished based on Maximum Life"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "attack_damage": 50
+        },
+        "descriptions": [
+          "+4 to All Skills (Plague Doctor)",
+          "+50% Attack Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bone_conjurer_s_regalia",
+    "name": "Bone Conjurer's Regalia",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Bone Conjurer's Mask",
+        "itemId": "amulet_satanic_bone_conjurer_s_mask"
+      },
+      {
+        "slot": "Boots",
+        "name": "Bone Conjurer's Marchers",
+        "itemId": "boots_satanic_bone_conjurer_s_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Bone Conjurer's Trophy",
+        "itemId": "charm_satanic_bone_conjurer_s_trophy"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Bone Conjurer's Grips",
+        "itemId": "gloves_satanic_bone_conjurer_s_grips"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_replenish_pct": 25
+        },
+        "descriptions": [
+          "+25% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "arcane_skill_damage": 20,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+20% Arcane Skill Damage",
+          "+3 to All Skills (Demon Spawn)"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "ignore_arcane_res": 20
+        },
+        "descriptions": [
+          "+8 to Demonic Presence (Demon Spawn)",
+          "+20% Ignore Arcane Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "god_of_the_elements",
+    "name": "God of the Elements",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Spirit Pendant",
+        "itemId": "amulet_satanic_spirit_pendant"
+      },
+      {
+        "slot": "Boots",
+        "name": "Boots of Wild",
+        "itemId": "boots_satanic_boots_of_wild"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Gloves of Wilderness",
+        "itemId": "gloves_satanic_gloves_of_wilderness"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Wendigo Skull",
+        "itemId": "helmet_satanic_wendigo_skull"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life": 235
+        },
+        "descriptions": [
+          "+235 Life"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "arcane_resistance": 75,
+          "movement_speed": 40
+        },
+        "descriptions": [
+          "+75% Arcane Resistance",
+          "+40% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+5 to All Skills (Shaman)",
+          "+5 to Chaos Totem (Shaman)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "guardian_s_of_the_sands",
+    "name": "Guardian's of the Sands",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Sand Manipulator's Kalasiris",
+        "itemId": "body_armor_satanic_sand_manipulator_s_kalasiris"
+      },
+      {
+        "slot": "Charm",
+        "name": "Canopic Jar of Blood",
+        "itemId": "charm_satanic_canopic_jar_of_blood"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Sand Manipulator's Authority",
+        "itemId": "gloves_satanic_sand_manipulator_s_authority"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Sand Manipulator's Mask",
+        "itemId": "helmet_satanic_sand_manipulator_s_mask"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_per_kill": 28
+        },
+        "descriptions": [
+          "+28 Mana After each Kill"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_attack_speed": 30,
+          "arcane_skill_damage": 30
+        },
+        "descriptions": [
+          "+30% Attack Speed",
+          "+30% Arcane Skill Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+3 to All Skills (Illusionist)",
+          "+6 to Sand Guardian (Illusionist)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "champion_s_valor",
+    "name": "Champion's Valor",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Champion's Medal of Valor",
+        "itemId": "amulet_satanic_champion_s_medal_of_valor"
+      },
+      {
+        "slot": "Charm",
+        "name": "Champion's Signet",
+        "itemId": "charm_satanic_champion_s_signet"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Champion's Fighting Gloves",
+        "itemId": "gloves_satanic_champion_s_fighting_gloves"
+      },
+      {
+        "slot": "Polearm",
+        "name": "Champion's Flag Lance",
+        "itemId": "polearm_satanic_champion_s_flag_lance"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "defense_ignored": 30
+        },
+        "descriptions": [
+          "+30% Ignore Target Defense"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "life_steal": 7,
+          "increased_attack_speed": 40
+        },
+        "descriptions": [
+          "+7% Life Stolen per Hit",
+          "+40% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "attack_damage": 30
+        },
+        "descriptions": [
+          "+4 to All Skills (Lancer)",
+          "+30% Attack Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "flames_of_the_apocalypse",
+    "name": "Flames of the Apocalypse",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Chestplate of Fire",
+        "itemId": "body_armor_satanic_chestplate_of_fire"
+      },
+      {
+        "slot": "Boots",
+        "name": "Flaming Marchers",
+        "itemId": "boots_satanic_flaming_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Flaming Coin",
+        "itemId": "charm_satanic_flaming_coin"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Hands of Flame",
+        "itemId": "gloves_satanic_hands_of_flame"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "increased_burning_damage": 30
+        },
+        "descriptions": [
+          "+30% Increased Burning Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 150,
+          "faster_cast_rate": 40
+        },
+        "descriptions": [
+          "+150% Mana Replenished based on Maximum Mana",
+          "+40% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "ignore_fire_res": 25
+        },
+        "descriptions": [
+          "+5 to All Skills (Pyromancer)",
+          "+25% Ignore Fire Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "temporal_mastery",
+    "name": "Temporal Mastery",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Chronomancer's Curio of Time",
+        "itemId": "amulet_satanic_chronomancer_s_curio_of_time"
+      },
+      {
+        "slot": "Boots",
+        "name": "Chronomancer's Omnipotence",
+        "itemId": "boots_satanic_chronomancer_s_omnipotence"
+      },
+      {
+        "slot": "Charm",
+        "name": "Sundial of Ancient Worlds",
+        "itemId": "charm_satanic_sundial_of_ancient_worlds"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Chronomancer's Observance",
+        "itemId": "helmet_satanic_chronomancer_s_observance"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life": 175
+        },
+        "descriptions": [
+          "+175 Life"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "all_resistances": 30,
+          "ignore_arcane_res": 20
+        },
+        "descriptions": [
+          "+30% All Resistances",
+          "+20% Ignore Arcane Resistance"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+5 to All Skills (Illusionist)",
+          "+5 to Temporal Heroes (Illusionist)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "damien_s_legacy",
+    "name": "Damien's Legacy",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Damien's Soulstone",
+        "itemId": "amulet_satanic_damien_s_soulstone"
+      },
+      {
+        "slot": "Book",
+        "name": "Damien's Head",
+        "itemId": "book_satanic_damien_s_head"
+      },
+      {
+        "slot": "Charm",
+        "name": "Damien's Cage",
+        "itemId": "charm_satanic_damien_s_cage"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_replenish_pct": 30
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "all_skills": 4,
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "+4 to All Skills",
+          "+50% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dante_s_nightmare",
+    "name": "Dante's Nightmare",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Dante's Jacket",
+        "itemId": "body_armor_satanic_dante_s_jacket"
+      },
+      {
+        "slot": "Boots",
+        "name": "Dante's Boots",
+        "itemId": "boots_satanic_dante_s_boots"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Dante's Mitts",
+        "itemId": "gloves_satanic_dante_s_mitts"
+      },
+      {
+        "slot": "Sword",
+        "name": "Dante's Demon Blade",
+        "itemId": "sword_satanic_dante_s_demon_blade"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life_steal": 15
+        },
+        "descriptions": [
+          "+15% Life Stolen per Hit"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "all_attributes": 40,
+          "movement_speed": 40
+        },
+        "descriptions": [
+          "+40 to All Attributes",
+          "+40% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 7,
+          "attack_rating_pct": 40
+        },
+        "descriptions": [
+          "+7 to All Skills (Demon Slayer)",
+          "+40% Increased Attack Rating"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "death_lord_s_legacy",
+    "name": "Death Lord's Legacy",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Death Lord's Bone Armor",
+        "itemId": "body_armor_satanic_death_lord_s_bone_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Death Lord's Marchers",
+        "itemId": "boots_satanic_death_lord_s_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Death Lord's Zombie Head",
+        "itemId": "charm_satanic_death_lord_s_zombie_head"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Death Lord's Crown",
+        "itemId": "helmet_satanic_death_lord_s_crown"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "additive_arcane_damage": 450
+        },
+        "descriptions": [
+          "+450 Additive Arcane Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "arcane_skill_damage": 30,
+          "all_resistances": 50
+        },
+        "descriptions": [
+          "+30% Arcane Skill Damage",
+          "+50% All Resistances"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "ignore_arcane_res": 25
+        },
+        "descriptions": [
+          "+5 to All Skills (Necromancer)",
+          "+25% Ignore Arcane Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "death_s_toll",
+    "name": "Death's Toll",
+    "items": [
+      {
+        "slot": "Gloves",
+        "name": "Death's Grasp",
+        "itemId": "gloves_satanic_death_s_grasp"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Reaper's Hood",
+        "itemId": "helmet_satanic_reaper_s_hood"
+      },
+      {
+        "slot": "Polearm",
+        "name": "Death's Scythe",
+        "itemId": "polearm_satanic_death_s_scythe"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "attack_damage": 25
+        },
+        "descriptions": [
+          "+25% Attack Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "all_skills": 2,
+          "increased_attack_speed": 60
+        },
+        "descriptions": [
+          "+2 to All Skills",
+          "+60% Attack Speed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "satan_s_curse",
+    "name": "Satan's Curse",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Satan's Precious",
+        "itemId": "amulet_satanic_satan_s_precious"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Satan's Cuirass",
+        "itemId": "body_armor_satanic_satan_s_cuirass"
+      },
+      {
+        "slot": "Boots",
+        "name": "Satan's Molten Steps",
+        "itemId": "boots_satanic_satan_s_molten_steps"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "damage_return": 75
+        },
+        "descriptions": [
+          "+75% Damage Return"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "defense": 750,
+          "physical_damage_reduction": 30
+        },
+        "descriptions": [
+          "+750 Defense",
+          "+30% Physical Damage Reduction"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "satan_s_redemption",
+    "name": "Satan's Redemption",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Devil's Gem",
+        "itemId": "amulet_satanic_devil_s_gem"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Demon's Ribcage",
+        "itemId": "body_armor_satanic_demon_s_ribcage"
+      },
+      {
+        "slot": "Charm",
+        "name": "Heart of Agony",
+        "itemId": "charm_satanic_heart_of_agony"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Devil's Grasp",
+        "itemId": "gloves_satanic_devil_s_grasp"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "arcane_resistance": 75
+        },
+        "descriptions": [
+          "+75% Arcane Resistance"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana": 350,
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "+350 Mana",
+          "+50% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "mana_per_kill": 35
+        },
+        "descriptions": [
+          "+5 to All Skills (Demon Spawn)",
+          "+35 Mana After each Kill"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "uabel_s_majesty",
+    "name": "Uabel's Majesty",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Uabel's Chest",
+        "itemId": "body_armor_satanic_uabel_s_chest"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Uabel's Gloves",
+        "itemId": "gloves_satanic_uabel_s_gloves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Uabel's Helmet",
+        "itemId": "helmet_satanic_uabel_s_helmet"
+      },
+      {
+        "slot": "Wand",
+        "name": "Uabel's Wand",
+        "itemId": "wand_satanic_uabel_s_wand"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "defense": 350
+        },
+        "descriptions": [
+          "+350 Defense"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 20,
+          "all_attributes": 15
+        },
+        "descriptions": [
+          "+20% Mana Replenished based on Maximum Mana",
+          "+15 to All Attributes"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3,
+          "all_resistances": 40
+        },
+        "descriptions": [
+          "+3 to All Skills",
+          "+40% All Resistances"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gabriel_s_devotion",
+    "name": "Gabriel's Devotion",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Insignia of the Hunter",
+        "itemId": "amulet_satanic_insignia_of_the_hunter"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Gabriel's Leather Trench Coat",
+        "itemId": "body_armor_satanic_gabriel_s_leather_trench_coat"
+      },
+      {
+        "slot": "Gun",
+        "name": "Demon",
+        "itemId": "gun_satanic_demon"
+      },
+      {
+        "slot": "Gun",
+        "name": "Angel",
+        "itemId": "gun_satanic_angel"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Gabriel's Brimmed Fedora",
+        "itemId": "helmet_satanic_gabriel_s_brimmed_fedora"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "crit_chance": 20
+        },
+        "descriptions": [
+          "+20% Chance for Critical Strike"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "projectile_speed": 2,
+          "increased_attack_speed": 40
+        },
+        "descriptions": [
+          "+2 Projectile Speed",
+          "+40% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 6,
+          "crit_damage": 75
+        },
+        "descriptions": [
+          "+6 to All Skills (Demon Slayer)",
+          "+75% Critical Strike Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "doctor_s_medkit",
+    "name": "Doctor's Medkit",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Doctor's Mask in a Jar",
+        "itemId": "charm_satanic_doctor_s_mask_in_a_jar"
+      },
+      {
+        "slot": "Flask",
+        "name": "Doctor's Potion",
+        "itemId": "flask_satanic_doctor_s_potion"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Doctor's Grasp",
+        "itemId": "gloves_satanic_doctor_s_grasp"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Doctor's Visage",
+        "itemId": "helmet_satanic_doctor_s_visage"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_replenish_pct": 20
+        },
+        "descriptions": [
+          "+20% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "poison_skill_damage": 25,
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "+25% Poison Skill Damage",
+          "+50% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "ignore_poison_res": 15
+        },
+        "descriptions": [
+          "+5 to All Skills (Plague Doctor)",
+          "+15% Ignore Poison Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "engineer_s_combat_gear",
+    "name": "Engineer's Combat Gear",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Engineer's Master Pendant",
+        "itemId": "amulet_satanic_engineer_s_master_pendant"
+      },
+      {
+        "slot": "Belt",
+        "name": "Engineer's Toolbelt",
+        "itemId": "belt_satanic_engineer_s_toolbelt"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Engineer's Plated Vest",
+        "itemId": "body_armor_satanic_engineer_s_plated_vest"
+      },
+      {
+        "slot": "Charm",
+        "name": "Engineer's Mini Drone",
+        "itemId": "charm_satanic_engineer_s_mini_drone"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "skill_haste": 20
+        },
+        "descriptions": [
+          "+20% Skill Haste"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 30,
+          "all_resistances": 45
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana",
+          "+45% All Resistances"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "physical_damage_reduction": 15,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+15% Physical Damage Reduction",
+          "+5 to All Skills (Marksman)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "flames_of_divinity",
+    "name": "Flames of Divinity",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Flame Diviner's Cord",
+        "itemId": "belt_satanic_flame_diviner_s_cord"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Flame Diviner's Sanctum",
+        "itemId": "body_armor_satanic_flame_diviner_s_sanctum"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Flame Diviner's Refuge",
+        "itemId": "helmet_satanic_flame_diviner_s_refuge"
+      },
+      {
+        "slot": "Shield",
+        "name": "Flame Diviner's Ward",
+        "itemId": "shield_satanic_flame_diviner_s_ward"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life": 750
+        },
+        "descriptions": [
+          "+750 Life"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "to_intelligence": 40,
+          "to_energy": 40
+        },
+        "descriptions": [
+          "+40 to Intelligence",
+          "+40 to Energy"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "fire_skill_damage": 40
+        },
+        "descriptions": [
+          "+5 to All Skills (Pyromancer)",
+          "+40% Fire Skill Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nobunaga_s_empire",
+    "name": "Nobunaga's Empire",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Nobunaga's Warrior Spirit",
+        "itemId": "amulet_satanic_nobunaga_s_warrior_spirit"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Nobunaga's Battle Cuirass",
+        "itemId": "body_armor_satanic_nobunaga_s_battle_cuirass"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Nobunaga's Battle Helmet",
+        "itemId": "helmet_satanic_nobunaga_s_battle_helmet"
+      },
+      {
+        "slot": "Mace",
+        "name": "Nobunaga's Battle Slicer",
+        "itemId": "mace_satanic_nobunaga_s_battle_slicer"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "arcane_skill_damage": 25
+        },
+        "descriptions": [
+          "+25% Arcane Skill Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "faster_cast_rate": 30,
+          "all_attributes": 30
+        },
+        "descriptions": [
+          "+30% Faster Cast Rate",
+          "+30 to All Attributes"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "explosion_aoe": 75
+        },
+        "descriptions": [
+          "+4 to All Skills (Samurai)",
+          "+75% Explosion AoE"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "plunderer_s_ensemble",
+    "name": "Plunderer's Ensemble",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Plunderer's Spy Glass",
+        "itemId": "amulet_satanic_plunderer_s_spy_glass"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Plunderer's Jacket",
+        "itemId": "body_armor_satanic_plunderer_s_jacket"
+      },
+      {
+        "slot": "Boots",
+        "name": "Plunderer's Deck Marchers",
+        "itemId": "boots_satanic_plunderer_s_deck_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Plunderer's Gunpowder Bag",
+        "itemId": "charm_satanic_plunderer_s_gunpowder_bag"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "to_intelligence": 45
+        },
+        "descriptions": [
+          "+45 to Intelligence"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "ignore_cold_res": 35,
+          "magic_find": 125
+        },
+        "descriptions": [
+          "+35% Ignore Cold Resistance",
+          "+125% Magic Find"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+6 to Anchor Swing (Pirate)",
+          "+5 to All Skills (Pirate)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "the_holy_one",
+    "name": "The Holy One",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Sacred Pendant",
+        "itemId": "amulet_satanic_sacred_pendant"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Sacred Robe",
+        "itemId": "body_armor_satanic_sacred_robe"
+      },
+      {
+        "slot": "Boots",
+        "name": "Sacred Marchers",
+        "itemId": "boots_satanic_sacred_marchers"
+      },
+      {
+        "slot": "Charm",
+        "name": "Sacred Owl",
+        "itemId": "charm_satanic_sacred_owl"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_replenish_pct": 30
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana": 400,
+          "faster_cast_rate": 40
+        },
+        "descriptions": [
+          "+400 Mana",
+          "+40% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "arcane_skill_damage": 35
+        },
+        "descriptions": [
+          "+5 to All Skills (White Mage)",
+          "+35% Arcane Skill Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "stickman_steve_s_destruction",
+    "name": "Stickman Steve's Destruction",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Steve's Necklace",
+        "itemId": "amulet_satanic_steve_s_necklace"
+      },
+      {
+        "slot": "Bow",
+        "name": "Steve's Punchbow",
+        "itemId": "bow_satanic_steve_s_punchbow"
+      },
+      {
+        "slot": "Charm",
+        "name": "Hello its me, Steve!",
+        "itemId": "charm_satanic_hello_its_me_steve"
+      },
+      {
+        "slot": "Gun",
+        "name": "Steve's Bang",
+        "itemId": "gun_satanic_steve_s_bang"
+      },
+      {
+        "slot": "Sword",
+        "name": "Steve's Mighty Sword",
+        "itemId": "sword_satanic_steve_s_mighty_sword"
+      },
+      {
+        "slot": "Wand",
+        "name": "Steve's Wand of Fortune",
+        "itemId": "wand_satanic_steve_s_wand_of_fortune"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "all_resistances": 25
+        },
+        "descriptions": [
+          "+25% All Resistances"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "all_skills": 4,
+          "all_attributes": 30
+        },
+        "descriptions": [
+          "+4 to All Skills",
+          "+30 to All Attributes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tal_s_reaping",
+    "name": "Tal's Reaping",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Tal's Pendant",
+        "itemId": "amulet_satanic_tal_s_pendant"
+      },
+      {
+        "slot": "Charm",
+        "name": "Tal's Deathskull",
+        "itemId": "charm_satanic_tal_s_deathskull"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "magic_find": 75,
+          "experience_gain": 5
+        },
+        "descriptions": [
+          "+75% Magic Find",
+          "+5% Increased Experience Gain"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "traveler",
+    "name": "Traveler",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Traveler's Compass",
+        "itemId": "amulet_satanic_traveler_s_compass"
+      },
+      {
+        "slot": "Belt",
+        "name": "Traveler's Double Belt",
+        "itemId": "belt_satanic_traveler_s_double_belt"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Traveler's Leather Jacket",
+        "itemId": "body_armor_satanic_traveler_s_leather_jacket"
+      },
+      {
+        "slot": "Charm",
+        "name": "Traveler's Map Journal",
+        "itemId": "charm_satanic_traveler_s_map_journal"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "flat_elemental_skill_damage": 30
+        },
+        "descriptions": [
+          "+30 Flat Elemental Skill Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_life": 8,
+          "movement_speed": 8
+        },
+        "descriptions": [
+          "+8% Increased Life",
+          "+8% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "increased_all_attributes": 7
+        },
+        "descriptions": [
+          "+4 to All Skills",
+          "+7% Increased All Attributes"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "venom_s_frame",
+    "name": "Venom's Frame",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Venom's Necklace",
+        "itemId": "amulet_satanic_venom_s_necklace"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Venom's Ribcage",
+        "itemId": "body_armor_satanic_venom_s_ribcage"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Venom's Talons",
+        "itemId": "gloves_satanic_venom_s_talons"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Venom's Skull",
+        "itemId": "helmet_satanic_venom_s_skull"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "poison_skill_damage": 20
+        },
+        "descriptions": [
+          "+20% Poison Skill Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "ignore_poison_res": 25,
+          "poison_resistance": 40
+        },
+        "descriptions": [
+          "+25% Ignore Poison Resistance",
+          "+40% Poison Resistance"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "physical_damage_reduction": 15,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+15% Physical Damage Reduction",
+          "+5 to All Skills (Necromancer)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ymir_s_wisdom",
+    "name": "Ymir's Wisdom",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Ymir's Frozen Tear",
+        "itemId": "amulet_satanic_ymir_s_frozen_tear"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Ymir's Frozen Vestment",
+        "itemId": "body_armor_satanic_ymir_s_frozen_vestment"
+      },
+      {
+        "slot": "Boots",
+        "name": "Ymir's Freezing Boots",
+        "itemId": "boots_satanic_ymir_s_freezing_boots"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Ymir's Frozen Shroud",
+        "itemId": "helmet_satanic_ymir_s_frozen_shroud"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_per_kill": 25
+        },
+        "descriptions": [
+          "+25 Mana After each Kill"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "cold_resistance": 75
+        },
+        "descriptions": [
+          "+75% Cold Resistance",
+          "+6 to Orb Of Frost (Jotunn)"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "ignore_cold_res": 25
+        },
+        "descriptions": [
+          "+4 to All Skills (Jotunn)",
+          "+25% Ignore Cold Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "viking_s_demise",
+    "name": "Viking's Demise",
+    "items": [
+      {
+        "slot": "Axe",
+        "name": "Viking's Sacred Axe",
+        "itemId": "axe_satanic_viking_s_sacred_axe"
+      },
+      {
+        "slot": "Boots",
+        "name": "Viking's Sacred Boots",
+        "itemId": "boots_satanic_viking_s_sacred_boots"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Viking's Sacred Helmet",
+        "itemId": "helmet_satanic_viking_s_sacred_helmet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "to_strength": 50
+        },
+        "descriptions": [
+          "+50 to Strength"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "attack_rating": 1250,
+          "all_skills": 5
+        },
+        "descriptions": [
+          "+1250 Attack Rating",
+          "+5 to All Skills (Viking)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "justiciar_s_thunder_raiment",
+    "name": "Justiciar's Thunder Raiment",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Justiciar's Thunder Sash",
+        "itemId": "belt_satanic_justiciar_s_thunder_sash"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Justiciar's Thunder Armor",
+        "itemId": "body_armor_satanic_justiciar_s_thunder_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Justiciar's Thunder Boots",
+        "itemId": "boots_satanic_justiciar_s_thunder_boots"
+      },
+      {
+        "slot": "Shield",
+        "name": "Justiciar's Thunder Wall",
+        "itemId": "shield_satanic_justiciar_s_thunder_wall"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "additive_lightning_damage": 450
+        },
+        "descriptions": [
+          "+450 Additive Lightning Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_attack_speed": 40,
+          "lightning_resistance": 75
+        },
+        "descriptions": [
+          "+40% Attack Speed",
+          "+75% Lightning Resistance"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+3 to All Skills (Paladin)",
+          "+5 to Lightning Fury (Paladin)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vagabond_s_rags",
+    "name": "Vagabond's Rags",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Vagabond's Strap",
+        "itemId": "belt_satanic_vagabond_s_strap"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Vagabond's Wraps",
+        "itemId": "body_armor_satanic_vagabond_s_wraps"
+      },
+      {
+        "slot": "Boots",
+        "name": "Vagabond's Marchers",
+        "itemId": "boots_satanic_vagabond_s_marchers"
+      },
+      {
+        "slot": "Shield",
+        "name": "Vagabond's Ward",
+        "itemId": "shield_satanic_vagabond_s_ward"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "movement_speed": 30
+        },
+        "descriptions": [
+          "+30% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "additive_physical_damage": 65,
+          "to_strength": 30
+        },
+        "descriptions": [
+          "+65 Additive Physical Damage",
+          "+30 to Strength"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+3 to All Skills (Nomad)",
+          "+5 to Flying Scimitar (Nomad)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "genji_s_battle_gear",
+    "name": "Genji's Battle Gear",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Genji's Battle Armor",
+        "itemId": "body_armor_satanic_genji_s_battle_armor"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Genji's Battle Helmet",
+        "itemId": "helmet_satanic_genji_s_battle_helmet"
+      },
+      {
+        "slot": "Sword",
+        "name": "Genji's Sword of Fate",
+        "itemId": "sword_satanic_genji_s_sword_of_fate"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "crit_chance": 20
+        },
+        "descriptions": [
+          "+20% Chance for Critical Strike"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "attack_damage": 100,
+          "crit_damage": 60
+        },
+        "descriptions": [
+          "+100% Attack Damage",
+          "+60% Critical Strike Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "wall_of_god",
+    "name": "Wall of God",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Lancer's Chestplate",
+        "itemId": "body_armor_satanic_lancer_s_chestplate"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Lancers Gauntlets",
+        "itemId": "gloves_satanic_lancers_gauntlets"
+      },
+      {
+        "slot": "Polearm",
+        "name": "Lancer's Glory",
+        "itemId": "polearm_satanic_lancer_s_glory"
+      },
+      {
+        "slot": "Shield",
+        "name": "Sacred Aegis",
+        "itemId": "shield_satanic_sacred_aegis"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "damage_return": 100
+        },
+        "descriptions": [
+          "+100% Damage Return"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "defense": 500,
+          "life": 450
+        },
+        "descriptions": [
+          "+500 Defense",
+          "+450 Life"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "physical_damage_reduction": 30
+        },
+        "descriptions": [
+          "+4 to All Skills (Lancer)",
+          "+30% Physical Damage Reduction"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "master_s_legacy",
+    "name": "Master's Legacy",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Lost Master's Platemail",
+        "itemId": "body_armor_satanic_lost_master_s_platemail"
+      },
+      {
+        "slot": "Boots",
+        "name": "Lost Master's Marchers",
+        "itemId": "boots_satanic_lost_master_s_marchers"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Lost Master's Gauntlets",
+        "itemId": "gloves_satanic_lost_master_s_gauntlets"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Lost Master's Vision",
+        "itemId": "helmet_satanic_lost_master_s_vision"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "to_strength": 25
+        },
+        "descriptions": [
+          "+25 to Strength"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "additive_physical_damage": 65,
+          "increased_attack_speed": 50
+        },
+        "descriptions": [
+          "+65 Additive Physical Damage",
+          "+50% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "deadly_blow": 50
+        },
+        "descriptions": [
+          "+5 to All Skills (Samurai)",
+          "+50% Deadly Blow"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "marksman_s_hunting_gear",
+    "name": "Marksman's Hunting Gear",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Marksman's Hunting Shroud",
+        "itemId": "body_armor_satanic_marksman_s_hunting_shroud"
+      },
+      {
+        "slot": "Bow",
+        "name": "Marksman's Hunting Bow",
+        "itemId": "bow_satanic_marksman_s_hunting_bow"
+      },
+      {
+        "slot": "Charm",
+        "name": "Marksman's Quiver",
+        "itemId": "charm_satanic_marksman_s_quiver"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Marksman's Hunting Gloves",
+        "itemId": "gloves_satanic_marksman_s_hunting_gloves"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "increased_attack_speed": 30
+        },
+        "descriptions": [
+          "+30% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "defense_ignored": 30,
+          "attack_rating": 825
+        },
+        "descriptions": [
+          "+30% Ignore Target Defense",
+          "+825 Attack Rating"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+3 to All Skills (Marksman)",
+          "+5 to Volatile Shot (Marksman)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mevius_eye_of_chaos",
+    "name": "Mevius' Eye of Chaos",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Mevius' Mighty Plate",
+        "itemId": "body_armor_satanic_mevius_mighty_plate"
+      },
+      {
+        "slot": "Boots",
+        "name": "Mevius' Mighty Marchers",
+        "itemId": "boots_satanic_mevius_mighty_marchers"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Mevius' Mighty Gauntlets",
+        "itemId": "gloves_satanic_mevius_mighty_gauntlets"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Mevius' Mighty Helmet",
+        "itemId": "helmet_satanic_mevius_mighty_helmet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana": 500
+        },
+        "descriptions": [
+          "+500 Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_per_kill": 35,
+          "mana_replenish_pct": 40
+        },
+        "descriptions": [
+          "+35 Mana After each Kill",
+          "+40% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_resistances": -125,
+          "all_skills": 15
+        },
+        "descriptions": [
+          "-125% All Resistances",
+          "+15 to All Skills"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "elder_of_mos_arathim",
+    "name": "Elder of Mos'Arathim",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Nomad's Battlerobe",
+        "itemId": "body_armor_satanic_nomad_s_battlerobe"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Nomad's Sand Mitts",
+        "itemId": "gloves_satanic_nomad_s_sand_mitts"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Nomad's Sand Bandana",
+        "itemId": "helmet_satanic_nomad_s_sand_bandana"
+      },
+      {
+        "slot": "Sword",
+        "name": "Nomad's Sandslicer",
+        "itemId": "sword_satanic_nomad_s_sandslicer"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "crit_chance": 20
+        },
+        "descriptions": [
+          "+20% Chance for Critical Strike"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "attack_rating": 450,
+          "crit_damage": 75
+        },
+        "descriptions": [
+          "+450 Attack Rating",
+          "+75% Critical Strike Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "to_strength": 30,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+30 to Strength",
+          "+4 to All Skills (Nomad)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "black_beard_s_remains",
+    "name": "Black Beard's Remains",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Pirate Captain's Shirt",
+        "itemId": "body_armor_satanic_pirate_captain_s_shirt"
+      },
+      {
+        "slot": "Boots",
+        "name": "Pirate Captain's Boots",
+        "itemId": "boots_satanic_pirate_captain_s_boots"
+      },
+      {
+        "slot": "Charm",
+        "name": "Pirate Captain's Flag",
+        "itemId": "charm_satanic_pirate_captain_s_flag"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Pirate Captain's Hat",
+        "itemId": "helmet_satanic_pirate_captain_s_hat"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "to_strength": 45
+        },
+        "descriptions": [
+          "+45 to Strength"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_attack_speed": 50,
+          "ignore_fire_res": 25
+        },
+        "descriptions": [
+          "+50% Attack Speed",
+          "+25% Ignore Fire Resistance"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "fire_skill_damage": 50
+        },
+        "descriptions": [
+          "+5 to All Skills (Pirate)",
+          "+50% Fire Skill Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shield_bearer_s_sanctuary",
+    "name": "Shield Bearer's Sanctuary",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Shield Bearer's Plated Armor",
+        "itemId": "body_armor_satanic_shield_bearer_s_plated_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Shield Bearer's Greaves",
+        "itemId": "boots_satanic_shield_bearer_s_greaves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Shield Bearer's Crown",
+        "itemId": "helmet_satanic_shield_bearer_s_crown"
+      },
+      {
+        "slot": "Shield",
+        "name": "Shield Bearer's Wall",
+        "itemId": "shield_satanic_shield_bearer_s_wall"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "defense_vs_missiles": 40
+        },
+        "descriptions": [
+          "+40% Defense vs Missiles"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_attack_speed": 50,
+          "all_resistances": 50
+        },
+        "descriptions": [
+          "+50% Attack Speed",
+          "+50% All Resistances"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "to_vitality": 40,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+40 to Vitality",
+          "+4 to All Skills (Viking)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "guardian_of_the_sun_temple",
+    "name": "Guardian of the Sun Temple",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Solar Prophet's Robes",
+        "itemId": "body_armor_satanic_solar_prophet_s_robes"
+      },
+      {
+        "slot": "Book",
+        "name": "Solar Prophet's Tablet",
+        "itemId": "book_satanic_solar_prophet_s_tablet"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Solar Prophet's Crown",
+        "itemId": "helmet_satanic_solar_prophet_s_crown"
+      },
+      {
+        "slot": "Ring",
+        "name": "Solar Prophet's Signet",
+        "itemId": "ring_satanic_solar_prophet_s_signet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_per_kill": 15
+        },
+        "descriptions": [
+          "+15% Mana After each Kill"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 30,
+          "fire_skill_damage": 50
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana",
+          "+50% Fire Skill Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "faster_cast_rate": 40
+        },
+        "descriptions": [
+          "+4 to All Skills (Exo)",
+          "+40% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "thor_s_thunder_hammer",
+    "name": "Thor's Thunder Hammer",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Thor's Chest Armor",
+        "itemId": "body_armor_satanic_thor_s_chest_armor"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Thor's Battle Gloves",
+        "itemId": "gloves_satanic_thor_s_battle_gloves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Thor's Battle Cap",
+        "itemId": "helmet_satanic_thor_s_battle_cap"
+      },
+      {
+        "slot": "Sword",
+        "name": "Thor's Battle Sword",
+        "itemId": "sword_satanic_thor_s_battle_sword"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "movement_speed": 20
+        },
+        "descriptions": [
+          "+20% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 25,
+          "faster_cast_rate": 30
+        },
+        "descriptions": [
+          "+25% Mana Replenished based on Maximum Mana",
+          "+30% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+3 to All Skills (Paladin)",
+          "+5 to Holy Hammer (Paladin)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "valkyrie_s_battle_gear",
+    "name": "Valkyrie's Battle Gear",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Valkyrie's Battle Raiment",
+        "itemId": "body_armor_satanic_valkyrie_s_battle_raiment"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Valkyrie's Winged Helm",
+        "itemId": "helmet_satanic_valkyrie_s_winged_helm"
+      },
+      {
+        "slot": "Shield",
+        "name": "Valkyrie's Battle Shield",
+        "itemId": "shield_satanic_valkyrie_s_battle_shield"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "movement_speed": 30,
+          "increased_attack_speed": 40
+        },
+        "descriptions": [
+          "+30% Movement Speed",
+          "+40% Attack Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "additive_lightning_damage": 1235,
+          "all_skills": 4,
+          "lightning_skill_damage": 35
+        },
+        "descriptions": [
+          "+1235 Additive Lightning Damage",
+          "+4 to All Skills (Amazon)",
+          "+35% Lightning Skill Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "zealot_s_prophecy",
+    "name": "Zealot's prophecy",
+    "items": [
+      {
+        "slot": "Book",
+        "name": "Zealot's Book of Prophecy",
+        "itemId": "book_satanic_zealot_s_book_of_prophecy"
+      },
+      {
+        "slot": "Charm",
+        "name": "Zealot's Beads of Destruction",
+        "itemId": "charm_satanic_zealot_s_beads_of_destruction"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Zealot's Deathbringers",
+        "itemId": "gloves_satanic_zealot_s_deathbringers"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Zealot's Guise of Doom",
+        "itemId": "helmet_satanic_zealot_s_guise_of_doom"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "movement_speed": 25
+        },
+        "descriptions": [
+          "+25% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "arcane_skill_damage": 20,
+          "mana_replenish_pct": 25
+        },
+        "descriptions": [
+          "+20% Arcane Skill Damage",
+          "+25% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "+4 to All Skills (White Mage)",
+          "+50% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lumberjack_s_forestry_gear",
+    "name": "Lumberjack's Forestry Gear",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Lumberjack's Forestry Boots",
+        "itemId": "boots_satanic_lumberjack_s_forestry_boots"
+      },
+      {
+        "slot": "Chainsaw",
+        "name": "Lumberjack's Chainsaw",
+        "itemId": "chainsaw_satanic_lumberjack_s_chainsaw"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Lumberjack's Safety Gloves",
+        "itemId": "gloves_satanic_lumberjack_s_safety_gloves"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Lumberjack's Safety Helm",
+        "itemId": "helmet_satanic_lumberjack_s_safety_helm"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "additive_physical_damage": 40
+        },
+        "descriptions": [
+          "+40 Additive Physical Damage"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "to_vitality": 35,
+          "movement_speed": 30
+        },
+        "descriptions": [
+          "+35 to Vitality",
+          "+30% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 5,
+          "physical_damage_reduction": 20
+        },
+        "descriptions": [
+          "+5 to All Skills (Redneck)",
+          "+20% Physical Damage Reduction"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "redneck_s_work_gear",
+    "name": "Redneck's Work Gear",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Redneck's Working Boots",
+        "itemId": "boots_satanic_redneck_s_working_boots"
+      },
+      {
+        "slot": "Charm",
+        "name": "Redneck's Keychain",
+        "itemId": "charm_satanic_redneck_s_keychain"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Redneck's Cap",
+        "itemId": "helmet_satanic_redneck_s_cap"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "all_resistances": 40,
+          "faster_cast_rate": 30
+        },
+        "descriptions": [
+          "+40% All Resistances",
+          "+30% Faster Cast Rate"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "fire_skill_damage": 40,
+          "all_skills": 3
+        },
+        "descriptions": [
+          "+40% Fire Skill Damage",
+          "+5 to Tire Fire (Redneck)",
+          "+3 to All Skills (Redneck)"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "thunder_god_s_wrath",
+    "name": "Thunder God's Wrath",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Zeus' Battle Boots",
+        "itemId": "boots_satanic_zeus_battle_boots"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Zeus' Circlet",
+        "itemId": "helmet_satanic_zeus_circlet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "ignore_lightning_res": 20,
+          "lightning_skill_damage": 25,
+          "additive_lightning_damage": 1150
+        },
+        "descriptions": [
+          "+20% Ignore Lightning Resistance",
+          "+25% Lightning Skill Damage",
+          "+1150 Additive Lightning Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "battle_worn",
+    "name": "Battle Worn",
+    "items": [
+      {
+        "slot": "Boots",
+        "name": "Battle Worn Boots",
+        "itemId": "boots_satanic_battle_worn_boots"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Battle Worn Gauntlets",
+        "itemId": "gloves_satanic_battle_worn_gauntlets"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Battle Worn Visor",
+        "itemId": "helmet_satanic_battle_worn_visor"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life_steal": 15
+        },
+        "descriptions": [
+          "+15% Life Stolen per Hit"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "crit_chance": 20,
+          "crit_damage": 80
+        },
+        "descriptions": [
+          "+20% Chance for Critical Strike",
+          "+80% Critical Strike Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "grenadier_s_explosive",
+    "name": "Grenadier's Explosive",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Tactical Flak Jacket",
+        "itemId": "body_armor_satanic_tactical_flak_jacket"
+      },
+      {
+        "slot": "Charm",
+        "name": "Bob's Grenade",
+        "itemId": "charm_satanic_bob_s_grenade"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {},
+        "descriptions": [
+          "+1 to Smart Fuse"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "blood_bond",
+    "name": "Blood Bond",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Butcher's Belt",
+        "itemId": "belt_satanic_butcher_s_belt"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Butcher's Apron",
+        "itemId": "body_armor_satanic_butcher_s_apron"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Butcher's Hood",
+        "itemId": "helmet_satanic_butcher_s_hood"
+      },
+      {
+        "slot": "Sword",
+        "name": "Daisy",
+        "itemId": "sword_satanic_daisy"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life_steal": 15
+        },
+        "descriptions": [
+          "+15% Life Stolen per Hit"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_attack_speed": 30,
+          "attack_damage": 50
+        },
+        "descriptions": [
+          "+30% Attack Speed",
+          "+50% Attack Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "to_dexterity": 250
+        },
+        "descriptions": [
+          "+4 to All Skills (Butcher)",
+          "+250 to Dexterity"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "witching",
+    "name": "Witching",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Mysterious Monkey Paw",
+        "itemId": "charm_satanic_mysterious_monkey_paw"
+      },
+      {
+        "slot": "Charm",
+        "name": "Dibbik Box",
+        "itemId": "charm_satanic_dibbik_box"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {},
+        "descriptions": [
+          "+2 to Follower Relic Amount"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "earth_shaper_s_pride",
+    "name": "Earth Shaper's Pride",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Earth Shaper's Belt",
+        "itemId": "belt_satanic_earth_shaper_s_belt"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Earth Shaper's Body",
+        "itemId": "body_armor_satanic_earth_shaper_s_body"
+      },
+      {
+        "slot": "Boots",
+        "name": "Earth Shaper's Boots",
+        "itemId": "boots_satanic_earth_shaper_s_boots"
+      },
+      {
+        "slot": "Claw",
+        "name": "Earth Shaper's Talons",
+        "itemId": "claw_satanic_earth_shaper_s_talons"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana": 225
+        },
+        "descriptions": [
+          "+225 Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 30,
+          "arcane_skill_damage": 35
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana",
+          "+35% Arcane Skill Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "faster_cast_rate": 50
+        },
+        "descriptions": [
+          "+10 to Tornado (Shaman)",
+          "+50% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "einar_s_rage",
+    "name": "Einar's Rage",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Einar's Plated Armor",
+        "itemId": "body_armor_satanic_einar_s_plated_armor"
+      },
+      {
+        "slot": "Boots",
+        "name": "Einar's Icy Stride",
+        "itemId": "boots_satanic_einar_s_icy_stride"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Einar's Padded Gauntlets",
+        "itemId": "gloves_satanic_einar_s_padded_gauntlets"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Einar's Horned Helmet",
+        "itemId": "helmet_satanic_einar_s_horned_helmet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "life_steal": 8
+        },
+        "descriptions": [
+          "+8% Life Stolen per Hit"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "cold_skill_damage": 20,
+          "attack_damage": 35
+        },
+        "descriptions": [
+          "+20% Cold Skill Damage",
+          "+35% Attack Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "increased_attack_speed": 40
+        },
+        "descriptions": [
+          "+4 to All Skills (Jotunn)",
+          "+40% Attack Speed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "the_lunar_eclipse",
+    "name": "The Lunar Eclipse",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Lunar Prophet's Girdle",
+        "itemId": "belt_satanic_lunar_prophet_s_girdle"
+      },
+      {
+        "slot": "Boots",
+        "name": "Lunar Prophet's Walkers",
+        "itemId": "boots_satanic_lunar_prophet_s_walkers"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Lunar Prophet's Tiara",
+        "itemId": "helmet_satanic_lunar_prophet_s_tiara"
+      },
+      {
+        "slot": "Ring",
+        "name": "Lunar Prophet's Band",
+        "itemId": "ring_satanic_lunar_prophet_s_band"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "increased_mana": 5
+        },
+        "descriptions": [
+          "+5% Increased Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "skill_haste": 30,
+          "cold_skill_damage": 50
+        },
+        "descriptions": [
+          "+30% Skill Haste",
+          "+50% Cold Skill Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "ignore_cold_res": 40
+        },
+        "descriptions": [
+          "+4 to All Skills (Exo)",
+          "+40% Ignore Cold Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "thunder_caller_s_wrath",
+    "name": "Thunder Caller's Wrath",
+    "items": [
+      {
+        "slot": "Belt",
+        "name": "Thunder Caller's Sash",
+        "itemId": "belt_satanic_thunder_caller_s_sash"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Thunder Caller's Robe",
+        "itemId": "body_armor_satanic_thunder_caller_s_robe"
+      },
+      {
+        "slot": "Boots",
+        "name": "Thunder Caller's Treads",
+        "itemId": "boots_satanic_thunder_caller_s_treads"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Thunder Caller's Veil",
+        "itemId": "helmet_satanic_thunder_caller_s_veil"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "mana_replenish_pct": 30
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "lightning_skill_damage": 30
+        },
+        "descriptions": [
+          "+30% Lightning Skill Damage",
+          "+6 to High Voltage Aura (Stormweaver)"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "ignore_lightning_res": 30
+        },
+        "descriptions": [
+          "+4 to All Skills (Stormweaver)",
+          "+30% Ignore Lightning Resistance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "odin_s_demise",
+    "name": "Odin's Demise",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Odin's Battlearmor",
+        "itemId": "body_armor_satanic_odin_s_battlearmor"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Odin's Eternal Visage",
+        "itemId": "helmet_satanic_odin_s_eternal_visage"
+      },
+      {
+        "slot": "Staff",
+        "name": "Thorn of Helheim",
+        "itemId": "staff_satanic_thorn_of_helheim"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "defense": 475,
+          "all_skills": 2
+        },
+        "descriptions": [
+          "+475 Defense",
+          "+2 to All Skills"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "mana_replenish_pct": 30,
+          "magic_skill_damage": 25,
+          "faster_cast_rate": 40
+        },
+        "descriptions": [
+          "+30% Mana Replenished based on Maximum Mana",
+          "+25% Magic Skill Damage",
+          "+40% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sheep_king_s_kingdom",
+    "name": "Sheep King's Kingdom",
+    "items": [
+      {
+        "slot": "Body Armor",
+        "name": "Sheep King's Hide",
+        "itemId": "body_armor_satanic_sheep_king_s_hide"
+      },
+      {
+        "slot": "Charm",
+        "name": "Sheep King's Wool",
+        "itemId": "charm_satanic_sheep_king_s_wool"
+      },
+      {
+        "slot": "Helmet",
+        "name": "Sheep King's Crown",
+        "itemId": "helmet_satanic_sheep_king_s_crown"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "all_attributes": 10,
+          "movement_speed": 20
+        },
+        "descriptions": [
+          "+10 to All Attributes",
+          "+20% Movement Speed"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "lightning_resistance": 75,
+          "all_skills": 5,
+          "faster_cast_rate": 45
+        },
+        "descriptions": [
+          "+75% Lightning Resistance",
+          "+5 to All Skills",
+          "+45% Faster Cast Rate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "masamura",
+    "name": "Masamura",
+    "items": [
+      {
+        "slot": "Sword",
+        "name": "Muramasa",
+        "itemId": "sword_satanic_muramasa"
+      },
+      {
+        "slot": "Sword",
+        "name": "Masamune",
+        "itemId": "sword_satanic_masamune"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "attack_damage": 25,
+          "increased_attack_speed": 40
+        },
+        "descriptions": [
+          "+25% Attack Damage",
+          "+40% Attack Speed"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mystic_of_the_forest",
+    "name": "Mystic of the Forest",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Prophet's Foliage",
+        "itemId": "amulet_satanic_prophets_foliage"
+      },
+      {
+        "slot": "Belt",
+        "name": "Prophet's Branch",
+        "itemId": "belt_satanic_prophets_branch"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Prophet's Shroud",
+        "itemId": "body_armor_satanic_prophets_shroud"
+      },
+      {
+        "slot": "Ring",
+        "name": "Prophet's Pinecone",
+        "itemId": "ring_satanic_prophets_pinecone"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "increased_intelligence": 10
+        },
+        "descriptions": [
+          "+10% Increased Intelligence"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "poison_skill_damage": 30,
+          "summon_damage": 45
+        },
+        "descriptions": [
+          "+30% Poison Skill Damage",
+          "+45% Increased Summon Damage"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "all_skills": 4,
+          "summon_life": 75
+        },
+        "descriptions": [
+          "+4 to All Skills (Prophet)",
+          "+75% Increased Summon Life"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "skinwalker_s_bloodlust",
+    "name": "Skinwalker's Bloodlust",
+    "items": [
+      {
+        "slot": "Amulet",
+        "name": "Skinwalker's Claw",
+        "itemId": "amulet_satanic_skinwalkers_claw"
+      },
+      {
+        "slot": "Body Armor",
+        "name": "Skinwalker's Mantle",
+        "itemId": "body_armor_satanic_skinwalkers_mantle"
+      },
+      {
+        "slot": "Gloves",
+        "name": "Skinwalker's Paw",
+        "itemId": "gloves_satanic_skinwalkers_paw"
+      },
+      {
+        "slot": "Ring",
+        "name": "Skinwalker's Sigil",
+        "itemId": "ring_satanic_skinwalkers_sigil"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "physical_damage_reduction": 10
+        },
+        "descriptions": [
+          "+10% Physical Damage Reduction"
+        ]
+      },
+      {
+        "pieces": 3,
+        "stats": {
+          "increased_attack_speed": 30,
+          "all_skills": 4
+        },
+        "descriptions": [
+          "+30% Attack Speed",
+          "+4 to All Skills (Prophet)"
+        ]
+      },
+      {
+        "pieces": 4,
+        "stats": {
+          "cold_skill_damage": 100
+        },
+        "descriptions": [
+          "+100% Cold Skill Damage",
+          "+1 to Piercing Bone (Prophet)"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,2369 @@
+[
+  {
+    "id": "moonshine_molotov",
+    "classId": "redneck",
+    "name": "Moonshine Molotov",
+    "kind": "active",
+    "description": "Throw a bottle of moonshine that ignites the impacted area on fire and sends out burning oil.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Projectile"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 5.5,
+      "perLevel": 7.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "range": 240,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Oil Spill",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Spontaneous Combustion",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Tire Fire",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.15,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "moonshine_molotov_core",
+        "positionIndex": 0,
+        "name": "Moonshine Molotov",
+        "description": "Core of the Moonshine Molotov subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "extra_gasoline",
+        "positionIndex": 1,
+        "name": "Extra Gasoline",
+        "description": "Increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "double_bourbon",
+        "positionIndex": 2,
+        "name": "Double Bourbon",
+        "description": "Chance to throw an additional molotov.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "wider_flames",
+        "positionIndex": 3,
+        "name": "Wider Flames",
+        "description": "Increases flame radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "scorching_collision",
+        "positionIndex": 4,
+        "name": "Scorching Collision",
+        "description": "Direct hits with the molotov breaks monsters fire resistances.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "gas_leak",
+        "positionIndex": 5,
+        "name": "Gas Leak",
+        "description": "Molotovs leave a small trail of fire as they travel.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 35 }
+        }
+      },
+      {
+        "id": "oil_spilled_flask",
+        "positionIndex": 6,
+        "name": "Oil Spilled Flask",
+        "description": "Chance for molotovs to spill oil around them.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 10 } }
+      },
+      {
+        "id": "burn_the_demons",
+        "positionIndex": 7,
+        "name": "Burn The Demons",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "redeeming_flames",
+        "positionIndex": 8,
+        "name": "Redeeming Flames",
+        "description": "Increases the amount of spills from moonshine molotov.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "bottle_flip",
+        "positionIndex": 9,
+        "name": "Bottle Flip",
+        "description": "Molotovs now bounce once when they hit the ground redirecting them towards the closest enemy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "resilient_liquid",
+        "positionIndex": 10,
+        "name": "Resilient Liquid",
+        "description": "Increases the duration of flames.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "heated_melting_point",
+        "positionIndex": 11,
+        "name": "Heated Melting Point",
+        "description": "Moonshine molotovs now ignite into blue flames increasing its damage significantly.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 70 }
+        }
+      },
+      {
+        "id": "set_the_world_on_fire",
+        "positionIndex": 12,
+        "name": "Set The World On Fire!",
+        "description": "Throw multiple molotovs around you for a short period setting the world ablaze. Moonshine molotov now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "flaming_tar",
+        "positionIndex": 13,
+        "name": "Flaming Tar",
+        "description": "Direct hits cause enemies to leave a trail of fire wherever they go damaging other nearby enemies dealing increased damage and inflicting burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": { "fire_skill_damage": 30, "increased_burning_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "blazing_trail_of_flames",
+        "positionIndex": 14,
+        "name": "Blazing Trail of Flames",
+        "description": "Molotov now bounces additional times from the ground spilling small flames around.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_bounces": 3, "fire_skill_damage": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "pipe_bombs",
+    "classId": "redneck",
+    "name": "Pipe Bombs",
+    "kind": "active",
+    "description": "Throw a barrage of handcrafted pipe bombs dealing area of effect fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Explosion"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 7,
+      "perLevel": 13
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "range": 340,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Combustible Oil",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moonshine Molotov",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Pickup Raid",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "pipe_bombs_core",
+        "positionIndex": 0,
+        "name": "Pipe Bombs",
+        "description": "Core of the Pipe Bombs subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "stacked_bag",
+        "positionIndex": 1,
+        "name": "Stacked Bag",
+        "description": "Throw additional bombs.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "lowered_weight",
+        "positionIndex": 2,
+        "name": "Lowered Weight",
+        "description": "Increases the projectile speed of pipe bombs.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "tnt_mass",
+        "positionIndex": 3,
+        "name": "TNT Mass",
+        "description": "Increases the size and explosion area of effect radius of pipe bombs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "bomberman",
+        "positionIndex": 4,
+        "name": "Bomberman",
+        "description": "Increases faster cast rate when using pipe bombs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "splitting_explosive",
+        "positionIndex": 5,
+        "name": "Splitting Explosive",
+        "description": "Chance on hit to split into multiple pipe bombs.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "wounding_blast",
+        "positionIndex": 6,
+        "name": "Wounding Blast",
+        "description": "Inflicts bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "salt_covering",
+        "positionIndex": 7,
+        "name": "Salt Covering",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "blasting_powder",
+        "positionIndex": 8,
+        "name": "Blasting Powder",
+        "description": "Increases the damage dealt by pipe bombs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "anti_fatigue",
+        "positionIndex": 9,
+        "name": "Anti Fatigue",
+        "description": "Decreases the mana cost of pipe bombs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "upwards_pressure",
+        "positionIndex": 10,
+        "name": "Upwards Pressure",
+        "description": "Chance on hit to knock up monsters dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "fiery_infusion",
+        "positionIndex": 11,
+        "name": "Fiery Infusion",
+        "description": "Pipe bombs now leave burning flames on the ground with increased damage and area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 45, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "disorienting_blast",
+        "positionIndex": 12,
+        "name": "Disorienting Blast",
+        "description": "Knock monsters back with massive power causing them to take additional damage and be stunned when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 125 }
+        }
+      },
+      {
+        "id": "eat_this",
+        "positionIndex": 13,
+        "name": "Eat This!",
+        "description": "Throw a single pipe bomb with force unleashing multiple pipe bombs in a circle around the impact point.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 60, "projectile_count": 6 }
+        }
+      },
+      {
+        "id": "colossal_explosive",
+        "positionIndex": 14,
+        "name": "Colossal Explosive",
+        "description": "Throw a giant pipe bomb that bounces multiple times dealing increased damage. Each bounce it shrinks in size and deals less damage until it vanishes.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "fire_skill_damage": 85, "projectile_size": 125 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "tire_fire",
+    "classId": "redneck",
+    "name": "Tire Fire",
+    "kind": "active",
+    "description": "Throw a truck tire that deals fire damage on hit.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell",
+      "Projectile",
+      "Explosion"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 11
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Hillbilly Rage",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moonshine Molotov",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Oil Spill",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "tire_fire_core",
+        "positionIndex": 0,
+        "name": "Tire Fire",
+        "description": "Core of the Tire Fire subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "tire_density",
+        "positionIndex": 1,
+        "name": "Tire Density",
+        "description": "Increases the damage dealt by tire fire.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "increased_stock",
+        "positionIndex": 2,
+        "name": "Increased Stock",
+        "description": "Increases the projectile speed of tire fire.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "scaling_up",
+        "positionIndex": 3,
+        "name": "Scaling Up",
+        "description": "Increases the size of tires.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "hard_hitter",
+        "positionIndex": 4,
+        "name": "Hard Hitter",
+        "description": "Knocks monsters back with increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "bouncy_tire",
+        "positionIndex": 5,
+        "name": "Bouncy Tire",
+        "description": "Tires now bounce over gaps and short terrain dealing a damaging area of effect pulse when landing.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "flaming_tire",
+        "positionIndex": 6,
+        "name": "Flaming Tire",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 22.5 } }
+          ]
+        }
+      },
+      {
+        "id": "overheated",
+        "positionIndex": 7,
+        "name": "Overheated",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "the_machinist",
+        "positionIndex": 8,
+        "name": "The Machinist",
+        "description": "Increases faster cast rate when casting tire fire.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "oily_tire",
+        "positionIndex": 9,
+        "name": "Oily Tire",
+        "description": "Tire now leaves a trail of oil behind with increased radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "impact_angle",
+        "positionIndex": 10,
+        "name": "Impact Angle",
+        "description": "Tires now bounce off of high terrain and environment increasing its damage per impact.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "monster_truck_tire",
+        "positionIndex": 11,
+        "name": "Monster Truck Tire",
+        "description": "Now sends out a big monster truck tire stunning and knocking monsters up on hit dealing increased damage. Tire fire now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "fire_skill_damage": 125, "projectile_size": 75 }
+        }
+      },
+      {
+        "id": "mini_tires",
+        "positionIndex": 12,
+        "name": "Mini Tires",
+        "description": "Now send out multiple smaller tires in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "fire_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "donuts",
+        "positionIndex": 13,
+        "name": "Donuts",
+        "description": "Tires now spiral outwards inflicting fire break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "fire_break": 0 },
+          "perRank": { "fire_skill_damage": 50, "fire_break": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "loose_tire",
+        "positionIndex": 14,
+        "name": "Loose Tire",
+        "description": "Send out a bouncing tire dealing increased area of effect damage every time it lands.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "oil_spill",
+    "classId": "redneck",
+    "name": "Oil Spill",
+    "kind": "active",
+    "description": "Spill oil on the ground slowing and lowering monster attack rating. Oil also ignites into flames when coming in contact with Moonshine Molotov dealing additional burning damage.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 1,
+    "effectDuration": 5,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "burning_damage": 20,
+        "attack_rating": 1
+      },
+      "perRank": {
+        "burning_damage": 5,
+        "attack_rating": 1
+      }
+    }
+  },
+  {
+    "id": "combustible_oil",
+    "classId": "redneck",
+    "name": "Combustible Oil",
+    "kind": "passive",
+    "description": "Increases your fire skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "fire_skill_damage": 3
+      },
+      "perRank": {
+        "fire_skill_damage": 3
+      }
+    }
+  },
+  {
+    "id": "hillbilly_rage",
+    "classId": "redneck",
+    "name": "Hillbilly Rage",
+    "kind": "buff",
+    "description": "Temporarily increases your fire skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 35,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "fire_skill_damage": 5
+      },
+      "perRank": {
+        "fire_skill_damage": 5
+      }
+    }
+  },
+  {
+    "id": "spontaneous_combustion",
+    "classId": "redneck",
+    "name": "Spontaneous Combustion",
+    "kind": "passive",
+    "description": "When igniting oil in flames, also make the monsters combust dealing area of effect fire damage around them.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive",
+      "Explosion"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "passiveStats": {
+      "base": {
+        "burning_damage": 30
+      },
+      "perRank": {
+        "burning_damage": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Combustible Oil",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Oil Spill",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moonshine Molotov",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.15,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "moonshine_madness",
+    "classId": "redneck",
+    "name": "Moonshine Madness",
+    "kind": "passive",
+    "description": "Increases your attack rating and movement speed.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_rating_pct": 3,
+        "movement_speed": 1.5
+      },
+      "perRank": {
+        "attack_rating_pct": 3,
+        "movement_speed": 1.5
+      }
+    }
+  },
+  {
+    "id": "pickup_raid",
+    "classId": "redneck",
+    "name": "Pickup Raid",
+    "kind": "active",
+    "description": "Call your hillbilly friends to siege your opponents in a pickup truck dealing fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell"
+    ],
+    "tree": "Hillbilly",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "damageType": "fire",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 18
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "effectDuration": 4,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      {
+        "source": "Pipe Bombs",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Tire Fire",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Spontaneous Combustion",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 8.5,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "pickup_raid_core",
+        "positionIndex": 0,
+        "name": "Pickup Raid",
+        "description": "Core of the Pickup Raid subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "ignition",
+        "positionIndex": 1,
+        "name": "Ignition",
+        "description": "Increases the damage dealt by pickup raid.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "oil_leak",
+        "positionIndex": 2,
+        "name": "Oil Leak",
+        "description": "All raid participants leak oil on the ground.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "napalm_filling",
+        "positionIndex": 3,
+        "name": "Napalm Filling",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "v12_engine",
+        "positionIndex": 4,
+        "name": "V12 Engine",
+        "description": "Increases travel speed of all raid members.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 10 }
+        }
+      },
+      {
+        "id": "shattering_shells",
+        "positionIndex": 5,
+        "name": "Shattering Shells",
+        "description": "Buckshots from the motorcycle rider now inflict fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "speed_dial",
+        "positionIndex": 6,
+        "name": "Speed Dial",
+        "description": "Decreases the cooldown of pickup raid.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "billy_little_bob",
+        "positionIndex": 7,
+        "name": "Billy & Little Bob",
+        "description": "Adds a motorcycle rider to the pickup raid firing buckshots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "double_barrel",
+        "positionIndex": 8,
+        "name": "Double Barrel",
+        "description": "Pickup truck now fires additional projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "moonshine_miles",
+        "positionIndex": 9,
+        "name": "Moonshine Miles",
+        "description": "Adds a wooden airplane to the pickup raid dropping bombs dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "crackling_fire",
+        "positionIndex": 10,
+        "name": "Crackling Fire",
+        "description": "Bombs dropped by the wooden airplane now inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "suicide_squad",
+        "positionIndex": 11,
+        "name": "Suicide Squad",
+        "description": "The raid now moves towards target location exploding into multiple big explosions and truck tires rolling into all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 300, "projectile_count": 8 }
+        }
+      },
+      {
+        "id": "freedom_convoy",
+        "positionIndex": 12,
+        "name": "Freedom Convoy",
+        "description": "Now send multiple pickup trucks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "fire_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "drunken_air_raid",
+        "positionIndex": 13,
+        "name": "Drunken Air Raid",
+        "description": "Now only send a raid of planes that fire projectiles and drop bombs.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "fire_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "tarethiel_mc",
+        "positionIndex": 14,
+        "name": "Tarethiel MC",
+        "description": "Now only send motorcycle riders firing buckshot inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "fire_skill_damage": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "durable_wear",
+    "classId": "redneck",
+    "name": "Durable Wear",
+    "kind": "passive",
+    "description": "Increases your defense.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "enhanced_defense": 5
+      },
+      "perRank": {
+        "enhanced_defense": 5
+      }
+    }
+  },
+  {
+    "id": "chainsaw_slash",
+    "classId": "redneck",
+    "name": "Chainsaw Slash",
+    "kind": "active",
+    "description": "Perform an area of effect attack attaching a spinning chainsaw on monsters for a short period of time.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Melee",
+      "Strike"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 65,
+        "perLevel": 22.5
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 10,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Durable Wear",
+        "stat": "attack_damage",
+        "value": 3.3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Chainsaw Massacre",
+        "stat": "attack_damage",
+        "value": 3.3,
+        "per": "skill_level"
+      },
+      {
+        "source": "Experienced Logger",
+        "stat": "attack_damage",
+        "value": 3.3,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "chainsaw_slash_core",
+        "positionIndex": 0,
+        "name": "Chainsaw Slash",
+        "description": "Core of the Chainsaw Slash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "wider_chain",
+        "positionIndex": 1,
+        "name": "Wider Chain",
+        "description": "Increases the attack area of effect radius of chainslaw slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "accelerated_chain",
+        "positionIndex": 2,
+        "name": "Accelerated Chain",
+        "description": "Increases the damage dealt by chainsaw slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "double_the_logging",
+        "positionIndex": 3,
+        "name": "Double The Logging",
+        "description": "Chance to attach an additional chainsaw on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "rupturing_slash",
+        "positionIndex": 4,
+        "name": "Rupturing Slash",
+        "description": "Chance on inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "chaining_uppercut",
+        "positionIndex": 5,
+        "name": "Chaining Uppercut",
+        "description": "Chance on hit to send monsters airborne dealing increased area of effect damage when landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 8 }
+          }
+        }
+      },
+      {
+        "id": "the_motor_goes_brrrrr",
+        "positionIndex": 6,
+        "name": "The Motor Goes BRRRRR!",
+        "description": "Increases chainsaw slash attack speed while wielding a chainsaw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "bigger_saw",
+        "positionIndex": 7,
+        "name": "Bigger Saw",
+        "description": "Increases the area of effect radius and size of rotating chainsaws.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "strengthened_bloodlust",
+        "positionIndex": 8,
+        "name": "Strengthened Bloodlust",
+        "description": "Increases rotating chainsaw damage and size based on your total strength.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 5, "projectile_size": 0.15 }
+        }
+      },
+      {
+        "id": "malfunctioning_chainsaw",
+        "positionIndex": 9,
+        "name": "Malfunctioning Chainsaw",
+        "description": "Chainsaws explode after expiring dealing additional damage and stunning nearby enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 15 }
+        }
+      },
+      {
+        "id": "bloody_carnage",
+        "positionIndex": 10,
+        "name": "Bloody Carnage",
+        "description": "Increases damage dealt to bleeding enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "giant_slash",
+        "positionIndex": 11,
+        "name": "Giant Slash",
+        "description": "Every 4th attack unleashes a giant slash dealing increased damage and inflicting armor break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "armor_break": 0 },
+          "perRank": { "physical_skill_damage": 35, "armor_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "woodcutters_madness",
+        "positionIndex": 12,
+        "name": "Woodcutter´s Madness",
+        "description": "Every 3rd hit unleashes a spinning attack with increased radius and dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "area_of_effect": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 25,
+            "area_of_effect": 25,
+            "projectile_count": 1
+          }
+        }
+      },
+      {
+        "id": "gas_to_the_chainsaws",
+        "positionIndex": 13,
+        "name": "Gas To The Chainsaws",
+        "description": "Each target can only have one chainsaw attached to them but striking them again causes it to reset its duration, growing in size and dealing additional damage up to 10 times.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 5, "projectile_size": 3 }
+        }
+      },
+      {
+        "id": "sawing_momentum",
+        "positionIndex": 14,
+        "name": "Sawing Momentum",
+        "description": "Enemies killed while a chainsaw is attached to them release the chainsaws outwards. If they hit a new target, they attach themselves to them instead.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "physical_skill_damage": 25, "faster_cast_rate": 10 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "loggers_endurance",
+    "classId": "redneck",
+    "name": "Loggers Endurance",
+    "kind": "passive",
+    "description": "Increases your life and life replenish.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "increased_life": 3,
+        "life_replenish_pct": 1
+      },
+      "perRank": {
+        "increased_life": 3,
+        "life_replenish_pct": 1
+      }
+    }
+  },
+  {
+    "id": "chainsaw_massacre",
+    "classId": "redneck",
+    "name": "Chainsaw Massacre",
+    "kind": "active",
+    "description": "Violently spin your chainsaw dealing damage to monsters around you. Going the full distance unleashes a whirl attack with increased damage and area of effect.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Melee",
+      "Area of Effect",
+      "Strike"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "damageType": "physical",
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 41,
+        "perLevel": 10
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 9,
+        "perLevel": 0
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Chainsaw Slash",
+        "stat": "attack_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Experienced Logger",
+        "stat": "attack_damage",
+        "value": 11,
+        "per": "skill_level"
+      },
+      {
+        "source": "Revved Up",
+        "stat": "attack_damage",
+        "value": 11,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "chainsaw_massacre_core",
+        "positionIndex": 0,
+        "name": "Chainsaw Massacre",
+        "description": "Core of the Chainsaw Massacre subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "wielding_the_saw",
+        "positionIndex": 1,
+        "name": "Wielding The Saw",
+        "description": "Increases the damage dealt by chainsaw massacre while you are wielding a chainsaw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "saw_through_the_woods",
+        "positionIndex": 2,
+        "name": "Saw Through The Woods",
+        "description": "Increases the area of effect radius of chainsaw massacre.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "sawing_execution",
+        "positionIndex": 3,
+        "name": "Sawing Execution",
+        "description": "Chainsaw massacre now executes targets below a certain percentage of life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "final_stand",
+        "positionIndex": 4,
+        "name": "Final Stand",
+        "description": "Increases damage dealt by chainsaw massacre's ending whirl.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "optimal_working_hours",
+        "positionIndex": 5,
+        "name": "Optimal Working Hours",
+        "description": "Decreases duration but increases damage dealt each second spent spinning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "overtime",
+        "positionIndex": 6,
+        "name": "Overtime",
+        "description": "Increases the duration of chainsaw massacre.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "critical_wounding",
+        "positionIndex": 7,
+        "name": "Critical Wounding",
+        "description": "Inflicts bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "resilient_sustain",
+        "positionIndex": 8,
+        "name": "Resilient Sustain",
+        "description": "Increases your life steal and mana steal when using chainsaw massacre.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_steal": 0, "mana_steal": 0 },
+          "perRank": { "life_steal": 3, "mana_steal": 3 }
+        }
+      },
+      {
+        "id": "logging_machine",
+        "positionIndex": 9,
+        "name": "Logging Machine",
+        "description": "Increases spinning speed of chainsaw massacre.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spin_speed": 0, "movement_speed": 0 },
+          "perRank": { "spin_speed": 8, "movement_speed": 8 }
+        }
+      },
+      {
+        "id": "calling_in_sick",
+        "positionIndex": 10,
+        "name": "Calling in Sick",
+        "description": "Decreases the duration of chainsaw massacre.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": -10 }
+        }
+      },
+      {
+        "id": "loggers_lil_helpers",
+        "positionIndex": 11,
+        "name": "Logger´s Lil Helpers",
+        "description": "Additionally summons multiple chainsaws that spin around you at different speeds while chainsaw massacre is active.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "raging_sawblades",
+        "positionIndex": 12,
+        "name": "Raging Sawblades",
+        "description": "Perform the ending whirl frequently while spinning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 15 }
+        }
+      },
+      {
+        "id": "standstill_focus",
+        "positionIndex": 13,
+        "name": "Standstill Focus",
+        "description": "Spin in place dealing increased damage. Each kill increases the area of effect radius of chainsaw massacre.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "physical_skill_damage": 125, "area_of_effect": 2.5 }
+          }
+        }
+      },
+      {
+        "id": "woodcutters_expertise",
+        "positionIndex": 14,
+        "name": "Woodcutter´s Expertise",
+        "description": "Gain absolute control of the spinning dealing increased damage and inflict bleeding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "crit_damage": 0 },
+          "perRank": { "physical_skill_damage": 25, "crit_damage": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "experienced_logger",
+    "classId": "redneck",
+    "name": "Experienced Logger",
+    "kind": "passive",
+    "description": "Increases your chance for critical strike and critical strike damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "passiveStats": {
+      "base": {
+        "crit_chance": 1,
+        "crit_damage": 4
+      },
+      "perRank": {
+        "crit_chance": 1,
+        "crit_damage": 4
+      }
+    }
+  },
+  {
+    "id": "revved_up",
+    "classId": "redneck",
+    "name": "Revved Up",
+    "kind": "buff",
+    "description": "Temporarily increases your attack speed and damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Buff"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "attack_damage": 3.5
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "attack_damage": 3.5
+      }
+    }
+  },
+  {
+    "id": "rogue_chainsaw",
+    "classId": "redneck",
+    "name": "Rogue Chainsaw",
+    "kind": "active",
+    "description": "Throw a chainsaw on the ground spinning and dealing increased damage and additional arcane damage to monsters struck.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Spell"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "damageType": "arcane",
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 10,
+        "perLevel": 15
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "baseCastRate": 1,
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Loggers Endurance",
+        "stat": "arcane_skill_damage",
+        "value": 14,
+        "per": "skill_level"
+      },
+      {
+        "source": "Chainsaw Slash",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Tree Trunk Triumph",
+        "stat": "arcane_skill_damage",
+        "value": 22,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 6.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "rogue_chainsaw_core",
+        "positionIndex": 0,
+        "name": "Rogue Chainsaw",
+        "description": "Core of the Rogue Chainsaw subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "overheating_engine",
+        "positionIndex": 1,
+        "name": "Overheating Engine",
+        "description": "Increases the spinning speed of rogue chainsaws.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spin_speed": 0 },
+          "perRank": { "spin_speed": 15 }
+        }
+      },
+      {
+        "id": "ripping_impact",
+        "positionIndex": 2,
+        "name": "Ripping Impact",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "handling_skills",
+        "positionIndex": 3,
+        "name": "Handling Skills",
+        "description": "Increases the cast rate of rogue chainsaw while wielding a chainsaw.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 7.5 }
+        }
+      },
+      {
+        "id": "rough_chains",
+        "positionIndex": 4,
+        "name": "Rough Chains",
+        "description": "Increases the damage dealt by rogue chainsaw.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "engine_gone_wild",
+        "positionIndex": 5,
+        "name": "Engine Gone Wild",
+        "description": "When expiring, the chainsaws launch into the direction they are facing, dealing additional damage and bouncing off of terrain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "chaining_chainsaws",
+        "positionIndex": 6,
+        "name": "Chaining Chainsaws",
+        "description": "Launched chainsaws have a chance to chain when they first hit an enemy.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 7 } }
+      },
+      {
+        "id": "empty_the_workbag",
+        "positionIndex": 7,
+        "name": "Empty The Workbag",
+        "description": "Chance on cast to throw additional rogue chainsaw.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "ruthless_chainsaws",
+        "positionIndex": 8,
+        "name": "Ruthless Chainsaws",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "consumed_rupture",
+        "positionIndex": 9,
+        "name": "Consumed Rupture",
+        "description": "When hitting a bleeding monster, consume the bleeding debuff and unleash an explosion of blood scaling with the bleeding damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "full_gas_tank",
+        "positionIndex": 10,
+        "name": "Full Gas Tank",
+        "description": "Increases the duration of rogue chainsaws.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "slice_em_up",
+        "positionIndex": 11,
+        "name": "Slice Em Up!",
+        "description": "Chainsaws now slowly travel forward with increased size and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 35, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "shredding_squad",
+        "positionIndex": 12,
+        "name": "Shredding Squad",
+        "description": "Launch multiple rogue chainsaws in an arc instead of throwing them on the ground.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 3, "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "homing_chainsaws",
+        "positionIndex": 13,
+        "name": "Homing Chainsaws",
+        "description": "Rogue chainsaws now home towards the closest monster.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 30, "skill_range": 45 }
+        }
+      },
+      {
+        "id": "circle_of_cutting",
+        "positionIndex": 14,
+        "name": "Circle of Cutting",
+        "description": "Throw multiple rogue chainsaws in a circle around you, traveling back to you upon landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 25, "projectile_count": 4 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "chainsaw_mastery",
+    "classId": "redneck",
+    "name": "Chainsaw Mastery",
+    "kind": "passive",
+    "description": "Increases your damage and attack rating when using a chainsaw.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 6,
+        "attack_rating_pct": 2.5
+      },
+      "perRank": {
+        "attack_damage": 6,
+        "attack_rating_pct": 2.5
+      }
+    }
+  },
+  {
+    "id": "tree_trunk_triumph",
+    "classId": "redneck",
+    "name": "Tree Trunk Triumph",
+    "kind": "active",
+    "description": "Summon a massive tree and cut it down on nearby monsters dealing increased damage and additional arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Melee",
+      "Strike"
+    ],
+    "tree": "Logger",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "damageType": "arcane",
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 10.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 37,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8,
+        "perLevel": 1
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "movementDuringUse": 65,
+    "bonusSources": [
+      {
+        "source": "Revved Up",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Loggers Endurance",
+        "stat": "arcane_skill_damage",
+        "value": 22.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Chainsaw Mastery",
+        "stat": "attack_damage",
+        "value": 6.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 9.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "tree_trunk_triumph_core",
+        "positionIndex": 0,
+        "name": "Tree Trunk Triumph",
+        "description": "Core of the Tree Trunk Triumph subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "splinters",
+        "positionIndex": 1,
+        "name": "Splinters",
+        "description": "Trunks have a chance to explode into multiple splinters inflicting monsters hit with bleeding for a portion of the damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "treefall",
+        "positionIndex": 2,
+        "name": "Treefall",
+        "description": "Chance to stun on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "heavy_trunk",
+        "positionIndex": 3,
+        "name": "Heavy Trunk",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "sequoia",
+        "positionIndex": 4,
+        "name": "Sequoia",
+        "description": "Increases the size of tree trunks.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "sticking_splinters",
+        "positionIndex": 5,
+        "name": "Sticking Splinters",
+        "description": "Splinters stick to monsters on hit dealing damage over time.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 30 }
+        }
+      },
+      {
+        "id": "skillfull_fall",
+        "positionIndex": 6,
+        "name": "Skillfull Fall",
+        "description": "Increases the damage dealt by tree trunk triumph.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "sudden_treefall",
+        "positionIndex": 7,
+        "name": "Sudden Treefall",
+        "description": "Trunks have a chance to cut down another tree at a nearby enemy.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "maiming_collision",
+        "positionIndex": 8,
+        "name": "Maiming Collision",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "heavy_fall",
+        "positionIndex": 9,
+        "name": "Heavy Fall",
+        "description": "Chance on hit to unleash a shockwave in the falling direction, dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "clear_the_way",
+        "positionIndex": 10,
+        "name": "Clear The Way",
+        "description": "Decreases movement diminish when using tree trunk triumph.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "stack_of_trunks",
+        "positionIndex": 11,
+        "name": "Stack of Trunks",
+        "description": "Cut down multiple trees in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "giant_red_tree",
+        "positionIndex": 12,
+        "name": "Giant Red Tree",
+        "description": "Every third attack summons a gigantic trunk dealing increased damage and inflicting armor break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "armor_break": 0 },
+          "perRank": { "arcane_skill_damage": 75, "armor_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "splitting_fall",
+        "positionIndex": 13,
+        "name": "Splitting Fall",
+        "description": "Trunks split into multiple wooden discs upon falling that chain from monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "arcane_skill_damage": 40, "projectile_bounces": 4 }
+        }
+      },
+      {
+        "id": "falling_forest",
+        "positionIndex": 14,
+        "name": "Falling Forest",
+        "description": "Multiple trunks fall from the sky on target location, falling towards the nearest monster. Tree trunk triumph now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 65, "projectile_count": 8 }
+        }
+      }
+    ]
+  }
+]

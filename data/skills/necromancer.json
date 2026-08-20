@@ -1,0 +1,2401 @@
+[
+  {
+    "id": "bone_shred",
+    "classId": "necromancer",
+    "name": "Bone Shred",
+    "kind": "active",
+    "description": "Unleash bone fragments dealing arcane damage to monsters.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Venomancer",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 9 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Bone Spear", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.45, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bone_shred_core",
+        "positionIndex": 0,
+        "name": "Bone Shred",
+        "description": "Core of the Bone Shred subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "endochondral_ossification",
+        "positionIndex": 1,
+        "name": "Endochondral Ossification",
+        "description": "Increases the amount of bone shreds.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "lrp5_gene",
+        "positionIndex": 2,
+        "name": "LRP5 Gene",
+        "description": "Increases the damage dealt by bone shred.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "remodelling",
+        "positionIndex": 3,
+        "name": "Remodelling",
+        "description": "Decreases mana cost when using bone shred.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 6 }
+        }
+      },
+      {
+        "id": "bone_disruption",
+        "positionIndex": 4,
+        "name": "Bone Disruption",
+        "description": "Increases projectile speed of the bone shreds.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "osteochondroma",
+        "positionIndex": 5,
+        "name": "Osteochondroma",
+        "description": "Chance on cast to increase the damage and size of bones.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+            "perRank": { "arcane_skill_damage": 30, "projectile_size": 15 }
+          }
+        }
+      },
+      {
+        "id": "quick_growth",
+        "positionIndex": 6,
+        "name": "Quick Growth",
+        "description": "Increases cast rate when using bone shred.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 8 }
+        }
+      },
+      {
+        "id": "bonerang",
+        "positionIndex": 7,
+        "name": "Bonerang",
+        "description": "Bone shreds now return to the necromancer dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "exposed_fracture",
+        "positionIndex": 8,
+        "name": "Exposed Fracture",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "infected_wound",
+        "positionIndex": 9,
+        "name": "Infected Wound",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "bone_spurs",
+        "positionIndex": 10,
+        "name": "Bone Spurs",
+        "description": "Chance on cast to unleash additional bone shreds.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "bomb_of_bones",
+        "positionIndex": 11,
+        "name": "Bomb of Bones",
+        "description": "Throw a bonebomb that explodes into an increased amount of piercing bone shred into all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 3, "arcane_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "shattering_carcass",
+        "positionIndex": 12,
+        "name": "Shattering Carcass",
+        "description": "Bone shreds now explode into piercing bone shards on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "orbiting_remains",
+        "positionIndex": 13,
+        "name": "Orbiting Remains",
+        "description": "Bone shred now orbits the necromancer with increased damage and are sent outwards after a short period if they do not hit a target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 85 }
+        }
+      },
+      {
+        "id": "skeletal_split",
+        "positionIndex": 14,
+        "name": "Skeletal Split",
+        "description": "Bone shreds split into multiple piercing shreds on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 20, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "meat_shield",
+    "classId": "necromancer",
+    "name": "Meat Shield",
+    "kind": "buff",
+    "description": "Cast a meat shield reducing physical damage taken.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 60,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Venomancer",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 3 },
+      "perRank": { "physical_damage_reduction": 1 }
+    }
+  },
+  {
+    "id": "meat_bomb",
+    "classId": "necromancer",
+    "name": "Meat Bomb",
+    "kind": "active",
+    "description": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 240,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Venomancer",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Corpse Explosion", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "meat_bomb_core",
+        "positionIndex": 0,
+        "name": "Meat Bomb",
+        "description": "Core of the Meat Bomb subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "high_protein",
+        "positionIndex": 1,
+        "name": "High Protein",
+        "description": "Increases the damage dealt by meat bomb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "far_reaching_meat",
+        "positionIndex": 2,
+        "name": "Far Reaching Meat",
+        "description": "Increases the cast range of meat bomb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "metabolic_lump",
+        "positionIndex": 3,
+        "name": "Metabolic Lump",
+        "description": "Recover a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "cadavery",
+        "positionIndex": 4,
+        "name": "Cadavery",
+        "description": "Increases the amount of corpses created by meat bomb.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "corpse_count": 0 },
+          "perRank": { "corpse_count": 1 }
+        }
+      },
+      {
+        "id": "elastic_meat",
+        "positionIndex": 5,
+        "name": "Elastic Meat",
+        "description": "Meatbomb bounces off the ground dealing area of effect damage with each bounce.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "of_total_damage": 15, "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "high_blood_pressure",
+        "positionIndex": 6,
+        "name": "High Blood Pressure",
+        "description": "Increases meat bombs explosion area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "tossing_the_meat",
+        "positionIndex": 7,
+        "name": "Tossing The Meat",
+        "description": "Increases meat bombs traveling speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "double_the_meat",
+        "positionIndex": 8,
+        "name": "Double The Meat",
+        "description": "Chance on cast to unleash an additional meat bomb.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "heavy_lump_of_meat",
+        "positionIndex": 9,
+        "name": "Heavy Lump of Meat",
+        "description": "Chance on hit to stun.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "fleshy_leftovers",
+        "positionIndex": 10,
+        "name": "Fleshy Leftovers",
+        "description": "Chance for smaller chunks of meat to explode and spawn an additional corpse.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "strong_bones",
+        "positionIndex": 11,
+        "name": "Strong Bones",
+        "description": "Pull nearby monsters into the explosion location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 30, "skill_range": 15 }
+        }
+      },
+      {
+        "id": "rotten_corpses",
+        "positionIndex": 12,
+        "name": "Rotten Corpses",
+        "description": "Converts meat bombs damage to poison inflicting poisoned. Consumed corpses unleash a poison nova.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 125 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 125 } }
+          ]
+        }
+      },
+      {
+        "id": "multi_lumps",
+        "positionIndex": 13,
+        "name": "Multi Lumps",
+        "description": "Throw multiple meat bombs in an arc inflicting arcane break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_break": 0, "projectile_count": 0 },
+          "perRank": { "arcane_break": 25, "projectile_count": 1 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "colossal_carcass",
+        "positionIndex": 14,
+        "name": "Colossal Carcass",
+        "description": "Throw a massive chunk of meat with increased size and damage sending monsters airborne dealing area of effect damage when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 150 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "poison_breath",
+    "classId": "necromancer",
+    "name": "Poison Breath",
+    "kind": "active",
+    "description": "Unleash a rotten breath of toxins dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Venomancer",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 20, "perLevel": 9.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Shred", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Poison Nova", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Cursed Ground", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 9.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "poison_breath_core",
+        "positionIndex": 0,
+        "name": "Poison Breath",
+        "description": "Core of the Poison Breath subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "neurotoxin",
+        "positionIndex": 1,
+        "name": "Neurotoxin",
+        "description": "Increases cast rate when using poison breath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "aerial_fumes",
+        "positionIndex": 2,
+        "name": "Aerial Fumes",
+        "description": "Increases the size of poison breath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "venomous_essence",
+        "positionIndex": 3,
+        "name": "Venomous Essence",
+        "description": "Inflicts poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "contamination",
+        "positionIndex": 4,
+        "name": "Contamination",
+        "description": "Chance on hit to chain an additional breath from the target to its closest monster.",
+        "maxRank": 3,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 8 } }
+      },
+      {
+        "id": "acid_components",
+        "positionIndex": 5,
+        "name": "Acid Components",
+        "description": "Dissolve low life monsters into pools of acid dealing additional damage and slowing on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0, "poison_skill_damage": 0 },
+          "perRank": { "execute_below": 1, "poison_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "poisonous_gas",
+        "positionIndex": 6,
+        "name": "Poisonous Gas",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 10 }
+        }
+      },
+      {
+        "id": "vile_bacteria",
+        "positionIndex": 7,
+        "name": "Vile Bacteria",
+        "description": "Chance on hit to inflict poison break.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 10 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "toxic_lungs",
+        "positionIndex": 8,
+        "name": "Toxic Lungs",
+        "description": "Increases the damage dealt by poison breath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "necrotic_intellect",
+        "positionIndex": 9,
+        "name": "Necrotic Intellect",
+        "description": "Decreases the mana cost of poison breath.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "necrotic_ward",
+        "positionIndex": 10,
+        "name": "Necrotic Ward",
+        "description": "Chance to spawn a necrotic ward on hit unleashing poison breath towards the nearest monster for a short period.",
+        "maxRank": 2,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "acid_spit",
+        "positionIndex": 11,
+        "name": "Acid Spit",
+        "description": "Spew out multiple poison projectiles exploding into acid novas inflicting increased poisoned damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "increased_poisoned_damage": 0 },
+          "perRank": { "of_total_damage": 5, "increased_poisoned_damage": 60 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 60 } }
+          ]
+        }
+      },
+      {
+        "id": "bio_hazard",
+        "positionIndex": 12,
+        "name": "Bio Hazard",
+        "description": "Increases the size of poison breath on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 30 }
+        }
+      },
+      {
+        "id": "necrotic_tongue",
+        "positionIndex": 13,
+        "name": "Necrotic Tongue",
+        "description": "Increases the length of poison breath inflicting poison break and dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "poison_skill_damage": 0,
+            "skill_range": 0,
+            "poison_break": 0
+          },
+          "perRank": {
+            "poison_skill_damage": 60,
+            "skill_range": 25,
+            "poison_break": 15
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "plague_breath",
+        "positionIndex": 14,
+        "name": "Plague Breath",
+        "description": "Unleash multiple breaths in an arc dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "poison_skill_damage": 40, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "bone_spear",
+    "classId": "necromancer",
+    "name": "Bone Spear",
+    "kind": "active",
+    "description": "Launch a piercing bone spear dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Venomancer",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 19 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Shred", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Corpse Explosion", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bone_spear_core",
+        "positionIndex": 0,
+        "name": "Bone Spear",
+        "description": "Core of the Bone Spear subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bone_density",
+        "positionIndex": 1,
+        "name": "Bone Density",
+        "description": "Increases the damage dealt by bone spear.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "mana_dweller",
+        "positionIndex": 2,
+        "name": "Mana Dweller",
+        "description": "Decreases the mana cost of bone spear.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "raising_spirits",
+        "positionIndex": 3,
+        "name": "Raising Spirits",
+        "description": "Chance on hit to summon a bone spirit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 6 } }
+      },
+      {
+        "id": "bone_sling",
+        "positionIndex": 4,
+        "name": "Bone Sling",
+        "description": "Increases the projectile speed of bone spear.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 12 }
+        }
+      },
+      {
+        "id": "disease_ridden_bone",
+        "positionIndex": 5,
+        "name": "Disease Ridden Bone",
+        "description": "Chance to inflict poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 65 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 65 } }
+          ]
+        }
+      },
+      {
+        "id": "autoimmune_disease",
+        "positionIndex": 6,
+        "name": "Autoimmune Disease",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            {
+              "state": "arcane_break",
+              "amount": { "base": 0, "perRank": 22.5 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "sharp_edged_bone",
+        "positionIndex": 7,
+        "name": "Sharp Edged Bone",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 35 }
+        }
+      },
+      {
+        "id": "bone_conjuring",
+        "positionIndex": 8,
+        "name": "Bone Conjuring",
+        "description": "Decreases movement diminish when using bone spear.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 20 }
+        }
+      },
+      {
+        "id": "fervoring_fever",
+        "positionIndex": 9,
+        "name": "Fervoring Fever",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 20 }
+        }
+      },
+      {
+        "id": "spiritual_tradeoff",
+        "positionIndex": 10,
+        "name": "Spiritual Tradeoff",
+        "description": "Increases damage based on your energy increasing the mana cost by a portion of your maximum mana.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_energy": 0, "mana_cost_reduction": 0 },
+          "perRank": { "conversion_energy": 2, "mana_cost_reduction": -5 }
+        }
+      },
+      {
+        "id": "impaling_spine",
+        "positionIndex": 11,
+        "name": "Impaling Spine",
+        "description": "Throw a colossal bone spear dealing increased damage and knocking up monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 150 }
+        }
+      },
+      {
+        "id": "bone_nova",
+        "positionIndex": 12,
+        "name": "Bone Nova",
+        "description": "Bone spear now explodes into a bone nova on hit dealing increased damage and stunning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "plenty_of_bone",
+        "positionIndex": 13,
+        "name": "Plenty of Bone",
+        "description": "Throw multiple smaller bone spears in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "arcane_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "bone_splinters",
+        "positionIndex": 14,
+        "name": "Bone Splinters",
+        "description": "Bone spears split into multiple smaller bone spears on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "arcane_skill_damage": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "corpse_explosion",
+    "classId": "necromancer",
+    "name": "Corpse Explosion",
+    "kind": "active",
+    "description": "Cause all corpses in target area to explode and deal an explosive arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Venomancer",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Meat Bomb", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "corpse_explosion_core",
+        "positionIndex": 0,
+        "name": "Corpse Explosion",
+        "description": "Core of the Corpse Explosion subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "volatile_magic",
+        "positionIndex": 1,
+        "name": "Volatile Magic",
+        "description": "Increases the explosion area of effect radius of corpse explosion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "violent_burst",
+        "positionIndex": 2,
+        "name": "Violent Burst",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "spell_crit_damage": 0 },
+            "perRank": { "spell_crit_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "channeling_necromancy",
+        "positionIndex": 3,
+        "name": "Channeling Necromancy",
+        "description": "Increases maximum cast range of corpse explosion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "reaching_conduit",
+        "positionIndex": 4,
+        "name": "Reaching Conduit",
+        "description": "Increases the area of effect radius of corpse explosion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 12 }
+        }
+      },
+      {
+        "id": "homunculus",
+        "positionIndex": 5,
+        "name": "Homunculus",
+        "description": "Corpses spawned from meat bomb causes corpse explosions to deal additional damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "reaper_within",
+        "positionIndex": 6,
+        "name": "Reaper Within",
+        "description": "Increases the damage dealt by corpse explosion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "rush_from_the_harvest",
+        "positionIndex": 7,
+        "name": "Rush from the Harvest",
+        "description": "Exploding a corpse gives you a burst of movement speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "unfair_advantage",
+        "positionIndex": 8,
+        "name": "Unfair Advantage",
+        "description": "Increases damage dealt to stunned enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "presence_of_the_lich",
+        "positionIndex": 9,
+        "name": "Presence of the Lich",
+        "description": "Chance to stun on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "assured_passing",
+        "positionIndex": 10,
+        "name": "Assured Passing",
+        "description": "Corpses have a chance to explode twice.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 2 } }
+      },
+      {
+        "id": "convergence",
+        "positionIndex": 11,
+        "name": "Convergence",
+        "description": "Corpse explosion now inflicts poisoned and poison break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0, "poison_break": 0 },
+          "perRank": { "increased_poisoned_damage": 40, "poison_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 40 } },
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "dissolvant_solution",
+        "positionIndex": 12,
+        "name": "Dissolvant Solution",
+        "description": "Corpse explosion deals poison damage inflicting poison break and dissolves low life monsters into gas clouds.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "execute_below": 0, "poison_break": 0 },
+          "perRank": { "execute_below": 1.5, "poison_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "devouring_aura",
+        "positionIndex": 13,
+        "name": "Devouring Aura",
+        "description": "Activate an aura around you consuming nearby corpses per second casting corpse explosion for a short period. Corpse explosion now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 15 }
+        }
+      },
+      {
+        "id": "lichs_command",
+        "positionIndex": 14,
+        "name": "Lich's Command",
+        "description": "Corpses are now lit on fire with increased size, dealing increased damage and inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "projectile_size": 0,
+            "increased_burning_damage": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 30,
+            "projectile_size": 25,
+            "increased_burning_damage": 35
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "bone_spirit",
+    "classId": "necromancer",
+    "name": "Bone Spirit",
+    "kind": "active",
+    "description": "Spawn a bone spirit that seeks out the nearest monster and explodes on impact, causing an Arcane damage explosion, then seeks out other mobs after the first impact.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 300,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Venomancer",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 29 }],
+    "damageFormula": { "base": 0, "perLevel": 18 },
+    "manaCostFormula": { "base": 29, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Spear", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Shred", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Meat Bomb", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bone_spirit_core",
+        "positionIndex": 0,
+        "name": "Bone Spirit",
+        "description": "Core of the Bone Spirit subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "divide_soul",
+        "positionIndex": 1,
+        "name": "Divide Soul",
+        "description": "Bone spirit unleashes additional souls on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "purifying_essence",
+        "positionIndex": 2,
+        "name": "Purifying Essence",
+        "description": "Increases the damage dealt by bone spirit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "life_infusion",
+        "positionIndex": 3,
+        "name": "Life Infusion",
+        "description": "Increases the explosion area of effect radius of bone spirit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "ancient_possession",
+        "positionIndex": 4,
+        "name": "Ancient Possession",
+        "description": "Bone spirits grow larger and deal more damage over time while traveling.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 8, "projectile_size": 8 }
+        }
+      },
+      {
+        "id": "cycle_of_life",
+        "positionIndex": 5,
+        "name": "Cycle of Life",
+        "description": "Gain chance to critically hit with increased critical damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 22.5 }
+        }
+      },
+      {
+        "id": "touch_of_arcana",
+        "positionIndex": 6,
+        "name": "Touch of Arcana",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "mark_target",
+        "positionIndex": 7,
+        "name": "Mark Target",
+        "description": "Increases the damage dealt to bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 10 }
+        }
+      },
+      {
+        "id": "follow_the_leader",
+        "positionIndex": 8,
+        "name": "Follow the Leader",
+        "description": "Increases the damage dealt by bone spirits explosion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "spirits_unleashed",
+        "positionIndex": 9,
+        "name": "Spirits Unleashed",
+        "description": "Increases bone spirit size and damage scaling with your explosion area of effect stat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 7, "projectile_size": 10 }
+        }
+      },
+      {
+        "id": "soul_infusion",
+        "positionIndex": 10,
+        "name": "Soul infusion",
+        "description": "When passing through one of the necromancers summons or allies bone spirits heals them for a portion of their maximum life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 2 }
+        }
+      },
+      {
+        "id": "ghouls_of_agony",
+        "positionIndex": 11,
+        "name": "Ghouls of Agony",
+        "description": "No longer explodes on hit but travels forwards slowly dealing damage over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "furnace_of_souls",
+        "positionIndex": 12,
+        "name": "Furnace of Souls",
+        "description": "Summon increased amount of souls inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "projectile_count": 0 },
+          "perRank": { "increased_burning_damage": 80, "projectile_count": 3 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 80 } }
+          ]
+        }
+      },
+      {
+        "id": "soul_sacrifice",
+        "positionIndex": 13,
+        "name": "Soul Sacrifice",
+        "description": "Now consumes a portion of your mana on hit converting it into additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_max_mana": 0 },
+          "perRank": { "conversion_max_mana": 15 }
+        }
+      },
+      {
+        "id": "spirit_festival",
+        "positionIndex": 14,
+        "name": "Spirit Festival",
+        "description": "Consume multiple corpses in a radius around you summoning a bone spirit from each. Cooldown is now increased.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 10, "skill_range": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "cursed_ground",
+    "classId": "necromancer",
+    "name": "Cursed Ground",
+    "kind": "active",
+    "description": "Corrupt the ground in the target area inflicting poison break on monsters affected area.",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Venomancer",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "poison_break": 2, "area_of_effect": 1 },
+      "perRank": { "poison_break": 2, "area_of_effect": 1 }
+    }
+  },
+  {
+    "id": "poison_nova",
+    "classId": "necromancer",
+    "name": "Poison Nova",
+    "kind": "active",
+    "description": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Venomancer",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 12 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Poison Breath", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Cursed Ground", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Amplify Damage", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 9.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "poison_nova_core",
+        "positionIndex": 0,
+        "name": "Poison Nova",
+        "description": "Core of the Poison Nova subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hollow_fangs",
+        "positionIndex": 1,
+        "name": "Hollow Fangs",
+        "description": "Increases the amount of poison projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "potent_venom",
+        "positionIndex": 2,
+        "name": "Potent Venom",
+        "description": "Increases the damage dealt by poison nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "embrace_the_venom",
+        "positionIndex": 3,
+        "name": "Embrace the Venom",
+        "description": "Increases the poisoned amount when dealing damage with poison nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "conjurers_might",
+        "positionIndex": 4,
+        "name": "Conjurer's Might",
+        "description": "Increases the projectile speed of poison nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "venoms_reach",
+        "positionIndex": 5,
+        "name": "Venom's Reach",
+        "description": "Chance to spread poison to nearby monsters on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "weakening_infection",
+        "positionIndex": 6,
+        "name": "Weakening Infection",
+        "description": "Chance to reduce targets damage dealt on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "weakened", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "down_with_the_sickness",
+        "positionIndex": 7,
+        "name": "Down with the Sickness",
+        "description": "Chance to slow and inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } },
+            "poisoned",
+            "slow"
+          ]
+        }
+      },
+      {
+        "id": "amplifying_mark",
+        "positionIndex": 8,
+        "name": "Amplifying Mark",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 15 }
+        }
+      },
+      {
+        "id": "overwhelming_presence",
+        "positionIndex": 9,
+        "name": "Overwhelming Presence",
+        "description": "Increases the size of poison projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "toxic_twist",
+        "positionIndex": 10,
+        "name": "Toxic Twist",
+        "description": "Poison nova projectiles now orbit outwards with increased duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "poison_cloud",
+        "positionIndex": 11,
+        "name": "Poison Cloud",
+        "description": "Instead of releasing projectiles poison nova instead causes an explosion centered around the necromancer dealing increased damage based on projectile amount.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 100, "area_of_effect": 45 }
+        }
+      },
+      {
+        "id": "virulent_blink",
+        "positionIndex": 12,
+        "name": "Virulent Blink",
+        "description": "Teleport to cast location hexing enemies on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0, "poison_skill_damage": 0 },
+          "perRank": { "skill_range": 25, "poison_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "center_of_epidemy",
+        "positionIndex": 13,
+        "name": "Center of Epidemy",
+        "description": "Poison nova projectiles have a chance to return to the necromancer dealing damage and increasing the necromancers poison damage on return.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 12 }
+          }
+        }
+      },
+      {
+        "id": "puppet_master",
+        "positionIndex": 14,
+        "name": "Puppet Master",
+        "description": "Cast a poison nova from all nearby poisoned enemies with increased damage based on poisoned. Poison nova now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "poison_skill_damage": 65, "skill_range": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "amplify_damage",
+    "classId": "necromancer",
+    "name": "Amplify Damage",
+    "kind": "active",
+    "description": "Curse monsters in the target area decreasing their damage dealt and inflicting arcane break.",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Lord of the Dead",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_break": 1, "damage_dealt": 1 },
+      "perRank": { "arcane_break": 1, "damage_dealt": 1 }
+    }
+  },
+  {
+    "id": "raise_skeleton",
+    "classId": "necromancer",
+    "name": "Raise Skeleton",
+    "kind": "active",
+    "description": "Raise a skeleton warrior from target corpse to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Lord of the Dead",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 15, "perLevel": 5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Amplify Damage", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Raise Skeleton Mage", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Summon Damned Legion", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 5.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "raise_skeleton_core",
+        "positionIndex": 0,
+        "name": "Raise Skeleton",
+        "description": "Core of the Raise Skeleton subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "undead_army",
+        "positionIndex": 1,
+        "name": "Undead Army",
+        "description": "Increases the maximum amount of skeleton warriors.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "unholy_strike",
+        "positionIndex": 2,
+        "name": "Unholy Strike",
+        "description": "Increases damage dealt by skeleton warriors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "command_for_haste",
+        "positionIndex": 3,
+        "name": "Command for Haste",
+        "description": "Increases the attack speed of skeleton warriors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "absorb_vitality",
+        "positionIndex": 4,
+        "name": "Absorb Vitality",
+        "description": "Skeleton warriors heal them selves for a portion of their missing life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life_steal": 0 },
+          "perRank": { "summon_life_steal": 2 }
+        }
+      },
+      {
+        "id": "undead_berserker",
+        "positionIndex": 5,
+        "name": "Undead Berserker",
+        "description": "Skeleton warriors now deal a portion of their damage as area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 25 }
+        }
+      },
+      {
+        "id": "between_the_ribs",
+        "positionIndex": 6,
+        "name": "Between the Ribs",
+        "description": "Skeleton warriors now have a chance to dodge incoming damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_dodge_chance": 0 },
+          "perRank": { "summon_dodge_chance": 8 }
+        }
+      },
+      {
+        "id": "unholy_lifeforce",
+        "positionIndex": 7,
+        "name": "Unholy Lifeforce",
+        "description": "Increases the life of skeleton warriors.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 12.5 }
+        }
+      },
+      {
+        "id": "toes_attached",
+        "positionIndex": 8,
+        "name": "Toes Attached",
+        "description": "Increases skeleton warrior movement speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_movement_speed": 0 },
+          "perRank": { "summon_movement_speed": 15 }
+        }
+      },
+      {
+        "id": "undying_rage",
+        "positionIndex": 9,
+        "name": "Undying Rage",
+        "description": "Increases skeleton warrior damage based on their missing life percentage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 1 }
+        }
+      },
+      {
+        "id": "last_stand",
+        "positionIndex": 10,
+        "name": "Last Stand",
+        "description": "Skeleton warrior life is reduced and they explode upon death unleashing bone shrapnel around them.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "zombies",
+        "positionIndex": 11,
+        "name": "Zombies!",
+        "description": "Skeleton warriors are spawned as zombies rapidly draining their life and exploding into pieces inflicting poisoned.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 150 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 150 } }
+          ]
+        }
+      },
+      {
+        "id": "winds_of_the_dead",
+        "positionIndex": 12,
+        "name": "Winds of the Dead",
+        "description": "Skeleton warriors have a chance to perform an area of effect attack with increased radius and damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "arcane_skill_damage": 32.5, "area_of_effect": 30 }
+          }
+        }
+      },
+      {
+        "id": "horde_of_undead",
+        "positionIndex": 13,
+        "name": "Horde of Undead",
+        "description": "Increases the maximum summon amount of skeleton warriors. Skeleton warriors damage and life is reduced.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 4 }
+        }
+      },
+      {
+        "id": "weapons_beyond_grave",
+        "positionIndex": 14,
+        "name": "Weapons Beyond Grave",
+        "description": "Skeleton warriors have a chance on attack to deal critical damage equal to your critical strike damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 20 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 30 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summon_mastery",
+    "classId": "necromancer",
+    "name": "Summon Mastery",
+    "kind": "passive",
+    "description": "Increases the life and arcane damage of all your summons.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Lord of the Dead",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "summon_damage": 2, "summon_life": 3.5 },
+      "perRank": { "summon_damage": 2, "summon_life": 3.5 }
+    }
+  },
+  {
+    "id": "raise_skeleton_mage",
+    "classId": "necromancer",
+    "name": "Raise Skeleton Mage",
+    "kind": "active",
+    "description": "Raise a skeleton mage from target corpse to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon", "Explosion", "Projectile"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Lord of the Dead",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 9.5, "perLevel": 8.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Amplify Damage", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Raise Skeleton", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Summon Vengeful Spirit", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "raise_skeleton_mage_core",
+        "positionIndex": 0,
+        "name": "Raise Skeleton Mage",
+        "description": "Core of the Raise Skeleton Mage subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "undead_coven",
+        "positionIndex": 1,
+        "name": "Undead Coven",
+        "description": "Increases the maximum amount of skeleton mages.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "unholy_force",
+        "positionIndex": 2,
+        "name": "Unholy Force",
+        "description": "Increases damage dealt by skeleton mages.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "reflection",
+        "positionIndex": 3,
+        "name": "Reflection",
+        "description": "Chance for skeleton mages to fire an additional projectile on attack.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "unholy_spellsling",
+        "positionIndex": 4,
+        "name": "Unholy Spellsling",
+        "description": "Chance for skeleton mages to critically hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0 },
+          "perRank": { "spell_crit_chance": 4 }
+        }
+      },
+      {
+        "id": "unholy_necrosis",
+        "positionIndex": 5,
+        "name": "Unholy Necrosis",
+        "description": "Increases critical strike damage dealt by skeleton mages.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_damage": 10 }
+        }
+      },
+      {
+        "id": "dark_bolts",
+        "positionIndex": 6,
+        "name": "Dark Bolts",
+        "description": "Skeleton mage now fires multiple projectiles in an arc.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "necrotic_mirage",
+        "positionIndex": 7,
+        "name": "Necrotic Mirage",
+        "description": "Chance on attack to create an illusion for a short period of time.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 1 } }
+      },
+      {
+        "id": "festering_scorch",
+        "positionIndex": 8,
+        "name": "Festering Scorch",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "gluttony",
+        "positionIndex": 9,
+        "name": "Gluttony",
+        "description": "Increases the life of skeleton mages.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 10 }
+        }
+      },
+      {
+        "id": "unholy_grasp",
+        "positionIndex": 10,
+        "name": "Unholy Grasp",
+        "description": "Increases attack speed for skeleton mages.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "cursed_blast",
+        "positionIndex": 11,
+        "name": "Cursed Blast",
+        "description": "Unleash an arcane nova on hit dealing a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 30 }
+        }
+      },
+      {
+        "id": "chaining_scorn",
+        "positionIndex": 12,
+        "name": "Chaining Scorn",
+        "description": "Attacks now chain on hit dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "arcane_skill_damage": 15, "projectile_bounces": 3 }
+        }
+      },
+      {
+        "id": "summon_archmage",
+        "positionIndex": 13,
+        "name": "Summon Archmage",
+        "description": "You can now only summon one skeleton mage but it scales according to the maximum amount of skeleton mages.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_summon_count": 0 },
+          "perRank": { "conversion_summon_count": 25 }
+        }
+      },
+      {
+        "id": "unholy_lightning",
+        "positionIndex": 14,
+        "name": "Unholy Lightning",
+        "description": "Skeleton mages now shoot a surge of dark lightning with increased range and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 35, "skill_range": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "life_tap",
+    "classId": "necromancer",
+    "name": "Life Tap",
+    "kind": "active",
+    "description": "Curse monsters in the target area increasing any attackers life steal when striking the target.",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 3.5,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Lord of the Dead",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "life_steal": 5 },
+      "perRank": { "life_steal": 2.5 }
+    }
+  },
+  {
+    "id": "summon_frenzy",
+    "classId": "necromancer",
+    "name": "Summon Frenzy",
+    "kind": "buff",
+    "description": "Temporarily enrage your summons increasing their attack speed and movement speed.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Lord of the Dead",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "summon_attack_speed": 10, "movement_speed": 5 },
+      "perRank": { "summon_attack_speed": 2, "movement_speed": 1 }
+    }
+  },
+  {
+    "id": "summon_resistances",
+    "classId": "necromancer",
+    "name": "Summon Resistances",
+    "kind": "passive",
+    "description": "Increases all resistances and physical damage reduction of your summons.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Lord of the Dead",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "all_resistances": 2, "physical_damage_reduction": 0.75 },
+      "perRank": { "all_resistances": 2, "physical_damage_reduction": 0.75 }
+    }
+  },
+  {
+    "id": "summon_damned_legion",
+    "classId": "necromancer",
+    "name": "Summon Damned Legion",
+    "kind": "active",
+    "description": "Summon a damned legion to fight on your side.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Lord of the Dead",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "damageFormula": { "base": 0, "perLevel": 12 },
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Raise Skeleton", "stat": "attack_damage", "value": 15, "per": "skill_level" },
+      { "source": "Raise Skeleton Mage", "stat": "attack_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Summon Frenzy", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "attack_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "summon_damned_legion_core",
+        "positionIndex": 0,
+        "name": "Summon Damned Legion",
+        "description": "Core of the Summon Damned Legion subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "unhallowed_authority",
+        "positionIndex": 1,
+        "name": "Unhallowed Authority",
+        "description": "Increases the damage dealt by damned legion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "undead_leadership",
+        "positionIndex": 2,
+        "name": "Undead Leadership",
+        "description": "Chance on hit to inspire nearby allies increasing their attack speed and damage for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "attack_damage": 0, "faster_cast_rate": 0 },
+            "perRank": { "attack_damage": 8, "faster_cast_rate": 6 }
+          }
+        }
+      },
+      {
+        "id": "unholy_reverberation",
+        "positionIndex": 3,
+        "name": "Unholy Reverberation",
+        "description": "Chance on attack for damned legion to stun nearby monsters.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "colossus_smash",
+        "positionIndex": 4,
+        "name": "Colossus Smash",
+        "description": "Attacks deal a portion of their damage to enemies around the target.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 35 }
+        }
+      },
+      {
+        "id": "vile_shock",
+        "positionIndex": 5,
+        "name": "Vile Shock",
+        "description": "Chance on attack to cast shockwave dealing area of effect damage and stunning monsters in a line.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 35 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "mass_legion",
+        "positionIndex": 6,
+        "name": "Mass Legion",
+        "description": "Increases the maximum amount of damned legions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "infused_with_blood",
+        "positionIndex": 7,
+        "name": "Infused with Blood",
+        "description": "Increases the life of damned legion based on your maximum life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 150 }
+        }
+      },
+      {
+        "id": "profane_zeal",
+        "positionIndex": 8,
+        "name": "Profane Zeal",
+        "description": "Chance to perform an additional attack.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "legionnaire_agility",
+        "positionIndex": 9,
+        "name": "Legionnaire Agility",
+        "description": "Increases the attack speed of damned legion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "crimson_aura",
+        "positionIndex": 10,
+        "name": "Crimson Aura",
+        "description": "Damned legion has an aura around them that pulses every second dealing a portion of their life as damage to nearby monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_summon_life": 0, "area_of_effect": 0 },
+          "perRank": { "conversion_summon_life": 22.5, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "abombination",
+        "positionIndex": 11,
+        "name": "Abombination",
+        "description": "Summon an frenzied Abomination instead that deals increased Damage for a short period of time before exploding dealing massively increased damage to nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 100, "area_of_effect": 33 }
+        }
+      },
+      {
+        "id": "thorned_revenant",
+        "positionIndex": 12,
+        "name": "Thorned Revenant",
+        "description": "Damned legion gains damage return based on your total damage return.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "damage_return": 0, "increased_life": 0 },
+          "perRank": { "damage_return": 250, "increased_life": 25 }
+        }
+      },
+      {
+        "id": "damned_sharpshooter",
+        "positionIndex": 13,
+        "name": "Damned Sharpshooter",
+        "description": "Instead summon a legion marksman firing explosive bolts with a giant ballista.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "catastrophic_legion",
+        "positionIndex": 14,
+        "name": "Catastrophic Legion",
+        "description": "Summon a single damned legion with increased damage and life. Additionally grows the size of damned legion scaling from the legion's maximum life.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "summon_life": 0,
+            "projectile_size": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 75,
+            "summon_life": 25,
+            "projectile_size": 0.075
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "summon_vengeful_spirit",
+    "classId": "necromancer",
+    "name": "Summon Vengeful Spirit",
+    "kind": "active",
+    "description": "Summon a vengeful spirit to fight on your side.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Summon", "Chain Lightning"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Lord of the Dead",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "damageFormula": { "base": 0, "perLevel": 14 },
+    "manaCostFormula": { "base": 13, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Raise Skeleton", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Raise Skeleton Mage", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Summon Damned Legion", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "summon_vengeful_spirit_core",
+        "positionIndex": 0,
+        "name": "Summon Vengeful Spirit",
+        "description": "Core of the Summon Vengeful Spirit subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hostile_intelligence",
+        "positionIndex": 1,
+        "name": "Hostile Intelligence",
+        "description": "Increases vengeful spirits damage based on your intelligence.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_intelligence": 0 },
+          "perRank": { "conversion_intelligence": 5 }
+        }
+      },
+      {
+        "id": "nimble_spirit",
+        "positionIndex": 2,
+        "name": "Nimble Spirit",
+        "description": "Increases the movement speed of vengeful spirit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "swift_bolts",
+        "positionIndex": 3,
+        "name": "Swift Bolts",
+        "description": "Increases the attack speed of vengeful spirit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "eternal_vengeance",
+        "positionIndex": 4,
+        "name": "Eternal Vengeance",
+        "description": "Increases vengeful spirits life.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 10 }
+        }
+      },
+      {
+        "id": "forking_bolts",
+        "positionIndex": 5,
+        "name": "Forking Bolts",
+        "description": "Attacks by vengeful spirit have a chance to fork creating multiple chain lightnings.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "critical_wrath",
+        "positionIndex": 6,
+        "name": "Critical Wrath",
+        "description": "Attacks always critically strike targets at max health dealing increased damage stunning them.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_damage": 75 }
+        }
+      },
+      {
+        "id": "stacking_pain",
+        "positionIndex": 7,
+        "name": "Stacking Pain",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "vacuuming_apparation",
+        "positionIndex": 8,
+        "name": "Vacuuming Apparation",
+        "description": "Chance on attack to summon a ghastly whirlpool that pulls nearby targets into it.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 2 } }
+      },
+      {
+        "id": "extended_lightning",
+        "positionIndex": 9,
+        "name": "Extended Lightning",
+        "description": "Chain lightning from vengeful spirit chains to additional targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "retaliatory_transfusion",
+        "positionIndex": 10,
+        "name": "Retaliatory Transfusion",
+        "description": "Vengeful spirit gains an aura dealing damage and draining a portion of it to heal it self.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "life_replenish_pct": 0 },
+          "perRank": { "arcane_skill_damage": 25, "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "contaminated_spirit",
+        "positionIndex": 11,
+        "name": "Contaminated Spirit",
+        "description": "Vengeful spirit now deals poison damage inflicting poisoned for a portion of its damage. Additionally gains a chance to unleash a poison nova on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 33 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 33 } }
+          ]
+        }
+      },
+      {
+        "id": "hatred_reinforcements",
+        "positionIndex": 12,
+        "name": "Hatred Reinforcements",
+        "description": "You can now summon additional vengeful spirits.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 1 }
+        }
+      },
+      {
+        "id": "sacrificial_offering",
+        "positionIndex": 13,
+        "name": "Sacrificial Offering",
+        "description": "Sacrifice all existing necromancer summons increasing the stats of vengeful spirit per summon sacrificed. You can no longer summon any minion while vengeful spirit is active.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_summon_count": 0 },
+          "perRank": { "conversion_summon_count": 15 }
+        }
+      },
+      {
+        "id": "vengeful_poltergeist",
+        "positionIndex": 14,
+        "name": "Vengeful Poltergeist",
+        "description": "Vengeful spirit now summons bone spirits and tornados in addition to its normal attack.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 45 }
+        }
+      }
+    ]
+  }
+]

@@ -7,11 +7,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+## Frontend
 node_modules
+
+## Engine + export
 dist
 dist-ssr
 *.local
-src-tauri/target/
+engine/target/
 /target/
 /crates/
 
@@ -20,13 +23,16 @@ src-tauri/target/
 !.vscode/extensions.json
 .idea
 .DS_Store
-.claude/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
+# Local environment config (web share endpoint URLs etc.)
+.env
+.env.*
+!.env.example
+
 # Build/tooling output kept local, never committed
 graphify-out/
-/docs/

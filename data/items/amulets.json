@@ -1,0 +1,1993 @@
+[
+  {
+    "id": "amulet_heroic_compass_of_wealth",
+    "name": "Compass of Wealth",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "all_attributes": [
+        15,
+        30
+      ],
+      "gold_find": [
+        30,
+        40
+      ],
+      "magic_find": [
+        20,
+        70
+      ],
+      "magic_find_based_on_level": 35
+    }
+  },
+  {
+    "id": "amulet_heroic_gryphon_s_claw",
+    "name": "Gryphon's Claw",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "crit_chance": [
+        18,
+        25
+      ],
+      "crit_damage": [
+        40,
+        50
+      ],
+      "open_wounds": [
+        15,
+        25
+      ],
+      "all_attributes": [
+        20,
+        30
+      ],
+      "open_wound_chance": [
+        15,
+        25
+      ]
+    },
+    "skillBonuses": {
+      "Execute": [
+        12,
+        18
+      ]
+    }
+  },
+  {
+    "id": "amulet_heroic_pendant_of_eternity",
+    "name": "Pendant of Eternity",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "faster_cast_rate": 30,
+      "skill_haste": [
+        15,
+        25
+      ],
+      "magic_skill_damage": [
+        30,
+        45
+      ],
+      "cooldown_recovery": [
+        15,
+        25
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast The Venerated One Level 20",
+        "details": "Temporarily increases your cast rate and mana replenish."
+      }
+    ]
+  },
+  {
+    "id": "amulet_heroic_philosopher_s_stone",
+    "name": "Philosopher's Stone",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        3,
+        5
+      ],
+      "to_energy": [
+        10,
+        40
+      ],
+      "increased_energy": [
+        10,
+        15
+      ],
+      "all_attributes": 15,
+      "all_resistances": 30
+    }
+  },
+  {
+    "id": "amulet_heroic_signet_of_kadosh",
+    "name": "Signet of Kadosh",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "crit_damage": [
+        30,
+        40
+      ]
+    },
+    "skillBonuses": {
+      "Magnum Opus": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "amulet_heroic_amulet_of_colosseum",
+    "name": "Amulet of Colosseum",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        2,
+        4
+      ],
+      "attacks_per_second": [
+        5,
+        10
+      ],
+      "to_strength": [
+        25,
+        35
+      ],
+      "increased_strength": [
+        8,
+        15
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "amulet_heroic_dragon_s_eye",
+    "name": "Dragon's Eye",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "fire_skills": [
+        3,
+        5
+      ],
+      "increased_burning_damage": [
+        35,
+        45
+      ],
+      "extra_damage_burning": [
+        25,
+        35
+      ],
+      "extra_fire_dmg_to_burning": [
+        25,
+        35
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "amulet_heroic_fractal_of_existence",
+    "name": "Fractal of Existence",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        2,
+        4
+      ],
+      "faster_cast_rate": [
+        20,
+        40
+      ],
+      "increased_attack_speed": [
+        20,
+        40
+      ],
+      "faster_hit_recovery": 66,
+      "light_radius": [
+        2,
+        4
+      ]
+    },
+    "skillBonuses": {
+      "Trampling Force": [
+        1,
+        3
+      ]
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
+  },
+  {
+    "id": "amulet_heroic_eagle_s_claw",
+    "name": "Eagle's Claw",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "enhanced_damage": [
+        50,
+        75
+      ],
+      "increased_attack_speed": [
+        15,
+        20
+      ],
+      "reduced_movement_diminish": [
+        30,
+        50
+      ],
+      "deadly_blow": [
+        12,
+        20
+      ],
+      "life_steal": 8,
+      "defense_ignored": [
+        12,
+        20
+      ]
+    },
+    "skillBonuses": {
+      "Enraged Mania": [
+        15,
+        25
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 1,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 7,
+        "description": "cast Live by the Sword Level 13",
+        "details": "Temporarily increases your attack speed and movement speed."
+      }
+    ]
+  },
+  {
+    "id": "amulet_heroic_shadow_beacon",
+    "name": "Shadow Beacon",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "movement_speed": [
+        15,
+        40
+      ],
+      "reduced_movement_diminish": 50,
+      "sentry_attack_speed": [
+        10,
+        30
+      ],
+      "sentry_damage": [
+        15,
+        30
+      ],
+      "sentry_max_amount": [
+        1,
+        2
+      ]
+    },
+    "uniqueEffects": [
+      "Unholy",
+      "Movement Phasing"
+    ],
+    "maxAffixes": 1,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "amulet_heroic_tarethiel_s_fall",
+    "name": "Tarethiel's Fall",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "all_attributes": [
+        20,
+        40
+      ],
+      "increased_all_attributes": 5
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "amulet_heroic_thoth_s_agony",
+    "name": "Thoth's Agony",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "ailment_damage_all": [
+        15,
+        22
+      ],
+      "to_intelligence": [
+        35,
+        50
+      ],
+      "increased_intelligence": [
+        8,
+        15
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        1,
+        5
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "amulet_satanic_all_seeing_eye",
+    "name": "All Seeing Eye",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 97,
+    "implicit": {
+      "all_skills": 3,
+      "mana_replenish_pct": 75,
+      "increased_mana": [
+        3,
+        5
+      ],
+      "light_radius": 5,
+      "magic_find": [
+        35,
+        50
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_amethyst_knight_s_amulet",
+    "name": "Amethyst Knight's Amulet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 38,
+    "implicit": {
+      "faster_cast_rate": [
+        2,
+        4
+      ],
+      "extra_damage_shadow_burning": [
+        25,
+        35
+      ],
+      "flat_arcane_skill_damage": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_anubis_oculus",
+    "name": "Anubis Oculus",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 81,
+    "implicit": {
+      "to_vitality": 15,
+      "life_replenish_pct": [
+        8,
+        15
+      ],
+      "life": [
+        35,
+        50
+      ],
+      "increased_life": [
+        1,
+        4
+      ]
+    },
+    "setId": "anubi_s_eternal_life"
+  },
+  {
+    "id": "amulet_satanic_arc_s_sigil",
+    "name": "Arc's Sigil",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": 1,
+      "attack_damage": [
+        8,
+        20
+      ],
+      "magic_skill_damage": [
+        5,
+        15
+      ],
+      "mana_replenish_pct": [
+        25,
+        40
+      ],
+      "mana_replenish": 100,
+      "increased_experience_gain_below_100": [
+        25,
+        50
+      ]
+    },
+    "setId": "arc_s_blessed_faith"
+  },
+  {
+    "id": "amulet_satanic_arcana_eye",
+    "name": "Arcana Eye",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 61,
+    "implicit": {
+      "faster_cast_rate": 10,
+      "mana_steal": 4,
+      "to_energy": 15,
+      "magic_skill_damage": [
+        8,
+        15
+      ],
+      "mana": [
+        20,
+        30
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_arcane_slayer_s_talisman",
+    "name": "Arcane Slayer's Talisman",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 14,
+    "implicit": {
+      "all_skills": 1,
+      "arcane_skills": [
+        1,
+        2
+      ],
+      "to_energy": 15,
+      "mana_replenish_pct": [
+        75,
+        125
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_aztec_necklace",
+    "name": "Aztec Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 79,
+    "implicit": {
+      "ignore_poison_res": [
+        5,
+        15
+      ],
+      "poison_resistance": [
+        40,
+        60
+      ],
+      "increased_poisoned_damage": [
+        20,
+        40
+      ],
+      "to_dexterity": [
+        5,
+        30
+      ],
+      "poison_length_reduced": 50,
+      "increased_dexterity": 10
+    },
+    "setId": "aztec_s_mystery"
+  },
+  {
+    "id": "amulet_satanic_baby_log_necklace",
+    "name": "Baby Log Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 64,
+    "implicit": {
+      "life_replenish_pct": [
+        15,
+        30
+      ],
+      "life": [
+        150,
+        225
+      ],
+      "damage_return": [
+        75,
+        100
+      ],
+      "physical_damage_reduction": 5
+    }
+  },
+  {
+    "id": "amulet_satanic_bone_conjurer_s_mask",
+    "name": "Bone Conjurer's Mask",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 90,
+    "implicit": {
+      "to_energy": 10,
+      "flat_arcane_skill_damage": [
+        18,
+        38
+      ],
+      "ignore_arcane_res": [
+        5,
+        10
+      ],
+      "arcane_resistance": [
+        40,
+        50
+      ]
+    },
+    "setId": "bone_conjurer_s_regalia",
+    "skillBonuses": {
+      "Random Skill": [
+        5,
+        8
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_champion_s_medal_of_valor",
+    "name": "Champion's Medal of Valor",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 84,
+    "implicit": {
+      "to_vitality": [
+        15,
+        20
+      ],
+      "life_replenish_pct": [
+        8,
+        20
+      ],
+      "damage_return": [
+        40,
+        60
+      ],
+      "all_resistances": [
+        10,
+        30
+      ]
+    },
+    "setId": "champion_s_valor"
+  },
+  {
+    "id": "amulet_satanic_charcoal_memento",
+    "name": "Charcoal Memento",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 90,
+    "defenseMin": 100,
+    "defenseMax": 100,
+    "implicit": {
+      "movement_speed": [
+        20,
+        30
+      ],
+      "increased_attack_speed": [
+        20,
+        35
+      ],
+      "to_dexterity": 25,
+      "increased_dexterity": [
+        4,
+        8
+      ],
+      "damage_reduced": [
+        75,
+        125
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_chronomancer_s_curio_of_time",
+    "name": "Chronomancer's Curio of Time",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "all_attributes": [
+        2,
+        4
+      ],
+      "arcane_skill_damage": [
+        4,
+        8
+      ],
+      "life": [
+        25,
+        35
+      ],
+      "mana_per_kill": [
+        6,
+        12
+      ],
+      "arcane_resistance": [
+        30,
+        50
+      ]
+    },
+    "setId": "temporal_mastery",
+    "skillBonuses": {
+      "Gravitation Slam": [
+        10,
+        15
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_claw_of_the_bloodthirsty",
+    "name": "Claw of the Bloodthirsty",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "crit_chance": 5,
+      "life_steal": [
+        4,
+        8
+      ],
+      "crit_damage": [
+        25,
+        40
+      ],
+      "to_strength": [
+        25,
+        40
+      ],
+      "to_dexterity": [
+        25,
+        40
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_claw_of_the_hunter",
+    "name": "Claw of the Hunter",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 58,
+    "implicit": {
+      "increased_attack_speed": 30,
+      "increased_poisoned_damage": [
+        25,
+        35
+      ],
+      "extra_damage_poisoned": [
+        15,
+        25
+      ],
+      "flat_poison_skill_damage": [
+        18,
+        30
+      ],
+      "light_radius": 3
+    }
+  },
+  {
+    "id": "amulet_satanic_coldfire_amulet",
+    "name": "Coldfire Amulet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 96,
+    "implicit": {
+      "attack_rating_pct": [
+        10,
+        15
+      ],
+      "attack_rating": [
+        250,
+        370
+      ],
+      "additive_fire_damage": [
+        370,
+        410
+      ],
+      "additive_cold_damage": [
+        370,
+        410
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_coldsnap_insignia",
+    "name": "Coldsnap Insignia",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 30,
+    "implicit": {
+      "cold_skills": [
+        1,
+        3
+      ],
+      "flat_cold_skill_damage": [
+        15,
+        20
+      ],
+      "cold_skill_damage": [
+        10,
+        15
+      ],
+      "phys_dmg_taken_as_cold": [
+        5,
+        10
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_damien_s_soulstone",
+    "name": "Damien's Soulstone",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 87,
+    "implicit": {
+      "all_skills": 2,
+      "magic_skill_damage": [
+        10,
+        25
+      ],
+      "all_resistances": [
+        10,
+        20
+      ]
+    },
+    "uniqueEffects": [
+      "Unholy"
+    ],
+    "setId": "damien_s_legacy"
+  },
+  {
+    "id": "amulet_satanic_dark_lord_s_sigil",
+    "name": "Dark Lord's Sigil",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 86,
+    "implicit": {
+      "arcane_skills": [
+        2,
+        3
+      ],
+      "flat_arcane_skill_damage": [
+        18,
+        38
+      ],
+      "arcane_skill_damage": [
+        15,
+        30
+      ],
+      "all_resistances": 15
+    }
+  },
+  {
+    "id": "amulet_satanic_devil_s_gem",
+    "name": "Devil's Gem",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 81,
+    "implicit": {
+      "ignore_arcane_res": [
+        5,
+        15
+      ],
+      "mana_replenish_pct": [
+        10,
+        15
+      ],
+      "arcane_resistance": [
+        40,
+        60
+      ],
+      "to_intelligence": [
+        25,
+        50
+      ],
+      "increased_intelligence": [
+        1,
+        5
+      ]
+    },
+    "setId": "satan_s_redemption"
+  },
+  {
+    "id": "amulet_satanic_eagerblade_s_tooth",
+    "name": "Eagerblade's Tooth",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 24,
+    "implicit": {
+      "crit_chance": 7,
+      "attack_rating": 50,
+      "additive_physical_damage": [
+        5,
+        12
+      ],
+      "to_armor": 8
+    }
+  },
+  {
+    "id": "amulet_satanic_earth_goliath_s_protection",
+    "name": "Earth Goliath's Protection",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "to_vitality": [
+        20,
+        30
+      ],
+      "enhanced_defense": [
+        3,
+        6
+      ],
+      "damage_return": [
+        75,
+        125
+      ],
+      "physical_damage_reduction": [
+        5,
+        10
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_elder_s_heart",
+    "name": "Elder's Heart",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 42,
+    "defenseMin": 50,
+    "defenseMax": 50,
+    "implicit": {
+      "enhanced_defense": [
+        30,
+        45
+      ],
+      "attack_rating_pct": [
+        7,
+        10
+      ],
+      "all_attributes": 15,
+      "all_resistances": 20
+    }
+  },
+  {
+    "id": "amulet_satanic_engineer_s_master_pendant",
+    "name": "Engineer's Master Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 82,
+    "implicit": {
+      "faster_cast_rate": [
+        10,
+        20
+      ],
+      "life": [
+        35,
+        45
+      ],
+      "mana": [
+        20,
+        30
+      ],
+      "damage_reduced": [
+        8,
+        15
+      ]
+    },
+    "setId": "engineer_s_combat_gear"
+  },
+  {
+    "id": "amulet_satanic_eye_of_horus",
+    "name": "Eye of Horus",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 65,
+    "implicit": {
+      "to_energy": 15,
+      "to_vitality": 15,
+      "life_per_kill": [
+        8,
+        12
+      ],
+      "mana_per_kill": [
+        8,
+        12
+      ],
+      "increased_life": [
+        2,
+        4
+      ],
+      "increased_mana": [
+        2,
+        4
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_gambler_s_demise",
+    "name": "Gambler's Demise",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 38,
+    "implicit": {
+      "to_strength": [
+        1,
+        50
+      ],
+      "to_intelligence": [
+        1,
+        50
+      ],
+      "life": [
+        1,
+        350
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_gurag_s_pebble",
+    "name": "Gurag's Pebble",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 82,
+    "implicit": {
+      "physical_skills": 1,
+      "crushing_blow_chance": 15,
+      "additive_physical_damage": [
+        18,
+        38
+      ],
+      "life_steal": [
+        4,
+        8
+      ],
+      "damage_reduced": [
+        5,
+        10
+      ]
+    },
+    "setId": "gurag_s_fury"
+  },
+  {
+    "id": "amulet_satanic_high_demon_s_necklace",
+    "name": "High Demon's Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 83,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "life_steal": [
+        3,
+        7
+      ],
+      "additive_cold_damage": [
+        450,
+        480
+      ],
+      "vitality_based_on_level": 50,
+      "vitality_converted_to_attack_dmg": [
+        6,
+        10
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_insignia_of_the_burning_legion",
+    "name": "Insignia of the Burning Legion",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 27,
+    "implicit": {
+      "increased_attack_speed": [
+        10,
+        20
+      ],
+      "life_per_kill": 15,
+      "increased_burning_damage": [
+        10,
+        20
+      ],
+      "flat_fire_skill_damage": [
+        10,
+        15
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 6,
+        "description": "cast Fire Enchant Level 11",
+        "details": "Enchant your attacks with additive fire damage inflicting burning on monsters. Your spells also apply a stack of Ignite. "
+      }
+    ]
+  },
+  {
+    "id": "amulet_satanic_insignia_of_the_hunter",
+    "name": "Insignia of the Hunter",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 83,
+    "implicit": {
+      "attack_rating_pct": [
+        3,
+        8
+      ],
+      "additive_physical_damage": [
+        18,
+        38
+      ],
+      "attack_damage": [
+        4,
+        8
+      ],
+      "melee_range": [
+        5,
+        15
+      ]
+    },
+    "setId": "gabriel_s_devotion"
+  },
+  {
+    "id": "amulet_satanic_juggernaut_s_emblem",
+    "name": "Juggernaut's Emblem",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 92,
+    "implicit": {
+      "physical_skills": [
+        1,
+        2
+      ],
+      "life_replenish_pct": [
+        15,
+        25
+      ],
+      "life": [
+        35,
+        45
+      ],
+      "physical_damage_reduction": [
+        5,
+        10
+      ]
+    },
+    "setId": "juggernaut_s_rampart"
+  },
+  {
+    "id": "amulet_satanic_kallik_s_fury",
+    "name": "Kallik's Fury",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 91,
+    "implicit": {
+      "all_skills": 1,
+      "increased_attack_speed": 18,
+      "additive_lightning_damage": [
+        135,
+        160
+      ],
+      "lightning_resistance": [
+        30,
+        40
+      ],
+      "enhanced_damage_based_on_level": 37.5
+    }
+  },
+  {
+    "id": "amulet_satanic_lifeblood_infuser",
+    "name": "Lifeblood Infuser",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 11,
+    "implicit": {
+      "deadly_blow": 10,
+      "life_steal": 5,
+      "to_vitality": [
+        10,
+        15
+      ],
+      "vitality_converted_to_attack_dmg": [
+        4,
+        7
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_light_bringer_s_mark",
+    "name": "Light Bringer's Mark",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "increased_attack_speed": [
+        20,
+        40
+      ],
+      "mana_steal": [
+        6,
+        15
+      ],
+      "defense_ignored": [
+        5,
+        25
+      ],
+      "to_dexterity": [
+        25,
+        40
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_lost_dieties_authority",
+    "name": "Lost Dieties Authority",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 85,
+    "defenseMin": 400,
+    "defenseMax": 450,
+    "implicit": {
+      "attack_rating": [
+        400,
+        450
+      ],
+      "life_per_kill": [
+        10,
+        15
+      ],
+      "all_resistances": [
+        35,
+        45
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_metal_vocalist_s_pentagram",
+    "name": "Metal Vocalist's Pentagram",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 84,
+    "implicit": {
+      "extra_damage_stasis": [
+        15,
+        20
+      ],
+      "to_intelligence": [
+        30,
+        40
+      ],
+      "intelligence_converted_to_lightning_skill_dmg": [
+        4,
+        8
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_nobunaga_s_warrior_spirit",
+    "name": "Nobunaga's Warrior Spirit",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 93,
+    "implicit": {
+      "faster_cast_rate": [
+        10,
+        20
+      ],
+      "all_attributes": [
+        10,
+        20
+      ],
+      "arcane_skill_damage": [
+        10,
+        25
+      ],
+      "mana_replenish_pct": 35
+    },
+    "setId": "nobunaga_s_empire"
+  },
+  {
+    "id": "amulet_satanic_plunderer_s_spy_glass",
+    "name": "Plunderer's Spy Glass",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 82,
+    "implicit": {
+      "to_energy": [
+        10,
+        15
+      ],
+      "flat_cold_skill_damage": [
+        18,
+        38
+      ],
+      "cold_skill_damage": [
+        8,
+        15
+      ],
+      "cold_resistance": [
+        30,
+        50
+      ]
+    },
+    "setId": "plunderer_s_ensemble"
+  },
+  {
+    "id": "amulet_satanic_prophets_foliage",
+    "name": "Prophet's Foliage",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_attributes": 25,
+      "all_resistances": 15,
+      "magic_find": [
+        5,
+        75
+      ]
+    },
+    "setId": "mystic_of_the_forest"
+  },
+  {
+    "id": "amulet_satanic_pyramid_pendant",
+    "name": "Pyramid Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 46,
+    "implicit": {
+      "open_wounds": [
+        20,
+        30
+      ],
+      "extra_damage_bleeding": [
+        25,
+        35
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_rapidshell_medallion",
+    "name": "Rapidshell Medallion",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 9,
+    "implicit": {
+      "faster_cast_rate": 10,
+      "increased_attack_speed": 10,
+      "to_vitality": [
+        7,
+        15
+      ],
+      "experience_gain": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_raven_s_claw",
+    "name": "Raven's Claw",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 88,
+    "implicit": {
+      "crit_chance": [
+        10,
+        20
+      ],
+      "crit_damage": [
+        20,
+        45
+      ],
+      "open_wounds": [
+        10,
+        20
+      ],
+      "to_strength": [
+        15,
+        25
+      ],
+      "to_dexterity": 10
+    }
+  },
+  {
+    "id": "amulet_satanic_rift_warrior_s_skull",
+    "name": "Rift Warrior's Skull",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 78,
+    "implicit": {
+      "mana_steal": [
+        11,
+        15
+      ],
+      "to_energy": 20,
+      "to_intelligence": 25,
+      "mana_replenish_pct": 25,
+      "mana_per_kill": [
+        10,
+        15
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_ritual_pendant",
+    "name": "Ritual Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 59,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "to_energy": [
+        5,
+        40
+      ],
+      "increased_energy": 8,
+      "energy_converted_to_magic_skill_dmg": [
+        1,
+        12
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_sacred_pendant",
+    "name": "Sacred Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 78,
+    "implicit": {
+      "to_energy": 15,
+      "mana_replenish_pct": [
+        10,
+        20
+      ],
+      "mana_per_kill": [
+        12,
+        24
+      ],
+      "all_skills": 2,
+      "cooldown_recovery": 30,
+      "flat_magic_skill_damage": [
+        18,
+        46
+      ],
+      "ignore_arcane_res": [
+        10,
+        30
+      ]
+    },
+    "setId": "the_holy_one"
+  },
+  {
+    "id": "amulet_satanic_satan_s_precious",
+    "name": "Satan's Precious",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 84,
+    "implicit": {
+      "fire_skills": [
+        1,
+        3
+      ],
+      "mana_steal": [
+        3,
+        7
+      ],
+      "slow_target": 10,
+      "additive_fire_damage": [
+        420,
+        480
+      ],
+      "fire_resistance": [
+        20,
+        50
+      ]
+    },
+    "setId": "satan_s_curse"
+  },
+  {
+    "id": "amulet_satanic_scout_s_medal_of_honor",
+    "name": "Scout's Medal of Honor",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 60,
+    "implicit": {
+      "movement_speed": 20,
+      "attack_rating_pct": [
+        4,
+        8
+      ],
+      "to_strength": 15,
+      "to_dexterity": 10,
+      "all_attributes": 4
+    }
+  },
+  {
+    "id": "amulet_satanic_serpentine_necklace",
+    "name": "Serpentine Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 87,
+    "implicit": {
+      "flat_poison_skill_damage": [
+        18,
+        38
+      ],
+      "poison_skill_damage": [
+        15,
+        35
+      ],
+      "poison_resistance": 50,
+      "max_poison_resistance": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_shining_pearl",
+    "name": "Shining Pearl",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 91,
+    "implicit": {
+      "all_attributes": 30,
+      "magic_skill_damage": 20,
+      "all_skills": [
+        1,
+        2
+      ],
+      "to_vitality": [
+        5,
+        30
+      ],
+      "increased_vitality": [
+        5,
+        10
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        6,
+        10
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_skinwalkers_claw",
+    "name": "Skinwalker's Claw",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 85,
+    "implicit": {
+      "all_skills": 3,
+      "all_attributes": [
+        10,
+        20
+      ],
+      "attack_damage": [
+        25,
+        40
+      ]
+    },
+    "setId": "skinwalker_s_bloodlust"
+  },
+  {
+    "id": "amulet_satanic_soulreplenish_pendant",
+    "name": "Soulreplenish Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 21,
+    "implicit": {
+      "to_energy": 15,
+      "to_vitality": 20,
+      "life_replenish_pct": [
+        15,
+        30
+      ],
+      "mana_replenish_pct": [
+        20,
+        35
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_spirit_pendant",
+    "name": "Spirit Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "skill_haste": 10,
+      "life": [
+        30,
+        45
+      ],
+      "mana": [
+        15,
+        25
+      ],
+      "all_resistances": [
+        20,
+        30
+      ]
+    },
+    "setId": "god_of_the_elements"
+  },
+  {
+    "id": "amulet_satanic_steve_s_necklace",
+    "name": "Steve's Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 86,
+    "implicit": {
+      "all_attributes": [
+        50,
+        100
+      ],
+      "physical_damage_reduction": [
+        8,
+        16
+      ],
+      "magic_damage_reduction": [
+        8,
+        16
+      ],
+      "all_resistances": 15
+    },
+    "setId": "stickman_steve_s_destruction"
+  },
+  {
+    "id": "amulet_satanic_stone_of_archaeology",
+    "name": "Stone of Archaeology",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 34,
+    "implicit": {
+      "movement_speed": [
+        10,
+        20
+      ],
+      "gold_find": [
+        8,
+        15
+      ],
+      "magic_find": [
+        10,
+        15
+      ]
+    },
+    "skillBonuses": {
+      "Treasure Hunter": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_storm_pendant",
+    "name": "Storm Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 40,
+    "implicit": {
+      "lightning_skills": [
+        1,
+        2
+      ],
+      "to_energy": [
+        15,
+        20
+      ],
+      "flat_lightning_skill_damage": [
+        15,
+        25
+      ],
+      "energy_converted_to_lightning_skill_dmg": [
+        6,
+        10
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_tal_s_pendant",
+    "name": "Tal's Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 93,
+    "implicit": {
+      "all_attributes": 8,
+      "gold_find": [
+        20,
+        30
+      ],
+      "magic_find": [
+        20,
+        30
+      ],
+      "experience_gain": [
+        1,
+        3
+      ]
+    },
+    "setId": "tal_s_reaping"
+  },
+  {
+    "id": "amulet_satanic_thunderstone_amulet",
+    "name": "Thunderstone Amulet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 97,
+    "implicit": {
+      "lightning_skills": [
+        1,
+        3
+      ],
+      "flat_lightning_skill_damage": [
+        18,
+        38
+      ],
+      "lightning_skill_damage": [
+        15,
+        30
+      ],
+      "lightning_resistance": [
+        40,
+        50
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_traveler_s_compass",
+    "name": "Traveler's Compass",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 1,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "all_attributes": [
+        15,
+        25
+      ],
+      "magic_find": [
+        20,
+        35
+      ]
+    },
+    "setId": "traveler"
+  },
+  {
+    "id": "amulet_satanic_treasure_pendant",
+    "name": "Treasure Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 66,
+    "implicit": {
+      "movement_speed": 10,
+      "gold_find": [
+        15,
+        20
+      ],
+      "magic_find": [
+        10,
+        30
+      ],
+      "experience_gain": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_unfathomable_puzzle",
+    "name": "Unfathomable Puzzle",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 86,
+    "implicit": {
+      "to_intelligence": [
+        20,
+        30
+      ],
+      "all_attributes": 15,
+      "magic_skill_damage": [
+        17,
+        30
+      ],
+      "increased_intelligence": [
+        2,
+        5
+      ]
+    }
+  },
+  {
+    "id": "amulet_satanic_venom_s_necklace",
+    "name": "Venom's Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 90,
+    "implicit": {
+      "increased_poisoned_damage": [
+        18,
+        25
+      ],
+      "flat_poison_skill_damage": [
+        22,
+        44
+      ],
+      "ignore_poison_res": 15
+    },
+    "setId": "venom_s_frame"
+  },
+  {
+    "id": "amulet_satanic_visage_s_eye",
+    "name": "Visage's Eye",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 62,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "faster_cast_rate": 20,
+      "mana_cost_reduction": [
+        5,
+        10
+      ],
+      "mana_replenish_pct": 75
+    }
+  },
+  {
+    "id": "amulet_satanic_ymir_s_frozen_tear",
+    "name": "Ymir's Frozen Tear",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "cold_skill_damage": [
+        10,
+        20
+      ],
+      "life": 300,
+      "mana_per_kill": 15,
+      "increased_intelligence": [
+        4,
+        8
+      ],
+      "intelligence_converted_to_cold_skill_dmg": [
+        6,
+        10
+      ]
+    },
+    "setId": "ymir_s_wisdom"
+  },
+  {
+    "id": "amulet_unholy_lilith_s_scorn",
+    "name": "Lilith's Scorn",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "magic_skill_damage": [
+        15,
+        60
+      ],
+      "all_resistances": [
+        15,
+        25
+      ],
+      "explosion_aoe": [
+        50,
+        75
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 2,
+        "description": "cast Liliths Rage Level 1"
+      }
+    ]
+  }
+]

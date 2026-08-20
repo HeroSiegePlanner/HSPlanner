@@ -1,0 +1,2643 @@
+[
+  {
+    "id": "tectonic_boulder",
+    "classId": "shaman",
+    "name": "Tectonic Boulder",
+    "kind": "active",
+    "description": "Unleash a massive boulder that travels forward dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 0, "col": 0 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 6, "perLevel": 12 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meteor Storm", "stat": "arcane_skill_damage", "value": 18, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "tectonic_boulder_core",
+        "positionIndex": 0,
+        "name": "Tectonic Boulder",
+        "description": "Core of the Tectonic Boulder subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bouncy_boulder",
+        "positionIndex": 1,
+        "name": "Bouncy Boulder",
+        "description": "Increases the amount of bounces.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "stoned_mind",
+        "positionIndex": 2,
+        "name": "Stoned Mind",
+        "description": "Decreases the mana cost of tectonic boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "boulder_momentum",
+        "positionIndex": 3,
+        "name": "Boulder Momentum",
+        "description": "Increases the projectile speed of tectonic boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 8 }
+        }
+      },
+      {
+        "id": "stone_density",
+        "positionIndex": 4,
+        "name": "Stone Density",
+        "description": "Increases damage dealt by tectonic boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "fractured_balance",
+        "positionIndex": 5,
+        "name": "Fractured Balance",
+        "description": "Knock monsters back on hit dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 4 }
+        }
+      },
+      {
+        "id": "crushing_boulder",
+        "positionIndex": 6,
+        "name": "Crushing Boulder",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "chunky_stone",
+        "positionIndex": 7,
+        "name": "Chunky Stone",
+        "description": "Increases the size of tectonic boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "frosted_pebble",
+        "positionIndex": 8,
+        "name": "Frosted Pebble",
+        "description": "Chance on cast to unleash a frozen boulder inflicting freezing on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["frozen"]
+        }
+      },
+      {
+        "id": "frostbiting_boulder",
+        "positionIndex": 9,
+        "name": "Frostbiting Boulder",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 10 }
+        }
+      },
+      {
+        "id": "fragmentation",
+        "positionIndex": 10,
+        "name": "Fragmentation",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "tiny_stones",
+        "positionIndex": 11,
+        "name": "Tiny Stones",
+        "description": "Unleash multiple smaller boulders in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "colossal_boulder",
+        "positionIndex": 12,
+        "name": "Colossal Boulder",
+        "description": "Unleash a boulder with increased size and damage stunning monsters on hit. Tectonic boulder now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 150, "projectile_size": 60 }
+        }
+      },
+      {
+        "id": "molten_boulder",
+        "positionIndex": 13,
+        "name": "Molten Boulder",
+        "description": "Conjure a molten boulder leaving behind a trail of lava inflicting monsters with burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "stone_slinger",
+        "positionIndex": 14,
+        "name": "Stone Slinger",
+        "description": "Throw boulders with increased projectile speed causing them to bounce off terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "arcane_skill_damage": 30, "projectile_speed": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "twisters",
+    "classId": "shaman",
+    "name": "Twisters",
+    "kind": "active",
+    "description": "Unleash small twisters towards target location dealing arcane damage to monsters on their path.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 0, "col": 2 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 5, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Tornado", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Earth's Grace", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.65, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "twisters_core",
+        "positionIndex": 0,
+        "name": "Twisters",
+        "description": "Core of the Twisters subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "twisted_winds",
+        "positionIndex": 1,
+        "name": "Twisted Winds",
+        "description": "Increases the projectile speed of twisters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "twistering_multitude",
+        "positionIndex": 2,
+        "name": "Twistering Multitude",
+        "description": "Increases the amount of twisters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "whispering_winds",
+        "positionIndex": 3,
+        "name": "Whispering Winds",
+        "description": "Decreases the mana cost of twisters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "sharp_gust",
+        "positionIndex": 4,
+        "name": "Sharp Gust",
+        "description": "Increases damage dealt by twisters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "winds_trajectory",
+        "positionIndex": 5,
+        "name": "Wind´s Trajectory",
+        "description": "Chance to change trajectory towards nearest monster with increased damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "gusts_bite",
+        "positionIndex": 6,
+        "name": "Gust´s Bite",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "windstruck",
+        "positionIndex": 7,
+        "name": "Windstruck",
+        "description": "Chance to strike monsters with lightning on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "windstep",
+        "positionIndex": 8,
+        "name": "Windstep",
+        "description": "Decreases movement diminish when using twisters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "upward_spiral",
+        "positionIndex": 9,
+        "name": "Upward Spiral",
+        "description": "Chance to send monsters airborne dealing increased damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "piercing_winds",
+        "positionIndex": 10,
+        "name": "Piercing Winds",
+        "description": "Chance for twisters to become piercing.",
+        "maxRank": 3,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 8 } }
+      },
+      {
+        "id": "entangling_gust",
+        "positionIndex": 11,
+        "name": "Entangling Gust",
+        "description": "Twisters pierce through targets with increased damage inflicting entangling roots on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 55 }
+        }
+      },
+      {
+        "id": "explosive_gust",
+        "positionIndex": 12,
+        "name": "Explosive Gust",
+        "description": "Twisters explode with increased area of effect radius on hit inflicting arcane break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "arcane_break": 0 },
+          "perRank": { "area_of_effect": 25, "arcane_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "splitting_twister",
+        "positionIndex": 13,
+        "name": "Splitting Twister",
+        "description": "Conjure a single twister with increased damage and size unleashing piercing twisters to all directions on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 35, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "ripping_gust",
+        "positionIndex": 14,
+        "name": "Ripping Gust",
+        "description": "Increases damage dealt inflicting bleeding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "increased_bleeding_damage": 0 },
+          "perRank": {
+            "arcane_skill_damage": 45,
+            "increased_bleeding_damage": 75
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "rock_fragments",
+    "classId": "shaman",
+    "name": "Rock Fragments",
+    "kind": "active",
+    "description": "Unleash rock fragments towards target location dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 1, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Earth Bind", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "rock_fragments_core",
+        "positionIndex": 0,
+        "name": "Rock Fragments",
+        "description": "Core of the Rock Fragments subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "multistone_fragments",
+        "positionIndex": 1,
+        "name": "Multistone Fragments",
+        "description": "Increases the amount of rock fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "stonegrowth",
+        "positionIndex": 2,
+        "name": "Stonegrowth",
+        "description": "Increases the size of rock fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "reinforced_stone",
+        "positionIndex": 3,
+        "name": "Reinforced Stone",
+        "description": "Increases damage dealt by rock fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "swift_fragments",
+        "positionIndex": 4,
+        "name": "Swift Fragments",
+        "description": "Increases the projectile speed of rock fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "arcanastone",
+        "positionIndex": 5,
+        "name": "Arcanastone",
+        "description": "Fragments have a chance of being imbued with arcana creating an arcane nova where they explode dealing damage over time.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "fragment_growth",
+        "positionIndex": 6,
+        "name": "Fragment Growth",
+        "description": "Chance to conjure fragments with increased damage and size.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+            "perRank": { "arcane_skill_damage": 15, "projectile_size": 15 }
+          }
+        }
+      },
+      {
+        "id": "disorienting_impact",
+        "positionIndex": 7,
+        "name": "Disorienting Impact",
+        "description": "Chance on hit to stun an enemy.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "feint_crush",
+        "positionIndex": 8,
+        "name": "Feint Crush",
+        "description": "Increases damage dealt to stunned enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "impaired_stone",
+        "positionIndex": 9,
+        "name": "Impaired Stone",
+        "description": "Rock fragments have a chance to ricochet on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "heavystone_crash",
+        "positionIndex": 10,
+        "name": "Heavystone Crash",
+        "description": "Chance to deal a critical strike with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "accumulating_density",
+        "positionIndex": 11,
+        "name": "Accumulating Density",
+        "description": "Increases the projectile speed of rock fragments increasing damage dealt based on distance traveled.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_speed": 20, "arcane_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "elemental_fragments",
+        "positionIndex": 12,
+        "name": "Elemental Fragments",
+        "description": "Arcanastone proc chance is doubled and additionally selects a random element between lightning, arcane, and fire. Lightning causes chain lightning, fire causes enemies to burn, and arcane leaves an arcane nova.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "projectile_bounces": 0,
+            "increased_burning_damage": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "projectile_bounces": 5,
+            "increased_burning_damage": 50,
+            "arcane_skill_damage": 15
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "colossus_stone_fragment",
+        "positionIndex": 13,
+        "name": "Colossus Stone Fragment",
+        "description": "Throw a giant rock onto the target location that explodes into multiple rock fragments that explode into smaller fragments.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 30 }
+        }
+      },
+      {
+        "id": "mad_rockslinger",
+        "positionIndex": 14,
+        "name": "Mad Rockslinger",
+        "description": "Throw increased amount of rocks in random directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 5 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "earth_bind",
+    "classId": "shaman",
+    "name": "Earth Bind",
+    "kind": "active",
+    "description": "Raise vines from the ground dealing poison damage, poisoning and rooting monsters in place.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 2, "col": 0 },
+    "damageType": "poison",
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Nature's Prophet", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "earth_bind_core",
+        "positionIndex": 0,
+        "name": "Earth Bind",
+        "description": "Core of the Earth Bind subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lasting_roots",
+        "positionIndex": 1,
+        "name": "Lasting Roots",
+        "description": "Increases the duration of earth bind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "sharp_oaks",
+        "positionIndex": 2,
+        "name": "Sharp Oaks",
+        "description": "Increases damage dealt by earth bind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "natures_intellect",
+        "positionIndex": 3,
+        "name": "Nature's Intellect",
+        "description": "Decreases the cooldown of earth bind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "increased_pressure",
+        "positionIndex": 4,
+        "name": "Increased Pressure",
+        "description": "Monsters killed by earth bind explode, dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "rooting_wave",
+        "positionIndex": 5,
+        "name": "Rooting Wave",
+        "description": "Chance to unleash additional earth binds on cast.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "expanding_roots",
+        "positionIndex": 6,
+        "name": "Expanding Roots",
+        "description": "Chance for earth bind to grow on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "lingering_oak",
+        "positionIndex": 7,
+        "name": "Lingering Oak",
+        "description": "Increases the area of effect of earth bind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "poisonous_ivy",
+        "positionIndex": 8,
+        "name": "Poisonous Ivy",
+        "description": "Increases poisoned damage of earth bind.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "strangling_thorns",
+        "positionIndex": 9,
+        "name": "Strangling Thorns",
+        "description": "Executes low-life monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "paralyzing_leaves",
+        "positionIndex": 10,
+        "name": "Paralyzing Leaves",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 10 }
+        }
+      },
+      {
+        "id": "field_of_roots",
+        "positionIndex": 11,
+        "name": "Field of Roots",
+        "description": "Area of effect and damage is greatly increased, but earth bind is now cast at your feet.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 25, "area_of_effect": 40 }
+        }
+      },
+      {
+        "id": "wildfire_growth",
+        "positionIndex": 12,
+        "name": "Wildfire Growth",
+        "description": "Chance to send a trail of hellfire towards targets on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "poison_skill_damage": 0 },
+            "perRank": { "poison_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "shattering_thorns",
+        "positionIndex": 13,
+        "name": "Shattering Thorns",
+        "description": "Increases damage dealt, inflicting elemental break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "elemental_break": 0 },
+          "perRank": { "poison_skill_damage": 25, "elemental_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 15 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "quick_strangulation",
+        "positionIndex": 14,
+        "name": "Quick Strangulation",
+        "description": "Increases the tick frequency of earth bind.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "meteor_storm",
+    "classId": "shaman",
+    "name": "Meteor Storm",
+    "kind": "active",
+    "description": "Call down a meteor storm on target location dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 2, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 240,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Earth's Grace", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.45, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "meteor_storm_core",
+        "positionIndex": 0,
+        "name": "Meteor Storm",
+        "description": "Core of the Meteor Storm subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "meteor_strike",
+        "positionIndex": 1,
+        "name": "Meteor Strike",
+        "description": "Increases the damage dealt by meteor storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "massive_stone",
+        "positionIndex": 2,
+        "name": "Massive Stone",
+        "description": "Increases the area of effect radius of meteor storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "extended_meteorshower",
+        "positionIndex": 3,
+        "name": "Extended Meteorshower",
+        "description": "Increases duration of meteor storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "meteoric_fragmentation",
+        "positionIndex": 4,
+        "name": "Meteoric Fragmentation",
+        "description": "Meteors have a chance of exploding into smaller fragments that deal additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "heat_seeking_storm",
+        "positionIndex": 5,
+        "name": "Heat Seeking Storm",
+        "description": "Meteor storm slowly travels towards the closest enemy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "concentrated_shattering",
+        "positionIndex": 6,
+        "name": "Concentrated Shattering",
+        "description": "Inflicts elemental break on hit with the cost of reduced area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "elemental_break": 0, "area_of_effect": 0 },
+          "perRank": { "elemental_break": 17.5, "area_of_effect": -15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 17.5 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "rolling_meteorite",
+        "positionIndex": 7,
+        "name": "Rolling Meteorite",
+        "description": "Chance for meteors to roll for a short duration when landing dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "manaburning_meteorology",
+        "positionIndex": 8,
+        "name": "Manaburning Meteorology",
+        "description": "Increases damage according to your energy. Mana cost is increased.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_energy": 0, "mana_cost_reduction": 0 },
+          "perRank": { "conversion_energy": 8, "mana_cost_reduction": -15 }
+        }
+      },
+      {
+        "id": "colossus_destroyer",
+        "positionIndex": 9,
+        "name": "Colossus Destroyer",
+        "description": "Increases damage dealt to bosses by meteor storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 15 }
+        }
+      },
+      {
+        "id": "hellflame_meteors",
+        "positionIndex": 10,
+        "name": "Hellflame Meteors",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "astroheated_shower",
+        "positionIndex": 11,
+        "name": "Astroheated Shower",
+        "description": "Meteors constantly fall around you with a decreased frequency.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "storm_of_comets",
+        "positionIndex": 12,
+        "name": "Storm of Comets",
+        "description": "Call down a rain of colossal meteors from the sky over a greater area dealing increased damage. Meteor storm now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 100, "area_of_effect": 50 }
+        }
+      },
+      {
+        "id": "back_into_orbit",
+        "positionIndex": 13,
+        "name": "Back Into Orbit",
+        "description": "Summon multiple storms orbiting you. Meteor storm now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 3 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "rain_from_hell",
+        "positionIndex": 14,
+        "name": "Rain From Hell",
+        "description": "Increases the duration of meteor storm inflicting monsters with burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "skill_duration": 0 },
+          "perRank": { "increased_burning_damage": 100, "skill_duration": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "tornado",
+    "classId": "shaman",
+    "name": "Tornado",
+    "kind": "active",
+    "description": "Summon a tornado traveling towards target direction dealing arcane damage to monsters on its path.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 2, "col": 2 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 15.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "range": 320,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Twisters", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Nature's Prophet", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "tornado_core",
+        "positionIndex": 0,
+        "name": "Tornado",
+        "description": "Core of the Tornado subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "winds_force",
+        "positionIndex": 1,
+        "name": "Wind´s Force",
+        "description": "Increases damage dealt by tornado.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "sudden_winds",
+        "positionIndex": 2,
+        "name": "Sudden Winds",
+        "description": "Chance to increase the amount of tornados.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "cyclone_radius",
+        "positionIndex": 3,
+        "name": "Cyclone Radius",
+        "description": "Increases the size of tornado.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 10 }
+        }
+      },
+      {
+        "id": "tempest_mind",
+        "positionIndex": 4,
+        "name": "Tempest Mind",
+        "description": "Decreases the mana cost of tornado.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "windstorms_wrath",
+        "positionIndex": 5,
+        "name": "Windstorm´s Wrath",
+        "description": "Chance to deal a critical strike with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "piercing_typhoon",
+        "positionIndex": 6,
+        "name": "Piercing Typhoon",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "flowing_spiral",
+        "positionIndex": 7,
+        "name": "Flowing Spiral",
+        "description": "Chance to stun and knock targets up on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "punishing_tempest",
+        "positionIndex": 8,
+        "name": "Punishing Tempest",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "tempeststep",
+        "positionIndex": 9,
+        "name": "Tempeststep",
+        "description": "Decreases movement diminish when using tornado.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "afterflow",
+        "positionIndex": 10,
+        "name": "Afterflow",
+        "description": "Chance to unleash an additional tornado.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "orbital_winds",
+        "positionIndex": 11,
+        "name": "Orbital Winds",
+        "description": "Spawn multiple tornadoes spiraling outwards from you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "storm_growth",
+        "positionIndex": 12,
+        "name": "Storm Growth",
+        "description": "Summon a static tornado growing in size and gaining increased damage over time eventually bursting into small tornados in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "projectile_size": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 10,
+            "projectile_size": 10,
+            "projectile_count": 4
+          }
+        }
+      },
+      {
+        "id": "splitting_cyclone",
+        "positionIndex": 13,
+        "name": "Splitting Cyclone",
+        "description": "Tornado halves on size and damage on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 50, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "absolute_tempest",
+        "positionIndex": 14,
+        "name": "Absolute Tempest",
+        "description": "Conjure a tornado with increased size catching monsters in it till hitting terrain throwing any monsters caught in the air and causing them to deal area of effect damage upon landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 55, "projectile_size": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "earths_grace",
+    "classId": "shaman",
+    "name": "Earth's Grace",
+    "kind": "passive",
+    "description": "Increases your maximum life and mana.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Elementalist",
+    "position": { "row": 3, "col": 0 },
+    "passiveStats": {
+      "base": { "increased_life": 3, "increased_mana": 3 },
+      "perRank": { "increased_life": 3, "increased_mana": 3 }
+    }
+  },
+  {
+    "id": "natures_prophet",
+    "classId": "shaman",
+    "name": "Nature's Prophet",
+    "kind": "passive",
+    "description": "Increases your arcane skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Elementalist",
+    "position": { "row": 3, "col": 2 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3.5 },
+      "perRank": { "arcane_skill_damage": 3.5 }
+    }
+  },
+  {
+    "id": "fissures",
+    "classId": "shaman",
+    "name": "Fissures",
+    "kind": "active",
+    "description": "Rip the ground open with magic causing cracks that release fissures dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Elementalist",
+    "position": { "row": 4, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 1, "perLevel": 24 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Meteor Storm", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rock Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Tectonic Boulder", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "fissures_core",
+        "positionIndex": 0,
+        "name": "Fissures",
+        "description": "Core of the Fissures subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "trembling_earth",
+        "positionIndex": 1,
+        "name": "Trembling Earth",
+        "description": "Increases duration of fissures.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "scorching_steam",
+        "positionIndex": 2,
+        "name": "Scorching Steam",
+        "description": "Increases damage dealt by fissures.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "debilitating_burst",
+        "positionIndex": 3,
+        "name": "Debilitating Burst",
+        "description": "Chance on hit to stun enemies.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "magnetic_field",
+        "positionIndex": 4,
+        "name": "Magnetic Field",
+        "description": "Decreases cooldown of fissures.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 5 }
+        }
+      },
+      {
+        "id": "trembling_pull",
+        "positionIndex": 5,
+        "name": "Trembling Pull",
+        "description": "Fissures have a chance to knock monsters towards the center on each hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "earth_crack",
+        "positionIndex": 6,
+        "name": "Earth Crack",
+        "description": "Chance to crack the earth impaling monsters with a stone pillar on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "comet_fall",
+        "positionIndex": 7,
+        "name": "Comet Fall",
+        "description": "Chance to drop a comet on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "field_of_landmass",
+        "positionIndex": 8,
+        "name": "Field of Landmass",
+        "description": "Increases the area of effect of fissures.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "rumbling_impact",
+        "positionIndex": 9,
+        "name": "Rumbling Impact",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "frequent_shaking",
+        "positionIndex": 10,
+        "name": "Frequent Shaking",
+        "description": "Increases the tick frequency of fissures.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 8 }
+        }
+      },
+      {
+        "id": "enlargening_earthquake",
+        "positionIndex": 11,
+        "name": "Enlargening Earthquake",
+        "description": "Increases the duration of fissures. Increase the size but decrease the damage dealt.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "skill_duration": 0,
+            "area_of_effect": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "skill_duration": 45,
+            "area_of_effect": 15,
+            "arcane_skill_damage": -1.5
+          }
+        }
+      },
+      {
+        "id": "electrocharged_fissures",
+        "positionIndex": 12,
+        "name": "Electrocharged Fissures",
+        "description": "Inflicts stasis and has a chance to strike monsters with bolts of lightning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 60 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 60 } }
+          ]
+        }
+      },
+      {
+        "id": "manual_quake",
+        "positionIndex": 13,
+        "name": "Manual Quake",
+        "description": "Fissures now unleashes only a single tremble dealing increased damage. Fissures no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 150 }
+        }
+      },
+      {
+        "id": "natural_disaster",
+        "positionIndex": 14,
+        "name": "Natural Disaster",
+        "description": "Increases the proc chance of earth crack and comet fall inflicting arcane break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "earth_totem",
+    "classId": "shaman",
+    "name": "Earth Totem",
+    "kind": "active",
+    "description": "Summon a totem that fires rock fragments that deal area of effect arcane damage on hit.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active", "Sentry"],
+    "tree": "Chieftain",
+    "position": { "row": 0, "col": 0 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 7, "perLevel": 12 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Chaos Totem", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fractal Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Astral Intellect", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "earth_totem_core",
+        "positionIndex": 0,
+        "name": "Earth Totem",
+        "description": "Core of the Earth Totem subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "earth_master",
+        "positionIndex": 1,
+        "name": "Earth Master",
+        "description": "Increases the maximum amount of earth totems.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_max_amount": 1 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "rapid_earth",
+        "positionIndex": 2,
+        "name": "Rapid Earth",
+        "description": "Increases attack speed of earth totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_attack_speed": 0 },
+          "perRank": { "sentry_attack_speed": 12.5 }
+        }
+      },
+      {
+        "id": "fragmenting_totemstones",
+        "positionIndex": 3,
+        "name": "Fragmenting Totemstones",
+        "description": "Chance for rocks to unleash fragments upon landing dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "earth_god",
+        "positionIndex": 4,
+        "name": "Earth God",
+        "description": "Increases damage dealt by earth totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "runic_earth",
+        "positionIndex": 5,
+        "name": "Runic Earth",
+        "description": "Increases the size of earth totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 17.5 }
+        }
+      },
+      {
+        "id": "dense_earth",
+        "positionIndex": 6,
+        "name": "Dense Earth",
+        "description": "Chance for rocks to bounce off the ground unleashing additional explosions.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_bounces": 0 },
+            "perRank": { "projectile_bounces": 1 }
+          }
+        }
+      },
+      {
+        "id": "stunning_earth",
+        "positionIndex": 7,
+        "name": "Stunning Earth",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "ravaging_earth",
+        "positionIndex": 8,
+        "name": "Ravaging Earth",
+        "description": "Increases damage dealt to stunned enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 16.5 }
+        }
+      },
+      {
+        "id": "double_boulder",
+        "positionIndex": 9,
+        "name": "Double Boulder",
+        "description": "Chance for earth totem to deal double damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "earth_caller",
+        "positionIndex": 10,
+        "name": "Earth Caller",
+        "description": "Spawn an additional earth totem per cast.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 1 }
+        }
+      },
+      {
+        "id": "entangling_roots",
+        "positionIndex": 11,
+        "name": "Entangling Roots",
+        "description": "Unleash a trail of earth roots traveling towards the target rooting monsters on hit and dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 60, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "fragmented_volley",
+        "positionIndex": 12,
+        "name": "Fragmented Volley",
+        "description": "Earth totem unleashes a volley of smaller rocks. Earth totem attack speed is decreased.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 20, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "the_rolling_stones",
+        "positionIndex": 13,
+        "name": "The Rolling Stones",
+        "description": "Earth totem unleashes rolling boulders inflicting arcane break and knocking monsters back on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "arcane_break": 0 },
+          "perRank": { "arcane_skill_damage": 40, "arcane_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "wind_totem",
+        "positionIndex": 14,
+        "name": "Wind Totem",
+        "description": "Earth totem unleashes multiple piercing tornados.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 30, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "spiritual_guide",
+    "classId": "shaman",
+    "name": "Spiritual Guide",
+    "kind": "passive",
+    "description": "Increases your mana and mana replenish.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Chieftain",
+    "position": { "row": 0, "col": 1 },
+    "passiveStats": {
+      "base": { "increased_mana": 1.5, "mana_replenish_pct": 1.5 },
+      "perRank": { "increased_mana": 1.5, "mana_replenish_pct": 1.5 }
+    }
+  },
+  {
+    "id": "fractal_mind",
+    "classId": "shaman",
+    "name": "Fractal Mind",
+    "kind": "passive",
+    "description": "Increases your movement speed and magic skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Chieftain",
+    "position": { "row": 1, "col": 1 },
+    "passiveStats": {
+      "base": { "movement_speed": 1.5, "magic_skill_damage": 2 },
+      "perRank": { "movement_speed": 1.5, "magic_skill_damage": 2 }
+    }
+  },
+  {
+    "id": "spirit_wolves",
+    "classId": "shaman",
+    "name": "Spirit Wolves",
+    "kind": "active",
+    "description": "Spawn a spirit wolf to fight on your side.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Chieftain",
+    "position": { "row": 1, "col": 2 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 0, "perLevel": 5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 120,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Fractal Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Spiritual Guide", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Scent of the Wolf", "stat": "arcane_skill_damage", "value": 17.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 11.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "spirit_wolves_core",
+        "positionIndex": 0,
+        "name": "Spirit Wolves",
+        "description": "Core of the Spirit Wolves subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharpened_teeth",
+        "positionIndex": 1,
+        "name": "Sharpened Teeth",
+        "description": "Increases damage dealt by spirit wolves.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "wolf_pack",
+        "positionIndex": 2,
+        "name": "Wolf Pack",
+        "description": "Increases the maximum amount of spirit wolves.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 2 }
+        }
+      },
+      {
+        "id": "astral_fur",
+        "positionIndex": 3,
+        "name": "Astral Fur",
+        "description": "Increases the damage reduction of spirit wolves.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_reduced_dmg_taken": 0 },
+          "perRank": { "summon_reduced_dmg_taken": 10 }
+        }
+      },
+      {
+        "id": "cleave_slash",
+        "positionIndex": 4,
+        "name": "Cleave Slash",
+        "description": "Increases the area of effect radius and splash damage dealt to monsters around the target.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "splash_of_total_damage": 20, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "wolfs_claw",
+        "positionIndex": 5,
+        "name": "Wolf´s Claw",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "ravaging_strike",
+        "positionIndex": 6,
+        "name": "Ravaging Strike",
+        "description": "Bleeding targets emit damage taken to nearby enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 5 }
+        }
+      },
+      {
+        "id": "pack_leader",
+        "positionIndex": 7,
+        "name": "Pack Leader",
+        "description": "Increases the attack speed of spirit wolves.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 25 }
+        }
+      },
+      {
+        "id": "pummeling_rage",
+        "positionIndex": 8,
+        "name": "Pummeling Rage",
+        "description": "Chance to knock monsters back dealing increased damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "rupturing_slice",
+        "positionIndex": 9,
+        "name": "Rupturing Slice",
+        "description": "Chance to deal a critical strike on attack.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "wounding_trail",
+        "positionIndex": 10,
+        "name": "Wounding Trail",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "spiritual_rabies",
+        "positionIndex": 11,
+        "name": "Spiritual Rabies",
+        "description": "Chance on attack to become enraged increasing movement speed and damage dealt for a short period.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "movement_speed": 0 },
+            "perRank": { "arcane_skill_damage": 75, "movement_speed": 20 }
+          }
+        }
+      },
+      {
+        "id": "alpha",
+        "positionIndex": 12,
+        "name": "Alpha",
+        "description": "Summon a single lone wolf scaling its damage and life according to the maximum amount of wolves.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_summon_count": 0 },
+          "perRank": { "conversion_summon_count": 30 }
+        }
+      },
+      {
+        "id": "lightning_fangs",
+        "positionIndex": 13,
+        "name": "Lightning Fangs",
+        "description": "Chance to unleash surges of chain lightning on hit dealing increased damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 16 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+            "perRank": { "arcane_skill_damage": 75, "projectile_bounces": 4 }
+          }
+        }
+      },
+      {
+        "id": "howling_pack",
+        "positionIndex": 14,
+        "name": "Howling Pack",
+        "description": "Increases spirit wolves movement speed and maximum summon amount.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "summon_max_amount": 0,
+            "movement_speed": 0
+          },
+          "perRank": {
+            "summon_max_amount": 3,
+            "movement_speed": 15
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "storm_totem",
+    "classId": "shaman",
+    "name": "Storm Totem",
+    "kind": "active",
+    "description": "Summon a totem that releases chain lightning on nearby monsters dealing lightning damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active", "Sentry"],
+    "tree": "Chieftain",
+    "position": { "row": 2, "col": 0 },
+    "damageType": "lightning",
+    "damageFormula": { "base": 1, "perLevel": 13 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Chaos Totem", "stat": "lightning_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fractal Mind", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Astral Intellect", "stat": "lightning_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "lightning_skill_damage", "value": 9.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "storm_totem_core",
+        "positionIndex": 0,
+        "name": "Storm Totem",
+        "description": "Core of the Storm Totem subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "storm_master",
+        "positionIndex": 1,
+        "name": "Storm Master",
+        "description": "Increases the maximum amount of storm totems.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "sentry_max_amount": 2 },
+          "perRank": { "sentry_max_amount": 1 }
+        }
+      },
+      {
+        "id": "circuitbreaking",
+        "positionIndex": 2,
+        "name": "Circuitbreaking",
+        "description": "Increases amount of chain lightning bounces.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 4 },
+          "perRank": { "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "storm_current",
+        "positionIndex": 3,
+        "name": "Storm Current",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "storm_god",
+        "positionIndex": 4,
+        "name": "Storm God",
+        "description": "Increases damage dealt by storm totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "static_duality",
+        "positionIndex": 5,
+        "name": "Static Duality",
+        "description": "Chance to summon an additional storm totem on attack for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "connected_by_storm",
+        "positionIndex": 6,
+        "name": "Connected by Storm",
+        "description": "Storm totems are now linked together with electric current dealing damage to monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 75 }
+        }
+      },
+      {
+        "id": "static_electroshock",
+        "positionIndex": 7,
+        "name": "Static Electroshock",
+        "description": "Increases damage dealt to targets with stasis.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stasis": 0 },
+          "perRank": { "extra_damage_stasis": 15 }
+        }
+      },
+      {
+        "id": "storming_bolt",
+        "positionIndex": 8,
+        "name": "Storming Bolt",
+        "description": "Chance to strike monsters with a bolt of lightning on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "struck_by_thunder",
+        "positionIndex": 9,
+        "name": "Struck by Thunder",
+        "description": "Storm totem has a chance to stun enemies on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "collapsing_thunder",
+        "positionIndex": 10,
+        "name": "Collapsing Thunder",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "lightning_rods",
+        "positionIndex": 11,
+        "name": "Lightning Rods",
+        "description": "Storm totems call lightning bolts from the sky unleashing lightning pulses dealing increased damage. Storm totems no longer unleash chain lightning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "surging_sentry",
+        "positionIndex": 12,
+        "name": "Surging Sentry",
+        "description": "Storm totem fires a surge of lightning unleashing lightning pulses on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "lightning_skill_damage": 15, "skill_range": 35 }
+        }
+      },
+      {
+        "id": "stormclaw_totem",
+        "positionIndex": 13,
+        "name": "Stormclaw Totem",
+        "description": "Increases the attack speed and damage dealt by storm totem unleashing an arc of lightning bolts on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "lightning_skill_damage": 0,
+            "faster_cast_rate": 0,
+            "projectile_count": 1
+          },
+          "perRank": {
+            "lightning_skill_damage": 20,
+            "faster_cast_rate": 20,
+            "projectile_count": 1
+          }
+        }
+      },
+      {
+        "id": "charged_totem",
+        "positionIndex": 14,
+        "name": "Charged Totem",
+        "description": "Storm totem unleashes multiple charged bolts.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "lightning_skill_damage": 30, "projectile_count": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "scent_of_the_wolf",
+    "classId": "shaman",
+    "name": "Scent of the Wolf",
+    "kind": "passive",
+    "description": "Increases spirit wolves arcane damage and life.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Chieftain",
+    "position": { "row": 2, "col": 2 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 3, "summon_life": 3 },
+      "perRank": { "arcane_skill_damage": 3, "summon_life": 3 }
+    }
+  },
+  {
+    "id": "fire_totem",
+    "classId": "shaman",
+    "name": "Fire Totem",
+    "kind": "active",
+    "description": "Spawn a totem that casts piercing fire projectiles dealing fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active", "Sentry"],
+    "tree": "Chieftain",
+    "position": { "row": 3, "col": 0 },
+    "damageType": "fire",
+    "damageFormula": { "base": 0, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 15,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Chaos Totem", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fractal Mind", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Astral Intellect", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "fire_totem_core",
+        "positionIndex": 0,
+        "name": "Fire Totem",
+        "description": "Core of the Fire Totem subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "fire_master",
+        "positionIndex": 1,
+        "name": "Fire Master",
+        "description": "Increases the maximum amount of fire totems.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "sentry_max_amount": 2 },
+          "perRank": { "sentry_max_amount": 1 }
+        }
+      },
+      {
+        "id": "flame_scorching",
+        "positionIndex": 2,
+        "name": "Flame Scorching",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "scattering_flames",
+        "positionIndex": 3,
+        "name": "Scattering Flames",
+        "description": "Chance to inflict fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "overheated_flames",
+        "positionIndex": 4,
+        "name": "Overheated Flames",
+        "description": "Increases damage dealt by fire totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "burning_radius",
+        "positionIndex": 5,
+        "name": "Burning Radius",
+        "description": "Increases the size of fire totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "light_the_soil",
+        "positionIndex": 6,
+        "name": "Light the Soil",
+        "description": "Chance to leave ground burning beneath monsters on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 35 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "arcfire",
+        "positionIndex": 7,
+        "name": "Arcfire",
+        "description": "Chance to unleash additional flames in an arc.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "gas_into_the_flames",
+        "positionIndex": 8,
+        "name": "Gas into the Flames",
+        "description": "Chance for flames to grow in size on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_size": 0 },
+            "perRank": { "projectile_size": 22.5 }
+          }
+        }
+      },
+      {
+        "id": "totemscorch",
+        "positionIndex": 9,
+        "name": "Totemscorch",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 15 }
+        }
+      },
+      {
+        "id": "flamescarred_sentry",
+        "positionIndex": 10,
+        "name": "Flamescarred Sentry",
+        "description": "Fire totem now burns monsters around it for a portion of its damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 10 }
+        }
+      },
+      {
+        "id": "firestorm_totems",
+        "positionIndex": 11,
+        "name": "Firestorm Totems",
+        "description": "Fire totem unleashes swirling flames orbiting outwards with increased damage but decreased duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "homing_flames",
+        "positionIndex": 12,
+        "name": "Homing Flames",
+        "description": "Flames become homing towards the nearest target dealing a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "multiplying_fire",
+        "positionIndex": 13,
+        "name": "Multiplying Fire",
+        "description": "Chance on hit to summon an additional fire totem at the target's location for a short time.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "paralyzing_napalm",
+        "positionIndex": 14,
+        "name": "Paralyzing Napalm",
+        "description": "Increases damage and size of flames inflicting slow on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "fire_skill_damage": 40, "projectile_size": 20 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "astral_intellect",
+    "classId": "shaman",
+    "name": "Astral Intellect",
+    "kind": "active",
+    "description": "Cast to move all spawned totems to you. Passively increases the attack range of all totems.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active"],
+    "tree": "Chieftain",
+    "position": { "row": 3, "col": 2 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "movementDuringUse": 85,
+    "passiveStats": {
+      "base": { "totem_attack_range": 3 },
+      "perRank": { "totem_attack_range": 3 }
+    }
+  },
+  {
+    "id": "chaos_totem",
+    "classId": "shaman",
+    "name": "Chaos Totem",
+    "kind": "active",
+    "description": "Summon a totem that rapidly shoots chaos bolts dealing arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "tags": ["Active", "Sentry"],
+    "tree": "Chieftain",
+    "position": { "row": 4, "col": 1 },
+    "damageType": "arcane",
+    "damageFormula": { "base": 1, "perLevel": 23 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "baseCastRate": 1,
+    "baseCooldown": 30,
+    "movementDuringUse": 85,
+    "bonusSources": [
+      { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
+      { "source": "Storm Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
+      { "source": "Fire Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.85, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "chaos_totem_core",
+        "positionIndex": 0,
+        "name": "Chaos Totem",
+        "description": "Core of the Chaos Totem subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "soulburning_bolts",
+        "positionIndex": 1,
+        "name": "Soulburning Bolts",
+        "description": "Increases damage of chaos totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "hour_of_chaos",
+        "positionIndex": 2,
+        "name": "Hour of Chaos",
+        "description": "Decreases the cooldown of chaos totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 5 }
+        }
+      },
+      {
+        "id": "chaos_shattering",
+        "positionIndex": 3,
+        "name": "Chaos Shattering",
+        "description": "Chance to inflict elemental break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "elemental_break": 0 },
+          "perRank": { "elemental_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 15 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "doomsday_clock",
+        "positionIndex": 4,
+        "name": "Doomsday Clock",
+        "description": "Increases the duration of chaos totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "chaos_aura",
+        "positionIndex": 5,
+        "name": "Chaos Aura",
+        "description": "Monsters around the chaos totem have a chance for a chaos meteor to drop down from the sky dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "chaos_arc",
+        "positionIndex": 6,
+        "name": "Chaos Arc",
+        "description": "Chance on attack to fire multiple chaos bolts in an arc.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "split_chaos",
+        "positionIndex": 7,
+        "name": "Split Chaos",
+        "description": "Chance for chaos bolts to split into two bolts on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "uncontrollable_reaction",
+        "positionIndex": 8,
+        "name": "Uncontrollable Reaction",
+        "description": "Chaos totem has a chance on hit to critically strike dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "reach_of_chaos",
+        "positionIndex": 9,
+        "name": "Reach of Chaos",
+        "description": "Increases the range of chaos totem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "chaos_pulse",
+        "positionIndex": 10,
+        "name": "Chaos Pulse",
+        "description": "Chance to unleash a pulse of shadow on hit inflicting burning and dealing additional damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "manafunneled_chaos",
+        "positionIndex": 11,
+        "name": "Manafunneled Chaos",
+        "description": "Chaos totem deals increased damage based on your maximum mana for each second active but drains increasing amounts of mana per second. If you run out of mana the totem despawns.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_max_mana": 0, "mana_drain_pct": 9 },
+          "perRank": { "conversion_max_mana": 0.05, "mana_drain_pct": 1 }
+        }
+      },
+      {
+        "id": "chaos_embodied",
+        "positionIndex": 12,
+        "name": "Chaos Embodied",
+        "description": "You can summon multiple chaos totems but you can no longer summon any other totems. Chaos totem no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "arcing_destruction",
+        "positionIndex": 13,
+        "name": "Arcing Destruction",
+        "description": "Chaos totem fires multiple chaos bolts in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "colossal_chaos",
+        "positionIndex": 14,
+        "name": "Colossal Chaos",
+        "description": "Increases the size and damage of chaos bolts.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 35, "projectile_size": 25 }
+        }
+      }
+    ]
+  }
+]

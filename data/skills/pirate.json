@@ -1,0 +1,3060 @@
+[
+  {
+    "id": "buckshot",
+    "classId": "pirate",
+    "name": "Buckshot",
+    "kind": "active",
+    "description": "Quick draw your musket and release a ranged buckshot with increased damage and additional fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Strike"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 8
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 32,
+        "perLevel": 18
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 8.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Grenade Jump",
+        "stat": "attack_damage",
+        "value": 5.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Bullets",
+        "stat": "fire_skill_damage",
+        "value": 22.75,
+        "per": "skill_level"
+      },
+      {
+        "source": "Cannonball",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "buckshot_core",
+        "positionIndex": 0,
+        "name": "Buckshot",
+        "description": "Core of the Buckshot subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "black_powder",
+        "positionIndex": 1,
+        "name": "Black Powder",
+        "description": "Increases damage dealt by buckshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "stack_of_slugs",
+        "positionIndex": 2,
+        "name": "Stack of Slugs",
+        "description": "Increases the amount of buckshot trails.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "trail_count": 0 },
+          "perRank": { "trail_count": 1 }
+        }
+      },
+      {
+        "id": "spiced_up",
+        "positionIndex": 3,
+        "name": "Spiced Up",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "eye_patch",
+        "positionIndex": 4,
+        "name": "Eye Patch",
+        "description": "Chance to stun on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "scorched_slugshot",
+        "positionIndex": 5,
+        "name": "Scorched Slugshot",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 20 }
+        }
+      },
+      {
+        "id": "longshot",
+        "positionIndex": 6,
+        "name": "Longshot",
+        "description": "Increases the range of buckshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 18 }
+        }
+      },
+      {
+        "id": "colossus_slugs",
+        "positionIndex": 7,
+        "name": "Colossus Slugs",
+        "description": "Buckshot projectile size increased.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 10 }
+        }
+      },
+      {
+        "id": "targeted_slugs",
+        "positionIndex": 8,
+        "name": "Targeted Slugs",
+        "description": "Increases the attack rating when using buckshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "firearm_expert",
+        "positionIndex": 9,
+        "name": "Firearm Expert",
+        "description": "Increases the attack speed of buckshot while wielding a gun.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
+        }
+      },
+      {
+        "id": "sluglust",
+        "positionIndex": 10,
+        "name": "Sluglust",
+        "description": "Killing an enemy with buckshot increases your fire damage for a short period of time.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "big_slugs",
+        "positionIndex": 11,
+        "name": "Big Slugs",
+        "description": "Projectiles are now bigger and travel farther also knocking monsters back.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "projectile_size": 0,
+            "skill_range": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 85,
+            "projectile_size": 50,
+            "skill_range": 35
+          }
+        }
+      },
+      {
+        "id": "one_slug_to_end_them_all",
+        "positionIndex": 12,
+        "name": "One Slug to End Them All",
+        "description": "Fire a single slug scaling a portion of its damage from the amount of total projectiles.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_size": 0 },
+          "perRank": { "of_total_damage": 85, "projectile_size": 40 }
+        }
+      },
+      {
+        "id": "circle_of_slugs",
+        "positionIndex": 13,
+        "name": "Circle of Slugs",
+        "description": "Fire multiple waves of slugs in every direction. Buckshot now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "max_targets": 0,
+            "projectile_count": 0,
+            "fire_skill_damage": 0
+          },
+          "perRank": {
+            "max_targets": 5,
+            "projectile_count": 2,
+            "fire_skill_damage": 15
+          }
+        }
+      },
+      {
+        "id": "slick_slugs",
+        "positionIndex": 14,
+        "name": "Slick Slugs",
+        "description": "Projectiles now chain off of the target with decreased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "splash_of_total_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "splash_of_total_damage": 65, "projectile_bounces": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "grenade_jump",
+    "classId": "pirate",
+    "name": "Grenade Jump",
+    "kind": "active",
+    "description": "Blast yourself into the air leaving a cluster of grenades behind dealing fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion",
+      "Movement"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "damageType": "fire",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 6.5,
+      "perLevel": 9.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Explosive Barrel",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Bullets",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Powder Trail",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ]
+  },
+  {
+    "id": "explosive_barrel",
+    "classId": "pirate",
+    "name": "Explosive Barrel",
+    "kind": "passive",
+    "description": "Spawn a barrel of explosives which detonates after some time or when shot with a projectile dealing fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive",
+      "Explosion"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "range": 8,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 9.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 15,
+        "perLevel": 15
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6.5,
+        "perLevel": 0.5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Buckshot",
+        "stat": "attack_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Bullets",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Powder Trail",
+        "stat": "fire_skill_damage",
+        "value": 25,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "explosive_barrel_core",
+        "positionIndex": 0,
+        "name": "Explosive Barrel",
+        "description": "Core of the Explosive Barrel subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "explosive_containers",
+        "positionIndex": 1,
+        "name": "Explosive Containers",
+        "description": "Increases the amount of spawned barrels.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "barrel_blast_radius",
+        "positionIndex": 2,
+        "name": "Barrel Blast Radius",
+        "description": "Increases explosion area of effect radius of explosive barrel.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "inflammable_liquid",
+        "positionIndex": 3,
+        "name": "Inflammable Liquid",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 20 }
+        }
+      },
+      {
+        "id": "scatter_barrel",
+        "positionIndex": 4,
+        "name": "Scatter Barrel",
+        "description": "Chance on cast to unleash an additional barrel.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "sudden_dynamite",
+        "positionIndex": 5,
+        "name": "Sudden Dynamite",
+        "description": "Chance on exploding to launch shrapnel around dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "stack_of_explosives",
+        "positionIndex": 6,
+        "name": "Stack of Explosives",
+        "description": "Increases the damage dealt by barrels.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "more_barrels",
+        "positionIndex": 7,
+        "name": "MORE BARRELS!",
+        "description": "Increases proc rate of explosive barrel.",
+        "maxRank": 3,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "incendiary_explosives",
+        "positionIndex": 8,
+        "name": "Incendiary Explosives",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 22.5 } }
+          ]
+        }
+      },
+      {
+        "id": "deepfrozen_barrel",
+        "positionIndex": 9,
+        "name": "Deepfrozen Barrel",
+        "description": "Dealing cold damage with explosive barrel freezes enemies and inflicts permafrost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_permafrost_damage": 0 },
+          "perRank": { "increased_permafrost_damage": 16 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "permafrost", "amount": { "base": 0, "perRank": 16 } }
+          ]
+        }
+      },
+      {
+        "id": "barrels_of_the_freljord",
+        "positionIndex": 10,
+        "name": "Barrels of the Freljord",
+        "description": "Barrels now explode in a frigid blast converting damage dealt to cold inflicting cold break.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "bring_the_grog",
+        "positionIndex": 11,
+        "name": "Bring the Grog!",
+        "description": "Barrels are now big and leave the ground burning with increased blast radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 100, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "field_of_explosives",
+        "positionIndex": 12,
+        "name": "Field of Explosives",
+        "description": "Create multiple trails of smaller barrels.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "trail_count": 0 },
+          "perRank": { "fire_skill_damage": 20, "trail_count": 2 }
+        }
+      },
+      {
+        "id": "explosive_collision",
+        "positionIndex": 13,
+        "name": "Explosive Collision",
+        "description": "Now throw a barrel bouncing and exploding multiple times.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_bounces": 0 },
+          "perRank": { "fire_skill_damage": 150, "projectile_bounces": 3 }
+        }
+      },
+      {
+        "id": "circle_of_tnt",
+        "positionIndex": 14,
+        "name": "Circle of TNT",
+        "description": "Now creates a circle of barrels around the target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 35, "projectile_count": 4 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "cannonball",
+    "classId": "pirate",
+    "name": "Cannonball",
+    "kind": "active",
+    "description": "Shoot a cannonball that launches in the air on hit and deals area of effect damage when landing.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Explosion",
+      "Strike"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 16,
+        "perLevel": 16
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 3.5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Buckshot",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Grenade Jump",
+        "stat": "fire_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Kneecap",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.35,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "cannonball_core",
+        "positionIndex": 0,
+        "name": "Cannonball",
+        "description": "Core of the Cannonball subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "cannon_scatter",
+        "positionIndex": 1,
+        "name": "Cannon Scatter",
+        "description": "Increases the amount of chain bounces.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "shrapnel_count",
+        "positionIndex": 2,
+        "name": "Shrapnel Count",
+        "description": "Increases the amount of shrapnel from cannonball explosion.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "cannon_accuracy",
+        "positionIndex": 3,
+        "name": "Cannon Accuracy",
+        "description": "Increases the attack rating when using cannonball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "steel_balls",
+        "positionIndex": 4,
+        "name": "Steel Balls",
+        "description": "Increases the damage dealt by cannonball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "slowmode",
+        "positionIndex": 5,
+        "name": "Slowmode",
+        "description": "Increases the damage dealt by cannonball shrapnel.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "artillery_farshot",
+        "positionIndex": 6,
+        "name": "Artillery Farshot",
+        "description": "Increases the range of cannonball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 12 }
+        }
+      },
+      {
+        "id": "empowered_blasting_powder",
+        "positionIndex": 7,
+        "name": "Empowered Blasting Powder",
+        "description": "Increases the projectile speed of cannonball shrapnel.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "mayday",
+        "positionIndex": 8,
+        "name": "Mayday",
+        "description": "Increases the size and explosion area of effect radius of cannonball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "slay_the_weak",
+        "positionIndex": 9,
+        "name": "Slay the Weak!",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "blasting_balls",
+        "positionIndex": 10,
+        "name": "Blasting Balls",
+        "description": "Cannonball no longer explodes on hit but instead knocks monsters back with increased damage according to the amount of shrapnel.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 2 }
+        }
+      },
+      {
+        "id": "bomb_trail",
+        "positionIndex": 11,
+        "name": "Bomb Trail",
+        "description": "Cannonball no longer chains but is now piercing and unleashes bombs on every monster hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "blast_the_horizon",
+        "positionIndex": 12,
+        "name": "Blast the Horizon",
+        "description": "Fire multiple cannonballs in an arc with decreased damage and bounces.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "splash_of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "splash_of_total_damage": 35, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "mega_shot",
+        "positionIndex": 13,
+        "name": "Mega Shot",
+        "description": "Fire a mega cannon ball with increased damage unleashing additional cannonballs around the impact location.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "projectile_size": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 50,
+            "projectile_size": 50,
+            "projectile_count": 4
+          }
+        }
+      },
+      {
+        "id": "rolling_balls",
+        "positionIndex": 14,
+        "name": "Rolling Balls",
+        "description": "Fire rolling cannon balls traveling forward on the ground exploding with increased radius and inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "projectile_size": 0,
+            "increased_burning_damage": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 75,
+            "projectile_size": 45,
+            "increased_burning_damage": 100
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "explosive_bullets",
+    "classId": "pirate",
+    "name": "Explosive Bullets",
+    "kind": "active",
+    "description": "Striking a monster leaves a charge in them that detonates after a short delay dealing area of effect fire damage and stunning them. If you have Explosive Barrel skilled, attacking has a chance to spawn barrels in a line around the target exploding shortly after.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Explosion",
+      "Strike"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "damageType": "fire",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 13.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 0,
+        "perLevel": 20
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 6.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Cannonball",
+        "stat": "fire_skill_damage",
+        "value": 20,
+        "per": "skill_level"
+      },
+      {
+        "source": "Explosive Barrel",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Kneecap",
+        "stat": "attack_damage",
+        "value": 7.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.45,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "explosive_bullets_core",
+        "positionIndex": 0,
+        "name": "Explosive Bullets",
+        "description": "Core of the Explosive Bullets subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "grouping_up",
+        "positionIndex": 1,
+        "name": "Grouping Up",
+        "description": "Chance to attach an additional explosive to a nearby target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "max_targets": 0 },
+            "perRank": { "max_targets": 1 }
+          }
+        }
+      },
+      {
+        "id": "gunners_glory",
+        "positionIndex": 2,
+        "name": "Gunner's Glory",
+        "description": "Increases the damage dealt by explosive bullets when wielding a gun.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "shattering_blast",
+        "positionIndex": 3,
+        "name": "Shattering Blast",
+        "description": "Inflicts armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "sudden_scatter",
+        "positionIndex": 4,
+        "name": "Sudden Scatter",
+        "description": "Chance on attack to fire an additional explosive bullet.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "boss_killer",
+        "positionIndex": 5,
+        "name": "Boss Killer",
+        "description": "Increases the damage dealt by explosive bullets against bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 20 }
+        }
+      },
+      {
+        "id": "multiplosion",
+        "positionIndex": 6,
+        "name": "Multiplosion",
+        "description": "Chance on hit to unleash additional explosions.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "explosion_site",
+        "positionIndex": 7,
+        "name": "Explosion Site",
+        "description": "Increases the explosion area of effect radius for explosive bullet.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "target_locked",
+        "positionIndex": 8,
+        "name": "Target Locked",
+        "description": "Increases attack rating when using explosive bullets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "napalm_infusion",
+        "positionIndex": 9,
+        "name": "Napalm Infusion",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "gasoline",
+        "positionIndex": 10,
+        "name": "Gasoline",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 20 }
+        }
+      },
+      {
+        "id": "chain_reaction",
+        "positionIndex": 11,
+        "name": "Chain Reaction",
+        "description": "Explosive bullet now explodes multiple times.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "area_of_effect": 0,
+            "projectile_count": 0,
+            "fire_skill_damage": 0
+          },
+          "perRank": {
+            "area_of_effect": 15,
+            "projectile_count": 1,
+            "fire_skill_damage": 15
+          }
+        }
+      },
+      {
+        "id": "shotwave",
+        "positionIndex": 12,
+        "name": "Shotwave",
+        "description": "On hit create a shockwave of explosions towards the target dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 40, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "blast_pulse",
+        "positionIndex": 13,
+        "name": "Blast Pulse",
+        "description": "Explosive bullet now deals increased damage and knocks nearby monsters back with massive force.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 100 }
+        }
+      },
+      {
+        "id": "penetrating_trail",
+        "positionIndex": 14,
+        "name": "Penetrating Trail",
+        "description": "Explosive bullet now pierces and sticks explosives to all monsters hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "fire_skill_damage": 40, "projectile_size": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "powder_trail",
+    "classId": "pirate",
+    "name": "Powder Trail",
+    "kind": "active",
+    "description": "Throw a keg of gunpowder causing a chain of explosions dealing fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "damageType": "fire",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 2.5,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 24.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Explosive Barrel",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Grenade Jump",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Buckshot",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 7.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "powder_trail_core",
+        "positionIndex": 0,
+        "name": "Powder Trail",
+        "description": "Core of the Powder Trail subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "napalm_powder",
+        "positionIndex": 1,
+        "name": "Napalm Powder",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "spinning_barrel",
+        "positionIndex": 2,
+        "name": "Spinning Barrel",
+        "description": "Increases the projectile speed of powder trail.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "blowing_up",
+        "positionIndex": 3,
+        "name": "Blowing Up",
+        "description": "Increases the damage dealt by barrel explosions.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "colliding_barrel",
+        "positionIndex": 4,
+        "name": "Colliding Barrel",
+        "description": "Increases the damage dealt by powder trail barrels.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "heated_powder",
+        "positionIndex": 5,
+        "name": "Heated Powder",
+        "description": "Increases damage to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 15 }
+        }
+      },
+      {
+        "id": "stacked_fumes",
+        "positionIndex": 6,
+        "name": "Stacked Fumes",
+        "description": "Every time the barrel hits an enemy it gives you a stacking buff increasing fire skill damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 3 }
+        }
+      },
+      {
+        "id": "powder_detonation",
+        "positionIndex": 7,
+        "name": "Powder Detonation",
+        "description": "Chance to unleash a fiery pulse dealing additional damage on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "fire_skill_damage": 20, "area_of_effect": 10 }
+          }
+        }
+      },
+      {
+        "id": "dual_barrel",
+        "positionIndex": 8,
+        "name": "Dual Barrel",
+        "description": "Chance on cast to unleash an additional barrel.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "mage_of_the_trails",
+        "positionIndex": 9,
+        "name": "Mage of the Trails",
+        "description": "Increases cast rate when using powder trail.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 5 }
+        }
+      },
+      {
+        "id": "shortened_fuse",
+        "positionIndex": 10,
+        "name": "Shortened Fuse",
+        "description": "Increases explosion area of effect but decreases traveling time.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "barrel_of_barrels",
+        "positionIndex": 11,
+        "name": "Barrel of Barrels",
+        "description": "Send forward a big barrel exploding on hit dealing damage and sending smaller barrels to all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "projectile_size": 0,
+            "projectile_count": 0,
+            "fire_skill_damage": 0
+          },
+          "perRank": {
+            "projectile_size": 45,
+            "projectile_count": 5,
+            "fire_skill_damage": 15
+          }
+        }
+      },
+      {
+        "id": "fragmenting_barrel",
+        "positionIndex": 12,
+        "name": "Fragmenting Barrel",
+        "description": "The barrel stops into terrain or on monster hit releasing flying bombs in an arc forward after exploding.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 80, "projectile_count": 6 }
+        }
+      },
+      {
+        "id": "heavy_barrel",
+        "positionIndex": 13,
+        "name": "Heavy Barrel",
+        "description": "Send forward a slowly rolling barrel that knocks monsters back dealing increased damage and stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "fire_skill_damage": 150, "projectile_size": 40 }
+        }
+      },
+      {
+        "id": "flaming_barrels",
+        "positionIndex": 14,
+        "name": "Flaming Barrels",
+        "description": "Send forward multiple barrels. Explosions now sets the ground on fire slowing and dealing damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 60, "projectile_count": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "bomb_barrage",
+    "classId": "pirate",
+    "name": "Bomb Barrage",
+    "kind": "active",
+    "description": "Start rapidly firing cannonballs dealing area of effect fire damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageType": "fire",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 8,
+    "range": 330,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 27
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Cannonball",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Grenade Jump",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Powder Trail",
+        "stat": "fire_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.15,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "bomb_barrage_core",
+        "positionIndex": 0,
+        "name": "Bomb Barrage",
+        "description": "Core of the Bomb Barrage subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bombardation",
+        "positionIndex": 1,
+        "name": "Bombardation",
+        "description": "Increases the amount of bombs thrown.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "barrage_blasting_radius",
+        "positionIndex": 2,
+        "name": "Barrage Blasting Radius",
+        "description": "Increases explosion area of effect of bomb barrage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "bombination",
+        "positionIndex": 3,
+        "name": "Bombination",
+        "description": "Increases the frequency of bombs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 8 }
+        }
+      },
+      {
+        "id": "explosive_barrage",
+        "positionIndex": 4,
+        "name": "Explosive Barrage",
+        "description": "Increases the damage dealt by bomb barrage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 16 }
+        }
+      },
+      {
+        "id": "piercing_blastwave",
+        "positionIndex": 5,
+        "name": "Piercing Blastwave",
+        "description": "Inflicts fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "scaled_blastradius",
+        "positionIndex": 6,
+        "name": "Scaled Blastradius",
+        "description": "Increases damage dealt based on your explosion area of effect stat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_explosion_aoe": 0 },
+          "perRank": { "conversion_explosion_aoe": 15 }
+        }
+      },
+      {
+        "id": "molten_heat_bombs",
+        "positionIndex": 7,
+        "name": "Molten Heat Bombs",
+        "description": "Bombs have a chance to scorch the ground dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 5 }
+          }
+        }
+      },
+      {
+        "id": "sharp_scatter",
+        "positionIndex": 8,
+        "name": "Sharp Scatter",
+        "description": "Chance for bombs to shatter into fragments inflicting bleeding when exploding.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "quick_barrage",
+        "positionIndex": 9,
+        "name": "Quick Barrage",
+        "description": "Increases the projectile speed of bomb barrage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "critical_explosion",
+        "positionIndex": 10,
+        "name": "Critical Explosion",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 6, "spell_crit_damage": 20 }
+        }
+      },
+      {
+        "id": "crossed_spot",
+        "positionIndex": 11,
+        "name": "Crossed Spot",
+        "description": "Mark a location where to fire all bombs.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 60 }
+        }
+      },
+      {
+        "id": "bomb_shower",
+        "positionIndex": 12,
+        "name": "Bomb Shower",
+        "description": "Fire multiple bombs in all directions from you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "rapid_barrage",
+        "positionIndex": 13,
+        "name": "Rapid Barrage",
+        "description": "Rapidly fire bombs with increased speed dealing area of effect damage and knocking monsters back on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "area_of_effect": 0 },
+          "perRank": { "faster_cast_rate": 40, "area_of_effect": 35 }
+        }
+      },
+      {
+        "id": "rain_of_bombs",
+        "positionIndex": 14,
+        "name": "Rain of Bombs",
+        "description": "Now throw a single bomb marking the target location and dropping multiple bombs from the sky.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "kneecap",
+    "classId": "pirate",
+    "name": "Kneecap",
+    "kind": "passive",
+    "description": "Increases your attack rating and chance for critical strike.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "attack_rating": 2,
+        "crit_chance": 1.5
+      },
+      "perRank": {
+        "attack_rating": 2,
+        "crit_chance": 1.5
+      }
+    }
+  },
+  {
+    "id": "rapid_fire",
+    "classId": "pirate",
+    "name": "Rapid Fire",
+    "kind": "buff",
+    "description": "Temporarily increase your attack speed and physical damage.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Buff",
+      "Cast",
+      "Active"
+    ],
+    "tree": "Gunner",
+    "position": {
+      "row": 4,
+      "col": 0
+    },
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 30,
+        "physical_damage": 20
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "physical_damage": 1
+      }
+    }
+  },
+  {
+    "id": "torrent",
+    "classId": "pirate",
+    "name": "Torrent",
+    "kind": "active",
+    "description": "Summon a pool of corrupted water on target location bursting into a massive torrent that knocks up monsters struck dealing cold damage.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Area of Effect"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "range": 240,
+    "damageFormula": {
+      "base": 12,
+      "perLevel": 9
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Freezing Chain Shot",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Frozen Lead",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Set Sail",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.55,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "torrent_core",
+        "positionIndex": 0,
+        "name": "Torrent",
+        "description": "Core of the Torrent subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "splash_impact",
+        "positionIndex": 1,
+        "name": "Splash Impact",
+        "description": "Chance when casting to summon an additional torrent at the closest monster.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_cast", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "watery_fissure",
+        "positionIndex": 2,
+        "name": "Watery Fissure",
+        "description": "Chance on hit to knock enemies into the air dealing area of effect damage upon landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "subzero_liquid",
+        "positionIndex": 3,
+        "name": "Subzero Liquid",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "torrenting_current",
+        "positionIndex": 4,
+        "name": "Torrenting Current",
+        "description": "Torrents now burst additional times.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "waterwalk",
+        "positionIndex": 5,
+        "name": "Waterwalk",
+        "description": "Decreases the movement diminish when using torrent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "collateral_splash",
+        "positionIndex": 6,
+        "name": "Collateral Splash",
+        "description": "Torrents have a chance on hit to chain their damage dealt to multiple nearby monsters.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "water_mass",
+        "positionIndex": 7,
+        "name": "Water Mass",
+        "description": "Increases the damage dealt by torrent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "pillar_of_water",
+        "positionIndex": 8,
+        "name": "Pillar of Water",
+        "description": "Chance on cast to replace torrent with a watery tornado dealing damage, freezing and lasting for an increased duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "cold_skill_damage": 0, "skill_duration": 0 },
+            "perRank": { "cold_skill_damage": 8, "skill_duration": 15 }
+          }
+        }
+      },
+      {
+        "id": "oceans_might",
+        "positionIndex": 9,
+        "name": "Ocean´s Might",
+        "description": "Increases the size and area of effect of torrent.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "hypothermic_liquid",
+        "positionIndex": 10,
+        "name": "Hypothermic Liquid",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 15 }
+        }
+      },
+      {
+        "id": "ocean_storm",
+        "positionIndex": 11,
+        "name": "Ocean Storm",
+        "description": "Unleash multiple torrents around target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "chaotic_wave",
+        "positionIndex": 12,
+        "name": "Chaotic Wave",
+        "description": "Send forward a tsunami unleashing torrents on hit. Torrent now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 70, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "whirlpool",
+        "positionIndex": 13,
+        "name": "Whirlpool",
+        "description": "Create a whirlpool sucking in monsters on a large radius eventually collapsing into torrents. Torrent now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 80, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "storm_pillar",
+        "positionIndex": 14,
+        "name": "Storm Pillar",
+        "description": "Unleash a big torrent knocking monsters back and airborne with force causing them to take increased damage when hitting the ground.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 175 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "freezing_chain_shot",
+    "classId": "pirate",
+    "name": "Freezing Chain Shot",
+    "kind": "active",
+    "description": "Shoot a piercing chain shot that freezes and deals cold damage to monsters struck.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 4
+      }
+    ],
+    "tags": [
+      "Active",
+      "Attack",
+      "Ranged",
+      "Projectile",
+      "Strike"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "damageType": "cold",
+    "attackKind": "attack",
+    "movementDuringUse": 65,
+    "damageFormula": {
+      "base": 5,
+      "perLevel": 8.5
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": -0.5,
+        "perLevel": 12.5
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 5.5,
+        "perLevel": 0.5
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 1.5
+      }
+    },
+    "manaCostFormula": {
+      "base": 4,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 12,
+        "per": "skill_level"
+      },
+      {
+        "source": "Frozen Lead",
+        "stat": "attack_damage",
+        "value": 7,
+        "per": "skill_level"
+      },
+      {
+        "source": "Anchor Swing",
+        "stat": "cold_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 7.45,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "freezing_chain_shot_core",
+        "positionIndex": 0,
+        "name": "Freezing Chain Shot",
+        "description": "Core of the Freezing Chain Shot subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "poseidons_fist",
+        "positionIndex": 1,
+        "name": "Poseidon's Fist",
+        "description": "Breaks cold resistances on striking.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "precision_chain",
+        "positionIndex": 2,
+        "name": "Precision Chain",
+        "description": "Increased hit rating.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "good_ol_ways",
+        "positionIndex": 3,
+        "name": "Good Ol' Ways",
+        "description": "Gain additional attacks per second while wielding a bow.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
+        }
+      },
+      {
+        "id": "pack_a_punch",
+        "positionIndex": 4,
+        "name": "Pack a Punch",
+        "description": "Increases the projectile speed of freezing chain shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "shatter",
+        "positionIndex": 5,
+        "name": "Shatter",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 10 }
+        }
+      },
+      {
+        "id": "ice_age",
+        "positionIndex": 6,
+        "name": "Ice Age",
+        "description": "Freezes enemies with a chance on striking to deepfreeze them.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_permafrost_damage": 0 },
+          "perRank": { "increased_permafrost_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "permafrost", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "ice_healing",
+        "positionIndex": 7,
+        "name": "Ice Healing",
+        "description": "Restores a flat amount of health and mana on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1, "mana_replenish_pct": 0.75 }
+        }
+      },
+      {
+        "id": "gulf_stream",
+        "positionIndex": 8,
+        "name": "Gulf Stream",
+        "description": "Chance on hit to increase your attackspeed for a short duration.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "increased_attack_speed": 0 },
+            "perRank": { "increased_attack_speed": 8 }
+          }
+        }
+      },
+      {
+        "id": "grip_boots",
+        "positionIndex": 9,
+        "name": "Grip Boots",
+        "description": "Decreases the movement diminish when using freezing chain shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "coldspot",
+        "positionIndex": 10,
+        "name": "Coldspot",
+        "description": "Freezing chain shot deals damage in a small area around the targets hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "splash_of_total_damage": 12, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "frozen_chain_rip",
+        "positionIndex": 11,
+        "name": "Frozen Chain Rip",
+        "description": "Freezing chain shot now chains and pulls chained monsters towards the first target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 5 }
+        }
+      },
+      {
+        "id": "coldsnap_vacuum",
+        "positionIndex": 12,
+        "name": "Coldsnap Vacuum",
+        "description": "Fire a huge chainshot catching monsters on its way and dealing increased damage and stunning caught monsters when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 75, "area_of_effect": 50 }
+        }
+      },
+      {
+        "id": "catch_of_the_day",
+        "positionIndex": 13,
+        "name": "Catch of the Day",
+        "description": "On hit release additional chain shots in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "freezing_whiplash",
+        "positionIndex": 14,
+        "name": "Freezing Whiplash",
+        "description": "When hitting terrain the chainshot spins and grows in size rapidly sending monsters into the air dealing increased damage and stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 135 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "frozen_lead",
+    "classId": "pirate",
+    "name": "Frozen Lead",
+    "kind": "passive",
+    "description": "Use specially hand crafted frozen lead to increase your cold skill damage.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 3
+      },
+      "perRank": {
+        "cold_skill_damage": 3
+      }
+    }
+  },
+  {
+    "id": "parrot",
+    "classId": "pirate",
+    "name": "Parrot",
+    "kind": "active",
+    "description": "Summon a parrot to peck your monsters dealing cold damage.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Summon"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 10
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Frozen Lead",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Remiges",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 9,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "parrot_core",
+        "positionIndex": 0,
+        "name": "Parrot",
+        "description": "Core of the Parrot subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "peck_peck",
+        "positionIndex": 1,
+        "name": "Peck Peck",
+        "description": "Increases parrot attack speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "birdstrike",
+        "positionIndex": 2,
+        "name": "Birdstrike",
+        "description": "Increases parrot movement speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 8 }
+        }
+      },
+      {
+        "id": "flock_gathering",
+        "positionIndex": 3,
+        "name": "Flock Gathering",
+        "description": "Increases the maximum amount of parrots.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 2 }
+        }
+      },
+      {
+        "id": "gm_crops",
+        "positionIndex": 4,
+        "name": "GM Crops",
+        "description": "Increases the life and damage dealt by parrots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "summon_life": 0 },
+          "perRank": { "cold_skill_damage": 8, "summon_life": 15 }
+        }
+      },
+      {
+        "id": "birdflu_vax",
+        "positionIndex": 5,
+        "name": "Birdflu Vax",
+        "description": "Increases the resistances of parrots.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_all_resist": 0 },
+          "perRank": { "summon_all_resist": 10 }
+        }
+      },
+      {
+        "id": "target_practise",
+        "positionIndex": 6,
+        "name": "Target Practise",
+        "description": "Increases the damage dealt by parrots against bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 10 }
+        }
+      },
+      {
+        "id": "pirates_best_friend",
+        "positionIndex": 7,
+        "name": "Pirate's Best Friend",
+        "description": "Chance on hit to reduce target's damage dealt.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "all_damage_taken_reduced_pct": 0 },
+            "perRank": { "all_damage_taken_reduced_pct": 3 }
+          }
+        }
+      },
+      {
+        "id": "upper_wing",
+        "positionIndex": 8,
+        "name": "Upper Wing",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "beak_of_steel",
+        "positionIndex": 9,
+        "name": "Beak of Steel",
+        "description": "Increases the damage dealt by parrot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "killing_command",
+        "positionIndex": 10,
+        "name": "Killing Command",
+        "description": "Parrots have a chance on hit to enrage, significantly increasing their attack speed and damage for a short duration before dying.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 1 } }
+      },
+      {
+        "id": "screech",
+        "positionIndex": 11,
+        "name": "Screech",
+        "description": "Parrots now send a traveling screeching wave on attack knocking monsters back dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "cold_skill_damage": 65, "skill_range": 20 }
+        }
+      },
+      {
+        "id": "pecking_pack",
+        "positionIndex": 12,
+        "name": "Pecking Pack",
+        "description": "Summon all parrots with one cast empowering the parrots with increased attack speed. Parrot now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 30 }
+        }
+      },
+      {
+        "id": "captains_parrot",
+        "positionIndex": 13,
+        "name": "Captain's Parrot",
+        "description": "Now only summon one big parrot scaling with the amount of total parrots attacking with increased radius and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 30, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "pecking_order",
+        "positionIndex": 14,
+        "name": "Pecking Order",
+        "description": "Parrots now unleash a frozen nova every five attacks with increased radius and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 45, "area_of_effect": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "set_sail",
+    "classId": "pirate",
+    "name": "Set Sail",
+    "kind": "buff",
+    "description": "Temporarily increases your cold skill damage and mana replenish.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Buff",
+      "Cast",
+      "Active"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 2.5,
+        "mana_replenish": 7
+      },
+      "perRank": {
+        "cold_skill_damage": 2.5,
+        "mana_replenish": 2
+      }
+    }
+  },
+  {
+    "id": "remiges",
+    "classId": "pirate",
+    "name": "Remiges",
+    "kind": "passive",
+    "description": "Increases your parrots cold damage and attack speed.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "tags": [
+      "Passive"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 2,
+      "col": 2
+    },
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 2,
+        "increased_attack_speed": 5
+      },
+      "perRank": {
+        "cold_skill_damage": 2,
+        "increased_attack_speed": 0.75
+      }
+    }
+  },
+  {
+    "id": "anchor_swing",
+    "classId": "pirate",
+    "name": "Anchor Swing",
+    "kind": "active",
+    "description": "Unleash a massive anchor swinging around you dealing cold damage.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Orbital"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 2,
+    "range": 360,
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 24
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Set Sail",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Freezing Chain Shot",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "anchor_swing_core",
+        "positionIndex": 0,
+        "name": "Anchor Swing",
+        "description": "Core of the Anchor Swing subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "on_the_deck",
+        "positionIndex": 1,
+        "name": "On The Deck",
+        "description": "Decreases movement diminish when using anchor swing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "rusted_chain",
+        "positionIndex": 2,
+        "name": "Rusted Chain",
+        "description": "Inflicts cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "spin_to_win",
+        "positionIndex": 3,
+        "name": "Spin to Win",
+        "description": "Increases the duration of anchor swing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 12.5 }
+        }
+      },
+      {
+        "id": "sharpened_bill",
+        "positionIndex": 4,
+        "name": "Sharpened Bill",
+        "description": "Increases damage dealt by anchor.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "baby_anchor",
+        "positionIndex": 5,
+        "name": "Baby Anchor",
+        "description": "Chance on cast to summon a small anchor spinning close to the pirate.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_cast", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "ianchor",
+        "positionIndex": 6,
+        "name": "iAnchor",
+        "description": "Chance on cast to unleash an additional anchor.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "frozen_tip",
+        "positionIndex": 7,
+        "name": "Frozen Tip",
+        "description": "Increases damage dealt by anchor and freezes monsters on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "freeze_duration": 0 },
+          "perRank": { "cold_skill_damage": 5, "freeze_duration": 1 }
+        }
+      },
+      {
+        "id": "cold_smash",
+        "positionIndex": 8,
+        "name": "Cold Smash",
+        "description": "Increases damage to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 17.5 }
+        }
+      },
+      {
+        "id": "man_of_war",
+        "positionIndex": 9,
+        "name": "Man of War",
+        "description": "Increases anchor size and area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "aerodynamic_chain",
+        "positionIndex": 10,
+        "name": "Aerodynamic Chain",
+        "description": "Increases the spinning speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "anchoring_the_anchor",
+        "positionIndex": 11,
+        "name": "Anchoring the Anchor",
+        "description": "Throw the anchor on target location unleashing another anchor swinging around that one with increased radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "cold_skill_damage": 50, "skill_range": 35 }
+        }
+      },
+      {
+        "id": "extended_weight",
+        "positionIndex": 12,
+        "name": "Extended Weight",
+        "description": "Anchor now has an additional spinning anchor attached to it.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "cold_skill_damage": 30, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "colossal_anchor",
+        "positionIndex": 13,
+        "name": "Colossal Anchor",
+        "description": "Unleash a massive anchor covering a wide radius with increased damage. Anchor swing now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "cold_skill_damage": 135, "skill_range": 70 }
+        }
+      },
+      {
+        "id": "trembling_smash",
+        "positionIndex": 14,
+        "name": "Trembling Smash",
+        "description": "Send the anchor forward unleashing a shockwave of torrents to all directions when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "cold_skill_damage": 35, "projectile_count": 5 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "treasure_hunter",
+    "classId": "pirate",
+    "name": "Treasure Hunter",
+    "kind": "active",
+    "description": "Search for a treasure from the corpses of dead monsters with additional magic find.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 3,
+      "col": 2
+    },
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "magic_find": 1
+      },
+      "perRank": {
+        "magic_find": 1
+      }
+    }
+  },
+  {
+    "id": "land_ahoy",
+    "classId": "pirate",
+    "name": "Land Ahoy!",
+    "kind": "active",
+    "description": "Call for the main ship to bombard the targeted area dealing area of effect cold damage.",
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "tags": [
+      "Active",
+      "Cast",
+      "Spell",
+      "Explosion"
+    ],
+    "tree": "Plunderer",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "damageType": "cold",
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "damageFormula": {
+      "base": 0.5,
+      "perLevel": 30.5
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Freezing Chain Shot",
+        "stat": "cold_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Anchor Swing",
+        "stat": "cold_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Torrent",
+        "stat": "cold_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "cold_skill_damage",
+        "value": 8.15,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "land_ahoy_core",
+        "positionIndex": 0,
+        "name": "Land Ahoy!",
+        "description": "Core of the Land Ahoy! subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "armada",
+        "positionIndex": 1,
+        "name": "Armada",
+        "description": "Increases the amount of bombs fired.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 15 }
+        }
+      },
+      {
+        "id": "fire_all",
+        "positionIndex": 2,
+        "name": "Fire All!",
+        "description": "Decreases the cooldown of land ahoy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 5 }
+        }
+      },
+      {
+        "id": "rum_infused_ammo",
+        "positionIndex": 3,
+        "name": "Rum Infused Ammo",
+        "description": "Bombs have a chance to explode an additional time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "blunder_bombs",
+        "positionIndex": 4,
+        "name": "Blunder Bombs",
+        "description": "Increases explosion area of effect radius of land ahoy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "warheads",
+        "positionIndex": 5,
+        "name": "Warheads",
+        "description": "Increases the damage dealt by land ahoy.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "strategic_airstrikes",
+        "positionIndex": 6,
+        "name": "Strategic Airstrikes",
+        "description": "Chance on cast to fire additional bombs towards nearby monsters.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "max_targets": 0 },
+            "perRank": { "max_targets": 3 }
+          }
+        }
+      },
+      {
+        "id": "food_for_cannon",
+        "positionIndex": 7,
+        "name": "Food for Cannon",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "sonic_impact",
+        "positionIndex": 8,
+        "name": "Sonic Impact",
+        "description": "Chance on hit to stun.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "moab",
+        "positionIndex": 9,
+        "name": "MOAB",
+        "description": "Chance on cast to fire larger bombs knocking monsters airborne on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_cast", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "fuel_to_the_fire",
+        "positionIndex": 10,
+        "name": "Fuel to the Fire",
+        "description": "Increases bomb damage based on explosion area of effect stat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_explosion_aoe": 0 },
+          "perRank": { "conversion_explosion_aoe": 20 }
+        }
+      },
+      {
+        "id": "concentrated_blast_radius",
+        "positionIndex": 11,
+        "name": "Concentrated Blast Radius",
+        "description": "Significantly decreases the area of effect radius of land ahoy! and increasing the amount of cannon balls.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 20 }
+        }
+      },
+      {
+        "id": "land_annihilation",
+        "positionIndex": 12,
+        "name": "Land Annihilation",
+        "description": "Drop a reduced amount of big bombs on a significantly larger radius. Land Ahoy! now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 100, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "traveling_bombardment",
+        "positionIndex": 13,
+        "name": "Traveling Bombardment",
+        "description": "Mark a location and fire bombs landing from your location to target location in a narrow line.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "of_total_damage": 0 },
+          "perRank": { "cold_skill_damage": 45, "of_total_damage": 10 }
+        }
+      },
+      {
+        "id": "reign_of_fire",
+        "positionIndex": 14,
+        "name": "Reign of Fire",
+        "description": "Damage type is changed to Fire. Explosive Barrels rain from the sky inflicting burning on hit",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 100 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      }
+    ]
+  }
+]

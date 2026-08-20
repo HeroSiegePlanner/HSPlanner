@@ -1,0 +1,2671 @@
+[
+  {
+    "id": "trickshot",
+    "classId": "marksman",
+    "name": "Trickshot",
+    "kind": "active",
+    "description": "Shoot an arrow with increased attack rating that bounces from monster to monster dealing increased attack damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Chaining", "Projectile", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Sharpshooter",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 82, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 1, "per": "skill_level" },
+      { "source": "Volatile Shot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Multishot", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "trickshot_core",
+        "positionIndex": 0,
+        "name": "Trickshot",
+        "description": "Core of the Trickshot subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lung_capacity",
+        "positionIndex": 1,
+        "name": "Lung Capacity",
+        "description": "Increases attack rating when using trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "tenacity",
+        "positionIndex": 2,
+        "name": "Tenacity",
+        "description": "Reduces the mana cost of trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 10 }
+        }
+      },
+      {
+        "id": "lethal_aim",
+        "positionIndex": 3,
+        "name": "Lethal Aim",
+        "description": "Increases the damage dealt by trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "archery_skills",
+        "positionIndex": 4,
+        "name": "Archery Skills",
+        "description": "Increases the amount of bounces for trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 2 }
+        }
+      },
+      {
+        "id": "looping_shot",
+        "positionIndex": 5,
+        "name": "Looping Shot",
+        "description": "Trickshot can hit the same monster multiple times if there are no others nearby with reduced damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "deadly_accuracy",
+        "positionIndex": 6,
+        "name": "Deadly Accuracy",
+        "description": "Increases critical strike damage dealt by trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "steady_hands",
+        "positionIndex": 7,
+        "name": "Steady Hands",
+        "description": "Increases the critical strike chance when using trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 4 }
+        }
+      },
+      {
+        "id": "agile_hunter",
+        "positionIndex": 8,
+        "name": "Agile Hunter",
+        "description": "Decreases the movement diminish when using trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "killshot",
+        "positionIndex": 9,
+        "name": "Killshot",
+        "description": "Increases the range of trickshot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "maiming_shot",
+        "positionIndex": 10,
+        "name": "Maiming Shot",
+        "description": "Trickshot inflicts a portion of its damage as bleeding.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "snipers_touch",
+        "positionIndex": 11,
+        "name": "Sniper's Touch",
+        "description": "Trickshot now only bounces to one additional target but multiplies its damage with the amount of bounces with increased damage and critical strike damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "crit_damage": 0 },
+          "perRank": { "physical_skill_damage": 12, "crit_damage": 30 }
+        }
+      },
+      {
+        "id": "splitting_trickshot",
+        "positionIndex": 12,
+        "name": "Splitting Trickshot",
+        "description": "Each bounce fires additional piercing projectiles.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 25, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "scorching_arrow",
+        "positionIndex": 13,
+        "name": "Scorching Arrow",
+        "description": "Trickshot now inflicts burning to monsters for a portion of its damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 200 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 200 } }
+          ]
+        }
+      },
+      {
+        "id": "powershot",
+        "positionIndex": 14,
+        "name": "Powershot",
+        "description": "The initial projectile now pierces with increased range and damage unleashing bouncing arrows to monsters on hit dealing decreased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "physical_skill_damage": 35, "projectile_speed": 20 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "vault",
+    "classId": "marksman",
+    "name": "Vault",
+    "kind": "active",
+    "description": "Vault in the direction aimed unleashing arrows towards nearby monsters dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Movement", "Spell", "Strike"],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Sharpshooter",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 82, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 }
+    },
+    "bonusSources": [
+      { "source": "Trickshot", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Multishot", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Agility", "stat": "attack_damage", "value": 2, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "vault_core",
+        "positionIndex": 0,
+        "name": "Vault",
+        "description": "Core of the Vault subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "forest_parkour",
+        "positionIndex": 1,
+        "name": "Forest Parkour",
+        "description": "Increases vault length.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "vaultshot",
+        "positionIndex": 2,
+        "name": "Vaultshot",
+        "description": "Increases the damage dealt by vault.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "eagle_eye",
+        "positionIndex": 3,
+        "name": "Eagle Eye",
+        "description": "Increases attack rating when vaulting.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "rapidshot",
+        "positionIndex": 4,
+        "name": "Rapidshot",
+        "description": "Increases the amount of projectiles fired when vaulting.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "high_leap",
+        "positionIndex": 5,
+        "name": "High Leap",
+        "description": "Increases air time when vaulting. Vault can now go over hard terrain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "landing_strike",
+        "positionIndex": 6,
+        "name": "Landing Strike",
+        "description": "When landing fire projectiles in a circle around you.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 8, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "hunters_aim",
+        "positionIndex": 7,
+        "name": "Hunter's Aim",
+        "description": "Projectiles from vault now pierce and bounce off of terrain with increased damage and speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "physical_skill_damage": 5, "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "wounding_shot",
+        "positionIndex": 8,
+        "name": "Wounding Shot",
+        "description": "Vault projectiles inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "trail_of_blood",
+        "positionIndex": 9,
+        "name": "Trail of Blood",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "explosive_trail",
+        "positionIndex": 10,
+        "name": "Explosive Trail",
+        "description": "Vault now leaves a trail of explosions with increased damage and area of effect.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 8, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "multivault",
+        "positionIndex": 11,
+        "name": "Multivault",
+        "description": "Vault now fires multiple projectiles in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 45, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "leaping_cyclone",
+        "positionIndex": 12,
+        "name": "Leaping Cyclone",
+        "description": "Vault fires orbiting projectiles that fly in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "safespace",
+        "positionIndex": 13,
+        "name": "Safespace",
+        "description": "When landing from leap knock back all monsters around you and drop raining arrows on them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 75, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "iarrow",
+        "positionIndex": 14,
+        "name": "iArrow",
+        "description": "Turn into a big arrow dealing damage to monsters on your path. Upon landing cause a big explosion pulse dealing damage to monsters around you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 125, "area_of_effect": 50 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "multishot",
+    "classId": "marksman",
+    "name": "Multishot",
+    "kind": "active",
+    "description": "Fire multiple arrows in an arc dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Sharpshooter",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 82, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 4.75 }
+    },
+    "bonusSources": [
+      { "source": "Trickshot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Arrow Rain", "stat": "attack_damage", "value": 6, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "multishot_core",
+        "positionIndex": 0,
+        "name": "Multishot",
+        "description": "Core of the Multishot subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bow_string",
+        "positionIndex": 1,
+        "name": "Bow & String",
+        "description": "Increases the damage dealt by multishot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "clear_mind",
+        "positionIndex": 2,
+        "name": "Clear Mind",
+        "description": "Decreases the mana cost of multishot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 10 }
+        }
+      },
+      {
+        "id": "steady_aim",
+        "positionIndex": 3,
+        "name": "Steady Aim",
+        "description": "Increases attack rating when using multishot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 15 }
+        }
+      },
+      {
+        "id": "stacked_quiver",
+        "positionIndex": 4,
+        "name": "Stacked Quiver",
+        "description": "Increases the amount of multishot projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "agile_marksman",
+        "positionIndex": 5,
+        "name": "Agile Marksman",
+        "description": "Decreases the movement diminish when using multishot.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 15 }
+        }
+      },
+      {
+        "id": "wounding_impact",
+        "positionIndex": 6,
+        "name": "Wounding Impact",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "wounded_target",
+        "positionIndex": 7,
+        "name": "Wounded Target",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "ambush",
+        "positionIndex": 8,
+        "name": "Ambush",
+        "description": "Increases the critical strike chance when using multishot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "headshot",
+        "positionIndex": 9,
+        "name": "Headshot",
+        "description": "Increases critical strike damage dealt when using multishot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 12 }
+        }
+      },
+      {
+        "id": "longshot",
+        "positionIndex": 10,
+        "name": "Longshot",
+        "description": "Increases the attack range of multishot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 8 }
+        }
+      },
+      {
+        "id": "tornadoshot",
+        "positionIndex": 11,
+        "name": "Tornadoshot",
+        "description": "Multishot now unleashes a cycloning tornado of projectiles on hit that are launched in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 55, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "arrow_nova",
+        "positionIndex": 12,
+        "name": "Arrow Nova",
+        "description": "Multishot now fires a decreased amount of projectiles which when landing or hitting a monster split into multiple projectiles flying in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 20, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "concentration_volley",
+        "positionIndex": 13,
+        "name": "Concentration Volley",
+        "description": "Multishot now fires a decreased amount of shotgunning projectiles in a narrow cone with decreased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "physical_skill_damage": 0 },
+          "perRank": { "of_total_damage": 50, "physical_skill_damage": 30 }
+        }
+      },
+      {
+        "id": "raining_inferno",
+        "positionIndex": 14,
+        "name": "Raining Inferno",
+        "description": "Multishot now fires burning arrows inflicting burning for a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 250 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 250 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "homing_missile",
+    "classId": "marksman",
+    "name": "Homing Missile",
+    "kind": "active",
+    "description": "Launch a barrage of homing missiles which seeks down its target dealing area of effect arcane and physical damage.",
+    "damageType": "arcane",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Explosion", "Strike"],
+    "movementDuringUse": 65,
+    "baseCooldown": 2,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Sharpshooter",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 1, "perLevel": 19 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 22 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3 }
+    },
+    "bonusSources": [
+      { "source": "Landmine", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Agility", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Rocket Turret", "stat": "arcane_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "agility",
+    "classId": "marksman",
+    "name": "Agility",
+    "kind": "buff",
+    "description": "Temporarily increases your movement speed and attack speed.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Sharpshooter",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "movement_speed": 20 },
+      "perRank": { "increased_attack_speed": 1, "movement_speed": 1 }
+    }
+  },
+  {
+    "id": "volatile_shot",
+    "classId": "marksman",
+    "name": "Volatile Shot",
+    "kind": "active",
+    "description": "Fire a colossal arrow exploding on hit dealing area of effect damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Explosion", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Sharpshooter",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 7 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 7, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 133, "perLevel": 22 },
+      "flatPhysicalMin": { "base": 5, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 14, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3.75 }
+    },
+    "bonusSources": [
+      { "source": "Agility", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "volatile_shot_core",
+        "positionIndex": 0,
+        "name": "Volatile Shot",
+        "description": "Core of the Volatile Shot subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hawk_eye",
+        "positionIndex": 1,
+        "name": "Hawk Eye",
+        "description": "Increases attack rating when using volatile shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "cannon_fodder",
+        "positionIndex": 2,
+        "name": "Cannon Fodder",
+        "description": "Increases the damage dealt by volatile shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "far_sight",
+        "positionIndex": 3,
+        "name": "Far Sight",
+        "description": "Increases the attack range of volatile shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 10 }
+        }
+      },
+      {
+        "id": "armor_shatter",
+        "positionIndex": 4,
+        "name": "Armor Shatter",
+        "description": "Inflicts armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "techies",
+        "positionIndex": 5,
+        "name": "Techies",
+        "description": "Now knocks monsters back with increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "explosive_tactics",
+        "positionIndex": 6,
+        "name": "Explosive Tactics",
+        "description": "Increases the explosion area of effect radius of volatile shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "armor_swap",
+        "positionIndex": 7,
+        "name": "Armor Swap",
+        "description": "Gain a portion of inflicted armor break as armor for a short duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_armor": 0 },
+          "perRank": { "increased_armor": 5 }
+        }
+      },
+      {
+        "id": "strafing",
+        "positionIndex": 8,
+        "name": "Strafing",
+        "description": "Decreases the movement diminish when using volatile shot.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "devastation",
+        "positionIndex": 9,
+        "name": "Devastation",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "military_tactics",
+        "positionIndex": 10,
+        "name": "Military Tactics",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "colossal_arrow",
+        "positionIndex": 11,
+        "name": "Colossal Arrow",
+        "description": "Fire a massive arrow with increased damage and increased armor break duration. Volatile shot now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "physical_skill_damage": 45, "skill_duration": 25 }
+        }
+      },
+      {
+        "id": "volatile_multishot",
+        "positionIndex": 12,
+        "name": "Volatile Multishot",
+        "description": "Fire multiple smaller projectiles in a cone.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 60, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "fire_in_the_hole",
+        "positionIndex": 13,
+        "name": "Fire in the Hole!",
+        "description": "On monster or terrain impact launch multiple piercing arrows in all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 7 }
+        }
+      },
+      {
+        "id": "artillery",
+        "positionIndex": 14,
+        "name": "Artillery",
+        "description": "Fire multiple additional arrows raining from the sky covering a wide area. Volatile shot now has a short cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "physical_skill_damage": 0 },
+          "perRank": { "projectile_count": 5, "physical_skill_damage": 150 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "critical_accuracy",
+    "classId": "marksman",
+    "name": "Critical Accuracy",
+    "kind": "passive",
+    "description": "Increases your attack rating and critical strike damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Sharpshooter",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_rating_pct": 2, "crit_damage": 1 },
+      "perRank": { "attack_rating_pct": 2, "crit_damage": 1 }
+    }
+  },
+  {
+    "id": "arrow_rain",
+    "classId": "marksman",
+    "name": "Arrow Rain",
+    "kind": "active",
+    "description": "Unleash a rain of arrows from the sky dealing increased damage.",
+    "damageType": "physical",
+    "tags": ["Cast", "Active", "Ranged", "Explosion", "Strike"],
+    "movementDuringUse": 65,
+    "range": 300,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Sharpshooter",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 5, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3 }
+    },
+    "bonusSources": [
+      { "source": "Multishot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Vault", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "arrow_rain_core",
+        "positionIndex": 0,
+        "name": "Arrow Rain",
+        "description": "Core of the Arrow Rain subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "spot_on",
+        "positionIndex": 1,
+        "name": "Spot On",
+        "description": "Increases attack rating when using arrow rain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "long_reach",
+        "positionIndex": 2,
+        "name": "Long Reach",
+        "description": "Increased the range of arrow rain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "rain_of_pain",
+        "positionIndex": 3,
+        "name": "Rain Of Pain",
+        "description": "Increases the amount of arrow rain projectiles.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "coverage",
+        "positionIndex": 4,
+        "name": "Coverage",
+        "description": "Increases the area of effect radius of arrow rain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 7 }
+        }
+      },
+      {
+        "id": "sharper_tips",
+        "positionIndex": 5,
+        "name": "Sharper Tips",
+        "description": "Increases the damage dealt by arrow rain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "split_fall",
+        "positionIndex": 6,
+        "name": "Split Fall",
+        "description": "Chance on hit for arrows to split into multiple projectiles flying in all directions.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "my_territory",
+        "positionIndex": 7,
+        "name": "My Territory",
+        "description": "Decreases the movement diminish when using arrow rain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "cutting_arrows",
+        "positionIndex": 8,
+        "name": "Cutting Arrows",
+        "description": "Chance to inflict bleed on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 12 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 12 } }
+          ]
+        }
+      },
+      {
+        "id": "wound_salt",
+        "positionIndex": 9,
+        "name": "Wound Salt",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 12 }
+        }
+      },
+      {
+        "id": "maiming_arrow",
+        "positionIndex": 10,
+        "name": "Maiming Arrow",
+        "description": "Chance to stun target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "scorching_volley",
+        "positionIndex": 11,
+        "name": "Scorching Volley",
+        "description": "Raining arrows are now on fire dealing fire damage instead and lowering monster fire resistances on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 125 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 125 } }
+          ]
+        }
+      },
+      {
+        "id": "kill_command",
+        "positionIndex": 12,
+        "name": "Kill Command",
+        "description": "Unleash a long rain of arrows on a massive radius. Arrow rain now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 50, "projectile_count": 5 }
+        }
+      },
+      {
+        "id": "contract_killer",
+        "positionIndex": 13,
+        "name": "Contract Killer",
+        "description": "Decreases the radius of arrow rain significantly dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "arrow_splinter",
+        "positionIndex": 14,
+        "name": "Arrow Splinter",
+        "description": "When hitting the ground arrows split into multiple piercing arrows flying in all directions.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+            "perRank": { "physical_skill_damage": 55, "projectile_count": 1 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "arrow_rampage",
+    "classId": "marksman",
+    "name": "Arrow Rampage",
+    "kind": "active",
+    "description": "Unleash a swarm of arrows towards the direction aimed dealing arcane and physical damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Ranged", "Projectile", "Strike"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 10,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Sharpshooter",
+    "position": { "row": 4, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 1, "perLevel": 21 },
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 8, "perLevel": 15 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 3 }
+    },
+    "bonusSources": [
+      { "source": "Multishot", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Arrow Rain", "stat": "arcane_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Agility", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "arrow_rampage_core",
+        "positionIndex": 0,
+        "name": "Arrow Rampage",
+        "description": "Core of the Arrow Rampage subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "arrow_to_the_knee",
+        "positionIndex": 1,
+        "name": "Arrow to the Knee",
+        "description": "Increases the damage dealt by arrow rampage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "spinning_shrapnel",
+        "positionIndex": 2,
+        "name": "Spinning Shrapnel",
+        "description": "Chance on hit to sling the arrow in the air spinning and dropping back dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "shredding_hit",
+        "positionIndex": 3,
+        "name": "Shredding Hit",
+        "description": "Inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "bigger_is_better",
+        "positionIndex": 4,
+        "name": "Bigger is Better",
+        "description": "Chance to increase arrow size and area of effect of arrow rampage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 20 },
+          "effects": {
+            "base": { "projectile_size": 0 },
+            "perRank": { "projectile_size": 16 }
+          }
+        }
+      },
+      {
+        "id": "exploding_arrowhead",
+        "positionIndex": 5,
+        "name": "Exploding Arrowhead",
+        "description": "Projectiles explode on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 12, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "critical_hit",
+        "positionIndex": 6,
+        "name": "Critical Hit",
+        "description": "Increases the critical strike chance when using arrow rampage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "crucial_strike",
+        "positionIndex": 7,
+        "name": "Crucial Strike",
+        "description": "Increased critical strike damage dealt by arrow rampage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 10 }
+        }
+      },
+      {
+        "id": "arcanum_arrow",
+        "positionIndex": 8,
+        "name": "Arcanum Arrow",
+        "description": "Increases the arcane damage dealt by arrow rampage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "arcanum_penetration",
+        "positionIndex": 9,
+        "name": "Arcanum Penetration",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "blast_wave",
+        "positionIndex": 10,
+        "name": "Blast Wave",
+        "description": "Increases the explosion area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "marked_for_destruction",
+        "positionIndex": 11,
+        "name": "Marked For Destruction",
+        "description": "Arrow rampage now spawns from all directions flying towards target area for an extended period of time. Cooldown is increased.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 20 }
+        }
+      },
+      {
+        "id": "tricky_tactics",
+        "positionIndex": 12,
+        "name": "Tricky Tactics",
+        "description": "Arrow rampage projectiles have a chance to cast trickshot when hitting a monster.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 16 },
+          "effects": {
+            "base": { "of_total_damage": 0, "projectile_bounces": 0 },
+            "perRank": { "of_total_damage": 30, "projectile_bounces": 3 }
+          }
+        }
+      },
+      {
+        "id": "arrow_mayhem",
+        "positionIndex": 13,
+        "name": "Arrow Mayhem",
+        "description": "Arrow rampage projectiles have a chance to shatter into a spread of arrows when hitting a target.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 20 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+            "perRank": { "arcane_skill_damage": 45, "projectile_count": 2 }
+          }
+        }
+      },
+      {
+        "id": "fiery_rain_of_arrows",
+        "positionIndex": 14,
+        "name": "Fiery Rain of Arrows",
+        "description": "Arrow rampage area becomes much wider and deals a portion of its damage as fire causing burning on monsters hit based on fire damage dealt.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "increased_burning_damage": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 15,
+            "increased_burning_damage": 150,
+            "area_of_effect": 35
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 150 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "frag_grenade",
+    "classId": "marksman",
+    "name": "Frag Grenade",
+    "kind": "active",
+    "description": "Throw a frag grenade dealing area of effect arcane damage launching shrapnel around.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Engineer",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8.5, "perLevel": 19.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Landmine", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Vault", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "frag_grenade_core",
+        "positionIndex": 0,
+        "name": "Frag Grenade",
+        "description": "Core of the Frag Grenade subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "shrapnel",
+        "positionIndex": 1,
+        "name": "Shrapnel",
+        "description": "Increases the amount of shrapnel when using frag grenade.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "fatal_range",
+        "positionIndex": 2,
+        "name": "Fatal Range",
+        "description": "Increases the explosion area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "detonating",
+        "positionIndex": 3,
+        "name": "Detonating",
+        "description": "Increases the damage dealt by frag grenade.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "fragging_penetration",
+        "positionIndex": 4,
+        "name": "Fragging Penetration",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "incendiary_grenade",
+        "positionIndex": 5,
+        "name": "Incendiary Grenade",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "increased_potency",
+        "positionIndex": 6,
+        "name": "Increased Potency",
+        "description": "Increased the size of frag grenade and shrapnel.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "flash_bang",
+        "positionIndex": 7,
+        "name": "Flash Bang",
+        "description": "Stun monsters on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "stun_duration_pct": 0 },
+          "perRank": { "stun_duration_pct": 1 }
+        }
+      },
+      {
+        "id": "stunning_casualty",
+        "positionIndex": 8,
+        "name": "Stunning Casualty",
+        "description": "Increased damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "blasting_wave",
+        "positionIndex": 9,
+        "name": "Blasting Wave",
+        "description": "Knock monsters back on hit dealing additional damage and stunning when hitting terrain.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "smell_of_burning",
+        "positionIndex": 10,
+        "name": "Smell of Burning",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 20 }
+        }
+      },
+      {
+        "id": "cluster_bomb",
+        "positionIndex": 11,
+        "name": "Cluster Bomb",
+        "description": "Throw a cluster bomb exploding into multiple frag grenades around the impact point.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "grenadier",
+        "positionIndex": 12,
+        "name": "Grenadier",
+        "description": "Throw frag grenades rapidly into all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "arcane_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "flames_and_explosions",
+        "positionIndex": 13,
+        "name": "Flames and Explosions",
+        "description": "Incendiary grenades sets the area under monsters hit on fire dealing additional fire damage causing burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": { "fire_skill_damage": 75, "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "giga_grenade",
+        "positionIndex": 14,
+        "name": "Giga Grenade",
+        "description": "Throw a huge grenade with increased explosion radius and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "arcane_skill_damage": 175, "projectile_size": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "arrow_turret",
+    "classId": "marksman",
+    "name": "Arrow Turret",
+    "kind": "active",
+    "description": "Build an arrow turret that shoots arrows at the closest monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Engineer",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Multishot", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "B.E.A.C.O.N", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "arrow_turret_core",
+        "positionIndex": 0,
+        "name": "Arrow Turret",
+        "description": "Core of the Arrow Turret subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "burstshot",
+        "positionIndex": 1,
+        "name": "Burstshot",
+        "description": "Chance on attack for arrow turret to fire twice.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "deadshot",
+        "positionIndex": 2,
+        "name": "Deadshot",
+        "description": "Chance to critically hit with increased critical damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0 },
+          "perRank": { "spell_crit_chance": 8 }
+        }
+      },
+      {
+        "id": "arrow_turrets",
+        "positionIndex": 3,
+        "name": "Arrow Turrets",
+        "description": "Increases the maximum amount of arrow turrets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "stuttershot",
+        "positionIndex": 4,
+        "name": "Stuttershot",
+        "description": "Chance on hit to knock monsters back dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 10 }
+          }
+        }
+      },
+      {
+        "id": "freezing_shot",
+        "positionIndex": 5,
+        "name": "Freezing Shot",
+        "description": "Chance to inflict freeze on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 10 }
+          },
+          "appliesStates": ["frozen"]
+        }
+      },
+      {
+        "id": "multishot",
+        "positionIndex": 6,
+        "name": "Multishot",
+        "description": "Turrets fire additional projectiles in an arc.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "high_velocity",
+        "positionIndex": 7,
+        "name": "High Velocity",
+        "description": "Increases the projectile speed of arrow turret.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 20 }
+        }
+      },
+      {
+        "id": "explosive_technician",
+        "positionIndex": 8,
+        "name": "Explosive Technician",
+        "description": "Increases the explosion area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "exploding_arrowhead",
+        "positionIndex": 9,
+        "name": "Exploding Arrowhead",
+        "description": "Projectiles now stick an explosive to the target on hit that explodes dealing additional damage after a short delay.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "hypothermic_impact",
+        "positionIndex": 10,
+        "name": "Hypothermic Impact",
+        "description": "Increases damage dealt to freezing targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 10 }
+        }
+      },
+      {
+        "id": "colossalshot",
+        "positionIndex": 11,
+        "name": "Colossalshot",
+        "description": "Arrow turret projectile is changed into a giant piercing arrow that deals increased damage based on the projectile amount scaling.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 25 }
+        }
+      },
+      {
+        "id": "cyclone_turret",
+        "positionIndex": 12,
+        "name": "Cyclone Turret",
+        "description": "Arrow turret now moves forward spinning rapidly firing projectiles in all directions for a much shorter duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 3 },
+          "perRank": { "arcane_skill_damage": 15, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "piercing_arrowheads",
+        "positionIndex": 13,
+        "name": "Piercing Arrowheads",
+        "description": "Arrow turret now fires piercing projectiles knocking back monsters dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "this_is_my_design",
+        "positionIndex": 14,
+        "name": "This is My Design",
+        "description": "Now spawn a single arrow turret that fires towards all nearby monsters. Arrow turret now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_haste": 0 },
+          "perRank": { "arcane_skill_damage": 75, "skill_haste": 20 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "landmine",
+    "classId": "marksman",
+    "name": "Landmine",
+    "kind": "active",
+    "description": "Lay down a landmine at the target location exploding shortly after detecting a nearby monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Engineer",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 22.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Rocket Turret", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "landmine_core",
+        "positionIndex": 0,
+        "name": "Landmine",
+        "description": "Core of the Landmine subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "blasting_radius",
+        "positionIndex": 1,
+        "name": "Blasting Radius",
+        "description": "Increases explosion area of effect radius of landmine.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "stacked_compound",
+        "positionIndex": 2,
+        "name": "Stacked Compound",
+        "description": "Increases the damage dealt by landmine.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "dead_zone",
+        "positionIndex": 3,
+        "name": "Dead Zone",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "spell_crit_chance": 0 },
+          "perRank": { "spell_crit_chance": 15 }
+        }
+      },
+      {
+        "id": "shrapnel_wounds",
+        "positionIndex": 4,
+        "name": "Shrapnel Wounds",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "rolling_mine",
+        "positionIndex": 5,
+        "name": "Rolling Mine",
+        "description": "Land mines now roll forward exploding shortly after hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "panzer_mine",
+        "positionIndex": 6,
+        "name": "Panzer Mine",
+        "description": "Chance to increase the size and explosion area of effect radius of land mine.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_size": 0, "area_of_effect": 0 },
+            "perRank": { "projectile_size": 20, "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "debilitating_mine",
+        "positionIndex": 7,
+        "name": "Debilitating Mine",
+        "description": "Chance to stun monsters on hit.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "crippling_impact",
+        "positionIndex": 8,
+        "name": "Crippling Impact",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 12 }
+        }
+      },
+      {
+        "id": "stealth_mine",
+        "positionIndex": 9,
+        "name": "Stealth Mine",
+        "description": "Chance on hit to send target into the air dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "napalm",
+        "positionIndex": 10,
+        "name": "Napalm",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 12 }
+        }
+      },
+      {
+        "id": "mine_field",
+        "positionIndex": 11,
+        "name": "Mine Field",
+        "description": "Throw multiple smaller mines into a target location dealing damage and slowing monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "of_total_damage": 0 },
+          "perRank": { "projectile_count": 5, "of_total_damage": 40 }
+        }
+      },
+      {
+        "id": "homing_landmine",
+        "positionIndex": 12,
+        "name": "Homing Landmine",
+        "description": "Land mines now home towards the first detected monster dealing increased damage in a large radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 150 }
+        }
+      },
+      {
+        "id": "air_raid",
+        "positionIndex": 13,
+        "name": "Air Raid",
+        "description": "Land mine now marks monster location on hit for an air raid dropping multiple bombs. Land mine now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 4, "arcane_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "incendiary_mine",
+        "positionIndex": 14,
+        "name": "Incendiary Mine",
+        "description": "Land mine ignites monsters on fire on a large radius dealing damage and inflicting burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "increased_burning_damage": 0 },
+          "perRank": { "area_of_effect": 45, "increased_burning_damage": 150 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 150 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "beacon",
+    "classId": "marksman",
+    "name": "B.E.A.C.O.N",
+    "kind": "active",
+    "description": "Build a beacon that increases nearby allies arcane skill damage and mana replenish.",
+    "tags": ["Cast", "Active", "Spell", "Sentry"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 10,
+    "effectDuration": 4,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Engineer",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 20, "mana_replenish": 30 },
+      "perRank": { "arcane_skill_damage": 2, "mana_replenish": 2 }
+    }
+  },
+  {
+    "id": "turret_mastery",
+    "classId": "marksman",
+    "name": "Turret Mastery",
+    "kind": "passive",
+    "description": "Increase arcane damage and attack speed of all turrets and drones.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Engineer",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 5, "increased_attack_speed": 5 },
+      "perRank": { "arcane_skill_damage": 1, "increased_attack_speed": 0.75 }
+    }
+  },
+  {
+    "id": "cannon_turret",
+    "classId": "marksman",
+    "name": "Cannon Turret",
+    "kind": "active",
+    "description": "Build a cannon turret that launches cannonballs towards the nearest monster that explode into shrapnel, dealing area of effect arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Engineer",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 12.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Arrow Turret", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "B.E.A.C.O.N", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "cannon_turret_core",
+        "positionIndex": 0,
+        "name": "Cannon Turret",
+        "description": "Core of the Cannon Turret subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "cannoningfodder",
+        "positionIndex": 1,
+        "name": "Cannoningfodder",
+        "description": "Increases the damage dealt by cannon turret.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "cannon_turrets",
+        "positionIndex": 2,
+        "name": "Cannon Turrets",
+        "description": "Increases the maximum amount of cannon turrets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "cannonballs",
+        "positionIndex": 3,
+        "name": "Cannonballs",
+        "description": "Chance when hitting the ground to unleash additional cannonballs on nearby targets.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "stunning_blast",
+        "positionIndex": 4,
+        "name": "Stunning Blast",
+        "description": "Chance on hit to stun the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "doom_ball",
+        "positionIndex": 5,
+        "name": "Doom Ball",
+        "description": "Chance for cannon turrets to fire a huge cannonball with increased damage and size.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12.5 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
+            "perRank": { "arcane_skill_damage": 27.5, "projectile_size": 15 }
+          }
+        }
+      },
+      {
+        "id": "weakened_blast",
+        "positionIndex": 6,
+        "name": "Weakened Blast",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "landing_spot",
+        "positionIndex": 7,
+        "name": "Landing Spot",
+        "description": "Increases explosion area of effect radius of cannon turret.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "line_of_sight",
+        "positionIndex": 8,
+        "name": "Line of Sight",
+        "description": "Increased attack range.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "multishred",
+        "positionIndex": 9,
+        "name": "Multishred",
+        "description": "Increases the amount of explosion shrapnel from cannon turret projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "frostbitten_fodder",
+        "positionIndex": 10,
+        "name": "Frostbitten Fodder",
+        "description": "Chance on hit to inflict deep freeze.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": ["permafrost", "frozen"]
+        }
+      },
+      {
+        "id": "megacannon",
+        "positionIndex": 11,
+        "name": "Megacannon",
+        "description": "Now launches a giant bomb that covers a larger area but cannon turret attack speed is reduced.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "mid_air_crisis",
+        "positionIndex": 12,
+        "name": "Mid Air Crisis",
+        "description": "The bomb explodes into shrapnel mid-air that hits monsters below causing them to bleed based on your attack damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0, "projectile_count": 0 },
+          "perRank": { "increased_bleeding_damage": 100, "projectile_count": 2 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      },
+      {
+        "id": "burst_artillery",
+        "positionIndex": 13,
+        "name": "Burst Artillery",
+        "description": "Fires multiple cannonballs in a quick succession.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "weakening_blast",
+        "positionIndex": 14,
+        "name": "Weakening Blast",
+        "description": "Cannonballs cause monsters to take extra damage from all sources.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "enemy_damage_taken_increased": 0 },
+          "perRank": { "enemy_damage_taken_increased": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "master_mechanic",
+    "classId": "marksman",
+    "name": "Master Mechanic",
+    "kind": "buff",
+    "description": "Temporarily increase the attack speed and arcane damage of all your turrets and drones!",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Engineer",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10, "increased_attack_speed": 8 },
+      "perRank": { "arcane_skill_damage": 1.5, "increased_attack_speed": 0.5 }
+    }
+  },
+  {
+    "id": "gunner_drone",
+    "classId": "marksman",
+    "name": "Gunner Drone",
+    "kind": "active",
+    "description": "Build a gunner drone which follows you and shoots bullets that bounce from monster to monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Chaining"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 5,
+    "effectDuration": 10,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Engineer",
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 12 }],
+    "damageFormula": { "base": 1, "perLevel": 11 },
+    "manaCostFormula": { "base": 12, "perLevel": 2 },
+    "bonusSources": [
+      { "source": "Master Mechanic", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Homing Missile", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "gunner_drone_core",
+        "positionIndex": 0,
+        "name": "Gunner Drone",
+        "description": "Core of the Gunner Drone subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "multitude",
+        "positionIndex": 1,
+        "name": "Multitude",
+        "description": "Increases the amount of drones summoned.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "rapidfire",
+        "positionIndex": 2,
+        "name": "Rapidfire",
+        "description": "Increases the rate of fire for drones.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "sentry_attack_speed": 0 },
+          "perRank": { "sentry_attack_speed": 12.5 }
+        }
+      },
+      {
+        "id": "mecha_tinkering",
+        "positionIndex": 3,
+        "name": "Mecha Tinkering",
+        "description": "Increases the duration of drones.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 25 }
+        }
+      },
+      {
+        "id": "explosive_toolkit",
+        "positionIndex": 4,
+        "name": "Explosive Toolkit",
+        "description": "Chance on hit for projectile to explode on impact dealing additional area of effect damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 22.5 }
+          }
+        }
+      },
+      {
+        "id": "heat_unit",
+        "positionIndex": 5,
+        "name": "Heat Unit",
+        "description": "Increases the damage dealt by drones.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "detection",
+        "positionIndex": 6,
+        "name": "Detection",
+        "description": "Increases attack range of gunner drones.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "burning_shot",
+        "positionIndex": 7,
+        "name": "Burning Shot",
+        "description": "Chance on hit to inflict burning.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "burst_engine",
+        "positionIndex": 8,
+        "name": "Burst Engine",
+        "description": "Chance on attack to shoot additional projectiles in sequence.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "immolating_impact",
+        "positionIndex": 9,
+        "name": "Immolating Impact",
+        "description": "Unleash a small fire nova when hitting a burning target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 20 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "splitting_shot",
+        "positionIndex": 10,
+        "name": "Splitting Shot",
+        "description": "Gunner drones now fires multiple projectiles in an arc.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "circuit_breaker",
+        "positionIndex": 11,
+        "name": "Circuit Breaker",
+        "description": "Drones now fire chain lightning dealing their damage as lightning and inflicting lightning break.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "lightning_break": 0,
+            "projectile_bounces": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 17.5,
+            "lightning_break": 30,
+            "projectile_bounces": 2
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "c_y_c_l_o_p_s",
+        "positionIndex": 12,
+        "name": "C.Y.C.L.O.P.S.",
+        "description": "Drones now fire a constant laser beam that sticks onto monsters dealing arcane damage four times a second until they die.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "arcane_skill_damage": 100, "skill_range": 15 }
+        }
+      },
+      {
+        "id": "m_e_c_h_a",
+        "positionIndex": 13,
+        "name": "M.E.C.H.A.",
+        "description": "Now only spawn a single drone scaling its damage based on the amount of drones and shooting at an increased rate of fire.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "of_total_damage": 0,
+            "sentry_attack_speed": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "of_total_damage": 40,
+            "sentry_attack_speed": 100,
+            "projectile_count": 2
+          }
+        }
+      },
+      {
+        "id": "nanodrones",
+        "positionIndex": 14,
+        "name": "Nanodrones",
+        "description": "Drone amount significantly increased. Your drones are super tiny and form two circles around you. Their attacks no longer chain but deal damage in a small area around the target.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "sentry_max_amount": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 15,
+            "sentry_max_amount": 5
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "rocket_turret",
+    "classId": "marksman",
+    "name": "Rocket Turret",
+    "kind": "active",
+    "description": "Build a rocket turret that shoots rockets towards the nearest monster dealing area of effect arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Engineer",
+    "position": { "row": 4, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 16 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Homing Missile", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Landmine", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "rocket_turret_core",
+        "positionIndex": 0,
+        "name": "Rocket Turret",
+        "description": "Core of the Rocket Turret subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "mini_sarmat",
+        "positionIndex": 1,
+        "name": "Mini Sarmat",
+        "description": "Increases the amount of rockets fired by rocket turret.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "blasting_power",
+        "positionIndex": 2,
+        "name": "Blasting Power",
+        "description": "Increases the damage dealt by rocket turret.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "rocket_turrets",
+        "positionIndex": 3,
+        "name": "Rocket Turrets",
+        "description": "Increases the maximum amount of rocket turrets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "mininuke",
+        "positionIndex": 4,
+        "name": "Mininuke",
+        "description": "Increases explosion area of effect of rocket turret projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "multiblast",
+        "positionIndex": 5,
+        "name": "Multiblast",
+        "description": "Chance on hit for rocket turret projectiles to explode additional times with increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "fragmenting_blast",
+        "positionIndex": 6,
+        "name": "Fragmenting Blast",
+        "description": "Inflicts arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "field_scanner",
+        "positionIndex": 7,
+        "name": "Field Scanner",
+        "description": "Increases the range of rocket turret.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "blastwave",
+        "positionIndex": 8,
+        "name": "Blastwave",
+        "description": "Chance on hit to create a shockwave of additional explosions.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "quick_silo",
+        "positionIndex": 9,
+        "name": "Quick Silo",
+        "description": "Increases the rate of fire for rocket turret.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "sentry_attack_speed": 0 },
+          "perRank": { "sentry_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "stun_blast",
+        "positionIndex": 10,
+        "name": "Stun Blast",
+        "description": "Chance on hit to knockback and stun target dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "locked_on",
+        "positionIndex": 11,
+        "name": "Locked On",
+        "description": "Fires a bigger barrage of missiles that target an area dealing massive damage over three seconds. Attack speed reduced.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 40, "projectile_count": 10 }
+        }
+      },
+      {
+        "id": "barret_shot",
+        "positionIndex": 12,
+        "name": "Barret Shot",
+        "description": "Instead fires a single .50 Cal sniper round that explodes on first monster hit dealing massive attack damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "attack_damage": 0, "area_of_effect": 0 },
+          "perRank": { "attack_damage": 3333, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "big_bertha",
+        "positionIndex": 13,
+        "name": "Big Bertha",
+        "description": "Increases the damage, projectile speed and explosion area of effect radius of the rockets.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "projectile_speed": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 45,
+            "projectile_speed": 100,
+            "area_of_effect": 30
+          }
+        }
+      },
+      {
+        "id": "the_boom_box",
+        "positionIndex": 14,
+        "name": "The Boom Box",
+        "description": "Rocket turret turns into an exploding turret that repeatedly explodes in place dealing increased damage to monsters hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 150, "area_of_effect": 75 }
+        }
+      }
+    ]
+  }
+]

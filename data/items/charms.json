@@ -1,0 +1,2255 @@
+[
+  {
+    "id": "charm_angelic_air_melon",
+    "name": "Air Melon",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "all_skills": 3,
+      "lightning_skills": [
+        4,
+        6
+      ],
+      "additive_lightning_damage": 1337,
+      "flat_lightning_skill_damage": [
+        28,
+        72
+      ],
+      "lightning_skill_damage": [
+        30,
+        40
+      ],
+      "lightning_resistance": [
+        40,
+        50
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_angelic_earth_melon",
+    "name": "Earth Melon",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "all_skills": 3,
+      "physical_skills": [
+        4,
+        6
+      ],
+      "additive_physical_damage": [
+        28,
+        72
+      ],
+      "attack_damage": [
+        30,
+        40
+      ],
+      "all_resistances": [
+        10,
+        20
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_angelic_fire_melon",
+    "name": "Fire Melon",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "all_skills": 3,
+      "fire_skills": [
+        4,
+        6
+      ],
+      "additive_fire_damage": 1337,
+      "flat_fire_skill_damage": [
+        28,
+        72
+      ],
+      "fire_skill_damage": [
+        30,
+        40
+      ],
+      "fire_resistance": [
+        40,
+        50
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_angelic_reverse_card",
+    "name": "Reverse Card",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "projectile_speed": 1,
+      "all_attributes": [
+        15,
+        30
+      ]
+    },
+    "skillBonuses": {
+      "Card Throw": [
+        1,
+        5
+      ]
+    },
+    "uniqueEffects": [
+      "Piercing Attack"
+    ],
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_angelic_water_melon",
+    "name": "Water Melon",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "angelic",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "all_skills": 3,
+      "cold_skills": [
+        4,
+        6
+      ],
+      "additive_cold_damage": 1337,
+      "flat_cold_skill_damage": [
+        28,
+        72
+      ],
+      "cold_skill_damage": [
+        30,
+        40
+      ],
+      "cold_resistance": [
+        40,
+        50
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charms_normal_small_charm",
+    "name": "Small Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "common",
+    "width": 1,
+    "height": 1,
+    "maxAffixes": 4
+  },
+  {
+    "id": "charms_normal_large_charm",
+    "name": "Large Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "common",
+    "width": 1,
+    "height": 2,
+    "maxAffixes": 4
+  },
+  {
+    "id": "charms_normal_grand_charm",
+    "name": "Grand Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "common",
+    "width": 1,
+    "height": 3,
+    "maxAffixes": 4
+  },
+  {
+    "id": "charm_heroic_finger_of_despair",
+    "name": "Finger of Despair",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "source": "Amun Ra",
+    "height": 3,
+    "width": 2,
+    "implicit": {
+      "all_skills": 3,
+      "all_attributes": [
+        25,
+        50
+      ],
+      "all_resistances": -50,
+      "max_all_resistances": -10
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        6,
+        10
+      ]
+    }
+  },
+  {
+    "id": "charm_heroic_fulgurite",
+    "name": "Fulgurite",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "all_attributes": [
+        1,
+        25
+      ],
+      "magic_skill_damage": [
+        10,
+        40
+      ],
+      "all_resistances": [
+        3,
+        25
+      ]
+    },
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_heroic_gas_canister",
+    "name": "Gas Canister",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "fire_skills": [
+        4,
+        6
+      ]
+    },
+    "skillBonuses": {
+      "Oil Spill": [
+        5,
+        10
+      ]
+    },
+    "width": 2,
+    "height": 2,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 12,
+        "description": "cast Fuel the Flames!! Level 3",
+        "details": "Throw oil all around you on a large area."
+      }
+    ]
+  },
+  {
+    "id": "charm_heroic_gladiator_s_dice",
+    "name": "Gladiator's Dice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "skillBonuses": {
+      "Gladiator's Roll": [
+        1,
+        5
+      ]
+    },
+    "width": 1,
+    "height": 1,
+    "implicit": {}
+  },
+  {
+    "id": "charm_heroic_graxy_s_mom_lure",
+    "name": "Graxy's Mom Lure",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_resistances": -35,
+      "max_all_resistances": -10,
+      "magic_find": [
+        100,
+        150
+      ],
+      "experience_gain": [
+        1,
+        5
+      ]
+    },
+    "skillBonuses": {
+      "Treasure Hunter": [
+        10,
+        15
+      ]
+    },
+    "width": 3,
+    "height": 1
+  },
+  {
+    "id": "charm_heroic_loaded_dice",
+    "name": "Loaded Dice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "implicit": {
+      "all_skills": 2
+    },
+    "width": 2,
+    "height": 2,
+    "skillBonuses": {
+      "Random Skill": [
+        12,
+        12
+      ]
+    }
+  },
+  {
+    "id": "charm_heroic_storm_in_a_vial",
+    "name": "Storm in a Vial",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 90,
+    "width": 3,
+    "height": 1,
+    "implicit": {
+      "faster_cast_rate": [
+        10,
+        15
+      ],
+      "flat_lightning_skill_damage": [
+        45,
+        60
+      ],
+      "ignore_lightning_res": [
+        5,
+        20
+      ],
+      "grant_subskills": 1
+    },
+    "skillBonuses": {
+      "Apocalyptic Thunder": [
+        10,
+        15
+      ]
+    }
+  },
+  {
+    "id": "charm_heroic_tablet_of_awakening",
+    "name": "Tablet of Awakening",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 75,
+    "sockets": 1,
+    "maxSockets": 4,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_heroic_tarethiel_s_ancient_wisdom",
+    "name": "Tarethiel's Ancient Wisdom",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 96,
+    "implicit": {
+      "all_skills": 1,
+      "faster_cast_rate": 15,
+      "skill_haste": [
+        15,
+        30
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_heroic_torstein_s_anvil",
+    "name": "Torstein's Anvil",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": 1,
+      "all_attributes": [
+        5,
+        10
+      ],
+      "all_resistances": [
+        5,
+        10
+      ],
+      "gold_find": [
+        8,
+        15
+      ]
+    },
+    "skillBonuses": {
+      "The Shop is Open": 1
+    },
+    "width": 1,
+    "height": 1
+  },
+  {
+    "id": "charm_heroic_wizard_s_dice",
+    "name": "Wizard's Dice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "skillBonuses": {
+      "Wizard's Roll": [
+        1,
+        5
+      ]
+    },
+    "width": 1,
+    "height": 1,
+    "implicit": {}
+  },
+  {
+    "id": "charm_heroic_chaos_gemstone",
+    "name": "Chaos Gemstone",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "source": "Possessed Luna",
+    "width": 1,
+    "height": 2,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ]
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "charm_heroic_sobek_s_fall",
+    "name": "Sobek's Fall",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "light_radius": 8,
+      "summon_damage": [
+        50,
+        75
+      ],
+      "poison_length_reduced": 50,
+      "random_skill_element": [
+        2,
+        3
+      ]
+    },
+    "width": 3,
+    "height": 1,
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Shade of Sobek Level 1",
+        "details": "Chance on cast to summon the shade of sobek to fight by your side for a short duration."
+      }
+    ]
+  },
+  {
+    "id": "charm_heroic_voodoo_doll",
+    "name": "Voodoo Doll",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "width": 1,
+    "height": 2,
+    "implicit": {
+      "self_inflicted_chance_when_casting": 10,
+      "self_inflicted_damage_from_casting": [
+        80,
+        280
+      ],
+      "self_inflicted_chance_when_attacking": 10,
+      "self_inflicted_damage_from_attacking": [
+        150,
+        350
+      ]
+    }
+  },
+  {
+    "id": "charm_heroic_plague_shot",
+    "name": "Plague Shot",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "skillBonuses": {
+      "Booster Shot": [
+        6,
+        15
+      ]
+    },
+    "width": 2,
+    "height": 1,
+    "implicit": {}
+  },
+  {
+    "id": "charm_heroic_dragon_s_heart",
+    "name": "Dragon's Heart",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "magic_skill_damage": 50
+    },
+    "skillBonuses": {
+      "Dragon's Wrath": [
+        1,
+        5
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1,
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_heroic_eye_of_rakhul",
+    "name": "Eye of Rakhul",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_attributes": [
+        15,
+        20
+      ],
+      "defense_vs_missiles": 60,
+      "light_radius": [
+        6,
+        8
+      ],
+      "experience_gain": 5
+    },
+    "skillBonuses": {
+      "Combat Orders": [
+        3,
+        8
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_heroic_torch_of_shadow",
+    "name": "Torch of Shadow",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        3
+      ],
+      "all_attributes": [
+        20,
+        30
+      ],
+      "light_radius": 8,
+      "all_resistances": [
+        10,
+        20
+      ]
+    },
+    "uniqueEffects": [
+      "All Skills Class"
+    ],
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_abomination_s_brain",
+    "name": "Abomination's Brain",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 84,
+    "setId": "abomination_s_defiled_organs",
+    "width": 1,
+    "height": 1,
+    "implicit": {
+      "summon_attack_speed": [
+        10,
+        20
+      ],
+      "summon_movement_speed": [
+        10,
+        25
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_abomination_s_eye",
+    "name": "Abomination's Eye",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 78,
+    "setId": "abomination_s_defiled_organs",
+    "width": 1,
+    "height": 1,
+    "implicit": {
+      "summon_all_resist": [
+        15,
+        30
+      ],
+      "summon_reduced_dmg_taken": [
+        5,
+        10
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_abomination_s_heart",
+    "name": "Abomination's Heart",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 95,
+    "implicit": {
+      "summon_skills": [
+        1,
+        3
+      ],
+      "summon_life": [
+        4,
+        12
+      ]
+    },
+    "setId": "abomination_s_defiled_organs",
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_adventurer_s_quiver",
+    "name": "Adventurer's Quiver",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 64,
+    "implicit": {
+      "increased_attack_speed": [
+        12,
+        20
+      ],
+      "melee_range": [
+        10,
+        20
+      ]
+    },
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_aimbot_exe",
+    "name": "Aimbot.exe",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 1,
+    "skillBonuses": {
+      "Aimbot": 1
+    },
+    "width": 1,
+    "height": 1,
+    "implicit": {}
+  },
+  {
+    "id": "charm_satanic_anubis_ankh_charm",
+    "name": "Anubis' Ankh Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 87,
+    "implicit": {
+      "life_replenish_pct": [
+        15,
+        35
+      ],
+      "life": [
+        650,
+        850
+      ],
+      "increased_life": [
+        8,
+        18
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_apple_of_evolution",
+    "name": "Apple of Evolution",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 65,
+    "implicit": {
+      "ignore_poison_res": [
+        15,
+        35
+      ],
+      "poison_resistance": -35
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_aztec_coin",
+    "name": "Aztec Coin",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 61,
+    "implicit": {
+      "light_radius": [
+        1,
+        3
+      ],
+      "poison_resistance": [
+        30,
+        50
+      ],
+      "gold_find": [
+        5,
+        10
+      ],
+      "max_poison_resistance": [
+        3,
+        5
+      ],
+      "poison_length_reduced": 25
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_aztec_devil",
+    "name": "Aztec Devil",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 65,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "setId": "aztec_s_mystery",
+    "width": 2,
+    "height": 2,
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_bag_of_unknown_riches",
+    "name": "Bag of Unknown Riches",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "gold_find": [
+        15,
+        30
+      ],
+      "magic_find": [
+        35,
+        100
+      ],
+      "experience_gain": [
+        1,
+        5
+      ],
+      "decreased_merchant_prices": [
+        1,
+        5
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_barrel_of_explosives",
+    "name": "Barrel of Explosives",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 57,
+    "setId": "demolition_expert",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "explosion_damage": [
+        15,
+        40
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_beetle_of_life",
+    "name": "Beetle of Life",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 60,
+    "implicit": {
+      "to_vitality": [
+        20,
+        30
+      ],
+      "life_replenish_pct": 8,
+      "life": [
+        45,
+        70
+      ],
+      "life_per_kill": [
+        10,
+        20
+      ],
+      "increased_life": [
+        5,
+        10
+      ],
+      "damage_recouped_as_life": [
+        8,
+        12
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_bob_s_grenade",
+    "name": "Bob's Grenade",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "setId": "grenadier_s_explosive",
+    "width": 1,
+    "height": 1,
+    "implicit": {
+      "explosion_damage": 30,
+      "explosion_aoe": [
+        5,
+        40
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_bone_conjurer_s_trophy",
+    "name": "Bone Conjurer's Trophy",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 74,
+    "setId": "bone_conjurer_s_regalia",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_bulls_eye",
+    "name": "Bull's Eye",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "setId": "sniper_s_kit",
+    "width": 1,
+    "height": 2,
+    "implicit": {
+      "ranged_skills": [
+        3,
+        8
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_canopic_jar_of_blood",
+    "name": "Canopic Jar of Blood",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 85,
+    "implicit": {
+      "flat_arcane_skill_damage": [
+        25,
+        50
+      ],
+      "arcane_skill_damage": [
+        22,
+        30
+      ]
+    },
+    "setId": "guardian_s_of_the_sands",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_champion_s_signet",
+    "name": "Champion's Signet",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 73,
+    "setId": "champion_s_valor",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_cold_giant_s_charm",
+    "name": "Cold Giant's Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 77,
+    "implicit": {
+      "flat_cold_skill_damage": [
+        35,
+        50
+      ],
+      "cold_skill_damage": [
+        17,
+        30
+      ],
+      "ignore_cold_res": [
+        8,
+        15
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_crow_s_feather",
+    "name": "Crow's Feather",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 1,
+    "implicit": {
+      "movement_speed": 20,
+      "all_attributes": 5,
+      "all_resistances": 5
+    },
+    "width": 2,
+    "height": 1
+  },
+  {
+    "id": "charm_satanic_cursed_gyroscope",
+    "name": "Cursed Gyroscope",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": 1,
+      "orbiting_relic_radius_increase": [
+        200,
+        300
+      ],
+      "orbiting_relic_amount": [
+        1,
+        3
+      ],
+      "orbiting_relic_damage": [
+        300,
+        450
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_damien_s_cage",
+    "name": "Damien's Cage",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 65,
+    "implicit": {
+      "arcane_skills": [
+        2,
+        4
+      ],
+      "to_intelligence": [
+        30,
+        45
+      ],
+      "arcane_skill_damage": 15,
+      "arcane_resistance": [
+        20,
+        45
+      ]
+    },
+    "setId": "damien_s_legacy",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_death_lord_s_zombie_head",
+    "name": "Death Lord's Zombie Head",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 62,
+    "setId": "death_lord_s_legacy",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_dibbik_box",
+    "name": "Dibbik Box",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "setId": "witching",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "ailment_damage_all": [
+        15,
+        25
+      ],
+      "follower_relic_attack_speed": [
+        35,
+        50
+      ],
+      "follower_relic_projectiles": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_doctor_s_mask_in_a_jar",
+    "name": "Doctor's Mask in a Jar",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 67,
+    "setId": "doctor_s_medkit",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_engineer_s_mini_drone",
+    "name": "Engineer's Mini Drone",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 78,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "sentry_attack_speed": 15,
+      "sentry_damage": [
+        20,
+        35
+      ],
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "setId": "engineer_s_combat_gear",
+    "width": 2,
+    "height": 2,
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_eye_of_skadi",
+    "name": "Eye of Skadi",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 65,
+    "implicit": {
+      "ignore_cold_res": [
+        15,
+        35
+      ],
+      "cold_resistance": -35
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_flaming_coin",
+    "name": "Flaming Coin",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 69,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "random_skill": [
+        7,
+        12
+      ]
+    },
+    "setId": "flames_of_the_apocalypse",
+    "width": 2,
+    "height": 2,
+    "skillBonuses": {
+      "Random Skill": [
+        7,
+        12
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_gurag_s_heart_charm",
+    "name": "Gurag's Heart Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 91,
+    "implicit": {
+      "enhanced_damage": [
+        20,
+        30
+      ],
+      "attack_rating_pct": 8,
+      "additive_physical_damage": [
+        40,
+        60
+      ],
+      "to_strength": [
+        22,
+        30
+      ]
+    },
+    "setId": "gurag_s_fury",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_hardened_steel_defender",
+    "name": "Hardened Steel Defender",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 81,
+    "implicit": {
+      "damage_return": [
+        100,
+        250
+      ],
+      "to_armor": [
+        25,
+        40
+      ],
+      "increased_life": [
+        12,
+        20
+      ]
+    },
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_heart_of_agony",
+    "name": "Heart of Agony",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 64,
+    "setId": "satan_s_redemption",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_hello_its_me_steve",
+    "name": "Hello its me, Steve!",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 56,
+    "implicit": {
+      "all_attributes": [
+        35,
+        75
+      ]
+    },
+    "setId": "stickman_steve_s_destruction",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_jack_s_pumpkin_spice",
+    "name": "Jack's Pumpkin Spice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 75,
+    "implicit": {
+      "explosion_skills": [
+        3,
+        5
+      ],
+      "to_vitality": [
+        15,
+        30
+      ],
+      "life_per_kill": [
+        10,
+        20
+      ],
+      "explosion_aoe": [
+        8,
+        15
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_mark_of_the_black_knight",
+    "name": "Mark of the Black Knight",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 77,
+    "implicit": {
+      "crushing_blow_chance": [
+        15,
+        25
+      ],
+      "deadly_blow": [
+        12,
+        20
+      ],
+      "life_steal": [
+        4,
+        8
+      ],
+      "defense_ignored": [
+        20,
+        30
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_marksman_s_quiver",
+    "name": "Marksman's Quiver",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 66,
+    "setId": "marksman_s_hunting_gear",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_moonshard",
+    "name": "Moonshard",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 63,
+    "implicit": {
+      "ignore_arcane_res": [
+        15,
+        35
+      ],
+      "arcane_resistance": -35
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_mysterious_monkey_paw",
+    "name": "Mysterious Monkey Paw",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "all_attributes": [
+        25,
+        40
+      ],
+      "follower_relic_damage": [
+        350,
+        500
+      ]
+    },
+    "setId": "witching",
+    "width": 2,
+    "height": 1
+  },
+  {
+    "id": "charm_satanic_mystery_card",
+    "name": "Mystery Card",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "skill_relic_damage": [
+        280,
+        400
+      ],
+      "skill_relic_projectiles": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_orange_grayon",
+    "name": "Orange Grayon",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "width": 1,
+    "height": 3,
+    "implicit": {
+      "sentry_attack_speed": [
+        20,
+        25
+      ],
+      "sentry_damage": [
+        35,
+        45
+      ],
+      "sentry_skills": [
+        6,
+        8
+      ],
+      "sentry_max_amount": [
+        1,
+        2
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_pirate_captain_s_flag",
+    "name": "Pirate Captain's Flag",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 68,
+    "setId": "black_beard_s_remains",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        7,
+        12
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        7,
+        12
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_plunderer_s_gunpowder_bag",
+    "name": "Plunderer's Gunpowder Bag",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 72,
+    "setId": "plunderer_s_ensemble",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_raider_s_torch",
+    "name": "Raider's Torch",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 61,
+    "implicit": {
+      "increased_attack_speed": [
+        10,
+        15
+      ],
+      "attack_damage": [
+        8,
+        20
+      ],
+      "light_radius": [
+        3,
+        5
+      ]
+    },
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_redneck_s_keychain",
+    "name": "Redneck's Keychain",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 65,
+    "setId": "redneck_s_work_gear",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        1,
+        3
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_sacred_owl",
+    "name": "Sacred Owl",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 68,
+    "setId": "the_holy_one",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        7,
+        12
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        7,
+        12
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_sassy_s_dislocated_foot",
+    "name": "Sassy's Dislocated Foot",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": 1,
+      "poison_skills": [
+        3,
+        5
+      ],
+      "movement_speed": -20,
+      "ignore_poison_res": [
+        5,
+        10
+      ],
+      "poison_length_reduced": 50
+    },
+    "skillBonuses": {
+      "Poison Nova": [
+        10,
+        20
+      ]
+    },
+    "width": 1,
+    "height": 3
+  },
+  {
+    "id": "charm_satanic_satan_s_chalice",
+    "name": "Satan's Chalice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 62,
+    "implicit": {
+      "fire_skills": [
+        2,
+        4
+      ],
+      "all_attributes": [
+        15,
+        25
+      ],
+      "fire_resistance": [
+        15,
+        45
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_sheep_king_s_wool",
+    "name": "Sheep King's Wool",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 77,
+    "implicit": {
+      "all_attributes": 28,
+      "magic_skill_damage": [
+        25,
+        35
+      ],
+      "enemy_all_resist": 10
+    },
+    "setId": "sheep_king_s_kingdom",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_shrunken_head",
+    "name": "Shrunken Head",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 83,
+    "implicit": {
+      "poison_skills": [
+        2,
+        4
+      ],
+      "poison_skill_damage": [
+        12,
+        25
+      ],
+      "ignore_poison_res": [
+        7,
+        15
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_snipers_scope",
+    "name": "Sniper's Scope",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "setId": "sniper_s_kit",
+    "implicit": {
+      "projectile_damage_increase": [
+        10,
+        20
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_solar_charm",
+    "name": "Solar Charm",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 67,
+    "implicit": {
+      "ignore_fire_res": [
+        15,
+        35
+      ],
+      "fire_resistance": -35
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_spine_trophy",
+    "name": "Spine Trophy",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 74,
+    "implicit": {
+      "physical_skills": [
+        1,
+        3
+      ],
+      "deadly_blow": 8,
+      "attack_rating_pct": [
+        15,
+        25
+      ],
+      "to_dexterity": [
+        8,
+        15
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_sundial_of_ancient_worlds",
+    "name": "Sundial of Ancient Worlds",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 91,
+    "implicit": {
+      "to_intelligence": [
+        45,
+        60
+      ],
+      "arcane_skill_damage": [
+        20,
+        30
+      ],
+      "increased_mana": [
+        6,
+        12
+      ]
+    },
+    "setId": "temporal_mastery",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_tal_s_deathskull",
+    "name": "Tal's Deathskull",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 92,
+    "implicit": {
+      "life_replenish_pct": [
+        22,
+        30
+      ],
+      "mana_replenish_pct": [
+        22,
+        30
+      ],
+      "life": [
+        275,
+        450
+      ],
+      "mana": [
+        275,
+        450
+      ]
+    },
+    "setId": "tal_s_reaping",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_telescope",
+    "name": "Telescope",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "setId": "orbital_gravity",
+    "width": 1,
+    "height": 2,
+    "implicit": {
+      "orbit_skills": [
+        3,
+        8
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_the_detonator",
+    "name": "The Detonator",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 58,
+    "implicit": {
+      "explosion_skills": [
+        3,
+        8
+      ]
+    },
+    "setId": "demolition_expert",
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_tiny_planet",
+    "name": "Tiny Planet",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "setId": "orbital_gravity",
+    "implicit": {
+      "orbital_projectile_duration_increased": [
+        15,
+        25
+      ]
+    }
+  },
+  {
+    "id": "charm_satanic_traveler_s_map_journal",
+    "name": "Traveler's Map Journal",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 89,
+    "implicit": {
+      "all_skills": 1,
+      "movement_speed": [
+        15,
+        30
+      ],
+      "all_attributes": 20,
+      "all_resistances": [
+        5,
+        20
+      ]
+    },
+    "setId": "traveler",
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_viking_s_glyphed_rune",
+    "name": "Viking's Glyphed Rune",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 60,
+    "implicit": {
+      "enhanced_damage": [
+        125,
+        225
+      ],
+      "additive_physical_damage": [
+        75,
+        100
+      ],
+      "physical_damage_reduction": -20,
+      "all_resistances": -10
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_wind_token",
+    "name": "Wind Token",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "SS",
+    "requiresLevel": 65,
+    "implicit": {
+      "ignore_lightning_res": [
+        15,
+        35
+      ],
+      "lightning_resistance": -35
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_witches_claw",
+    "name": "Witches Claw",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 65,
+    "implicit": {
+      "all_skills": 1,
+      "mana_steal": [
+        3,
+        6
+      ],
+      "mana_per_kill": [
+        13,
+        20
+      ]
+    },
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_satanic_zealot_s_beads_of_destruction",
+    "name": "Zealot's Beads of Destruction",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 76,
+    "setId": "zealot_s_prophecy",
+    "width": 2,
+    "height": 2,
+    "implicit": {
+      "random_skill": [
+        7,
+        12
+      ],
+      "extra_dmg_to_shadowburn": [
+        25,
+        40
+      ]
+    },
+    "skillBonuses": {
+      "Random Skill": [
+        7,
+        12
+      ]
+    }
+  },
+  {
+    "id": "charm_unholy_annihilator",
+    "name": "Annihilator",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 72,
+    "implicit": {
+      "all_skills": 2,
+      "all_attributes": [
+        40,
+        60
+      ],
+      "all_resistances": [
+        35,
+        50
+      ],
+      "experience_gain": [
+        3,
+        5
+      ]
+    },
+    "width": 1,
+    "height": 2
+  },
+  {
+    "id": "charm_unholy_arcane_pumpkin",
+    "name": "Arcane Pumpkin",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "all_skills": 3,
+      "arcane_skills": [
+        4,
+        6
+      ],
+      "additive_arcane_damage": 1337,
+      "flat_arcane_skill_damage": [
+        28,
+        72
+      ],
+      "arcane_skill_damage": [
+        30,
+        40
+      ],
+      "arcane_resistance": [
+        40,
+        50
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_unholy_devil_s_pact",
+    "name": "Devil's Pact",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        5,
+        7
+      ],
+      "life": -666,
+      "increased_life": -15,
+      "all_resistances": [
+        30,
+        40
+      ]
+    },
+    "width": 3,
+    "height": 3
+  },
+  {
+    "id": "charm_unholy_goburins_head",
+    "name": "Goburin's Head",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "movement_speed": [
+        15,
+        30
+      ],
+      "life_replenish": -400,
+      "life": 66,
+      "life_per_kill": 35,
+      "experience_gain": [
+        1,
+        5
+      ],
+      "all_skills": 1
+    },
+    "skillBonuses": {
+      "Goburin's Greed": 1
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_unholy_lilith_s_wrath",
+    "name": "Lilith's Wrath",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "extra_damage_burning": [
+        20,
+        25
+      ],
+      "fire_skill_damage": [
+        20,
+        40
+      ],
+      "explosion_aoe": [
+        15,
+        20
+      ]
+    },
+    "width": 1,
+    "height": 3,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 30,
+        "description": "cast Agony of Souls Level 1",
+        "details": "Unleash a soul nova dealing fire damage"
+      }
+    ]
+  },
+  {
+    "id": "charm_unholy_rotten_pumpkin",
+    "name": "Rotten Pumpkin",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 94,
+    "implicit": {
+      "all_skills": 3,
+      "poison_skills": [
+        4,
+        6
+      ],
+      "additive_poison_damage": 1337,
+      "flat_poison_skill_damage": [
+        28,
+        72
+      ],
+      "poison_skill_damage": [
+        30,
+        40
+      ],
+      "poison_resistance": [
+        40,
+        50
+      ]
+    },
+    "width": 2,
+    "height": 2
+  },
+  {
+    "id": "charm_unholy_soul_collector",
+    "name": "Soul Collector",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        3,
+        6
+      ],
+      "all_attributes": [
+        33,
+        66
+      ],
+      "life": [
+        333,
+        666
+      ],
+      "light_radius": [
+        3,
+        6
+      ],
+      "movement_speed": [
+        3,
+        6
+      ]
+    },
+    "width": 1,
+    "height": 5,
+    "skillBonuses": {
+      "Soul Burst": 3
+    }
+  },
+  {
+    "id": "charm_unholy_overloaded_dice",
+    "name": "Overloaded Dice",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": 2,
+      "all_attributes": 10,
+      "grant_subskills": 1
+    },
+    "width": 2,
+    "height": 2
+  }
+]

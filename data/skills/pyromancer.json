@@ -1,0 +1,2485 @@
+[
+  {
+    "id": "blazing_trail",
+    "classId": "pyromancer",
+    "name": "Blazing Trail",
+    "kind": "active",
+    "description": "Leave behind a trail of fire dealing fire damage to monsters.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Area of Effect", "Spell"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Flame Diviner",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 4.5, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "blazing_trail_core",
+        "positionIndex": 0,
+        "name": "Blazing Trail",
+        "description": "Core of the Blazing Trail subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "timed_fire",
+        "positionIndex": 1,
+        "name": "Timed Fire",
+        "description": "Increases the duration of blazing trail.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "scorch",
+        "positionIndex": 2,
+        "name": "Scorch",
+        "description": "Increased the damage dealt by blazing trail.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "expanded_flames",
+        "positionIndex": 3,
+        "name": "Expanded Flames",
+        "description": "Increases the area of effect radius of blazing trail.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "flaming_steps",
+        "positionIndex": 4,
+        "name": "Flaming Steps",
+        "description": "Increases your movement speed while blazing trail is active.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 12 }
+        }
+      },
+      {
+        "id": "agonizing_heat",
+        "positionIndex": 5,
+        "name": "Agonizing Heat",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 6 }
+        }
+      },
+      {
+        "id": "combusting_flames",
+        "positionIndex": 6,
+        "name": "Combusting Flames",
+        "description": "Trails inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 24 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 24 } }
+          ]
+        }
+      },
+      {
+        "id": "burning_veins",
+        "positionIndex": 7,
+        "name": "Burning Veins",
+        "description": "Trails inflict fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "paralyzing_fire",
+        "positionIndex": 8,
+        "name": "Paralyzing Fire",
+        "description": "Trails inflict slow on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "slow_duration": 0, "slow_target": 0 },
+          "perRank": { "slow_duration": 1, "slow_target": 15 }
+        }
+      },
+      {
+        "id": "crackling_heat",
+        "positionIndex": 9,
+        "name": "Crackling Heat",
+        "description": "Chance of trails to pulsate every second.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 7 } }
+      },
+      {
+        "id": "fueled_flames",
+        "positionIndex": 10,
+        "name": "Fueled Flames",
+        "description": "Increases the tick rate of blazing trail.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "forking_flames",
+        "positionIndex": 11,
+        "name": "Forking Flames",
+        "description": "Trails have a chance to fork.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 18 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 45 }
+          }
+        }
+      },
+      {
+        "id": "circle_of_fire",
+        "positionIndex": 12,
+        "name": "Circle of Fire",
+        "description": "You now send trails of fire outwards to all directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "trail_count": 0 },
+          "perRank": { "fire_skill_damage": 30, "trail_count": 5 }
+        }
+      },
+      {
+        "id": "trail_of_comets",
+        "positionIndex": 13,
+        "name": "Trail of Comets",
+        "description": "Now drops comets that explode into flames.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "detonation_field",
+        "positionIndex": 14,
+        "name": "Detonation Field",
+        "description": "Instead of flames now leaves behind fiery mines exploding into flaming fissures.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fire_enchant",
+    "classId": "pyromancer",
+    "name": "Fire Enchant",
+    "kind": "buff",
+    "description": "Enchant your attacks with additive fire damage inflicting burning on monsters. Your spells also apply a stack of Ignite.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 30,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Flame Diviner",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": -0.5, "perLevel": 4 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "burning_damage": 40 },
+      "perRank": { "burning_damage": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Inferno Slash", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Searing Chains", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 6.5, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "phoenix_flight",
+    "classId": "pyromancer",
+    "name": "Phoenix Flight",
+    "kind": "active",
+    "description": "Charge forward through the air dealing area of effect fire damage when landing.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Movement", "Charge"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Flame Diviner",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 14 }],
+    "damageFormula": { "base": -0.5, "perLevel": 31 },
+    "manaCostFormula": { "base": 14, "perLevel": 2 },
+    "bonusSources": [
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fire Nova", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Ignite", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 8.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "phoenix_flight_core",
+        "positionIndex": 0,
+        "name": "Phoenix Flight",
+        "description": "Core of the Phoenix Flight subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "flaming_pecker",
+        "positionIndex": 1,
+        "name": "Flaming Pecker",
+        "description": "Increases the damage dealt by phoenix flight.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "swift_flight",
+        "positionIndex": 2,
+        "name": "Swift Flight",
+        "description": "Increases flight speed of phoenix flight.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 12 }
+        }
+      },
+      {
+        "id": "scorching_fury",
+        "positionIndex": 3,
+        "name": "Scorching Fury",
+        "description": "Unleash fireballs in a circle around you when landing.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 25, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "infused_flames",
+        "positionIndex": 4,
+        "name": "Infused Flames",
+        "description": "Gain increased fire skill damage for a short period when crashing into monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "searing_touch",
+        "positionIndex": 5,
+        "name": "Searing Touch",
+        "description": "Chance to unleash searing chains when flying through monsters.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 25 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "burning_screech",
+        "positionIndex": 6,
+        "name": "Burning Screech",
+        "description": "Increases landing nova area of effect.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "collateral_burning",
+        "positionIndex": 7,
+        "name": "Collateral Burning",
+        "description": "Deal additional fire damage to nearby monsters while phoenix flight is active.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 20, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "afterburn",
+        "positionIndex": 8,
+        "name": "Afterburn",
+        "description": "Chance on landing to unleash an additional nova.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "molten_feathers",
+        "positionIndex": 9,
+        "name": "Molten Feathers",
+        "description": "Increases damage reduction while phoenix flight is active.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 15 }
+        }
+      },
+      {
+        "id": "mental_heat",
+        "positionIndex": 10,
+        "name": "Mental Heat",
+        "description": "Taunt enemies you fly through.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 2 }
+        }
+      },
+      {
+        "id": "rise_from_the_ashes",
+        "positionIndex": 11,
+        "name": "Rise from the Ashes",
+        "description": "At the end of your flight you launch into the air unleashing multiple fire novas beneath you and then land and smash the ground stunning and dealing additional damage to nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 120, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "seed_of_fulmination",
+        "positionIndex": 12,
+        "name": "Seed of Fulmination",
+        "description": "Plant a seed of fulmination on monsters you fly through that explodes after a short delay.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 35, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "wings_of_the_phoenix",
+        "positionIndex": 13,
+        "name": "Wings of the Phoenix",
+        "description": "When flying you rapidly shoot searing bolts behind you in a cone.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 10, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "burning_wings",
+        "positionIndex": 14,
+        "name": "Burning Wings",
+        "description": "Flight distance is now short. Upon landing you knock back all monsters around scorching the land below them dealing fire damage and stunning them.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 35, "area_of_effect": 10 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "inferno_slash",
+    "classId": "pyromancer",
+    "name": "Inferno Slash",
+    "kind": "active",
+    "description": "Send forward a fire enchanted cleave attack dealing increased damage and additional fire damage.",
+    "damageType": "fire",
+    "tags": ["Attack", "Active", "Melee", "Projectile", "Strike"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Flame Diviner",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": -0.5, "perLevel": 18 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 72, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11.5, "perLevel": 0.5 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fire Enchant", "stat": "fire_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Ignite", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Avatar of Fire", "stat": "attack_damage", "value": 8, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "inferno_slash_core",
+        "positionIndex": 0,
+        "name": "Inferno Slash",
+        "description": "Core of the Inferno Slash subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "infernal_reach",
+        "positionIndex": 1,
+        "name": "Infernal Reach",
+        "description": "Increases the attack range of inferno slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "scattering_flame",
+        "positionIndex": 2,
+        "name": "Scattering Flame",
+        "description": "Increases attack rating when using inferno slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "molten_ground",
+        "positionIndex": 3,
+        "name": "Molten Ground",
+        "description": "Chance on striking to set the ground on fire.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "piercing_flame",
+        "positionIndex": 4,
+        "name": "Piercing Flame",
+        "description": "Inflicts fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 5 } }
+          ]
+        }
+      },
+      {
+        "id": "stacked_burn",
+        "positionIndex": 5,
+        "name": "Stacked Burn",
+        "description": "Chance on hit to gain a stacking fire skill damage buff.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 3 }
+          }
+        }
+      },
+      {
+        "id": "scorching_slash",
+        "positionIndex": 6,
+        "name": "Scorching Slash",
+        "description": "Increases the damage dealt by inferno slash.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "nerve_damage",
+        "positionIndex": 7,
+        "name": "Nerve Damage",
+        "description": "Chance to stun on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "stun_duration_pct": 0 },
+            "perRank": { "stun_duration_pct": 1 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "accelerated_fumes",
+        "positionIndex": 8,
+        "name": "Accelerated Fumes",
+        "description": "Chance on attack to gain increased attack speed.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 1 },
+          "effects": {
+            "base": { "increased_attack_speed": 0 },
+            "perRank": { "increased_attack_speed": 8 }
+          }
+        }
+      },
+      {
+        "id": "igniting_wind",
+        "positionIndex": 9,
+        "name": "Igniting Wind",
+        "description": "Chance on attack to perform an additional attack.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "third_degree_burns",
+        "positionIndex": 10,
+        "name": "Third Degree Burns",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 8 }
+        }
+      },
+      {
+        "id": "infernal_cleave",
+        "positionIndex": 11,
+        "name": "Infernal Cleave",
+        "description": "Inferno slash is now a 360 degree area of effect attack.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 30, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "searing_fork",
+        "positionIndex": 12,
+        "name": "Searing Fork",
+        "description": "Inferno slash sends multiple smaller waves that split on the first hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 35, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "fearful_flames",
+        "positionIndex": 13,
+        "name": "Fearful Flames",
+        "description": "Inferno slash now knocks back monsters inflicting Burning and dealing increased Damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": {
+            "fire_skill_damage": 60,
+            "increased_burning_damage": 100
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      },
+      {
+        "id": "flies_of_agony",
+        "positionIndex": 14,
+        "name": "Flies of Agony",
+        "description": "Inferno slash now sends burning fireflies towards monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 35, "projectile_count": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "searing_chains",
+    "classId": "pyromancer",
+    "name": "Searing Chains",
+    "kind": "active",
+    "description": "When striking a monster unleash a powerful chain attack dealing increased damage, additional fire damage and stunning monsters struck.",
+    "damageType": "fire",
+    "tags": ["Attack", "Active", "Melee", "Chain Lightning", "Strike"],
+    "movementDuringUse": 65,
+    "effectDuration": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Flame Diviner",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": -0.5, "perLevel": 20 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 6, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 7, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Inferno Slash", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Ignite", "stat": "fire_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "ignite",
+    "classId": "pyromancer",
+    "name": "Ignite",
+    "kind": "passive",
+    "description": "All fire enchanted attacks add a stack of ignite on the monster, causing them to combust at 10 stacks dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Passive", "Explosion"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Flame Diviner",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.5, "perLevel": 11.5 },
+    "bonusSources": [
+      { "source": "Fire Enchant", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Searing Chains", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "fire_shield",
+    "classId": "pyromancer",
+    "name": "Fire Shield",
+    "kind": "buff",
+    "description": "Cast a shield of fire that increases your Physical damage reduction and deals fire damage to monsters around you.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 30,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Flame Diviner",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": -0.5, "perLevel": 11 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 0.5 },
+      "perRank": { "physical_damage_reduction": 0.5 }
+    },
+    "bonusSources": [
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Avatar of Fire", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "fiery_presence",
+    "classId": "pyromancer",
+    "name": "Fiery Presence",
+    "kind": "passive",
+    "description": "Increases your fire skill damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Flame Diviner",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "fire_skill_damage": 4.5 },
+      "perRank": { "fire_skill_damage": 4.5 }
+    }
+  },
+  {
+    "id": "avatar_of_fire",
+    "classId": "pyromancer",
+    "name": "Avatar of Fire",
+    "kind": "buff",
+    "description": "Temporarily turns you into an avatar of fire. Increasing your attack speed, fire damage, spell critical damage and spell critical chance.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 40,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Flame Diviner",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "crit_chance": 20 },
+      "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "crit_chance": 0 }
+    }
+  },
+  {
+    "id": "breath_of_fire",
+    "classId": "pyromancer",
+    "name": "Breath of Fire",
+    "kind": "active",
+    "description": "Breathe burning flames dealing fire damage and inflicting burning on hit.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Arsonist",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 8, "perLevel": 13.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "burning_damage": 35 },
+      "perRank": { "burning_damage": 0 }
+    },
+    "bonusSources": [
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "breath_of_fire_core",
+        "positionIndex": 0,
+        "name": "Breath of Fire",
+        "description": "Core of the Breath of Fire subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "expanding_heat",
+        "positionIndex": 1,
+        "name": "Expanding Heat",
+        "description": "Increases the size of breath of fire.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 35 }
+        }
+      },
+      {
+        "id": "burning_haze",
+        "positionIndex": 2,
+        "name": "Burning Haze",
+        "description": "Increases the damage dealt by breath of fire.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "heat_combustion",
+        "positionIndex": 3,
+        "name": "Heat Combustion",
+        "description": "Chance on hit to unleash burning fragments from the target dealing damage to other nearby targets.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 12 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "double_breeze",
+        "positionIndex": 4,
+        "name": "Double Breeze",
+        "description": "Chance on cast to unleash an additional breath of fire.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "scorching_exhale",
+        "positionIndex": 5,
+        "name": "Scorching Exhale",
+        "description": "Increased the length of breath of fire.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "burning_lungs",
+        "positionIndex": 6,
+        "name": "Burning Lungs",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 45 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 45 } }
+          ]
+        }
+      },
+      {
+        "id": "collateral_ignition",
+        "positionIndex": 7,
+        "name": "Collateral Ignition",
+        "description": "Chance on hit to spread burning to monsters around the target.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 2 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "burst_of_heat",
+        "positionIndex": 8,
+        "name": "Burst of Heat",
+        "description": "Chance on hit to unleash a small fire nova if target is burning.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 15 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "breaking_point",
+        "positionIndex": 9,
+        "name": "Breaking Point",
+        "description": "Chance to inflict fire break on burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 8 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 8 } },
+            "burning"
+          ]
+        }
+      },
+      {
+        "id": "reverse_hypothermia",
+        "positionIndex": 10,
+        "name": "Reverse Hypothermia",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 8 }
+        }
+      },
+      {
+        "id": "hydras_breeze",
+        "positionIndex": 11,
+        "name": "Hydra´s Breeze",
+        "description": "Unleash additional breaths in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 35, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "chain_of_fire",
+        "positionIndex": 12,
+        "name": "Chain of Fire",
+        "description": "Breath of fire now chains multiple times.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "chain_count": 0 },
+          "perRank": { "fire_skill_damage": 70, "chain_count": 3 }
+        }
+      },
+      {
+        "id": "scorching_hellflame",
+        "positionIndex": 13,
+        "name": "Scorching Hellflame",
+        "description": "Breath of fire now applies stacks of Hellflame which will unleash a fiery pulse of area of effect damage when reaching max stacks.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 150, "area_of_effect": 175 }
+        }
+      },
+      {
+        "id": "molten_orb",
+        "positionIndex": 14,
+        "name": "Molten Orb",
+        "description": "Breath of fire now summons a molten orb traveling forwards breathing fire towards the closest target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "fire_skill_damage": 50, "faster_cast_rate": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fireball",
+    "classId": "pyromancer",
+    "name": "Fireball",
+    "kind": "active",
+    "description": "Cast a fireball dealing fire damage to monsters.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Projectile", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Arsonist",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 3.5, "perLevel": 20 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Hydra", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 10, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "fireball_core",
+        "positionIndex": 0,
+        "name": "Fireball",
+        "description": "Core of the Fireball subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "multicast",
+        "positionIndex": 1,
+        "name": "Multicast",
+        "description": "Chance on cast to unleash an additional fireball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "multicast_chance": 0 },
+          "perRank": { "multicast_chance": 10 }
+        }
+      },
+      {
+        "id": "ignition_radius",
+        "positionIndex": 2,
+        "name": "Ignition Radius",
+        "description": "Increases the area of effect radius of fireball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "inferno_ball",
+        "positionIndex": 3,
+        "name": "Inferno Ball",
+        "description": "Increases the damage dealt by fireball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "gas_fumes",
+        "positionIndex": 4,
+        "name": "Gas Fumes",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "searing_speed",
+        "positionIndex": 5,
+        "name": "Searing Speed",
+        "description": "Increases the projectile speed and cast rate of fireball.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0, "faster_cast_rate": 0 },
+          "perRank": { "projectile_speed": 15, "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "paralyzing_impact",
+        "positionIndex": 6,
+        "name": "Paralyzing Impact",
+        "description": "Chance on hit to knockback monsters dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "soulburn",
+        "positionIndex": 7,
+        "name": "Soulburn",
+        "description": "Inflicts fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "critical_burn",
+        "positionIndex": 8,
+        "name": "Critical Burn",
+        "description": "Chance on hit to deal double damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 6 } }
+      },
+      {
+        "id": "mark_of_doom",
+        "positionIndex": 9,
+        "name": "Mark of Doom",
+        "description": "Chance on hit to rain down flaming meteors from the sky.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 1 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 50 }
+          }
+        }
+      },
+      {
+        "id": "burn_baby_burn",
+        "positionIndex": 10,
+        "name": "Burn baby burn!",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 15 }
+        }
+      },
+      {
+        "id": "splitfire",
+        "positionIndex": 11,
+        "name": "Splitfire",
+        "description": "Fireball now splits to multiple smaller fireballs on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 3, "fire_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "path_of_destruction",
+        "positionIndex": 12,
+        "name": "Path of Destruction",
+        "description": "Fireball now has piercing and leaves a trail of fire on its’ path.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "fire_skill_damage": 60, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "orbital_fire",
+        "positionIndex": 13,
+        "name": "Orbital Fire",
+        "description": "Fireball casts now orbit around you for a short period.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "skill_duration": 0,
+            "area_of_effect": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "skill_duration": 18,
+            "area_of_effect": 30,
+            "projectile_count": 4
+          }
+        }
+      },
+      {
+        "id": "fireflies",
+        "positionIndex": 14,
+        "name": "Fireflies!",
+        "description": "Chance on spellhit to spawn a firefly around you that seek out nearby targets exploding into a fireball.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 20 },
+          "effects": {
+            "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+            "perRank": { "projectile_count": 4, "fire_skill_damage": 60 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "scorching_aura",
+    "classId": "pyromancer",
+    "name": "Scorching Aura",
+    "kind": "aura",
+    "description": "Scorch monsters around you dealing fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Arsonist",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0, "perLevel": 15.5 },
+    "bonusSources": [
+      { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "scorching_aura_core",
+        "positionIndex": 0,
+        "name": "Scorching Aura",
+        "description": "Core of the Scorching Aura subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "scorched_lands",
+        "positionIndex": 1,
+        "name": "Scorched Lands",
+        "description": "Increases the area of effect radius of scorching aura.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "sixt_degree_burns",
+        "positionIndex": 2,
+        "name": "Sixt Degree Burns",
+        "description": "Increases the damage dealt by scorching aura.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "burning_necrosis",
+        "positionIndex": 3,
+        "name": "Burning Necrosis",
+        "description": "Inflicts fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 12.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 12.5 } }
+          ]
+        }
+      },
+      {
+        "id": "flaming_fissure",
+        "positionIndex": 4,
+        "name": "Flaming Fissure",
+        "description": "Chance on hit to release a flaming fissure beneath monsters knocking them into the air dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 12 }
+          }
+        }
+      },
+      {
+        "id": "rapid_burning",
+        "positionIndex": 5,
+        "name": "Rapid Burning",
+        "description": "Increases the tick rate of scorching aura.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 15 }
+        }
+      },
+      {
+        "id": "burnt_feet",
+        "positionIndex": 6,
+        "name": "Burnt Feet",
+        "description": "Increases your movement speed while scorching aura is active.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "ignite_the_flames",
+        "positionIndex": 7,
+        "name": "IGNITE THE FLAMES!",
+        "description": "Damaging monsters now builds up flaming ignition stacks unleashing a fiery pulse at max stacks.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 1 }
+        }
+      },
+      {
+        "id": "ground_blaze",
+        "positionIndex": 8,
+        "name": "Ground Blaze",
+        "description": "Chance on hit to slow monsters and light a blaze at their feet.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 12 }
+          },
+          "appliesStates": ["slow"]
+        }
+      },
+      {
+        "id": "scorching_agony",
+        "positionIndex": 9,
+        "name": "Scorching Agony",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 20 }
+        }
+      },
+      {
+        "id": "burn_them_all",
+        "positionIndex": 10,
+        "name": "Burn Them All!",
+        "description": "Inflicts burning for a portion of scorching auras damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": {
+            "conversion_skill_damage": 0,
+            "increased_burning_damage": 0
+          },
+          "perRank": {
+            "conversion_skill_damage": 10,
+            "increased_burning_damage": 10
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "searing_burst",
+        "positionIndex": 11,
+        "name": "Searing Burst",
+        "description": "Frequently unleash small bursts of fire dealing additional damage stunning monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 10, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "burning_soul",
+        "positionIndex": 12,
+        "name": "Burning Soul",
+        "description": "Increases the damage of scorching aura based on your maximum life.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_max_life": 0 },
+          "perRank": { "conversion_max_life": 6 }
+        }
+      },
+      {
+        "id": "scorching_harvester",
+        "positionIndex": 13,
+        "name": "Scorching Harvester",
+        "description": "Frequently send out fiery souls dealing damage replenishing a portion of your maximum life.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "life_steal": 0 },
+          "perRank": { "fire_skill_damage": 20, "life_steal": 1.5 }
+        }
+      },
+      {
+        "id": "release_the_chaos",
+        "positionIndex": 14,
+        "name": "RELEASE THE CHAOS!",
+        "description": "Ignite the flames now additionally unleashes piercing fireballs spiraling outwards dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 40, "projectile_count": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "hydra",
+    "classId": "pyromancer",
+    "name": "Hydra",
+    "kind": "active",
+    "description": "Spawn a fiery hydra that shoots fireballs with area of effect fire damage towards the closest monster.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Projectile", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Arsonist",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "damageFormula": { "base": -0.5, "perLevel": 20 },
+    "manaCostFormula": { "base": 8, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Armageddon", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "hydra_core",
+        "positionIndex": 0,
+        "name": "Hydra",
+        "description": "Core of the Hydra subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "lasting_fire",
+        "positionIndex": 1,
+        "name": "Lasting Fire",
+        "description": "Increases the duration of hydra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 8 }
+        }
+      },
+      {
+        "id": "fiery_snakebite",
+        "positionIndex": 2,
+        "name": "Fiery Snakebite",
+        "description": "Increases the damage dealt by hydra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "flaming_reach",
+        "positionIndex": 3,
+        "name": "Flaming Reach",
+        "description": "Increases the range of hydra attacks.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 10 }
+        }
+      },
+      {
+        "id": "scorching_blast",
+        "positionIndex": 4,
+        "name": "Scorching Blast",
+        "description": "Hydras have a chance to cast a small fire nova at the target on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "more_heads_more_fire",
+        "positionIndex": 5,
+        "name": "More Heads More Fire!",
+        "description": "Increases the amount of hydras you can spawn.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_max_amount": 0 },
+          "perRank": { "sentry_max_amount": 2 }
+        }
+      },
+      {
+        "id": "flaming_reflexes",
+        "positionIndex": 6,
+        "name": "Flaming Reflexes",
+        "description": "Increases the attack speed of summoned hydra.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "sentry_attack_speed": 0 },
+          "perRank": { "sentry_attack_speed": 15 }
+        }
+      },
+      {
+        "id": "cloning_combustion",
+        "positionIndex": 7,
+        "name": "Cloning Combustion",
+        "description": "Chance on attack for hydra to create a temporary clone of itself for a short period of time.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 2 } }
+      },
+      {
+        "id": "burstfire",
+        "positionIndex": 8,
+        "name": "Burstfire",
+        "description": "Hydras have a chance on attack to fire an additional projectile.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "burning_essence",
+        "positionIndex": 9,
+        "name": "Burning Essence",
+        "description": "Hydras deal damage in a small radius around them.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 25, "area_of_effect": 12.5 }
+        }
+      },
+      {
+        "id": "slitherin_army",
+        "positionIndex": 10,
+        "name": "Slitherin Army",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "chaotic_calamity",
+        "positionIndex": 11,
+        "name": "Chaotic Calamity",
+        "description": "Hydras now unleash small comets with every attack.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "hydra_herder",
+        "positionIndex": 12,
+        "name": "Hydra Herder",
+        "description": "Hydras now follow the player but the amount of hydras are capped.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "summon_movement_speed": 0 },
+          "perRank": { "fire_skill_damage": 12.5, "summon_movement_speed": 25 }
+        }
+      },
+      {
+        "id": "scorching_kraken",
+        "positionIndex": 13,
+        "name": "Scorching Kraken",
+        "description": "Now summon one massive hydra that breathes fire to nearby monsters with increased damage and range. Additionally scales the damage based on maximum amount of hydras.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "skill_range": 0,
+            "conversion_summon_count": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 40,
+            "skill_range": 25,
+            "conversion_summon_count": 15
+          }
+        }
+      },
+      {
+        "id": "searing_snakes",
+        "positionIndex": 14,
+        "name": "Searing Snakes",
+        "description": "Now summon all hydras with one cast dealing increased damage and inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": { "fire_skill_damage": 15, "increased_burning_damage": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "volcano",
+    "classId": "pyromancer",
+    "name": "Volcano",
+    "kind": "active",
+    "description": "Spawn a molten volcano that deals fire damage around it and spews out burning rocks that explode on hit.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 4,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Arsonist",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "damageFormula": { "base": 0, "perLevel": 29.5 },
+    "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Hydra", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 10, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "volcano_core",
+        "positionIndex": 0,
+        "name": "Volcano",
+        "description": "Core of the Volcano subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "eruption",
+        "positionIndex": 1,
+        "name": "Eruption",
+        "description": "Increases the amount of volcano fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "extended_lava",
+        "positionIndex": 2,
+        "name": "Extended Lava",
+        "description": "Increases the duration of volcano.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "danger_zone",
+        "positionIndex": 3,
+        "name": "Danger Zone",
+        "description": "Increases the range of volcano.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "searing_mountain",
+        "positionIndex": 4,
+        "name": "Searing Mountain",
+        "description": "Increases the size of volcano.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "colossal_fragment",
+        "positionIndex": 5,
+        "name": "Colossal Fragment",
+        "description": "Chance to shoot out a colossal fragment instead knocking monsters into the air and inflicting burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "crackling_earth",
+        "positionIndex": 6,
+        "name": "Crackling Earth",
+        "description": "Release flaming fissures around the volcano.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 12 }
+        }
+      },
+      {
+        "id": "scorching_lava",
+        "positionIndex": 7,
+        "name": "Scorching Lava",
+        "description": "Increases the damage dealt by volcano.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 6 }
+        }
+      },
+      {
+        "id": "crushing_fragment",
+        "positionIndex": 8,
+        "name": "Crushing Fragment",
+        "description": "Fragments have a chance to bounce and deal area of effect damage when hitting the ground.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "too_hot_to_touch",
+        "positionIndex": 9,
+        "name": "Too Hot to Touch",
+        "description": "Monsters touching the volcano get knocked back and stunned taking additional damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "lava_dipping",
+        "positionIndex": 10,
+        "name": "Lava Dipping",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "yellowstone",
+        "positionIndex": 11,
+        "name": "Yellowstone",
+        "description": "Now spawns a massive volcano shooting out fragments that spawn smaller volcanoes around it.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 25 }
+        }
+      },
+      {
+        "id": "lava_trail",
+        "positionIndex": 12,
+        "name": "Lava Trail",
+        "description": "Volcano now sends out trails of molten lava inflicting a portion of its damage as burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "trail_count": 0, "conversion_skill_damage": 0 },
+          "perRank": { "trail_count": 3, "conversion_skill_damage": 80 }
+        }
+      },
+      {
+        "id": "i_am_the_volcano_now",
+        "positionIndex": 13,
+        "name": "I Am The Volcano Now!",
+        "description": "The volcano is now stuck on you with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 110 }
+        }
+      },
+      {
+        "id": "trail_of_volcanoes",
+        "positionIndex": 14,
+        "name": "Trail of Volcanoes",
+        "description": "Spawn multiple volcanoes trailing into a random direction.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 55, "projectile_count": 4 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "meteor",
+    "classId": "pyromancer",
+    "name": "Meteor",
+    "kind": "active",
+    "description": "Cast a powerful meteor forwards dealing area of effect fire damage on impact.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Arsonist",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 26 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "fire_nova",
+    "classId": "pyromancer",
+    "name": "Fire Nova",
+    "kind": "active",
+    "description": "Cast a nova of fire around you dealing fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Arsonist",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 19.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 8.85, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "fire_nova_core",
+        "positionIndex": 0,
+        "name": "Fire Nova",
+        "description": "Core of the Fire Nova subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "extended_flames",
+        "positionIndex": 1,
+        "name": "Extended Flames",
+        "description": "Increases the area of effect radius of fire nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "boiling_point",
+        "positionIndex": 2,
+        "name": "Boiling Point",
+        "description": "Inflicts burning on hit.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "heat_haze",
+        "positionIndex": 3,
+        "name": "Heat Haze",
+        "description": "Increases the damage dealt by fire nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "burning_agony",
+        "positionIndex": 4,
+        "name": "Burning Agony",
+        "description": "Inflicts fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 8 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 8 } }
+          ]
+        }
+      },
+      {
+        "id": "crushing_flames",
+        "positionIndex": 5,
+        "name": "Crushing Flames",
+        "description": "Fire nova knocks monsters back dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "rapid_flames",
+        "positionIndex": 6,
+        "name": "Rapid Flames",
+        "description": "Increases your cast rate when casting fire nova.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "mirror_flames",
+        "positionIndex": 7,
+        "name": "Mirror Flames",
+        "description": "Chance on cast to unleash an additional fire nova.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "armageddon_bolts",
+        "positionIndex": 8,
+        "name": "Armageddon Bolts",
+        "description": "Chance on hit to drop armageddon bolts down from the sky.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 1 } }
+      },
+      {
+        "id": "agonizing_flames",
+        "positionIndex": 9,
+        "name": "Agonizing Flames",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 6 }
+        }
+      },
+      {
+        "id": "molten_trail",
+        "positionIndex": 10,
+        "name": "Molten Trail",
+        "description": "Chance on cast to send a trail of molten lava forward.",
+        "maxRank": 2,
+        "proc": { "trigger": "on_cast", "chance": { "base": 0, "perRank": 30 } }
+      },
+      {
+        "id": "scorching_bolts",
+        "positionIndex": 11,
+        "name": "Scorching Bolts",
+        "description": "Now unleash piercing fireballs in all directions instead of a nova.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "projectile_speed": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 15,
+            "projectile_speed": 25,
+            "projectile_count": 5
+          }
+        }
+      },
+      {
+        "id": "searing_tornado",
+        "positionIndex": 12,
+        "name": "Searing Tornado",
+        "description": "Summon piercing fireballs orbiting you. Fire nova now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0, "projectile_count": 0 },
+          "perRank": { "skill_duration": 10, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "traveling_flames",
+        "positionIndex": 13,
+        "name": "Traveling Flames",
+        "description": "Send a traveling nova forward unleashing additional novas with increased damage and area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "fire_skill_damage": 0,
+            "area_of_effect": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "fire_skill_damage": 25,
+            "area_of_effect": 25,
+            "projectile_count": 1
+          }
+        }
+      },
+      {
+        "id": "vacuum_flames",
+        "positionIndex": 14,
+        "name": "Vacuum Flames",
+        "description": "Fire nova now vacuums monsters inside stunning and dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "comet",
+    "classId": "pyromancer",
+    "name": "Comet",
+    "kind": "active",
+    "description": "Call down a huge comet exploding on impact dealing area of effect fire damage.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 360,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Arsonist",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 27.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Fireball", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "comet_core",
+        "positionIndex": 0,
+        "name": "Comet",
+        "description": "Core of the Comet subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "blast_radius",
+        "positionIndex": 1,
+        "name": "Blast Radius",
+        "description": "Increases the area of effect radius of comet.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "molten_rock",
+        "positionIndex": 2,
+        "name": "Molten Rock",
+        "description": "Increases the damage dealt by comet.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "skycaller",
+        "positionIndex": 3,
+        "name": "Skycaller",
+        "description": "Increases your cast rate when using comet.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "comet_fragments",
+        "positionIndex": 4,
+        "name": "Comet Fragments",
+        "description": "Chance when comet hits the ground to rain down smaller comets.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "molten_aftershock",
+        "positionIndex": 5,
+        "name": "Molten Aftershock",
+        "description": "Chance when hitting the ground to unleash a fiery pulse dealing additional damage knocking monsters back.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "shattering_impact",
+        "positionIndex": 6,
+        "name": "Shattering Impact",
+        "description": "Inflicts fire break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_break": 0 },
+          "perRank": { "fire_break": 10 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "stunning_hit",
+        "positionIndex": 7,
+        "name": "Stunning Hit",
+        "description": "Chance on hit to stun monsters.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "cracked_terrain",
+        "positionIndex": 8,
+        "name": "Cracked Terrain",
+        "description": "Increased damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "searing_shrapnel",
+        "positionIndex": 9,
+        "name": "Searing Shrapnel",
+        "description": "Comet shrapnel flies farther dealing a portion of comets damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "fire_skill_damage": 0, "skill_range": 0 },
+            "perRank": { "fire_skill_damage": 30, "skill_range": 12.5 }
+          }
+        }
+      },
+      {
+        "id": "flaming_terrain",
+        "positionIndex": 10,
+        "name": "Flaming Terrain",
+        "description": "Chance when hitting the ground to create flames dealing a portion of comets damage over time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "fiery_shower",
+        "positionIndex": 11,
+        "name": "Fiery Shower",
+        "description": "Drop additional comets dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 15, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "molten_starfall",
+        "positionIndex": 12,
+        "name": "Molten Starfall",
+        "description": "Drop multiple comets simultaneously. Comet now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "bouncing_comets",
+        "positionIndex": 13,
+        "name": "Bouncing Comets",
+        "description": "Drop multiple small comets bouncing forwards when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "fire_skill_damage": 60 }
+        }
+      },
+      {
+        "id": "crushing_comet",
+        "positionIndex": 14,
+        "name": "Crushing Comet",
+        "description": "Comet now smashes the ground with force sending monsters airborne with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "fire_skill_damage": 140, "projectile_size": 30 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "armageddon",
+    "classId": "pyromancer",
+    "name": "Armageddon",
+    "kind": "active",
+    "description": "Call down a rain of meteors from the sky dealing area of effect fire damage to monsters struck.",
+    "damageType": "fire",
+    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Arsonist",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "damageFormula": { "base": -0.5, "perLevel": 33 },
+    "manaCostFormula": { "base": 8, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Volcano", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Meteor", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "armageddon_core",
+        "positionIndex": 0,
+        "name": "Armageddon",
+        "description": "Core of the Armageddon subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "falling_wrath",
+        "positionIndex": 1,
+        "name": "Falling Wrath",
+        "description": "Increases the amount of armageddon projectiles.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "storm_of_fire",
+        "positionIndex": 2,
+        "name": "Storm of Fire",
+        "description": "Increases the area of effect radius of armageddon.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "colossal_chunks",
+        "positionIndex": 3,
+        "name": "Colossal Chunks",
+        "description": "Increases projectile size and explosion radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 20 }
+        }
+      },
+      {
+        "id": "searing_meteor",
+        "positionIndex": 4,
+        "name": "Searing Meteor",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 12 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "pyrokinetic_madness",
+        "positionIndex": 5,
+        "name": "Pyrokinetic Madness",
+        "description": "Chance on cast to unleash an additional armageddon.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "doomsday_clock",
+        "positionIndex": 6,
+        "name": "Doomsday Clock",
+        "description": "Decreases the cooldown of armageddon.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 6 }
+        }
+      },
+      {
+        "id": "blisters",
+        "positionIndex": 7,
+        "name": "Blisters",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 8 }
+        }
+      },
+      {
+        "id": "ball_of_fire",
+        "positionIndex": 8,
+        "name": "Ball of Fire",
+        "description": "Chance for a meteor to turn into a ball of fire with increased size and damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "fire_skill_damage": 0, "projectile_size": 0 },
+            "perRank": { "fire_skill_damage": 15, "projectile_size": 15 }
+          }
+        }
+      },
+      {
+        "id": "doom_fire",
+        "positionIndex": 9,
+        "name": "Doom Fire",
+        "description": "Increased the damage dealt by armageddon.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "blazing_pulse",
+        "positionIndex": 10,
+        "name": "Blazing Pulse",
+        "description": "Chance on hit to unleash a fiery pulse dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "fire_skill_damage": 0 },
+            "perRank": { "fire_skill_damage": 16 }
+          }
+        }
+      },
+      {
+        "id": "searing_concentration",
+        "positionIndex": 11,
+        "name": "Searing Concentration",
+        "description": "Armageddon area of effect is now drastically smaller for more concentrated damage output.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": -25 }
+        }
+      },
+      {
+        "id": "warm_shower",
+        "positionIndex": 12,
+        "name": "Warm Shower",
+        "description": "Armageddon now follows the player dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "blistering_bolt",
+        "positionIndex": 13,
+        "name": "Blistering Bolt",
+        "description": "Armageddon now drops a meteor on every monster around you on a large radius. Armageddon no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "fire_skill_damage": 0 },
+          "perRank": { "area_of_effect": 15, "fire_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "warped_doom",
+        "positionIndex": 14,
+        "name": "Warped Doom",
+        "description": "Armageddon projectiles now fly horizontally through terrain exploding on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_speed": 0 },
+          "perRank": { "fire_skill_damage": 70, "projectile_speed": 20 }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,332 @@
+[
+ {
+  "name": "Movement Speed",
+  "id": 25,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyNS4wXX19fQ=="
+ },
+ {
+  "name": "Phasing",
+  "id": 26,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyNi4wXX19fQ=="
+ },
+ {
+  "name": "Jumping Power",
+  "id": 27,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyNy4wXX19fQ=="
+ },
+ {
+  "name": "Strength",
+  "id": 33,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszMy4wXX19fQ=="
+ },
+ {
+  "name": "Strength per level",
+  "id": 34,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszNC4wXX19fQ=="
+ },
+ {
+  "name": "Dexterity",
+  "id": 36,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszNi4wXX19fQ=="
+ },
+ {
+  "name": "Dexterity per level",
+  "id": 37,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszNy4wXX19fQ=="
+ },
+ {
+  "name": "Energy",
+  "id": 39,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszOS4wXX19fQ=="
+ },
+ {
+  "name": "Energy per level",
+  "id": 40,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0MC4wXX19fQ=="
+ },
+ {
+  "name": "Intelligence",
+  "id": 42,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0Mi4wXX19fQ=="
+ },
+ {
+  "name": "Intelligence per level",
+  "id": 43,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0My4wXX19fQ=="
+ },
+ {
+  "name": "Armor",
+  "id": 45,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0NS4wXX19fQ=="
+ },
+ {
+  "name": "Armor per level",
+  "id": 46,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0Ni4wXX19fQ=="
+ },
+ {
+  "name": "Vitality",
+  "id": 48,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0OC4wXX19fQ=="
+ },
+ {
+  "name": "Vitality per level",
+  "id": 49,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls0OS4wXX19fQ=="
+ },
+ {
+  "name": "All Attributes",
+  "id": 51,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls1MS4wXX19fQ=="
+ },
+ {
+  "name": "Projectile Speed",
+  "id": 70,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3MC4wXX19fQ=="
+ },
+ {
+  "name": "Explosion Skills",
+  "id": 112,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxMTIuMF19fX0="
+ },
+ {
+  "name": "All Skills",
+  "id": 201,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMDEuMF19fX0="
+ },
+ {
+  "name": "Singular Skills",
+  "id": 202,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMDIuMF19fX0="
+ },
+ {
+  "name": "Physical Skills",
+  "id": 222,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMjIuMF19fX0="
+ },
+ {
+  "name": "Cold Skills",
+  "id": 223,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMjMuMF19fX0="
+ },
+ {
+  "name": "Arcane Skills",
+  "id": 224,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMjQuMF19fX0="
+ },
+ {
+  "name": "Fire Skills",
+  "id": 225,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMjUuMF19fX0="
+ },
+ {
+  "name": "Lightning Skills",
+  "id": 226,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMjYuMF19fX0="
+ },
+ {
+  "name": "Poison Skills",
+  "id": 227,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyMjcuMF19fX0="
+ },
+ {
+  "name": "Light Radius",
+  "id": 281,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyODEuMF19fX0="
+ },
+ {
+  "name": "Increased Experience Gain",
+  "id": 282,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyODIuMF19fX0="
+ },
+ {
+  "name": "Magic Find",
+  "id": 284,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyODQuMF19fX0="
+ },
+ {
+  "name": "Magic Find per level",
+  "id": 285,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyODUuMF19fX0="
+ },
+ {
+  "name": "Extra Gold from kills",
+  "id": 286,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyODYuMF19fX0="
+ },
+ {
+  "name": "Merchant prices",
+  "id": 290,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyOTAuMF19fX0="
+ },
+ {
+  "name": "Summon Skills",
+  "id": 331,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszMzEuMF19fX0="
+ },
+ {
+  "name": "Sentry Skills",
+  "id": 335,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszMzUuMF19fX0="
+ },
+ {
+  "name": "Flask Mana Replenish %",
+  "id": 385,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszODUuMF19fX0="
+ },
+ {
+  "name": "Flask Instant Mana Replenish",
+  "id": 386,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszODYuMF19fX0="
+ },
+ {
+  "name": "Flask Life Replenish %",
+  "id": 388,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszODguMF19fX0="
+ },
+ {
+  "name": "Flask Instant Life Replenish",
+  "id": 389,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszODkuMF19fX0="
+ },
+ {
+  "name": "Flask Duration",
+  "id": 391,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszOTEuMF19fX0="
+ },
+ {
+  "name": "Flask Extra Stacks",
+  "id": 393,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszOTMuMF19fX0="
+ },
+ {
+  "name": "Flask Stacks Recovered Per Kill",
+  "id": 394,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszOTQuMF19fX0="
+ },
+ {
+  "name": "Flask Stacks Recovered",
+  "id": 395,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszOTUuMF19fX0="
+ },
+ {
+  "name": "Flask Cooldown",
+  "id": 396,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszOTYuMF19fX0="
+ },
+ {
+  "name": "Enhanced Damage",
+  "id": 28,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsyOC4wXX19fQ=="
+ },
+ {
+  "name": "Enhanced Damage per level",
+  "id": 31,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlszMS4wXX19fQ=="
+ },
+ {
+  "name": "Attack Range",
+  "id": 67,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls2Ny4wXX19fQ=="
+ },
+ {
+  "name": "Attack Speed",
+  "id": 68,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls2OC4wXX19fQ=="
+ },
+ {
+  "name": "Chance for Critical Strike",
+  "id": 72,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3Mi4wXX19fQ=="
+ },
+ {
+  "name": "Critical Strike Damage",
+  "id": 73,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3My4wXX19fQ=="
+ },
+ {
+  "name": "Attack Rating",
+  "id": 74,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3NC4wXX19fQ=="
+ },
+ {
+  "name": "Attack Rating %",
+  "id": 75,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3NS4wXX19fQ=="
+ },
+ {
+  "name": "Attack Rating per level",
+  "id": 76,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3Ni4wXX19fQ=="
+ },
+ {
+  "name": "Piercing",
+  "id": 77,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3Ny4wXX19fQ=="
+ },
+ {
+  "name": "Slow Target",
+  "id": 78,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls3OC4wXX19fQ=="
+ },
+ {
+  "name": "Ignore Target Defense",
+  "id": 94,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls5NC4wXX19fQ=="
+ },
+ {
+  "name": "Deadly Blow",
+  "id": 95,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls5NS4wXX19fQ=="
+ },
+ {
+  "name": "Crushing Blow",
+  "id": 97,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls5Ny4wXX19fQ=="
+ },
+ {
+  "name": "Open Wounds",
+  "id": 99,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOls5OS4wXX19fQ=="
+ },
+ {
+  "name": "Physical Damage per level",
+  "id": 103,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxMDMuMF19fX0="
+ },
+ {
+  "name": "Flat Physical Damage",
+  "id": 128,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxMjguMF19fX0="
+ },
+ {
+  "name": "Physical Damage %",
+  "id": 129,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxMjkuMF19fX0="
+ },
+ {
+  "name": "Additive Fire Damage",
+  "id": 132,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxMzIuMF19fX0="
+ },
+ {
+  "name": "Additive Cold Damage",
+  "id": 136,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxMzYuMF19fX0="
+ },
+ {
+  "name": "Additive Lightning Damage",
+  "id": 144,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxNDQuMF19fX0="
+ },
+ {
+  "name": "Additive Poison Damage",
+  "id": 148,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxNDguMF19fX0="
+ },
+ {
+  "name": "Additive Arcane Damage",
+  "id": 140,
+  "code": "eyJ2ZXJzaW9uIjoyLCJ0MCI6eyJ0cjAiOnsiaHMiOlsxNDAuMF19fX0="
+ }
+]

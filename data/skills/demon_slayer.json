@@ -1,0 +1,1884 @@
+[
+  {
+    "id": "eagle_eye",
+    "classId": "demon_slayer",
+    "name": "Eagle Eye",
+    "kind": "passive",
+    "description": "Increases your attack damage, additional physical damage and critical strike damage when using ranged weapons.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Gunslinger",
+    "position": { "row": 0, "col": 0 },
+    "passiveStats": {
+      "base": { "attack_damage": 1, "additive_physical_damage": 5, "crit_damage": 2 },
+      "perRank": { "attack_damage": 1, "additive_physical_damage": 5, "crit_damage": 2 }
+    }
+  },
+  {
+    "id": "trigger_finger",
+    "classId": "demon_slayer",
+    "name": "Trigger Finger",
+    "kind": "active",
+    "description": "Fire a burst shot dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Strike", "Physical"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Gunslinger",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 50, "perLevel": 15 },
+      "attackRatingPct": { "base": 5, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Eagle Eye", "stat": "attack_damage", "value": 2.5, "per": "skill_level" },
+      { "source": "Bullet Hell", "stat": "attack_damage", "value": 2.5, "per": "skill_level" },
+      { "source": "Possessed Bullet", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "trigger_finger_core",
+        "positionIndex": 0,
+        "name": "Trigger Finger",
+        "description": "Core of the Trigger Finger subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "slick_fingers",
+        "positionIndex": 1,
+        "name": "Slick Fingers",
+        "description": "Increases attack rating when using trigger finger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "triggerheavy",
+        "positionIndex": 2,
+        "name": "Triggerheavy",
+        "description": "Increases damage dealt by trigger finger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "gunslinging_slayer",
+        "positionIndex": 3,
+        "name": "Gunslinging Slayer",
+        "description": "Increases the amount of projectiles fired by trigger finger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "rapid_gunslinger",
+        "positionIndex": 4,
+        "name": "Rapid Gunslinger",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "burning_bullethole",
+        "positionIndex": 5,
+        "name": "Burning Bullethole",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 75 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "executing_gunshot",
+        "positionIndex": 6,
+        "name": "Executing Gunshot",
+        "description": "Execute low life monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "bullet_fragmentation",
+        "positionIndex": 7,
+        "name": "Bullet Fragmentation",
+        "description": "Chance to fragment bullets on hit causing pieces to ricochet around the target.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "brand_new_cavity",
+        "positionIndex": 8,
+        "name": "Brand New Cavity",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "supersonic_bullets",
+        "positionIndex": 9,
+        "name": "Supersonic Bullets",
+        "description": "Increases critical strike damage when using trigger finger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "gasoline_covered_ammunition",
+        "positionIndex": 10,
+        "name": "Gasoline Covered Ammunition",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "piercing_mayhem",
+        "positionIndex": 11,
+        "name": "Piercing Mayhem",
+        "description": "Projectiles now pierce and bounce off of terrain dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 60 }
+        }
+      },
+      {
+        "id": "fingertapped_killshot",
+        "positionIndex": 12,
+        "name": "Fingertapped Killshot",
+        "description": "Fire a single projectile with significantly increased range and power dealing multiplied damage. Trigger Finger now has a small cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "of_total_damage": 0,
+            "skill_range": 0,
+            "physical_skill_damage": 0
+          },
+          "perRank": {
+            "of_total_damage": 200,
+            "skill_range": 20,
+            "physical_skill_damage": 20
+          }
+        }
+      },
+      {
+        "id": "its_raining_bullets",
+        "positionIndex": 13,
+        "name": "It's Raining Bullets",
+        "description": "Fire a burst of projectiles traveling through air and landing on the target location dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "projectile_count": 0,
+            "area_of_effect": 0,
+            "physical_skill_damage": 0
+          },
+          "perRank": {
+            "projectile_count": 4,
+            "area_of_effect": 25,
+            "physical_skill_damage": 30
+          }
+        }
+      },
+      {
+        "id": "shredder_slugs",
+        "positionIndex": 14,
+        "name": "Shredder Slugs",
+        "description": "Fire small shredders dealing damage over time and inflicting bleeding. The shredders projectile speed slows down on impact.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_bleeding_damage": 0 },
+          "perRank": {
+            "physical_skill_damage": 30,
+            "increased_bleeding_damage": 90
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 90 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "execute",
+    "classId": "demon_slayer",
+    "name": "Execute",
+    "kind": "passive",
+    "description": "Deal extra attack damage to monsters below 30% Life.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Gunslinger",
+    "position": { "row": 1, "col": 0 },
+    "passiveStats": {
+      "base": { "extra_damage_low_life": 6 },
+      "perRank": { "extra_damage_low_life": 6 }
+    }
+  },
+  {
+    "id": "bullet_hell",
+    "classId": "demon_slayer",
+    "name": "Bullet Hell",
+    "kind": "active",
+    "description": "Fire a barrage of bullets towards the aimed direction dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Strike", "Physical"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Gunslinger",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 7 }],
+    "manaCostFormula": { "base": 7, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 28.6, "perLevel": 12 },
+      "attackRatingPct": { "base": 3.75, "perLevel": 3.75 }
+    },
+    "bonusSources": [
+      { "source": "Execute", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Trigger Finger", "stat": "attack_damage", "value": 1.6, "per": "skill_level" },
+      { "source": "Absolute Mayhem", "stat": "attack_damage", "value": 2.1, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "bullet_hell_core",
+        "positionIndex": 0,
+        "name": "Bullet Hell",
+        "description": "Core of the Bullet Hell subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hellflame_bullets",
+        "positionIndex": 1,
+        "name": "Hellflame Bullets",
+        "description": "Increases damage dealt by bullet hell.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "more_bullets",
+        "positionIndex": 2,
+        "name": "More Bullets!",
+        "description": "Increases the amount of projectiles fired by bullet hell.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "slipping_triggerfinger",
+        "positionIndex": 3,
+        "name": "Slipping Triggerfinger",
+        "description": "Chance on attack to fire an additional wave of bullets.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "steady_gunhold",
+        "positionIndex": 4,
+        "name": "Steady Gunhold",
+        "description": "Increases attack rating when using bullet hell.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "heavy_bullet_impact",
+        "positionIndex": 5,
+        "name": "Heavy Bullet Impact",
+        "description": "Chance to knock monsters back on hit stunning them.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "barrel_maintenance",
+        "positionIndex": 6,
+        "name": "Barrel Maintenance",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "higher_caliber",
+        "positionIndex": 7,
+        "name": "Higher Caliber",
+        "description": "Increases the size of bullet hell projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "blasting_gunshot",
+        "positionIndex": 8,
+        "name": "Blasting Gunshot",
+        "description": "Increases critical strike damage when using bullet hell.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 22.5 }
+        }
+      },
+      {
+        "id": "swift_rounds",
+        "positionIndex": 9,
+        "name": "Swift Rounds",
+        "description": "Decreased movement diminish when using bullet hell.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 15 }
+        }
+      },
+      {
+        "id": "abusive_tactics",
+        "positionIndex": 10,
+        "name": "Abusive Tactics",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 20 }
+        }
+      },
+      {
+        "id": "bullet_storm",
+        "positionIndex": 11,
+        "name": "Bullet Storm",
+        "description": "Fire a circle of orbitting bullets traveling forward.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 10, "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "nowhere_to_hide",
+        "positionIndex": 12,
+        "name": "Nowhere to Hide",
+        "description": "Fire additional projectiles in a wider radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "projectile_count": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 25,
+            "projectile_count": 2,
+            "area_of_effect": 20
+          }
+        }
+      },
+      {
+        "id": "demons_hurricane",
+        "positionIndex": 13,
+        "name": "Demon´s Hurricane",
+        "description": "Spin around firing trails of bullets into random directions.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "increased_attack_speed": 35,
+            "projectile_count": 1
+          },
+          "perRank": {
+            "physical_skill_damage": 15,
+            "increased_attack_speed": 15,
+            "projectile_count": 1
+          }
+        }
+      },
+      {
+        "id": "gunpowder",
+        "positionIndex": 14,
+        "name": "Gunpowder",
+        "description": "Bullets knock monsters back with increased power dealing increased damage and stunning monsters when they collide with terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "concentration_aura",
+    "classId": "demon_slayer",
+    "name": "Concentration Aura",
+    "kind": "aura",
+    "description": "When active, increases your and your party members attack rating.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Cast", "Active", "Aura"],
+    "tree": "Gunslinger",
+    "position": { "row": 2, "col": 0 },
+    "passiveStats": {
+      "base": { "attack_rating_pct": 2.5 },
+      "perRank": { "attack_rating_pct": 2.5 }
+    }
+  },
+  {
+    "id": "possessed_bullet",
+    "classId": "demon_slayer",
+    "name": "Possessed Bullet",
+    "kind": "active",
+    "description": "Fire a satanic bullet possessed by darkness which explodes into multiple bullets on impact dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Strike", "Physical"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Gunslinger",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 10, "perLevel": 6 },
+      "attackRatingPct": { "base": 3.75, "perLevel": 3.75 }
+    },
+    "bonusSources": [
+      { "source": "Trigger Finger", "stat": "attack_damage", "value": 1.6, "per": "skill_level" },
+      { "source": "Bullet Hell", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Concentration Aura", "stat": "attack_damage", "value": 2.4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "possessed_bullet_core",
+        "positionIndex": 0,
+        "name": "Possessed Bullet",
+        "description": "Core of the Possessed Bullet subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "secondary_haunting",
+        "positionIndex": 1,
+        "name": "Secondary Haunting",
+        "description": "Chance on attack to fire an additional bullet.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "spirits_within_rounds",
+        "positionIndex": 2,
+        "name": "Spirits Within Rounds",
+        "description": "Increases the amount of projectiles released by the initial hit.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "exorcism",
+        "positionIndex": 3,
+        "name": "Exorcism",
+        "description": "Increases damage dealt by possessed bullet.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "hemorrhaging_possession",
+        "positionIndex": 4,
+        "name": "Hemorrhaging Possession",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "blood_ripples",
+        "positionIndex": 5,
+        "name": "Blood Ripples",
+        "description": "Chance to unleash blood ripples on hit dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "bloodlusted_bullet",
+        "positionIndex": 6,
+        "name": "Bloodlusted Bullet",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 20 }
+        }
+      },
+      {
+        "id": "longlasting_barrel",
+        "positionIndex": 7,
+        "name": "Longlasting Barrel",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "the_demon_within",
+        "positionIndex": 8,
+        "name": "The Demon Within",
+        "description": "Chance to unleash additional bullets after initial hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 3 }
+          }
+        }
+      },
+      {
+        "id": "stop_resisting",
+        "positionIndex": 9,
+        "name": "Stop Resisting",
+        "description": "Inflicts armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "leeching_demon",
+        "positionIndex": 10,
+        "name": "Leeching Demon",
+        "description": "Increases possessed bullet damage to bosses.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 17.5 }
+        }
+      },
+      {
+        "id": "ghostwhirl",
+        "positionIndex": 11,
+        "name": "Ghostwhirl",
+        "description": "Projectiles now swirl around the target on a small radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "physical_skill_damage": 25, "skill_range": 20 }
+        }
+      },
+      {
+        "id": "seeking_host",
+        "positionIndex": 12,
+        "name": "Seeking Host",
+        "description": "Possessed bullets now return to the target after a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 70 }
+        }
+      },
+      {
+        "id": "haunting",
+        "positionIndex": 13,
+        "name": "Haunting",
+        "description": "Bullets now haunt monsters, slowing them and exploding after a short duration, dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 40, "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "malignance",
+        "positionIndex": 14,
+        "name": "Malignance",
+        "description": "Send multiple homing ghosts towards the target dealing damage to monsters on their path.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 30, "projectile_count": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "shredder_trap",
+    "classId": "demon_slayer",
+    "name": "Shredder Trap",
+    "kind": "active",
+    "description": "Throw a shredder on the ground spinning with deadly speed dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Physical"],
+    "movementDuringUse": 85,
+    "baseCooldown": 1,
+    "effectDuration": 4,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Gunslinger",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 72.5, "perLevel": 22.5 },
+      "attackRatingPct": { "base": 5, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Execute", "stat": "attack_damage", "value": 4, "per": "skill_level" },
+      { "source": "Possessed Bullet", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Demon's Presence", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "shredder_trap_core",
+        "positionIndex": 0,
+        "name": "Shredder Trap",
+        "description": "Core of the Shredder Trap subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "sharp_edged_shredders",
+        "positionIndex": 1,
+        "name": "Sharp Edged Shredders",
+        "description": "Increases the damage dealt by shredder trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "blood_hungry_blades",
+        "positionIndex": 2,
+        "name": "Blood Hungry Blades",
+        "description": "Chance for shredder trap to grow larger on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_size": 0 },
+            "perRank": { "projectile_size": 1 }
+          }
+        }
+      },
+      {
+        "id": "bits_and_pieces",
+        "positionIndex": 3,
+        "name": "Bits and Pieces",
+        "description": "Chance to unleash smaller flying shredders on hit dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "ripping_shredderblade",
+        "positionIndex": 4,
+        "name": "Ripping Shredderblade",
+        "description": "Inflicts bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "slayers_adrenaline",
+        "positionIndex": 5,
+        "name": "Slayer´s Adrenaline",
+        "description": "Decreases movement diminish when using shredder trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "less_is_more",
+        "positionIndex": 6,
+        "name": "Less is More",
+        "description": "Decreases mana cost when using shredder trap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 8 }
+        }
+      },
+      {
+        "id": "forging_hands",
+        "positionIndex": 7,
+        "name": "Forging Hands",
+        "description": "Gain increased critical strike chance and critical chance damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "cutting_power",
+        "positionIndex": 8,
+        "name": "Cutting Power",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "slay_the_wounded",
+        "positionIndex": 9,
+        "name": "Slay the Wounded",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "bigger_and_sharper_blades",
+        "positionIndex": 10,
+        "name": "Bigger and Sharper Blades",
+        "description": "Increases the size of shredders.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "comeback_with_a_cut",
+        "positionIndex": 11,
+        "name": "Comeback with a Cut",
+        "description": "Shredders now home back to you after a short period dealing damage on the way.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 85 }
+        }
+      },
+      {
+        "id": "woodshop",
+        "positionIndex": 12,
+        "name": "Woodshop",
+        "description": "Throw multiple smaller shredders at once. Shredder trap now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 50, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "circular_cutting",
+        "positionIndex": 13,
+        "name": "Circular Cutting",
+        "description": "Unleash multiple orbiting shredders around you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 1, "physical_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "physical_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "gigashredder",
+        "positionIndex": 14,
+        "name": "Gigashredder",
+        "description": "Unleash a big shredder that slowly homes towards the closest monster on range. You can now only spawn one shredder.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 125, "area_of_effect": 45 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "demons_presence",
+    "classId": "demon_slayer",
+    "name": "Demon's Presence",
+    "kind": "buff",
+    "description": "Temporarily increase your attack speed and attack damage.",
+    "tags": ["Cast", "Active", "Buff"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Gunslinger",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "baseCastRate": 1,
+    "baseCooldown": 60,
+    "effectDuration": 25,
+    "movementDuringUse": 85,
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 20, "attack_damage": 20 },
+      "perRank": { "increased_attack_speed": 1, "attack_damage": 3 }
+    }
+  },
+  {
+    "id": "absolute_mayhem",
+    "classId": "demon_slayer",
+    "name": "Absolute Mayhem",
+    "kind": "active",
+    "description": "Harness the power of your inner demon and fire multiple massive bullets in a line dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Strike", "Physical"],
+    "movementDuringUse": 65,
+    "baseCooldown": 8,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Gunslinger",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "manaCostFormula": { "base": 8, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 42.5, "perLevel": 35 },
+      "attackRatingPct": { "base": 5, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Trigger Finger", "stat": "attack_damage", "value": 2.5, "per": "skill_level" },
+      { "source": "Bullet Hell", "stat": "attack_damage", "value": 5, "per": "skill_level" },
+      { "source": "Possessed Bullet", "stat": "attack_damage", "value": 8, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "absolute_mayhem_core",
+        "positionIndex": 0,
+        "name": "Absolute Mayhem",
+        "description": "Core of the Absolute Mayhem subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "mayhem_up",
+        "positionIndex": 1,
+        "name": "Mayhem Up!",
+        "description": "Increases the amount of bullets fired with absolute mayhem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "absolute_carnage",
+        "positionIndex": 2,
+        "name": "Absolute Carnage",
+        "description": "Increases damage dealt by absolute mayhem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "colossal_barrel",
+        "positionIndex": 3,
+        "name": "Colossal Barrel",
+        "description": "Increases the projectile speed of absolute mayhem bullets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "stocked_capacity",
+        "positionIndex": 4,
+        "name": "Stocked Capacity",
+        "description": "Decreases the cooldown of absolute mayhem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "hypothermic_rounds",
+        "positionIndex": 5,
+        "name": "Hypothermic Rounds",
+        "description": "Chance to inflict freeze on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "appliesStates": ["frozen"]
+        }
+      },
+      {
+        "id": "bonehit",
+        "positionIndex": 6,
+        "name": "Bonehit",
+        "description": "Chance to knock monsters back dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "explosive_empowered_rounds",
+        "positionIndex": 7,
+        "name": "Explosive Empowered Rounds",
+        "description": "Chance for bullets to explode and fragment on hit unleashing shrapnel around the target.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 3 } }
+      },
+      {
+        "id": "fear_the_gun",
+        "positionIndex": 8,
+        "name": "Fear the Gun",
+        "description": "Increases critical strike damage dealt by absolute mayhem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "bicep_curls",
+        "positionIndex": 9,
+        "name": "Bicep Curls",
+        "description": "Decreases movement diminish when using absolute mayhem.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "frostbiting_bullets",
+        "positionIndex": 10,
+        "name": "Frostbiting Bullets",
+        "description": "Increases damage to freezing targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 10 }
+        }
+      },
+      {
+        "id": "impact_shrapnel",
+        "positionIndex": 11,
+        "name": "Impact Shrapnel",
+        "description": "Bullets now break into fragments traveling in an arc behind the target dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "physical_skill_damage": 0 },
+          "perRank": { "projectile_count": 2, "physical_skill_damage": 35 }
+        }
+      },
+      {
+        "id": "line_of_fire",
+        "positionIndex": 12,
+        "name": "Line of Fire",
+        "description": "Fire additional trail of bullets in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "trail_count": 0, "physical_skill_damage": 0 },
+          "perRank": { "trail_count": 1, "physical_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "explosion_vacuum",
+        "positionIndex": 13,
+        "name": "Explosion Vacuum",
+        "description": "Fire a single bullet which vacuums all nearby monsters and unleashes a big explosion.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "skill_range": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 50,
+            "skill_range": 25,
+            "area_of_effect": 20
+          }
+        }
+      },
+      {
+        "id": "maniac_mayhem",
+        "positionIndex": 14,
+        "name": "Maniac Mayhem",
+        "description": "The Demonslayer changes his weapon into a demonic minigun which uncontrollably fires bullets for a short duration before breaking.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "physical_skill_damage": 0 },
+          "perRank": { "of_total_damage": 100, "physical_skill_damage": 40 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "fast_slices",
+    "classId": "demon_slayer",
+    "name": "Fast Slices",
+    "kind": "active",
+    "description": "Perform a series of dashing attacks, dealing area of effect physical damage on second attack and stunning monsters around you on the final attack.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike", "Physical"],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Executioner",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 100, "perLevel": 25 },
+      "attackRatingPct": { "base": 4.25, "perLevel": 4.25 }
+    },
+    "bonusSources": [
+      { "source": "Heart Attack", "stat": "attack_damage", "value": 5, "per": "skill_level" },
+      { "source": "Sword Handler", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Demon Form", "stat": "attack_damage", "value": 15, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "fast_slices_core",
+        "positionIndex": 0,
+        "name": "Fast Slices",
+        "description": "Core of the Fast Slices subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "wide_slice",
+        "positionIndex": 1,
+        "name": "Wide Slice",
+        "description": "Increases the area of effect radius of fast slices.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "slashing_strike",
+        "positionIndex": 2,
+        "name": "Slashing Strike",
+        "description": "Increases damage dealt by fast slices.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "expert_slayer",
+        "positionIndex": 3,
+        "name": "Expert Slayer",
+        "description": "Increases attack rating when using fast slices.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0, "crit_chance": 0 },
+          "perRank": { "attack_rating_pct": 10, "crit_chance": 4 }
+        }
+      },
+      {
+        "id": "demons_heart",
+        "positionIndex": 4,
+        "name": "Demon's Heart",
+        "description": "Chance to heat target souls causing them to explode after a brief moment dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "ferocious_slice",
+        "positionIndex": 5,
+        "name": "Ferocious Slice",
+        "description": "Chance to knock monsters airborne causing them to deal area of effect damage upon landing on the third hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 40 }
+          }
+        }
+      },
+      {
+        "id": "burning_blade",
+        "positionIndex": 6,
+        "name": "Burning Blade",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "molten_steel",
+        "positionIndex": 7,
+        "name": "Molten Steel",
+        "description": "Increases damage to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 20 }
+        }
+      },
+      {
+        "id": "slayers_intellect",
+        "positionIndex": 8,
+        "name": "Slayer's Intellect",
+        "description": "Decreases mana cost when using fast slices.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 8 }
+        }
+      },
+      {
+        "id": "swift_deadstrike",
+        "positionIndex": 9,
+        "name": "Swift Deadstrike",
+        "description": "Increases critical strike damage when using fast slices.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 22.5 }
+        }
+      },
+      {
+        "id": "demon_slaying",
+        "positionIndex": 10,
+        "name": "Demon Slaying",
+        "description": "Execute low life monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1.25 }
+        }
+      },
+      {
+        "id": "flaming_blades",
+        "positionIndex": 11,
+        "name": "Flaming Blades",
+        "description": "Every slice additionally unleashes a wave of fire inflicting burning for a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "of_total_damage": 0 },
+          "perRank": { "increased_burning_damage": 75, "of_total_damage": 70 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      },
+      {
+        "id": "detonation_slice",
+        "positionIndex": 12,
+        "name": "Detonation Slice",
+        "description": "Your third attack now causes monsters to unleash an explosion dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 30, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "shadow_daggers",
+        "positionIndex": 13,
+        "name": "Shadow Daggers",
+        "description": "Throw multiple piercing daggers with each slash.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 3 },
+          "perRank": { "physical_skill_damage": 40, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "high_strike",
+        "positionIndex": 14,
+        "name": "High Strike",
+        "description": "Your third attack sends enemies high in the air causing them to deal area of effect damage upon landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 100 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "heart_attack",
+    "classId": "demon_slayer",
+    "name": "Heart Attack",
+    "kind": "passive",
+    "description": "Increases your chance for critical strikes and critical strike damage when using a melee weapon.",
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Executioner",
+    "position": { "row": 0, "col": 2 },
+    "passiveStats": {
+      "base": { "crit_chance": 1, "crit_damage": 2 },
+      "perRank": { "crit_chance": 0.5, "crit_damage": 2 }
+    }
+  },
+  {
+    "id": "demons_calling",
+    "classId": "demon_slayer",
+    "name": "Demon's Calling",
+    "kind": "active",
+    "description": "Become airborne and smash the ground dealing area of effect arcane damage and stunning monsters around you.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Arcane"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCooldown": 2,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Executioner",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "baseCastRate": 1,
+    "damageFormula": { "base": 0.5, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Soul Leech", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Fast Slices", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Demon's Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "demons_calling_core",
+        "positionIndex": 0,
+        "name": "Demon's Calling",
+        "description": "Core of the Demon's Calling subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "pentagram_radius",
+        "positionIndex": 1,
+        "name": "Pentagram Radius",
+        "description": "Increases the area of effect radius of demon's calling.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "demons_embrace",
+        "positionIndex": 2,
+        "name": "Demon's Embrace",
+        "description": "Increases damage dealt by demon's calling.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "hellflame_burst",
+        "positionIndex": 3,
+        "name": "Hellflame Burst",
+        "description": "Chance to send monsters airborne on hit causing them to deal area of effect damage when landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "dark_essence",
+        "positionIndex": 4,
+        "name": "Dark Essence",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "dark_meteors",
+        "positionIndex": 5,
+        "name": "Dark Meteors",
+        "description": "Chance to drop chaos meteors on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "the_fiery_layer_of_hell",
+        "positionIndex": 6,
+        "name": "The Fiery Layer of Hell",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "hellish_scorching",
+        "positionIndex": 7,
+        "name": "Hellish Scorching",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "demons_mind",
+        "positionIndex": 8,
+        "name": "Demon's Mind",
+        "description": "Chance on cast to jump higher and smash the ground dealing increased damage with increased area of effect radius.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "arcane_skill_damage": 10, "area_of_effect": 10 }
+          }
+        }
+      },
+      {
+        "id": "devil_in_the_detail",
+        "positionIndex": 9,
+        "name": "Devil in the Detail",
+        "description": "Decreases mana cost when using demon's calling.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 8 }
+        }
+      },
+      {
+        "id": "hell_infused_aftershock",
+        "positionIndex": 10,
+        "name": "Hell Infused Aftershock",
+        "description": "Chance to shock the ground an additional time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "unholy_aftershock",
+        "positionIndex": 11,
+        "name": "Unholy Aftershock",
+        "description": "Demon's Calling now echoes additional times increasing its size.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "area_of_effect": 0 },
+          "perRank": { "projectile_count": 1, "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "shadow_flames",
+        "positionIndex": 12,
+        "name": "Shadow Flames",
+        "description": "Dark meteors now unleash a trail of shadow flames outwards dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 20 }
+        }
+      },
+      {
+        "id": "appearing_from_shadows",
+        "positionIndex": 13,
+        "name": "Appearing from Shadows",
+        "description": "Blink towards target location before unleashing demons calling with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 45 }
+        }
+      },
+      {
+        "id": "pentagram_shockwave",
+        "positionIndex": 14,
+        "name": "Pentagram Shockwave",
+        "description": "Unleash a shockwave of pentagrams dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "sword_handler",
+    "classId": "demon_slayer",
+    "name": "Sword Handler",
+    "kind": "passive",
+    "description": "Increases your life stolen per hit, attack rating and damage when using swords.",
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Executioner",
+    "position": { "row": 1, "col": 2 },
+    "passiveStats": {
+      "base": { "life_steal": 1, "attack_rating_pct": 1, "attack_damage": 3 },
+      "perRank": { "life_steal": 0.25, "attack_rating_pct": 1, "attack_damage": 3 }
+    }
+  },
+  {
+    "id": "slice_of_shadows",
+    "classId": "demon_slayer",
+    "name": "Slice of Shadows",
+    "kind": "active",
+    "description": "Perform an attack that releases a wave of shadow dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Projectile", "Strike", "Physical"],
+    "movementDuringUse": 85,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Executioner",
+    "position": { "row": 2, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackKind": "attack",
+    "attackScaling": {
+      "weaponDamagePct": { "base": 24, "perLevel": 18 },
+      "attackRatingPct": { "base": 5, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Fast Slices", "stat": "attack_damage", "value": 6, "per": "skill_level" },
+      { "source": "Demon Form", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Demon's Shield", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "slice_of_shadows_core",
+        "positionIndex": 0,
+        "name": "Slice of Shadows",
+        "description": "Core of the Slice of Shadows subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "floating_shadow",
+        "positionIndex": 1,
+        "name": "Floating Shadow",
+        "description": "Increases projectile speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "strenghtened_veil",
+        "positionIndex": 2,
+        "name": "Strenghtened Veil",
+        "description": "Increases damage dealt by slice of shadows based on your strength.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_strength": 0 },
+          "perRank": { "conversion_strength": 2.5 }
+        }
+      },
+      {
+        "id": "shadow_duality",
+        "positionIndex": 3,
+        "name": "Shadow Duality",
+        "description": "Chance to unleash an additional slice of shadows on attack.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "mist_of_darkness",
+        "positionIndex": 4,
+        "name": "Mist of Darkness",
+        "description": "Increases attack rating when using slice of shadows.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "stacking_shadow",
+        "positionIndex": 5,
+        "name": "Stacking Shadow",
+        "description": "Gain a stacking damage buff for a short period on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 1 }
+        }
+      },
+      {
+        "id": "crushing_veil",
+        "positionIndex": 6,
+        "name": "Crushing Veil",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "cold_shadow",
+        "positionIndex": 7,
+        "name": "Cold Shadow",
+        "description": "Chance on hit to freeze enemies.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 20 },
+          "appliesStates": ["frozen"]
+        }
+      },
+      {
+        "id": "frostbitten_mist",
+        "positionIndex": 8,
+        "name": "Frostbitten Mist",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 12 }
+        }
+      },
+      {
+        "id": "bitter_smoke",
+        "positionIndex": 9,
+        "name": "Bitter Smoke",
+        "description": "Increases critical strike damage when using slice of shadows.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 10 }
+        }
+      },
+      {
+        "id": "looming_mist",
+        "positionIndex": 10,
+        "name": "Looming Mist",
+        "description": "Increases the size of slice of shadows.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "shadow_extraction",
+        "positionIndex": 11,
+        "name": "Shadow Extraction",
+        "description": "Perform an empowered attack unleashing small shadows from the target on hit. Slice of shadows now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 60, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "shadows_arc",
+        "positionIndex": 12,
+        "name": "Shadow's Arc",
+        "description": "Unleash additional shadows in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "lingering_shadows",
+        "positionIndex": 13,
+        "name": "Lingering Shadows",
+        "description": "Gain stacks of lingering shadows on hit. At maximum stacks your next slice of shadows deals increased damage with increased size.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 15, "projectile_size": 10 }
+        }
+      },
+      {
+        "id": "scorching_shadow",
+        "positionIndex": 14,
+        "name": "Scorching Shadow",
+        "description": "Unleash a shadow ball of fire bouncing from terrain and inflicting burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_burning_damage": 0, "projectile_count": 1 },
+          "perRank": { "increased_burning_damage": 90, "projectile_count": 1 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 90 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "shadow_anomalies",
+    "classId": "demon_slayer",
+    "name": "Shadow Anomalies",
+    "kind": "passive",
+    "description": "Casting Demon's Calling now spawns five shadow anomalies that perform Demon's Calling with increased arcane damage.",
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Executioner",
+    "position": { "row": 2, "col": 1 },
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 10 },
+      "perRank": { "arcane_skill_damage": 10 }
+    }
+  },
+  {
+    "id": "soul_leech",
+    "classId": "demon_slayer",
+    "name": "Soul Leech",
+    "kind": "active",
+    "description": "Leech life out of monsters in target area dealing arcane damage and healing you.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Arcane"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Executioner",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "baseCastRate": 1,
+    "damageFormula": { "base": 0.5, "perLevel": 11.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Slice of Shadows", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Heart Attack", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Shadow Anomalies", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "demons_shield",
+    "classId": "demon_slayer",
+    "name": "Demon's Shield",
+    "kind": "passive",
+    "description": "Increases all resistances and movement speed.",
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "ranks": [{ "rank": 1 }],
+    "tags": ["Passive"],
+    "tree": "Executioner",
+    "position": { "row": 3, "col": 2 },
+    "passiveStats": {
+      "base": { "all_resistances": 5, "movement_speed": 2 },
+      "perRank": { "all_resistances": 0.5, "movement_speed": 2 }
+    }
+  },
+  {
+    "id": "demon_form",
+    "classId": "demon_slayer",
+    "name": "Demon Form",
+    "kind": "buff",
+    "description": "Temporarily turn into a demon gaining increased attack damage and attack speed.",
+    "tags": ["Cast", "Active", "Shape Shift"],
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Executioner",
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 25,
+    "movementDuringUse": 85,
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "attack_damage": 30, "increased_attack_speed": 10 },
+      "perRank": { "attack_damage": 6, "increased_attack_speed": 2 }
+    }
+  }
+]

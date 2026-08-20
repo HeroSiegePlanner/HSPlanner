@@ -1,0 +1,2076 @@
+[
+  {
+    "id": "frozen_boulder",
+    "classId": "jotunn",
+    "name": "Frozen Boulder",
+    "kind": "active",
+    "description": "Throw a frozen boulder dealing cold damage to monsters on its path.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Son of Ymir",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7.5, "perLevel": 9.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Icicles", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Frozen Hide", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "frozen_boulder_core",
+        "positionIndex": 0,
+        "name": "Frozen Boulder",
+        "description": "Core of the Frozen Boulder subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "boulder_lob",
+        "positionIndex": 1,
+        "name": "Boulder Lob",
+        "description": "Increases the projectile speed of frozen boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "petrifying_frost",
+        "positionIndex": 2,
+        "name": "Petrifying Frost",
+        "description": "Increases the damage dealt by frozen boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "bouncing_slab",
+        "positionIndex": 3,
+        "name": "Bouncing Slab",
+        "description": "Increases the amount of frozen boulder bounces.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "shattering_frost",
+        "positionIndex": 4,
+        "name": "Shattering Frost",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "expanding_stonefrost",
+        "positionIndex": 5,
+        "name": "Expanding Stonefrost",
+        "description": "Increases the size of frozen boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "subzero_temp",
+        "positionIndex": 6,
+        "name": "Subzero Temp",
+        "description": "Chance to inflict freeze on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["frozen"]
+        }
+      },
+      {
+        "id": "frozen_throbbing",
+        "positionIndex": 7,
+        "name": "Frozen Throbbing",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 20 }
+        }
+      },
+      {
+        "id": "pulsing_monolith",
+        "positionIndex": 8,
+        "name": "Pulsing Monolith",
+        "description": "Frozen boulder unleashes a frozen nova with each bounce dealing a portion of its damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 35 }
+        }
+      },
+      {
+        "id": "stonecold_master",
+        "positionIndex": 9,
+        "name": "Stonecold Master",
+        "description": "Decreases the mana cost of frozen boulder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "demolishing_frostone",
+        "positionIndex": 10,
+        "name": "Demolishing Frostone",
+        "description": "Chance to knock monsters back on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "cold_skill_damage": 0 },
+            "perRank": { "cold_skill_damage": 22.5 }
+          }
+        }
+      },
+      {
+        "id": "rolling_winterstone",
+        "positionIndex": 11,
+        "name": "Rolling Winterstone",
+        "description": "Frozen boulder rolls on the ground gathering monsters on its path exploding when hitting terrain and dealing increased damage per monster gathered.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 50 }
+        }
+      },
+      {
+        "id": "overgrowing_boulder",
+        "positionIndex": 12,
+        "name": "Overgrowing Boulder",
+        "description": "Frozen boulder grows in size gaining increased damage with each bounce also bouncing off of terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "cold_skill_damage": 26.5, "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "splinter_stones",
+        "positionIndex": 13,
+        "name": "Splinter Stones",
+        "description": "Frozen boulder explodes into chunks of ice on hit dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 75 }
+        }
+      },
+      {
+        "id": "boulder_barrage",
+        "positionIndex": 14,
+        "name": "Boulder Barrage",
+        "description": "Unleash a barrage of smaller frozen boulders in an arc. Frozen boulder has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 2, "cold_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "cold_skill_damage": 35 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "breath_of_ice",
+    "classId": "jotunn",
+    "name": "Breath of Ice",
+    "kind": "active",
+    "description": "Breathe glacial air freezing and dealing cold damage to monsters.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Son of Ymir",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 6, "perLevel": 7 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Flash Freeze", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Orb of Frost", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Permafrost", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "breath_of_ice_core",
+        "positionIndex": 0,
+        "name": "Breath of Ice",
+        "description": "Core of the Breath of Ice subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "fresh_mint",
+        "positionIndex": 1,
+        "name": "Fresh Mint",
+        "description": "Increases the damage dealt by breath of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "crumbling_winds",
+        "positionIndex": 2,
+        "name": "Crumbling Winds",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "expansive_gasp",
+        "positionIndex": 3,
+        "name": "Expansive Gasp",
+        "description": "Increases the area of effect of breath of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "ironfrost_lungs",
+        "positionIndex": 4,
+        "name": "Ironfrost Lungs",
+        "description": "Increases the duration of breath of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "frozen_exhale",
+        "positionIndex": 5,
+        "name": "Frozen Exhale",
+        "description": "Knock monsters back slowly dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 6 }
+        }
+      },
+      {
+        "id": "freezing_point",
+        "positionIndex": 6,
+        "name": "Freezing Point",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 15 }
+        }
+      },
+      {
+        "id": "ice_skating",
+        "positionIndex": 7,
+        "name": "Ice Skating",
+        "description": "Chance on cast to conjure a trail of ice dealing damage over time and slowing monsters on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 40 }
+          },
+          "appliesStates": ["slow"]
+        }
+      },
+      {
+        "id": "frostbourne_winds",
+        "positionIndex": 8,
+        "name": "Frostbourne Winds",
+        "description": "Chance to inflict frostbite on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0 },
+          "perRank": { "increased_frost_bite_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "cascading_exhale",
+        "positionIndex": 9,
+        "name": "Cascading Exhale",
+        "description": "Chance to unleash additional breath of ice from target location on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "vacuuming_inhale",
+        "positionIndex": 10,
+        "name": "Vacuuming Inhale",
+        "description": "Chance to pull monsters towards you on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "frostbitten_lungs",
+        "positionIndex": 11,
+        "name": "Frostbitten Lungs",
+        "description": "Increases breath of ice duration dealing damage over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "skill_duration": 0 },
+          "perRank": { "faster_cast_rate": 12.5, "skill_duration": 17.5 }
+        }
+      },
+      {
+        "id": "frost_charged_breath",
+        "positionIndex": 12,
+        "name": "Frost Charged Breath",
+        "description": "Inflict targets with a stack of frost charged on hit unleashing an avalance at maximum stacks dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "max_skill_stacks": 0 },
+          "perRank": { "area_of_effect": 20, "max_skill_stacks": 5 }
+        }
+      },
+      {
+        "id": "absolute_control",
+        "positionIndex": 13,
+        "name": "Absolute Control",
+        "description": "Increases the length of breath of ice significantly inflicting strong slow and freeze on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_range": 0, "cold_skill_damage": 0 },
+          "perRank": { "skill_range": 75, "cold_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "frosted_throat",
+        "positionIndex": 14,
+        "name": "Frosted Throat",
+        "description": "Unleash multiple breaths of ice with chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "projectile_count": 0,
+            "spell_crit_chance": 0,
+            "spell_crit_damage": 0
+          },
+          "perRank": {
+            "projectile_count": 1,
+            "spell_crit_chance": 10,
+            "spell_crit_damage": 50
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "icicles",
+    "classId": "jotunn",
+    "name": "Icicles",
+    "kind": "passive",
+    "description": "Every 5th time you cast a spell also release Icicles dealing cold damage.",
+    "damageType": "cold",
+    "tags": ["Passive", "Projectile"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Son of Ymir",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 1, "perLevel": 15 },
+    "bonusSources": [
+      { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Orb of Frost", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Power of the Ancients", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "frozen_hide",
+    "classId": "jotunn",
+    "name": "Frozen Hide",
+    "kind": "buff",
+    "description": "Cast a frost enhanced shield on yourself reducing incoming physical damage, freezing and dealing cold damage to monsters that attack you.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "effectDuration": 130,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Son of Ymir",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0, "perLevel": 10 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "passiveStats": {
+      "base": { "physical_damage_reduction": 1 },
+      "perRank": { "physical_damage_reduction": 0.5 }
+    },
+    "bonusSources": [
+      { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Orb of Frost", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Portal of Ice", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "orb_of_frost",
+    "classId": "jotunn",
+    "name": "Orb of Frost",
+    "kind": "active",
+    "description": "Cast a frozen orb traveling in target direction releasing icicles, freezing and dealing cold damage to monsters on its path.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 85,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 1.75,
+    "effectDuration": 1.85,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Son of Ymir",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "damageFormula": { "base": 0.5, "perLevel": 21.5 },
+    "manaCostFormula": { "base": 8, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Icicles", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Power of the Ancients", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Blizzard", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 10, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "orb_of_frost_core",
+        "positionIndex": 0,
+        "name": "Orb of Frost",
+        "description": "Core of the Orb of Frost subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "festering_cold",
+        "positionIndex": 1,
+        "name": "Festering Cold",
+        "description": "Increases the damage dealt by orb of frost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "frost_icicles",
+        "positionIndex": 2,
+        "name": "Frost Icicles",
+        "description": "Increases the amount of orb of frost icicles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "frozen_mass",
+        "positionIndex": 3,
+        "name": "Frozen Mass",
+        "description": "Increases the size of orb of frost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "icy_winds",
+        "positionIndex": 4,
+        "name": "Icy Winds",
+        "description": "Increases the projectile speed of icicles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "cold_singularity",
+        "positionIndex": 5,
+        "name": "Cold Singularity",
+        "description": "Decreases the orbiting radius of icicles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 20 }
+        }
+      },
+      {
+        "id": "coldsnap",
+        "positionIndex": 6,
+        "name": "Coldsnap",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "hypothermia",
+        "positionIndex": 7,
+        "name": "Hypothermia",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 8 }
+        }
+      },
+      {
+        "id": "timeless_tundra",
+        "positionIndex": 8,
+        "name": "Timeless Tundra",
+        "description": "Decreases the cooldown of orb of frost.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 10 }
+        }
+      },
+      {
+        "id": "multicicles",
+        "positionIndex": 9,
+        "name": "Multicicles",
+        "description": "Chance on pulse to unleash additional icicles.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "howling_ricochet",
+        "positionIndex": 10,
+        "name": "Howling Ricochet",
+        "description": "Orb of frost bounces off of terrain dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 5 }
+        }
+      },
+      {
+        "id": "glacial_shredder",
+        "positionIndex": 11,
+        "name": "Glacial Shredder",
+        "description": "Unleash a glacial shredder with increased size and damage. Icicles are now attached around the orb.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "cold_skill_damage": 100, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "enlargening_frost_orb",
+        "positionIndex": 12,
+        "name": "Enlargening Frost Orb",
+        "description": "Orb of frost increases its size and damage over time while traveling.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "cold_skill_damage": 12, "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "chaining_frost",
+        "positionIndex": 13,
+        "name": "Chaining Frost",
+        "description": "Icicles from orb of frost chain from targets unleashing frozen pulses on hit dealing a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "max_targets": 0 },
+          "perRank": { "cold_skill_damage": 55, "max_targets": 6 }
+        }
+      },
+      {
+        "id": "orb_of_duality",
+        "positionIndex": 14,
+        "name": "Orb of Duality",
+        "description": "Unleash multiple smaller orbs of frost in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "cold_skill_damage": 40, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "power_of_the_ancients",
+    "classId": "jotunn",
+    "name": "Power of the Ancients",
+    "kind": "passive",
+    "description": "Gain additional cold skill damage based on your mana.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Son of Ymir",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "cold_skill_damage": 1, "per_point_of_mana": 100 },
+      "perRank": { "cold_skill_damage": 0.2, "per_point_of_mana": 5 }
+    }
+  },
+  {
+    "id": "avatar_of_frost",
+    "classId": "jotunn",
+    "name": "Avatar of Frost",
+    "kind": "passive",
+    "description": "Increases your cold skill damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Son of Ymir",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "cold_skill_damage": 2.5 },
+      "perRank": { "cold_skill_damage": 2.5 }
+    }
+  },
+  {
+    "id": "portal_of_ice",
+    "classId": "jotunn",
+    "name": "Portal of Ice",
+    "kind": "active",
+    "description": "Teleport to the target location and release a frost nova dealing cold damage.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Movement", "Blink"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Son of Ymir",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 8 }],
+    "damageFormula": { "base": 0.5, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 8, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Icicles", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Frozen Hide", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Avatar of Frost", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "portal_of_ice_core",
+        "positionIndex": 0,
+        "name": "Portal of Ice",
+        "description": "Core of the Portal of Ice subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "ice_travel",
+        "positionIndex": 1,
+        "name": "Ice Travel",
+        "description": "Increases the range of portal of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "cold_enhanced_warp",
+        "positionIndex": 2,
+        "name": "Cold-enhanced Warp",
+        "description": "Increases the damage dealt by portal of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "spiky_approach",
+        "positionIndex": 3,
+        "name": "Spiky Approach",
+        "description": "Chance on cast to conjure multiple orbiting icicles dealing a portion of the damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "engulfing_nova",
+        "positionIndex": 4,
+        "name": "Engulfing Nova",
+        "description": "Increases the area of effect radius of portal of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "blink_faster",
+        "positionIndex": 5,
+        "name": "Blink Faster",
+        "description": "Increases cast rate when using portal of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "corrosive_frostbite",
+        "positionIndex": 6,
+        "name": "Corrosive Frostbite",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "shredding_chillstep",
+        "positionIndex": 7,
+        "name": "Shredding Chillstep",
+        "description": "Gain a stack of shredding chillstep on cast increasing your cold skill damage for a short duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "max_skill_stacks": 0 },
+          "perRank": { "cold_skill_damage": 2, "max_skill_stacks": 2 }
+        }
+      },
+      {
+        "id": "efficient_iceblink",
+        "positionIndex": 8,
+        "name": "Efficient Iceblink",
+        "description": "Reduces the mana cost of portal of ice.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "cryo_armor",
+        "positionIndex": 9,
+        "name": "Cryo Armor",
+        "description": "Increases your all resistances on cast for a short duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_resistances": 0 },
+          "perRank": { "all_resistances": 3.5 }
+        }
+      },
+      {
+        "id": "icecold_bloodthirst",
+        "positionIndex": 10,
+        "name": "Icecold Bloodthirst",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 22.5 }
+        }
+      },
+      {
+        "id": "hailstorm_orb",
+        "positionIndex": 11,
+        "name": "Hailstorm Orb",
+        "description": "Conjure a static orb of frost at target location for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "cold_skill_damage": 20, "skill_duration": 15 }
+        }
+      },
+      {
+        "id": "winter_aparition",
+        "positionIndex": 12,
+        "name": "Winter Aparition",
+        "description": "Chance to summon a small blizzard on hit for a short duration.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "cold_skill_damage": 0, "projectile_count": 0 },
+            "perRank": { "cold_skill_damage": 15, "projectile_count": 3 }
+          }
+        }
+      },
+      {
+        "id": "permafrost_voidpull",
+        "positionIndex": 13,
+        "name": "Permafrost Voidpull",
+        "description": "Increases damage and area of effect radius pulling monsters towards you on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 25, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "crystallized_pinnacles",
+        "positionIndex": 14,
+        "name": "Crystallized Pinnacles",
+        "description": "Chance to unleash small frost novas on hit inflicting frostbite.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0 },
+          "perRank": { "increased_frost_bite_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "cold_skill_damage": 0 },
+            "perRank": { "cold_skill_damage": 15 }
+          },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "blizzard",
+    "classId": "jotunn",
+    "name": "Blizzard",
+    "kind": "active",
+    "description": "Cast a freezing blizzard dealing area of effect cold damage and freezing monsters in the target area.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Explosion"],
+    "movementDuringUse": 85,
+    "range": 240,
+    "baseCastRate": 1,
+    "baseCooldown": 2,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Son of Ymir",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 9 }],
+    "damageFormula": { "base": 0, "perLevel": 22 },
+    "manaCostFormula": { "base": 9, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Orb of Frost", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Icicles", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "blizzard_core",
+        "positionIndex": 0,
+        "name": "Blizzard",
+        "description": "Core of the Blizzard subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "intensified_snowfall",
+        "positionIndex": 1,
+        "name": "Intensified Snowfall",
+        "description": "Increases the damage dealt by blizzard.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "eternal_winter",
+        "positionIndex": 2,
+        "name": "Eternal Winter",
+        "description": "Increases the duration of blizzard.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 20 }
+        }
+      },
+      {
+        "id": "frost_domain",
+        "positionIndex": 3,
+        "name": "Frost Domain",
+        "description": "Increases the area of effect radius of blizzard.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 17.5 }
+        }
+      },
+      {
+        "id": "crackling_ice",
+        "positionIndex": 4,
+        "name": "Crackling Ice",
+        "description": "Chance to stun targets on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "cold_skill_damage": 0 },
+            "perRank": { "cold_skill_damage": 40 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "tracking_snowinds",
+        "positionIndex": 5,
+        "name": "Tracking Snowinds",
+        "description": "Blizzard slowly moves towards the nearest monster.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "corrosive_ice",
+        "positionIndex": 6,
+        "name": "Corrosive Ice",
+        "description": "Chance to inflict frostbite on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0 },
+          "perRank": { "increased_frost_bite_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "hypothermic_temperature",
+        "positionIndex": 7,
+        "name": "Hypothermic Temperature",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "winter_echoes",
+        "positionIndex": 8,
+        "name": "Winter Echoes",
+        "description": "Chance on cast to summon an additional blizzard.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "cold_necrosis",
+        "positionIndex": 9,
+        "name": "Cold Necrosis",
+        "description": "Increases damage dealt to frostbitten targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frost_bitten": 0 },
+          "perRank": { "extra_damage_frost_bitten": 20 }
+        }
+      },
+      {
+        "id": "chilling_coldsnap",
+        "positionIndex": 10,
+        "name": "Chilling Coldsnap",
+        "description": "Monsters killed by blizzard explode into icicles dealing additional damage to nearby monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "splash_of_total_damage": 0 },
+          "perRank": { "splash_of_total_damage": 100 }
+        }
+      },
+      {
+        "id": "snowstorm_maelstrom",
+        "positionIndex": 11,
+        "name": "Snowstorm Maelstrom",
+        "description": "Increases the area of effect radius of blizzard inflicting frostbite and a strong slow on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0, "area_of_effect": 0 },
+          "perRank": { "increased_frost_bite_damage": 50, "area_of_effect": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "frost_flurries",
+        "positionIndex": 12,
+        "name": "Frost Flurries",
+        "description": "Ice chunks explode into frozen novas when hitting the ground dealing area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "frigid_eruption",
+        "positionIndex": 13,
+        "name": "Frigid Eruption",
+        "description": "Unleash a shockwave of blizzards towards target location. Blizzard no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "cold_skill_damage": 30, "skill_duration": 75 }
+        }
+      },
+      {
+        "id": "snowmageddon",
+        "positionIndex": 14,
+        "name": "Snowmageddon",
+        "description": "Blizzard gains increased size and projectile frequency over time dropping a huge boulder when expiring..",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_size": 0, "faster_cast_rate": 0 },
+          "perRank": { "projectile_size": 25, "faster_cast_rate": 4 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "flash_freeze",
+    "classId": "jotunn",
+    "name": "Flash Freeze",
+    "kind": "active",
+    "description": "Perform an attack enhanced with ice that unleashes a chaining orb of ice, exploding into icicles at the end dealing additional cold damage.",
+    "damageType": "cold",
+    "tags": ["Attack", "Active", "Melee", "Chaining", "Strike"],
+    "movementDuringUse": 65,
+    "effectDuration": 2,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "manaCostFormula": { "base": 4, "perLevel": 1.125 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Glacial Tremors", "stat": "attack_damage", "value": 10, "per": "skill_level" },
+      { "source": "Permafrost", "stat": "cold_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "The Embodiment of Aurgelmir", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "flash_freeze_core",
+        "positionIndex": 0,
+        "name": "Flash Freeze",
+        "description": "Core of the Flash Freeze subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "hail_force",
+        "positionIndex": 1,
+        "name": "Hail Force",
+        "description": "Increases the damage dealt by flash freeze.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "excess_cold",
+        "positionIndex": 2,
+        "name": "Excess Cold",
+        "description": "Increases the amount of icicles unleashed by frost orb.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "precise_tundra",
+        "positionIndex": 3,
+        "name": "Precise Tundra",
+        "description": "Increases attack rating when using flash freeze.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "fractured_ice",
+        "positionIndex": 4,
+        "name": "Fractured Ice",
+        "description": "Chance for icicles to fork on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "nordic_frenzy",
+        "positionIndex": 5,
+        "name": "Nordic Frenzy",
+        "description": "Increases damage dealt to frozen targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_frozen": 0 },
+          "perRank": { "extra_damage_frozen": 15 }
+        }
+      },
+      {
+        "id": "boreal_reach",
+        "positionIndex": 6,
+        "name": "Boreal Reach",
+        "description": "Increases the area of effect radius of flash freeze.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "freezing_rage",
+        "positionIndex": 7,
+        "name": "Freezing Rage",
+        "description": "Gain a stack of freezing rage on hit increasing your damage and attack speed.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "increased_attack_speed": 0 },
+          "perRank": { "cold_skill_damage": 1, "increased_attack_speed": 1.5 }
+        }
+      },
+      {
+        "id": "gelid_sequence",
+        "positionIndex": 8,
+        "name": "Gelid Sequence",
+        "description": "Increases the amount of bounces for flash freeze.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "eternal_cascade",
+        "positionIndex": 9,
+        "name": "Eternal Cascade",
+        "description": "Chance to unleash another frost orb when it expires.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "froststep",
+        "positionIndex": 10,
+        "name": "Froststep",
+        "description": "Decreases movement diminish when using flash freeze.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "icicle_bombardment",
+        "positionIndex": 11,
+        "name": "Icicle Bombardment",
+        "description": "Frost orb now unleashes icicles with every hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 45 }
+        }
+      },
+      {
+        "id": "recurving_stalactites",
+        "positionIndex": 12,
+        "name": "Recurving Stalactites",
+        "description": "Icicles from frost orb return to target location after a short duration dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 32.5 }
+        }
+      },
+      {
+        "id": "swirling_wintershard",
+        "positionIndex": 13,
+        "name": "Swirling Wintershard",
+        "description": "Frost orb now orbits you for a short duration frequently unleashing icicles.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 22.5 }
+        }
+      },
+      {
+        "id": "coldflash_volley",
+        "positionIndex": 14,
+        "name": "Coldflash Volley",
+        "description": "Unleash multiple icicles in an arc dealing increased damage and inflicting cold break. Does not require hitting a monster.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "cold_skill_damage": 0,
+            "cold_break": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "cold_skill_damage": 45,
+            "cold_break": 25,
+            "projectile_count": 1
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "glacial_tremors",
+    "classId": "jotunn",
+    "name": "Glacial Tremors",
+    "kind": "passive",
+    "description": "Every 4th attack unleashes an area of effect blast dealing cold damage.",
+    "damageType": "cold",
+    "tags": ["Passive", "Area of Effect"],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0, "perLevel": 30 },
+    "bonusSources": [
+      { "source": "Permafrost", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "The Embodiment of Aurgelmir", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Freezing Leap", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "freezing_leap",
+    "classId": "jotunn",
+    "name": "Freezing Leap",
+    "kind": "active",
+    "description": "Leap through the air into target location freezing and dealing cold damage to monsters when landing.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 12.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Flash Freeze", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Absolute Zero", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "freezing_leap_core",
+        "positionIndex": 0,
+        "name": "Freezing Leap",
+        "description": "Core of the Freezing Leap subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "leap_force",
+        "positionIndex": 1,
+        "name": "Leap Force",
+        "description": "Increases the damage dealt by freezing leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "extended_field",
+        "positionIndex": 2,
+        "name": "Extended Field",
+        "description": "Increases the maximum range of freezing leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 8 }
+        }
+      },
+      {
+        "id": "dazing_impact",
+        "positionIndex": 3,
+        "name": "Dazing Impact",
+        "description": "Chance to stun targets on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "grand_impact",
+        "positionIndex": 4,
+        "name": "Grand Impact",
+        "description": "Increases the area of effect radius of freezing leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "concentrated_detonation",
+        "positionIndex": 5,
+        "name": "Concentrated Detonation",
+        "description": "Increases the damage dealt of freezing leap decreasing its area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 15, "area_of_effect": -8 }
+        }
+      },
+      {
+        "id": "echoing_frostquake",
+        "positionIndex": 6,
+        "name": "Echoing Frostquake",
+        "description": "Chance to unleash an additional shockwave when landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "hare_spirit",
+        "positionIndex": 7,
+        "name": "Hare Spirit",
+        "description": "Increases landing recovery when using freezing leap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 20 }
+        }
+      },
+      {
+        "id": "arctic_vulnerability",
+        "positionIndex": 8,
+        "name": "Arctic Vulnerability",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "overwhelming_impacts",
+        "positionIndex": 9,
+        "name": "Overwhelming Impacts",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "frosted_territory",
+        "positionIndex": 10,
+        "name": "Frosted Territory",
+        "description": "Ground below landing location is left frosted dealing damage over time and slowing monsters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 25 }
+        }
+      },
+      {
+        "id": "superhero_landing",
+        "positionIndex": 11,
+        "name": "Superhero Landing",
+        "description": "Unleash an arc of shockwaves towards target location when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "cold_skill_damage": 0,
+            "trail_count": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "cold_skill_damage": 20,
+            "trail_count": 2,
+            "projectile_count": 3
+          }
+        }
+      },
+      {
+        "id": "seismic_icequake",
+        "positionIndex": 12,
+        "name": "Seismic Icequake",
+        "description": "Leave the ground trembling after landing causing additional echos.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "cold_skill_damage": 40, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "tectonic_stampede",
+        "positionIndex": 13,
+        "name": "Tectonic Stampede",
+        "description": "Charge towards target location followed by a shockwave of ice.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 50, "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "frostbending_leap",
+        "positionIndex": 14,
+        "name": "Frostbending Leap",
+        "description": "Pull nearby monsters towards you when landing with increased area of effect radius inflicting elemental break.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "elemental_break": 0, "area_of_effect": 0 },
+          "perRank": { "elemental_break": 20, "area_of_effect": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 20 }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "permafrost",
+    "classId": "jotunn",
+    "name": "Permafrost",
+    "kind": "passive",
+    "description": "Frozen monsters have a chance explode into an area of effect pulse when shattered.",
+    "tags": ["Passive", "Area of Effect"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "of_total_damage": 15, "area_of_effect": 10, "proc_chance": 10 },
+      "perRank": { "of_total_damage": 15, "area_of_effect": 1, "proc_chance": 0.25 }
+    },
+    "proc": { "chance": 10, "trigger": "on_kill", "target": "Permafrost" }
+  },
+  {
+    "id": "avalanche",
+    "classId": "jotunn",
+    "name": "Avalanche",
+    "kind": "active",
+    "description": "Release a bellowing shout dealing cold damage to all monsters around you and freezing them.",
+    "damageType": "cold",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 3,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 13 }],
+    "damageFormula": { "base": 0.5, "perLevel": 21.5 },
+    "manaCostFormula": { "base": 13, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Freezing Leap", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Absolute Zero", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Permafrost", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 7.35, "per": "attribute_point" },
+      { "source": "Vitality", "stat": "cold_skill_damage", "value": 5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "avalanche_core",
+        "positionIndex": 0,
+        "name": "Avalanche",
+        "description": "Core of the Avalanche subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "devastating_snowslide",
+        "positionIndex": 1,
+        "name": "Devastating Snowslide",
+        "description": "Increases the damage dealt by avalanche.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "devouring_snowpour",
+        "positionIndex": 2,
+        "name": "Devouring Snowpour",
+        "description": "Increases the area of effect radius of avalanche.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "timeless_cold",
+        "positionIndex": 3,
+        "name": "Timeless Cold",
+        "description": "Chance to inflict frostbite on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0 },
+          "perRank": { "increased_frost_bite_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "colossus_of_yggdrasil",
+        "positionIndex": 4,
+        "name": "Colossus of Yggdrasil",
+        "description": "Increases the damage dealt by avalanche based on your vitality.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "conversion_vitality": 0 },
+          "perRank": { "conversion_vitality": 2 }
+        }
+      },
+      {
+        "id": "acute_hoarfrost",
+        "positionIndex": 5,
+        "name": "Acute Hoarfrost",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "frigid_safeguard",
+        "positionIndex": 6,
+        "name": "Frigid Safeguard",
+        "description": "Increases your damage reduction and armor on cast for a short duration.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_damage_taken_reduced_pct": 0, "increased_armor": 0 },
+          "perRank": { "all_damage_taken_reduced_pct": 4, "increased_armor": 5 }
+        }
+      },
+      {
+        "id": "snow_cataclysm",
+        "positionIndex": 7,
+        "name": "Snow Cataclysm",
+        "description": "Inflicts monsters with a stack of cataclysm on hit increasing the damage dealt by avalanche.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 3 }
+        }
+      },
+      {
+        "id": "ephemeral_flurry",
+        "positionIndex": 8,
+        "name": "Ephemeral Flurry",
+        "description": "Reduces the cooldown of avalanche.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "further_collapse",
+        "positionIndex": 9,
+        "name": "Further Collapse",
+        "description": "Chance on cast for the avalanche to echo an additional time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "mending_winter",
+        "positionIndex": 10,
+        "name": "Mending Winter",
+        "description": "Restore a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "neverending_winter",
+        "positionIndex": 11,
+        "name": "Neverending Winter",
+        "description": "Conjure a snow storm dealing damage over time on a large radius around you for a short duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 25, "area_of_effect": 40 }
+        }
+      },
+      {
+        "id": "glacial_radiance",
+        "positionIndex": 12,
+        "name": "Glacial Radiance",
+        "description": "Unleash a pattern of tectonic energy on the ground dealing damage over time for an extended duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "cold_skill_damage": 30, "skill_duration": 35 }
+        }
+      },
+      {
+        "id": "snowshade_bait",
+        "positionIndex": 13,
+        "name": "Snowshade Bait",
+        "description": "Casting Avalanche leaves an ice clone on the target area that taunts enemies and casts shouts for a set duration.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0, "faster_cast_rate": 0 },
+          "perRank": { "skill_duration": 25, "faster_cast_rate": 20 }
+        }
+      },
+      {
+        "id": "nordic_stigma",
+        "positionIndex": 14,
+        "name": "Nordic Stigma",
+        "description": "Mark monsters with nordic stigma on hit causing them to be hit with lightning after a short delay.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 70 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "absolute_zero",
+    "classId": "jotunn",
+    "name": "Absolute Zero",
+    "kind": "passive",
+    "description": "Applies Cold Break on Attack.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "cold_break": 2 },
+      "perRank": { "cold_break": 2 }
+    }
+  },
+  {
+    "id": "frost_sunder",
+    "classId": "jotunn",
+    "name": "Frost Sunder",
+    "kind": "active",
+    "description": "Unleash a barrage of piercing icicles dealing cold and physical damage freezing on hit.",
+    "damageType": "cold",
+    "tags": ["Attack", "Active", "Melee", "Projectile"],
+    "movementDuringUse": 65,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "damageFormula": { "base": 0, "perLevel": 10.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 0, "perLevel": 28 },
+      "flatPhysicalMin": { "base": 1, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 5, "perLevel": 2 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Flash Freeze", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Avalanche", "stat": "cold_skill_damage", "value": 20, "per": "skill_level" },
+      { "source": "The Embodiment of Aurgelmir", "stat": "attack_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "cold_skill_damage", "value": 8.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "frost_sunder_core",
+        "positionIndex": 0,
+        "name": "Frost Sunder",
+        "description": "Core of the Frost Sunder subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "arctic_breeze",
+        "positionIndex": 1,
+        "name": "Arctic Breeze",
+        "description": "Increases the damage dealt by frost sunder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_skill_damage": 0 },
+          "perRank": { "cold_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "weakening_precision",
+        "positionIndex": 2,
+        "name": "Weakening Precision",
+        "description": "A portion of the cold damage can critically hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "crit_damage_portion": 0 },
+          "perRank": { "crit_damage_portion": 25 }
+        }
+      },
+      {
+        "id": "ice_trolls_lineage",
+        "positionIndex": 3,
+        "name": "Ice Trolls Lineage",
+        "description": "Chance on attack to gain increased movement speed for a short period.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "movement_speed": 0 },
+            "perRank": { "movement_speed": 8 }
+          }
+        }
+      },
+      {
+        "id": "ice_trolls_agility",
+        "positionIndex": 4,
+        "name": "Ice Trolls Agility",
+        "description": "Increases attack speed when using frost sunder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 7 }
+        }
+      },
+      {
+        "id": "frozen_to_the_core",
+        "positionIndex": 5,
+        "name": "Frozen to the Core",
+        "description": "Chance to inflict frostbite on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_frost_bite_damage": 0 },
+          "perRank": { "increased_frost_bite_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "frostbite", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "shattering_coldstrike",
+        "positionIndex": 6,
+        "name": "Shattering Coldstrike",
+        "description": "Chance to inflict cold break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "cold_break": 0 },
+          "perRank": { "cold_break": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "cold_break", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "lingering_fissure",
+        "positionIndex": 7,
+        "name": "Lingering Fissure",
+        "description": "Decreases movement diminish when using frost sunder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "frost_shrapnel",
+        "positionIndex": 8,
+        "name": "Frost Shrapnel",
+        "description": "Increases the amount of icicles unleashed by frost sunder.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "frozen_death",
+        "positionIndex": 9,
+        "name": "Frozen Death",
+        "description": "Increases the critical strike damage dealt by frost sunder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0 },
+          "perRank": { "crit_damage": 20 }
+        }
+      },
+      {
+        "id": "deaths_touch",
+        "positionIndex": 10,
+        "name": "Death´s Touch",
+        "description": "Increases the critical strike chance of frost sunder.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0 },
+          "perRank": { "crit_chance": 5 }
+        }
+      },
+      {
+        "id": "frost_sunder_onslaught",
+        "positionIndex": 11,
+        "name": "Frost Sunder Onslaught",
+        "description": "Icicles explode on contact unleashing an explosion dealing damage on a large radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "cold_skill_damage": 75, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "dissecting_vortex",
+        "positionIndex": 12,
+        "name": "Dissecting Vortex",
+        "description": "Icicles seek targets when proccing frost bite dealing increased damage to frostbitten monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "extra_damage_frost_bitten": 0 },
+          "perRank": {
+            "cold_skill_damage": 15,
+            "extra_damage_frost_bitten": 50
+          }
+        }
+      },
+      {
+        "id": "gelid_riptide",
+        "positionIndex": 13,
+        "name": "Gelid Riptide",
+        "description": "Chance to unleash multiple waves of icicles.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 15 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "unstoppable_assault",
+        "positionIndex": 14,
+        "name": "Unstoppable Assault",
+        "description": "Summon a vortex of orbiting icicles piercing monsters on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "cold_skill_damage": 25, "projectile_count": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "glacial_armor",
+    "classId": "jotunn",
+    "name": "Glacial Armor",
+    "kind": "passive",
+    "description": "Increases your all resistances.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "all_resistances": 5 },
+      "perRank": { "all_resistances": 0.5 }
+    }
+  },
+  {
+    "id": "embodiment_of_aurgelmir",
+    "classId": "jotunn",
+    "name": "The Embodiment of Aurgelmir",
+    "kind": "buff",
+    "description": "Summon the power of Aurgelmir and temporarily turn into a war machine of the frozen tundra increasing your attack damage, attack speed and life replenish.",
+    "tags": ["Cast", "Active", "Buff", "Shape Shift"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Son of Aurgelmir",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 11 }],
+    "manaCostFormula": { "base": 11, "perLevel": 1.125 },
+    "passiveStats": {
+      "base": { "attack_damage": 30, "increased_attack_speed": 30, "life_replenish": 8 },
+      "perRank": { "attack_damage": 10, "increased_attack_speed": 1, "life_replenish": 8 }
+    }
+  }
+]

@@ -1,0 +1,827 @@
+[
+ {
+  "id": 25,
+  "name": "Movement Speed",
+  "col": 1
+ },
+ {
+  "id": 26,
+  "name": "Phasing",
+  "col": 1
+ },
+ {
+  "id": 27,
+  "name": "Jumping Power",
+  "col": 1
+ },
+ {
+  "id": 33,
+  "name": "Strength",
+  "col": 1
+ },
+ {
+  "id": 34,
+  "name": "Strength per level",
+  "col": 1
+ },
+ {
+  "id": 36,
+  "name": "Dexterity",
+  "col": 1
+ },
+ {
+  "id": 37,
+  "name": "Dexterity per level",
+  "col": 1
+ },
+ {
+  "id": 39,
+  "name": "Energy",
+  "col": 1
+ },
+ {
+  "id": 40,
+  "name": "Energy per level",
+  "col": 1
+ },
+ {
+  "id": 42,
+  "name": "Intelligence",
+  "col": 1
+ },
+ {
+  "id": 43,
+  "name": "Intelligence per level",
+  "col": 1
+ },
+ {
+  "id": 45,
+  "name": "Armor",
+  "col": 1
+ },
+ {
+  "id": 46,
+  "name": "Armor per level",
+  "col": 1
+ },
+ {
+  "id": 48,
+  "name": "Vitality",
+  "col": 1
+ },
+ {
+  "id": 49,
+  "name": "Vitality per level",
+  "col": 1
+ },
+ {
+  "id": 51,
+  "name": "All Attributes",
+  "col": 1
+ },
+ {
+  "id": 70,
+  "name": "Projectile Speed",
+  "col": 1
+ },
+ {
+  "id": 112,
+  "name": "Explosion Skills",
+  "col": 1
+ },
+ {
+  "id": 201,
+  "name": "All Skills",
+  "col": 1
+ },
+ {
+  "id": 202,
+  "name": "Singular Skills",
+  "col": 1
+ },
+ {
+  "id": 222,
+  "name": "Physical Skills",
+  "col": 1
+ },
+ {
+  "id": 223,
+  "name": "Cold Skills",
+  "col": 1
+ },
+ {
+  "id": 224,
+  "name": "Arcane Skills",
+  "col": 1
+ },
+ {
+  "id": 225,
+  "name": "Fire Skills",
+  "col": 1
+ },
+ {
+  "id": 226,
+  "name": "Lightning Skills",
+  "col": 1
+ },
+ {
+  "id": 227,
+  "name": "Poison Skills",
+  "col": 1
+ },
+ {
+  "id": 281,
+  "name": "Light Radius",
+  "col": 1
+ },
+ {
+  "id": 282,
+  "name": "Increased Experience Gain",
+  "col": 1
+ },
+ {
+  "id": 284,
+  "name": "Magic Find",
+  "col": 1
+ },
+ {
+  "id": 285,
+  "name": "Magic Find per level",
+  "col": 1
+ },
+ {
+  "id": 286,
+  "name": "Extra Gold from kills",
+  "col": 1
+ },
+ {
+  "id": 290,
+  "name": "Merchant prices",
+  "col": 1
+ },
+ {
+  "id": 331,
+  "name": "Summon Skills",
+  "col": 1
+ },
+ {
+  "id": 335,
+  "name": "Sentry Skills",
+  "col": 1
+ },
+ {
+  "id": 385,
+  "name": "Flask Mana Replenish %",
+  "col": 1
+ },
+ {
+  "id": 386,
+  "name": "Flask Instant Mana Replenish",
+  "col": 1
+ },
+ {
+  "id": 388,
+  "name": "Flask Life Replenish %",
+  "col": 1
+ },
+ {
+  "id": 389,
+  "name": "Flask Instant Life Replenish",
+  "col": 1
+ },
+ {
+  "id": 391,
+  "name": "Flask Duration",
+  "col": 1
+ },
+ {
+  "id": 393,
+  "name": "Flask Extra Stacks",
+  "col": 1
+ },
+ {
+  "id": 394,
+  "name": "Flask Stacks Recovered Per Kill",
+  "col": 1
+ },
+ {
+  "id": 395,
+  "name": "Flask Stacks Recovered",
+  "col": 1
+ },
+ {
+  "id": 396,
+  "name": "Flask Cooldown",
+  "col": 1
+ },
+ {
+  "id": 28,
+  "name": "Enhanced Damage",
+  "col": 2
+ },
+ {
+  "id": 31,
+  "name": "Enhanced Damage per level",
+  "col": 2
+ },
+ {
+  "id": 67,
+  "name": "Attack Range",
+  "col": 2
+ },
+ {
+  "id": 68,
+  "name": "Attack Speed",
+  "col": 2
+ },
+ {
+  "id": 72,
+  "name": "Chance for Critical Strike",
+  "col": 2
+ },
+ {
+  "id": 73,
+  "name": "Critical Strike Damage",
+  "col": 2
+ },
+ {
+  "id": 74,
+  "name": "Attack Rating",
+  "col": 2
+ },
+ {
+  "id": 75,
+  "name": "Attack Rating %",
+  "col": 2
+ },
+ {
+  "id": 76,
+  "name": "Attack Rating per level",
+  "col": 2
+ },
+ {
+  "id": 77,
+  "name": "Piercing",
+  "col": 2
+ },
+ {
+  "id": 78,
+  "name": "Slow Target",
+  "col": 2
+ },
+ {
+  "id": 94,
+  "name": "Ignore Target Defense",
+  "col": 2
+ },
+ {
+  "id": 95,
+  "name": "Deadly Blow",
+  "col": 2
+ },
+ {
+  "id": 97,
+  "name": "Crushing Blow",
+  "col": 2
+ },
+ {
+  "id": 99,
+  "name": "Open Wounds",
+  "col": 2
+ },
+ {
+  "id": 103,
+  "name": "Physical Damage per level",
+  "col": 2
+ },
+ {
+  "id": 128,
+  "name": "Flat Physical Damage",
+  "col": 2
+ },
+ {
+  "id": 129,
+  "name": "Physical Damage %",
+  "col": 2
+ },
+ {
+  "id": 132,
+  "name": "Additive Fire Damage",
+  "col": 2
+ },
+ {
+  "id": 136,
+  "name": "Additive Cold Damage",
+  "col": 2
+ },
+ {
+  "id": 140,
+  "name": "Additive Arcane Damage",
+  "col": 2
+ },
+ {
+  "id": 144,
+  "name": "Additive Lightning Damage",
+  "col": 2
+ },
+ {
+  "id": 148,
+  "name": "Additive Poison Damage",
+  "col": 2
+ },
+ {
+  "id": 79,
+  "name": "Extra damage to Stunned",
+  "col": 3
+ },
+ {
+  "id": 80,
+  "name": "Extra damage to Bleeding",
+  "col": 3
+ },
+ {
+  "id": 81,
+  "name": "Extra damage to Frozen",
+  "col": 3
+ },
+ {
+  "id": 82,
+  "name": "Extra damage to Poisoned",
+  "col": 3
+ },
+ {
+  "id": 83,
+  "name": "Extra damage to Burning",
+  "col": 3
+ },
+ {
+  "id": 84,
+  "name": "Extra damage to Stasis",
+  "col": 3
+ },
+ {
+  "id": 85,
+  "name": "Extra Damage to Shadow Burning",
+  "col": 3
+ },
+ {
+  "id": 86,
+  "name": "Extra Damage to Frost Bitten",
+  "col": 3
+ },
+ {
+  "id": 87,
+  "name": "Extra Damage to Ailments",
+  "col": 3
+ },
+ {
+  "id": 101,
+  "name": "Magic Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 104,
+  "name": "Increased Bleeding Frequency",
+  "col": 3
+ },
+ {
+  "id": 105,
+  "name": "Increased Poisoned Frequency",
+  "col": 3
+ },
+ {
+  "id": 106,
+  "name": "Increased Burning Frequency",
+  "col": 3
+ },
+ {
+  "id": 107,
+  "name": "Increased Stasis Frequency",
+  "col": 3
+ },
+ {
+  "id": 108,
+  "name": "Increased Shadow Burning Frequency",
+  "col": 3
+ },
+ {
+  "id": 109,
+  "name": "Increased Frost Bite Frequency",
+  "col": 3
+ },
+ {
+  "id": 110,
+  "name": "Increased Ailment Frequency",
+  "col": 3
+ },
+ {
+  "id": 111,
+  "name": "Explosion Damage",
+  "col": 3
+ },
+ {
+  "id": 133,
+  "name": "Flat Fire Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 134,
+  "name": "Fire Skill Damage %",
+  "col": 3
+ },
+ {
+  "id": 135,
+  "name": "Ignore Fire Resistance",
+  "col": 3
+ },
+ {
+  "id": 137,
+  "name": "Flat Cold Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 138,
+  "name": "Cold Skill Damage %",
+  "col": 3
+ },
+ {
+  "id": 139,
+  "name": "Ignore Cold Resistance",
+  "col": 3
+ },
+ {
+  "id": 141,
+  "name": "Flat Arcane Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 142,
+  "name": "Arcane Skill Damage %",
+  "col": 3
+ },
+ {
+  "id": 143,
+  "name": "Ignore Arcane Resistance",
+  "col": 3
+ },
+ {
+  "id": 145,
+  "name": "Flat Lightning Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 146,
+  "name": "Lightning Skill Damage %",
+  "col": 3
+ },
+ {
+  "id": 147,
+  "name": "Ignore Lightning Resistance",
+  "col": 3
+ },
+ {
+  "id": 149,
+  "name": "Flat Poison Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 150,
+  "name": "Poison Skill Damage %",
+  "col": 3
+ },
+ {
+  "id": 151,
+  "name": "Ignore Poison Resistance",
+  "col": 3
+ },
+ {
+  "id": 152,
+  "name": "Ignore All Resistance",
+  "col": 3
+ },
+ {
+  "id": 153,
+  "name": "Flat Elemental Skill Damage",
+  "col": 3
+ },
+ {
+  "id": 196,
+  "name": "Faster Cast Rate",
+  "col": 3
+ },
+ {
+  "id": 198,
+  "name": "Skill Haste",
+  "col": 3
+ },
+ {
+  "id": 200,
+  "name": "Mana Cost Reduced",
+  "col": 3
+ },
+ {
+  "id": 250,
+  "name": "Ailment Damage",
+  "col": 3
+ },
+ {
+  "id": 327,
+  "name": "Summon Life %",
+  "col": 3
+ },
+ {
+  "id": 328,
+  "name": "Summon Damage Reduction",
+  "col": 3
+ },
+ {
+  "id": 329,
+  "name": "Summon Resistances",
+  "col": 3
+ },
+ {
+  "id": 330,
+  "name": "Summon Amount",
+  "col": 3
+ },
+ {
+  "id": 332,
+  "name": "Summon Damage %",
+  "col": 3
+ },
+ {
+  "id": 333,
+  "name": "Summon Attack Speed",
+  "col": 3
+ },
+ {
+  "id": 334,
+  "name": "Summon Movement Speed",
+  "col": 3
+ },
+ {
+  "id": 336,
+  "name": "Sentry Damage %",
+  "col": 3
+ },
+ {
+  "id": 337,
+  "name": "Sentry Amount",
+  "col": 3
+ },
+ {
+  "id": 338,
+  "name": "Sentry Attack Speed",
+  "col": 3
+ },
+ {
+  "id": 339,
+  "name": "Sentry Duration",
+  "col": 3
+ },
+ {
+  "id": 437,
+  "name": "Explosion AoE",
+  "col": 3
+ },
+ {
+  "id": 465,
+  "name": "Movement Speed Converted to Damage",
+  "col": 3
+ },
+ {
+  "id": 29,
+  "name": "Enhanced Defense",
+  "col": 4
+ },
+ {
+  "id": 30,
+  "name": "Enhanced Defense per level",
+  "col": 4
+ },
+ {
+  "id": 52,
+  "name": "Life",
+  "col": 4
+ },
+ {
+  "id": 53,
+  "name": "Life %",
+  "col": 4
+ },
+ {
+  "id": 54,
+  "name": "Life per level",
+  "col": 4
+ },
+ {
+  "id": 55,
+  "name": "Life Replenish",
+  "col": 4
+ },
+ {
+  "id": 57,
+  "name": "Life stolen per Hit",
+  "col": 4
+ },
+ {
+  "id": 58,
+  "name": "Life per second",
+  "col": 4
+ },
+ {
+  "id": 59,
+  "name": "Life After each Kill",
+  "col": 4
+ },
+ {
+  "id": 60,
+  "name": "Mana",
+  "col": 4
+ },
+ {
+  "id": 61,
+  "name": "Mana %",
+  "col": 4
+ },
+ {
+  "id": 62,
+  "name": "Mana per level",
+  "col": 4
+ },
+ {
+  "id": 63,
+  "name": "Mana Replenish",
+  "col": 4
+ },
+ {
+  "id": 64,
+  "name": "Mana stolen per Hit",
+  "col": 4
+ },
+ {
+  "id": 65,
+  "name": "Mana per second",
+  "col": 4
+ },
+ {
+  "id": 66,
+  "name": "Mana After each Kill",
+  "col": 4
+ },
+ {
+  "id": 155,
+  "name": "Defense %",
+  "col": 4
+ },
+ {
+  "id": 156,
+  "name": "Defense per level",
+  "col": 4
+ },
+ {
+  "id": 159,
+  "name": "Physical damage reduction",
+  "col": 4
+ },
+ {
+  "id": 160,
+  "name": "Magic damage reduction",
+  "col": 4
+ },
+ {
+  "id": 161,
+  "name": "All damage reduction",
+  "col": 4
+ },
+ {
+  "id": 162,
+  "name": "Damage reduced",
+  "col": 4
+ },
+ {
+  "id": 167,
+  "name": "Damage taken recouped as Mana",
+  "col": 4
+ },
+ {
+  "id": 168,
+  "name": "Damage taken recouped as Life",
+  "col": 4
+ },
+ {
+  "id": 169,
+  "name": "Defense vs Missiles",
+  "col": 4
+ },
+ {
+  "id": 170,
+  "name": "Faster Hit Recovery",
+  "col": 4
+ },
+ {
+  "id": 171,
+  "name": "Damage Return",
+  "col": 4
+ },
+ {
+  "id": 173,
+  "name": "All Resistances",
+  "col": 4
+ },
+ {
+  "id": 174,
+  "name": "Maximum All Resists",
+  "col": 4
+ },
+ {
+  "id": 175,
+  "name": "Fire Resistance",
+  "col": 4
+ },
+ {
+  "id": 176,
+  "name": "Maximum Fire Resist",
+  "col": 4
+ },
+ {
+  "id": 177,
+  "name": "Cold Resistance",
+  "col": 4
+ },
+ {
+  "id": 178,
+  "name": "Maximum Cold Resist",
+  "col": 4
+ },
+ {
+  "id": 179,
+  "name": "Lightning Resistance",
+  "col": 4
+ },
+ {
+  "id": 180,
+  "name": "Maximum Lightning Resist",
+  "col": 4
+ },
+ {
+  "id": 181,
+  "name": "Arcane Resistance",
+  "col": 4
+ },
+ {
+  "id": 182,
+  "name": "Maximum Arcane Resist",
+  "col": 4
+ },
+ {
+  "id": 183,
+  "name": "Poison Resistance",
+  "col": 4
+ },
+ {
+  "id": 184,
+  "name": "Maximum Poison Resist",
+  "col": 4
+ },
+ {
+  "id": 191,
+  "name": "Fire Absorption",
+  "col": 4
+ },
+ {
+  "id": 192,
+  "name": "Cold Absorption",
+  "col": 4
+ },
+ {
+  "id": 193,
+  "name": "Poison Absorption",
+  "col": 4
+ },
+ {
+  "id": 194,
+  "name": "Lightning Absorption",
+  "col": 4
+ },
+ {
+  "id": 195,
+  "name": "Arcane Absorption",
+  "col": 4
+ },
+ {
+  "id": 287,
+  "name": "Half Freeze Duration",
+  "col": 4
+ },
+ {
+  "id": 288,
+  "name": "Cannot be Frozen",
+  "col": 4
+ },
+ {
+  "id": 289,
+  "name": "Poison Length Reduced",
+  "col": 4
+ }
+]

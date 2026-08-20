@@ -1,0 +1,28 @@
+{
+  "change": {
+    "gurag_s_fury": {
+      "bonuses": [
+        {
+          "pieces": 2,
+          "stats": {
+            "life": 300
+          },
+          "descriptions": [
+            "+300 Life"
+          ]
+        },
+        {
+          "pieces": 3,
+          "stats": {
+            "all_skills": 4,
+            "physical_damage_reduction": 30
+          },
+          "descriptions": [
+            "+4 to All Skills",
+            "+30% Physical Damage Reduction"
+          ]
+        }
+      ]
+    }
+  }
+}

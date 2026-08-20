@@ -1,0 +1,1877 @@
+{
+  "noxious_strike": {
+    "explosive_toxins": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "leaping_ambush": {
+    "envenomous_groundslam": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "arc_of_spears": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "ground_stomper": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "caustic_spearhead": {
+    "venomous_burst": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "death_from_above": {
+    "spear_delivery": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "ancient_device": {
+      "add": [
+        "Sentry"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "detonation_shower": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "envenom": {
+    "envenova": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Explosion"
+      ]
+    }
+  },
+  "astropes_gift": {
+    "thundering_storm": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "rebound": {
+    "rebomb": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "orbital_rebound": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "spearnage": {
+    "explosive_speartips": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "storm_dash": {
+    "storm_orbs": {
+      "add": [
+        "Chain Lightning",
+        "Orbital"
+      ],
+      "remove": [
+        "Ranged"
+      ]
+    },
+    "storm_gates": {
+      "add": [
+        "Blink"
+      ]
+    },
+    "pillar_of_storm": {
+      "remove": [
+        "Ranged"
+      ]
+    }
+  },
+  "thunder_fury": {
+    "leaping_thunder": {
+      "add": [
+        "Chain Lightning"
+      ]
+    },
+    "vacuuming_thunder": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "progenies_of_the_great_cataclysm": {
+    "orbital_soundwaves": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "crowd_dive": {
+    "pit_fighters": {
+      "add": [
+        "Summon"
+      ]
+    },
+    "flying_fists": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "blinkfist_strike": {
+      "add": [
+        "Blink",
+        "Movement"
+      ],
+      "remove": [
+        "Charge"
+      ]
+    }
+  },
+  "headbanger": {
+    "hair_tornado": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "moshpit_massacre": {
+    "pitfighting_colossus": {
+      "remove": [
+        "Orbital"
+      ]
+    },
+    "total_anarchy": {
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "slicing_throw": {
+    "slicing_vortex": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "bladesaw_massacre": {
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "furious_strike": {
+    "consumed_by_hatred": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "chain_rip": {
+    "chainfueled_hunting": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "carcass_rip": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "brutalizing_slash": {
+    "pummeling_slashwave": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "gutting_frenzy": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "butchers_hook": {
+    "concussive_blow": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "welcome_to_hell": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "chain_swing": {
+    "hookstorm": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "blender": {
+    "blenderang": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "possessed_bullet": {
+    "haunting": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "shredder_trap": {
+    "circular_cutting": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "absolute_mayhem": {
+    "explosion_vacuum": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "fast_slices": {
+    "detonation_slice": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "shadow_daggers": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "high_strike": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "demons_calling": {
+    "appearing_from_shadows": {
+      "add": [
+        "Blink",
+        "Movement"
+      ]
+    }
+  },
+  "bone_fragments": {
+    "sharp_bonerangs": {
+      "add": [
+        "Ranged"
+      ]
+    },
+    "bone_altar": {
+      "add": [
+        "Sentry"
+      ]
+    }
+  },
+  "impale": {
+    "spear_of_amaymon": {
+      "add": [
+        "Explosion",
+        "Projectile"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "bone_storm": {
+    "bone_tornado": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "spinal_tap": {
+    "blood_and_gore": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "eternal_suffering": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "bone_barrage": {
+    "barraging_boneswirl": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "blood_bolts": {
+    "mark_of_the_demon": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "blood_surge": {
+    "unlimited_power": {
+      "add": [
+        "Explosion",
+        "Projectile"
+      ]
+    }
+  },
+  "scorching_whip": {
+    "blasting_whiplash": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "whirlwhipper": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "solar_flare": {
+    "suns_orbit": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "supernova": {
+    "particle_outflux": {
+      "add": [
+        "Ranged"
+      ]
+    },
+    "planetary_collision": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "black_hole": {
+    "hidden_in_plain_sight": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "sand_guardians": {
+    "guardian_nevermore": {
+      "remove": [
+        "Guardian"
+      ]
+    },
+    "sand_mages": {
+      "remove": [
+        "Guardian"
+      ]
+    },
+    "sacrifice_for_the_throne": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Guardian"
+      ]
+    },
+    "guardians_of_the_orbital_sand": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Guardian"
+      ]
+    }
+  },
+  "circle_of_guardians": {
+    "deserts_army": {
+      "remove": [
+        "Guardian"
+      ]
+    },
+    "ancient_sand_goliath": {
+      "remove": [
+        "Guardian"
+      ]
+    },
+    "arcanic_sand_tether": {
+      "remove": [
+        "Guardian"
+      ]
+    },
+    "seven_nation_army": {
+      "remove": [
+        "Guardian"
+      ]
+    }
+  },
+  "age_proliferation": {
+    "scorching_magic": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "gravitation_slam": {
+    "antigravity_slam": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "temporal_heroes": {
+    "augmented_heroics": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "the_four_horsemen": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "summon_support": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "frozen_boulder": {
+    "rolling_winterstone": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "orb_of_frost": {
+    "chaining_frost": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "portal_of_ice": {
+    "hailstorm_orb": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "winter_aparition": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "permafrost_voidpull": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "crystallized_pinnacles": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "flash_freeze": {
+    "swirling_wintershard": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Ranged"
+      ]
+    },
+    "coldflash_volley": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Ranged"
+      ]
+    }
+  },
+  "avalanche": {
+    "nordic_stigma": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "heavy_ball": {
+    "heavy_swing": {
+      "add": [
+        "Orbital"
+      ]
+    },
+    "terrain_collision": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "crazy_grapple": {
+    "cannonade_grapple": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "arena_master": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Movement"
+      ]
+    },
+    "explosive_grapple": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "bombardment": {
+    "icbm": {
+      "add": [
+        "Area of Effect",
+        "Projectile"
+      ],
+      "remove": [
+        "Explosion"
+      ]
+    }
+  },
+  "serrated_chains": {
+    "rawest_power": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "gladiators_dash": {
+      "add": [
+        "Movement"
+      ]
+    }
+  },
+  "retiarius_net": {
+    "ricocheting_net": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "chain_trap": {
+    "betrayal": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "annihilation": {
+    "symphony_of_chains": {
+      "add": [
+        "Orbital"
+      ]
+    },
+    "total_annihilation": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "madness_control": {
+    "blink_and_you_are_dead": {
+      "add": [
+        "Blink",
+        "Movement"
+      ]
+    }
+  },
+  "vault": {
+    "leaping_cyclone": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "safespace": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "iarrow": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "arrow_rampage": {
+    "tricky_tactics": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "arrow_turret": {
+    "cyclone_turret": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Sentry"
+      ]
+    }
+  },
+  "gunner_drone": {
+    "circuit_breaker": {
+      "add": [
+        "Chain Lightning"
+      ],
+      "remove": [
+        "Chaining"
+      ]
+    },
+    "c_y_c_l_o_p_s": {
+      "remove": [
+        "Chaining"
+      ]
+    },
+    "m_e_c_h_a": {
+      "add": [
+        "Ranged"
+      ],
+      "remove": [
+        "Chaining"
+      ]
+    },
+    "nanodrones": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Chaining"
+      ]
+    }
+  },
+  "bone_shred": {
+    "bomb_of_bones": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "orbiting_remains": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "poison_breath": {
+    "acid_spit": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "bone_spear": {
+    "bone_nova": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "bone_spirit": {
+    "ghouls_of_agony": {
+      "remove": [
+        "Explosion"
+      ]
+    }
+  },
+  "poison_nova": {
+    "poison_cloud": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "virulent_blink": {
+      "add": [
+        "Blink",
+        "Movement"
+      ]
+    }
+  },
+  "raise_skeleton": {
+    "zombies": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "raise_skeleton_mage": {
+    "cursed_blast": {
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "chaining_scorn": {
+      "add": [
+        "Ranged"
+      ],
+      "remove": [
+        "Explosion",
+        "Projectile"
+      ]
+    },
+    "summon_archmage": {
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "unholy_lightning": {
+      "remove": [
+        "Explosion",
+        "Projectile"
+      ]
+    }
+  },
+  "summon_damned_legion": {
+    "abombination": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "damned_sharpshooter": {
+      "add": [
+        "Explosion",
+        "Projectile"
+      ]
+    }
+  },
+  "summon_vengeful_spirit": {
+    "vengeful_poltergeist": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "sand_carver": {
+    "parasitical_sand": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "cloud_of_sand": {
+    "deserts_echo": {
+      "remove": [
+        "Blink",
+        "Movement"
+      ]
+    }
+  },
+  "sand_gush": {
+    "dust_devils": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "blade_strike": {
+    "stacked_blade": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "eye_of_ra": {
+    "pillar_of_light": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Ranged"
+      ]
+    },
+    "orbiting_the_sun": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Ranged"
+      ]
+    }
+  },
+  "chainslice": {
+    "critical_shred": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "scimitar_charge": {
+    "scimitar_storm": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "static_blade_vortex": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "phantom_blade": {
+    "spirit_blades": {
+      "add": [
+        "Orbital"
+      ]
+    },
+    "dimensional_ghostblade": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "vengeance": {
+    "charge_release": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "electric_pillars": {
+      "add": [
+        "Sentry"
+      ]
+    }
+  },
+  "divine_storm": {
+    "chaining_storm": {
+      "add": [
+        "Chain Lightning"
+      ]
+    },
+    "bad_omens": {
+      "add": [
+        "Chain Lightning"
+      ]
+    },
+    "charged_hurricane": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "ball_lightning": {
+    "hovering_bolt": {
+      "add": [
+        "Chain Lightning"
+      ]
+    }
+  },
+  "lightning_fury": {
+    "storm_surge": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "concentrated_fury": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "holy_bolt": {
+    "touch_of_righteousness": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "divine_assbeating": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "holy_nova": {
+    "faiths_winds": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "holy_hammer": {
+    "divine_lightning": {
+      "add": [
+        "Chain Lightning"
+      ]
+    },
+    "returning_lightforge": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    },
+    "chaining_mallet": {
+      "add": [
+        "Area of Effect",
+        "Ranged"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "fist_of_the_heavens": {
+    "divine_explosion": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "immaculate_warrior": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "tiring_combat": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "buckshot": {
+    "slick_slugs": {
+      "add": [
+        "Explosion",
+        "Ranged"
+      ]
+    }
+  },
+  "explosive_barrel": {
+    "explosive_collision": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "powder_trail": {
+    "barrel_of_barrels": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "fragmenting_barrel": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "heavy_barrel": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "flaming_barrels": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "torrent": {
+    "ocean_storm": {
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "chaotic_wave": {
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "storm_pillar": {
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "freezing_chain_shot": {
+    "frozen_chain_rip": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "anchor_swing": {
+    "trembling_smash": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "miasma": {
+    "epidemic_dissemination": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "surgical_blood_letting": {
+    "surgeons_vortex": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Chaining",
+        "Projectile"
+      ]
+    },
+    "blood_thaumaturgist": {
+      "remove": [
+        "Chaining"
+      ]
+    },
+    "fracturing_knifestack": {
+      "remove": [
+        "Chaining"
+      ]
+    },
+    "cutting_storm": {
+      "remove": [
+        "Chaining"
+      ]
+    }
+  },
+  "crematus": {
+    "spiraling_cremation": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "toxin_container": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "plague_of_rats": {
+    "rat_den": {
+      "add": [
+        "Sentry"
+      ]
+    }
+  },
+  "plague_master": {
+    "raise_from_the_pestilence": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "jar_of_leeches": {
+    "toxicophile_bloodsucker": {
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "randy_the_rancid_rat": {
+    "randy_rider": {
+      "remove": [
+        "Summon"
+      ]
+    },
+    "qa3_modified_specimen": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "summon_raven": {
+    "honey_stinger": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "tempest_of_ravens": {
+      "add": [
+        "Orbital"
+      ]
+    }
+  },
+  "thorned_roots": {
+    "hungering_hive_mind": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "carrion_worm": {
+    "devouring_worm": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "leaping_charge": {
+    "skipping_claws": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "trail_of_agony": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "shuriken_of_claws": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "herald_of_bones": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "storm_hawk": {
+    "stormbolts": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "bird_of_thunder": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "thundering_bolt": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "electric_screech": {
+      "remove": [
+        "Shape Shift"
+      ]
+    }
+  },
+  "spirit_of_the_ent": {
+    "reflecting_branches": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "grizzly": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "dominos_of_trunks": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "crushing_trunksmash": {
+      "remove": [
+        "Shape Shift"
+      ]
+    }
+  },
+  "maelstrom_of_frost": {
+    "meteor_of_ice": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "storm_of_frost": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "spirit_of_the_wendigo": {
+    "blood_thirsty_skinwalker": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "clawarang": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "flesh_ripping_beast": {
+      "remove": [
+        "Shape Shift"
+      ]
+    },
+    "blood_carnage": {
+      "remove": [
+        "Shape Shift"
+      ]
+    }
+  },
+  "blazing_trail": {
+    "trail_of_comets": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "detonation_field": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "phoenix_flight": {
+    "rise_from_the_ashes": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "seed_of_fulmination": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "wings_of_the_phoenix": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "breath_of_fire": {
+    "chain_of_fire": {
+      "add": [
+        "Ranged"
+      ]
+    },
+    "scorching_hellflame": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "molten_orb": {
+      "add": [
+        "Explosion",
+        "Projectile"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "fireball": {
+    "orbital_fire": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "hydra": {
+    "scorching_kraken": {
+      "remove": [
+        "Explosion",
+        "Projectile"
+      ]
+    }
+  },
+  "fire_nova": {
+    "scorching_bolts": {
+      "add": [
+        "Explosion",
+        "Projectile"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "searing_tornado": {
+      "add": [
+        "Explosion",
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "armageddon": {
+    "warped_doom": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "pickup_raid": {
+    "suicide_squad": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "drunken_air_raid": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "tarethiel_mc": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "chainsaw_slash": {
+    "woodcutters_madness": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "gas_to_the_chainsaws": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "rogue_chainsaw": {
+    "shredding_squad": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "tree_trunk_triumph": {
+    "splitting_fall": {
+      "add": [
+        "Projectile",
+        "Ranged"
+      ]
+    }
+  },
+  "shuriken_throw": {
+    "shadow_shuriken": {
+      "add": [
+        "Blink",
+        "Movement"
+      ]
+    }
+  },
+  "quickslash": {
+    "mechanical_advantage": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "explosive_kunai": {
+    "chainsplosions": {
+      "add": [
+        "Ranged"
+      ]
+    },
+    "little_slicers": {
+      "remove": [
+        "Explosion"
+      ]
+    }
+  },
+  "omnislash": {
+    "rain_of_chaos": {
+      "add": [
+        "Explosion"
+      ]
+    },
+    "poison_coated_daggers": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "shadow_step": {
+    "bargain_with_demons": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "empires_slash": {
+    "cone_of_death": {
+      "remove": [
+        "Blink",
+        "Movement"
+      ]
+    },
+    "muda_muda_muda_muda_muda": {
+      "remove": [
+        "Blink",
+        "Movement"
+      ]
+    }
+  },
+  "twisters": {
+    "explosive_gust": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "meteor_storm": {
+    "back_into_orbit": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "tornado": {
+    "orbital_winds": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "absolute_tempest": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "fissures": {
+    "natural_disaster": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "spirit_wolves": {
+    "lightning_fangs": {
+      "add": [
+        "Chain Lightning"
+      ]
+    }
+  },
+  "storm_totem": {
+    "lightning_rods": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Chain Lightning"
+      ]
+    },
+    "surging_sentry": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Chain Lightning"
+      ]
+    },
+    "stormclaw_totem": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "charged_totem": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Chain Lightning"
+      ]
+    }
+  },
+  "fire_totem": {
+    "firestorm_totems": {
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "glorious_strike": {
+    "punisher": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "javelin_harbinger": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "valiant_combo": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "battle_charge": {
+    "hyper_assault": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "crushing_lance": {
+    "marked_for_javelinstrike": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  },
+  "lance_thrust": {
+    "legion_exterminator": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "commend_to_onslaught": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "shield_slam": {
+    "groundquake_bulwark": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "knights_templar": {
+      "add": [
+        "Area of Effect",
+        "Projectile"
+      ]
+    },
+    "captain_tarethiel": {
+      "add": [
+        "Area of Effect",
+        "Projectile"
+      ]
+    }
+  },
+  "honed_defenses": {
+    "risen_guards": {
+      "add": [
+        "Summon"
+      ]
+    }
+  },
+  "shield_wall": {
+    "shield_vortex": {
+      "add": [
+        "Projectile"
+      ],
+      "remove": [
+        "Orbital"
+      ]
+    }
+  },
+  "counter": {
+    "insatiable_challenger": {
+      "add": [
+        "Area of Effect"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "give_no_quarter": {
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "versus_the_world": {
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "charged_bolts": {
+    "loaded_thunder": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "storm_cloud": {
+    "orbiting_tempest": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "storm_bolt": {
+    "pulsating_bolt": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "bouncing_charge": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "charge": {
+    "mountain_fall": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "seismic_slam": {
+    "polar_shift": {
+      "add": [
+        "Movement"
+      ]
+    }
+  },
+  "zeal": {
+    "throwing_fury": {
+      "add": [
+        "Chaining",
+        "Projectile"
+      ]
+    }
+  },
+  "ymirs_champion": {
+    "chainslicing_tomahawk": {
+      "add": [
+        "Ranged"
+      ]
+    }
+  },
+  "whirlwind": {
+    "detonation": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "shadow_bolt": {
+    "shadow_flame": {
+      "add": [
+        "Area of Effect"
+      ]
+    },
+    "shadows_grasp": {
+      "remove": [
+        "Projectile"
+      ]
+    }
+  },
+  "restless_spirits": {
+    "spirit_circle": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "soul_termination": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "satans_mark": {
+    "the_black_mass": {
+      "add": [
+        "Area of Effect",
+        "Chain Lightning"
+      ],
+      "remove": [
+        "Explosion"
+      ]
+    }
+  },
+  "black_mass": {
+    "shadow_puppets": {
+      "add": [
+        "Explosion"
+      ],
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "loyal_followers_13": {
+      "remove": [
+        "Projectile"
+      ]
+    },
+    "cult_bishops": {
+      "remove": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "heavenly_fire": {
+    "essence_of_heavens": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "chain_of_fire": {
+      "add": [
+        "Chain Lightning"
+      ]
+    }
+  },
+  "burst_of_light": {
+    "light_within": {
+      "add": [
+        "Area of Effect"
+      ]
+    }
+  },
+  "chain_of_holy_lightning": {
+    "gods_altar": {
+      "add": [
+        "Sentry"
+      ]
+    },
+    "echo_of_heavens": {
+      "add": [
+        "Projectile"
+      ]
+    },
+    "gods_grasp": {
+      "add": [
+        "Explosion"
+      ]
+    }
+  },
+  "mana_orb": {
+    "energy_orbit": {
+      "add": [
+        "Orbital"
+      ],
+      "remove": [
+        "Area of Effect"
+      ]
+    },
+    "hauling_manawell": {
+      "add": [
+        "Projectile"
+      ]
+    }
+  }
+}

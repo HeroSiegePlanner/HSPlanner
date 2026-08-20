@@ -1,0 +1,23 @@
+{
+  "change": {
+    "diminishingReturns": {
+      "gold_find": { "threshold": 200, "power": 0.75 },
+      "movement_speed": { "threshold": 200, "power": 0.86, "cap": 600 },
+      "magic_find": { "threshold": 1300, "power": 0.9 },
+      "increased_attack_speed": { "threshold": 415, "power": 0.9 },
+      "faster_cast_rate": { "threshold": 350, "power": 0.8 },
+      "deadly_blow": { "threshold": 50, "power": 0.75, "cap": 100 },
+      "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 }
+    }
+  },
+  "stats": {
+    "add": [
+      {
+        "key": "cold_resistance_converted_to_cold_damage",
+        "name": "of Cold Resistance is Converted to Cold Damage",
+        "category": "offense",
+        "format": "percent"
+      }
+    ]
+  }
+}

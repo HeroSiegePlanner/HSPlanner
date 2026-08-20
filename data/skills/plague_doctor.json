@@ -1,0 +1,1931 @@
+[
+  {
+    "id": "miasma",
+    "classId": "plague_doctor",
+    "name": "Miasma",
+    "kind": "active",
+    "description": "Empower your attack with a mixture of chemicals causing the monster to release a toxic cloud dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Sanguine Physician",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 4 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 83.72, "perLevel": 45.08 },
+      "flatPhysicalMin": { "base": 3, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 10, "perLevel": 3 },
+      "attackRatingPct": { "base": 0, "perLevel": 6 }
+    },
+    "bonusSources": [
+      { "source": "Toxic Flask", "stat": "attack_damage", "value": 2, "per": "skill_level" },
+      { "source": "Booster Shot", "stat": "attack_damage", "value": 2.5, "per": "skill_level" },
+      { "source": "Devout Doctor", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "miasma_core",
+        "positionIndex": 0,
+        "name": "Miasma",
+        "description": "Core of the Miasma subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "dense_haze",
+        "positionIndex": 1,
+        "name": "Dense Haze",
+        "description": "Increases the tick frequency of miasma.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 10 }
+        }
+      },
+      {
+        "id": "contagious_mist",
+        "positionIndex": 2,
+        "name": "Contagious Mist",
+        "description": "Chance to inflict poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "harmful_poluents",
+        "positionIndex": 3,
+        "name": "Harmful Poluents",
+        "description": "Increases the damage dealt by miasma.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "eroding_haze",
+        "positionIndex": 4,
+        "name": "Eroding Haze",
+        "description": "Increases damage dealt to poisoned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_poisoned": 0 },
+          "perRank": { "extra_damage_poisoned": 10 }
+        }
+      },
+      {
+        "id": "hasty_vapors",
+        "positionIndex": 5,
+        "name": "Hasty Vapors",
+        "description": "Increases the size of miasma.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "hemoglobin_nova",
+        "positionIndex": 6,
+        "name": "Hemoglobin Nova",
+        "description": "Chance to unleash additional miasma clouds from poisoned targets on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          },
+          "appliesStates": ["poisoned"]
+        }
+      },
+      {
+        "id": "incendiary_fumes",
+        "positionIndex": 7,
+        "name": "Incendiary Fumes",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "intense_malodor",
+        "positionIndex": 8,
+        "name": "Intense Malodor",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_chance": 0, "crit_damage": 0 },
+          "perRank": { "crit_chance": 3, "crit_damage": 15 }
+        }
+      },
+      {
+        "id": "sweep_scourge",
+        "positionIndex": 9,
+        "name": "Sweep Scourge",
+        "description": "Increases attack rating when using miasma.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "meteoric_haze",
+        "positionIndex": 10,
+        "name": "Meteoric Haze",
+        "description": "Chance to drop a burning meteor at burning targets on hit unleashing multiple fire balls to all directions when exploding.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "projectile_count": 0, "of_total_damage": 0 },
+            "perRank": { "projectile_count": 1, "of_total_damage": 20 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "tenacious_stench",
+        "positionIndex": 11,
+        "name": "Tenacious Stench",
+        "description": "Miasma sticks to the target with increased size and damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
+          "perRank": { "physical_skill_damage": 70, "projectile_size": 25 }
+        }
+      },
+      {
+        "id": "shoulder_fling",
+        "positionIndex": 12,
+        "name": "Shoulder Fling",
+        "description": "Fling targets behind you on hit inflicting elemental break and stunning them. Miasma clouds now spawn behind you.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "elemental_break": 0 },
+          "perRank": { "elemental_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            {
+              "state": "elemental_break",
+              "amount": { "base": 0, "perRank": 30 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "epidemic_dissemination",
+        "positionIndex": 13,
+        "name": "Epidemic Dissemination",
+        "description": "Unleash multiple miasma clouds in an arc when attacking. Miasma no longer requires you to strike a target.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 24, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "epinephrine_addict",
+        "positionIndex": 14,
+        "name": "Epinephrine Addict",
+        "description": "Striking monsters gives you a stack of epinephrine addict increasing your attack speed, movement speed and attack range. At maximum stacks gain phasing movement.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_attack_speed": 0,
+            "movement_speed": 0,
+            "skill_range": 0
+          },
+          "perRank": {
+            "increased_attack_speed": 1,
+            "movement_speed": 0.5,
+            "skill_range": 0.25
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "surgical_blood_letting",
+    "classId": "plague_doctor",
+    "name": "Surgical Blood Letting",
+    "kind": "active",
+    "description": "Throw a surgical knife with razor sharp accuracy that bounces from monster to monster dealing physical damage.",
+    "damageType": "physical",
+    "tags": ["Attack", "Active", "Melee", "Ranged", "Projectile", "Chaining", "Strike"],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Sanguine Physician",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "attackKind": "attack",
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "attackScaling": {
+      "weaponDamagePct": { "base": 99.2, "perLevel": 24.8 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 12, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
+    },
+    "bonusSources": [
+      { "source": "Miasma", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Malpractice", "stat": "attack_damage", "value": 2.4, "per": "skill_level" },
+      { "source": "Booster Shot", "stat": "attack_damage", "value": 2.4, "per": "skill_level" }
+    ],
+    "subskills": [
+      {
+        "id": "surgical_blood_letting_core",
+        "positionIndex": 0,
+        "name": "Surgical Blood Letting",
+        "description": "Core of the Surgical Blood Letting subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "incisive_cuts",
+        "positionIndex": 1,
+        "name": "Incisive Cuts",
+        "description": "Increases the damage dealt by surgical blood letting.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "cutting_edge",
+        "positionIndex": 2,
+        "name": "Cutting Edge",
+        "description": "Inflict bleeding to targets on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "bolting_scalpels",
+        "positionIndex": 3,
+        "name": "Bolting Scalpels",
+        "description": "Increases the projectile speed of surgical blood letting.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "expert_surgeon",
+        "positionIndex": 4,
+        "name": "Expert Surgeon",
+        "description": "Increases attack rating when using surgical blood letting.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "attack_rating_pct": 0 },
+          "perRank": { "attack_rating_pct": 10 }
+        }
+      },
+      {
+        "id": "vitality_devourer",
+        "positionIndex": 5,
+        "name": "Vitality Devourer",
+        "description": "Chance to restore life on hit for a portion of your additive physical damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "life_replenish_pct": 0 },
+            "perRank": { "life_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "exsanguination",
+        "positionIndex": 6,
+        "name": "Exsanguination",
+        "description": "Chance on attack to inflict increased bleed damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "plhebotomist",
+        "positionIndex": 7,
+        "name": "Plhebotomist",
+        "description": "Increases damage dealt to bleeding enemies.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "sanguine_eruption",
+        "positionIndex": 8,
+        "name": "Sanguine Eruption",
+        "description": "Chance to unleash a ripple of blood on hit dealing area of effect damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "swift_precision",
+        "positionIndex": 9,
+        "name": "Swift Precision",
+        "description": "Decreases movement diminish when using surgical blood letting.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "lifeblood_harvest",
+        "positionIndex": 10,
+        "name": "Lifeblood Harvest",
+        "description": "Chance on attack to increase damage dealt according to your vitality.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "conversion_vitality": 0 },
+            "perRank": { "conversion_vitality": 12 }
+          }
+        }
+      },
+      {
+        "id": "surgeons_vortex",
+        "positionIndex": 11,
+        "name": "Surgeon´s Vortex",
+        "description": "Knives now orbit around you slowly going outwards.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "projectile_count": 0,
+            "area_of_effect": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 15,
+            "projectile_count": 2,
+            "area_of_effect": 25
+          }
+        }
+      },
+      {
+        "id": "blood_thaumaturgist",
+        "positionIndex": 12,
+        "name": "Blood Thaumaturgist",
+        "description": "Throw multiple knives in an arc. The knives stick to the targets for a short duration before pulling back to you dealing increased damage according to your vitality.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "conversion_vitality": 0 },
+          "perRank": { "projectile_count": 1, "conversion_vitality": 25 }
+        }
+      },
+      {
+        "id": "fracturing_knifestack",
+        "positionIndex": 13,
+        "name": "Fracturing Knifestack",
+        "description": "Throw a knife with increased projectile speed exploding into multiple piercing knives to all directions on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0, "projectile_count": 0 },
+          "perRank": { "projectile_speed": 25, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "cutting_storm",
+        "positionIndex": 14,
+        "name": "Cutting Storm",
+        "description": "Knives have a chance to conjure a spinning knife tornado on hit dealing increased damage over time.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+            "perRank": { "physical_skill_damage": 15, "projectile_count": 3 }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "booster_shot",
+    "classId": "plague_doctor",
+    "name": "Booster Shot",
+    "kind": "buff",
+    "description": "When attacking have a chance to inject yourself with a mRNA gene altering shot temporarily increasing your attack damage and movement speed.",
+    "tags": ["Buff"],
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Sanguine Physician",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "attack_damage": 10, "movement_speed": 10 },
+      "perRank": { "attack_damage": 2, "movement_speed": 1 }
+    }
+  },
+  {
+    "id": "malpractice",
+    "classId": "plague_doctor",
+    "name": "Malpractice",
+    "kind": "passive",
+    "description": "Increases the force of surgical blood letting causing targets to bleed.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Sanguine Physician",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "bleeding_damage": 50 },
+      "perRank": { "bleeding_damage": 4 }
+    }
+  },
+  {
+    "id": "blood_sustenance",
+    "classId": "plague_doctor",
+    "name": "Blood Sustenance",
+    "kind": "passive",
+    "description": "Gain increased attack damage and life stolen per hit from bleeding targets.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Sanguine Physician",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life_steal": 1, "attack_damage": 1 },
+      "perRank": { "life_steal": 1, "attack_damage": 1 }
+    }
+  },
+  {
+    "id": "lifeblood_aura",
+    "classId": "plague_doctor",
+    "name": "Lifeblood Aura",
+    "kind": "aura",
+    "description": "When active, increases your and your party members Life and life replenish.",
+    "tags": ["Cast", "Active", "Aura"],
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Sanguine Physician",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1, "life_replenish": 1.25 },
+      "perRank": { "life": 0.5, "life_replenish": 1.25 }
+    }
+  },
+  {
+    "id": "crow_masks_presence",
+    "classId": "plague_doctor",
+    "name": "Crow Mask's Presence",
+    "kind": "passive",
+    "description": "Increases your life and all resistances.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Sanguine Physician",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "life": 1.25, "all_resistances": 5 },
+      "perRank": { "life": 1.25, "all_resistances": 0.5 }
+    }
+  },
+  {
+    "id": "devout_doctor",
+    "classId": "plague_doctor",
+    "name": "Devout Doctor",
+    "kind": "passive",
+    "description": "Gain physical damage based on your maximum life.",
+    "damageType": "physical",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Sanguine Physician",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "physical_damage": 1, "life_converted_to_damage": 300 },
+      "perRank": { "physical_damage": 1, "life_converted_to_damage": 60 }
+    }
+  },
+  {
+    "id": "defunct_surgeon",
+    "classId": "plague_doctor",
+    "name": "Defunct Surgeon",
+    "kind": "buff",
+    "description": "Temporarily increase your attack speed and life stolen per hit. When active lose a portion of your maximum life per second (Non-fatal).",
+    "tags": ["Cast", "Active", "Buff"],
+    "baseCastRate": 1,
+    "baseCooldown": 44.67,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Sanguine Physician",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 10 }],
+    "manaCostFormula": { "base": 10, "perLevel": 1 },
+    "passiveStats": {
+      "base": { "increased_attack_speed": 30, "life_steal": 1, "attack_rating_pct": 2 },
+      "perRank": { "increased_attack_speed": 0.5, "life_steal": 1, "attack_rating_pct": 2 }
+    }
+  },
+  {
+    "id": "toxic_flask",
+    "classId": "plague_doctor",
+    "name": "Toxic Flask",
+    "kind": "active",
+    "description": "Throw a bouncing toxic flask towards target location dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "range": 240,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Plague Caller",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7, "perLevel": 54.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Crematus", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Oops", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Plague Master", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "toxic_flask_core",
+        "positionIndex": 0,
+        "name": "Toxic Flask",
+        "description": "Core of the Toxic Flask subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "one_with_the_poison",
+        "positionIndex": 1,
+        "name": "One with the Poison",
+        "description": "Increases the maximum cast range and area of effect radius of toxic flask.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0, "area_of_effect": 0 },
+          "perRank": { "skill_range": 15, "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "harmful_vial",
+        "positionIndex": 2,
+        "name": "Harmful Vial",
+        "description": "Increases the damage dealt by toxic flask.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "modest_poison",
+        "positionIndex": 3,
+        "name": "Modest Poison",
+        "description": "Decreases the mana cost of toxic flask.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "decomposing_materia",
+        "positionIndex": 4,
+        "name": "Decomposing Materia",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "heatseeking_flask",
+        "positionIndex": 5,
+        "name": "Heatseeking Flask",
+        "description": "Toxic flasks home into the nearest monster with increased projectile speed after reaching the highest altitude.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "resistant_crystal",
+        "positionIndex": 6,
+        "name": "Resistant Crystal",
+        "description": "Increases the amount of ground bounces for toxic flask.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "apothecary",
+        "positionIndex": 7,
+        "name": "Apothecary",
+        "description": "Chance on cast to unleash an additional toxic flask.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "fake_throw",
+        "positionIndex": 8,
+        "name": "Fake Throw",
+        "description": "Chance on cast to throw an additional toxic flask high in the air falling straight down with increased area of effect radius.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "area_of_effect": 0 },
+            "perRank": { "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "agile_tosser",
+        "positionIndex": 9,
+        "name": "Agile Tosser",
+        "description": "Decreases movement diminish when using toxic flask.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "flask_flip",
+        "positionIndex": 10,
+        "name": "Flask Flip",
+        "description": "Teleport into target location when toxic flask hits the ground.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 10 }
+        }
+      },
+      {
+        "id": "plague_radiator",
+        "positionIndex": 11,
+        "name": "Plague Radiator",
+        "description": "Toxic flask emmits toxic clouds towards nearby monsters inflicting poisoned when hitting the ground.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "increased_poisoned_damage": 0 },
+          "perRank": { "projectile_count": 2, "increased_poisoned_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "toxin_vials",
+        "positionIndex": 12,
+        "name": "Toxin Vials",
+        "description": "Throw multiple small toxic flasks in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "glassblowing_technician",
+        "positionIndex": 13,
+        "name": "Glassblowing Technician",
+        "description": "Toxic flask breaks into glass shards dealing its damage as physical and ignoring all target defense.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "vial_of_alchemy",
+        "positionIndex": 14,
+        "name": "Vial of Alchemy",
+        "description": "Throwing toxic flask at yourself or an ally empowers them with toxins granting increased damage, life and damage reduction.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "poison_skill_damage": 0,
+            "increased_life": 0,
+            "all_damage_taken_reduced_pct": 0
+          },
+          "perRank": {
+            "poison_skill_damage": 10,
+            "increased_life": 15,
+            "all_damage_taken_reduced_pct": 5
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "crematus",
+    "classId": "plague_doctor",
+    "name": "Crematus",
+    "kind": "active",
+    "description": "Unleash a breath of toxic flames dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "baseCooldown": 3.44,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Plague Caller",
+    "position": { "row": 0, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 9, "perLevel": 62 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Oops", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.35, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "crematus_core",
+        "positionIndex": 0,
+        "name": "Crematus",
+        "description": "Core of the Crematus subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "gas_cilynder",
+        "positionIndex": 1,
+        "name": "Gas Cilynder",
+        "description": "Increases the duration of crematus.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 25 }
+        }
+      },
+      {
+        "id": "potent_exhaling",
+        "positionIndex": 2,
+        "name": "Potent Exhaling",
+        "description": "Increases the damage dealt by crematus.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "corrosive_burning",
+        "positionIndex": 3,
+        "name": "Corrosive Burning",
+        "description": "Chance to inflict poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "corrosive_embers",
+        "positionIndex": 4,
+        "name": "Corrosive Embers",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 25 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "trifurcate_blow",
+        "positionIndex": 5,
+        "name": "Trifurcate Blow",
+        "description": "Chance on cast to unleash two additional trails of crematus dealing a portion of the damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "toxic_dragonflight",
+        "positionIndex": 6,
+        "name": "Toxic Dragonflight",
+        "description": "Gain increased movement speed when casting crematus.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "toxiamplified_alveoli",
+        "positionIndex": 7,
+        "name": "Toxiamplified Alveoli",
+        "description": "Increases the area of effect radius of crematus.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "tachypnea",
+        "positionIndex": 8,
+        "name": "Tachypnea",
+        "description": "Decreases movement diminish when using crematus.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "engulfing_pyre",
+        "positionIndex": 9,
+        "name": "Engulfing Pyre",
+        "description": "Chance to burst the ground on flames at burning targets location on hit dealing a portion of the damage over time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          },
+          "appliesStates": ["burning"]
+        }
+      },
+      {
+        "id": "bursting_pustules",
+        "positionIndex": 10,
+        "name": "Bursting Pustules",
+        "description": "Damaging a monster with crematus inflicts a stack of pustules. At full stacks unleash a burst of poison dealing area of effect damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 12.5, "area_of_effect": 3 }
+        }
+      },
+      {
+        "id": "spiraling_cremation",
+        "positionIndex": 11,
+        "name": "Spiraling Cremation",
+        "description": "Unleash multiple swirling flames around you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "poison_skill_damage": 30, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "farflames",
+        "positionIndex": 12,
+        "name": "Farflames",
+        "description": "Increases the projectile speed, size and damage dealt by crematus.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "poison_skill_damage": 0,
+            "projectile_speed": 0,
+            "projectile_size": 0
+          },
+          "perRank": {
+            "poison_skill_damage": 40,
+            "projectile_speed": 30,
+            "projectile_size": 25
+          }
+        }
+      },
+      {
+        "id": "unstable_contamination",
+        "positionIndex": 13,
+        "name": "Unstable Contamination",
+        "description": "Activate/Deactivate to leave behind a trail of poisonous gas dealing damage over time and slowing targets. Drains mana constantly.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "poison_skill_damage": 0,
+            "mana_drain_pct": 0,
+            "projectile_size": 0
+          },
+          "perRank": {
+            "poison_skill_damage": 50,
+            "mana_drain_pct": 3.5,
+            "projectile_size": 30
+          }
+        }
+      },
+      {
+        "id": "toxin_container",
+        "positionIndex": 14,
+        "name": "Toxin Container",
+        "description": "Throw a plague container at target location unleashing crematus into all directions for a short duration. The plague container eventually explodes dealing area of effect damage and stunning nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "poison_skill_damage": 25, "skill_duration": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "plague_of_rats",
+    "classId": "plague_doctor",
+    "name": "Plague of Rats",
+    "kind": "active",
+    "description": "Send plague rats in target direction dealing poison damage on impact.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Plague Caller",
+    "position": { "row": 1, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 7.5, "perLevel": 85.5 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Exploding Mice", "stat": "poison_skill_damage", "value": 9, "per": "skill_level" },
+      { "source": "Randy the Rancid Rat", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 9, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "plague_of_rats_core",
+        "positionIndex": 0,
+        "name": "Plague of Rats",
+        "description": "Core of the Plague of Rats subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "horde_of_rats",
+        "positionIndex": 1,
+        "name": "Horde of Rats",
+        "description": "Increases the projectile amount of plague of rats.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "gnawing_rodents",
+        "positionIndex": 2,
+        "name": "Gnawing Rodents",
+        "description": "Increases the damage dealt by plague of rats.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "lab_grown_rats",
+        "positionIndex": 3,
+        "name": "Lab Grown Rats",
+        "description": "Increases the size of plague of rats.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "bite_tethering",
+        "positionIndex": 4,
+        "name": "Bite Tethering",
+        "description": "Decreases the mana cost of plague of rats.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "plague_carriers",
+        "positionIndex": 5,
+        "name": "Plague Carriers",
+        "description": "Chance for rats to explode into plagued chunks of meat dealing damage and inflicting poisoned on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 8 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "painful_bite",
+        "positionIndex": 6,
+        "name": "Painful Bite",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "rodent_handler",
+        "positionIndex": 7,
+        "name": "Rodent Handler",
+        "description": "Increases cast rate when using plague of rats.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "leptospirosis",
+        "positionIndex": 8,
+        "name": "Leptospirosis",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 30 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "nimble_trainer",
+        "positionIndex": 9,
+        "name": "Nimble Trainer",
+        "description": "Decreases movement diminish when using plague of rats.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "plaguemausers",
+        "positionIndex": 10,
+        "name": "Plaguemausers",
+        "description": "Increases the projectile speed of plague of rats.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "ratsunami",
+        "positionIndex": 11,
+        "name": "Ratsunami",
+        "description": "Summon increased amount of piercing rats bouncing off of high terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "poison_skill_damage": 0 },
+          "perRank": { "projectile_count": 4, "poison_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "rat_den",
+        "positionIndex": 12,
+        "name": "Rat Den",
+        "description": "Summon a rat den at target location constantly sending rats towards nearby monsters. Plague of rats now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "poison_skill_damage": 40, "skill_duration": 20 }
+        }
+      },
+      {
+        "id": "spreading_infestation",
+        "positionIndex": 13,
+        "name": "Spreading Infestation",
+        "description": "Increases the proc chance and poisoned damage of plague carriers. Plague carriers now additionally sends multiple piercing rats towards nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 50 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 50 } }
+          ]
+        }
+      },
+      {
+        "id": "ratpocalypse",
+        "positionIndex": 14,
+        "name": "Ratpocalypse",
+        "description": "Summon increased amount of rats in a circle around target location moving towards the center. Plague of rats now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "poison_skill_damage": 0 },
+          "perRank": { "projectile_count": 5, "poison_skill_damage": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "oops",
+    "classId": "plague_doctor",
+    "name": "Oops",
+    "kind": "passive",
+    "description": "Toxic flask also leaves a pool of poisonous substance on the ground dealing poison damage, poisoning and slowing monsters. Oops.",
+    "damageType": "poison",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Plague Caller",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "poison_damage": 4, "slow_duration": 3 },
+      "perRank": { "poison_damage": 4, "slow_duration": 0 }
+    }
+  },
+  {
+    "id": "exploding_mice",
+    "classId": "plague_doctor",
+    "name": "Exploding Mice",
+    "kind": "passive",
+    "description": "Plague of Rats explode on impact causing poison damage.",
+    "damageType": "poison",
+    "tags": ["Passive", "Explosion"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Plague Caller",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "poison_damage": 4.5 },
+      "perRank": { "poison_damage": 4.5 }
+    }
+  },
+  {
+    "id": "plague_master",
+    "classId": "plague_doctor",
+    "name": "Plague Master",
+    "kind": "active",
+    "description": "Cause all poisoned targets on target location to spread the plague and deal poison damage to monsters around them.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Chain Lightning"],
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Plague Caller",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 86 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Oops", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "plague_master_core",
+        "positionIndex": 0,
+        "name": "Plague Master",
+        "description": "Core of the Plague Master subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "plague_domain",
+        "positionIndex": 1,
+        "name": "Plague Domain",
+        "description": "Increases the area of effect radius of plague master.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "toxology",
+        "positionIndex": 2,
+        "name": "Toxology",
+        "description": "Increases the damage dealt by plague master.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "flesh_melting",
+        "positionIndex": 3,
+        "name": "Flesh Melting",
+        "description": "Chance to inflict poison break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_break": 0 },
+          "perRank": { "poison_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "poison_break", "amount": { "base": 0, "perRank": 15 } },
+            "poisoned"
+          ]
+        }
+      },
+      {
+        "id": "neverending_infection",
+        "positionIndex": 4,
+        "name": "Neverending Infection",
+        "description": "Increases the poisoned duration from plague master.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 20 }
+        }
+      },
+      {
+        "id": "crippling_poison_vial",
+        "positionIndex": 5,
+        "name": "Crippling Poison Vial",
+        "description": "Chance on hit to stun enemies.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "escalating_illness",
+        "positionIndex": 6,
+        "name": "Escalating Illness",
+        "description": "Increases the tick frequency of poisoned from plague master.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_frequency": 0 },
+          "perRank": { "increased_poisoned_frequency": 10 }
+        }
+      },
+      {
+        "id": "anemic_impact",
+        "positionIndex": 7,
+        "name": "Anemic Impact",
+        "description": "Inflicts slow on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "slow_target": 0 },
+          "perRank": { "slow_target": 12.5 }
+        }
+      },
+      {
+        "id": "boundless_agent",
+        "positionIndex": 8,
+        "name": "Boundless Agent",
+        "description": "Decreases the mana cost of plague master.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "pathogens",
+        "positionIndex": 9,
+        "name": "Pathogens",
+        "description": "Chance to summon a pool of bacteria and viruses on hit dealing damage over time.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "concussive_effect",
+        "positionIndex": 10,
+        "name": "Concussive Effect",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "stacked_bacteria",
+        "positionIndex": 11,
+        "name": "Stacked Bacteria",
+        "description": "Poisoned from plague master inflicts additional stacks of poisoned.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "max_skill_stacks": 0 },
+          "perRank": { "of_total_damage": 30, "max_skill_stacks": 2 }
+        }
+      },
+      {
+        "id": "bulbonic_plague",
+        "positionIndex": 12,
+        "name": "Bulbonic Plague",
+        "description": "Chance to inflict plague on hit causing targets to become infected inflicting damage to monsters around them.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "splash_of_total_damage": 0, "area_of_effect": 0 },
+            "perRank": { "splash_of_total_damage": 40, "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "containment_breakout",
+        "positionIndex": 13,
+        "name": "Containment Breakout",
+        "description": "Increases the damage dealt and area of effect radius of plague master significantly. Increases the cooldown of plague master.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 60, "area_of_effect": 35 }
+        }
+      },
+      {
+        "id": "raise_from_the_pestilence",
+        "positionIndex": 14,
+        "name": "Raise from the Pestilence",
+        "description": "Monsters killed by plague master spawn a toxic anomaly. Toxic anomalies seek nearby monsters exploding on hit dealing increased area of effect damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "increased_poisoned_damage": 0 },
+          "perRank": {
+            "poison_skill_damage": 100,
+            "increased_poisoned_damage": 40
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "jar_of_leeches",
+    "classId": "plague_doctor",
+    "name": "Jar of Leeches",
+    "kind": "active",
+    "description": "Throw a glass jar towards target location releasing leeches dealing poison damage on impact.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
+    "range": 240,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Plague Caller",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 70 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Plague of Rats", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Randy the Rancid Rat", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.15, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "jar_of_leeches_core",
+        "positionIndex": 0,
+        "name": "Jar of Leeches",
+        "description": "Core of the Jar of Leeches subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "leech_swarm",
+        "positionIndex": 1,
+        "name": "Leech Swarm",
+        "description": "Increases the amount of leeches spawned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "power_sucktion",
+        "positionIndex": 2,
+        "name": "Power Sucktion",
+        "description": "Increases the damage dealt by jar of leeches.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "nimble_creepers",
+        "positionIndex": 3,
+        "name": "Nimble Creepers",
+        "description": "Increases the projectile speed of jar of leeches.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "draining_the_demons",
+        "positionIndex": 4,
+        "name": "Draining the Demons",
+        "description": "Increases the damage dealt to bosses.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 10 }
+        }
+      },
+      {
+        "id": "bloody_surprise",
+        "positionIndex": 5,
+        "name": "Bloody Surprise",
+        "description": "Chance on cast to unleash an additional jar of leeches.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "overfed",
+        "positionIndex": 6,
+        "name": "Overfed",
+        "description": "Increases area of effect radius of jar of leeches.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "jar_handler",
+        "positionIndex": 7,
+        "name": "Jar Handler",
+        "description": "Increases the maximum cast range of jar of leeches.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "leaking_dents",
+        "positionIndex": 8,
+        "name": "Leaking Dents",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "call_to_ascend",
+        "positionIndex": 9,
+        "name": "Call to Ascend",
+        "description": "Consume nearby corpses adding additional leeches into the jar.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "blood_sharing",
+        "positionIndex": 10,
+        "name": "Blood Sharing",
+        "description": "Restore a portion of your maximum life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 0.5 }
+        }
+      },
+      {
+        "id": "jug_juggler",
+        "positionIndex": 11,
+        "name": "Jug Juggler",
+        "description": "Throw multiple jars in an arc dealing a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_count": 0 },
+          "perRank": { "of_total_damage": 25, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "blood_infused_leeches",
+        "positionIndex": 12,
+        "name": "Blood-infused Leeches",
+        "description": "Increases leech damage, size and area of effect radius based on your vitality. Jar of leeches consumes a portion of your maximum life per cast.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_vitality": 0, "life_drain_pct": 0 },
+          "perRank": { "conversion_vitality": 1, "life_drain_pct": 3 }
+        }
+      },
+      {
+        "id": "toxicophile_bloodsucker",
+        "positionIndex": 13,
+        "name": "Toxicophile Bloodsucker",
+        "description": "Spawn a static leech at target location. The leech pulsates dealing damage and slowly pulling monsters towards it on hit. Jar of leeches now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "poison_skill_damage": 100, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "lasting_hunger",
+        "positionIndex": 14,
+        "name": "Lasting Hunger",
+        "description": "Leeches now stick on targets for a short duration dealing increased damage over time.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "poison_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "poison_skill_damage": 25, "skill_duration": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "chant_of_weakness",
+    "classId": "plague_doctor",
+    "name": "Chant of Weakness",
+    "kind": "passive",
+    "description": "Poisoned targets take increased poison damage.",
+    "damageType": "poison",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Plague Caller",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "poison_damage": 2 },
+      "perRank": { "poison_damage": 2 }
+    }
+  },
+  {
+    "id": "randy_the_rancid_rat",
+    "classId": "plague_doctor",
+    "name": "Randy the Rancid Rat",
+    "kind": "active",
+    "description": "Summon randy the rancid rat to fight for you dealing poison damage.",
+    "damageType": "poison",
+    "tags": ["Cast", "Active", "Spell", "Summon"],
+    "baseCooldown": 10.31,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Plague Caller",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 1, "perLevel": 109 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Plague of Rats", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Jar of Leeches", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Chant of Weakness", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "poison_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "randy_the_rancid_rat_core",
+        "positionIndex": 0,
+        "name": "Randy the Rancid Rat",
+        "description": "Core of the Randy the Rancid Rat subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "vigorous_leader",
+        "positionIndex": 1,
+        "name": "Vigorous Leader",
+        "description": "Increases the life of randy the rancid rat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_life": 0 },
+          "perRank": { "summon_life": 10 }
+        }
+      },
+      {
+        "id": "enhanced_jaws",
+        "positionIndex": 2,
+        "name": "Enhanced Jaws",
+        "description": "Increases the damage of randy the rancid rat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "rat_invoker",
+        "positionIndex": 3,
+        "name": "Rat Invoker",
+        "description": "Chance on hit to unleash piercing plague rats towards the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        }
+      },
+      {
+        "id": "speed_chomps",
+        "positionIndex": 4,
+        "name": "Speed Chomps",
+        "description": "Increases the movement speed and attack speed of randy the rancid rat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0, "movement_speed": 0 },
+          "perRank": { "summon_attack_speed": 10, "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "expansive_plague_mind",
+        "positionIndex": 5,
+        "name": "Expansive Plague Mind",
+        "description": "Randy the rancid rat gains an aura inflicting monsters with poisoned.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0, "area_of_effect": 0 },
+          "perRank": { "increased_poisoned_damage": 10, "area_of_effect": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 10 } }
+          ]
+        }
+      },
+      {
+        "id": "disease_hoarder",
+        "positionIndex": 6,
+        "name": "Disease Hoarder",
+        "description": "Increases the poisoned inflicted by randy the rancid rat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_poisoned_damage": 0 },
+          "perRank": { "increased_poisoned_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "blood_transfusion",
+        "positionIndex": 7,
+        "name": "Blood Transfusion",
+        "description": "Randy the rancid rat recovers a portion of its maximum life on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "life_replenish_pct": 0 },
+          "perRank": { "life_replenish_pct": 1 }
+        }
+      },
+      {
+        "id": "armored_fur",
+        "positionIndex": 8,
+        "name": "Armored Fur",
+        "description": "Increases all resistances and damage reduction for randy the rancid rat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "all_resistances": 0, "all_damage_taken_reduced_pct": 0 },
+          "perRank": { "all_resistances": 5, "all_damage_taken_reduced_pct": 5 }
+        }
+      },
+      {
+        "id": "rage_sequence",
+        "positionIndex": 9,
+        "name": "Rage Sequence",
+        "description": "Chance to become enraged on hit increasing damage dealt and attack speed.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "poison_skill_damage": 0, "faster_cast_rate": 0 },
+            "perRank": { "poison_skill_damage": 15, "faster_cast_rate": 15 }
+          }
+        }
+      },
+      {
+        "id": "vital_division",
+        "positionIndex": 10,
+        "name": "Vital Division",
+        "description": "Redirect a portion of incoming damage to randy the rancid rat.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "poison_skill_damage": 0 },
+          "perRank": { "poison_skill_damage": 6 }
+        }
+      },
+      {
+        "id": "randy_rider",
+        "positionIndex": 11,
+        "name": "Randy Rider",
+        "description": "Mount randy the rancid rat gaining increased movement speed, jumping power and the ability to jump through high terrain. Taking damage will unmount you. Randy the rancid rat now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 35 }
+        }
+      },
+      {
+        "id": "dragorat",
+        "positionIndex": 12,
+        "name": "Dragorat",
+        "description": "Randy the rancid rat unleashes a breath of fire when attacking.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "effects": {
+            "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "poison_skill_damage": 25, "area_of_effect": 15 }
+          }
+        }
+      },
+      {
+        "id": "qa3_modified_specimen",
+        "positionIndex": 13,
+        "name": "QA3-Modified Specimen",
+        "description": "Randy the rancid rat summons additional tiny rats armed with blunderbusses dealing a portion of the damage on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "of_total_damage": 0,
+            "summon_max_amount": 0
+          },
+          "perRank": {
+            "of_total_damage": 40,
+            "summon_max_amount": 1
+          }
+        }
+      },
+      {
+        "id": "gluttony",
+        "positionIndex": 14,
+        "name": "Gluttony",
+        "description": "Increases the attack area of effect radius of randy the rancid rat whenever striking a monster stacking infinitely. Decreases the duration of randy the rancid rat.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "skill_duration": 0 },
+          "perRank": { "area_of_effect": 6, "skill_duration": -20 }
+        }
+      }
+    ]
+  }
+]

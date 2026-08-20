@@ -1,0 +1,1710 @@
+[
+  {
+    "id": "bone_fragments",
+    "classId": "demonspawn",
+    "name": "Bone Fragments",
+    "kind": "active",
+    "description": "Cast fragments of bone towards target location dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Bone Conjurer",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 14.1, "perLevel": 6.73 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Impale", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ossification", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bone_fragments_core",
+        "positionIndex": 0,
+        "name": "Bone Fragments",
+        "description": "Core of the Bone Fragments subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "heterotopic_ossification",
+        "positionIndex": 1,
+        "name": "Heterotopic Ossification",
+        "description": "Increases the amount of fragments.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "high_demon",
+        "positionIndex": 2,
+        "name": "High Demon",
+        "description": "Lowers the mana cost of bone fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "bone_frenzy",
+        "positionIndex": 3,
+        "name": "Bone Frenzy",
+        "description": "Chance on cast to increase the amount of fragments.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 2 }
+          }
+        }
+      },
+      {
+        "id": "bone_cannonade",
+        "positionIndex": 4,
+        "name": "Bone Cannonade",
+        "description": "Chance on cast to unleash additional bone fragments.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "demons_fury",
+        "positionIndex": 5,
+        "name": "Demon's Fury",
+        "description": "Increases the projectile speed of fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "blood_dipped_fragments",
+        "positionIndex": 6,
+        "name": "Blood Dipped Fragments",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "exoskeletal",
+        "positionIndex": 7,
+        "name": "Exoskeletal",
+        "description": "Chance to impale targets on hit sending them airborne dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "bloodshed",
+        "positionIndex": 8,
+        "name": "Bloodshed",
+        "description": "Unleash a nova of blood on hit if the target is bleeding.",
+        "maxRank": 7,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "arcane_skill_damage": 8, "area_of_effect": 8 }
+        }
+      },
+      {
+        "id": "witchcraft_essentials",
+        "positionIndex": 9,
+        "name": "Witchcraft Essentials",
+        "description": "Increases the damage dealt by bone fragments.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "carved_fragments",
+        "positionIndex": 10,
+        "name": "Carved Fragments",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "sharp_bonerangs",
+        "positionIndex": 11,
+        "name": "Sharp Bonerangs",
+        "description": "Bone fragments now bounce additional times on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_bounces": 0 },
+          "perRank": { "projectile_bounces": 1 }
+        }
+      },
+      {
+        "id": "demons_grip",
+        "positionIndex": 12,
+        "name": "Demon's Grip",
+        "description": "Bone fragments orbit targets on hit for a short period of time dealing additional damage to nearby monsters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "arcane_skill_damage": 35, "skill_duration": 35 }
+        }
+      },
+      {
+        "id": "bone_altar",
+        "positionIndex": 13,
+        "name": "Bone Altar",
+        "description": "Summon a bone altar at target location casting bone fragments for a short period. Bone fragments now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "skill_duration": 0 },
+          "perRank": { "arcane_skill_damage": 25, "skill_duration": 25 }
+        }
+      },
+      {
+        "id": "smart_bone",
+        "positionIndex": 14,
+        "name": "Smart Bone",
+        "description": "Fragments seek the nearest monster dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 65 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "impale",
+    "classId": "demonspawn",
+    "name": "Impale",
+    "kind": "active",
+    "description": "Summon spikes from the ground impaling monsters in a target area dealing arcane damage and knocking them up.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 260,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Bone Conjurer",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 16, "perLevel": 8 },
+    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "bonusSources": [
+      { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.25, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "impale_core",
+        "positionIndex": 0,
+        "name": "Impale",
+        "description": "Core of the Impale subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "demonic_effect",
+        "positionIndex": 1,
+        "name": "Demonic Effect",
+        "description": "Increases impale area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "warlocks_power",
+        "positionIndex": 2,
+        "name": "Warlock's Power",
+        "description": "Increases damage dealt by impale.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "sharpened_bones",
+        "positionIndex": 3,
+        "name": "Sharpened Bones",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "unseen_strike",
+        "positionIndex": 4,
+        "name": "Unseen Strike",
+        "description": "Chance to critically hit with increased critical damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "hells_ascension",
+        "positionIndex": 5,
+        "name": "Hell's Ascension",
+        "description": "Chance to unleash an additional impale on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "blood_shedding_impale",
+        "positionIndex": 6,
+        "name": "Blood Shedding Impale",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 20 }
+        }
+      },
+      {
+        "id": "bonemagi",
+        "positionIndex": 7,
+        "name": "Bonemagi",
+        "description": "Decreases the mana cost of impale.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "impaling_flames",
+        "positionIndex": 8,
+        "name": "Impaling Flames",
+        "description": "Chance to light the ground on fire on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "shattering_impale",
+        "positionIndex": 9,
+        "name": "Shattering Impale",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 22.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            {
+              "state": "arcane_break",
+              "amount": { "base": 0, "perRank": 22.5 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "spiked_fields",
+        "positionIndex": 10,
+        "name": "Spiked Fields",
+        "description": "Chance on cast to increase the area of effect radius of impale.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "area_of_effect": 0 },
+            "perRank": { "area_of_effect": 20 }
+          }
+        }
+      },
+      {
+        "id": "hunger_of_the_demon",
+        "positionIndex": 11,
+        "name": "Hunger of the Demon",
+        "description": "Unleash multiple smaller impales in an arc.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
+          "perRank": { "projectile_count": 1, "arcane_skill_damage": 25 }
+        }
+      },
+      {
+        "id": "elemental_bone_magister",
+        "positionIndex": 12,
+        "name": "Elemental Bone Magister",
+        "description": "Impale inflicts stasis, bleeding and burning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_bleeding_damage": 0,
+            "increased_burning_damage": 0,
+            "increased_stasis_damage": 0
+          },
+          "perRank": {
+            "increased_bleeding_damage": 30,
+            "increased_burning_damage": 30,
+            "increased_stasis_damage": 30
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } },
+            { "state": "burning", "amount": { "base": 0, "perRank": 30 } },
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "via_dolorosa",
+        "positionIndex": 13,
+        "name": "Via Dolorosa",
+        "description": "Impale now travels forward in a pathway increasing in size and damage until reaching its end stunning monsters it hits.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "arcane_skill_damage": 0,
+            "area_of_effect": 0,
+            "projectile_count": 0
+          },
+          "perRank": {
+            "arcane_skill_damage": 15,
+            "area_of_effect": 5,
+            "projectile_count": 3
+          }
+        }
+      },
+      {
+        "id": "spear_of_amaymon",
+        "positionIndex": 14,
+        "name": "Spear of Amaymon",
+        "description": "Impale becomes a piercing bone projectile you throw. Each enemy it catches is impaled and travels along with the projectile until it hits terrain stunning attached enemies.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 75 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "bone_storm",
+    "classId": "demonspawn",
+    "name": "Bone Storm",
+    "kind": "active",
+    "description": "Summon a storm of bone and cartilage surrounding you dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Orbital"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "effectDuration": 8,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Bone Conjurer",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 18 }],
+    "damageFormula": { "base": 0.6, "perLevel": 6.7 },
+    "manaCostFormula": { "base": 18, "perLevel": 2.48 },
+    "bonusSources": [
+      { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Spinal Tap", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.75, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bone_storm_core",
+        "positionIndex": 0,
+        "name": "Bone Storm",
+        "description": "Core of the Bone Storm subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "forming_storm",
+        "positionIndex": 1,
+        "name": "Forming Storm",
+        "description": "Increases the amount of bone projectiles.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0, "area_of_effect": 0 },
+          "perRank": { "projectile_count": 5, "area_of_effect": 5 }
+        }
+      },
+      {
+        "id": "razor_sharp",
+        "positionIndex": 2,
+        "name": "Razor Sharp",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "demonic_winds",
+        "positionIndex": 3,
+        "name": "Demonic Winds",
+        "description": "Increases the speed of bone projectiles.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "sacrificial_lambs",
+        "positionIndex": 4,
+        "name": "Sacrificial Lambs",
+        "description": "Increases damage to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "demons_eye_of_storm",
+        "positionIndex": 5,
+        "name": "Demon´s Eye of Storm",
+        "description": "Increases damage dealt by bone storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "infiltrate_their_core",
+        "positionIndex": 6,
+        "name": "Infiltrate their Core",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "devils_favourite",
+        "positionIndex": 7,
+        "name": "Devils Favourite",
+        "description": "Chance to knock monsters back on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 30 }
+          }
+        }
+      },
+      {
+        "id": "spontanious_dislocation",
+        "positionIndex": 8,
+        "name": "Spontanious Dislocation",
+        "description": "Bone Storm has a chance on hit to summon additional Bone Fragments in random directions.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 50 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "storm_influx",
+        "positionIndex": 9,
+        "name": "Storm Influx",
+        "description": "Decreases the cooldown of bone storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 5 }
+        }
+      },
+      {
+        "id": "devils_diversion",
+        "positionIndex": 10,
+        "name": "Devils Diversion",
+        "description": "Gain increased chance to dodge attacks for a short period when casting bone storm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "dodge_chance": 0 },
+          "perRank": { "dodge_chance": 15 }
+        }
+      },
+      {
+        "id": "cycloning_bones",
+        "positionIndex": 11,
+        "name": "Cycloning Bones",
+        "description": "Chance to summon a small cyclone of bones on hit.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 6 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 36 }
+          }
+        }
+      },
+      {
+        "id": "bone_tornado",
+        "positionIndex": 12,
+        "name": "Bone Tornado",
+        "description": "Unleash a bone tornado towards target location with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "arcane_skill_damage": 50, "projectile_count": 8 }
+        }
+      },
+      {
+        "id": "everlasting_storm",
+        "positionIndex": 13,
+        "name": "Everlasting Storm",
+        "description": "Bone storm no longer expires but it only deals a portion of its damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": -30 }
+        }
+      },
+      {
+        "id": "bone_devils",
+        "positionIndex": 14,
+        "name": "Bone Devils",
+        "description": "Summons small bone devils at target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 45 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "ossification",
+    "classId": "demonspawn",
+    "name": "Ossification",
+    "kind": "passive",
+    "description": "Increases your defense and gives you a burst of movement speed after killing a monster.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Bone Conjurer",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "enhanced_defense": 2.5, "movement_speed": 2 },
+      "perRank": { "enhanced_defense": 2.5, "movement_speed": 2 }
+    }
+  },
+  {
+    "id": "cartilage_build_up",
+    "classId": "demonspawn",
+    "name": "Cartilage Build Up",
+    "kind": "passive",
+    "description": "When damaged by cartilage and bone monsters are stacked up and at 10 stacks they explode spreading bone and cartilage around them dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Passive", "Explosion"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Bone Conjurer",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.4, "perLevel": 30.25 },
+    "proc": { "chance": 25, "trigger": "on_hit", "target": "Cartilage Build Up" },
+    "bonusSources": [
+      { "source": "Impale", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Single Out", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Ossification", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "single_out",
+    "classId": "demonspawn",
+    "name": "Single Out",
+    "kind": "passive",
+    "description": "Monsters that have no other monsters around them take increased arcane damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Bone Conjurer",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2 },
+      "perRank": { "arcane_skill_damage": 2 }
+    }
+  },
+  {
+    "id": "spinal_tap",
+    "classId": "demonspawn",
+    "name": "Spinal Tap",
+    "kind": "active",
+    "description": "Rip the spine out of monsters at target location dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Area of Effect"],
+    "movementDuringUse": 65,
+    "range": 240,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Bone Conjurer",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.4, "perLevel": 20.65 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Impale", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "spinal_tap_core",
+        "positionIndex": 0,
+        "name": "Spinal Tap",
+        "description": "Core of the Spinal Tap subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "inevitable_carnage",
+        "positionIndex": 1,
+        "name": "Inevitable Carnage",
+        "description": "Increases spinal tap's area of effect radius.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "hells_reach",
+        "positionIndex": 2,
+        "name": "Hell's Reach",
+        "description": "Increases the maximum cast range of spinal tap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 20 }
+        }
+      },
+      {
+        "id": "vampiric_tendencies",
+        "positionIndex": 3,
+        "name": "Vampiric Tendencies",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 10 }
+        }
+      },
+      {
+        "id": "bringer_of_pain",
+        "positionIndex": 4,
+        "name": "Bringer of Pain",
+        "description": "Chance to unleash an additional spinal tap.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "increase_in_suffering",
+        "positionIndex": 5,
+        "name": "Increase in Suffering",
+        "description": "Increases damage dealt by spinal tap.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "restoring_agony",
+        "positionIndex": 6,
+        "name": "Restoring Agony",
+        "description": "Chance to replenish a portion of your maximum mana on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 1 },
+          "effects": {
+            "base": { "mana_replenish_pct": 0 },
+            "perRank": { "mana_replenish_pct": 1 }
+          }
+        }
+      },
+      {
+        "id": "additive_curse",
+        "positionIndex": 7,
+        "name": "Additive Curse",
+        "description": "Increases the maximum stacks of cartilage build up.",
+        "maxRank": 6,
+        "effects": {
+          "base": { "max_skill_stacks": 0 },
+          "perRank": { "max_skill_stacks": 1 }
+        }
+      },
+      {
+        "id": "demonic_grip",
+        "positionIndex": 8,
+        "name": "Demonic Grip",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      },
+      {
+        "id": "spinal_explosion",
+        "positionIndex": 9,
+        "name": "Spinal Explosion",
+        "description": "Spines ripped from monsters have a chance to explode dealing additional damage.",
+        "maxRank": 8,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "violent_rip",
+        "positionIndex": 10,
+        "name": "Violent Rip",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+          ]
+        }
+      },
+      {
+        "id": "blood_and_gore",
+        "positionIndex": 11,
+        "name": "Blood and Gore",
+        "description": "Spinal tap executes enemies below a threshold of life causing them to explode with increased area of effect radius dealing increased damage.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "execute_below": 0 },
+          "perRank": { "arcane_skill_damage": 25, "execute_below": 2.5 }
+        }
+      },
+      {
+        "id": "internal_bleeding",
+        "positionIndex": 12,
+        "name": "Internal Bleeding",
+        "description": "Spinal tap inflicts increased bleeding on hit. If the target is already bleeding, increase the tick frequency of existing bleed until it consumes the bleeding dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_bleeding_damage": 0,
+            "increased_bleeding_frequency": 0
+          },
+          "perRank": {
+            "increased_bleeding_damage": 32,
+            "increased_bleeding_frequency": 8
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 32 } }
+          ]
+        }
+      },
+      {
+        "id": "eternal_suffering",
+        "positionIndex": 13,
+        "name": "Eternal Suffering",
+        "description": "Conjure piercing bone spikes flying towards targets on hit dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 55 }
+        }
+      },
+      {
+        "id": "healing_torture",
+        "positionIndex": 14,
+        "name": "Healing Torture",
+        "description": "Increases the area of effect radius of spinal tap healing you for a portion of your maximum life per hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0, "life_replenish_pct": 0 },
+          "perRank": { "area_of_effect": 33, "life_replenish_pct": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "ominous_presence",
+    "classId": "demonspawn",
+    "name": "Ominous Presence",
+    "kind": "aura",
+    "description": "When active, increases your and your party members arcane skill damage.",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Bone Conjurer",
+    "position": { "row": 3, "col": 2 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2 },
+      "perRank": { "arcane_skill_damage": 2 }
+    }
+  },
+  {
+    "id": "bone_barrage",
+    "classId": "demonspawn",
+    "name": "Bone Barrage",
+    "kind": "active",
+    "description": "Unleash a barrage of bones in target direction dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "baseCooldown": 6,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Bone Conjurer",
+    "position": { "row": 4, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.5, "perLevel": 19.37 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Single Out", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "bone_barrage_core",
+        "positionIndex": 0,
+        "name": "Bone Barrage",
+        "description": "Core of the Bone Barrage subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "bonemarrow",
+        "positionIndex": 1,
+        "name": "Bonemarrow",
+        "description": "Decreases the cooldown of bone barrage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 5 }
+        }
+      },
+      {
+        "id": "skeletal_stock",
+        "positionIndex": 2,
+        "name": "Skeletal Stock",
+        "description": "Increases the amount of bone spikes.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 3 }
+        }
+      },
+      {
+        "id": "bone_growth",
+        "positionIndex": 3,
+        "name": "Bone Growth",
+        "description": "Increases the size of bone spikes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "swift_bone",
+        "positionIndex": 4,
+        "name": "Swift Bone",
+        "description": "Increases the projectile speed of bone spikes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "hard_as_steel",
+        "positionIndex": 5,
+        "name": "Hard as Steel",
+        "description": "Increases the damage dealt by bone spikes.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "rib_crack",
+        "positionIndex": 6,
+        "name": "Rib Crack",
+        "description": "Chance to inflict stun on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "explosive_density",
+        "positionIndex": 7,
+        "name": "Explosive Density",
+        "description": "Chance on hit to unleash a bloody explosion dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 25 }
+          }
+        }
+      },
+      {
+        "id": "flexible_bonestructure",
+        "positionIndex": 8,
+        "name": "Flexible Bonestructure",
+        "description": "Bone spikes bounce from terrain dealing increased damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "bone_pong",
+        "positionIndex": 9,
+        "name": "Bone Pong",
+        "description": "Chance to chain between multiple monsters on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
+            "perRank": { "arcane_skill_damage": 15, "projectile_bounces": 2 }
+          }
+        }
+      },
+      {
+        "id": "skeletal_impact",
+        "positionIndex": 10,
+        "name": "Skeletal Impact",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 10 }
+        }
+      },
+      {
+        "id": "nova_of_bones",
+        "positionIndex": 11,
+        "name": "Nova of Bones",
+        "description": "Unleash all the projectiles around you in a circle. Bone barrage no longer has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "projectile_speed": 0 },
+          "perRank": { "of_total_damage": 35, "projectile_speed": 10 }
+        }
+      },
+      {
+        "id": "master_of_boneology",
+        "positionIndex": 12,
+        "name": "Master of Boneology",
+        "description": "Bone spikes start homing towards nearest monsters briefly after casting dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0 },
+          "perRank": { "of_total_damage": 50 }
+        }
+      },
+      {
+        "id": "hell_on_earth",
+        "positionIndex": 13,
+        "name": "Hell on Earth",
+        "description": "Bone spikes now rain from the sky on enemies around you causing the spikes to fragment when hitting the ground launching small fragments around the point of impact.",
+        "maxRank": 4,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "barraging_boneswirl",
+        "positionIndex": 14,
+        "name": "Barraging Boneswirl",
+        "description": "Bone spikes now spiral outwards from you with increased speed.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0, "projectile_count": 0 },
+          "perRank": { "projectile_speed": 40, "projectile_count": 3 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "blood_bolts",
+    "classId": "demonspawn",
+    "name": "Blood Bolts",
+    "kind": "active",
+    "description": "Unleash bolts of blood towards target location dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell", "Projectile"],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Blood Lord",
+    "position": { "row": 0, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 14.1, "perLevel": 6.75 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Single Out", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
+      { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Blood Demons", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.8, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "blood_bolts_core",
+        "positionIndex": 0,
+        "name": "Blood Bolts",
+        "description": "Core of the Blood Bolts subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "adrenaline_secretion",
+        "positionIndex": 1,
+        "name": "Adrenaline Secretion",
+        "description": "Increases the projectile speed of blood bolts.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "volume_increase",
+        "positionIndex": 2,
+        "name": "Volume Increase",
+        "description": "Increases the size of blood bolts.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "hemophilia",
+        "positionIndex": 3,
+        "name": "Hemophilia",
+        "description": "Chance to inflict bleeding on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "demonic_formula",
+        "positionIndex": 4,
+        "name": "Demonic Formula",
+        "description": "Chance for blood bolts to become piercing and to continue traveling forward after hitting a monster.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "leukocytes",
+        "positionIndex": 5,
+        "name": "Leukocytes",
+        "description": "Increases damage dealt by blood bolts.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "advanced_metabolism",
+        "positionIndex": 6,
+        "name": "Advanced Metabolism",
+        "description": "Blood bolts start homing towards the nearest target briefly after being casted.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 4 }
+        }
+      },
+      {
+        "id": "demon_master",
+        "positionIndex": 7,
+        "name": "Demon Master",
+        "description": "Increases the damage of blood demons spawned by blood bolts.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "high_hemoglobin",
+        "positionIndex": 8,
+        "name": "High Hemoglobin",
+        "description": "Increases the amount of blood bolts.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "arterial_blood",
+        "positionIndex": 9,
+        "name": "Arterial Blood",
+        "description": "Decreases the mana cost of blood bolts.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "thrombus",
+        "positionIndex": 10,
+        "name": "Thrombus",
+        "description": "Chance on hit to knock enemies back with force dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 15 }
+          }
+        }
+      },
+      {
+        "id": "demon_sentry",
+        "positionIndex": 11,
+        "name": "Demon Sentry",
+        "description": "Summon a following blood demon unleashing blood bolts to nearby monsters with increased blood bolt amount and attack speed.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "summon_max_amount": 1,
+            "summon_attack_speed": 0
+          },
+          "perRank": {
+            "summon_max_amount": 1,
+            "summon_attack_speed": 30
+          }
+        }
+      },
+      {
+        "id": "bloodshed",
+        "positionIndex": 12,
+        "name": "Bloodshed",
+        "description": "Unleash a blood bolt towards each nearby monster draining your life for each target dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "life_drain_pct": 0 },
+          "perRank": { "arcane_skill_damage": 75, "life_drain_pct": 0.5 }
+        }
+      },
+      {
+        "id": "mark_of_the_demon",
+        "positionIndex": 13,
+        "name": "Mark of the Demon",
+        "description": "Conjure a pool of blood on target location. Unleash blood bolts towards monsters in the blood pool.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "wave_of_blood",
+        "positionIndex": 14,
+        "name": "Wave of Blood",
+        "description": "Unleash a wave of blood leaving a trail of blood behind it. Any player touching the trail gains increased movement speed, faster cast rate and increased arcane skill damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "faster_cast_rate": 0,
+            "movement_speed": 0,
+            "arcane_skill_damage": 0
+          },
+          "perRank": {
+            "faster_cast_rate": 6,
+            "movement_speed": 15,
+            "arcane_skill_damage": 15
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "manapool_aura",
+    "classId": "demonspawn",
+    "name": "Manapool Aura",
+    "kind": "aura",
+    "description": "When active, increases your and your party members mana replenish.",
+    "tags": ["Cast", "Active", "Aura"],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Blood Lord",
+    "position": { "row": 0, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "mana_replenish_pct": 20 },
+      "perRank": { "mana_replenish_pct": 4 }
+    }
+  },
+  {
+    "id": "gut_spread",
+    "classId": "demonspawn",
+    "name": "Gut Spread",
+    "kind": "passive",
+    "description": "Every 6th cast causes your intestines to boil and burst lumps of blood around you dealing a portion of blood bolts damage as arcane damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Blood Lord",
+    "position": { "row": 1, "col": 0 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "of_total_damage": 5 },
+      "perRank": { "of_total_damage": 5 }
+    }
+  },
+  {
+    "id": "mana_shield",
+    "classId": "demonspawn",
+    "name": "Mana Shield",
+    "kind": "buff",
+    "description": "When active, create a mana shield around you that reduces physical damage taken and absorbs a portion of damage taken as mana.",
+    "tags": ["Cast", "Active", "Buff"],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "effectDuration": 5,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Blood Lord",
+    "position": { "row": 1, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "passiveStats": {
+      "base": { "magic_damage_reduction": 1, "damage_recouped_as_mana": 12 },
+      "perRank": { "magic_damage_reduction": 0.5, "damage_recouped_as_mana": 2 }
+    }
+  },
+  {
+    "id": "demonic_presence",
+    "classId": "demonspawn",
+    "name": "Demonic Presence",
+    "kind": "passive",
+    "description": "Increases your arcane skill damage.",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Blood Lord",
+    "position": { "row": 2, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "arcane_skill_damage": 2 },
+      "perRank": { "arcane_skill_damage": 2 }
+    }
+  },
+  {
+    "id": "mana_devour",
+    "classId": "demonspawn",
+    "name": "Mana Devour",
+    "kind": "active",
+    "description": "Instantly restores a portion of your mana.",
+    "tags": ["Cast", "Active"],
+    "movementDuringUse": 85,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Blood Lord",
+    "position": { "row": 2, "col": 2 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "passiveStats": {
+      "base": { "mana_replenish_pct": 5 },
+      "perRank": { "mana_replenish_pct": 2 }
+    }
+  },
+  {
+    "id": "blood_surge",
+    "classId": "demonspawn",
+    "name": "Blood Surge",
+    "kind": "active",
+    "description": "Channel a massive surge of blood towards target direction dealing arcane damage to enemies in its path.",
+    "damageType": "arcane",
+    "tags": ["Cast", "Active", "Spell"],
+    "movementDuringUse": 65,
+    "range": 2000,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Blood Lord",
+    "position": { "row": 3, "col": 0 },
+    "ranks": [{ "rank": 1, "manaCost": 5 }],
+    "damageFormula": { "base": 0.4, "perLevel": 8.4 },
+    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "bonusSources": [
+      { "source": "Blood Bolts", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Blood Demons", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.66, "per": "attribute_point" }
+    ],
+    "subskills": [
+      {
+        "id": "blood_surge_core",
+        "positionIndex": 0,
+        "name": "Blood Surge",
+        "description": "Core of the Blood Surge subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "corrosive_blood",
+        "positionIndex": 1,
+        "name": "Corrosive Blood",
+        "description": "Increases the damage dealt by blood surge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "wide_veins",
+        "positionIndex": 2,
+        "name": "Wide Veins",
+        "description": "Increases the area of effect radius of blood surge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "white_blood_cells",
+        "positionIndex": 3,
+        "name": "White Blood Cells",
+        "description": "Increases the duration of blood surge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_duration": 0 },
+          "perRank": { "skill_duration": 10 }
+        }
+      },
+      {
+        "id": "increased_plasma",
+        "positionIndex": 4,
+        "name": "Increased Plasma",
+        "description": "Decreases the mana cost of blood surge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "mana_cost_reduction": 0 },
+          "perRank": { "mana_cost_reduction": 7 }
+        }
+      },
+      {
+        "id": "blood_fervor",
+        "positionIndex": 5,
+        "name": "Blood Fervor",
+        "description": "Chance to inflict burning on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 35 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "immune_deficiency",
+        "positionIndex": 6,
+        "name": "Immune Deficiency",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 8,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 10 }
+        }
+      },
+      {
+        "id": "asphyxiating_vessels",
+        "positionIndex": 7,
+        "name": "Asphyxiating Vessels",
+        "description": "Chance to inflict arcane break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "arcane_break": 0 },
+          "perRank": { "arcane_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "demon_wings",
+        "positionIndex": 8,
+        "name": "Demon Wings",
+        "description": "Decreases movement diminish when using blood surge.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "vein_pressure",
+        "positionIndex": 9,
+        "name": "Vein Pressure",
+        "description": "Chance to unleash a critical strike with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 25 }
+        }
+      },
+      {
+        "id": "rays_of_blood",
+        "positionIndex": 10,
+        "name": "Rays of Blood",
+        "description": "Chance on hit to unleash additional surges of blood to directions around the target on hit.",
+        "maxRank": 2,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 2 }
+          }
+        }
+      },
+      {
+        "id": "hematopoiesis",
+        "positionIndex": 11,
+        "name": "Hematopoiesis",
+        "description": "Increases the tick frequency of blood surge.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
+          "perRank": { "faster_cast_rate": 20, "arcane_skill_damage": 15 }
+        }
+      },
+      {
+        "id": "channeling_surge",
+        "positionIndex": 12,
+        "name": "Channeling Surge",
+        "description": "Blood surge deals increased damage and no longer expires until you run out of mana or cast blood surge again.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "increased_mana": 0 },
+          "perRank": { "arcane_skill_damage": 40, "increased_mana": 7 }
+        }
+      },
+      {
+        "id": "blood_line",
+        "positionIndex": 13,
+        "name": "Blood Line",
+        "description": "Unleash two surges of blood curving to your sides before expiring.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0 },
+          "perRank": { "arcane_skill_damage": 45 }
+        }
+      },
+      {
+        "id": "unlimited_power",
+        "positionIndex": 14,
+        "name": "Unlimited Power",
+        "description": "Conjure an orb of blood unleashing surges of blood towards targets on hit. Blood surge now has a cooldown.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "arcane_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "arcane_skill_damage": 30, "faster_cast_rate": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "blood_demons",
+    "classId": "demonspawn",
+    "name": "Blood Demons",
+    "kind": "passive",
+    "description": "Chance on spellcast to summon a blood demon towards the closest monster dealing arcane damage.",
+    "damageType": "arcane",
+    "tags": ["Passive"],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Blood Lord",
+    "position": { "row": 3, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "damageFormula": { "base": 0.4, "perLevel": 17.57 },
+    "proc": { "chance": 40, "trigger": "on_cast", "target": "Blood Demon" },
+    "bonusSources": [
+      { "source": "Blood Surge", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
+      { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Blood Bolts", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.6, "per": "attribute_point" }
+    ]
+  },
+  {
+    "id": "blood_tendrils",
+    "classId": "demonspawn",
+    "name": "Blood Tendrils",
+    "kind": "passive",
+    "description": "Blood surge now causes its target to release blood tendrils for a portion of its damage.",
+    "tags": ["Passive", "Chain Lightning"],
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Blood Lord",
+    "position": { "row": 4, "col": 1 },
+    "ranks": [{ "rank": 1 }],
+    "passiveStats": {
+      "base": { "of_total_damage": 15 },
+      "perRank": { "of_total_damage": 3 }
+    }
+  }
+]

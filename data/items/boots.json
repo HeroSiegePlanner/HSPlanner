@@ -1,0 +1,2974 @@
+[
+  {
+    "id": "boots_normal_boots",
+    "name": "Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_heavy_boots",
+    "name": "Heavy Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_chain_boots",
+    "name": "Chain Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_light_plated_boots",
+    "name": "Light Plated Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_greaves",
+    "name": "Greaves",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_devilhide_boots",
+    "name": "Devilhide Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_battle_boots",
+    "name": "Battle Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_mesh_boots",
+    "name": "Mesh Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_viperskin_boots",
+    "name": "Viperskin Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_war_boots",
+    "name": "War Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_wyrmhide_boots",
+    "name": "Wyrmhide Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_crusader_marchers",
+    "name": "Crusader Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_boneweave_boots",
+    "name": "Boneweave Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_scarabshell_boots",
+    "name": "Scarabshell Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_normal_demonplate_boots",
+    "name": "Demonplate Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "common",
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "sockets": 0,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_heroic_deserts_storm",
+    "name": "Desert's Storm",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        130,
+        160
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        65,
+        85
+      ],
+      "increased_attack_speed": [
+        20,
+        30
+      ],
+      "magic_skill_damage": [
+        20,
+        35
+      ],
+      "extra_guardian_chance": [
+        10,
+        15
+      ],
+      "summon_attack_radius": [
+        50,
+        75
+      ],
+      "guardian_additional_attack": [
+        10,
+        15
+      ],
+      "guardian_attack_range": [
+        50,
+        75
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 2,
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
+  },
+  {
+    "id": "boots_heroic_fumacinha_s_favela_flipflop",
+    "name": "Fumacinha's Favela Flipflop",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 97,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        110,
+        150
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        75
+      ],
+      "jumping_power": [
+        50,
+        75
+      ],
+      "faster_hit_recovery": 50,
+      "reduced_movement_diminish": [
+        25,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ],
+    "skillBonuses": {
+      "Sand Gush": [
+        8,
+        12
+      ],
+      "Sand Vortex": [
+        6,
+        12
+      ],
+      "Sand Entombment": [
+        6,
+        12
+      ]
+    }
+  },
+  {
+    "id": "boots_heroic_pearlescent_dream",
+    "name": "Pearlescent Dream",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 97,
+    "defenseMin": 82,
+    "defenseMax": 114,
+    "implicit": {
+      "enhanced_defense": [
+        310,
+        350
+      ],
+      "movement_speed": [
+        60,
+        85
+      ],
+      "jumping_power": [
+        40,
+        50
+      ],
+      "to_energy": [
+        35,
+        50
+      ],
+      "magic_skill_damage": [
+        27,
+        40
+      ],
+      "faster_hit_recovery": 75,
+      "all_resistances": [
+        25,
+        40
+      ],
+      "magic_find": [
+        25,
+        40
+      ]
+    },
+    "skillBonuses": {
+      "Holy Aura": [
+        20,
+        30
+      ]
+    }
+  },
+  {
+    "id": "boots_heroic_steampowered_flamewalkers",
+    "name": "Steampowered Flamewalkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "defenseMin": 82,
+    "defenseMax": 100,
+    "implicit": {
+      "enhanced_defense": [
+        220,
+        250
+      ],
+      "movement_speed": [
+        60,
+        85
+      ],
+      "crit_chance": [
+        15,
+        25
+      ],
+      "crit_damage": [
+        35,
+        60
+      ],
+      "to_dexterity": 20,
+      "all_attributes": [
+        10,
+        20
+      ],
+      "faster_hit_recovery": 40,
+      "defense_vs_missiles": [
+        50,
+        150
+      ],
+      "light_radius": 5,
+      "fire_resistance": [
+        40,
+        75
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 7,
+        "description": "cast Blazing Trail Level 49",
+        "details": "Leave behind a trail of fire dealing fire damage to monsters."
+      }
+    ],
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
+  },
+  {
+    "id": "boots_heroic_wind_walker_s_step",
+    "name": "Wind Walker's Step",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 99,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        130,
+        160
+      ],
+      "movement_speed": [
+        80,
+        100
+      ],
+      "jumping_power": 100,
+      "all_attributes": [
+        12,
+        20
+      ],
+      "magic_skill_damage": 25,
+      "faster_hit_recovery": [
+        50,
+        75
+      ],
+      "defense_vs_missiles": [
+        25,
+        40
+      ]
+    },
+    "uniqueEffects": [
+      "Movement Phasing",
+      "Double Jump"
+    ]
+  },
+  {
+    "id": "boots_heroic_chaoswalkers",
+    "name": "Chaoswalkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "movement_speed": [
+        65,
+        80
+      ],
+      "extra_damage_ailments": [
+        15,
+        25
+      ],
+      "all_attributes": 40,
+      "magic_skill_damage": [
+        30,
+        40
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_adamant_roamers",
+    "name": "Adamant Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 180,
+    "defenseMax": 260,
+    "implicit": {
+      "enhanced_defense": [
+        200,
+        250
+      ],
+      "all_skills": 4,
+      "movement_speed": [
+        50,
+        65
+      ],
+      "to_armor": [
+        50,
+        75
+      ],
+      "increased_armor": [
+        4,
+        8
+      ],
+      "faster_hit_recovery": 75,
+      "all_damage_taken_reduced_pct": [
+        8,
+        16
+      ],
+      "all_resistances": 25
+    },
+    "sockets": 4,
+    "maxSockets": 4
+  },
+  {
+    "id": "boots_heroic_astral_roamers",
+    "name": "Astral Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_arcane_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_shadow_burning": [
+        15,
+        25
+      ],
+      "arcane_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_brutal_roamers",
+    "name": "Brutal Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "physical_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "additive_physical_damage": [
+        32,
+        60
+      ],
+      "extra_damage_bleeding": [
+        15,
+        25
+      ],
+      "attack_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_chilling_roamers",
+    "name": "Chilling Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "cold_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_cold_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_frost_bitten": [
+        15,
+        25
+      ],
+      "cold_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_grimbone_s_marchers",
+    "name": "Grimbone's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 82,
+    "defenseMax": 100,
+    "implicit": {
+      "enhanced_defense": [
+        220,
+        250
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "movement_speed": [
+        25,
+        50
+      ],
+      "skill_haste": [
+        15,
+        25
+      ],
+      "sentry_attack_speed": [
+        10,
+        25
+      ],
+      "sentry_damage": [
+        25,
+        40
+      ],
+      "faster_hit_recovery": 100,
+      "cooldown_recovery": [
+        15,
+        25
+      ],
+      "sentry_skills": [
+        2,
+        3
+      ],
+      "sentry_max_amount": 1
+    },
+    "sockets": 2,
+    "maxSockets": 3,
+    "uniqueEffects": [
+      "Cannot be Frozen"
+    ]
+  },
+  {
+    "id": "boots_heroic_rift_vectors",
+    "name": "Rift Vectors",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "movement_speed": [
+        45,
+        75
+      ],
+      "faster_cast_rate": [
+        15,
+        30
+      ],
+      "increased_attack_speed": [
+        15,
+        30
+      ],
+      "all_attributes": [
+        20,
+        30
+      ]
+    },
+    "sockets": 3,
+    "maxSockets": 3,
+    "skillBonuses": {
+      "Teleport": 1
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
+  },
+  {
+    "id": "boots_heroic_scorching_roamers",
+    "name": "Scorching Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "fire_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_fire_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_burning": [
+        15,
+        25
+      ],
+      "fire_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_soulflaming_marchers",
+    "name": "Soulflaming Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        120,
+        150
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "faster_hit_recovery": 50
+    },
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy"
+  },
+  {
+    "id": "boots_heroic_stranded_boot",
+    "name": "Stranded Boot",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 100,
+    "defenseMax": 110,
+    "implicit": {
+      "enhanced_defense": [
+        200,
+        240
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "cold_skills": [
+        6,
+        8
+      ],
+      "movement_speed": [
+        100,
+        110
+      ],
+      "flat_cold_skill_damage": [
+        22,
+        44
+      ],
+      "faster_hit_recovery": 75,
+      "all_resistances": 18
+    },
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 4,
+        "description": "cast Set Sail Level 30",
+        "details": "Temporarily increases your cold skill damage and mana replenish.       "
+      },
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Anchor Swing",
+        "details": "Unleash a massive anchor swinging around you dealing cold damage."
+      }
+    ],
+    "skillBonuses": {
+      "Lost at Sea": 1,
+      "Walson's Aid": [
+        1,
+        5
+      ]
+    },
+    "uniqueEffects": [
+      "Cannot be Frozen"
+    ]
+  },
+  {
+    "id": "boots_heroic_thunder_roamers",
+    "name": "Thunder Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "lightning_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_lightning_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_stasis": [
+        15,
+        25
+      ],
+      "lightning_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_heroic_venom_roamers",
+    "name": "Venom Roamers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 3,
+      "poison_skills": [
+        3,
+        5
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "flat_poison_skill_damage": [
+        32,
+        60
+      ],
+      "extra_damage_poisoned": [
+        15,
+        25
+      ],
+      "poison_skill_damage": [
+        22,
+        30
+      ],
+      "faster_hit_recovery": 75
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_satanic_aetherflow_treads",
+    "name": "Aetherflow Treads",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 8,
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "implicit": {
+      "enhanced_defense": [
+        15,
+        30
+      ],
+      "movement_speed": [
+        10,
+        25
+      ],
+      "lightning_skill_damage": [
+        8,
+        15
+      ],
+      "life": [
+        50,
+        75
+      ],
+      "faster_hit_recovery": 25,
+      "lightning_resistance": [
+        15,
+        25
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "boots_satanic_arc_s_walkers",
+    "name": "Arc's Walkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 1,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        75,
+        100
+      ],
+      "movement_speed": [
+        30,
+        50
+      ],
+      "mana_based_on_level": 175,
+      "life_based_on_level": 300,
+      "attack_rating_based_on_level": 500,
+      "increased_experience_gain_below_100": [
+        25,
+        50
+      ],
+      "defense_based_on_level": 50
+    },
+    "setId": "arc_s_blessed_faith"
+  },
+  {
+    "id": "boots_satanic_arch_wizard_s_silk_boots",
+    "name": "Arch Wizard's Silk Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 62,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "all_skills": 1,
+      "movement_speed": [
+        20,
+        35
+      ],
+      "to_energy": [
+        10,
+        20
+      ],
+      "to_intelligence": 10,
+      "all_resistances": 15
+    }
+  },
+  {
+    "id": "boots_satanic_arena_master_s_marchers",
+    "name": "Arena Master's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 89,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        90,
+        130
+      ],
+      "physical_skills": [
+        1,
+        2
+      ],
+      "movement_speed": 55,
+      "increased_attack_speed": [
+        12,
+        20
+      ],
+      "crushing_blow_chance": [
+        5,
+        10
+      ],
+      "additive_physical_damage": [
+        18,
+        38
+      ],
+      "to_dexterity": 15
+    }
+  },
+  {
+    "id": "boots_satanic_battle_worn_boots",
+    "name": "Battle Worn Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 75,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        100,
+        140
+      ],
+      "movement_speed": 30,
+      "deadly_blow": [
+        8,
+        15
+      ],
+      "attack_rating": [
+        65,
+        80
+      ],
+      "to_dexterity": [
+        25,
+        40
+      ],
+      "to_vitality": 25
+    },
+    "setId": "battle_worn"
+  },
+  {
+    "id": "boots_satanic_blood_letter_s_plated_boots",
+    "name": "Blood-letter's Plated Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 57,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "extra_damage_bleeding": [
+        8,
+        20
+      ],
+      "to_vitality": [
+        15,
+        20
+      ],
+      "life_per_kill": [
+        4,
+        8
+      ]
+    },
+    "setId": "blood_letter_s_armament"
+  },
+  {
+    "id": "boots_satanic_bone_conjurer_s_marchers",
+    "name": "Bone Conjurer's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "extra_damage_bleeding": [
+        8,
+        20
+      ],
+      "mana_replenish_pct": 20,
+      "mana_replenish": 20,
+      "mana_based_on_level": 75
+    },
+    "setId": "bone_conjurer_s_regalia"
+  },
+  {
+    "id": "boots_satanic_boots_of_blood",
+    "name": "Boots of Blood",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 24,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "movement_speed": 20,
+      "life_steal": [
+        3,
+        5
+      ],
+      "to_strength": 10,
+      "to_vitality": 7,
+      "life": [
+        20,
+        30
+      ],
+      "faster_hit_recovery": 40
+    }
+  },
+  {
+    "id": "boots_satanic_boots_of_wild",
+    "name": "Boots of Wild",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 53,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "faster_cast_rate": 20,
+      "faster_hit_recovery": 50,
+      "defense_vs_missiles": [
+        35,
+        50
+      ]
+    },
+    "setId": "god_of_the_elements"
+  },
+  {
+    "id": "boots_satanic_chronomancer_s_omnipotence",
+    "name": "Chronomancer's Omnipotence",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 60,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "skill_haste": [
+        10,
+        20
+      ],
+      "all_resistances": [
+        10,
+        15
+      ]
+    },
+    "setId": "temporal_mastery"
+  },
+  {
+    "id": "boots_satanic_dante_s_boots",
+    "name": "Dante's Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 61,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "attack_rating": [
+        60,
+        100
+      ],
+      "defense_ignored": [
+        10,
+        20
+      ],
+      "to_dexterity": 20
+    },
+    "setId": "dante_s_nightmare"
+  },
+  {
+    "id": "boots_satanic_darkhide_boots",
+    "name": "Darkhide Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 24,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "movement_speed": 20,
+      "life_steal": [
+        3,
+        5
+      ],
+      "mana_steal": [
+        4,
+        6
+      ],
+      "to_dexterity": 15,
+      "faster_hit_recovery": 75
+    }
+  },
+  {
+    "id": "boots_satanic_death_lord_s_marchers",
+    "name": "Death Lord's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 54,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "arcane_skill_damage": [
+        7,
+        15
+      ],
+      "damage_recouped_as_mana": [
+        6,
+        12
+      ],
+      "damage_drained_from_mana": [
+        6,
+        12
+      ]
+    },
+    "setId": "death_lord_s_legacy",
+    "skillBonuses": {
+      "Summon Mastery": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_deep_chilled_marchers",
+    "name": "Deep Chilled Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 86,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_damage": [
+        30,
+        60
+      ],
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "cold_skills": [
+        1,
+        2
+      ],
+      "movement_speed": [
+        25,
+        55
+      ],
+      "to_dexterity": 15,
+      "cold_skill_damage": [
+        15,
+        20
+      ],
+      "cold_resistance": 50,
+      "max_cold_resistance": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_earth_shaper_s_boots",
+    "name": "Earth Shaper's Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 56,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "skill_haste": [
+        5,
+        10
+      ],
+      "ignore_arcane_res": [
+        7,
+        15
+      ],
+      "all_resistances": 20
+    },
+    "setId": "earth_shaper_s_pride"
+  },
+  {
+    "id": "boots_satanic_einar_s_icy_stride",
+    "name": "Einar's Icy Stride",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        30,
+        40
+      ],
+      "to_strength": [
+        15,
+        25
+      ],
+      "to_dexterity": 25,
+      "faster_hit_recovery": 50,
+      "cold_resistance": [
+        30,
+        40
+      ]
+    },
+    "setId": "einar_s_rage"
+  },
+  {
+    "id": "boots_satanic_enigma_s_riftwalkers",
+    "name": "Enigma's Riftwalkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 29,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        20,
+        40
+      ],
+      "movement_speed": 20,
+      "to_energy": [
+        4,
+        8
+      ],
+      "magic_skill_damage": [
+        5,
+        15
+      ],
+      "magic_damage_reduction": 5
+    }
+  },
+  {
+    "id": "boots_satanic_flaming_marchers",
+    "name": "Flaming Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 52,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "extra_damage_burning": [
+        8,
+        20
+      ],
+      "mana_per_kill": 12,
+      "increased_burning_damage": [
+        25,
+        40
+      ],
+      "fire_resistance": [
+        35,
+        50
+      ],
+      "max_fire_resistance": 5
+    },
+    "setId": "flames_of_the_apocalypse",
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "boots_satanic_frozen_marchers",
+    "name": "Frozen Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 39,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        70
+      ],
+      "movement_speed": [
+        10,
+        50
+      ],
+      "cold_skill_damage": [
+        12,
+        18
+      ],
+      "cold_absorption": [
+        5,
+        8
+      ],
+      "cold_resistance": [
+        40,
+        50
+      ]
+    },
+    "uniqueEffects": [
+      "Half Freeze Duration"
+    ]
+  },
+  {
+    "id": "boots_satanic_gladiator_s_battle_sandals",
+    "name": "Gladiator's Battle Sandals",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "jumping_power": 30,
+      "to_intelligence": [
+        15,
+        20
+      ],
+      "increased_attack_speed": [
+        15,
+        20
+      ],
+      "to_strength": [
+        15,
+        20
+      ]
+    },
+    "setId": "gladiator_s_glory",
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 15,
+        "description": "cast Force Overwhelming Level 20",
+        "details": "Temporarily increase your attack damage, attack rating and attack speed."
+      }
+    ]
+  },
+  {
+    "id": "boots_satanic_grand_wizard_s_silk_shoes",
+    "name": "Grand Wizard's Silk Shoes",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 85,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "all_skills": [
+        1,
+        3
+      ],
+      "movement_speed": 10,
+      "faster_cast_rate": [
+        10,
+        20
+      ],
+      "to_energy": [
+        15,
+        25
+      ],
+      "mana": [
+        40,
+        60
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_hermes_boots",
+    "name": "Hermes Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 84,
+    "defenseMin": 60,
+    "defenseMax": 85,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "movement_speed": 70,
+      "jumping_power": [
+        35,
+        50
+      ],
+      "all_attributes": [
+        18,
+        25
+      ],
+      "all_resistances": [
+        30,
+        40
+      ],
+      "defense_vs_missiles": [
+        50,
+        75
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_juggernaut_s_victory_marchers",
+    "name": "Juggernaut's Victory Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 54,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "deadly_blow": 15,
+      "to_dexterity": [
+        20,
+        25
+      ],
+      "attack_damage": [
+        7,
+        15
+      ]
+    },
+    "setId": "juggernaut_s_rampart"
+  },
+  {
+    "id": "boots_satanic_justiciar_s_thunder_boots",
+    "name": "Justiciar's Thunder Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 53,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "ignore_lightning_res": [
+        8,
+        15
+      ],
+      "lightning_resistance": [
+        30,
+        40
+      ],
+      "max_lightning_resistance": [
+        4,
+        10
+      ]
+    },
+    "setId": "justiciar_s_thunder_raiment"
+  },
+  {
+    "id": "boots_satanic_lava_treaders",
+    "name": "Lava Treaders",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 86,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        80,
+        110
+      ],
+      "fire_skills": 2,
+      "movement_speed": 45,
+      "to_vitality": 10,
+      "fire_skill_damage": [
+        15,
+        30
+      ],
+      "ignore_lightning_res": [
+        7,
+        15
+      ],
+      "fire_resistance": 50,
+      "ignore_fire_res": [
+        7,
+        15
+      ],
+      "max_fire_resistance": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_lost_master_s_marchers",
+    "name": "Lost Master's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 56,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 40,
+      "increased_attack_speed": 30,
+      "to_dexterity": [
+        20,
+        30
+      ],
+      "defense_vs_missiles": [
+        40,
+        50
+      ]
+    },
+    "setId": "master_s_legacy"
+  },
+  {
+    "id": "boots_satanic_lumberjack_s_forestry_boots",
+    "name": "Lumberjack's Forestry Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 40,
+      "crushing_blow_chance": [
+        3,
+        8
+      ],
+      "crit_damage": [
+        20,
+        30
+      ],
+      "to_dexterity": 25
+    },
+    "setId": "lumberjack_s_forestry_gear"
+  },
+  {
+    "id": "boots_satanic_lunar_prophet_s_walkers",
+    "name": "Lunar Prophet's Walkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 57,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 40,
+      "to_energy": [
+        10,
+        15
+      ],
+      "to_intelligence": 10,
+      "cold_resistance": [
+        30,
+        50
+      ]
+    },
+    "setId": "the_lunar_eclipse",
+    "uniqueEffects": [
+      "Cannot be Frozen"
+    ]
+  },
+  {
+    "id": "boots_satanic_mana_woven_walkers",
+    "name": "Mana-Woven Walkers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 82,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "movement_speed": [
+        30,
+        50
+      ],
+      "faster_cast_rate": [
+        10,
+        20
+      ],
+      "mana_cost_reduction": [
+        5,
+        10
+      ],
+      "to_energy": [
+        30,
+        40
+      ],
+      "increased_mana": 20,
+      "random_skill_element": 2,
+      "mana_costs_decreased": [
+        5,
+        10
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_metal_vocalist_s_war_boots",
+    "name": "Metal Vocalist's War Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "SS",
+    "requiresLevel": 83,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "movement_speed": [
+        45,
+        60
+      ],
+      "projectile_speed": 1,
+      "to_vitality": 35,
+      "lightning_skill_damage": [
+        15,
+        30
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "boots_satanic_mevius_mighty_marchers",
+    "name": "Mevius' Mighty Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 57,
+    "defenseMin": 50,
+    "defenseMax": 80,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "to_energy": [
+        10,
+        15
+      ],
+      "to_intelligence": 15,
+      "mana_per_kill": [
+        8,
+        15
+      ],
+      "damage_mitigation": -3
+    },
+    "setId": "mevius_eye_of_chaos"
+  },
+  {
+    "id": "boots_satanic_molten_boots",
+    "name": "Molten Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 41,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        70
+      ],
+      "fire_skills": 1,
+      "movement_speed": 20,
+      "fire_skill_damage": [
+        12,
+        18
+      ],
+      "faster_hit_recovery": 25,
+      "fire_absorption": [
+        5,
+        8
+      ],
+      "fire_resistance": [
+        40,
+        50
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_mos_arathim_marchers",
+    "name": "Mos'Arathim Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 42,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "movement_speed": 30,
+      "deadly_blow": 15,
+      "to_strength": 10,
+      "to_dexterity": 5,
+      "faster_hit_recovery": 60
+    }
+  },
+  {
+    "id": "boots_satanic_mos_arathim_s_kicks",
+    "name": "Mos'Arathim's Kicks",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 10,
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "implicit": {
+      "enhanced_defense": [
+        20,
+        25
+      ],
+      "movement_speed": 25,
+      "flat_arcane_skill_damage": [
+        3,
+        7
+      ],
+      "arcane_skill_damage": [
+        5,
+        10
+      ],
+      "faster_hit_recovery": 50,
+      "all_resistances": [
+        5,
+        10
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "boots_satanic_mystic_soles",
+    "name": "Mystic Soles",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 20,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        55
+      ],
+      "movement_speed": [
+        5,
+        30
+      ],
+      "all_resistances": -9,
+      "magic_find": [
+        10,
+        20
+      ],
+      "experience_gain": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_onslaught_stompers",
+    "name": "Onslaught Stompers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 24,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        35,
+        50
+      ],
+      "movement_speed": 15,
+      "attack_rating": [
+        30,
+        50
+      ],
+      "to_strength": [
+        10,
+        20
+      ],
+      "all_attributes": 3,
+      "faster_hit_recovery": 50
+    }
+  },
+  {
+    "id": "boots_satanic_pirate_captain_s_boots",
+    "name": "Pirate Captain's Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 54,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "increased_attack_speed": [
+        10,
+        20
+      ],
+      "attack_rating_pct": [
+        10,
+        15
+      ],
+      "to_dexterity": 25
+    },
+    "sockets": 1,
+    "maxSockets": 1,
+    "setId": "black_beard_s_remains"
+  },
+  {
+    "id": "boots_satanic_pla_yer_s_choice",
+    "name": "Pla-Yer's Choice",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 10,
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "implicit": {
+      "enhanced_defense": 5,
+      "movement_speed": [
+        1,
+        40
+      ],
+      "faster_cast_rate": [
+        1,
+        20
+      ],
+      "increased_attack_speed": [
+        1,
+        20
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_plunderer_s_deck_marchers",
+    "name": "Plunderer's Deck Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 62,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "ignore_cold_res": [
+        5,
+        10
+      ],
+      "cold_resistance": 40
+    },
+    "setId": "plunderer_s_ensemble",
+    "uniqueEffects": [
+      "Half Freeze Duration"
+    ]
+  },
+  {
+    "id": "boots_satanic_redneck_s_working_boots",
+    "name": "Redneck's Working Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 54,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "to_dexterity": 15,
+      "attack_damage": [
+        12,
+        20
+      ],
+      "physical_damage_reduction": [
+        5,
+        10
+      ],
+      "magic_damage_reduction": [
+        5,
+        10
+      ]
+    },
+    "setId": "redneck_s_work_gear"
+  },
+  {
+    "id": "boots_satanic_rocket_boots",
+    "name": "Rocket Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 22,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        20,
+        40
+      ],
+      "movement_speed": [
+        40,
+        60
+      ],
+      "faster_hit_recovery": 75
+    },
+    "skillBonuses": {
+      "Zoooooom": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_runescribe_s_striders",
+    "name": "Runescribe's Striders",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "D",
+    "requiresLevel": 15,
+    "defenseMin": 2,
+    "defenseMax": 6,
+    "implicit": {
+      "enhanced_defense": [
+        10,
+        20
+      ],
+      "movement_speed": [
+        25,
+        30
+      ],
+      "faster_cast_rate": 15,
+      "to_intelligence": [
+        8,
+        15
+      ],
+      "mana": 75
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "boots_satanic_sacred_marchers",
+    "name": "Sacred Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 52,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "mana_per_kill": [
+        10,
+        15
+      ],
+      "increased_mana": 5,
+      "arcane_resistance": 40,
+      "vitality_converted_to_magic_skill_dmg": [
+        3,
+        8
+      ]
+    },
+    "setId": "the_holy_one",
+    "skillBonuses": {
+      "Divine Healing": [
+        5,
+        8
+      ],
+      "Random Skill": [
+        5,
+        8
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_satan_s_molten_steps",
+    "name": "Satan's Molten Steps",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 54,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        20,
+        35
+      ],
+      "additive_fire_damage": [
+        250,
+        325
+      ],
+      "flat_fire_skill_damage": [
+        12,
+        26
+      ],
+      "fire_skill_damage": 10,
+      "fire_resistance": [
+        25,
+        35
+      ]
+    },
+    "setId": "satan_s_curse"
+  },
+  {
+    "id": "boots_satanic_shield_bearer_s_greaves",
+    "name": "Shield Bearer's Greaves",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        60,
+        90
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "defense_ignored": [
+        15,
+        25
+      ],
+      "to_strength": [
+        20,
+        30
+      ],
+      "to_vitality": 15
+    },
+    "setId": "shield_bearer_s_sanctuary"
+  },
+  {
+    "id": "boots_satanic_spiked_greaves",
+    "name": "Spiked Greaves",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 80,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        120,
+        160
+      ],
+      "movement_speed": 20,
+      "to_vitality": [
+        20,
+        30
+      ],
+      "life_replenish_pct": [
+        15,
+        20
+      ],
+      "damage_return": [
+        35,
+        60
+      ],
+      "life_replenish": [
+        15,
+        20
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 1,
+        "description": "cast Dissipating Tornado Level 15",
+        "details": "Summon a dissipating tornado around you that pulls nearby monsters and causes you to dodge all attacks and unleash sand at monsters when they strike you dealing arcane damage."
+      }
+    ]
+  },
+  {
+    "id": "boots_satanic_stalwart_sabatons",
+    "name": "Stalwart Sabatons",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "C",
+    "requiresLevel": 22,
+    "defenseMin": 8,
+    "defenseMax": 16,
+    "implicit": {
+      "enhanced_defense": [
+        25,
+        40
+      ],
+      "all_skills": [
+        0,
+        1
+      ],
+      "movement_speed": [
+        10,
+        20
+      ],
+      "mana_replenish_pct": 25,
+      "life": [
+        50,
+        75
+      ],
+      "mana": [
+        50,
+        75
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_steadfast_marchers",
+    "name": "Steadfast Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 55,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 20,
+      "increased_attack_speed": [
+        10,
+        15
+      ],
+      "attack_rating_pct": [
+        5,
+        8
+      ],
+      "to_dexterity": 25,
+      "increased_life": [
+        7,
+        15
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_tarek_s_tradeoff",
+    "name": "Tarek's Tradeoff",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 40,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        30,
+        50
+      ],
+      "movement_speed": [
+        30,
+        40
+      ],
+      "all_attributes": [
+        40,
+        75
+      ],
+      "faster_hit_recovery": [
+        10,
+        100
+      ],
+      "physical_damage_reduction": -28,
+      "all_resistances": -57
+    }
+  },
+  {
+    "id": "boots_satanic_thunder_caller_s_treads",
+    "name": "Thunder Caller's Treads",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 57,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        45,
+        75
+      ],
+      "movement_speed": 30,
+      "to_intelligence": [
+        15,
+        25
+      ],
+      "ignore_lightning_res": [
+        6,
+        10
+      ],
+      "increased_mana": 8
+    },
+    "setId": "thunder_caller_s_wrath",
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Storm Cloud Level 16",
+        "details": "Conjure a storm cloud at target location striking monsters with surges of lightning dealing lightning damage."
+      }
+    ]
+  },
+  {
+    "id": "boots_satanic_treasure_hunter_s_boots",
+    "name": "Treasure Hunter's Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 82,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "movement_speed": [
+        50,
+        65
+      ],
+      "all_attributes": 10,
+      "gold_find": [
+        15,
+        20
+      ],
+      "magic_find": 15,
+      "experience_gain": [
+        1,
+        3
+      ],
+      "magic_find_based_on_level": 25
+    },
+    "uniqueEffects": [
+      "Half Freeze Duration"
+    ]
+  },
+  {
+    "id": "boots_satanic_tribal_boots",
+    "name": "Tribal Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 38,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "movement_speed": 30,
+      "attack_rating": [
+        65,
+        85
+      ],
+      "to_strength": 10,
+      "to_dexterity": [
+        10,
+        15
+      ],
+      "faster_hit_recovery": 25,
+      "all_resistances": 15
+    }
+  },
+  {
+    "id": "boots_satanic_tundra_marchers",
+    "name": "Tundra Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "A",
+    "requiresLevel": 57,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "cold_skill_damage": [
+        10,
+        20
+      ],
+      "cold_resistance": [
+        45,
+        75
+      ]
+    },
+    "uniqueEffects": [
+      "Half Freeze Duration"
+    ],
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Avalanche Level 14",
+        "details": "Release a bellowing shout dealing cold damage to all monsters around you and freezing them."
+      }
+    ]
+  },
+  {
+    "id": "boots_satanic_vagabond_s_marchers",
+    "name": "Vagabond's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 40,
+      "to_dexterity": 20,
+      "attack_damage": [
+        8,
+        15
+      ],
+      "all_resistances": [
+        10,
+        25
+      ]
+    },
+    "setId": "vagabond_s_rags"
+  },
+  {
+    "id": "boots_satanic_viking_s_sacred_boots",
+    "name": "Viking's Sacred Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 58,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": [
+        25,
+        40
+      ],
+      "deadly_blow": 10,
+      "to_strength": 25,
+      "to_dexterity": 15
+    },
+    "setId": "viking_s_demise"
+  },
+  {
+    "id": "boots_satanic_vipermagi_s_sprinters",
+    "name": "Vipermagi's Sprinters",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 37,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "to_armor": 15,
+      "additive_arcane_damage": 230,
+      "additive_poison_damage": [
+        130,
+        160
+      ],
+      "arcane_resistance": [
+        10,
+        25
+      ],
+      "poison_resistance": [
+        15,
+        20
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_voodoo_stompers",
+    "name": "Voodoo Stompers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 87,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        85,
+        120
+      ],
+      "poison_skills": [
+        1,
+        2
+      ],
+      "movement_speed": 55,
+      "to_vitality": 12,
+      "poison_skill_damage": [
+        12,
+        20
+      ],
+      "ignore_poison_res": [
+        10,
+        15
+      ],
+      "poison_resistance": [
+        40,
+        60
+      ],
+      "max_poison_resistance": [
+        3,
+        5
+      ],
+      "poison_length_reduced": [
+        20,
+        30
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_whisper_walker_s_feiyue",
+    "name": "Whisper Walker's Feiyue",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "S",
+    "requiresLevel": 84,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "all_skills": 1,
+      "movement_speed": 30,
+      "skill_haste": [
+        12,
+        25
+      ],
+      "attack_rating_pct": [
+        10,
+        20
+      ],
+      "all_attributes": [
+        7,
+        10
+      ],
+      "cooldown_recovery": [
+        12,
+        25
+      ],
+      "increased_attack_rating": 15,
+      "damage_based_on_level": 50,
+      "strength_based_on_level": 25
+    }
+  },
+  {
+    "id": "boots_satanic_wizard_boots",
+    "name": "Wizard Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic",
+    "grade": "B",
+    "requiresLevel": 40,
+    "defenseMin": 18,
+    "defenseMax": 26,
+    "implicit": {
+      "enhanced_defense": [
+        40,
+        60
+      ],
+      "all_skills": 1,
+      "movement_speed": 10,
+      "to_intelligence": 10,
+      "increased_mana": [
+        5,
+        8
+      ]
+    }
+  },
+  {
+    "id": "boots_satanic_ymir_s_freezing_boots",
+    "name": "Ymir's Freezing Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "A",
+    "requiresLevel": 56,
+    "defenseMin": 34,
+    "defenseMax": 48,
+    "implicit": {
+      "enhanced_defense": [
+        50,
+        80
+      ],
+      "movement_speed": 30,
+      "to_energy": 20,
+      "mana_replenish_pct": 30,
+      "increased_mana": 5
+    },
+    "setId": "ymir_s_wisdom"
+  },
+  {
+    "id": "boots_satanic_zeus_battle_boots",
+    "name": "Zeus' Battle Boots",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "satanic_set",
+    "grade": "S",
+    "requiresLevel": 88,
+    "defenseMin": 52,
+    "defenseMax": 64,
+    "implicit": {
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "to_energy": 8,
+      "lightning_skill_damage": [
+        20,
+        35
+      ],
+      "ignore_lightning_res": [
+        7,
+        15
+      ],
+      "mana_per_kill": 8,
+      "lightning_resistance": [
+        40,
+        60
+      ]
+    },
+    "setId": "thunder_god_s_wrath"
+  },
+  {
+    "id": "boots_unholy_marcher_s_of_hatred",
+    "name": "Marcher's of Hatred",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        30,
+        100
+      ],
+      "faster_cast_rate": [
+        12,
+        20
+      ],
+      "increased_attack_speed": [
+        12,
+        20
+      ],
+      "crushing_blow_chance": [
+        25,
+        35
+      ],
+      "faster_hit_recovery": 120,
+      "reduced_movement_diminish": 50,
+      "deadly_blow_effectiveness": [
+        60,
+        110
+      ]
+    },
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ]
+  },
+  {
+    "id": "boots_unholy_peg_leg",
+    "name": "Peg Leg",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "unholy",
+    "grade": "SS",
+    "requiresLevel": 83,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "cold_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        45,
+        75
+      ],
+      "cold_skill_damage": [
+        25,
+        45
+      ],
+      "summon_attack_speed": [
+        15,
+        25
+      ],
+      "summon_life": [
+        5,
+        10
+      ],
+      "grant_subskills": 1,
+      "summon_movement_speed": [
+        20,
+        40
+      ],
+      "summon_all_resist": 25,
+      "summon_reduced_dmg_taken": 20
+    },
+    "sockets": 1,
+    "maxSockets": 1,
+    "skillBonuses": {
+      "Parrot": [
+        10,
+        16
+      ],
+      "Remiges": [
+        24,
+        30
+      ]
+    }
+  }
+]

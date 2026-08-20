@@ -48,9 +48,9 @@ updates:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
 
-  # Tauri backend (Rust)
+  # Tauri engine (Rust)
   - package-ecosystem: "cargo"
-    directory: "/src-tauri"
+    directory: "/engine"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10

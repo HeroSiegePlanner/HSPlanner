@@ -1,0 +1,2434 @@
+[
+  {
+    "id": "slaying_riffs",
+    "classId": "bard",
+    "name": "Slaying Riffs",
+    "kind": "active",
+    "description": "Drop an amplifier from the sky smashing the ground and send notes towards enemies dealing lightning damage. Dropping an amplifier on another one causes the first one to explode.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Projectile",
+      "Explosion"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 0,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 4,
+      "perLevel": 9.8
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Insane Riff",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Amping Up",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Sounds of Silence",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "slaying_riffs_core",
+        "positionIndex": 0,
+        "name": "Slaying Riffs",
+        "description": "Core of the Slaying Riffs subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "multipicking",
+        "positionIndex": 1,
+        "name": "Multipicking",
+        "description": "Increases the projectile amount of slaying riffs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_count": 0 },
+          "perRank": { "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "heavy_notes",
+        "positionIndex": 2,
+        "name": "Heavy Notes",
+        "description": "Increases the damage dealt by slaying riffs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "breaking_the_soundbarrier",
+        "positionIndex": 3,
+        "name": "Breaking The Soundbarrier",
+        "description": "Increases the projectile speed of slaying riffs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_speed": 0 },
+          "perRank": { "projectile_speed": 15 }
+        }
+      },
+      {
+        "id": "picking_skills",
+        "positionIndex": 4,
+        "name": "Picking Skills",
+        "description": "Increases cast rate when using slaying riffs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "faster_cast_rate": 0 },
+          "perRank": { "faster_cast_rate": 6 }
+        }
+      },
+      {
+        "id": "widened_amplifiers",
+        "positionIndex": 5,
+        "name": "Widened Amplifiers",
+        "description": "Increases the size of slaying riffs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "projectile_size": 0 },
+          "perRank": { "projectile_size": 15 }
+        }
+      },
+      {
+        "id": "stage_agility",
+        "positionIndex": 6,
+        "name": "Stage Agility",
+        "description": "Decreases movement diminish when using slaying riffs.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "reduced_movement_diminish": 0 },
+          "perRank": { "reduced_movement_diminish": 10 }
+        }
+      },
+      {
+        "id": "ear_penetration",
+        "positionIndex": 7,
+        "name": "Ear Penetration",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 25 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "splitting_sound",
+        "positionIndex": 8,
+        "name": "Splitting Sound",
+        "description": "Chance for notes to split in two on hit.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+      },
+      {
+        "id": "burning_acoustics",
+        "positionIndex": 9,
+        "name": "Burning Acoustics",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "paralyzing_volume",
+        "positionIndex": 10,
+        "name": "Paralyzing Volume",
+        "description": "Increases damage dealt to monsters inflicted with stasis.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stasis": 0 },
+          "perRank": { "extra_damage_stasis": 15 }
+        }
+      },
+      {
+        "id": "bursting_sound",
+        "positionIndex": 11,
+        "name": "Bursting Sound",
+        "description": "Unleash a single note exploding into multiple notes on hit dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "lightning_skill_damage": 25, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "echoing_sound_wall",
+        "positionIndex": 12,
+        "name": "Echoing Sound Wall",
+        "description": "Unleash the notes in an arc bouncing off terrain dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "lightning_skill_damage": 15, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "satanic_notes",
+        "positionIndex": 13,
+        "name": "Satanic Notes",
+        "description": "Pull nearby monsters towards target on hit unleashing a sonar pulse.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "lightning_skill_damage": 0,
+            "area_of_effect": 0,
+            "skill_range": 0
+          },
+          "perRank": {
+            "lightning_skill_damage": 50,
+            "area_of_effect": 50,
+            "skill_range": 30
+          }
+        }
+      },
+      {
+        "id": "symphony_of_destruction",
+        "positionIndex": 14,
+        "name": "Symphony of Destruction",
+        "description": "Increases the projectile amount and cast radius of slaying riffs.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 2 },
+          "perRank": { "lightning_skill_damage": 20, "projectile_count": 1 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "insane_riff",
+    "classId": "bard",
+    "name": "Insane Riff",
+    "kind": "passive",
+    "description": "Every fifth spell cast is empowered with increased lightning damage.",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 30
+      },
+      "perRank": {
+        "lightning_skill_damage": 4
+      }
+    }
+  },
+  {
+    "id": "visceral_growl",
+    "classId": "bard",
+    "name": "Visceral Growl",
+    "kind": "active",
+    "description": "Unleash a visceral growl in a frontal cone dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 1,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 9.8
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "High dB",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Sounds of Silence",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Progenies of the Great Cataclysm",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "visceral_growl_core",
+        "positionIndex": 0,
+        "name": "Visceral Growl",
+        "description": "Core of the Visceral Growl subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "amplified_sound",
+        "positionIndex": 1,
+        "name": "Amplified Sound",
+        "description": "Increases the damage dealt by visceral growl.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "vocal_echo",
+        "positionIndex": 2,
+        "name": "Vocal Echo",
+        "description": "Increases the area of effect radius of visceral growl.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 8 }
+        }
+      },
+      {
+        "id": "octavism",
+        "positionIndex": 3,
+        "name": "Octavism",
+        "description": "Chance to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "acoustic_piercing",
+        "positionIndex": 4,
+        "name": "Acoustic Piercing",
+        "description": "Chance to unleash a chain lightning from target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "sound_weight",
+        "positionIndex": 5,
+        "name": "Sound Weight",
+        "description": "Chance on hit to knock monsters back dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 20 }
+          }
+        }
+      },
+      {
+        "id": "after_growl",
+        "positionIndex": 6,
+        "name": "After Growl",
+        "description": "Chance on cast to unleash an additional fast and powerful growl.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 100 },
+            "perRank": { "of_total_damage": 0 }
+          }
+        }
+      },
+      {
+        "id": "reaching_roar",
+        "positionIndex": 7,
+        "name": "Reaching Roar",
+        "description": "Increases the range of visceral growl.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 8 }
+        }
+      },
+      {
+        "id": "vocal_therapy",
+        "positionIndex": 8,
+        "name": "Vocal Therapy",
+        "description": "Increases damage dealt to targets inflicted by stasis.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stasis": 0 },
+          "perRank": { "extra_damage_stasis": 15 }
+        }
+      },
+      {
+        "id": "trembling_growl",
+        "positionIndex": 9,
+        "name": "Trembling Growl",
+        "description": "Chance to unleash piercing notes towards target on hit.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "of_total_damage": 0 },
+            "perRank": { "of_total_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "stuttering_frequency",
+        "positionIndex": 10,
+        "name": "Stuttering Frequency",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "echo_in_the_darkness",
+        "positionIndex": 11,
+        "name": "Echo in the Darkness",
+        "description": "Unleash a shockwave of visceral growls towards target location.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "lightning_skill_damage": 35, "projectile_count": 1 }
+        }
+      },
+      {
+        "id": "vocal_concentration",
+        "positionIndex": 12,
+        "name": "Vocal Concentration",
+        "description": "Unleash a narrow growl with increased length dealing increased damage and stunning targets on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "skill_range": 0 },
+          "perRank": { "lightning_skill_damage": 50, "skill_range": 35 }
+        }
+      },
+      {
+        "id": "tinnitus",
+        "positionIndex": 13,
+        "name": "Tinnitus",
+        "description": "Increases the proc chance of stuttering frequency increasing the damage and tick frequency of stasis.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_stasis_damage": 0,
+            "increased_ailment_frequency": 0
+          },
+          "perRank": {
+            "increased_stasis_damage": 35,
+            "increased_ailment_frequency": 20
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 10 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 35 } }
+          ]
+        }
+      },
+      {
+        "id": "unleash_the_metal",
+        "positionIndex": 14,
+        "name": "Unleash The Metal",
+        "description": "Increases the area of effect radius of visceral growl knocking monsters back with force dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "lightning_skill_damage": 50, "area_of_effect": 10 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "amping_up",
+    "classId": "bard",
+    "name": "Amping Up",
+    "kind": "passive",
+    "description": "Chance on spellhit or strike to gain a stack of amping up increasing your cast rate for a short duration.",
+    "tags": [
+      "Passive"
+    ],
+    "range": 10,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "cast_rate": 5
+      },
+      "perRank": {
+        "cast_rate": 0.5
+      }
+    }
+  },
+  {
+    "id": "sacrilegious_symphony",
+    "classId": "bard",
+    "name": "Sacrilegious Symphony",
+    "kind": "active",
+    "description": "Channel for a brief moment before unleashing a massive area of effect pulse around you dealing lightning damage.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 100,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 7,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 1,
+      "perLevel": 38
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Slaying Riffs",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Satan's Melody",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Sounds of Silence",
+        "stat": "lightning_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "sacrilegious_symphony_core",
+        "positionIndex": 0,
+        "name": "Sacrilegious Symphony",
+        "description": "Core of the Sacrilegious Symphony subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "marked_by_the_devil",
+        "positionIndex": 1,
+        "name": "Marked By The Devil",
+        "description": "Increases the damage dealt by sacrilegious symphony.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "echoing_riffs",
+        "positionIndex": 2,
+        "name": "Echoing Riffs",
+        "description": "Increases the area of effect radius of sacrilegious symphony.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "scorching_riffs",
+        "positionIndex": 3,
+        "name": "Scorching Riffs",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "blasting_soundwave",
+        "positionIndex": 4,
+        "name": "Blasting Soundwave",
+        "description": "Chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "free_will",
+        "positionIndex": 5,
+        "name": "Free Will",
+        "description": "Increases your movement speed for a short duration when casting sacrilegious symphony.",
+        "maxRank": 2,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 50 }
+        }
+      },
+      {
+        "id": "trembling_symphony",
+        "positionIndex": 6,
+        "name": "Trembling Symphony",
+        "description": "Chance to stun monsters on hit dealing increased damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 25 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "increased_tempo",
+        "positionIndex": 7,
+        "name": "Increased Tempo",
+        "description": "Decreases the cooldown of sacrilegious Symphony",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 10 }
+        }
+      },
+      {
+        "id": "symphony_of_anxiety",
+        "positionIndex": 8,
+        "name": "Symphony of Anxiety",
+        "description": "Increases the activation time of sacrilegious symphony.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "rapid_activation_chance": 0 },
+          "perRank": { "rapid_activation_chance": 10 }
+        }
+      },
+      {
+        "id": "double_the_satisfaction",
+        "positionIndex": 9,
+        "name": "Double the Satisfaction",
+        "description": "Chance on cast to deal double damage",
+        "maxRank": 5,
+        "proc": { "trigger": "on_cast", "chance": { "base": 0, "perRank": 7 } }
+      },
+      {
+        "id": "static_symphony",
+        "positionIndex": 10,
+        "name": "Static Symphony",
+        "description": "Increases damage dealt to targets inflicted by stasis",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stasis": 0 },
+          "perRank": { "extra_damage_stasis": 15 }
+        }
+      },
+      {
+        "id": "sacrilegious_encore",
+        "positionIndex": 11,
+        "name": "Sacrilegious Encore",
+        "description": "Sacrilegious symphony now echoes additional times with increased area of effect radius.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "projectile_count": 0, "area_of_effect": 0 },
+          "perRank": { "projectile_count": 2, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "symphony_of_destruction",
+        "positionIndex": 12,
+        "name": "Symphony of Destruction",
+        "description": "Unleash a massive shockwave knocking monsters up causing them to deal area of effect damage when landing.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "pulling_the_crowd",
+        "positionIndex": 13,
+        "name": "Pulling the Crowd",
+        "description": "Pull nearby monsters towards you when casting and stunning them for a short while.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "lightning_skill_damage": 25, "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "spiraling_to_insanity",
+        "positionIndex": 14,
+        "name": "Spiraling to Insanity",
+        "description": "Unleash multiple piercing notes orbitting around you dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "projectile_count": 10 },
+          "perRank": { "lightning_skill_damage": 25, "projectile_count": 5 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "satans_melody",
+    "classId": "bard",
+    "name": "Satan's Melody",
+    "kind": "buff",
+    "description": "Gain increased lightning skill damage for a short duration and a chance to unleash guitar picks in an arc on hit.",
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "movementDuringUse": 0,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 15,
+        "proc_chance": 10
+      },
+      "perRank": {
+        "lightning_skill_damage": 2,
+        "proc_chance": 0
+      }
+    }
+  },
+  {
+    "id": "sounds_of_silence",
+    "classId": "bard",
+    "name": "Sounds of Silence",
+    "kind": "passive",
+    "description": "Converts a portion of your intelligence into lightning skill damage.",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 5
+      },
+      "perRank": {
+        "lightning_skill_damage": 0.5
+      }
+    }
+  },
+  {
+    "id": "high_db",
+    "classId": "bard",
+    "name": "High dB",
+    "kind": "passive",
+    "description": "Notes have a chance to unleash a sonar pulse on hit dealing increased lightning damage.",
+    "tags": [
+      "Passive"
+    ],
+    "range": 15,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "lightning_skill_damage": 4
+      },
+      "perRank": {
+        "lightning_skill_damage": 4
+      }
+    }
+  },
+  {
+    "id": "progenies_of_the_great_cataclysm",
+    "classId": "bard",
+    "name": "Progenies of the Great Cataclysm",
+    "kind": "active",
+    "description": "Summon a massive amplifier playing black metal at high volume sending piercing notes towards nearby monsters bouncing from terrain dealing lightning damage. If you are too far from the amplifier it is pulled back to your position.",
+    "damageType": "lightning",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Area of Effect"
+    ],
+    "movementDuringUse": 65,
+    "range": 320,
+    "baseCastRate": 1,
+    "baseCooldown": 40,
+    "effectDuration": 20,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Metal Guitarist",
+    "position": {
+      "row": 4,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 25
+    },
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "bonusSources": [
+      {
+        "source": "Sacrilegious Symphony",
+        "stat": "lightning_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Slaying Riffs",
+        "stat": "lightning_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "High dB",
+        "stat": "lightning_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "lightning_skill_damage",
+        "value": 8.65,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "progenies_of_the_great_cataclysm_core",
+        "positionIndex": 0,
+        "name": "Progenies of the Great Cataclysm",
+        "description": "Core of the Progenies of the Great Cataclysm subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "black_metals_reach",
+        "positionIndex": 1,
+        "name": "Black Metals Reach",
+        "description": "Increases maximum targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_targets": 0 },
+          "perRank": { "max_targets": 2 }
+        }
+      },
+      {
+        "id": "stage_osha_violation",
+        "positionIndex": 2,
+        "name": "Stage OSHA Violation",
+        "description": "Chance on hit to drop an exploding amplifier from the sky dealing area of effect damage upon landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "lightning_skill_damage": 30, "area_of_effect": 15 }
+          }
+        }
+      },
+      {
+        "id": "longer_cord",
+        "positionIndex": 3,
+        "name": "Longer Cord",
+        "description": "Increases the range of the amplifier.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "the_sound_of_darkness",
+        "positionIndex": 4,
+        "name": "The Sound of Darkness",
+        "description": "Increases the damage dealt by the amplifier.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 8 }
+        }
+      },
+      {
+        "id": "amping_up_the_metal",
+        "positionIndex": 5,
+        "name": "Amping Up The Metal",
+        "description": "Decreases the cooldown of progenies of the great cataclysm.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 7 }
+        }
+      },
+      {
+        "id": "penetrating_soundwaves",
+        "positionIndex": 6,
+        "name": "Penetrating Soundwaves",
+        "description": "Gain a chance to critically hit with increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 22.5 }
+        }
+      },
+      {
+        "id": "broken_electric_cord",
+        "positionIndex": 7,
+        "name": "Broken Electric Cord",
+        "description": "Chance to inflict lightning break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "lightning_break": 0 },
+          "perRank": { "lightning_break": 20 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            {
+              "state": "lightning_break",
+              "amount": { "base": 0, "perRank": 20 }
+            }
+          ]
+        }
+      },
+      {
+        "id": "electric_soundwaves",
+        "positionIndex": 8,
+        "name": "Electric Soundwaves",
+        "description": "Chance on hit to unleash a chain lightning dealing additional damage.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "lightning_skill_damage": 0 },
+            "perRank": { "lightning_skill_damage": 5 }
+          }
+        }
+      },
+      {
+        "id": "overheated_amplifier",
+        "positionIndex": 9,
+        "name": "Overheated Amplifier",
+        "description": "Chance on amplifier cast to send trails of flames towards random directions.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "of_total_damage": 0, "trail_count": 0 },
+            "perRank": { "of_total_damage": 35, "trail_count": 2 }
+          }
+        }
+      },
+      {
+        "id": "electrocuting_soundblast",
+        "positionIndex": 10,
+        "name": "Electrocuting Soundblast",
+        "description": "Chance to inflict stasis on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_stasis_damage": 0 },
+          "perRank": { "increased_stasis_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "stasis", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "increasing_sound_levels",
+        "positionIndex": 11,
+        "name": "Increasing Sound Levels",
+        "description": "The main amplifier now creates additional smaller amplifiers pulsating and dealing area of effect lightning damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "lightning_skill_damage": 0,
+            "summon_max_amount": 0
+          },
+          "perRank": {
+            "lightning_skill_damage": 25,
+            "summon_max_amount": 1
+          }
+        }
+      },
+      {
+        "id": "crushing_sound_levels",
+        "positionIndex": 12,
+        "name": "Crushing Sound Levels",
+        "description": "The amplifier now sends shockwaves instead of notes with a lowered projectile count.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0 },
+          "perRank": { "lightning_skill_damage": 40 }
+        }
+      },
+      {
+        "id": "orbital_soundwaves",
+        "positionIndex": 13,
+        "name": "Orbital Soundwaves",
+        "description": "The amplifier now orbits you with increased cast speed.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "lightning_skill_damage": 0,
+            "faster_cast_rate": 0,
+            "spin_speed": 0
+          },
+          "perRank": {
+            "lightning_skill_damage": 10,
+            "faster_cast_rate": 20,
+            "spin_speed": 15
+          }
+        }
+      },
+      {
+        "id": "tripping_electric_cord",
+        "positionIndex": 14,
+        "name": "Tripping Electric Cord",
+        "description": "The amplifier cord now deals increased damage to monsters with increased frequency.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "lightning_skill_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "lightning_skill_damage": 80, "faster_cast_rate": 25 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "crowd_dive",
+    "classId": "bard",
+    "name": "Crowd Dive",
+    "kind": "active",
+    "description": "Charge towards target location knocking monsters up on hit dealing physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Attack",
+      "Active",
+      "Spell",
+      "Area of Effect",
+      "Charge",
+      "Strike"
+    ],
+    "movementDuringUse": 65,
+    "baseCooldown": 3,
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 0,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 56,
+        "perLevel": 30
+      },
+      "flatPhysicalMin": {
+        "base": 2,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 10,
+        "perLevel": 1
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Crowd Pummeler",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Headbanger",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Craving For Attention",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "crowd_dive_core",
+        "positionIndex": 0,
+        "name": "Crowd Dive",
+        "description": "Core of the Crowd Dive subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "uppercuts_so_many_uppercuts",
+        "positionIndex": 1,
+        "name": "Uppercuts.. So Many Uppercuts",
+        "description": "Chance to knock monsters airborne on hit dealing area of effect damage when landing.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "headbutt",
+        "positionIndex": 2,
+        "name": "Headbutt",
+        "description": "Increases damage dealt by crowd diver.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "colliding_masses",
+        "positionIndex": 3,
+        "name": "Colliding Masses",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 5 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "diving_stamina",
+        "positionIndex": 4,
+        "name": "Diving Stamina",
+        "description": "Decreases cooldown of crowd diver",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_haste": 0 },
+          "perRank": { "skill_haste": 8 }
+        }
+      },
+      {
+        "id": "get_out_the_way",
+        "positionIndex": 5,
+        "name": "Get Out The Way",
+        "description": "Chance on cast to knock monsters back causing them to take increased damage from terrain.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_cast",
+          "chance": { "base": 0, "perRank": 7 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 35 }
+          }
+        }
+      },
+      {
+        "id": "crowd_violation",
+        "positionIndex": 6,
+        "name": "Crowd Violation",
+        "description": "Stun targets on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "stun_duration_pct": 0 },
+          "perRank": { "stun_duration_pct": 1 }
+        }
+      },
+      {
+        "id": "dirty_diver",
+        "positionIndex": 7,
+        "name": "Dirty Diver",
+        "description": "Chance to deal increased critical strike damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 25 }
+        }
+      },
+      {
+        "id": "hammer_dive",
+        "positionIndex": 8,
+        "name": "Hammer Dive",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 15 }
+        }
+      },
+      {
+        "id": "quick_dive",
+        "positionIndex": 9,
+        "name": "Quick Dive",
+        "description": "Increases the dash speed of crowd diver.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "movement_speed": 0 },
+          "perRank": { "movement_speed": 15 }
+        }
+      },
+      {
+        "id": "lengthy_dive",
+        "positionIndex": 10,
+        "name": "Lengthy Dive",
+        "description": "Increases the maximum length of crowd diver.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "skill_range": 0 },
+          "perRank": { "skill_range": 15 }
+        }
+      },
+      {
+        "id": "pit_fighters",
+        "positionIndex": 11,
+        "name": "Pit Fighters",
+        "description": "Spawn pit fighters to fight by your side for a short duration after impact.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "summon_max_amount": 1
+          },
+          "perRank": {
+            "physical_skill_damage": 25,
+            "summon_max_amount": 1
+          }
+        }
+      },
+      {
+        "id": "flying_fists",
+        "positionIndex": 12,
+        "name": "Flying Fists",
+        "description": "Unleash pummeling fists towards nearby monsters dealing damage with increased critical strike damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "spell_crit_damage": 0 },
+          "perRank": { "physical_skill_damage": 22.5, "spell_crit_damage": 50 }
+        }
+      },
+      {
+        "id": "ifist",
+        "positionIndex": 13,
+        "name": "iFist",
+        "description": "Turn into a fist unleashing an area of effect pulse dealing increased damage on a large radius when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 250, "area_of_effect": 30 }
+        }
+      },
+      {
+        "id": "blinkfist_strike",
+        "positionIndex": 14,
+        "name": "Blinkfist Strike",
+        "description": "Teleport a short distance falling down from the sky with a massive fist dealing area of effect damage inflicting burning and stunning on hit.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_burning_damage": 0 },
+          "perRank": {
+            "physical_skill_damage": 15,
+            "increased_burning_damage": 75
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "crowd_pummeler",
+    "classId": "bard",
+    "name": "Crowd Pummeler",
+    "kind": "passive",
+    "description": "Chance to unleash notes from monsters on hit dealing physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 1,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 0,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "attack_damage": 20
+      },
+      "perRank": {
+        "attack_damage": 5
+      }
+    }
+  },
+  {
+    "id": "pyro_technician",
+    "classId": "bard",
+    "name": "Pyro Technician",
+    "kind": "active",
+    "description": "Blink into the closest monster to target location unleashing an area of effect attack dealing physical and fire damage.",
+    "damageType": "fire",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Movement",
+      "Blink",
+      "Area of Effect",
+      "Strike"
+    ],
+    "movementDuringUse": 100,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 1,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 6
+      }
+    ],
+    "attackKind": "attack",
+    "damageFormula": {
+      "base": 0,
+      "perLevel": 28
+    },
+    "manaCostFormula": {
+      "base": 6,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 80,
+        "perLevel": 30
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 10,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Crowd Dive",
+        "stat": "fire_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Headbanger",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Craving For Another Killing",
+        "stat": "fire_skill_damage",
+        "value": 18,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 8.75,
+        "per": "attribute_point"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "pyro_technician_core",
+        "positionIndex": 0,
+        "name": "Pyro Technician",
+        "description": "Core of the Pyro Technician subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "heat_to_the_flames",
+        "positionIndex": 1,
+        "name": "Heat To The Flames",
+        "description": "Increases physical damage and fire damage dealt by pyro technician",
+        "maxRank": 5,
+        "effects": {
+          "base": { "fire_skill_damage": 0 },
+          "perRank": { "fire_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "amping_up_the_heat",
+        "positionIndex": 2,
+        "name": "Amping Up The Heat",
+        "description": "Gain maximum heat stacks increasing your attack speed per stack.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "max_skill_stacks": 0, "increased_attack_speed": 0 },
+          "perRank": { "max_skill_stacks": 2, "increased_attack_speed": 2 }
+        }
+      },
+      {
+        "id": "lit_on_flames",
+        "positionIndex": 3,
+        "name": "Lit On Flames",
+        "description": "Chance on hit to inflict burning for a portion of your physical and fire damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 40 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 3 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 40 } }
+          ]
+        }
+      },
+      {
+        "id": "fueling_the_engine",
+        "positionIndex": 4,
+        "name": "Fueling The Engine",
+        "description": "Increases attack speed when using pyro technician.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 8 }
+        }
+      },
+      {
+        "id": "afterflame",
+        "positionIndex": 5,
+        "name": "Afterflame",
+        "description": "Chance on kill to unleash a flaming pulse dealing damage on a large radius around the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_kill",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
+            "perRank": { "fire_skill_damage": 40, "area_of_effect": 15 }
+          }
+        }
+      },
+      {
+        "id": "melting_bones",
+        "positionIndex": 6,
+        "name": "Melting Bones",
+        "description": "Increases damage dealt to burning targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_burning": 0 },
+          "perRank": { "extra_damage_burning": 15 }
+        }
+      },
+      {
+        "id": "wounding_fire",
+        "positionIndex": 7,
+        "name": "Wounding Fire",
+        "description": "Increases damage dealt to bosses.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "extra_damage_bosses": 0 },
+          "perRank": { "extra_damage_bosses": 25 }
+        }
+      },
+      {
+        "id": "covering_the_stage",
+        "positionIndex": 8,
+        "name": "Covering The Stage",
+        "description": "Increases the area of effect radius of pyro technician.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 18 }
+        }
+      },
+      {
+        "id": "pulsating_pyrokinesis",
+        "positionIndex": 9,
+        "name": "Pulsating Pyrokinesis",
+        "description": "Execute low life monsters below a treshold.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1.5 }
+        }
+      },
+      {
+        "id": "concentrated_scorching",
+        "positionIndex": 10,
+        "name": "Concentrated Scorching",
+        "description": "Chance for both physical and fire damage to critically hit dealing increased critical strike damage.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0, "crit_chance": 0 },
+          "perRank": { "crit_damage": 22.5, "crit_chance": 3 }
+        }
+      },
+      {
+        "id": "rapid_burns",
+        "positionIndex": 11,
+        "name": "Rapid Burns",
+        "description": "Increases the frequency and damage of inflicted burning.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "increased_burning_damage": 0,
+            "increased_ailment_frequency": 0
+          },
+          "perRank": {
+            "increased_burning_damage": 100,
+            "increased_ailment_frequency": 15
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 100 } }
+          ]
+        }
+      },
+      {
+        "id": "traveling_pyre",
+        "positionIndex": 12,
+        "name": "Traveling Pyre",
+        "description": "Unleash multiple burning tornados on hit dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "fire_skill_damage": 50, "projectile_count": 2 }
+        }
+      },
+      {
+        "id": "circle_of_burning",
+        "positionIndex": 13,
+        "name": "Circle of Burning",
+        "description": "Chance on attack to hit multiple targets dealing increased damage.",
+        "maxRank": 3,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 25 },
+          "effects": {
+            "base": { "fire_skill_damage": 0, "max_targets": 0 },
+            "perRank": { "fire_skill_damage": 33, "max_targets": 2 }
+          }
+        }
+      },
+      {
+        "id": "burning_surface",
+        "positionIndex": 14,
+        "name": "Burning Surface",
+        "description": "Scorch the ground below your targets dealing a portion of your damage for a short duration. Effect stacks infinitely.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "skill_duration": 0 },
+          "perRank": { "of_total_damage": 40, "skill_duration": 15 }
+        }
+      }
+    ]
+  },
+  {
+    "id": "adrenaline_momentum",
+    "classId": "bard",
+    "name": "Adrenaline Momentum",
+    "kind": "passive",
+    "description": "Chance to gain a stack of adrenaline momentum on hit increasing your movement speed and attack speed.",
+    "tags": [
+      "Passive"
+    ],
+    "range": 10,
+    "maxRank": 20,
+    "requiresLevel": 8,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 1,
+      "col": 2
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 5,
+        "movement_speed": 3
+      },
+      "perRank": {
+        "increased_attack_speed": 0.5,
+        "movement_speed": 0.25
+      }
+    }
+  },
+  {
+    "id": "antisocial_pit_fighter",
+    "classId": "bard",
+    "name": "Antisocial Pit Fighter",
+    "kind": "passive",
+    "description": "Chance to apply increased magic find on kill.",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 2,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "magic_find": 30,
+        "proc_chance": 8
+      },
+      "perRank": {
+        "magic_find": 4,
+        "proc_chance": 0
+      }
+    }
+  },
+  {
+    "id": "headbanger",
+    "classId": "bard",
+    "name": "Headbanger",
+    "kind": "active",
+    "description": "Every third attack unleashes a headbang dealing area of effect damage.",
+    "damageType": "physical",
+    "tags": [
+      "Attack",
+      "Active",
+      "Melee",
+      "Area of Effect",
+      "Strike"
+    ],
+    "movementDuringUse": 100,
+    "maxRank": 20,
+    "requiresLevel": 16,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 2,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 100,
+        "perLevel": 35
+      },
+      "flatPhysicalMin": {
+        "base": 3,
+        "perLevel": 1
+      },
+      "flatPhysicalMax": {
+        "base": 12,
+        "perLevel": 2
+      },
+      "attackRatingPct": {
+        "base": 0,
+        "perLevel": 5
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Crowd Pummeler",
+        "stat": "attack_damage",
+        "value": 5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Adrenaline Momentum",
+        "stat": "attack_damage",
+        "value": 7,
+        "per": "skill_level"
+      },
+      {
+        "source": "Moshpit Massacre",
+        "stat": "attack_damage",
+        "value": 10,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "headbanger_core",
+        "positionIndex": 0,
+        "name": "Headbanger",
+        "description": "Core of the Headbanger subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "banging_hard",
+        "positionIndex": 1,
+        "name": "Banging Hard",
+        "description": "Increases damage dealt by headbanger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 10 }
+        }
+      },
+      {
+        "id": "hair_length",
+        "positionIndex": 2,
+        "name": "Hair Length",
+        "description": "Increases the area of effect radius of headbanger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "whipping_faster",
+        "positionIndex": 3,
+        "name": "Whipping Faster",
+        "description": "Increases attack speed when using headbanger.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "hair_clipping",
+        "positionIndex": 4,
+        "name": "Hair Clipping",
+        "description": "Chance on hit to deal increased damage and stun the target.",
+        "maxRank": 5,
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "physical_skill_damage": 0 },
+            "perRank": { "physical_skill_damage": 40 }
+          },
+          "appliesStates": ["stun"]
+        }
+      },
+      {
+        "id": "taking_advantage",
+        "positionIndex": 5,
+        "name": "Taking Advantage",
+        "description": "Increases damage dealt to stunned targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_stunned": 0 },
+          "perRank": { "extra_damage_stunned": 17.5 }
+        }
+      },
+      {
+        "id": "crushing_hair_sweep",
+        "positionIndex": 6,
+        "name": "Crushing Hair Sweep",
+        "description": "Chance to inflict armor break on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "armor_break": 0 },
+          "perRank": { "armor_break": 25 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "armor_break", "amount": { "base": 0, "perRank": 25 } }
+          ]
+        }
+      },
+      {
+        "id": "ripping_hair",
+        "positionIndex": 7,
+        "name": "Ripping Hair",
+        "description": "Chance to inflict bleed on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "vile_slash",
+        "positionIndex": 8,
+        "name": "Vile Slash",
+        "description": "Chance to deal increased critical strike damage on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "crit_damage": 0, "crit_chance": 0 },
+          "perRank": { "crit_damage": 8, "crit_chance": 4 }
+        }
+      },
+      {
+        "id": "smacking_whip",
+        "positionIndex": 9,
+        "name": "Smacking Whip",
+        "description": "Chance on hit to deal double damage.",
+        "maxRank": 5,
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+      },
+      {
+        "id": "rupturing_headbang",
+        "positionIndex": 10,
+        "name": "Rupturing Headbang",
+        "description": "Chance on hit to deal increased damage to bleeding targets and increase the frequency of bleeding.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_frequency": 0 },
+          "perRank": { "increased_bleeding_frequency": 12.5 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "effects": {
+            "base": { "extra_damage_bleeding": 0 },
+            "perRank": { "extra_damage_bleeding": 25 }
+          },
+          "appliesStates": ["bleeding"]
+        }
+      },
+      {
+        "id": "hair_whipper",
+        "positionIndex": 11,
+        "name": "Hair Whipper",
+        "description": "Headbang with every attack dealing a portion of the damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 80, "area_of_effect": 20 }
+        }
+      },
+      {
+        "id": "hair_tornado",
+        "positionIndex": 12,
+        "name": "Hair Tornado",
+        "description": "Unleash a tornado of hair dealing increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
+          "perRank": { "physical_skill_damage": 60, "area_of_effect": 25 }
+        }
+      },
+      {
+        "id": "slapping_around",
+        "positionIndex": 13,
+        "name": "Slapping Around",
+        "description": "Knock monsters back when headbanging causing them to take increased damage when hitting terrain.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "increased_attack_speed": 0 },
+          "perRank": {
+            "physical_skill_damage": 100,
+            "increased_attack_speed": 15
+          }
+        }
+      },
+      {
+        "id": "hemorrhaging_hairbang",
+        "positionIndex": 14,
+        "name": "Hemorrhaging Hairbang",
+        "description": "Headbang now stacks bleeding with increased damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "max_skill_stacks": 1,
+            "increased_bleeding_damage": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 25,
+            "max_skill_stacks": 1,
+            "increased_bleeding_damage": 20
+          }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 20 } }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "craving_for_another_killing",
+    "classId": "bard",
+    "name": "Craving For Another Killing",
+    "kind": "buff",
+    "description": "Increases your attack damage, life per hit and attack speed for a short duration.",
+    "tags": [
+      "Cast",
+      "Active",
+      "Buff"
+    ],
+    "movementDuringUse": 65,
+    "baseCastRate": 1,
+    "baseCooldown": 70,
+    "effectDuration": 25,
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 3,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "passiveStats": {
+      "base": {
+        "attack_damage": 20,
+        "life_steal": 5,
+        "increased_attack_speed": 15
+      },
+      "perRank": {
+        "attack_damage": 2,
+        "life_steal": 0.25,
+        "increased_attack_speed": 1
+      }
+    }
+  },
+  {
+    "id": "craving_for_attention",
+    "classId": "bard",
+    "name": "Craving For Attention",
+    "kind": "passive",
+    "description": "Gain fire skill damage for a portion of your total enhanced damage.",
+    "tags": [
+      "Passive"
+    ],
+    "maxRank": 20,
+    "requiresLevel": 24,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 3,
+      "col": 1
+    },
+    "ranks": [
+      {
+        "rank": 1
+      }
+    ],
+    "passiveStats": {
+      "base": {
+        "fire_skill_damage": 5
+      },
+      "perRank": {
+        "fire_skill_damage": 0.5
+      }
+    }
+  },
+  {
+    "id": "moshpit_massacre",
+    "classId": "bard",
+    "name": "Moshpit Massacre",
+    "kind": "active",
+    "description": "Summon a death metal crowd to fight monsters within the area radius draining a portion of your maximum mana over time dealing physical damage.",
+    "damageType": "physical",
+    "tags": [
+      "Cast",
+      "Active",
+      "Spell",
+      "Summon",
+      "Orbital"
+    ],
+    "movementDuringUse": 65,
+    "baseCooldown": 5,
+    "maxRank": 20,
+    "requiresLevel": 30,
+    "tree": "Pit Fighter",
+    "position": {
+      "row": 4,
+      "col": 0
+    },
+    "ranks": [
+      {
+        "rank": 1,
+        "manaCost": 5
+      }
+    ],
+    "attackKind": "attack",
+    "manaCostFormula": {
+      "base": 5,
+      "perLevel": 1
+    },
+    "attackScaling": {
+      "weaponDamagePct": {
+        "base": 88,
+        "perLevel": 30
+      },
+      "flatPhysicalMin": {
+        "base": 4,
+        "perLevel": 0
+      },
+      "flatPhysicalMax": {
+        "base": 12,
+        "perLevel": 1
+      }
+    },
+    "passiveStats": {
+      "base": {
+        "life": 2750,
+        "mana_drain_pct": 7
+      },
+      "perRank": {
+        "life": 250,
+        "mana_drain_pct": 0
+      }
+    },
+    "bonusSources": [
+      {
+        "source": "Headbanger",
+        "stat": "attack_damage",
+        "value": 4,
+        "per": "skill_level"
+      },
+      {
+        "source": "Antisocial Pit Fighter",
+        "stat": "attack_damage",
+        "value": 6,
+        "per": "skill_level"
+      },
+      {
+        "source": "Craving For Another Killing",
+        "stat": "attack_damage",
+        "value": 8,
+        "per": "skill_level"
+      }
+    ],
+    "subskills": [
+      {
+        "id": "moshpit_massacre_core",
+        "positionIndex": 0,
+        "name": "Moshpit Massacre",
+        "description": "Core of the Moshpit Massacre subtree.",
+        "maxRank": 1
+      },
+      {
+        "id": "pit_crowd",
+        "positionIndex": 1,
+        "name": "Pit Crowd",
+        "description": "Increases the amount of fighters in the pit",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_max_amount": 0 },
+          "perRank": { "summon_max_amount": 2 }
+        }
+      },
+      {
+        "id": "moshpit_mania",
+        "positionIndex": 2,
+        "name": "Moshpit Mania",
+        "description": "Increases the damage dealt by pit fighters",
+        "maxRank": 5,
+        "effects": {
+          "base": { "physical_skill_damage": 0 },
+          "perRank": { "physical_skill_damage": 12 }
+        }
+      },
+      {
+        "id": "amping_up_the_crowd",
+        "positionIndex": 3,
+        "name": "Amping Up The Crowd",
+        "description": "Increases the attack speed of pit fighters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_attack_speed": 0 },
+          "perRank": { "summon_attack_speed": 10 }
+        }
+      },
+      {
+        "id": "pit_fatality",
+        "positionIndex": 4,
+        "name": "Pit Fatality",
+        "description": "Pit fighters execute low life targets",
+        "maxRank": 5,
+        "effects": {
+          "base": { "execute_below": 0 },
+          "perRank": { "execute_below": 1 }
+        }
+      },
+      {
+        "id": "make_it_bigger",
+        "positionIndex": 5,
+        "name": "MAKE IT BIGGER!!",
+        "description": "Increases the area of effect radius of the pit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": 15 }
+        }
+      },
+      {
+        "id": "broken_noses",
+        "positionIndex": 6,
+        "name": "Broken Noses",
+        "description": "Pit fighters have a chance to inflict bleed on hit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "increased_bleeding_damage": 0 },
+          "perRank": { "increased_bleeding_damage": 30 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 0, "perRank": 4 },
+          "appliesStates": [
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+          ]
+        }
+      },
+      {
+        "id": "pit_full_of_injuries",
+        "positionIndex": 7,
+        "name": "Pit Full Of Injuries",
+        "description": "Increases damage dealt to bleeding targets.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "extra_damage_bleeding": 0 },
+          "perRank": { "extra_damage_bleeding": 15 }
+        }
+      },
+      {
+        "id": "going_crazy",
+        "positionIndex": 8,
+        "name": "Going Crazy",
+        "description": "Increases the movement speed of the pit fighters",
+        "maxRank": 5,
+        "effects": {
+          "base": { "summon_movement_speed": 0 },
+          "perRank": { "summon_movement_speed": 20 }
+        }
+      },
+      {
+        "id": "slamming_around",
+        "positionIndex": 9,
+        "name": "Slamming Around",
+        "description": "Increases the critical strike chance and damage of the pit fighters.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
+          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 30 }
+        }
+      },
+      {
+        "id": "brutal_intimacy",
+        "positionIndex": 10,
+        "name": "Brutal Intimacy",
+        "description": "Decreases the area of effect radius of the pit.",
+        "maxRank": 5,
+        "effects": {
+          "base": { "area_of_effect": 0 },
+          "perRank": { "area_of_effect": -15 }
+        }
+      },
+      {
+        "id": "follow_the_lead",
+        "positionIndex": 11,
+        "name": "Follow The Lead",
+        "description": "The pit provides increased attack speed, movement speed and damage to the pit fighters.",
+        "maxRank": 3,
+        "effects": {
+          "base": {
+            "physical_skill_damage": 0,
+            "summon_attack_speed": 0,
+            "summon_movement_speed": 0
+          },
+          "perRank": {
+            "physical_skill_damage": 15,
+            "summon_attack_speed": 15,
+            "summon_movement_speed": 15
+          }
+        }
+      },
+      {
+        "id": "pitfighting_colossus",
+        "positionIndex": 12,
+        "name": "Pitfighting Colossus",
+        "description": "Only spawn one pit fighter with increased stats scaling off of the total amount of pit fighters.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "conversion_summon_count": 100 },
+          "perRank": { "conversion_summon_count": 20 }
+        }
+      },
+      {
+        "id": "beach_balls",
+        "positionIndex": 13,
+        "name": "Beach Balls",
+        "description": "Add multiple flying beach balls into the pit bouncing off of its edges dealing additional damage.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
+          "perRank": { "physical_skill_damage": 125, "projectile_count": 4 }
+        }
+      },
+      {
+        "id": "total_anarchy",
+        "positionIndex": 14,
+        "name": "Total Anarchy",
+        "description": "Spawn pit fighters without the pits limitations following you around with a portion of their stats.",
+        "maxRank": 3,
+        "effects": {
+          "base": { "summon_stats_pct": 0 },
+          "perRank": { "summon_stats_pct": 5 }
+        }
+      }
+    ]
+  }
+]
