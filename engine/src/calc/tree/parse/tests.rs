@@ -280,6 +280,96 @@ fn rule_defense_and_speed() {
 }
 
 #[test]
+fn rule_weapon_conditional_lines_use_dedicated_keys() {
+    assert_mod(
+        "+8% to Faster Cast Rate while wielding a wand",
+        "faster_cast_rate_with_wand",
+        8.0,
+    );
+    assert_mod(
+        "+5% Increased Total Faster Cast Rate while wielding a wand",
+        "faster_cast_rate_more_with_wand",
+        5.0,
+    );
+    assert_mod(
+        "+8 to Maximum Damage when wielding a shield",
+        "attack_damage_with_shield",
+        8.0,
+    );
+    assert_mod("+8 to Maximum Damage", "attack_damage", 8.0);
+    assert_mod(
+        "+15% Damage Mitigation when using a Shield",
+        "damage_mitigation_with_shield",
+        15.0,
+    );
+    assert_mod(
+        "+50 to Damage Returned when wielding a Shield",
+        "damage_return_with_shield",
+        50.0,
+    );
+    assert_mod(
+        "+10% Increased Total Critical Strike Damage when using a Shield",
+        "crit_damage_more_with_shield",
+        10.0,
+    );
+    assert_mod(
+        "+30% Increased Melee Attack Range when using a Shield",
+        "melee_range_with_shield",
+        30.0,
+    );
+    assert_mod(
+        "+3% Increased Ailment Damage when using a Two Handed Weapon",
+        "ailment_damage_all_with_two_handed",
+        3.0,
+    );
+    assert_mod(
+        "+20% Increased Total Ailment Damage when using a Two Handed Weapon",
+        "ailment_damage_all_more_with_two_handed",
+        20.0,
+    );
+    assert_mod(
+        "+5% Increased Ailment Frequency when using a Two Handed Weapon",
+        "increased_ailment_frequency_with_two_handed",
+        5.0,
+    );
+    assert_mod(
+        "+8% Increased Melee Attack Damage when using a Two Handed Melee Weapon",
+        "damage_with_two_handed_melee",
+        8.0,
+    );
+    assert_mod(
+        "+50% to Enhanced Damage when using Bow",
+        "enhanced_damage_with_bow",
+        50.0,
+    );
+    assert_mod(
+        "+50% to Enhanced Damage when using Gun",
+        "enhanced_damage_with_gun",
+        50.0,
+    );
+    assert_mod(
+        "+50% to Enhanced Damage when using Throwing Weapon",
+        "enhanced_damage_with_throwing",
+        50.0,
+    );
+    assert_mod(
+        "+50% to Enhanced Damage when using Axe",
+        "damage_with_axe",
+        50.0,
+    );
+    assert_mod(
+        "5% Increased Total Spell Projectile Damage",
+        "spell_projectile_damage_more",
+        5.0,
+    );
+    assert_mod(
+        "+8% Increased Spell Projectile Damage when wielding a Staff or a Cane",
+        "two_handed_spell_projectile_damage",
+        8.0,
+    );
+}
+
+#[test]
 fn rule_crit() {
     assert_mod("30% Increased Critical Strike Damage", "crit_damage", 30.0);
     assert_mod(
@@ -521,21 +611,16 @@ fn meta_element_conversion() {
 
 #[test]
 fn meta_weapon_specific_enhanced_damage() {
-    assert_convert(
-        "50% to Enhanced Damage when using Bow",
-        "enhanced_damage",
-        ConvertKind::Stat,
-        "damage_with_bow",
-        ConvertKind::Stat,
-        50.0,
-    );
-    assert_convert(
+    // Weapon-gated enhanced damage is a flat conditional stat now, not a
+    // conversion; folded into enhanced_damage when the weapon matches.
+    assert_mod(
         "40% to Enhanced Damage when using Axe",
-        "enhanced_damage",
-        ConvertKind::Stat,
         "damage_with_axe",
-        ConvertKind::Stat,
         40.0,
+    );
+    assert_eq!(
+        parse_tree_node_meta("50% to Enhanced Damage when using Bow"),
+        None
     );
 }
 
