@@ -129,3 +129,42 @@ jobs:
             HSPlanner-x86_64.rpm \
             HSPlanner-amd64.AppImage \
             --clobber 2>/dev/null || true
+
+  # ubuntu-22.04 libs bundled into the AppImage (libwayland, glib, systemd...) shadow
+  # newer host libs and break EGL on Mesa 25+ distros -> white screen (tauri#15665).
+  # Strip them, repack, re-sign, and fix the updater manifest.
+  fix-appimage:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download AppImage from release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download ${{ inputs.tag }} -R ${{ github.repository }} -p '*_amd64.AppImage'
+
+      - name: Strip over-bundled libs and repack
+        run: |
+          APPIMAGE=$(ls *_amd64.AppImage)
+          ./"$APPIMAGE" --appimage-extract
+          rm -f squashfs-root/usr/lib/{libwayland-*,libglib-*,libgio-*,libgobject-*,libgmodule-*,libgst*,libmount*,libblkid*,libselinux*,libpcre2-*,libsystemd*,libudev*,libgudev*,liblzma*,liblz4*,libzstd*,libcap*,libgcrypt*,libdbus-1*,libseccomp*,libdw*,libelf*,libffi*,libbsd*,libmd*}
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage --appimage-extract-and-run --comp zstd squashfs-root "$APPIMAGE"
+
+      - name: Re-sign and update release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          APPIMAGE=$(ls *_amd64.AppImage)
+          npx --yes @tauri-apps/cli@2.11.2 signer sign "$APPIMAGE"
+          gh release upload ${{ inputs.tag }} "$APPIMAGE" "$APPIMAGE.sig" --clobber -R ${{ github.repository }}
+          gh release download ${{ inputs.tag }} -R ${{ github.repository }} -p latest.json
+          ASSET_URL=$(gh api repos/${{ github.repository }}/releases/tags/${{ inputs.tag }} --jq ".assets[] | select(.name==\"$APPIMAGE\") | .url")
+          SIG=$(cat "$APPIMAGE.sig")
+          jq --arg sig "$SIG" --arg url "$ASSET_URL" \
+            '.platforms["linux-x86_64"] |= (.signature=$sig | .url=$url)
+             | .platforms["linux-x86_64-appimage"] |= (.signature=$sig | .url=$url)' \
+            latest.json > latest.json.tmp && mv latest.json.tmp latest.json
+          gh release upload ${{ inputs.tag }} latest.json --clobber -R ${{ github.repository }}

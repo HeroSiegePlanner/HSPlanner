@@ -44,6 +44,7 @@
 - Switching tabs is faster
 
 ## Fixes
+- The Linux AppImage starts again on modern distros. No more white screen
 - Skill cards in Stats show the real skill level: item "+X to Skills" ranks count in the header, and mana cost scales with that rank like in the game (shared web builds too) instead of always showing the rank 1 cost
 - Shaman and Redneck passives now match the game: Earth's Grace, Spiritual Guide, Moonshine Madness, Durable Wear, Logger's Endurance and Chainsaw Mastery grant percent-based stats, Spontaneous Combustion uses the corrected formula, and five Redneck skills sit in their real tree columns
 - Glacier Talons now simply lowers its proc to 4% for S10 instead of showing the nerf as a second uncalculated mod
