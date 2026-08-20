@@ -145,6 +145,7 @@ jobs:
       - name: Strip over-bundled libs and repack
         run: |
           APPIMAGE=$(ls *_amd64.AppImage)
+          chmod +x "$APPIMAGE"
           ./"$APPIMAGE" --appimage-extract
           rm -f squashfs-root/usr/lib/{libwayland-*,libglib-*,libgio-*,libgobject-*,libgmodule-*,libgst*,libmount*,libblkid*,libselinux*,libpcre2-*,libsystemd*,libudev*,libgudev*,liblzma*,liblz4*,libzstd*,libcap*,libgcrypt*,libdbus-1*,libseccomp*,libdw*,libelf*,libffi*,libbsd*,libmd*}
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
