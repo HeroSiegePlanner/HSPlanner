@@ -3,6 +3,7 @@ import { effectiveSkillCost } from './effectiveSkillCost'
 import { visibleEffectiveSkillTags } from '../../utils/skills/skillTags'
 import { useBuild } from '../../store/build'
 import type {
+  AttackSkillDamageBreakdown,
   SkillDamageBreakdown,
   WeaponDamageBreakdown,
 } from '../../utils/item/stats'
@@ -15,6 +16,7 @@ import type {
 import { formatDecimal, formatRange, useFormatRangeInt } from './statFormat'
 import { BDLine, BDSection, HeroStat, Panel } from './statPrimitives'
 import { DamageBreakdown } from './DamageBreakdown'
+import { AttackDamageBreakdown } from './AttackDamageBreakdown'
 
 export function MainSkillSection({
   mainSkill,
@@ -28,6 +30,7 @@ export function MainSkillSection({
   mcrRange,
   paidInLifeRange,
   weaponDamage,
+  attackDamage,
 }: {
   mainSkill: Skill | null
   mainSkillRank: number
@@ -42,7 +45,27 @@ export function MainSkillSection({
   mcrRange: RangedValue
   paidInLifeRange: RangedValue
   weaponDamage: WeaponDamageBreakdown | null
+  attackDamage: AttackSkillDamageBreakdown | null
 }) {
+  // Attack skills first: their combined numbers already include the elemental
+  // part, so they are the fuller breakdown when both exist.
+  if (mainSkill && attackDamage) {
+    return (
+      <Panel title="Main Skill" meta={`${mainSkill.name}`}>
+        <AttackSkillHero skill={mainSkill} breakdown={attackDamage} />
+        <AttackDamageBreakdown
+          skill={mainSkill}
+          breakdown={attackDamage}
+          currentRank={mainSkillRank}
+          attributes={attributes}
+          skillRanksByName={skillRanksByName}
+          skillsByNormalizedName={skillsByNormalizedName}
+          rankBonuses={rankBonuses}
+        />
+      </Panel>
+    )
+  }
+
   if (mainSkill && skillBreakdown) {
     return (
       <Panel
@@ -91,6 +114,101 @@ export function MainSkillSection({
         headline damage breakdown here.
       </div>
     </Panel>
+  )
+}
+
+function AttackSkillHero({
+  skill,
+  breakdown,
+}: {
+  skill: Skill
+  breakdown: AttackSkillDamageBreakdown
+}) {
+  const formatRangeInt = useFormatRangeInt()
+  const b = breakdown
+  const subskillRanks = useBuild((s) => s.subskillRanks)
+  const tagView = visibleEffectiveSkillTags(skill, subskillRanks)
+  const accentBg = skill.damageType
+    ? skillHeroBg(skill.damageType)
+    : 'linear-gradient(135deg, rgba(224,184,100,0.06), transparent 60%)'
+  const hasElemental = b.poisonHitMax > 0
+  return (
+    <div
+      className="mb-3 grid grid-cols-1 overflow-hidden rounded-[3px] border border-border md:grid-cols-[1.2fr_1fr]"
+      style={{ background: accentBg }}
+    >
+      <div className="border-b border-border px-4 py-3.5 md:border-b-0 md:border-r">
+        <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
+          <span>Average Hit</span>
+          {skill.damageType && (
+            <span
+              className={`rounded-xs border px-1.5 py-px text-[9px] font-semibold ${DAMAGE_COLORS[skill.damageType].pill}`}
+            >
+              {skill.damageType}
+            </span>
+          )}
+        </div>
+        <div
+          className="font-mono text-[28px] font-semibold leading-none tabular-nums tracking-[0.01em] text-accent-hot"
+          style={{ textShadow: '0 0 16px rgba(224,184,100,0.18)' }}
+        >
+          {formatRangeInt(Math.round(b.combinedAvgMin), Math.round(b.combinedAvgMax))}
+        </div>
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 font-mono text-[10px] tracking-widest text-muted">
+          <span>
+            DPS{' '}
+            <span className="text-accent-hot">
+              {formatRangeInt(Math.round(b.dpsMin), Math.round(b.dpsMax))}
+            </span>
+          </span>
+          <span>
+            <span className="text-text/90">
+              {formatRange(b.attacksPerSecondMin, b.attacksPerSecondMax)}
+            </span>{' '}
+            attacks/sec
+          </span>
+          {(tagView.tags.length > 0 || tagView.removed.length > 0) && (
+            <div className="flex flex-wrap gap-1">
+              {tagView.tags.map((tag) => (
+                <span
+                  key={tag}
+                  title={tagView.added.has(tag) ? 'Added by subskill' : undefined}
+                  className={`rounded-xs border px-1.5 py-px text-[9px] font-semibold uppercase tracking-[0.14em] text-accent-hot ${
+                    tagView.added.has(tag)
+                      ? 'border-accent-hot/80'
+                      : 'border-accent-deep/50'
+                  }`}
+                  style={{
+                    background:
+                      'linear-gradient(180deg, rgba(58,46,24,0.4), rgba(42,36,24,0.2))',
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2.5 px-4 py-3.5">
+        <HeroStat
+          k="Hit damage"
+          v={formatRangeInt(b.combinedHitMin, b.combinedHitMax)}
+        />
+        <HeroStat
+          k="Attack damage"
+          v={`${formatRange(b.weaponDamagePctMin, b.weaponDamagePctMax)}%`}
+        />
+        <HeroStat
+          k="Physical hit"
+          v={formatRangeInt(b.physicalHitMin, b.physicalHitMax)}
+        />
+        <HeroStat
+          k="Elemental hit"
+          v={hasElemental ? formatRangeInt(b.poisonHitMin, b.poisonHitMax) : '—'}
+        />
+      </div>
+    </div>
   )
 }
 

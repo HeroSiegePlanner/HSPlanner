@@ -79,8 +79,17 @@ pub struct DamageRow {
 
 #[derive(Debug, Clone)]
 pub enum BonusSource {
-    AttributePoint { source: String, value: f64 },
-    SkillLevel { source: String, value: f64 },
+    AttributePoint { source: String, stat: String, value: f64 },
+    SkillLevel { source: String, stat: String, value: f64 },
+}
+
+impl BonusSource {
+    pub fn stat(&self) -> &str {
+        match self {
+            BonusSource::AttributePoint { stat, .. } => stat,
+            BonusSource::SkillLevel { stat, .. } => stat,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -170,6 +179,24 @@ pub struct AttackSkillDamageBreakdown {
     pub skill_flat_phys_max: f64,
     pub attack_rating_pct_min: f64,
     pub attack_rating_pct_max: f64,
+    pub synergy_min_pct: f64,
+    pub synergy_max_pct: f64,
+    pub projectile_count: u32,
+    pub weapon_damage_min: f64,
+    pub weapon_damage_max: f64,
+    pub enhanced_damage_min_pct: f64,
+    pub enhanced_damage_max_pct: f64,
+    pub additive_physical_min: f64,
+    pub additive_physical_max: f64,
+    pub attack_damage_min_pct: f64,
+    pub attack_damage_max_pct: f64,
+    pub crushing_blow_modifier: f64,
+    pub armor_break_pct: f64,
+    pub deadly_blow_chance: f64,
+    pub crit_chance: f64,
+    pub crit_damage_pct: f64,
+    pub crit_multiplier_avg: f64,
+    pub extra_damage_sources: Vec<ExtraSource>,
     pub physical_hit_min: i64,
     pub physical_hit_max: i64,
     pub physical_avg_min: i64,

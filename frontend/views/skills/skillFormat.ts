@@ -23,20 +23,6 @@ export function formatPctRange(min: number, max: number): string {
   return `${m}% - ${mx}%`
 }
 
-export function formatFlatPhys(
-  minF: { base: number; perLevel: number },
-  maxF: { base: number; perLevel: number },
-  curMin: number,
-  curMax: number,
-): string {
-  const fmt = (rank: number) =>
-    `[${Math.round(evalFormulaClamped(minF, rank) * 100) / 100} to ${
-      Math.round(evalFormulaClamped(maxF, rank) * 100) / 100
-    }]`
-  if (curMin === curMax) return fmt(curMin)
-  return `${fmt(curMin)} … ${fmt(curMax)}`
-}
-
 export function formatDmgRange(
   min: [number, number],
   max: [number, number],

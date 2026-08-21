@@ -72,6 +72,8 @@ function skillRef(skill: Skill) {
     bonusSources: skill.bonusSources ?? [],
     baseCastRate: skill.baseCastRate ?? undefined,
     usesAttackSpeed: skill.usesAttackSpeed ?? false,
+    attackKind: skill.attackKind ?? undefined,
+    attackScaling: skill.attackScaling ?? undefined,
     proc: skill.proc
       ? {
           chance: skill.proc.chance,

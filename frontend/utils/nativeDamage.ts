@@ -2,7 +2,11 @@ import { invoke } from '@tauri-apps/api/core'
 import { notifyBridgeError } from './calc/bridge'
 import type { RangedValue } from '../types/game'
 import type { BonusSource, DamageFormula, DamageRange, DamageType } from '../types/skill'
-import type { SkillDamageBreakdown, WeaponDamageBreakdown } from './item/stats'
+import type {
+  AttackSkillDamageBreakdown,
+  SkillDamageBreakdown,
+  WeaponDamageBreakdown,
+} from './item/stats'
 
 export interface NativeSkillRef {
   name: string
@@ -11,6 +15,13 @@ export interface NativeSkillRef {
   damageFormula?: DamageFormula
   damagePerRank?: DamageRange[]
   bonusSources?: BonusSource[]
+  attackKind?: 'attack' | 'spell'
+  attackScaling?: {
+    weaponDamagePct?: DamageFormula
+    flatPhysicalMin?: DamageFormula
+    flatPhysicalMax?: DamageFormula
+    attackRatingPct?: DamageFormula
+  }
 }
 
 export interface NativeWeaponRef {
@@ -46,6 +57,20 @@ export async function computeSkillDamageNative(
 ): Promise<SkillDamageBreakdown | null> {
   try {
     return await invoke('compute_skill_damage', { input })
+  } catch (err) {
+    throw notifyBridgeError(err)
+  }
+}
+
+export interface NativeAttackSkillDamageInput extends NativeSkillDamageInput {
+  weapon?: NativeWeaponRef
+}
+
+export async function computeAttackSkillDamageNative(
+  input: NativeAttackSkillDamageInput,
+): Promise<AttackSkillDamageBreakdown | null> {
+  try {
+    return await invoke('compute_attack_skill_damage', { input })
   } catch (err) {
     throw notifyBridgeError(err)
   }

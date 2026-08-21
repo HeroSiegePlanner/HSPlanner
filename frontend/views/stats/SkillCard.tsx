@@ -1,5 +1,5 @@
 import { type CSSProperties, useMemo } from 'react'
-import { useSkillDamage } from '../../hooks/useSkillDamage'
+import { useAttackSkillDamage, useSkillDamage } from '../../hooks/useSkillDamage'
 import { DAMAGE_COLORS } from '../../utils/damageColors'
 import { normalizeSkillName, rangedMax, rangedMin } from '../../utils/item/stats'
 import { effectiveSkillCost } from './effectiveSkillCost'
@@ -15,9 +15,14 @@ import {
 } from '../../utils/build/entityRates'
 import { useBuild } from '../../store/build'
 import type { AttributeKey, RangedStatMap, RangedValue, Skill } from '../../types'
-import type { NativeSkillDamageInput } from '../../utils/nativeDamage'
+import type {
+  NativeAttackSkillDamageInput,
+  NativeSkillDamageInput,
+  NativeWeaponRef,
+} from '../../utils/nativeDamage'
 import { formatDecimal, formatRange, useFormatRangeInt } from './statFormat'
 import { DamageBreakdown } from './DamageBreakdown'
+import { AttackDamageBreakdown } from './AttackDamageBreakdown'
 
 export function SkillCard({
   skill,
@@ -34,6 +39,7 @@ export function SkillCard({
   skillProjectiles,
   subtreeScoped,
   isMain,
+  weapon,
 }: {
   skill: Skill
   mcrRange: RangedValue
@@ -49,6 +55,7 @@ export function SkillCard({
   skillProjectiles: Record<string, number>
   subtreeScoped: Record<string, RangedValue>
   isMain: boolean
+  weapon?: NativeWeaponRef
 }) {
   const formatRangeInt = useFormatRangeInt()
   const subskillRanks = useBuild((s) => s.subskillRanks)
@@ -89,11 +96,13 @@ export function SkillCard({
     Math.max(1, effRankMax),
   )
 
-  const hasDamage =
+  const isAttack = skill.attackKind === 'attack'
+  const hasSpellDamage =
     !!skill.damageFormula ||
     (!!skill.damagePerRank && skill.damagePerRank.length > 0)
+  const hasDamage = hasSpellDamage || isAttack
   const skillInput = useMemo<NativeSkillDamageInput | null>(() => {
-    if (currentRank <= 0 || !hasDamage) return null
+    if (currentRank <= 0 || !hasSpellDamage || isAttack) return null
     return {
       skill,
       allocatedRank: currentRank,
@@ -111,7 +120,8 @@ export function SkillCard({
     }
   }, [
     currentRank,
-    hasDamage,
+    hasSpellDamage,
+    isAttack,
     skill,
     attributes,
     stats,
@@ -124,6 +134,40 @@ export function SkillCard({
     subtreeScoped,
   ])
   const damageBreakdown = useSkillDamage(skillInput)
+  const attackInput = useMemo<NativeAttackSkillDamageInput | null>(() => {
+    if (currentRank <= 0 || !isAttack) return null
+    return {
+      skill,
+      allocatedRank: currentRank,
+      attributes,
+      stats,
+      skillRanksByName,
+      itemSkillBonuses,
+      enemyConditions,
+      enemyResistances,
+      skillsByName: skillsByNormalizedName,
+      projectileCount:
+        (skillProjectiles[skill.id] ?? 1) +
+        rangedMax(subtreeScoped.projectile_count ?? 0),
+      ofTotalDamage: rangedMax(subtreeScoped.of_total_damage ?? 0),
+      weapon,
+    }
+  }, [
+    currentRank,
+    isAttack,
+    skill,
+    attributes,
+    stats,
+    skillRanksByName,
+    itemSkillBonuses,
+    enemyConditions,
+    enemyResistances,
+    skillsByNormalizedName,
+    skillProjectiles,
+    subtreeScoped,
+    weapon,
+  ])
+  const attackBreakdown = useAttackSkillDamage(attackInput)
   const typeLabel = skill.damageType
     ? skill.damageType.charAt(0).toUpperCase() + skill.damageType.slice(1)
     : ''
@@ -180,7 +224,28 @@ export function SkillCard({
             )}
           </span>
         </div>
-        {hasDamage && damageBreakdown ? (
+        {isAttack && attackBreakdown ? (
+          <div
+            className={`font-mono text-[13px] font-semibold tabular-nums ${dmgAccent}`}
+          >
+            {formatRangeInt(
+              attackBreakdown.combinedHitMin,
+              attackBreakdown.combinedHitMax,
+            )}{' '}
+            <span className="ml-0.5 font-mono text-[9px] font-normal uppercase tracking-[0.14em] text-faint">
+              {typeLabel} damage
+            </span>
+            <span className="ml-2 font-mono text-[9px] font-normal uppercase tracking-[0.14em] text-faint">
+              DPS{' '}
+              <span className="text-accent-hot">
+                {formatRangeInt(
+                  Math.round(attackBreakdown.dpsMin),
+                  Math.round(attackBreakdown.dpsMax),
+                )}
+              </span>
+            </span>
+          </div>
+        ) : hasDamage && damageBreakdown ? (
           <div
             className={`font-mono text-[13px] font-semibold tabular-nums ${dmgAccent}`}
           >
@@ -258,6 +323,17 @@ export function SkillCard({
               life
             </span>
           )}
+          {isAttack && attackBreakdown && (
+            <span>
+              <span className="font-mono font-medium text-text">
+                {formatRange(
+                  attackBreakdown.attacksPerSecondMin,
+                  attackBreakdown.attacksPerSecondMax,
+                )}
+              </span>{' '}
+              attacks/s
+            </span>
+          )}
           {entitySwing && (
             <span>
               <span className="font-mono font-medium text-text">
@@ -309,6 +385,17 @@ export function SkillCard({
         <DamageBreakdown
           skill={skill}
           breakdown={damageBreakdown}
+          currentRank={currentRank}
+          attributes={attributes}
+          skillRanksByName={skillRanksByName}
+          skillsByNormalizedName={skillsByNormalizedName}
+          rankBonuses={rankBonuses}
+        />
+      )}
+      {isAttack && attackBreakdown && (
+        <AttackDamageBreakdown
+          skill={skill}
+          breakdown={attackBreakdown}
           currentRank={currentRank}
           attributes={attributes}
           skillRanksByName={skillRanksByName}

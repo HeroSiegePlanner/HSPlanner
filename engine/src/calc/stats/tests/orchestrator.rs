@@ -302,6 +302,101 @@ fn dagger_conditional_lines_require_dagger_weapon() {
     );
 }
 
+// Weapon-gated tree lines (wand/shield/two-handed) must stay inert unless the
+// matching weapon kind is equipped; base-tier wands are typed "Spell" in data.
+#[test]
+fn weapon_conditional_nodes_require_matching_weapon() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+
+    let stat = |inventory: &Inventory, nodes: &HashSet<u32>, key: &str| -> f64 {
+        let base_input = empty_input(
+            &allocated,
+            inventory,
+            &skill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &player_conditions,
+            &subskill_ranks,
+            &enemy_conditions,
+        );
+        let input = BuildStatsInput {
+            allocated_tree_nodes: nodes,
+            ..base_input
+        };
+        compute_build_stats(&input)
+            .stats
+            .get(key)
+            .copied()
+            .unwrap_or((0.0, 0.0))
+            .0
+    };
+    let delta = |item: Option<(&str, &str)>, node: u32, key: &str| -> f64 {
+        let mut inventory: Inventory = HashMap::new();
+        if let Some((slot, base_id)) = item {
+            inventory.insert(
+                slot.to_string(),
+                EquippedItem {
+                    base_id: base_id.to_string(),
+                    ..Default::default()
+                },
+            );
+        }
+        let nodes: HashSet<u32> = [node].into_iter().collect();
+        stat(&inventory, &nodes, key) - stat(&inventory, &HashSet::new(), key)
+    };
+
+    // Node 1265: +8% to Faster Cast Rate while wielding a wand.
+    assert_eq!(delta(None, 1265, "faster_cast_rate"), 0.0);
+    assert_eq!(
+        delta(Some(("weapon", "base_spell_wand")), 1265, "faster_cast_rate"),
+        8.0
+    );
+    // Node 1270: +5% Increased Total Faster Cast Rate while wielding a wand.
+    // The diminishing-returns pass folds _more into the base key, so read it there.
+    assert_eq!(delta(None, 1270, "faster_cast_rate"), 0.0);
+    assert_eq!(
+        delta(Some(("weapon", "base_spell_wand")), 1270, "faster_cast_rate"),
+        5.0
+    );
+    // Node 622: +15% Damage Mitigation when using a Shield.
+    assert_eq!(delta(None, 622, "damage_mitigation"), 0.0);
+    assert_eq!(
+        delta(
+            Some(("offhand", "shield_angelic_st_hallgar_s_bloodforged_aegis")),
+            622,
+            "damage_mitigation",
+        ),
+        15.0
+    );
+    // Node 349: +20% Increased Total Ailment Damage and +5% Increased Ailment
+    // Frequency, both gated on a two-handed weapon.
+    assert_eq!(delta(None, 349, "ailment_damage_all_more"), 0.0);
+    assert_eq!(delta(None, 349, "increased_ailment_frequency"), 0.0);
+    assert_eq!(
+        delta(Some(("weapon", "base_mace_ogre_maul")), 349, "ailment_damage_all_more"),
+        20.0
+    );
+    assert_eq!(
+        delta(
+            Some(("weapon", "base_mace_ogre_maul")),
+            349,
+            "increased_ailment_frequency",
+        ),
+        5.0
+    );
+}
+
 // Merc-granted auras arrive as input.granted_skill_ranks and must apply
 // the granted skill's per-rank passive stats without any worn item.
 #[test]
