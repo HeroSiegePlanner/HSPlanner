@@ -90,6 +90,26 @@ describe('S10 item changes', () => {
     expect(apsInImplicit.map((w) => w.id)).toEqual([])
   })
 
+  it('Shadow Lantern shield exists with its sentry package', () => {
+    const sl = patchedItem('shield_heroic_shadow_lantern')
+    expect(sl.slot).toBe('offhand')
+    expect(sl.rarity).toBe('heroic')
+    expect(sl.requiresLevel).toBe(98)
+    expect(sl.implicit).toEqual({
+      all_skills: [2, 3],
+      skill_haste: [15, 35],
+      sentry_damage: [25, 50],
+      sentry_skills: [3, 5],
+      sentry_duration: 33,
+      sentry_max_amount: [1, 3],
+    })
+    expect(sl.uniqueEffects).toEqual(['Unholy', 'Unholy'])
+    expect(sl.maxAffixes).toBe(2)
+    expect(sl.randomAffixGroupId).toBe('random_unholy')
+    expect(sl.sockets).toBe(3)
+    expect(sl.maxSockets).toBe(4)
+  })
+
   it('Skull Axe grants the Demon Form proc buff', () => {
     const axe = patchedItem('relic_relic_skull_axe')
     expect(axe.procs).toEqual([
