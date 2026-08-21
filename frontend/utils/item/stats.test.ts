@@ -241,14 +241,12 @@ describe('dedupeStatDefsByKey', () => {
     expect(dedupeStatDefsByKey(defs).map((d) => d.key)).toEqual(['a', 'b'])
   })
 
+  // The base config ships a duplicate damage_per_rage_stack; a season patch keys
+  // stats by id and silently drops it, so the guard cannot assume either shape.
   it('yields unique custom-stat option ids for the real game config', () => {
     const visible = gameConfig.stats.filter(
       (s) => !s.itemOnly && !s.skillScoped,
     )
-    expect(
-      visible.filter((s) => s.key === 'damage_per_rage_stack').length,
-    ).toBeGreaterThan(1)
-
     const keys = dedupeStatDefsByKey(visible).map((d) => d.key)
     expect(new Set(keys).size).toBe(keys.length)
     expect(keys.filter((k) => k === 'damage_per_rage_stack')).toHaveLength(1)

@@ -1,8 +1,8 @@
 // Phase 3 of the TS→Rust calc migration. Loads the TS-generated fixture at
-// engine/tests/fixtures/parity.json (produced by
-// frontend/utils/__parity-fixtures.gen.test.ts before any TS calc file is touched)
-// and reproduces every scenario through the Rust `calc_build_performance`
-// command, asserting numerical equality of every output field.
+// engine/tests/fixtures/parity.json and reproduces every scenario through the
+// Rust `calc_build_performance` command, asserting numerical equality of every
+// output field. Each scenario carries the season it was dumped under, so the
+// fixture stays valid when the default season moves on.
 //
 // Comparison tolerates:
 //   * scalar vs `[min, min]` tuple equivalence (TS legacy RangedValue shape
@@ -29,10 +29,7 @@ const EPSILON: f64 = 1e-9;
 #[test]
 fn parity_with_ts_fixtures() {
     let json = std::fs::read_to_string(FIXTURE_PATH).unwrap_or_else(|e| {
-        panic!(
-            "missing parity fixture at {FIXTURE_PATH}: {e}\n\
-             Regenerate with: npx vitest run src/utils/__parity-fixtures.gen.test.ts"
-        )
+        panic!("missing parity fixture at {FIXTURE_PATH}: {e}")
     });
     let entries: Vec<FixtureEntry> =
         serde_json::from_str(&json).expect("parity.json must be a valid JSON array");

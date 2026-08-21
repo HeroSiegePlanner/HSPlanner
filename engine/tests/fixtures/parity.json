@@ -21,6 +21,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
@@ -174,6 +175,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
@@ -407,6 +409,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
@@ -646,6 +649,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
@@ -888,6 +892,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
@@ -1137,6 +1142,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {},
       "subskillRanks": {},
@@ -1403,6 +1409,7 @@
       "mainSkillId": null,
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {},
       "skillRanks": {
         "chain_lightning": 5
@@ -1638,6 +1645,7 @@
       "mainSkillId": "charged_bolts",
       "playerConditions": {},
       "procToggles": {},
+      "season": "s9",
       "skillProjectiles": {
         "charged_bolts": 3
       },

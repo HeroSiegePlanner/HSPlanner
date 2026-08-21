@@ -11,22 +11,26 @@ import {
   patched,
   seasonDataErrors,
 } from './index'
+import { DEFAULT_SEASON_ID } from './seasons/registry'
 import affixesJson from './affixes.json'
 import incarnationNodesJson from './incarnation-nodes.json'
 import incarnationTreeJson from './incarnation-tree.json'
 
 describe('data hub season resolution (default season)', () => {
-  it('resolves s9 with no errors', () => {
-    expect(activeSeasonId).toBe('s9')
+  it('resolves the default season with no errors', () => {
+    expect(activeSeasonId).toBe(DEFAULT_SEASON_ID)
     expect(seasonDataErrors).toEqual([])
   })
 
-  it('s9 collections equal base data', () => {
+  it('serves base data for collections the season leaves alone', () => {
     expect(affixes).toEqual(affixesJson)
-    expect(incarnationNodeInfo).toEqual(incarnationNodesJson)
-    expect(incarnationTree.nodes).toEqual(incarnationTreeJson.nodes)
-    expect(incarnationTree.edges).toEqual(incarnationTreeJson.edges)
-    expect(incarnationTree.viewBox).toBe(incarnationTreeJson.viewBox)
+  })
+
+  it('serves patched data for the incarnation tree', () => {
+    expect(incarnationNodeInfo).not.toEqual(incarnationNodesJson)
+    expect(incarnationTree.nodes).not.toEqual(incarnationTreeJson.nodes)
+    expect(incarnationTree.edges).not.toEqual(incarnationTreeJson.edges)
+    expect(incarnationTree.viewBox).not.toBe(incarnationTreeJson.viewBox)
   })
 })
 

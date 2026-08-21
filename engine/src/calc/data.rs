@@ -520,11 +520,20 @@ mod tests {
     #[test]
     fn data_reads_thread_local_season_scope() {
         let default_ptr = super::data() as *const GameData;
+        {
+            let _scope = crate::calc::season::SeasonScope::enter(Some(
+                crate::calc::season::DEFAULT_SEASON_ID.to_string(),
+            ));
+            assert_eq!(default_ptr, super::data() as *const GameData);
+        }
         let _scope = crate::calc::season::SeasonScope::enter(Some(
             "scope-unknown-season".to_string(),
         ));
-        let scoped_ptr = super::data() as *const GameData;
-        assert_eq!(default_ptr, scoped_ptr);
+        assert_ne!(
+            default_ptr,
+            super::data() as *const GameData,
+            "an unknown season serves base data, the patched default does not"
+        );
     }
 
     #[test]

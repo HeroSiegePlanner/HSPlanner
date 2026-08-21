@@ -10,13 +10,15 @@ export const SEASONS: ReadonlyArray<Season> = [
   { id: 's10', name: 'Season 10' },
 ]
 
-export const DEFAULT_SEASON_ID = 's9' as const
+export const DEFAULT_SEASON_ID = 's10' as const
 
 export const LEGACY_SEASON_ID = 's9'
 
 export const SEASON_BEFORE_CHARM_STARS = 's9'
 
-export const SEASON_STORAGE_KEY = 'hsplanner.season.v1'
+// Bumped to v2 at the S10 default flip: dropping the stored pick is the point,
+// so everyone lands on DEFAULT_SEASON_ID instead of their old season.
+export const SEASON_STORAGE_KEY = 'hsplanner.season.v2'
 
 export function isKnownSeasonId(id: string): boolean {
   return SEASONS.some((s) => s.id === id)

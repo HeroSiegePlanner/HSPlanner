@@ -14,7 +14,7 @@ import {
 describe('season registry', () => {
   it('contains s9 and s10 with s9 as default', () => {
     expect(SEASONS.map((s) => s.id)).toEqual(['s9', 's10'])
-    expect(DEFAULT_SEASON_ID).toBe('s9')
+    expect(DEFAULT_SEASON_ID).toBe('s10')
   })
 
   it('falls back to default when storage is empty', () => {

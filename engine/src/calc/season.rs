@@ -5,8 +5,8 @@ use std::sync::Mutex;
 
 use super::data::SEASON_PATCHES;
 
-// Must match DEFAULT_SEASON_ID in registry.ts; flip both at S10 launch.
-pub const DEFAULT_SEASON_ID: &str = "s9";
+// Must match DEFAULT_SEASON_ID in registry.ts; flip both when a season launches.
+pub const DEFAULT_SEASON_ID: &str = "s10";
 
 thread_local! {
     static CURRENT_SEASON: RefCell<Option<String>> = const { RefCell::new(None) };
