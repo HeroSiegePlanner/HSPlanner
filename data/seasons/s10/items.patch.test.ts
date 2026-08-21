@@ -90,6 +90,34 @@ describe('S10 item changes', () => {
     expect(apsInImplicit.map((w) => w.id)).toEqual([])
   })
 
+  it('Skull Axe grants the Demon Form proc buff', () => {
+    const axe = patchedItem('relic_relic_skull_axe')
+    expect(axe.procs).toEqual([
+      {
+        trigger: 'on_attack',
+        chance: 20,
+        description: 'cast Demon Form Level [1-10]',
+      },
+    ])
+    expect(axe.skillBonuses).toEqual({ 'Demon Form': [1, 10] })
+    expect((axe.implicit as Rec).attack_rating).toBe(250)
+  })
+
+  it('Demon Form buff scales 24%+6%/lvl attack damage, 8%+2%/lvl attack speed', () => {
+    const out = applyListPatch(
+      itemGrantedSkillsJson as Rec[],
+      patches.itemGrantedSkills,
+      'item-granted-skills',
+      'name',
+    )
+    const df = out.data.find((s) => (s as Rec).name === 'Demon Form') as Rec
+    expect(df).toBeDefined()
+    expect(df.condition).toBe('demon_form_buff')
+    const ps = df.passiveStats as Rec
+    expect(ps.base).toEqual({ attack_damage: 18, increased_attack_speed: 6 })
+    expect(ps.perRank).toEqual({ attack_damage: 6, increased_attack_speed: 2 })
+  })
+
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
     const out = applyListPatch(
       itemGrantedSkillsJson as Rec[],

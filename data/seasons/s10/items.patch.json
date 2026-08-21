@@ -172,6 +172,16 @@
     }
   ],
   "change": {
+    "relic_relic_skull_axe": {
+      "procs": [
+        {
+          "trigger": "on_attack",
+          "chance": 20,
+          "description": "cast Demon Form Level [1-10]"
+        }
+      ],
+      "skillBonuses": { "Demon Form": [1, 10] }
+    },
     "amulet_heroic_amulet_of_colosseum": {
       "implicit": {
         "all_skills": [

@@ -1,4 +1,16 @@
 {
+  "add": [
+    {
+      "id": "demon_form",
+      "name": "Demon Form",
+      "description": "Transform into a demon, increasing your attack damage and attack speed.",
+      "condition": "demon_form_buff",
+      "passiveStats": {
+        "base": { "attack_damage": 18, "increased_attack_speed": 6 },
+        "perRank": { "attack_damage": 6, "increased_attack_speed": 2 }
+      }
+    }
+  ],
   "change": {
     "Fallen God's Bloodlust": {
       "passiveConverts": {
