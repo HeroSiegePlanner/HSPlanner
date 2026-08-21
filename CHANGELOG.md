@@ -1,5 +1,5 @@
 ## Features
-- Season 10 is now the default season; everyone starts there unless they switch
+- Season 10 is now the default season. Everyone starts there unless they switch
 - Item text editor: "Custom affixes" list — click a stat to insert a `[custom]` implicit line
 
 ## Fixes
