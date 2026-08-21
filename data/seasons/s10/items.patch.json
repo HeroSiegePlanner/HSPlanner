@@ -172,6 +172,14 @@
     }
   ],
   "change": {
+    "amulet_heroic_amulet_of_colosseum": {
+      "implicit": {
+        "all_skills": [2, 4],
+        "increased_attack_speed": [5, 10],
+        "to_strength": [25, 35],
+        "increased_strength": [8, 15]
+      }
+    },
     "weapons_heroic_ukkos_revenge": {
       "implicit": {
         "enhanced_damage": [

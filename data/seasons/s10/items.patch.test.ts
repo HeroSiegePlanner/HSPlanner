@@ -46,6 +46,13 @@ describe('S10 item changes', () => {
     expect(procs[0]).toMatchObject({ trigger: 'on_kill', chance: 4 })
   })
 
+  it('Amulet of Colosseum implicit is % increased attack speed, not flat APS', () => {
+    const impl = patchedItem('amulet_heroic_amulet_of_colosseum').implicit as Rec
+    expect(impl.increased_attack_speed).toEqual([5, 10])
+    expect(impl.attacks_per_second).toBeUndefined()
+    expect(impl.all_skills).toEqual([2, 4])
+  })
+
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
     const out = applyListPatch(
       itemGrantedSkillsJson as Rec[],
