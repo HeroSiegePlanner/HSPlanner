@@ -156,6 +156,31 @@ pub struct BuildStatsInput<'a> {
     pub main_skill_id: Option<&'a str>,
 }
 
+// Base-tier caster items are typed "Spell" in data; recover the real weapon
+// kind from the item name so "wielding a wand" style gates still match.
+fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
+    if base.base_type == "1-Handed Throwing Weapon" {
+        return "Throwing".to_string();
+    }
+    if base.base_type != "Spell" {
+        return base.base_type.clone();
+    }
+    let name = base.name.to_ascii_lowercase();
+    for (needle, kind) in [
+        ("spellblade", "Spellblade"),
+        ("wand", "Wand"),
+        ("cane", "Cane"),
+        ("staff", "Staff"),
+        ("fork", "Staff"),
+        ("tome", "Book"),
+    ] {
+        if name.contains(needle) {
+            return kind.to_string();
+        }
+    }
+    base.base_type.clone()
+}
+
 // Single pass of the full stat-aggregation pipeline; compute_build_stats
 // wraps it with an automatic crit-below-40 re-run when needed.
 pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
@@ -198,30 +223,67 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 7. Custom user-defined stats
     apply_custom_stats(input.custom_stats, &mut attr_sources, &mut stat_sources);
 
-    // 7b. Weapon-type conditional stats: dagger lines fold into their real
-    // stats only while a Dagger base is equipped in the weapon slot.
-    let weapon_is_dagger = input
+    // 7b. Weapon-type conditional stats: tree lines gated on a weapon kind
+    // fold into their real stats only while a matching base is equipped.
+    let weapon_base = input
         .inventory
         .get("weapon")
+        .and_then(|item| data::get_item(&item.base_id));
+    let kind = weapon_base.map(weapon_kind_of).unwrap_or_default();
+    let two_handed = weapon_base.is_some_and(|base| base.two_handed == Some(true));
+    let two_handed_melee = two_handed
+        && matches!(
+            kind.as_str(),
+            "Axe" | "Sword" | "Mace" | "Polearm" | "Chainsaw" | "Claw" | "Dagger" | "Spellblade"
+        );
+    let has_shield = input
+        .inventory
+        .get("offhand")
         .and_then(|item| data::get_item(&item.base_id))
-        .is_some_and(|base| base.base_type == "Dagger");
-    if weapon_is_dagger {
-        for (cond_key, target_key) in [
-            ("physical_damage_with_dagger", "additive_physical_damage"),
-            ("enhanced_damage_with_dagger", "enhanced_damage"),
-        ] {
-            let sum = sum_ranged_from_map(&stat_sources, cond_key);
-            if sum != (0.0, 0.0) {
-                apply_contribution(
-                    &mut attr_sources,
-                    &mut stat_sources,
-                    target_key,
-                    sum,
-                    "While wielding a Dagger".to_string(),
-                    SourceType::Tree,
-                    None,
-                );
-            }
+        .is_some_and(|base| base.base_type == "Shield");
+    let weapon_folds = [
+        (kind == "Dagger", "physical_damage_with_dagger", "additive_physical_damage", "While wielding a Dagger"),
+        (kind == "Dagger", "enhanced_damage_with_dagger", "enhanced_damage", "While wielding a Dagger"),
+        (kind == "Wand", "faster_cast_rate_with_wand", "faster_cast_rate", "While wielding a Wand"),
+        (kind == "Wand", "faster_cast_rate_more_with_wand", "faster_cast_rate_more", "While wielding a Wand"),
+        (kind == "Wand", "magic_skill_damage_with_wand", "magic_skill_damage", "While wielding a Wand"),
+        (kind == "Axe", "damage_with_axe", "enhanced_damage", "While wielding an Axe"),
+        (kind == "Axe", "attack_rating_with_axe_pct", "attack_rating_pct", "While wielding an Axe"),
+        (kind == "Staff" || kind == "Cane", "two_handed_spell_projectile_damage", "spell_projectile_damage", "While wielding a Staff or Cane"),
+        (has_shield, "attack_damage_with_shield", "attack_damage", "While using a Shield"),
+        (has_shield, "vitality_with_shield_flat", "to_vitality", "While using a Shield"),
+        (has_shield, "vitality_with_shield", "increased_vitality", "While using a Shield"),
+        (has_shield, "melee_range_with_shield", "melee_range", "While using a Shield"),
+        (has_shield, "damage_mitigation_with_shield", "damage_mitigation", "While using a Shield"),
+        (has_shield, "crit_damage_more_with_shield", "crit_damage_more", "While using a Shield"),
+        (has_shield, "damage_return_with_shield", "damage_return", "While using a Shield"),
+        (two_handed, "damage_with_two_handed", "enhanced_damage", "While using a Two Handed Weapon"),
+        (two_handed, "ailment_damage_all_with_two_handed", "ailment_damage_all", "While using a Two Handed Weapon"),
+        (two_handed, "ailment_damage_all_more_with_two_handed", "ailment_damage_all_more", "While using a Two Handed Weapon"),
+        (two_handed, "increased_ailment_frequency_with_two_handed", "increased_ailment_frequency", "While using a Two Handed Weapon"),
+        (two_handed_melee, "damage_with_two_handed_melee", "enhanced_damage", "While using a Two Handed Melee Weapon"),
+        (kind == "Bow", "damage_with_bow", "ranged_projectile_damage", "While using a Bow"),
+        (kind == "Bow", "enhanced_damage_with_bow", "enhanced_damage", "While using a Bow"),
+        (kind == "Gun", "damage_with_gun", "ranged_projectile_damage", "While using a Gun"),
+        (kind == "Gun", "enhanced_damage_with_gun", "enhanced_damage", "While using a Gun"),
+        (kind == "Throwing", "damage_with_throwing", "ranged_projectile_damage", "While using a Throwing Weapon"),
+        (kind == "Throwing", "enhanced_damage_with_throwing", "enhanced_damage", "While using a Throwing Weapon"),
+    ];
+    for (enabled, cond_key, target_key, label) in weapon_folds {
+        if !enabled {
+            continue;
+        }
+        let sum = sum_ranged_from_map(&stat_sources, cond_key);
+        if sum != (0.0, 0.0) {
+            apply_contribution(
+                &mut attr_sources,
+                &mut stat_sources,
+                target_key,
+                sum,
+                label.to_string(),
+                SourceType::Tree,
+                None,
+            );
         }
     }
 

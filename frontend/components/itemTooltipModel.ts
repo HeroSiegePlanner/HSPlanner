@@ -117,6 +117,7 @@ export const RARITY_TONE: Record<ItemRarity, TooltipTone> = {
 
 const TRIGGER_LABEL: Record<string, string> = {
   on_hit: 'on Hit',
+  on_attack: 'when Attacking',
   when_struck: 'when Struck',
   on_kill: 'on Kill',
   on_cast: 'on Cast',

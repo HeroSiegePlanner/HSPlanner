@@ -20,7 +20,6 @@ import { SYNERGY_RGB } from './treeConstants'
 import {
   evalFormulaClamped,
   formatDmgRange,
-  formatFlatPhys,
   formatPair,
   formatPctRange,
   formatStatPair,
@@ -457,29 +456,6 @@ export function SkillEffectsBlock({
             />
           )
         })}
-        {skill.attackScaling?.flatPhysicalMin &&
-          skill.attackScaling.flatPhysicalMax && (
-            <EffRow
-              label="Physical damage"
-              cur={formatFlatPhys(
-                skill.attackScaling.flatPhysicalMin,
-                skill.attackScaling.flatPhysicalMax,
-                curMin,
-                curMax,
-              )}
-              next={
-                nextMin !== null && nextMax !== null
-                  ? formatFlatPhys(
-                      skill.attackScaling.flatPhysicalMin,
-                      skill.attackScaling.flatPhysicalMax,
-                      nextMin,
-                      nextMax,
-                    )
-                  : undefined
-              }
-              color={allocated ? 'text-accent-hot' : 'text-muted'}
-            />
-          )}
         {manaCurMin !== undefined && manaCurMax !== undefined && (
           <EffRow
             label="Mana cost"

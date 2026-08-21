@@ -633,13 +633,22 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "enhanced_damage"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+to\s+Faster\s+Cast\s+Rate(?:\s+while\s+wielding\s+a\s+wand)?$",
+            r"(?i)^([+\-\d.]+)%\s+to\s+Faster\s+Cast\s+Rate$",
             "faster_cast_rate"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Faster\s+Cast\s+Rate(?:\s+while\s+wielding\s+a\s+wand)?$",
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Faster\s+Cast\s+Rate$",
             "faster_cast_rate",
             "faster_cast_rate_more"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+to\s+Faster\s+Cast\s+Rate\s+while\s+wielding\s+a\s+wand$",
+            "faster_cast_rate_with_wand"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Faster\s+Cast\s+Rate\s+while\s+wielding\s+a\s+wand$",
+            "faster_cast_rate_with_wand",
+            "faster_cast_rate_more_with_wand"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+to\s+Spell\s+Mana\s+Leech$",
@@ -662,8 +671,12 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "armor_break_on_strike"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)\s+to\s+(?:Maximum|Minimum)\s+Damage(?:\s+when\s+wielding\s+a\s+shield)?$",
+            r"(?i)^([+\-\d.]+)\s+to\s+(?:Maximum|Minimum)\s+Damage$",
             "attack_damage"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+to\s+(?:Maximum|Minimum)\s+Damage\s+when\s+wielding\s+a\s+shield$",
+            "attack_damage_with_shield"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%?\s+Increased\s+(Total\s+)?Physical\s+Damage$",
@@ -698,11 +711,10 @@ pub(super) fn rules() -> Vec<ParseRule> {
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(?:Total\s+)?Area\s+of\s+Effect\s+Spell\s+Damage$",
             "spell_aoe_damage"
         ),
-        // "_more" branch intentionally uses `two_handed_spell_projectile_damage` (TS parity).
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Spell\s+Projectile\s+Damage$",
             "spell_projectile_damage",
-            "two_handed_spell_projectile_damage"
+            "spell_projectile_damage_more"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+(?:Increased\s+)?Spell\s+Projectile\s+Size$",
@@ -1019,11 +1031,20 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(?:Melee\s+Attack\s+Damage|Melee\s+Damage)\s+when\s+using\s+a\s+Two\s+Handed\s+Melee\s+Weapon$",
+            "damage_with_two_handed_melee"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Damage\s+when\s+using\s+a\s+Two\s+Handed\s+Weapon$",
             "damage_with_two_handed"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+Increased\s+(?:Damage\s+when\s+using\s+a\s+Two\s+Handed\s+Weapon|Ailment\s+Damage\s+when\s+using\s+a\s+Two\s+Handed\s+Weapon)$",
-            "damage_with_two_handed"
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Ailment\s+Damage\s+when\s+using\s+a\s+Two\s+Handed\s+Weapon$",
+            "ailment_damage_all_with_two_handed",
+            "ailment_damage_all_more_with_two_handed"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Ailment(?:\s+Tick)?\s+Frequency\s+when\s+using\s+a\s+Two\s+Handed\s+Weapon$",
+            "increased_ailment_frequency_with_two_handed"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Spell\s+Projectile\s+Damage\s+when\s+wielding\s+a\s+Staff\s+or\s+a\s+Cane$",
@@ -1039,15 +1060,15 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Attack\s+Range\s+when\s+using\s+a\s+Shield$",
-            "melee_range"
+            "melee_range_with_shield"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Damage\s+Mitigation\s+when\s+using\s+a\s+Shield$",
-            "damage_mitigation"
+            "damage_mitigation_with_shield"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Total\s+Critical\s+Strike\s+Damage\s+when\s+using\s+a\s+Shield$",
-            "crit_damage_more"
+            "crit_damage_more_with_shield"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)\s+to\s+Vitality\s+when\s+wielding\s+a\s+shield$",
@@ -1067,8 +1088,33 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)\s+to\s+Damage\s+Returned\s+when\s+wielding\s+a\s+Shield$",
-            "damage_return"
+            "damage_return_with_shield"
         ),
+        // Conditional "+X% to Enhanced Damage when using <weapon>" lines; Axe
+        // shares `damage_with_axe` since both fold into enhanced_damage.
+        ParseRule {
+            test: Regex::new(
+                r"(?i)^([+\-\d.]+)%\s+to\s+Enhanced\s+Damage\s+when\s+using\s+(Bow|Throwing\s+Weapon|Gun|Axe)$",
+            )
+            .unwrap(),
+            build: |m| {
+                let weapon = m[2].to_ascii_lowercase();
+                let key = if weapon == "bow" {
+                    "enhanced_damage_with_bow"
+                } else if weapon == "gun" {
+                    "enhanced_damage_with_gun"
+                } else if weapon == "axe" {
+                    "damage_with_axe"
+                } else {
+                    "enhanced_damage_with_throwing"
+                };
+                Some(ParsedMod {
+                    key: key.to_string(),
+                    value: num(&m[1]),
+                    self_condition: None,
+                })
+            },
+        },
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Projectile\s+Damage\s+when\s+using\s+a\s+Gun$",
             "damage_with_gun"
