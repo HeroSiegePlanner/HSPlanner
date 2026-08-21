@@ -53,6 +53,43 @@ describe('S10 item changes', () => {
     expect(impl.all_skills).toEqual([2, 4])
   })
 
+  it('Angel gun gains base damage and APS moved out of implicit', () => {
+    const angel = patchedItem('gun_satanic_angel')
+    expect(angel.attackSpeed).toBe(1.75)
+    expect(angel.damageMin).toBeGreaterThan(0)
+    expect(angel.damageMax).toBeGreaterThanOrEqual(angel.damageMin as number)
+    const impl = angel.implicit as Rec
+    expect(impl.attacks_per_second).toBeUndefined()
+    expect(impl.enhanced_damage).toEqual([430, 580])
+  })
+
+  it('every weapon has base damage and attack speed, none hides APS in implicit', () => {
+    const out = applyListPatch(baseItems, patches.items, 'items')
+    // Spears absent from hero-siege-helper; s10_ weapons are new-season
+    // scaffolding the helper does not list yet.
+    const missingInSource = new Set([
+      'base_throwing_short_spear',
+      'base_polearm_tribal_spear',
+      's10_ethereal_musket',
+      's10_grimtides_scimitar',
+      's10_conjured_tentacle',
+      's10_phantom_scimitar',
+      's10_phantom_strike',
+      's10_leviathans_spine',
+    ])
+    const weapons = out.data.filter(
+      (i) => (i as Rec).slot === 'weapon' && !missingInSource.has((i as Rec).id as string),
+    ) as Rec[]
+    const noDamage = weapons.filter((w) => typeof w.damageMin !== 'number')
+    const noAps = weapons.filter((w) => typeof w.attackSpeed !== 'number')
+    const apsInImplicit = weapons.filter(
+      (w) => ((w.implicit ?? {}) as Rec).attacks_per_second !== undefined,
+    )
+    expect(noDamage.map((w) => w.id)).toEqual([])
+    expect(noAps.map((w) => w.id)).toEqual([])
+    expect(apsInImplicit.map((w) => w.id)).toEqual([])
+  })
+
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
     const out = applyListPatch(
       itemGrantedSkillsJson as Rec[],

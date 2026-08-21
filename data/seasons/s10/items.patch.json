@@ -174,10 +174,22 @@
   "change": {
     "amulet_heroic_amulet_of_colosseum": {
       "implicit": {
-        "all_skills": [2, 4],
-        "increased_attack_speed": [5, 10],
-        "to_strength": [25, 35],
-        "increased_strength": [8, 15]
+        "all_skills": [
+          2,
+          4
+        ],
+        "increased_attack_speed": [
+          5,
+          10
+        ],
+        "to_strength": [
+          25,
+          35
+        ],
+        "increased_strength": [
+          8,
+          15
+        ]
       }
     },
     "weapons_heroic_ukkos_revenge": {
@@ -564,6 +576,3859 @@
         3,
         4
       ]
+    },
+    "axe_satanic_abomination_s_gut_ripper": {
+      "damageMin": 82,
+      "damageMax": 90,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          660,
+          740
+        ],
+        "physical_skills": [
+          5,
+          10
+        ],
+        "increased_attack_speed": [
+          10,
+          100
+        ],
+        "open_wounds": 25,
+        "slow_target": 75,
+        "strength_based_on_level": 100,
+        "dexterity_based_on_level": 50,
+        "melee_range": [
+          25,
+          40
+        ],
+        "open_wound_chance": 25
+      }
+    },
+    "flask_satanic_ancient_mucus": {
+      "damageMin": 15,
+      "damageMax": 20,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "to_energy": 8,
+        "to_vitality": 5,
+        "flat_poison_skill_damage": [
+          5,
+          12
+        ],
+        "poison_skill_damage": [
+          10,
+          15
+        ],
+        "mana_replenish_pct": 25,
+        "mana_per_kill": [
+          10,
+          15
+        ],
+        "mana_replenish": 25
+      }
+    },
+    "staff_satanic_ancient_sun_beacon": {
+      "damageMin": 28,
+      "damageMax": 38,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "flat_fire_skill_damage": [
+          7,
+          18
+        ],
+        "fire_skill_damage": [
+          25,
+          40
+        ],
+        "ignore_lightning_res": 15,
+        "mana_replenish_pct": 50,
+        "ignore_fire_res": 15,
+        "mana_replenish": 50,
+        "energy_based_on_level": 35,
+        "intelligence_based_on_level": 75
+      }
+    },
+    "gun_satanic_angel": {
+      "damageMin": 44,
+      "damageMax": 52,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          430,
+          580
+        ],
+        "increased_attack_speed": 25,
+        "crushing_blow_chance": 15,
+        "attack_rating_pct": 3,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "defense_ignored": 35,
+        "to_dexterity": 25,
+        "life_per_kill": 8,
+        "mana_per_kill": 5,
+        "increased_attack_rating": 3
+      }
+    },
+    "staff_satanic_apocalypto": {
+      "damageMin": 16,
+      "damageMax": 27,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "all_attributes": 15,
+        "fire_skill_damage": [
+          20,
+          40
+        ],
+        "mana_replenish_pct": 30,
+        "fire_resistance": 50,
+        "mana_replenish": 30
+      }
+    },
+    "staff_satanic_archangel_staff": {
+      "damageMin": 40,
+      "damageMax": 47,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "all_skills": [
+          1,
+          2
+        ],
+        "skill_haste": [
+          20,
+          30
+        ],
+        "mana_replenish": [
+          8,
+          12
+        ],
+        "to_energy": 15,
+        "arcane_skill_damage": [
+          20,
+          40
+        ],
+        "cooldown_recovery": [
+          20,
+          30
+        ]
+      }
+    },
+    "sword_satanic_ashbringer": {
+      "damageMin": 40,
+      "damageMax": 46,
+      "attackSpeed": 1.1,
+      "implicit": {
+        "enhanced_damage": [
+          290,
+          340
+        ],
+        "attack_rating_pct": [
+          45,
+          50
+        ],
+        "additive_fire_damage": [
+          345,
+          355
+        ],
+        "life": [
+          40,
+          50
+        ],
+        "fire_resistance": [
+          25,
+          40
+        ],
+        "increased_attack_rating": 15,
+        "flat_fire_skill_damage": [
+          22,
+          42
+        ],
+        "damage_based_on_level": 65
+      }
+    },
+    "sword_satanic_azure_s_wrath": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          285,
+          320
+        ],
+        "all_skills": [
+          2,
+          3
+        ],
+        "increased_attack_speed": [
+          30,
+          50
+        ],
+        "all_attributes": 30,
+        "additive_arcane_damage": [
+          1125,
+          1300
+        ],
+        "additive_cold_damage": [
+          1125,
+          1300
+        ],
+        "attack_damage": [
+          20,
+          35
+        ],
+        "light_radius": 3,
+        "flat_fire_skill_damage": [
+          18,
+          28
+        ]
+      }
+    },
+    "wand_satanic_battle_mage_s_wand": {
+      "damageMin": 16,
+      "damageMax": 23,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "faster_cast_rate": 50,
+        "life_replenish": [
+          4,
+          6
+        ],
+        "mana_replenish": [
+          4,
+          6
+        ],
+        "magic_skill_damage": 8,
+        "mana": [
+          50,
+          100
+        ],
+        "increased_life": [
+          3,
+          8
+        ],
+        "to_vitality": [
+          20,
+          30
+        ],
+        "mana_costs_decreased": [
+          4,
+          10
+        ],
+        "vitality_converted_to_magic_skill_dmg": [
+          4,
+          8
+        ]
+      }
+    },
+    "book_satanic_book_of_revelations": {
+      "damageMin": 7,
+      "damageMax": 10,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "faster_cast_rate": [
+          10,
+          20
+        ],
+        "mana_replenish": [
+          2,
+          5
+        ],
+        "all_attributes": 2,
+        "magic_skill_damage": [
+          5,
+          10
+        ],
+        "life": 25,
+        "mana": 25,
+        "mana_per_kill": 5
+      }
+    },
+    "bow_satanic_buriza_ko_nu": {
+      "damageMin": 66,
+      "damageMax": 78,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          360,
+          400
+        ],
+        "attack_rating_pct": 10,
+        "attack_rating": 375,
+        "defense_ignored": [
+          30,
+          40
+        ],
+        "to_strength": 20,
+        "to_dexterity": 20,
+        "all_skills": [
+          1,
+          2
+        ],
+        "increased_attack_rating": 15,
+        "additive_physical_damage": [
+          20,
+          40
+        ],
+        "increased_dexterity": [
+          5,
+          10
+        ]
+      }
+    },
+    "cane_satanic_cane_of_the_tundra": {
+      "damageMin": 32,
+      "damageMax": 42,
+      "attackSpeed": 1.15,
+      "implicit": {
+        "all_skills": [
+          2,
+          4
+        ],
+        "cold_skills": 3,
+        "flat_cold_skill_damage": [
+          18,
+          38
+        ],
+        "cold_skill_damage": [
+          25,
+          40
+        ],
+        "mana": [
+          310,
+          325
+        ],
+        "mana_per_kill": [
+          15,
+          35
+        ],
+        "cold_resistance": [
+          40,
+          60
+        ]
+      }
+    },
+    "dagger_satanic_ceremonial_dagger": {
+      "damageMin": 48,
+      "damageMax": 53,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          240,
+          270
+        ],
+        "increased_attack_speed": [
+          75,
+          100
+        ],
+        "all_attributes": 15,
+        "flat_poison_skill_damage": [
+          18,
+          38
+        ],
+        "poison_skill_damage": [
+          25,
+          40
+        ],
+        "ignore_poison_res": [
+          15,
+          25
+        ],
+        "increased_life": -10,
+        "magic_find": 30
+      }
+    },
+    "polearm_satanic_champion_s_flag_lance": {
+      "damageMin": 45,
+      "damageMax": 54,
+      "attackSpeed": 1.15,
+      "implicit": {
+        "enhanced_damage": [
+          410,
+          540
+        ],
+        "all_skills": [
+          1,
+          3
+        ],
+        "movement_speed": 30,
+        "to_vitality": 15,
+        "to_armor": 30,
+        "ignore_arcane_res": [
+          15,
+          30
+        ],
+        "faster_hit_recovery": [
+          50,
+          75
+        ],
+        "damage_return": [
+          75,
+          125
+        ],
+        "defense_vs_missiles": 125,
+        "life_based_on_level": 300
+      }
+    },
+    "gun_satanic_chills_of_war": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          350,
+          475
+        ],
+        "increased_attack_speed": [
+          20,
+          30
+        ],
+        "mana_steal": [
+          4,
+          8
+        ],
+        "slow_target": 15,
+        "to_strength": 10,
+        "to_dexterity": 10,
+        "additive_cold_damage": [
+          45,
+          70
+        ],
+        "mana_per_kill": [
+          8,
+          12
+        ]
+      }
+    },
+    "wand_satanic_clafaxier": {
+      "damageMin": 9,
+      "damageMax": 15,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "mana_replenish": [
+          2,
+          6
+        ],
+        "flat_poison_skill_damage": [
+          5,
+          12
+        ],
+        "poison_skill_damage": 20,
+        "ignore_poison_res": [
+          4,
+          10
+        ],
+        "poison_resistance": [
+          40,
+          60
+        ],
+        "extra_damage_poisoned": [
+          15,
+          25
+        ]
+      }
+    },
+    "flask_satanic_cobra_blood_vial": {
+      "damageMin": 34,
+      "damageMax": 41,
+      "attackSpeed": 1.3,
+      "implicit": {
+        "all_skills": [
+          1,
+          2
+        ],
+        "poison_skills": 2,
+        "faster_cast_rate": [
+          20,
+          30
+        ],
+        "extra_damage_poisoned": 5,
+        "poison_skill_damage": [
+          15,
+          25
+        ],
+        "ignore_poison_res": [
+          10,
+          15
+        ],
+        "mana_replenish_pct": 35,
+        "mana_replenish": 35
+      }
+    },
+    "polearm_satanic_crusader_halberd": {
+      "damageMin": 42,
+      "damageMax": 48,
+      "attackSpeed": 1.6,
+      "implicit": {
+        "enhanced_damage": [
+          280,
+          310
+        ],
+        "all_skills": [
+          1,
+          2
+        ],
+        "movement_speed": [
+          20,
+          30
+        ],
+        "attack_rating": 235,
+        "life_replenish_pct": [
+          10,
+          15
+        ],
+        "physical_damage_reduction": 10,
+        "all_resistances": [
+          20,
+          30
+        ],
+        "life_replenish": [
+          10,
+          15
+        ],
+        "life_based_on_level": 25,
+        "damage_based_on_level": 50
+      }
+    },
+    "cane_satanic_crystal_cane_of_ice": {
+      "damageMin": 4,
+      "damageMax": 7,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "all_skills": 1,
+        "mana_replenish": [
+          4,
+          8
+        ],
+        "mana_replenish_pct": [
+          8,
+          15
+        ],
+        "life_per_kill": [
+          8,
+          15
+        ],
+        "all_resistances": [
+          10,
+          20
+        ],
+        "cold_skills": [
+          2,
+          3
+        ],
+        "to_energy": [
+          5,
+          10
+        ],
+        "flat_cold_skill_damage": [
+          12,
+          20
+        ],
+        "increased_frost_bite_damage": [
+          20,
+          30
+        ],
+        "ailment_crit_chance": 20,
+        "ailment_crit_damage": 25
+      }
+    },
+    "axe_satanic_crystal_infused_axe": {
+      "damageMin": 8,
+      "damageMax": 11,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          125,
+          180
+        ],
+        "deadly_blow": 15,
+        "defense_ignored": 25,
+        "to_strength": 10,
+        "attack_damage": 10,
+        "life_per_kill": 3,
+        "mana_per_kill": 3
+      }
+    },
+    "gun_satanic_crystal_infused_pistol": {
+      "damageMin": 8,
+      "damageMax": 11,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          220,
+          340
+        ],
+        "increased_attack_speed": 20,
+        "deadly_blow": 20,
+        "attack_rating": 65,
+        "mana_steal": [
+          3,
+          6
+        ],
+        "defense_ignored": 40,
+        "additive_arcane_damage": [
+          15,
+          25
+        ]
+      }
+    },
+    "sword_satanic_crystal_infused_sword": {
+      "damageMin": 14,
+      "damageMax": 18,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          180,
+          210
+        ],
+        "crushing_blow_chance": 20,
+        "attack_rating_pct": [
+          3,
+          6
+        ],
+        "attack_rating": [
+          50,
+          75
+        ],
+        "life_steal": 5,
+        "to_strength": 10,
+        "life_per_kill": 10,
+        "increased_attack_rating": [
+          3,
+          6
+        ]
+      }
+    },
+    "wand_satanic_crystal_infused_wand": {
+      "damageMin": 4,
+      "damageMax": 7,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "mana_replenish": [
+          3,
+          6
+        ],
+        "flat_arcane_skill_damage": [
+          3,
+          7
+        ],
+        "arcane_skill_damage": 15,
+        "ignore_arcane_res": [
+          5,
+          15
+        ],
+        "arcane_resistance": [
+          30,
+          50
+        ],
+        "all_skills": 1,
+        "flat_magic_skill_damage": [
+          8,
+          15
+        ],
+        "magic_skill_damage": 15
+      }
+    },
+    "sword_satanic_daisy": {
+      "damageMin": 90,
+      "damageMax": 105,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          775,
+          850
+        ],
+        "physical_skills": [
+          1,
+          4
+        ],
+        "attack_rating_pct": 30,
+        "life_steal": [
+          10,
+          25
+        ],
+        "crit_damage": [
+          25,
+          45
+        ],
+        "slow_target": [
+          40,
+          60
+        ],
+        "to_strength": 45,
+        "to_dexterity": [
+          30,
+          50
+        ],
+        "life_per_kill": [
+          15,
+          30
+        ],
+        "increased_bleeding_damage": [
+          25,
+          45
+        ],
+        "increased_attack_rating": 30
+      }
+    },
+    "book_satanic_damien_s_head": {
+      "damageMin": 30,
+      "damageMax": 35,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "all_skills": 1,
+        "faster_cast_rate": 30,
+        "mana_replenish": [
+          8,
+          15
+        ],
+        "all_attributes": 5,
+        "mana_per_kill": 8,
+        "damage_recouped_as_mana": 10,
+        "all_resistances": [
+          5,
+          15
+        ],
+        "projectile_speed": 1.5,
+        "to_intelligence": 25,
+        "increased_intelligence": [
+          3,
+          5
+        ]
+      }
+    },
+    "sword_satanic_dante_s_demon_blade": {
+      "damageMin": 82,
+      "damageMax": 90,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          520,
+          580
+        ],
+        "increased_attack_speed": [
+          30,
+          60
+        ],
+        "deadly_blow": 20,
+        "attack_rating": 1225,
+        "open_wounds": 25,
+        "to_strength": 45,
+        "to_dexterity": 25,
+        "attack_damage": [
+          20,
+          30
+        ],
+        "open_wound_chance": 25
+      }
+    },
+    "dagger_satanic_darkness": {
+      "damageMin": 16,
+      "damageMax": 20,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          110,
+          140
+        ],
+        "increased_attack_speed": 20,
+        "crit_chance": 20,
+        "crushing_blow_chance": 30,
+        "attack_rating": [
+          75,
+          100
+        ],
+        "crit_damage": 30,
+        "to_strength": 10,
+        "to_dexterity": 15
+      }
+    },
+    "dagger_satanic_death_s_mirror": {
+      "damageMin": 48,
+      "damageMax": 53,
+      "attackSpeed": 1.1,
+      "implicit": {
+        "enhanced_damage": [
+          240,
+          270
+        ],
+        "mana": [
+          150,
+          275
+        ],
+        "gold_find": 20,
+        "magic_find": [
+          25,
+          40
+        ],
+        "magic_find_based_on_level": 50
+      }
+    },
+    "polearm_satanic_death_s_scythe": {
+      "damageMin": 72,
+      "damageMax": 78,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          450,
+          500
+        ],
+        "movement_speed": [
+          20,
+          30
+        ],
+        "increased_attack_speed": [
+          40,
+          80
+        ],
+        "attack_rating": [
+          1225,
+          1350
+        ],
+        "to_vitality": 25,
+        "additive_cold_damage": [
+          2275,
+          3
+        ]
+      }
+    },
+    "gun_satanic_demon": {
+      "damageMin": 44,
+      "damageMax": 52,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          430,
+          580
+        ],
+        "increased_attack_speed": 25,
+        "crushing_blow_chance": 15,
+        "attack_rating_pct": 3,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "defense_ignored": 35,
+        "to_dexterity": 25,
+        "life_per_kill": 8,
+        "mana_per_kill": 5,
+        "increased_attack_rating": 3
+      }
+    },
+    "flask_satanic_demon_blood_flask": {
+      "damageMin": 26,
+      "damageMax": 33,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "all_skills": [
+          1,
+          2
+        ],
+        "faster_cast_rate": 40,
+        "mana_replenish_pct": 25,
+        "mana": [
+          150,
+          200
+        ],
+        "mana_per_kill": 15,
+        "mana_replenish": 25
+      }
+    },
+    "flask_satanic_doctor_s_potion": {
+      "damageMin": 46,
+      "damageMax": 54,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "all_skills": [
+          2,
+          3
+        ],
+        "poison_skills": [
+          1,
+          3
+        ],
+        "faster_cast_rate": [
+          30,
+          40
+        ],
+        "extra_damage_poisoned": [
+          10,
+          25
+        ],
+        "to_energy": [
+          15,
+          25
+        ],
+        "poison_skill_damage": [
+          20,
+          40
+        ],
+        "ignore_poison_res": 20,
+        "mana_per_kill": 15,
+        "magic_find": 20
+      }
+    },
+    "axe_satanic_doom_cutter": {
+      "damageMin": 53,
+      "damageMax": 58,
+      "attackSpeed": 1.1,
+      "implicit": {
+        "enhanced_damage": [
+          275,
+          325
+        ],
+        "all_skills": [
+          1,
+          2
+        ],
+        "crit_chance": 10,
+        "additive_physical_damage": [
+          7,
+          18
+        ],
+        "crit_damage": 100,
+        "defense_ignored": 50
+      }
+    },
+    "chainsaw_satanic_doomsaw": {
+      "damageMin": 26,
+      "damageMax": 34,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          180,
+          190
+        ],
+        "attack_rating": [
+          110,
+          140
+        ],
+        "mana_steal": [
+          4,
+          8
+        ],
+        "additive_fire_damage": [
+          140,
+          160
+        ],
+        "fire_skill_damage": [
+          5,
+          15
+        ],
+        "ignore_lightning_res": 30,
+        "ignore_fire_res": 30
+      }
+    },
+    "flask_satanic_doomweed_vial": {
+      "damageMin": 46,
+      "damageMax": 54,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "poison_skills": [
+          2,
+          5
+        ],
+        "extra_damage_poisoned": [
+          5,
+          10
+        ],
+        "to_energy": 15,
+        "to_intelligence": 15,
+        "flat_poison_skill_damage": [
+          18,
+          38
+        ],
+        "poison_skill_damage": [
+          20,
+          35
+        ],
+        "ignore_poison_res": [
+          10,
+          25
+        ],
+        "mana_replenish_pct": [
+          25,
+          45
+        ],
+        "mana_replenish": [
+          25,
+          45
+        ]
+      }
+    },
+    "chainsaw_satanic_doublesaw_4000": {
+      "damageMin": 42,
+      "damageMax": 48,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          180,
+          190
+        ],
+        "deadly_blow": 40,
+        "open_wounds": 20,
+        "slow_target": 40,
+        "to_strength": [
+          20,
+          30
+        ],
+        "attack_damage": [
+          15,
+          20
+        ],
+        "life_per_kill": [
+          8,
+          14
+        ],
+        "open_wound_chance": 20
+      }
+    },
+    "mace_satanic_dragon_knight_s_flail": {
+      "damageMin": 48,
+      "damageMax": 52,
+      "attackSpeed": 1.45,
+      "implicit": {
+        "enhanced_damage": [
+          220,
+          280
+        ],
+        "all_skills": [
+          3,
+          4
+        ],
+        "faster_cast_rate": [
+          30,
+          40
+        ],
+        "mana_replenish": 4,
+        "magic_skill_damage": [
+          5,
+          10
+        ],
+        "increased_mana": [
+          10,
+          15
+        ],
+        "all_resistances": 25,
+        "flat_magic_skill_damage": [
+          22,
+          40
+        ],
+        "ignore_arcane_res": 25
+      }
+    },
+    "spellblade_satanic_dragon_s_breath": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "increased_attack_speed": 50,
+        "increased_burning_damage": [
+          12,
+          20
+        ],
+        "attack_rating": 640,
+        "mana_steal": [
+          4,
+          8
+        ],
+        "flat_fire_skill_damage": [
+          18,
+          38
+        ],
+        "fire_skill_damage": [
+          15,
+          35
+        ]
+      }
+    },
+    "claw_satanic_earth_shaper_s_talons": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "arcane_skills": [
+          2,
+          4
+        ],
+        "arcane_skill_damage": [
+          25,
+          40
+        ],
+        "mana_replenish_pct": 25,
+        "mana": 560,
+        "all_resistances": 25,
+        "mana_replenish": 25
+      }
+    },
+    "bow_satanic_electro": {
+      "damageMin": 66,
+      "damageMax": 78,
+      "attackSpeed": 1.7,
+      "implicit": {
+        "enhanced_damage": [
+          260,
+          380
+        ],
+        "increased_attack_speed": [
+          10,
+          30
+        ],
+        "attack_rating": [
+          180,
+          250
+        ],
+        "to_dexterity": 30,
+        "additive_lightning_damage": [
+          625,
+          665
+        ],
+        "lightning_skill_damage": [
+          4,
+          15
+        ],
+        "ignore_lightning_res": [
+          4,
+          10
+        ],
+        "lightning_resistance": 50,
+        "max_lightning_resistance": 5,
+        "flat_lightning_skill_damage": [
+          22,
+          44
+        ]
+      }
+    },
+    "claw_satanic_elemental_claws": {
+      "damageMin": 7,
+      "damageMax": 12,
+      "attackSpeed": 1.85,
+      "implicit": {
+        "enhanced_damage": [
+          110,
+          140
+        ],
+        "additive_arcane_damage": [
+          6,
+          12
+        ],
+        "additive_lightning_damage": [
+          6,
+          12
+        ],
+        "additive_fire_damage": [
+          6,
+          12
+        ],
+        "additive_cold_damage": [
+          6,
+          12
+        ],
+        "magic_skill_damage": [
+          8,
+          15
+        ],
+        "life_per_kill": 3,
+        "mana_per_kill": 3
+      }
+    },
+    "sword_satanic_eternal_glaive": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.8,
+      "implicit": {
+        "enhanced_damage": [
+          425,
+          460
+        ],
+        "increased_attack_speed": [
+          20,
+          30
+        ],
+        "crit_chance": 15,
+        "crushing_blow_chance": 20,
+        "attack_rating": [
+          450,
+          475
+        ],
+        "mana_steal": [
+          2,
+          5
+        ],
+        "crit_damage": [
+          10,
+          20
+        ],
+        "to_dexterity": [
+          20,
+          30
+        ]
+      }
+    },
+    "gun_satanic_f4_tactical_rifle": {
+      "damageMin": 74,
+      "damageMax": 80,
+      "attackSpeed": 1.85,
+      "implicit": {
+        "enhanced_damage": [
+          580,
+          620
+        ],
+        "all_skills": 2,
+        "increased_attack_speed": [
+          20,
+          40
+        ],
+        "crit_chance": 20,
+        "deadly_blow": 15,
+        "attack_rating": 350,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "life_steal": [
+          4,
+          6
+        ],
+        "crit_damage": [
+          20,
+          40
+        ],
+        "defense_ignored": 25
+      }
+    },
+    "staff_satanic_flame_of_the_phoenix": {
+      "damageMin": 40,
+      "damageMax": 47,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "all_skills": [
+          2,
+          3
+        ],
+        "fire_skills": [
+          2,
+          3
+        ],
+        "movement_speed": [
+          30,
+          45
+        ],
+        "to_energy": [
+          20,
+          30
+        ],
+        "fire_skill_damage": [
+          17,
+          30
+        ],
+        "ignore_lightning_res": [
+          8,
+          15
+        ],
+        "mana_per_kill": [
+          8,
+          15
+        ],
+        "ignore_fire_res": [
+          8,
+          15
+        ]
+      }
+    },
+    "bow_satanic_flamebringer": {
+      "damageMin": 80,
+      "damageMax": 92,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          350,
+          550
+        ],
+        "movement_speed": 40,
+        "increased_attack_speed": 40,
+        "mana_steal": 6,
+        "to_dexterity": 30,
+        "additive_fire_damage": [
+          1150,
+          1350
+        ],
+        "fire_skill_damage": 15,
+        "ignore_lightning_res": 25,
+        "to_strength": 30,
+        "flat_fire_skill_damage": [
+          22,
+          46
+        ],
+        "ignore_fire_res": 25
+      }
+    },
+    "gun_satanic_flamecannon": {
+      "damageMin": 74,
+      "damageMax": 80,
+      "attackSpeed": 1.85,
+      "implicit": {
+        "enhanced_damage": [
+          450,
+          500
+        ],
+        "increased_attack_speed": [
+          50,
+          75
+        ],
+        "attack_rating": [
+          500,
+          600
+        ],
+        "fire_skill_damage": 50,
+        "ignore_lightning_res": 35,
+        "ignore_fire_res": 35
+      }
+    },
+    "gun_satanic_fred": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          350,
+          475
+        ],
+        "increased_attack_speed": [
+          30,
+          50
+        ],
+        "deadly_blow": 20,
+        "life_steal": [
+          4,
+          8
+        ],
+        "slow_target": 15,
+        "to_strength": 15,
+        "to_dexterity": 15,
+        "life_per_kill": [
+          8,
+          12
+        ]
+      }
+    },
+    "mace_satanic_frozen_carver": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          150,
+          250
+        ],
+        "attack_rating": [
+          90,
+          150
+        ],
+        "life_steal": [
+          3,
+          6
+        ],
+        "to_strength": 10,
+        "additive_cold_damage": [
+          335,
+          460
+        ],
+        "mana_per_kill": [
+          4,
+          8
+        ],
+        "cold_resistance": 50
+      }
+    },
+    "sword_satanic_genji_s_sword_of_fate": {
+      "damageMin": 88,
+      "damageMax": 100,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          650,
+          800
+        ],
+        "all_skills": 4,
+        "movement_speed": [
+          30,
+          35
+        ],
+        "increased_attack_speed": [
+          50,
+          80
+        ],
+        "attack_rating_pct": 25,
+        "crit_damage": [
+          15,
+          40
+        ],
+        "to_vitality": 40,
+        "increased_attack_rating": 25
+      }
+    },
+    "mace_satanic_gladiator_s_skullcrusher": {
+      "damageMin": 56,
+      "damageMax": 62,
+      "attackSpeed": 1.4,
+      "implicit": {
+        "enhanced_damage": [
+          310,
+          370
+        ],
+        "all_skills": 3,
+        "attack_rating_pct": [
+          4,
+          8
+        ],
+        "additive_physical_damage": [
+          12,
+          26
+        ],
+        "to_strength": 20,
+        "to_vitality": 15,
+        "life_replenish_pct": [
+          10,
+          15
+        ],
+        "increased_attack_rating": [
+          5,
+          10
+        ],
+        "life_replenish": [
+          35,
+          50
+        ]
+      }
+    },
+    "mace_satanic_gladiator_s_wrecking_ball": {
+      "damageMin": 82,
+      "damageMax": 90,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          240,
+          280
+        ],
+        "movement_speed": 25,
+        "increased_attack_speed": [
+          30,
+          40
+        ],
+        "deadly_blow": 50,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "all_attributes": 15
+      }
+    },
+    "bow_satanic_glimmerfury": {
+      "damageMin": 16,
+      "damageMax": 22,
+      "attackSpeed": 1.4,
+      "implicit": {
+        "enhanced_damage": [
+          210,
+          340
+        ],
+        "movement_speed": 15,
+        "attack_rating_pct": 2,
+        "to_dexterity": 15,
+        "additive_cold_damage": [
+          220,
+          550
+        ],
+        "cold_skill_damage": [
+          5,
+          15
+        ],
+        "mana_per_kill": 8,
+        "cold_resistance": 40,
+        "increased_attack_speed": [
+          20,
+          40
+        ],
+        "increased_attack_rating": 10,
+        "additive_physical_damage": [
+          10,
+          15
+        ]
+      }
+    },
+    "book_satanic_god_s_benevolence": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "magic_skill_damage": 10,
+        "faster_hit_recovery": 20,
+        "physical_damage_reduction": 15,
+        "all_skills": [
+          1,
+          2
+        ],
+        "cooldown_recovery": [
+          20,
+          30
+        ],
+        "flat_magic_skill_damage": [
+          17,
+          30
+        ]
+      }
+    },
+    "sword_satanic_godfather": {
+      "damageMin": 62,
+      "damageMax": 66,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          375,
+          425
+        ],
+        "attack_rating_pct": 20,
+        "additive_physical_damage": [
+          22,
+          38
+        ],
+        "crit_damage": [
+          50,
+          75
+        ],
+        "to_vitality": [
+          20,
+          25
+        ],
+        "all_attributes": 15,
+        "life": [
+          40,
+          50
+        ],
+        "increased_attack_rating": 20,
+        "enhanced_damage_based_on_level": 200
+      }
+    },
+    "polearm_satanic_golden_god_s_gladius": {
+      "damageMin": 15,
+      "damageMax": 20,
+      "attackSpeed": 1.6,
+      "implicit": {
+        "enhanced_damage": [
+          190,
+          210
+        ],
+        "life_steal": 5,
+        "to_vitality": [
+          5,
+          8
+        ],
+        "life_replenish_pct": [
+          10,
+          15
+        ],
+        "life": [
+          15,
+          20
+        ],
+        "mana_per_kill": [
+          8,
+          12
+        ],
+        "life_replenish": [
+          10,
+          15
+        ],
+        "defense_vs_missiles": 15,
+        "life_based_on_level": 20
+      }
+    },
+    "mace_satanic_gurag_s_stone_crusher": {
+      "damageMin": 165,
+      "damageMax": 180,
+      "attackSpeed": 0.85,
+      "implicit": {
+        "enhanced_damage": [
+          420,
+          475
+        ],
+        "crushing_blow_chance": 50,
+        "to_strength": 35,
+        "to_vitality": 25,
+        "all_resistances": [
+          25,
+          35
+        ],
+        "magic_find": 20,
+        "all_skills": [
+          2,
+          7
+        ],
+        "defense_ignored": [
+          25,
+          35
+        ],
+        "cast_when_attacking": 1,
+        "vitality_converted_to_attack_dmg": 15
+      }
+    },
+    "sword_satanic_gut_s_bfs": {
+      "damageMin": 56,
+      "damageMax": 62,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          420,
+          480
+        ],
+        "increased_attack_speed": 20,
+        "attack_rating": 225,
+        "additive_physical_damage": [
+          12,
+          26
+        ],
+        "life_steal": 5,
+        "defense_ignored": 50,
+        "to_strength": 35,
+        "to_vitality": 10
+      }
+    },
+    "sword_satanic_gut_s_hfs": {
+      "damageMin": 90,
+      "damageMax": 110,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          620,
+          680
+        ],
+        "increased_attack_speed": 30,
+        "attack_rating": 625,
+        "additive_physical_damage": [
+          22,
+          50
+        ],
+        "life_steal": 10,
+        "defense_ignored": 25,
+        "to_strength": 60,
+        "to_vitality": 25
+      }
+    },
+    "sword_satanic_hanzo_s_flaming_katana": {
+      "damageMin": 40,
+      "damageMax": 46,
+      "attackSpeed": 1.2,
+      "implicit": {
+        "enhanced_damage": [
+          350,
+          400
+        ],
+        "increased_attack_speed": [
+          10,
+          30
+        ],
+        "attack_rating": 444,
+        "to_strength": 25,
+        "additive_fire_damage": [
+          225,
+          340
+        ],
+        "flat_fire_skill_damage": [
+          7,
+          18
+        ],
+        "fire_skill_damage": [
+          25,
+          40
+        ],
+        "cast_after_kill": 100
+      }
+    },
+    "bow_satanic_hellspawn_eradicator": {
+      "damageMin": 80,
+      "damageMax": 94,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          410,
+          540
+        ],
+        "deadly_blow": 75,
+        "crushing_blow_chance": 75,
+        "defense_ignored": 35,
+        "slow_target": 40,
+        "additive_cold_damage": [
+          1600,
+          1800
+        ],
+        "cold_skill_damage": [
+          20,
+          30
+        ],
+        "life_per_kill": 20,
+        "flat_cold_skill_damage": [
+          22,
+          46
+        ],
+        "extra_dmg_to_deep_frozen": [
+          20,
+          35
+        ]
+      }
+    },
+    "claw_satanic_hemorrhage": {
+      "damageMin": 33,
+      "damageMax": 36,
+      "attackSpeed": 1.6,
+      "implicit": {
+        "enhanced_damage": [
+          280,
+          360
+        ],
+        "increased_attack_speed": 50,
+        "crushing_blow_chance": 35,
+        "to_strength": 15,
+        "to_dexterity": 15,
+        "life_per_kill": 14,
+        "damage_return": 125
+      }
+    },
+    "sword_satanic_hiyoki_s_vorpal_katana": {
+      "damageMin": 26,
+      "damageMax": 32,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          225,
+          280
+        ],
+        "movement_speed": 10,
+        "increased_attack_speed": [
+          30,
+          45
+        ],
+        "attack_rating_pct": [
+          5,
+          10
+        ],
+        "life_steal": [
+          5,
+          10
+        ],
+        "to_strength": [
+          10,
+          15
+        ],
+        "increased_attack_rating": [
+          5,
+          10
+        ]
+      }
+    },
+    "sword_satanic_holy_warrior_s_phase_blade": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          220,
+          280
+        ],
+        "all_skills": 1,
+        "arcane_skills": [
+          1,
+          2
+        ],
+        "increased_attack_speed": [
+          30,
+          50
+        ],
+        "flat_arcane_skill_damage": [
+          12,
+          26
+        ],
+        "arcane_skill_damage": [
+          8,
+          20
+        ]
+      }
+    },
+    "mace_satanic_icy_crusher": {
+      "damageMin": 34,
+      "damageMax": 39,
+      "attackSpeed": 1.45,
+      "implicit": {
+        "enhanced_damage": [
+          320,
+          375
+        ],
+        "attack_rating": [
+          160,
+          180
+        ],
+        "life_steal": [
+          5,
+          9
+        ],
+        "to_vitality": [
+          15,
+          20
+        ],
+        "additive_cold_damage": [
+          775,
+          1
+        ],
+        "cold_skill_damage": [
+          25,
+          35
+        ],
+        "increased_life": 3
+      }
+    },
+    "dagger_satanic_icy_shank": {
+      "damageMin": 31,
+      "damageMax": 35,
+      "attackSpeed": 1.6,
+      "implicit": {
+        "enhanced_damage": [
+          170,
+          200
+        ],
+        "faster_cast_rate": 40,
+        "to_energy": 20,
+        "all_attributes": 10,
+        "cold_skill_damage": [
+          20,
+          30
+        ],
+        "ignore_cold_res": [
+          5,
+          15
+        ]
+      }
+    },
+    "axe_satanic_inferno_slayer": {
+      "damageMin": 78,
+      "damageMax": 88,
+      "attackSpeed": 1.2,
+      "implicit": {
+        "enhanced_damage": 250,
+        "additive_fire_damage": [
+          1850,
+          1950
+        ],
+        "life": [
+          425,
+          735
+        ],
+        "enhanced_damage_based_on_level": 300,
+        "strength_based_on_level": 65,
+        "vitality_based_on_level": 50
+      }
+    },
+    "gun_satanic_jack": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          350,
+          475
+        ],
+        "increased_attack_speed": [
+          30,
+          50
+        ],
+        "deadly_blow": 10,
+        "life_steal": [
+          4,
+          8
+        ],
+        "slow_target": 15,
+        "to_strength": 15,
+        "to_dexterity": 15,
+        "life_per_kill": [
+          8,
+          12
+        ]
+      }
+    },
+    "sword_satanic_jade_warrior_s_gladius": {
+      "damageMin": 26,
+      "damageMax": 32,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          225,
+          280
+        ],
+        "to_strength": [
+          5,
+          10
+        ],
+        "to_vitality": 5,
+        "additive_poison_damage": [
+          135,
+          155
+        ],
+        "life": 30,
+        "life_per_kill": 5
+      }
+    },
+    "polearm_satanic_jousting_lance": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1,
+      "implicit": {
+        "enhanced_damage": [
+          210,
+          240
+        ],
+        "crushing_blow_chance": 20,
+        "to_vitality": 20,
+        "faster_hit_recovery": [
+          20,
+          25
+        ],
+        "damage_return": [
+          70,
+          90
+        ],
+        "physical_damage_reduction": [
+          5,
+          10
+        ],
+        "all_resistances": 15
+      }
+    },
+    "polearm_satanic_lancer_s_glory": {
+      "damageMin": 42,
+      "damageMax": 50,
+      "attackSpeed": 1.6,
+      "implicit": {
+        "enhanced_damage": [
+          360,
+          400
+        ],
+        "movement_speed": 40,
+        "increased_attack_speed": [
+          30,
+          60
+        ],
+        "attack_rating": 825,
+        "defense_ignored": 40,
+        "open_wounds": 20,
+        "to_strength": 40,
+        "attack_damage": [
+          25,
+          40
+        ],
+        "open_wound_chance": 20
+      }
+    },
+    "chainsaw_satanic_lumberjack_s_chainsaw": {
+      "damageMin": 76,
+      "damageMax": 82,
+      "attackSpeed": 1.4,
+      "implicit": {
+        "enhanced_damage": [
+          365,
+          380
+        ],
+        "increased_attack_speed": [
+          40,
+          60
+        ],
+        "attack_rating": [
+          680,
+          700
+        ],
+        "to_strength": 30,
+        "to_vitality": 20,
+        "life": [
+          440,
+          470
+        ],
+        "increased_life": [
+          2,
+          5
+        ]
+      }
+    },
+    "gun_satanic_marine_s_buddy": {
+      "damageMin": 42,
+      "damageMax": 48,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          370,
+          425
+        ],
+        "increased_attack_speed": [
+          15,
+          30
+        ],
+        "crit_chance": [
+          10,
+          20
+        ],
+        "deadly_blow": 25,
+        "attack_rating_pct": 10,
+        "crit_damage": [
+          15,
+          25
+        ],
+        "to_strength": 20,
+        "to_dexterity": 15,
+        "mana_per_kill": [
+          6,
+          10
+        ],
+        "increased_attack_rating": 10
+      }
+    },
+    "bow_satanic_marksman_s_hunting_bow": {
+      "damageMin": 80,
+      "damageMax": 94,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          440,
+          520
+        ],
+        "movement_speed": 20,
+        "increased_attack_speed": [
+          10,
+          20
+        ],
+        "crit_chance": 20,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "crit_damage": [
+          25,
+          40
+        ],
+        "to_strength": 20,
+        "to_dexterity": 20,
+        "mana_per_kill": 12,
+        "increased_strength": [
+          5,
+          10
+        ]
+      }
+    },
+    "sword_satanic_masamune": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          430,
+          480
+        ],
+        "increased_attack_speed": 20,
+        "deadly_blow": 20,
+        "attack_rating": 825,
+        "to_dexterity": 30
+      }
+    },
+    "mace_satanic_metal_vocalist_s_warlock": {
+      "damageMin": 102,
+      "damageMax": 108,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "extra_damage_stasis": [
+          20,
+          30
+        ],
+        "additive_lightning_damage": [
+          50,
+          100
+        ]
+      }
+    },
+    "dagger_satanic_molten_dagger": {
+      "damageMin": 7,
+      "damageMax": 10,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          90,
+          120
+        ],
+        "attack_rating": [
+          20,
+          30
+        ],
+        "to_strength": 10,
+        "to_dexterity": 10,
+        "to_vitality": 5,
+        "additive_fire_damage": [
+          15,
+          25
+        ],
+        "all_resistances": 10,
+        "fire_resistance": 40
+      }
+    },
+    "mace_satanic_molten_hammer": {
+      "damageMin": 57,
+      "damageMax": 62,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          650,
+          725
+        ],
+        "fire_skills": [
+          3,
+          5
+        ],
+        "increased_attack_speed": [
+          60,
+          80
+        ],
+        "extra_damage_burning": [
+          10,
+          20
+        ],
+        "flat_fire_skill_damage": [
+          22,
+          50
+        ],
+        "fire_skill_damage": [
+          25,
+          35
+        ],
+        "ignore_lightning_res": 20,
+        "ignore_fire_res": 20
+      }
+    },
+    "claw_satanic_molten_paw": {
+      "damageMin": 57,
+      "damageMax": 62,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          380,
+          420
+        ],
+        "movement_speed": 35,
+        "attack_rating": 600,
+        "mana_steal": 5,
+        "to_energy": 30,
+        "additive_fire_damage": 5,
+        "fire_skill_damage": [
+          20,
+          25
+        ],
+        "mana_per_kill": 8
+      }
+    },
+    "sword_satanic_molten_sword": {
+      "damageMin": 40,
+      "damageMax": 46,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          300,
+          370
+        ],
+        "increased_attack_speed": [
+          10,
+          20
+        ],
+        "crit_chance": [
+          2,
+          10
+        ],
+        "crit_damage": [
+          7,
+          15
+        ],
+        "additive_fire_damage": [
+          310,
+          330
+        ],
+        "fire_skill_damage": 15
+      }
+    },
+    "sword_satanic_muramasa": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          430,
+          480
+        ],
+        "crushing_blow_chance": 20,
+        "attack_rating_pct": 15,
+        "to_strength": 30,
+        "attack_damage": [
+          15,
+          25
+        ],
+        "increased_attack_rating": 15
+      }
+    },
+    "staff_satanic_necrobutcher_s_curse": {
+      "damageMin": 40,
+      "damageMax": 47,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "summon_skills": [
+          3,
+          4
+        ],
+        "all_skills": [
+          2,
+          4
+        ],
+        "summon_attack_speed": [
+          20,
+          28
+        ],
+        "summon_damage": [
+          15,
+          30
+        ],
+        "summon_life": [
+          15,
+          20
+        ],
+        "summon_max_amount": 1
+      }
+    },
+    "mace_satanic_nightmare_slasher": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          400,
+          475
+        ],
+        "increased_attack_speed": [
+          30,
+          40
+        ],
+        "magic_skill_damage": [
+          10,
+          20
+        ],
+        "all_resistances": [
+          10,
+          15
+        ],
+        "enemy_all_resist": 10
+      }
+    },
+    "mace_satanic_nobunaga_s_battle_slicer": {
+      "damageMin": 72,
+      "damageMax": 78,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          340,
+          390
+        ],
+        "increased_attack_speed": [
+          40,
+          60
+        ],
+        "mana_replenish": 3,
+        "projectile_speed": [
+          1,
+          2
+        ],
+        "flat_arcane_skill_damage": [
+          18,
+          38
+        ],
+        "ignore_arcane_res": 20,
+        "mana_per_kill": [
+          8,
+          15
+        ]
+      }
+    },
+    "sword_satanic_nomad_s_sandslicer": {
+      "damageMin": 84,
+      "damageMax": 95,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          520,
+          580
+        ],
+        "movement_speed": [
+          20,
+          40
+        ],
+        "crushing_blow_chance": 15,
+        "attack_rating_pct": 25,
+        "defense_ignored": 40,
+        "to_strength": 30,
+        "to_dexterity": 30,
+        "attack_damage": [
+          15,
+          30
+        ],
+        "increased_attack_rating": 25
+      }
+    },
+    "axe_satanic_odin_s_battle_axe": {
+      "damageMin": 72,
+      "damageMax": 78,
+      "attackSpeed": 1.2,
+      "implicit": {
+        "enhanced_damage": [
+          275,
+          305
+        ],
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "enhanced_damage_based_on_level": 200,
+        "magic_find_based_on_level": 30,
+        "vitality_based_on_level": 100
+      }
+    },
+    "polearm_satanic_odin_s_battle_spear": {
+      "damageMin": 56,
+      "damageMax": 62,
+      "attackSpeed": 1.7,
+      "implicit": {
+        "enhanced_damage": [
+          280,
+          340
+        ],
+        "increased_attack_speed": [
+          25,
+          32
+        ],
+        "attack_rating": [
+          245,
+          300
+        ],
+        "life_steal": [
+          7,
+          10
+        ],
+        "additive_arcane_damage": [
+          850,
+          975
+        ],
+        "damage_recouped_as_mana": 15,
+        "all_resistances": 25,
+        "damage_based_on_level": 100,
+        "damage_drained_from_mana": 15
+      }
+    },
+    "mace_satanic_pillar_of_niflheim": {
+      "damageMin": 72,
+      "damageMax": 78,
+      "attackSpeed": 1.15,
+      "implicit": {
+        "enhanced_damage": [
+          510,
+          570
+        ],
+        "deadly_blow": 15,
+        "open_wounds": [
+          10,
+          20
+        ],
+        "life_replenish_pct": 8,
+        "all_skills": [
+          1,
+          3
+        ],
+        "life_replenish": 8,
+        "strength_based_on_level": 150,
+        "vitality_based_on_level": 75,
+        "open_wound_chance": [
+          10,
+          20
+        ]
+      }
+    },
+    "mace_satanic_pit_fighter_s_brutalizer": {
+      "damageMin": 68,
+      "damageMax": 76,
+      "attackSpeed": 1.85,
+      "implicit": {
+        "enhanced_damage": [
+          630,
+          780
+        ],
+        "increased_attack_speed": [
+          15,
+          60
+        ],
+        "crushing_blow_chance": 20,
+        "extra_damage_stunned": [
+          15,
+          25
+        ],
+        "to_strength": [
+          125,
+          150
+        ]
+      }
+    },
+    "mace_satanic_pit_fighter_s_skullcracker": {
+      "damageMin": 78,
+      "damageMax": 86,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          630,
+          780
+        ],
+        "crit_chance": 25,
+        "crit_damage": [
+          25,
+          30
+        ],
+        "slow_target": 75,
+        "extra_damage_bleeding": 50,
+        "increased_attack_speed": [
+          15,
+          20
+        ]
+      }
+    },
+    "bow_satanic_poison_ivy": {
+      "damageMin": 44,
+      "damageMax": 52,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          260,
+          380
+        ],
+        "attack_rating": [
+          130,
+          145
+        ],
+        "to_strength": 7,
+        "to_dexterity": 7,
+        "additive_poison_damage": [
+          160,
+          180
+        ],
+        "poison_skill_damage": [
+          5,
+          15
+        ],
+        "poison_resistance": 50,
+        "extra_damage_poisoned": [
+          10,
+          20
+        ],
+        "flat_poison_skill_damage": [
+          12,
+          22
+        ],
+        "increased_poisoned_frequency": [
+          10,
+          15
+        ]
+      }
+    },
+    "polearm_satanic_poseidon_s_might": {
+      "damageMin": 26,
+      "damageMax": 32,
+      "attackSpeed": 1.88,
+      "implicit": {
+        "enhanced_damage": [
+          150,
+          175
+        ],
+        "movement_speed": 10,
+        "increased_attack_speed": [
+          20,
+          30
+        ],
+        "crit_chance": [
+          5,
+          10
+        ],
+        "attack_rating": 180,
+        "crit_damage": [
+          10,
+          20
+        ],
+        "to_strength": 15,
+        "additive_cold_damage": [
+          50,
+          75
+        ]
+      }
+    },
+    "staff_satanic_raise_of_the_dead": {
+      "damageMin": 40,
+      "damageMax": 47,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "summon_skills": [
+          1,
+          2
+        ],
+        "summon_attack_speed": [
+          10,
+          20
+        ],
+        "summon_damage": [
+          5,
+          15
+        ],
+        "summon_life": [
+          5,
+          10
+        ]
+      }
+    },
+    "mace_satanic_revenant_s_lasher": {
+      "damageMin": 63,
+      "damageMax": 68,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          830,
+          980
+        ],
+        "all_skills": 3,
+        "increased_attack_speed": [
+          20,
+          40
+        ],
+        "attack_rating_pct": [
+          6,
+          15
+        ],
+        "mana_steal": [
+          8,
+          12
+        ],
+        "lightning_skill_damage": [
+          18,
+          40
+        ],
+        "ignore_lightning_res": [
+          15,
+          25
+        ],
+        "lightning_absorption": 15,
+        "lightning_resistance": 60,
+        "increased_attack_rating": [
+          6,
+          15
+        ]
+      }
+    },
+    "axe_satanic_rift_commander_s_axe": {
+      "damageMin": 54,
+      "damageMax": 62,
+      "attackSpeed": 1.1,
+      "implicit": {
+        "enhanced_damage": [
+          320,
+          380
+        ],
+        "crit_chance": 10,
+        "life_steal": [
+          4,
+          8
+        ],
+        "crit_damage": [
+          20,
+          30
+        ],
+        "to_vitality": 10,
+        "physical_damage_reduction": 5,
+        "experience_gain": 5
+      }
+    },
+    "chainsaw_satanic_royal_decapitator": {
+      "damageMin": 74,
+      "damageMax": 80,
+      "attackSpeed": 1,
+      "implicit": {
+        "enhanced_damage": [
+          500,
+          550
+        ],
+        "all_skills": [
+          2,
+          4
+        ],
+        "crushing_blow_chance": 30,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "slow_target": 20,
+        "magic_skill_damage": [
+          10,
+          20
+        ],
+        "strength_based_on_level": 100
+      }
+    },
+    "gun_satanic_rt_xqc_4910": {
+      "damageMin": 74,
+      "damageMax": 80,
+      "attackSpeed": 1,
+      "implicit": {
+        "enhanced_damage": [
+          480,
+          520
+        ],
+        "all_skills": 2,
+        "crushing_blow_chance": 50,
+        "attack_rating": 250,
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "life_steal": [
+          5,
+          7
+        ],
+        "defense_ignored": 25,
+        "slow_target": 30,
+        "melee_range": [
+          15,
+          30
+        ]
+      }
+    },
+    "mace_satanic_sacred_whip": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          280,
+          320
+        ],
+        "increased_attack_speed": 30,
+        "crushing_blow_chance": 50,
+        "additive_lightning_damage": [
+          675,
+          785
+        ],
+        "ignore_lightning_res": 25,
+        "all_resistances": 10,
+        "gold_find": [
+          5,
+          10
+        ],
+        "magic_find": [
+          20,
+          35
+        ]
+      }
+    },
+    "sword_satanic_sand_crusader_s_scimitar": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          180,
+          220
+        ],
+        "increased_attack_speed": [
+          20,
+          30
+        ],
+        "deadly_blow": 10,
+        "attack_rating": 165,
+        "mana_steal": 7,
+        "defense_ignored": 30,
+        "to_dexterity": 10,
+        "attack_damage": [
+          5,
+          10
+        ]
+      }
+    },
+    "dagger_satanic_sand_dagger": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.45,
+      "implicit": {
+        "enhanced_damage": [
+          240,
+          270
+        ],
+        "all_skills": 1,
+        "attack_rating": [
+          350,
+          450
+        ],
+        "life_steal": [
+          3,
+          6
+        ],
+        "defense_ignored": 20,
+        "open_wounds": 20,
+        "attack_damage": [
+          35,
+          75
+        ],
+        "life_per_kill": [
+          8,
+          15
+        ],
+        "open_wound_chance": 20
+      }
+    },
+    "book_satanic_sands_of_time": {
+      "damageMin": 30,
+      "damageMax": 35,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "all_skills": 2,
+        "faster_cast_rate": 20,
+        "to_energy": 8,
+        "arcane_skill_damage": [
+          5,
+          10
+        ],
+        "cooldown_recovery": 25,
+        "guardian_damage": [
+          25,
+          35
+        ],
+        "guardian_attack_range": [
+          15,
+          25
+        ]
+      }
+    },
+    "sword_satanic_sanguine_blade": {
+      "damageMin": 15,
+      "damageMax": 20,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          150,
+          175
+        ],
+        "increased_attack_speed": [
+          20,
+          30
+        ],
+        "attack_rating_pct": 5,
+        "life_steal": [
+          6,
+          10
+        ],
+        "to_vitality": 6,
+        "life_replenish_pct": 8,
+        "life": 15,
+        "life_per_kill": 8,
+        "increased_attack_rating": 5,
+        "life_replenish": 8
+      }
+    },
+    "book_satanic_satan_s_unholy_bible": {
+      "damageMin": 15,
+      "damageMax": 19,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "faster_cast_rate": 40,
+        "magic_skill_damage": [
+          20,
+          30
+        ],
+        "mana_replenish_pct": 25,
+        "increased_life": -10,
+        "physical_damage_reduction": -10,
+        "all_resistances": -50,
+        "flat_magic_skill_damage": [
+          15,
+          25
+        ],
+        "mana_replenish": 100,
+        "enemy_all_resist": -10
+      }
+    },
+    "chainsaw_satanic_sawgun": {
+      "damageMin": 37,
+      "damageMax": 42,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          225,
+          250
+        ],
+        "increased_attack_speed": [
+          40,
+          60
+        ],
+        "deadly_blow": 20,
+        "attack_rating": [
+          420,
+          580
+        ],
+        "mana_steal": [
+          6,
+          8
+        ],
+        "defense_ignored": 40,
+        "to_dexterity": 10
+      }
+    },
+    "sword_satanic_shattered_dimensions": {
+      "damageMin": 40,
+      "damageMax": 46,
+      "attackSpeed": 1.2,
+      "implicit": {
+        "enhanced_damage": [
+          300,
+          370
+        ],
+        "movement_speed": 50,
+        "crit_chance": 5,
+        "crit_damage": 15,
+        "to_strength": [
+          30,
+          45
+        ],
+        "magic_find_based_on_level": 30
+      }
+    },
+    "book_satanic_solar_prophet_s_tablet": {
+      "damageMin": 30,
+      "damageMax": 35,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "fire_skills": [
+          2,
+          3
+        ],
+        "faster_cast_rate": 30,
+        "skill_haste": [
+          15,
+          20
+        ],
+        "fire_skill_damage": [
+          15,
+          25
+        ],
+        "mana_replenish_pct": 100,
+        "cooldown_recovery": [
+          15,
+          20
+        ],
+        "mana_replenish": 100
+      }
+    },
+    "spellblade_satanic_spellshard": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "faster_cast_rate": [
+          20,
+          30
+        ],
+        "increased_attack_speed": [
+          20,
+          40
+        ],
+        "attack_rating": [
+          480,
+          490
+        ],
+        "mana_replenish": [
+          8,
+          16
+        ],
+        "flat_arcane_skill_damage": [
+          12,
+          26
+        ],
+        "all_resistances": [
+          10,
+          15
+        ]
+      }
+    },
+    "flask_satanic_spirit_urn": {
+      "damageMin": 8,
+      "damageMax": 12,
+      "attackSpeed": 1.45,
+      "implicit": {
+        "mana_steal": 8,
+        "to_energy": [
+          10,
+          15
+        ],
+        "all_attributes": [
+          2,
+          5
+        ],
+        "mana_replenish_pct": 15,
+        "to_intelligence": [
+          20,
+          30
+        ],
+        "mana_replenish": 15,
+        "mana_based_on_level": 50
+      }
+    },
+    "claw_satanic_spirit_walker_s_guide": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          180,
+          220
+        ],
+        "all_skills": 1,
+        "faster_cast_rate": 20,
+        "arcane_skill_damage": [
+          12,
+          25
+        ],
+        "mana_replenish_pct": 10,
+        "mana": 35,
+        "mana_replenish": 10
+      }
+    },
+    "mace_satanic_spiritus": {
+      "damageMin": 48,
+      "damageMax": 52,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          225,
+          260
+        ],
+        "all_skills": [
+          1,
+          2
+        ],
+        "increased_attack_speed": [
+          25,
+          50
+        ],
+        "crit_chance": 10,
+        "deadly_blow": 25,
+        "crushing_blow_chance": 15,
+        "mana_steal": [
+          10,
+          14
+        ],
+        "to_strength": [
+          15,
+          30
+        ],
+        "to_dexterity": 22,
+        "additive_arcane_damage": [
+          1250,
+          1350
+        ]
+      }
+    },
+    "staff_satanic_staff_of_nether_flame": {
+      "damageMin": 28,
+      "damageMax": 38,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "faster_cast_rate": [
+          5,
+          50
+        ],
+        "to_vitality": 15,
+        "all_attributes": 25,
+        "poison_skill_damage": [
+          35,
+          50
+        ],
+        "fire_skill_damage": [
+          35,
+          50
+        ],
+        "mana_per_kill": 40
+      }
+    },
+    "gun_satanic_steve_s_bang": {
+      "damageMin": 44,
+      "damageMax": 52,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "enhanced_damage": [
+          440,
+          590
+        ],
+        "increased_attack_speed": [
+          20,
+          50
+        ],
+        "attack_rating": [
+          110,
+          140
+        ],
+        "all_attributes": 10,
+        "additive_lightning_damage": [
+          35,
+          50
+        ],
+        "additive_fire_damage": [
+          35,
+          50
+        ],
+        "additive_cold_damage": [
+          35,
+          50
+        ],
+        "mana_per_kill": 10,
+        "all_resistances": 15,
+        "magic_find": [
+          20,
+          30
+        ]
+      }
+    },
+    "sword_satanic_steve_s_mighty_sword": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          490,
+          560
+        ],
+        "increased_attack_speed": [
+          15,
+          30
+        ],
+        "attack_rating": [
+          800,
+          1
+        ],
+        "additive_physical_damage": [
+          18,
+          38
+        ],
+        "all_attributes": 40,
+        "additive_arcane_damage": [
+          800,
+          1420
+        ],
+        "additive_lightning_damage": [
+          800,
+          1420
+        ],
+        "additive_poison_damage": [
+          800,
+          1420
+        ],
+        "additive_fire_damage": [
+          800,
+          1420
+        ],
+        "additive_cold_damage": [
+          800,
+          1420
+        ]
+      }
+    },
+    "bow_satanic_steve_s_punchbow": {
+      "damageMin": 80,
+      "damageMax": 94,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          440,
+          580
+        ],
+        "all_skills": 2,
+        "attack_rating_pct": 4,
+        "attack_rating": [
+          280,
+          460
+        ],
+        "mana_steal": 6,
+        "slow_target": 20,
+        "all_attributes": 10,
+        "additive_lightning_damage": [
+          550,
+          575
+        ],
+        "additive_fire_damage": [
+          550,
+          575
+        ],
+        "additive_cold_damage": [
+          550,
+          575
+        ],
+        "crushing_blow_chance": 25,
+        "increased_attack_rating": 20,
+        "additive_physical_damage": [
+          22,
+          46
+        ],
+        "flat_magic_skill_damage": [
+          22,
+          46
+        ]
+      }
+    },
+    "wand_satanic_steve_s_wand_of_fortune": {
+      "damageMin": 24,
+      "damageMax": 31,
+      "attackSpeed": 0.5,
+      "implicit": {
+        "all_skills": [
+          2,
+          4
+        ],
+        "to_energy": [
+          20,
+          35
+        ],
+        "to_intelligence": [
+          20,
+          35
+        ],
+        "to_vitality": [
+          20,
+          35
+        ],
+        "magic_skill_damage": [
+          35,
+          50
+        ],
+        "faster_cast_rate": [
+          35,
+          55
+        ]
+      }
+    },
+    "sword_satanic_storm_katana": {
+      "damageMin": 40,
+      "damageMax": 46,
+      "attackSpeed": 1.4,
+      "implicit": {
+        "enhanced_damage": [
+          310,
+          370
+        ],
+        "increased_attack_speed": [
+          20,
+          40
+        ],
+        "life_steal": [
+          3,
+          6
+        ],
+        "to_strength": [
+          5,
+          10
+        ],
+        "additive_lightning_damage": [
+          345,
+          365
+        ],
+        "life_per_kill": 5
+      }
+    },
+    "claw_satanic_talons_of_wisdom": {
+      "damageMin": 16,
+      "damageMax": 20,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          140,
+          180
+        ],
+        "faster_cast_rate": 35,
+        "to_energy": [
+          8,
+          15
+        ],
+        "all_attributes": [
+          5,
+          10
+        ],
+        "mana_replenish_pct": [
+          15,
+          25
+        ],
+        "mana": [
+          125,
+          130
+        ],
+        "mana_replenish": [
+          15,
+          25
+        ]
+      }
+    },
+    "chainsaw_satanic_the_annihilator": {
+      "damageMin": 15,
+      "damageMax": 20,
+      "attackSpeed": 1.4,
+      "implicit": {
+        "enhanced_damage": [
+          140,
+          160
+        ],
+        "crushing_blow_chance": 40,
+        "attack_rating": 60,
+        "mana_steal": [
+          2,
+          4
+        ],
+        "defense_ignored": 40,
+        "slow_target": 20,
+        "additive_fire_damage": [
+          10,
+          20
+        ],
+        "all_resistances": [
+          10,
+          20
+        ]
+      }
+    },
+    "staff_satanic_the_iris": {
+      "damageMin": 16,
+      "damageMax": 27,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          75,
+          125
+        ],
+        "arcane_skills": [
+          2,
+          3
+        ],
+        "faster_cast_rate": [
+          15,
+          25
+        ],
+        "increased_attack_speed": [
+          50,
+          80
+        ],
+        "mana_replenish": [
+          5,
+          10
+        ],
+        "to_energy": [
+          8,
+          15
+        ],
+        "to_intelligence": 15,
+        "arcane_skill_damage": [
+          20,
+          40
+        ]
+      }
+    },
+    "sword_satanic_the_undying": {
+      "damageMin": 82,
+      "damageMax": 90,
+      "attackSpeed": 1.2,
+      "implicit": {
+        "enhanced_damage": [
+          550,
+          600
+        ],
+        "to_vitality": [
+          25,
+          30
+        ],
+        "to_armor": [
+          20,
+          25
+        ],
+        "additive_cold_damage": [
+          1340,
+          1560
+        ],
+        "damage_return": 50,
+        "physical_damage_reduction": 15
+      }
+    },
+    "sword_satanic_thor_s_battle_sword": {
+      "damageMin": 48,
+      "damageMax": 54,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          220,
+          280
+        ],
+        "arcane_skills": [
+          2,
+          4
+        ],
+        "to_energy": 25,
+        "all_attributes": 15,
+        "arcane_skill_damage": [
+          20,
+          35
+        ],
+        "mana_replenish_pct": 30,
+        "mana_per_kill": [
+          12,
+          20
+        ],
+        "arcane_resistance": 75,
+        "mana_replenish": 30
+      }
+    },
+    "staff_satanic_thorn_of_helheim": {
+      "damageMin": 50,
+      "damageMax": 58,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "all_skills": [
+          3,
+          5
+        ],
+        "faster_cast_rate": [
+          20,
+          40
+        ],
+        "magic_skill_damage": [
+          25,
+          40
+        ],
+        "mana_per_kill": [
+          8,
+          15
+        ],
+        "increased_mana": 10,
+        "ailment_damage_all": [
+          15,
+          25
+        ]
+      }
+    },
+    "polearm_satanic_thorn_of_noxus": {
+      "damageMin": 226,
+      "damageMax": 232,
+      "attackSpeed": 0.5,
+      "implicit": {
+        "enhanced_damage": [
+          650,
+          750
+        ],
+        "all_skills": 8,
+        "poison_skills": [
+          5,
+          10
+        ],
+        "increased_attack_speed": -50,
+        "deadly_blow": 75,
+        "defense_ignored": 75,
+        "to_strength": 125,
+        "poison_skill_damage": [
+          60,
+          80
+        ],
+        "increased_attack_speed_more": -60,
+        "less_dmg_with_cd_skills": 85
+      }
+    },
+    "dagger_satanic_thunder_dagger": {
+      "damageMin": 31,
+      "damageMax": 35,
+      "attackSpeed": 1.8,
+      "implicit": {
+        "enhanced_damage": [
+          170,
+          200
+        ],
+        "faster_cast_rate": 30,
+        "to_intelligence": [
+          15,
+          25
+        ],
+        "lightning_skill_damage": [
+          20,
+          35
+        ],
+        "ignore_lightning_res": [
+          15,
+          25
+        ]
+      }
+    },
+    "wand_satanic_uabel_s_wand": {
+      "damageMin": 26,
+      "damageMax": 32,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "all_skills": [
+          4,
+          6
+        ],
+        "faster_cast_rate": [
+          40,
+          60
+        ],
+        "mana_replenish": [
+          8,
+          12
+        ],
+        "to_energy": [
+          25,
+          35
+        ],
+        "mana_replenish_pct": [
+          75,
+          125
+        ],
+        "increased_life": -15,
+        "increased_mana": -25,
+        "all_resistances": -50,
+        "explosion_aoe": [
+          25,
+          40
+        ]
+      }
+    },
+    "mace_satanic_unholy_god_s_flail": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1.8,
+      "implicit": {
+        "enhanced_damage": [
+          370,
+          410
+        ],
+        "mana_steal": [
+          4,
+          8
+        ],
+        "to_energy": [
+          8,
+          15
+        ],
+        "arcane_skill_damage": [
+          15,
+          25
+        ],
+        "ignore_arcane_res": 20,
+        "life": [
+          400,
+          600
+        ],
+        "grant_aura_holder_only": [
+          25,
+          35
+        ]
+      }
+    },
+    "gun_satanic_vampire_hunter": {
+      "damageMin": 56,
+      "damageMax": 62,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          310,
+          450
+        ],
+        "increased_attack_speed": [
+          10,
+          20
+        ],
+        "attack_rating": 175,
+        "additive_physical_damage": [
+          12,
+          26
+        ],
+        "life_steal": [
+          4,
+          8
+        ],
+        "defense_ignored": 50,
+        "open_wounds": 15,
+        "life_per_kill": 10,
+        "damage_based_on_level": 100,
+        "melee_range": [
+          15,
+          30
+        ],
+        "open_wound_chance": 15,
+        "vitality_converted_to_attack_dmg": [
+          2,
+          5
+        ]
+      }
+    },
+    "polearm_satanic_vanguard_s_lance": {
+      "damageMin": 24,
+      "damageMax": 28,
+      "attackSpeed": 2.2,
+      "implicit": {
+        "enhanced_damage": [
+          160,
+          190
+        ],
+        "deadly_blow": 20,
+        "attack_rating": 275,
+        "life_steal": [
+          3,
+          8
+        ],
+        "to_strength": 10,
+        "to_dexterity": 15,
+        "additive_cold_damage": [
+          320,
+          430
+        ],
+        "attack_damage": [
+          5,
+          10
+        ],
+        "mana_per_kill": [
+          6,
+          12
+        ],
+        "attack_rating_based_on_level": 75
+      }
+    },
+    "axe_satanic_viking_s_sacred_axe": {
+      "damageMin": 72,
+      "damageMax": 78,
+      "attackSpeed": 1.35,
+      "implicit": {
+        "enhanced_damage": [
+          285,
+          340
+        ],
+        "movement_speed": 15,
+        "increased_attack_speed": 20,
+        "attack_rating": [
+          635,
+          720
+        ],
+        "additive_lightning_damage": [
+          175,
+          220
+        ]
+      }
+    },
+    "wand_satanic_voodoo_magician_s_skull": {
+      "damageMin": 32,
+      "damageMax": 42,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "summon_skills": [
+          1,
+          3
+        ],
+        "all_skills": [
+          1,
+          2
+        ],
+        "to_intelligence": 25,
+        "all_attributes": [
+          10,
+          20
+        ],
+        "summon_damage": [
+          10,
+          20
+        ],
+        "intelligence_converted_to_magic_skill_dmg": [
+          6,
+          10
+        ]
+      }
+    },
+    "chainsaw_satanic_vorpal_sharktooth": {
+      "damageMin": 72,
+      "damageMax": 78,
+      "attackSpeed": 1.8,
+      "implicit": {
+        "enhanced_damage": [
+          255,
+          290
+        ],
+        "increased_attack_speed": [
+          20,
+          30
+        ],
+        "life_steal": [
+          3,
+          6
+        ],
+        "to_strength": 15,
+        "to_dexterity": 15,
+        "additive_fire_damage": [
+          825,
+          950
+        ],
+        "life_per_kill": [
+          6,
+          8
+        ],
+        "crit_chance": 20,
+        "deadly_blow": 33,
+        "additive_physical_damage": [
+          30,
+          60
+        ],
+        "crit_damage": [
+          30,
+          45
+        ]
+      }
+    },
+    "polearm_satanic_war_god_s_lance": {
+      "damageMin": 8,
+      "damageMax": 12,
+      "attackSpeed": 1.45,
+      "implicit": {
+        "enhanced_damage": [
+          120,
+          180
+        ],
+        "increased_attack_speed": [
+          20,
+          40
+        ],
+        "crushing_blow_chance": 15,
+        "attack_rating": 60,
+        "all_attributes": 3,
+        "damage_based_on_level": 50
+      }
+    },
+    "gun_satanic_warbringer": {
+      "damageMin": 16,
+      "damageMax": 20,
+      "attackSpeed": 1.85,
+      "implicit": {
+        "enhanced_damage": [
+          350,
+          470
+        ],
+        "increased_attack_speed": [
+          15,
+          30
+        ],
+        "crit_chance": [
+          10,
+          20
+        ],
+        "crushing_blow_chance": 35,
+        "attack_rating": 90,
+        "life_steal": [
+          4,
+          8
+        ]
+      }
+    },
+    "sword_satanic_wind_guardian_s_gladius": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1,
+      "implicit": {
+        "enhanced_damage": [
+          240,
+          280
+        ],
+        "increased_attack_speed": [
+          30,
+          50
+        ],
+        "attack_rating": [
+          285,
+          320
+        ],
+        "open_wounds": 20,
+        "all_attributes": [
+          3,
+          5
+        ],
+        "additive_lightning_damage": [
+          530,
+          645
+        ],
+        "open_wound_chance": 20
+      }
+    },
+    "bow_satanic_wind_s_force": {
+      "damageMin": 94,
+      "damageMax": 106,
+      "attackSpeed": 1.8,
+      "implicit": {
+        "enhanced_damage": [
+          500,
+          600
+        ],
+        "increased_attack_speed": [
+          50,
+          60
+        ],
+        "mana_steal": [
+          4,
+          7
+        ],
+        "to_strength": 40,
+        "to_dexterity": 40,
+        "damage_based_on_level": 125
+      }
+    },
+    "wand_satanic_witch_s_wand": {
+      "damageMin": 32,
+      "damageMax": 42,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "faster_cast_rate": -50,
+        "faster_cast_rate_more": -50,
+        "follower_relic_damage": [
+          75,
+          125
+        ],
+        "follower_relic_attack_speed": [
+          10,
+          20
+        ]
+      }
+    },
+    "spellblade_satanic_wormclaw": {
+      "damageMin": 32,
+      "damageMax": 36,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "poison_skills": [
+          1,
+          3
+        ],
+        "increased_poisoned_damage": [
+          10,
+          25
+        ],
+        "flat_poison_skill_damage": [
+          12,
+          24
+        ],
+        "poison_skill_damage": 20,
+        "increased_poisoned_frequency": 10
+      }
+    },
+    "wand_satanic_wraithbone": {
+      "damageMin": 16,
+      "damageMax": 23,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "summon_skills": 2,
+        "all_attributes": [
+          10,
+          20
+        ],
+        "summon_attack_speed": [
+          15,
+          25
+        ],
+        "summon_all_resist": [
+          3,
+          5
+        ]
+      }
+    },
+    "claw_satanic_yoshi_s_throat_cutters": {
+      "damageMin": 86,
+      "damageMax": 92,
+      "attackSpeed": 1.65,
+      "implicit": {
+        "enhanced_damage": [
+          850,
+          925
+        ],
+        "all_skills": [
+          2,
+          3
+        ],
+        "physical_skills": [
+          3,
+          5
+        ],
+        "attack_rating_pct": 35,
+        "life_steal": 6,
+        "to_strength": 45,
+        "to_dexterity": 45,
+        "faster_hit_recovery": 75,
+        "increased_attack_rating": 35
+      }
+    },
+    "book_satanic_zealot_s_book_of_prophecy": {
+      "damageMin": 31,
+      "damageMax": 36,
+      "attackSpeed": 1.75,
+      "implicit": {
+        "skill_haste": [
+          5,
+          10
+        ],
+        "arcane_skill_damage": [
+          10,
+          15
+        ],
+        "mana_replenish_pct": 15,
+        "mana": 35,
+        "cooldown_recovery": [
+          10,
+          20
+        ],
+        "flat_arcane_skill_damage": [
+          24,
+          64
+        ],
+        "mana_replenish": 100
+      }
+    },
+    "base_flask_poison_flask": {
+      "attackSpeed": 1.5
+    },
+    "base_flask_caustic_vial": {
+      "damageMin": 14,
+      "damageMax": 20,
+      "attackSpeed": 1.25
+    },
+    "base_throwing_javelin": {
+      "damageMin": 5,
+      "damageMax": 7,
+      "attackSpeed": 1.5
+    },
+    "base_throwing_pilum": {
+      "attackSpeed": 1.5
+    },
+    "base_throwing_simbilan": {
+      "attackSpeed": 1.5
+    },
+    "base_throwing_throwing_spear": {
+      "damageMin": 12,
+      "damageMax": 16,
+      "attackSpeed": 1.5
+    },
+    "base_mace_mace": {
+      "damageMin": 5,
+      "damageMax": 7
     }
   }
 }
