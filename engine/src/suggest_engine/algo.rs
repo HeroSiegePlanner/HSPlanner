@@ -44,8 +44,22 @@ fn skill_ref_to_calc(skill: &SkillRef) -> calc::Skill {
                 },
             })
             .collect(),
-        attack_kind: None,
-        attack_scaling: None,
+        attack_kind: match skill.attack_kind.as_deref() {
+            Some("attack") => Some(calc::AttackKind::Attack),
+            Some("spell") => Some(calc::AttackKind::Spell),
+            _ => None,
+        },
+        attack_scaling: skill.attack_scaling.as_ref().map(|s| {
+            let f = |x: &Option<super::types::DamageFormula>| {
+                x.as_ref().map(|d| calc::DamageFormula { base: d.base, per_level: d.per_level })
+            };
+            calc::AttackSkillScaling {
+                weapon_damage_pct: f(&s.weapon_damage_pct),
+                flat_physical_min: f(&s.flat_physical_min),
+                flat_physical_max: f(&s.flat_physical_max),
+                attack_rating_pct: f(&s.attack_rating_pct),
+            }
+        }),
     }
 }
 
@@ -63,6 +77,8 @@ struct DpsContext<'a> {
     id_by_normalized_name: HashMap<String, String>,
     skill_ranks_norm: HashMap<String, f64>,
     item_bonuses_norm: HashMap<String, super::types::Ranged>,
+    /// Equipped weapon for attack-kind skills; constant across candidates.
+    weapon: Option<calc::Weapon>,
 }
 
 fn build_dps_context<'a>(input: &'a PrecomputedInput) -> Option<DpsContext<'a>> {
@@ -77,6 +93,18 @@ fn build_dps_context<'a>(input: &'a PrecomputedInput) -> Option<DpsContext<'a>> 
         skills_by_name.insert(norm.clone(), skill_ref_to_calc(s));
         id_by_normalized_name.insert(norm, s.id.clone());
     }
+    let weapon = input
+        .inventory
+        .get("weapon")
+        .and_then(|eq| crate::calc::data::get_item(&eq.base_id))
+        .and_then(|base| match (base.damage_min, base.damage_max) {
+            (Some(min), Some(max)) => Some(calc::Weapon {
+                name: base.name.clone(),
+                damage_min: min,
+                damage_max: max,
+            }),
+            _ => None,
+        });
     Some(DpsContext {
         active,
         active_calc: skill_ref_to_calc(active),
@@ -87,6 +115,7 @@ fn build_dps_context<'a>(input: &'a PrecomputedInput) -> Option<DpsContext<'a>> 
             &input.inventory,
             &crate::calc::data::data().items,
         ),
+        weapon,
     })
 }
 
@@ -116,7 +145,25 @@ fn compute_dps(state: &FinalState, input: &PrecomputedInput, ctx: &DpsContext) -
 
     let mut avg_hit_min = 0.0;
     let mut avg_hit_max = 0.0;
-    if let Some(b) = hit_breakdown.as_ref() {
+    if ctx.active_calc.attack_kind == Some(calc::AttackKind::Attack) {
+        // Mirror of the attack branch in calc/build.rs: weapon physical +
+        // elemental part, with attacks-per-second baked into the breakdown.
+        let attack_input = calc::AttackSkillInput {
+            skill: &ctx.active_calc,
+            allocated_rank: input.active_skill_rank as f64,
+            stats: &state.stats,
+            item_skill_bonuses: &ctx.item_bonuses_norm,
+            enemy_conditions: &input.enemy_conditions,
+            weapon: ctx.weapon.as_ref(),
+            poison_breakdown: hit_breakdown.as_ref(),
+            scoped: &no_scoped,
+            conversion_flat: 0.0,
+        };
+        if let Some(ad) = calc::compute_attack_skill_damage(&attack_input) {
+            avg_hit_min = ad.combined_avg_min as f64 * ad.attacks_per_second_min;
+            avg_hit_max = ad.combined_avg_max as f64 * ad.attacks_per_second_max;
+        }
+    } else if let Some(b) = hit_breakdown.as_ref() {
         let stat = |key: &str| state.stats.get(key).copied().unwrap_or((0.0, 0.0));
         // Mirror of the entity branch in calc/build.rs. The config base rate is
         // a constant scale, so 1.0 cannot reorder candidates.
@@ -655,6 +702,54 @@ mod tests {
             budget,
             ..Default::default()
         }
+    }
+
+    #[test]
+    fn attack_skill_gets_nonzero_dps_and_enhanced_damage_fillers() {
+        let nodes: HashMap<u32, TreeNodeInfo> = (0..5)
+            .map(|i| (i, node("minor", "+10% to Enhanced Damage")))
+            .collect();
+        let skill = SkillRef {
+            id: "a1".to_string(),
+            name: "Heavy Swing".to_string(),
+            attack_kind: Some("attack".to_string()),
+            attack_scaling: Some(super::super::types::AttackScalingRef {
+                weapon_damage_pct: Some(DamageFormula { base: 100.0, per_level: 0.0 }),
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let mut inventory: crate::calc::types::Inventory = HashMap::new();
+        inventory.insert(
+            "weapon".to_string(),
+            crate::calc::types::EquippedItem {
+                base_id: "base_mace_ogre_maul".to_string(),
+                ..Default::default()
+            },
+        );
+        let mut input = PrecomputedInput {
+            graph: chain_graph(5),
+            tree_nodes: nodes,
+            active_skill: Some(skill.clone()),
+            active_skill_rank: 1,
+            all_skills: vec![skill],
+            budget: 4,
+            inventory,
+            ..Default::default()
+        };
+        input
+            .stat_contributions
+            .insert("attacks_per_second".to_string(), vec![(1.0, 1.0)]);
+
+        let result = suggest(&input, None);
+
+        assert!(
+            result.base_dps > 0.0,
+            "unarmed attack skill must have baseline dps (got {})",
+            result.base_dps
+        );
+        assert_eq!(result.budget_used, 4, "enhanced damage nodes are dps gains for attacks");
+        assert!(result.final_dps > result.base_dps);
     }
 
     #[test]

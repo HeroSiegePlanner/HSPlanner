@@ -76,6 +76,19 @@ pub struct SkillProc {
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct AttackScalingRef {
+    #[serde(default)]
+    pub weapon_damage_pct: Option<DamageFormula>,
+    #[serde(default)]
+    pub flat_physical_min: Option<DamageFormula>,
+    #[serde(default)]
+    pub flat_physical_max: Option<DamageFormula>,
+    #[serde(default)]
+    pub attack_rating_pct: Option<DamageFormula>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SkillRef {
     pub id: String,
     pub name: String,
@@ -97,6 +110,10 @@ pub struct SkillRef {
     pub uses_attack_speed: bool,
     #[serde(default)]
     pub proc: Option<SkillProc>,
+    #[serde(default)]
+    pub attack_kind: Option<String>,
+    #[serde(default)]
+    pub attack_scaling: Option<AttackScalingRef>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
