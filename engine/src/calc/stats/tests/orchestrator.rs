@@ -202,6 +202,69 @@ fn class_scoped_all_skills_only_pays_out_for_that_class() {
 }
 
 #[test]
+fn class_labelled_set_bonus_only_pays_out_for_that_class() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    for (slot, base_id) in [
+        ("amulet", "amulet_satanic_engineer_s_master_pendant"),
+        ("belt", "belt_satanic_engineer_s_toolbelt"),
+        ("armor", "body_armor_satanic_engineer_s_plated_vest"),
+        ("charm_1", "charm_satanic_engineer_s_mini_drone"),
+    ] {
+        inventory.insert(
+            slot.to_string(),
+            crate::calc::types::EquippedItem {
+                base_id: base_id.to_string(),
+                ..Default::default()
+            },
+        );
+    }
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+
+    // 4-set "+5 to All Skills (Marksman)" + the charm's +[1-2] + the vest's
+    // unlabelled +1 implicit, which stays global because the item data says so.
+    let marksman = compute_build_stats(&BuildStatsInput {
+        class_id: Some("marksman"),
+        ..base_input
+    });
+    assert_eq!(
+        marksman.stats.get("all_skills").copied(),
+        Some((7.0, 8.0)),
+        "the 4-set bonus and the charm both reach a marksman"
+    );
+
+    let amazon = compute_build_stats(&BuildStatsInput {
+        class_id: Some("amazon"),
+        ..base_input
+    });
+    assert_eq!(
+        amazon.stats.get("all_skills").copied(),
+        Some((1.0, 1.0)),
+        "another class in the whole set keeps only the unlabelled vest implicit"
+    );
+}
+
+#[test]
 fn incarnation_nodes_contribute_to_build_stats() {
     // S10: patch sezonu podmienia całe drzewo — nody liczą się przez to
     // samo allocated_tree_nodes.

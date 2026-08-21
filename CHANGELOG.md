@@ -5,6 +5,7 @@
 
 ## Fixes
 - Engineer's Mini Drone: "+[1-2] to All Skills" is Marksman-only, as the item says
+- Class set bonuses: all 43 "+X to All Skills (Class)" 4-set bonuses now only pay out for that class
 - Item text editor: deleting or replacing a base implicit line now removes it instead of re-adding it on save; unknown implicit stat names block saving
 - Fix skipping node link #2113 
 - Crow's Whisper is 2-handed staff instead 1-handed wand

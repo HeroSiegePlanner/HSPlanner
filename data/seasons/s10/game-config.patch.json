@@ -1,13 +1,37 @@
 {
   "change": {
     "diminishingReturns": {
-      "gold_find": { "threshold": 200, "power": 0.75 },
-      "movement_speed": { "threshold": 200, "power": 0.86, "cap": 600 },
-      "magic_find": { "threshold": 1300, "power": 0.9 },
-      "increased_attack_speed": { "threshold": 415, "power": 0.9 },
-      "faster_cast_rate": { "threshold": 350, "power": 0.8 },
-      "deadly_blow": { "threshold": 50, "power": 0.75, "cap": 100 },
-      "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 }
+      "gold_find": {
+        "threshold": 200,
+        "power": 0.75
+      },
+      "movement_speed": {
+        "threshold": 200,
+        "power": 0.86,
+        "cap": 600
+      },
+      "magic_find": {
+        "threshold": 1300,
+        "power": 0.9
+      },
+      "increased_attack_speed": {
+        "threshold": 415,
+        "power": 0.9
+      },
+      "faster_cast_rate": {
+        "threshold": 350,
+        "power": 0.8
+      },
+      "deadly_blow": {
+        "threshold": 50,
+        "power": 0.75,
+        "cap": 100
+      },
+      "skill_haste": {
+        "threshold": 100,
+        "power": 0.75,
+        "cap": 200
+      }
     }
   },
   "stats": {
@@ -27,6 +51,138 @@
       {
         "key": "all_skills_marksman",
         "name": "All Skills (Marksman)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_amazon",
+        "name": "All Skills (Amazon)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_butcher",
+        "name": "All Skills (Butcher)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_demon_slayer",
+        "name": "All Skills (Demon Slayer)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_demonspawn",
+        "name": "All Skills (Demonspawn)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_exo",
+        "name": "All Skills (Exo)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_illusionist",
+        "name": "All Skills (Illusionist)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_jotunn",
+        "name": "All Skills (Jotunn)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_marauder",
+        "name": "All Skills (Marauder)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_necromancer",
+        "name": "All Skills (Necromancer)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_nomad",
+        "name": "All Skills (Nomad)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_paladin",
+        "name": "All Skills (Paladin)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_pirate",
+        "name": "All Skills (Pirate)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_plague_doctor",
+        "name": "All Skills (Plague Doctor)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_prophet",
+        "name": "All Skills (Prophet)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_pyromancer",
+        "name": "All Skills (Pyromancer)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_redneck",
+        "name": "All Skills (Redneck)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_samurai",
+        "name": "All Skills (Samurai)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_shaman",
+        "name": "All Skills (Shaman)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_shield_lancer",
+        "name": "All Skills (Shield Lancer)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_stormweaver",
+        "name": "All Skills (Stormweaver)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_viking",
+        "name": "All Skills (Viking)",
+        "category": "base",
+        "format": "flat"
+      },
+      {
+        "key": "all_skills_white_mage",
+        "name": "All Skills (White Mage)",
         "category": "base",
         "format": "flat"
       }

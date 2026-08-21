@@ -203,6 +203,43 @@ describe('S10 item stat changes (second batch)', () => {
     expect((bonuses[0].stats as Rec).life).toBe(300)
   })
 
+  it('class-labelled set bonuses carry a class-scoped all_skills key', () => {
+    const setsJson = import.meta.glob<{ default: Rec[] }>('../../sets.json', {
+      eager: true,
+    })
+    const baseSets: Rec[] = Object.values(setsJson).flatMap((m) => m.default)
+    const out = applyListPatch(baseSets, patches.sets, 'sets')
+    const statKeys = patches.gameConfig?.stats?.add?.map((s) => s.key) ?? []
+
+    let classScoped = 0
+    for (const set of out.data as Rec[]) {
+      for (const bonus of (set.bonuses ?? []) as Rec[]) {
+        const stats = bonus.stats as Rec
+        const labelled = ((bonus.descriptions ?? []) as string[]).some((d) =>
+          /All Skills \(/.test(d),
+        )
+        if (!labelled) continue
+        expect(stats.all_skills).toBeUndefined()
+        const key = Object.keys(stats).find((k) => k.startsWith('all_skills_'))
+        expect(key, `${set.id as string} lost its class-scoped key`).toBeDefined()
+        expect(statKeys).toContain(key)
+        classScoped++
+      }
+    }
+    expect(classScoped).toBe(43)
+  })
+
+  it('unlabelled set bonuses keep the global all_skills key', () => {
+    const setsJson = import.meta.glob<{ default: Rec[] }>('../../sets.json', {
+      eager: true,
+    })
+    const baseSets: Rec[] = Object.values(setsJson).flatMap((m) => m.default)
+    const out = applyListPatch(baseSets, patches.sets, 'sets')
+    const gurag = out.data.find((s) => (s as Rec).id === 'gurag_s_fury') as Rec
+    const tier2 = (gurag.bonuses as Rec[])[1].stats as Rec
+    expect(tier2.all_skills).toBe(4)
+  })
+
   it('game config gains the cold-res-to-cold-damage stat for Peg Leg', () => {
     const stats = patches.gameConfig?.stats?.add ?? []
     expect(stats.some((s) => s.key === 'cold_resistance_converted_to_cold_damage')).toBe(true)
