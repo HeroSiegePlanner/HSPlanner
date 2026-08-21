@@ -17,6 +17,12 @@
         "name": "of Cold Resistance is Converted to Cold Damage",
         "category": "offense",
         "format": "percent"
+      },
+      {
+        "key": "sentry_attack_rate_fixed",
+        "name": "Sentry Attack Rate",
+        "category": "offense",
+        "format": "flat"
       }
     ]
   }

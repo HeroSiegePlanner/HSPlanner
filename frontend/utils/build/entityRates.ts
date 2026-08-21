@@ -38,7 +38,11 @@ export function entityAttackRate(
   kind: EntityKind,
   rates: EntityRates,
   increasedPct: [number, number],
+  fixed = 0,
 ): EntityRate {
+  // A subskill can pin the entity to a literal rate (C.Y.C.L.O.P.S. lasers tick
+  // 4/s); pinned means pinned, so knob and speed bonuses drop out.
+  if (fixed > 0) return { base: fixed, min: fixed, max: fixed }
   const base = rates[kind] ?? DEFAULT_ENTITY_RATE
   return {
     base,
@@ -49,4 +53,8 @@ export function entityAttackRate(
 
 export function entityAttackSpeedKey(kind: EntityKind): string {
   return `${kind}_attack_speed`
+}
+
+export function entityAttackRateFixedKey(kind: EntityKind): string {
+  return `${kind}_attack_rate_fixed`
 }

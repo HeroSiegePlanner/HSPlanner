@@ -10,6 +10,7 @@ import {
 } from '../../utils/skills/skillTags'
 import {
   entityAttackRate,
+  entityAttackRateFixedKey,
   entityAttackSpeedKey,
   entityKindOfTag,
 } from '../../utils/build/entityRates'
@@ -65,10 +66,15 @@ export function SkillCard({
   const entityKind = entityTag ? entityKindOfTag(entityTag) : undefined
   // Entities swing on their own cadence; the cast rate only spawns them.
   const entitySwing = entityKind
-    ? entityAttackRate(entityKind, entityRates, [
-        rangedMin(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-        rangedMax(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-      ])
+    ? entityAttackRate(
+        entityKind,
+        entityRates,
+        [
+          rangedMin(stats[entityAttackSpeedKey(entityKind)] ?? 0),
+          rangedMax(stats[entityAttackSpeedKey(entityKind)] ?? 0),
+        ],
+        rangedMax(stats[entityAttackRateFixedKey(entityKind)] ?? 0),
+      )
     : undefined
   // Item "+X to <tag> Skills" ranks count toward the rank the game reports,
   // so mana cost and the header rank both use the effective total.

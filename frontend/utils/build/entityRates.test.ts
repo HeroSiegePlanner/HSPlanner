@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   defaultEntityRates,
   entityAttackRate,
+  entityAttackRateFixedKey,
   entityAttackSpeedKey,
   entityKindOfTag,
   entityRatesFrom,
@@ -56,7 +57,16 @@ describe('entityAttackRate', () => {
     })
   })
 
-  it('names the stat key per kind', () => {
+  it('pins the rate flat, ignoring the knob and entity attack speed', () => {
+    expect(entityAttackRate('sentry', rates, [100, 100], 4)).toEqual({
+      base: 4,
+      min: 4,
+      max: 4,
+    })
+  })
+
+  it('names the stat keys per kind', () => {
     expect(entityAttackSpeedKey('guardian')).toBe('guardian_attack_speed')
+    expect(entityAttackRateFixedKey('sentry')).toBe('sentry_attack_rate_fixed')
   })
 })

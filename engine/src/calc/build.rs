@@ -371,17 +371,25 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     let (base_rate, rate_bonus) = if let Some(kind) = entity_kind {
         // The entity swings on its own cadence: config base rate scaled by its
         // own attack-speed stats. Player FCR / attack speed stay out of it.
-        let bonus = super::affix_tags::sum_for(
-            super::types::AffixEffect::AttackSpeed,
-            entity_tags,
-            &computed.stats,
-        );
-        let rate = deps
-            .entity_rates
-            .get(&kind.to_lowercase())
-            .copied()
-            .unwrap_or(DEFAULT_ENTITY_RATE);
-        (Some(rate), bonus)
+        let kind_key = kind.to_lowercase();
+        // A subskill can pin the entity to a literal rate (C.Y.C.L.O.P.S. lasers
+        // tick 4/s); pinned means pinned, so knob and speed bonuses drop out.
+        let fixed = r_max(stat(&format!("{kind_key}_attack_rate_fixed")));
+        if fixed > 0.0 {
+            (Some(fixed), (0.0, 0.0))
+        } else {
+            let bonus = super::affix_tags::sum_for(
+                super::types::AffixEffect::AttackSpeed,
+                entity_tags,
+                &computed.stats,
+            );
+            let rate = deps
+                .entity_rates
+                .get(&kind_key)
+                .copied()
+                .unwrap_or(DEFAULT_ENTITY_RATE);
+            (Some(rate), bonus)
+        }
     } else if active_skill.is_some_and(|s| s.uses_attack_speed) {
         (
             Some(r_max(stat("attacks_per_second"))),
