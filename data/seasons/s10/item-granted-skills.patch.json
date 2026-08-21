@@ -12,6 +12,40 @@
     }
   ],
   "change": {
+    "Celestial Might": {
+      "passiveConverts": {
+        "perRank": [
+          {
+            "from": "fire_skill_damage",
+            "to": "arcane_skill_damage",
+            "pct": 0,
+            "basePct": 100,
+            "replaces": true
+          },
+          {
+            "from": "cold_skill_damage",
+            "to": "arcane_skill_damage",
+            "pct": 0,
+            "basePct": 100,
+            "replaces": true
+          },
+          {
+            "from": "lightning_skill_damage",
+            "to": "arcane_skill_damage",
+            "pct": 0,
+            "basePct": 100,
+            "replaces": true
+          },
+          {
+            "from": "poison_skill_damage",
+            "to": "arcane_skill_damage",
+            "pct": 0,
+            "basePct": 100,
+            "replaces": true
+          }
+        ]
+      }
+    },
     "Fallen God's Bloodlust": {
       "passiveConverts": {
         "perRank": [

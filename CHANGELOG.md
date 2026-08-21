@@ -5,9 +5,12 @@
 - Item text editor: "Custom affixes" list — click a stat to insert a `[custom]` implicit line
 
 ## Fixes
+- Celestial Might now actually converts elemental skill damage into arcane instead of being ignored
 - Engineer's Mini Drone: "+[1-2] to All Skills" is Marksman-only, as the item says
 - Class set bonuses: all 43 "+X to All Skills (Class)" 4-set bonuses now only pay out for that class
-- Item text editor: deleting or replacing a base implicit line now removes it instead of re-adding it on save; unknown implicit stat names block saving
+- Item text editor: deleting or replacing a base implicit line now removes it instead of re-adding it on save
 - Fix skipping node link #2113 
+- Incarnation tree: Malicious Veins shows "+25% of Maximum life dealt as Arcane Damage"
+- Incarnation tree: Vital Heart, First Aid, Rapid Mending and Vitalizing Charge are notables, as in game
 - Crow's Whisper is 2-handed staff instead 1-handed wand
 - C.Y.C.L.O.P.S. now pins gunner drones to 4 attacks/s

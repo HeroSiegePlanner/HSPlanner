@@ -37,6 +37,19 @@ function deps(over: Partial<TooltipModelDeps> = {}): TooltipModelDeps {
 }
 
 describe('buildItemTooltipModel', () => {
+  it('words a replaces conversion as "converted to", not "added as"', () => {
+    const base = getItem('shield_heroic_celestial_s_authority')
+    if (!base) throw new Error('fixture item missing from game data')
+    const display = {
+      ...emptyDisplay(),
+      skillRankScaled: { 'Celestial Might': [1, 1] as [number, number] },
+    }
+    const model = buildItemTooltipModel(base, eq(base.id), deps({ display }))
+    const text = JSON.stringify(model.sections)
+    expect(text).toContain('converted to')
+    expect(text).not.toContain('added as')
+  })
+
   it('names the picked skill on a "+X to Random Skill" line', () => {
     const base = getItem('charm_satanic_engineer_s_mini_drone')
     if (!base) throw new Error('fixture item missing from game data')

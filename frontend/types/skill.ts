@@ -146,7 +146,14 @@ export interface ItemGrantedSkill {
   }
   passiveConverts?: {
     // Total pct = basePct + pct * rank (game tooltips quote the rank-1 value).
-    perRank: Array<{ from: string; to: string; pct: number; basePct?: number }>
+    perRank: Array<{
+      from: string
+      to: string
+      pct: number
+      basePct?: number
+      // "X is converted to Y": the converted share leaves `from`.
+      replaces?: boolean
+    }>
   }
   // Flat typed damage fired on an internal cooldown (item procs, e.g. The Eye).
   procDamage?: Array<{ type: string; base: number; perRank: number }>

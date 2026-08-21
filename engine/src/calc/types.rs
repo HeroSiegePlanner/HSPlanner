@@ -286,6 +286,10 @@ pub struct PassiveConvert {
     // so base_pct = shown - pct.
     #[serde(default)]
     pub base_pct: f64,
+    /// "X is converted to Y" — the converted share leaves `from`. Without it the
+    /// skill only grants Y on top, which is what "a portion of X" mods do.
+    #[serde(default)]
+    pub replaces: bool,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

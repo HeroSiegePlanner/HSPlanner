@@ -104,8 +104,10 @@ pub fn apply_item_granted_conversions(
                 .copied()
                 .unwrap_or((0.0, 0.0));
             let effective = combine_additive_and_more(from, from_more);
-            let add_min = ((conv.base_pct + conv.pct * rank_min) / 100.0) * effective.0;
-            let add_max = ((conv.base_pct + conv.pct * rank_max) / 100.0) * effective.1;
+            let share_min = (conv.base_pct + conv.pct * rank_min) / 100.0;
+            let share_max = (conv.base_pct + conv.pct * rank_max) / 100.0;
+            let add_min = share_min * effective.0;
+            let add_max = share_max * effective.1;
             if add_min == 0.0 && add_max == 0.0 {
                 continue;
             }
@@ -123,13 +125,34 @@ pub fn apply_item_granted_conversions(
                 stat_sources,
                 &conv.to,
                 SourceContribution {
-                    label,
+                    label: label.clone(),
                     source_type: SourceType::Item,
                     value: (add_min, add_max),
                     forge: None,
                 },
             );
             touched.insert(conv.to.clone());
+            if conv.replaces {
+                // Take the share out of each half separately. The combined
+                // figure includes the `_more` multiplier, so subtracting it
+                // from the additive key alone would drive that key negative.
+                for (key, val) in [
+                    (conv.from.clone(), from),
+                    (format!("{}_more", conv.from), from_more),
+                ] {
+                    push_source(
+                        stat_sources,
+                        &key,
+                        SourceContribution {
+                            label: format!("{label} (removed)"),
+                            source_type: SourceType::Item,
+                            value: (-share_min * val.0, -share_max * val.1),
+                            forge: None,
+                        },
+                    );
+                    touched.insert(key);
+                }
+            }
         }
     }
     touched

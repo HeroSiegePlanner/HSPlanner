@@ -528,7 +528,8 @@ function buildGrantedSkillEntries(
         const pctMin = round2((c.basePct ?? 0) + c.pct * rMin)
         const pctMax = round2((c.basePct ?? 0) + c.pct * rMax)
         const pctText = pctMin === pctMax ? `${pctMin}%` : `${pctMin}–${pctMax}%`
-        lines.push(`${pctText} of ${statName(c.from)} added as ${statName(c.to)}`)
+        const verb = c.replaces ? 'converted to' : 'added as'
+        lines.push(`${pctText} of ${statName(c.from)} ${verb} ${statName(c.to)}`)
       }
     }
     if (skill.passiveStats) {
