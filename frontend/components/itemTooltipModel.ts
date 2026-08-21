@@ -255,8 +255,19 @@ export function buildItemTooltipModel(
 
   const { standard, unholy } = buildAffixLines(equipped?.affixes ?? [], display)
   if (standard.length > 0) sections.push({ lines: standard })
-  if (unholy.length > 0) {
-    sections.push({ header: { text: 'Unholy Affixes', tone: 'pink' }, lines: unholy })
+  // uniqueEffects carries one "Unholy" per rollable slot; the picked ones are
+  // already listed, so the remainder shows as slots still waiting for a roll.
+  const unrolledUnholy = Math.max(0, countUnholySlots(base) - unholy.length)
+  if (unholy.length > 0 || unrolledUnholy > 0) {
+    sections.push({
+      header: { text: 'Unholy Affixes', tone: 'pink' },
+      lines: [
+        ...unholy,
+        ...Array.from({ length: unrolledUnholy }, () =>
+          textLine('Unholy (not rolled)', 'unholy-missing'),
+        ),
+      ],
+    })
   }
 
   if (equippedForgedMods.length > 0 && forgeKind) {
@@ -370,7 +381,7 @@ export function buildItemTooltipModel(
   }
 
   if (base.uniqueEffects && base.uniqueEffects.length > 0) {
-    const effects = base.uniqueEffects
+    const effects = base.uniqueEffects.filter((e) => e.trim() !== UNHOLY_EFFECT)
     const special = effects.filter((e) => RECOGNIZED_EFFECTS.has(e.trim().toLowerCase()))
     const notSupported = effects.filter(
       (e) => !RECOGNIZED_EFFECTS.has(e.trim().toLowerCase()),
@@ -541,6 +552,13 @@ function buildGrantedSkillEntries(
     out.push({ skill, displayRank, lines })
   }
   return out
+}
+
+// Item data spells one "Unholy" per rollable unholy-affix slot.
+const UNHOLY_EFFECT = 'Unholy'
+
+function countUnholySlots(base: ItemBase): number {
+  return (base.uniqueEffects ?? []).filter((e) => e.trim() === UNHOLY_EFFECT).length
 }
 
 function buildAffixLines(

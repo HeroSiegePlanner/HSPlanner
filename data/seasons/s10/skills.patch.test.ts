@@ -240,6 +240,25 @@ describe('S10 item stat changes (second batch)', () => {
     expect(tier2.all_skills).toBe(4)
   })
 
+  it('every item with Unholy slots can actually roll them', () => {
+    const ids = [
+      'mace_heroic_rakhul_s_legion_crusher',
+      'axe_satanic_abomination_s_gut_ripper',
+      'boots_unholy_marcher_s_of_hatred',
+      'gloves_heroic_manahungerers',
+      'amulet_satanic_damien_s_soulstone',
+    ]
+    for (const id of ids) {
+      const item = patchedItem(id)
+      const slots = ((item.uniqueEffects ?? []) as string[]).filter(
+        (e) => e.trim() === 'Unholy',
+      ).length
+      expect(slots, `${id} lost its Unholy slots`).toBeGreaterThan(0)
+      expect(item.randomAffixGroupId, id).toBe('random_unholy')
+      expect(item.maxAffixes, id).toBe(slots)
+    }
+  })
+
   it('game config gains the cold-res-to-cold-damage stat for Peg Leg', () => {
     const stats = patches.gameConfig?.stats?.add ?? []
     expect(stats.some((s) => s.key === 'cold_resistance_converted_to_cold_damage')).toBe(true)

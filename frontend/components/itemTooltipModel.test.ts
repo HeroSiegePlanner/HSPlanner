@@ -95,6 +95,41 @@ describe('buildItemTooltipModel', () => {
     })
   })
 
+  it('lists unrolled Unholy slots in the Unholy Affixes section, not Special Effects', () => {
+    const base = getItem('axe_angelic_aurelion_fury')
+    if (!base) throw new Error('fixture item missing from game data')
+
+    const model = buildItemTooltipModel(base, eq(base.id), deps())
+    const unholy = model.sections.find((s) => s.header?.text === 'Unholy Affixes')
+    if (!unholy) throw new Error('unholy affix section missing')
+    // The item carries three Unholy slots and none are rolled yet.
+    expect(unholy.lines).toHaveLength(3)
+    expect(unholy.lines.every((l) => l.kind === 'text' && l.style === 'unholy-missing')).toBe(true)
+
+    const special = model.sections.find((s) => s.header?.text === 'Special Effects')
+    expect(JSON.stringify(special?.lines ?? [])).not.toContain('Unholy')
+    // Non-Unholy effects stay where they were.
+    expect(JSON.stringify(special?.lines ?? [])).toContain('Attacks can hit multiple enemies')
+  })
+
+  it('drops one empty Unholy slot per rolled unholy affix', () => {
+    const base = getItem('axe_angelic_aurelion_fury')
+    if (!base) throw new Error('fixture item missing from game data')
+    const model = buildItemTooltipModel(
+      base,
+      eq(base.id, {
+        affixes: [{ affixId: 'random_unholy_to_strength', tier: 1, roll: 0 }],
+      }),
+      deps(),
+    )
+    const unholy = model.sections.find((s) => s.header?.text === 'Unholy Affixes')
+    if (!unholy) throw new Error('unholy affix section missing')
+    expect(unholy.lines).toHaveLength(3)
+    expect(
+      unholy.lines.filter((l) => l.kind === 'text' && l.style === 'unholy-missing'),
+    ).toHaveLength(2)
+  })
+
   it('splits affixes into standard (affix) and Unholy Affixes section (unholy)', () => {
     const base = getItem('boots_satanic_boots_of_wild')
     if (!base) throw new Error('fixture item missing from game data')

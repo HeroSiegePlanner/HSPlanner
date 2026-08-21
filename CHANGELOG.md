@@ -1,4 +1,5 @@
 ## Features
+- Unholy slots: items with "Unholy" special effects list them as their own tooltip section
 - Random Skill rolls: items that roll "+X to Random Skill" get a skill picker in the gear slot, and the ranks land on the picked skill
 - Season 10 is now the default season. Everyone starts there unless they switch
 - Item text editor: "Custom affixes" list — click a stat to insert a `[custom]` implicit line

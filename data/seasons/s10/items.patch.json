@@ -194,6 +194,18 @@
     }
   ],
   "change": {
+    "mace_heroic_rakhul_s_legion_crusher": {
+      "randomAffixGroupId": "random_unholy",
+      "maxAffixes": 2
+    },
+    "gloves_heroic_manahungerers": {
+      "randomAffixGroupId": "random_unholy",
+      "maxAffixes": 1
+    },
+    "amulet_satanic_damien_s_soulstone": {
+      "randomAffixGroupId": "random_unholy",
+      "maxAffixes": 1
+    },
     "charm_satanic_engineer_s_mini_drone": {
       "implicit": {
         "all_skills_marksman": [
@@ -494,6 +506,8 @@
       }
     },
     "boots_unholy_marcher_s_of_hatred": {
+      "randomAffixGroupId": "random_unholy",
+      "maxAffixes": 2,
       "uniqueEffects": [
         "Unholy",
         "Unholy",
@@ -627,6 +641,8 @@
       ]
     },
     "axe_satanic_abomination_s_gut_ripper": {
+      "randomAffixGroupId": "random_unholy",
+      "maxAffixes": 1,
       "damageMin": 82,
       "damageMax": 90,
       "attackSpeed": 1.25,
