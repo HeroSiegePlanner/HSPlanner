@@ -13,6 +13,7 @@ import {
   getItem,
   getItemGrantedSkillByName,
   getItemSet,
+  skills,
 } from '@data'
 import { BONUS_SOCKET_MOD_ID } from '../store/itemRules'
 import type {
@@ -189,9 +190,16 @@ export function buildItemTooltipModel(
   const grantedSkillNames = new Set(
     grantedSkillEntries.map((e) => e.skill.name.trim().toLowerCase()),
   )
-  const visibleSkillBonusEntries = skillBonusEntries.filter(
-    ([skill]) => !grantedSkillNames.has(skill.trim().toLowerCase()),
-  )
+  const visibleSkillBonusEntries = skillBonusEntries
+    .filter(([skill]) => !grantedSkillNames.has(skill.trim().toLowerCase()))
+    .map(([skill, val]): [string, typeof val] =>
+      skill === RANDOM_SKILL_NAME
+        ? [
+            randomSkillLabel(equipped?.randomSkillId),
+            display.skillRankScaled[skill] ?? val,
+          ]
+        : [skill, val],
+    )
   const runewordEntries = runeword
     ? Object.entries(runeword.stats).filter(([, v]) => v !== 0)
     : []
@@ -247,8 +255,19 @@ export function buildItemTooltipModel(
 
   const { standard, unholy } = buildAffixLines(equipped?.affixes ?? [], display)
   if (standard.length > 0) sections.push({ lines: standard })
-  if (unholy.length > 0) {
-    sections.push({ header: { text: 'Unholy Affixes', tone: 'pink' }, lines: unholy })
+  // uniqueEffects carries one "Unholy" per rollable slot; the picked ones are
+  // already listed, so the remainder shows as slots still waiting for a roll.
+  const unrolledUnholy = Math.max(0, countUnholySlots(base) - unholy.length)
+  if (unholy.length > 0 || unrolledUnholy > 0) {
+    sections.push({
+      header: { text: 'Unholy Affixes', tone: 'pink' },
+      lines: [
+        ...unholy,
+        ...Array.from({ length: unrolledUnholy }, () =>
+          textLine('Unholy (not rolled)', 'unholy-missing'),
+        ),
+      ],
+    })
   }
 
   if (equippedForgedMods.length > 0 && forgeKind) {
@@ -362,7 +381,7 @@ export function buildItemTooltipModel(
   }
 
   if (base.uniqueEffects && base.uniqueEffects.length > 0) {
-    const effects = base.uniqueEffects
+    const effects = base.uniqueEffects.filter((e) => e.trim() !== UNHOLY_EFFECT)
     const special = effects.filter((e) => RECOGNIZED_EFFECTS.has(e.trim().toLowerCase()))
     const notSupported = effects.filter(
       (e) => !RECOGNIZED_EFFECTS.has(e.trim().toLowerCase()),
@@ -478,6 +497,14 @@ function buildImplicitEntries(
 
 const round2 = (n: number): number => Math.round(n * 100) / 100
 
+// Item data names the roll; the tooltip shows what the user says it landed on.
+export const RANDOM_SKILL_NAME = 'Random Skill'
+
+function randomSkillLabel(skillId: string | undefined): string {
+  if (!skillId) return `${RANDOM_SKILL_NAME} (not rolled)`
+  return skills.find((s) => s.id === skillId)?.name ?? RANDOM_SKILL_NAME
+}
+
 function buildGrantedSkillEntries(
   base: ItemBase,
   display: TooltipModelDeps['display'],
@@ -485,6 +512,9 @@ function buildGrantedSkillEntries(
   if (!base.skillBonuses) return []
   const out: GrantedSkillEntry[] = []
   for (const skillName of Object.keys(base.skillBonuses)) {
+    // The catalog carries an empty "Random Skill" placeholder; the roll grants
+    // ranks in a real skill, so it belongs on an implicit line, not here.
+    if (skillName === RANDOM_SKILL_NAME) continue
     const skill = getItemGrantedSkillByName(skillName)
     if (!skill) continue
     const [sMin, sMax] = display.skillRankScaled[skillName] ?? [0, 0]
@@ -498,7 +528,8 @@ function buildGrantedSkillEntries(
         const pctMin = round2((c.basePct ?? 0) + c.pct * rMin)
         const pctMax = round2((c.basePct ?? 0) + c.pct * rMax)
         const pctText = pctMin === pctMax ? `${pctMin}%` : `${pctMin}–${pctMax}%`
-        lines.push(`${pctText} of ${statName(c.from)} added as ${statName(c.to)}`)
+        const verb = c.replaces ? 'converted to' : 'added as'
+        lines.push(`${pctText} of ${statName(c.from)} ${verb} ${statName(c.to)}`)
       }
     }
     if (skill.passiveStats) {
@@ -522,6 +553,13 @@ function buildGrantedSkillEntries(
     out.push({ skill, displayRank, lines })
   }
   return out
+}
+
+// Item data spells one "Unholy" per rollable unholy-affix slot.
+const UNHOLY_EFFECT = 'Unholy'
+
+function countUnholySlots(base: ItemBase): number {
+  return (base.uniqueEffects ?? []).filter((e) => e.trim() === UNHOLY_EFFECT).length
 }
 
 function buildAffixLines(

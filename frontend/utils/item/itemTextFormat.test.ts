@@ -272,3 +272,73 @@ Implicit:
   })
 
 })
+
+describe('itemTextFormat — removing / replacing base implicits', () => {
+  const blaster = () =>
+    items.find((it) => it.id === 'gun_angelic_commander_s_sentry_blaster')
+  const bare = (baseId: string): EquippedItem => ({
+    baseId,
+    affixes: [],
+    socketCount: 0,
+    socketed: [],
+    socketTypes: [],
+    stars: 0,
+  })
+
+  it('replacing a base implicit line swaps the stat instead of appending it', async () => {
+    const base = blaster()
+    expect(base).toBeDefined()
+    if (!base) return
+    const text = await serializeEquippedItem(bare(base.id), base, stubMath)
+    expect(text).toContain('+25% Increased Sentry Duration')
+    const edited = text.replace(
+      '+25% Increased Sentry Duration',
+      '+50% Increased Strength [custom]',
+    )
+
+    const parsed = await parseItemText(edited, base.id, stubMath)
+    expect(parsed.equipped).not.toBeNull()
+    expect(parsed.equipped!.implicitOverrides).toEqual({
+      sentry_duration: 0,
+      increased_strength: 50,
+    })
+
+    const again = await serializeEquippedItem(parsed.equipped!, base, stubMath)
+    expect(again).not.toContain('Sentry Duration')
+    expect(again).toContain('+50% Increased Strength [custom]')
+  })
+
+  it('rejects an implicit line with an unknown stat name instead of dropping it', async () => {
+    const base = blaster()
+    if (!base) return
+    const text = await serializeEquippedItem(bare(base.id), base, stubMath)
+    const edited = text.replace(
+      '+25% Increased Sentry Duration',
+      '+25% Increased Sentry Durationn',
+    )
+
+    const parsed = await parseItemText(edited, base.id, stubMath)
+    expect(parsed.equipped).toBeNull()
+    expect(parsed.errors).toContainEqual(
+      expect.objectContaining({
+        severity: 'error',
+        message: expect.stringContaining('Unknown implicit stat'),
+      }),
+    )
+  })
+
+  it('deleting a base implicit line zeroes only that stat', async () => {
+    const base = blaster()
+    if (!base) return
+    const text = await serializeEquippedItem(bare(base.id), base, stubMath)
+    const edited = text.replace('+3 to All Skills\n', '')
+    expect(edited).not.toBe(text)
+
+    const parsed = await parseItemText(edited, base.id, stubMath)
+    expect(parsed.equipped!.implicitOverrides).toEqual({ all_skills: 0 })
+
+    const again = await serializeEquippedItem(parsed.equipped!, base, stubMath)
+    expect(again).not.toContain('to All Skills')
+    expect(again).toContain('+25% Increased Sentry Duration')
+  })
+})

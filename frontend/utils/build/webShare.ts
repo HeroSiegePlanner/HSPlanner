@@ -1,5 +1,6 @@
 import {
   entityAttackRate,
+  entityAttackRateFixedKey,
   entityAttackSpeedKey,
   entityKindOfTag,
   entityRatesFrom,
@@ -206,6 +207,7 @@ async function buildSustainSection(
         rangedMin(performance.stats[speedKey] ?? 0),
         rangedMax(performance.stats[speedKey] ?? 0),
       ],
+      rangedMax(performance.stats[entityAttackRateFixedKey(entityKind)] ?? 0),
     )
     rows.push({
       label: `${entityTag} attack rate`,

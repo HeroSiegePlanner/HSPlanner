@@ -143,6 +143,7 @@ fn s10_incarnation_node_lines_parse_coverage() {
         "+##% Storm Turbulence Damage",
         "+##% Vile Pustules Damage",
         "+##% Wallbanger Damage",
+        "+##% of Maximum life dealt as Arcane Damage",
         "+#% Chance to unleash Arcana Destruction on hit",
         "+#% Chance to unleash Avalanche of Boulders on hit",
         "+#% Chance to unleash Heart of Fire on hit",

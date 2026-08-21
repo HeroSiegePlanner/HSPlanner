@@ -104,10 +104,12 @@ export async function serializeEquippedItem(
   const runeword = runewordEarly
   const scaleImplicit = scaleImplicitEarly
   const implicitEntries = implicitBaseEntries
-    .map(
-      ([k, v]) =>
-        [k, scaleImplicit ? (implicitScaled.get(k) ?? v) : v] as const,
-    )
+    .map(([k, v]) => {
+      const override = equipped.implicitOverrides?.[k]
+      const shown =
+        override ?? (scaleImplicit ? (implicitScaled.get(k) ?? v) : v)
+      return [k, shown, override !== undefined] as const
+    })
     .filter(([, v]) => !isZero(v))
   const extraImplicits = equipped.implicitOverrides
     ? Object.entries(equipped.implicitOverrides).filter(
@@ -117,13 +119,9 @@ export async function serializeEquippedItem(
   if (implicitEntries.length > 0 || extraImplicits.length > 0) {
     lines.push(SEP)
     lines.push('Implicit:')
-    for (const [k, v] of implicitEntries) {
-      const override = equipped.implicitOverrides?.[k]
-      if (override !== undefined) {
-        lines.push(`${formatValue(override, k)} ${statName(k)} [custom]`)
-      } else {
-        lines.push(`${formatValue(v, k)} ${statName(k)}`)
-      }
+    for (const [k, v, isCustom] of implicitEntries) {
+      const suffix = isCustom ? ' [custom]' : ''
+      lines.push(`${formatValue(v, k)} ${statName(k)}${suffix}`)
     }
     for (const [k, v] of extraImplicits) {
       lines.push(`${formatValue(v, k)} ${statName(k)} [custom]`)

@@ -37,6 +37,46 @@ function deps(over: Partial<TooltipModelDeps> = {}): TooltipModelDeps {
 }
 
 describe('buildItemTooltipModel', () => {
+  it('words a replaces conversion as "converted to", not "added as"', () => {
+    const base = getItem('shield_heroic_celestial_s_authority')
+    if (!base) throw new Error('fixture item missing from game data')
+    const display = {
+      ...emptyDisplay(),
+      skillRankScaled: { 'Celestial Might': [1, 1] as [number, number] },
+    }
+    const model = buildItemTooltipModel(base, eq(base.id), deps({ display }))
+    const text = JSON.stringify(model.sections)
+    expect(text).toContain('converted to')
+    expect(text).not.toContain('added as')
+  })
+
+  it('names the picked skill on a "+X to Random Skill" line', () => {
+    const base = getItem('charm_satanic_engineer_s_mini_drone')
+    if (!base) throw new Error('fixture item missing from game data')
+    // A rank here is what pulls the line into Granted Skill Effects.
+    const display = {
+      ...emptyDisplay(),
+      skillRankScaled: { 'Random Skill': [3, 5] as [number, number] },
+    }
+    const granted = (m: ReturnType<typeof buildItemTooltipModel>) =>
+      m.sections.some((s) => s.header?.text === 'Granted Skill Effects')
+
+    const unrolled = buildItemTooltipModel(base, eq(base.id), deps({ display }))
+    expect(granted(unrolled)).toBe(false)
+    expect(JSON.stringify(unrolled.sections)).toContain('Random Skill (not rolled)')
+
+    const rolled = buildItemTooltipModel(
+      base,
+      eq(base.id, { randomSkillId: 'gunner_drone' }),
+      deps({ display }),
+    )
+    expect(granted(rolled)).toBe(false)
+    const text = JSON.stringify(rolled.sections)
+    // Star-scaled ranks, not the raw [1-3] from item data.
+    expect(text).toContain('[3-5] to Gunner Drone')
+    expect(text).not.toContain('Random Skill')
+  })
+
   it('puts base stats first as row lines (Defense/Damage/Block/Attacks per sec)', () => {
     const base = getItem('sword_angelic_st_mika_s_zweih_nder')
     if (!base) throw new Error('fixture item missing from game data')
@@ -66,6 +106,41 @@ describe('buildItemTooltipModel', () => {
       style: 'implicit',
       badge: 'custom',
     })
+  })
+
+  it('lists unrolled Unholy slots in the Unholy Affixes section, not Special Effects', () => {
+    const base = getItem('axe_angelic_aurelion_fury')
+    if (!base) throw new Error('fixture item missing from game data')
+
+    const model = buildItemTooltipModel(base, eq(base.id), deps())
+    const unholy = model.sections.find((s) => s.header?.text === 'Unholy Affixes')
+    if (!unholy) throw new Error('unholy affix section missing')
+    // The item carries three Unholy slots and none are rolled yet.
+    expect(unholy.lines).toHaveLength(3)
+    expect(unholy.lines.every((l) => l.kind === 'text' && l.style === 'unholy-missing')).toBe(true)
+
+    const special = model.sections.find((s) => s.header?.text === 'Special Effects')
+    expect(JSON.stringify(special?.lines ?? [])).not.toContain('Unholy')
+    // Non-Unholy effects stay where they were.
+    expect(JSON.stringify(special?.lines ?? [])).toContain('Attacks can hit multiple enemies')
+  })
+
+  it('drops one empty Unholy slot per rolled unholy affix', () => {
+    const base = getItem('axe_angelic_aurelion_fury')
+    if (!base) throw new Error('fixture item missing from game data')
+    const model = buildItemTooltipModel(
+      base,
+      eq(base.id, {
+        affixes: [{ affixId: 'random_unholy_to_strength', tier: 1, roll: 0 }],
+      }),
+      deps(),
+    )
+    const unholy = model.sections.find((s) => s.header?.text === 'Unholy Affixes')
+    if (!unholy) throw new Error('unholy affix section missing')
+    expect(unholy.lines).toHaveLength(3)
+    expect(
+      unholy.lines.filter((l) => l.kind === 'text' && l.style === 'unholy-missing'),
+    ).toHaveLength(2)
   })
 
   it('splits affixes into standard (affix) and Unholy Affixes section (unholy)', () => {

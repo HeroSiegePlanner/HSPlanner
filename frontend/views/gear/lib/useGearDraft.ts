@@ -51,6 +51,10 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     (n: number) => edit((cur) => edits.withStars(cur, n)),
     [edit],
   )
+  const setRandomSkill = useCallback(
+    (skillId: string | null) => edit((cur) => edits.withRandomSkill(cur, skillId)),
+    [edit],
+  )
   const addAffix = useCallback(
     (affixId: string, tier: number) => edit((cur) => edits.withAffixAdded(cur, affixId, tier)),
     [edit],
@@ -91,6 +95,7 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     setSocketed,
     setSocketType,
     setStars,
+    setRandomSkill,
     addAffix,
     removeAffix,
     addForgedMod,

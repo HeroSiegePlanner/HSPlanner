@@ -1,5 +1,6 @@
 import { compressToEncodedURIComponent } from 'lz-string'
 import { describe, expect, it } from 'vitest'
+import { activeSeasonId } from '@data'
 import { makeSnapshot } from './buildSnapshot.fixture'
 import {
   decodeShareToBuild,
@@ -21,14 +22,14 @@ describe('share schema v2 season', () => {
     const code = encodeBuildToShare(snapshot())
     const decoded = decodeShareToBuild(code)
     expect(decoded).not.toBeNull()
-    expect(decoded!.season).toBe('s9')
+    expect(decoded!.season).toBe(activeSeasonId)
   })
 
   it('encodes with an explicit seasonId override, independent of the active season', () => {
-    const code = encodeBuildToShare(snapshot(), undefined, 's10')
+    const code = encodeBuildToShare(snapshot(), undefined, 's9')
     const decoded = decodeShareToBuild(code)
     expect(decoded).not.toBeNull()
-    expect(decoded!.season).toBe('s10')
+    expect(decoded!.season).toBe('s9')
   })
 
   it('v1 payload (no se field) decodes as legacy season s9', () => {

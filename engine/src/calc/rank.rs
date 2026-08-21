@@ -9,6 +9,10 @@ pub fn normalize_skill_name(name: &str) -> String {
     name.trim().to_lowercase()
 }
 
+/// Item data names the roll, not a skill: "+X to Random Skill" only lands once
+/// the user picks which skill from the item's pool it rolled.
+pub const RANDOM_SKILL_NAME: &str = "Random Skill";
+
 // "+X to <Tag> Skills" raises the rank of any skill carrying the tag,
 // independent of its damage type. Which key pairs with which tag lives in
 // data/affix-tags.json.
@@ -78,6 +82,17 @@ pub fn aggregate_item_skill_bonuses(
             None
         };
         for (skill_name, val) in skill_bonuses {
+            let target = if skill_name == RANDOM_SKILL_NAME {
+                let Some(picked) = item.random_skill_id.as_deref() else {
+                    continue;
+                };
+                match super::data::skill_name_by_id(picked) {
+                    Some(name) => name,
+                    None => continue,
+                }
+            } else {
+                skill_name.as_str()
+            };
             let scaled = apply_stars_to_ranged_value(
                 val.as_ranged(),
                 "item_granted_skill_rank",
@@ -87,7 +102,7 @@ pub fn aggregate_item_skill_bonuses(
             // fractional item-data fallback values.
             let min = r_min(scaled).round();
             let max = r_max(scaled).round();
-            let key = normalize_skill_name(skill_name);
+            let key = normalize_skill_name(target);
             let cur = out.entry(key).or_insert((0.0, 0.0));
             cur.0 += min;
             cur.1 += max;
@@ -281,6 +296,39 @@ mod tests {
         inv.insert("weapon".into(), equipped("plain_sword", None));
         let out = aggregate_item_skill_bonuses(&inv, &db);
         assert!(out.is_empty());
+    }
+
+    #[test]
+    fn random_skill_bonus_lands_on_the_picked_skill() {
+        let mut db: HashMap<String, ItemBase> = HashMap::new();
+        db.insert(
+            "drone_charm".into(),
+            item_base("drone_charm", "charm_1", &[(RANDOM_SKILL_NAME, (1.0, 3.0))]),
+        );
+        let mut picked = equipped("drone_charm", None);
+        picked.random_skill_id = Some("gunner_drone".to_string());
+        let mut inv: Inventory = HashMap::new();
+        inv.insert("charm_1".into(), picked);
+        let out = aggregate_item_skill_bonuses(&inv, &db);
+        assert_eq!(out.get("gunner drone"), Some(&(1.0, 3.0)));
+        assert!(!out.contains_key("random skill"));
+    }
+
+    #[test]
+    fn random_skill_bonus_is_inert_until_a_skill_is_picked() {
+        let mut db: HashMap<String, ItemBase> = HashMap::new();
+        db.insert(
+            "drone_charm".into(),
+            item_base("drone_charm", "charm_1", &[(RANDOM_SKILL_NAME, (1.0, 3.0))]),
+        );
+        let mut inv: Inventory = HashMap::new();
+        inv.insert("charm_1".into(), equipped("drone_charm", None));
+        assert!(aggregate_item_skill_bonuses(&inv, &db).is_empty());
+
+        let mut bogus = equipped("drone_charm", None);
+        bogus.random_skill_id = Some("no_such_skill".to_string());
+        inv.insert("charm_1".into(), bogus);
+        assert!(aggregate_item_skill_bonuses(&inv, &db).is_empty());
     }
 
     #[test]

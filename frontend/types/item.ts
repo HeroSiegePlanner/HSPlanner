@@ -14,6 +14,12 @@ export type ItemRarity =
 
 export type ItemGrade = 'SSS' | 'SS' | 'S' | 'A' | 'B' | 'C' | 'D'
 
+/** Which skills an item's "+X to Random Skill" roll can land on. */
+export interface RandomSkillPool {
+  classId: string
+  tree: string
+}
+
 export interface ItemBase {
   id: string
   name: string
@@ -49,6 +55,7 @@ export interface ItemBase {
   maxAffixes?: number
   socketTransforms?: Record<string, StatMap>
   randomAffixGroupId?: string
+  randomSkillPool?: RandomSkillPool
 }
 
 export type ProcTrigger =

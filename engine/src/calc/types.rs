@@ -286,6 +286,10 @@ pub struct PassiveConvert {
     // so base_pct = shown - pct.
     #[serde(default)]
     pub base_pct: f64,
+    /// "X is converted to Y" — the converted share leaves `from`. Without it the
+    /// skill only grants Y on top, which is what "a portion of X" mods do.
+    #[serde(default)]
+    pub replaces: bool,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -740,6 +744,9 @@ pub struct EquippedItem {
     pub augment: Option<AugmentRef>,
     #[serde(default)]
     pub implicit_overrides: HashMap<String, f64>,
+    /// Which skill the item's "Random Skill" roll landed on, picked by the user.
+    #[serde(default)]
+    pub random_skill_id: Option<String>,
 }
 
 pub type Inventory = HashMap<SlotKey, EquippedItem>;

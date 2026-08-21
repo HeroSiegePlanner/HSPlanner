@@ -738,7 +738,6 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
-    "twoHanded": true,
     "damageMin": 82,
     "damageMax": 94,
     "attackSpeed": 1.9,
@@ -2511,7 +2510,8 @@
   {
     "id": "wand_heroic_crow_s_whisper",
     "name": "Crow's Whisper",
-    "baseType": "Wand",
+    "baseType": "Staff",
+    "twoHanded": true,
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",

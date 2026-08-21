@@ -436,6 +436,103 @@ fn trampling_force_converts_movement_speed_into_both_damage_stats() {
 }
 
 #[test]
+fn celestial_might_moves_every_elemental_increase_into_arcane() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let mut ranks: HashMap<String, Ranged> = HashMap::new();
+    ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    for key in [
+        "fire_skill_damage",
+        "cold_skill_damage",
+        "lightning_skill_damage",
+        "poison_skill_damage",
+    ] {
+        stats.insert(key.into(), (40.0, 40.0));
+    }
+    // Flat elemental damage is a different stat and must survive untouched.
+    stats.insert("flat_fire_skill_damage".into(), (25.0, 25.0));
+    let mut sources: SourceMap = HashMap::new();
+
+    let touched = apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut sources);
+
+    let arcane = sum_contributions(sources.get("arcane_skill_damage").expect("arcane missing"));
+    assert!(
+        (arcane.0 - 160.0).abs() < 1e-9,
+        "four schools at 40% each land as 160% arcane: {arcane:?}"
+    );
+    for key in [
+        "fire_skill_damage",
+        "cold_skill_damage",
+        "lightning_skill_damage",
+        "poison_skill_damage",
+    ] {
+        let net = sum_contributions(sources.get(key).unwrap_or_else(|| panic!("{key} missing")));
+        assert!(
+            (net.0 + 40.0).abs() < 1e-9,
+            "{key} must be cancelled out, got {net:?}"
+        );
+        assert!(touched.contains(key), "{key} must be re-summed");
+    }
+    assert!(
+        !sources.contains_key("flat_fire_skill_damage"),
+        "flat elemental damage is not an increase and stays put"
+    );
+}
+
+#[test]
+fn replaces_conversion_never_drives_its_source_negative() {
+    // A school whose only bonus is a `_more` multiplier: the converted figure
+    // includes it, so taking it all off the additive key would leave -8%.
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let mut ranks: HashMap<String, Ranged> = HashMap::new();
+    ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert("lightning_skill_damage".into(), (0.0, 0.0));
+    stats.insert("lightning_skill_damage_more".into(), (8.0, 8.0));
+    let mut sources: SourceMap = HashMap::new();
+
+    apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut sources);
+
+    let additive = sources
+        .get("lightning_skill_damage")
+        .map(|l| sum_contributions(l))
+        .unwrap_or((0.0, 0.0));
+    assert!(
+        additive.0.abs() < 1e-9 && additive.1.abs() < 1e-9,
+        "an empty additive side stays at zero, got {additive:?}"
+    );
+    let more = sources
+        .get("lightning_skill_damage_more")
+        .map(|l| sum_contributions(l))
+        .unwrap_or((0.0, 0.0));
+    assert!(
+        (more.0 + 8.0).abs() < 1e-9,
+        "the multiplier is what gets cancelled, got {more:?}"
+    );
+    let arcane = sum_contributions(sources.get("arcane_skill_damage").expect("arcane missing"));
+    assert!((arcane.0 - 8.0).abs() < 1e-9, "arcane still gains it: {arcane:?}");
+}
+
+#[test]
+fn a_portion_convert_leaves_its_source_alone() {
+    // Fallen God's Bloodlust converts "a portion of" attack speed: the source
+    // keeps its full value, unlike a replaces conversion.
+    let mut ranks: HashMap<String, Ranged> = HashMap::new();
+    ranks.insert(normalize_skill_name("Fallen God's Bloodlust"), (1.0, 1.0));
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert("increased_attack_speed".into(), (100.0, 100.0));
+    let mut sources: SourceMap = HashMap::new();
+
+    apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut sources);
+
+    assert!(sources.contains_key("faster_cast_rate"));
+    assert!(
+        !sources.contains_key("increased_attack_speed"),
+        "no replaces flag means nothing is taken away"
+    );
+}
+
+#[test]
 fn apply_inventory_implicit_overrides_replace_base_implicits() {
     // Pick any item with non-empty implicit, override one of its keys
     // with a scalar value, and verify the override appears in the source.

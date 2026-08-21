@@ -60,6 +60,20 @@ export function withStars(item: EquippedItem, count: number): EquippedItem {
   return { ...item, stars: clamped }
 }
 
+export function withRandomSkill(
+  item: EquippedItem,
+  skillId: string | null,
+): EquippedItem {
+  if (skillId === null) {
+    if (!item.randomSkillId) return item
+    const { randomSkillId: _drop, ...rest } = item
+    void _drop
+    return rest
+  }
+  if (item.randomSkillId === skillId) return item
+  return { ...item, randomSkillId: skillId }
+}
+
 export function withAffixAdded(
   item: EquippedItem,
   affixId: string,

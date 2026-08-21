@@ -41,6 +41,7 @@ import {
 } from "../../utils/skills/skillTags";
 import {
   entityAttackRate,
+  entityAttackRateFixedKey,
   entityAttackSpeedKey,
   entityKindOfTag,
 } from "../../utils/build/entityRates";
@@ -103,10 +104,15 @@ export default function LeftStatsPanel() {
   const entityKind = entityLabel ? entityKindOfTag(entityLabel) : undefined;
   const entityRates = useBuild((s) => s.entityRates);
   const entitySwing = entityKind
-    ? entityAttackRate(entityKind, entityRates, [
-        rangedMin(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-        rangedMax(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-      ])
+    ? entityAttackRate(
+        entityKind,
+        entityRates,
+        [
+          rangedMin(stats[entityAttackSpeedKey(entityKind)] ?? 0),
+          rangedMax(stats[entityAttackSpeedKey(entityKind)] ?? 0),
+        ],
+        rangedMax(stats[entityAttackRateFixedKey(entityKind)] ?? 0),
+      )
     : undefined;
 
   const rankBonus: [number, number] = activeSkill

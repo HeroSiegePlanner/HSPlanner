@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { ADJ, START_IDS, START_SET } from './treeGraph'
 
 describe('treeGraph season-aware build', () => {
-  it('derives START_IDS from root nodes (s9 baseline)', () => {
-    expect([...START_IDS]).toEqual([0, 8, 16, 28, 42, 44, 46, 48])
+  it('derives START_IDS from the active season\'s root nodes (s10)', () => {
+    expect([...START_IDS]).toEqual([0, 1, 22, 39, 44, 61, 66, 83])
     expect(START_SET.has(0)).toBe(true)
   })
 

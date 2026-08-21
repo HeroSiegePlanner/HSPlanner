@@ -34,6 +34,7 @@ export interface EquippedItem {
   forgedMods?: EquippedAffix[]
   augment?: { id: string; level: number }
   implicitOverrides?: Record<string, number>
+  randomSkillId?: string
 }
 
 export type Inventory = Partial<Record<SlotKey, EquippedItem>>

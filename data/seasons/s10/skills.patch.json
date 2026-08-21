@@ -4230,6 +4230,227 @@
         }
       ]
     },
+    "gunner_drone": {
+      "subskills": [
+        {
+          "id": "gunner_drone_core",
+          "positionIndex": 0,
+          "name": "Gunner Drone",
+          "description": "Core of the Gunner Drone subtree.",
+          "maxRank": 1
+        },
+        {
+          "id": "multitude",
+          "positionIndex": 1,
+          "name": "Multitude",
+          "description": "Increases the amount of drones summoned.",
+          "maxRank": 8,
+          "effects": {
+            "base": { "sentry_max_amount": 0 },
+            "perRank": { "sentry_max_amount": 2 }
+          }
+        },
+        {
+          "id": "rapidfire",
+          "positionIndex": 2,
+          "name": "Rapidfire",
+          "description": "Increases the rate of fire for drones.",
+          "maxRank": 8,
+          "effects": {
+            "base": { "sentry_attack_speed": 0 },
+            "perRank": { "sentry_attack_speed": 12.5 }
+          }
+        },
+        {
+          "id": "mecha_tinkering",
+          "positionIndex": 3,
+          "name": "Mecha Tinkering",
+          "description": "Increases the duration of drones.",
+          "maxRank": 5,
+          "effects": {
+            "base": { "skill_duration": 0 },
+            "perRank": { "skill_duration": 25 }
+          }
+        },
+        {
+          "id": "explosive_toolkit",
+          "positionIndex": 4,
+          "name": "Explosive Toolkit",
+          "description": "Chance on hit for projectile to explode on impact dealing additional area of effect damage.",
+          "maxRank": 5,
+          "proc": {
+            "trigger": "on_hit",
+            "chance": { "base": 0, "perRank": 3 },
+            "effects": {
+              "base": { "arcane_skill_damage": 0 },
+              "perRank": { "arcane_skill_damage": 22.5 }
+            }
+          }
+        },
+        {
+          "id": "heat_unit",
+          "positionIndex": 5,
+          "name": "Heat Unit",
+          "description": "Increases the damage dealt by drones.",
+          "maxRank": 5,
+          "effects": {
+            "base": { "arcane_skill_damage": 0 },
+            "perRank": { "arcane_skill_damage": 12 }
+          }
+        },
+        {
+          "id": "detection",
+          "positionIndex": 6,
+          "name": "Detection",
+          "description": "Increases attack range of gunner drones.",
+          "maxRank": 5,
+          "effects": {
+            "base": { "skill_range": 0 },
+            "perRank": { "skill_range": 15 }
+          }
+        },
+        {
+          "id": "burning_shot",
+          "positionIndex": 7,
+          "name": "Burning Shot",
+          "description": "Chance on hit to inflict burning.",
+          "maxRank": 5,
+          "effects": {
+            "base": { "increased_burning_damage": 0 },
+            "perRank": { "increased_burning_damage": 25 }
+          },
+          "proc": {
+            "trigger": "on_hit",
+            "chance": { "base": 0, "perRank": 4 },
+            "appliesStates": [
+              { "state": "burning", "amount": { "base": 0, "perRank": 25 } }
+            ]
+          }
+        },
+        {
+          "id": "burst_engine",
+          "positionIndex": 8,
+          "name": "Burst Engine",
+          "description": "Chance on attack to shoot additional projectiles in sequence.",
+          "maxRank": 5,
+          "proc": {
+            "trigger": "on_hit",
+            "chance": { "base": 0, "perRank": 2 },
+            "effects": {
+              "base": { "projectile_count": 0 },
+              "perRank": { "projectile_count": 1 }
+            }
+          }
+        },
+        {
+          "id": "immolating_impact",
+          "positionIndex": 9,
+          "name": "Immolating Impact",
+          "description": "Unleash a small fire nova when hitting a burning target.",
+          "maxRank": 5,
+          "proc": {
+            "trigger": "on_hit",
+            "chance": { "base": 0, "perRank": 4 },
+            "effects": {
+              "base": { "arcane_skill_damage": 0 },
+              "perRank": { "arcane_skill_damage": 20 }
+            },
+            "appliesStates": ["burning"]
+          }
+        },
+        {
+          "id": "splitting_shot",
+          "positionIndex": 10,
+          "name": "Splitting Shot",
+          "description": "Gunner drones now fires multiple projectiles in an arc.",
+          "maxRank": 5,
+          "effects": {
+            "base": { "projectile_count": 0 },
+            "perRank": { "projectile_count": 1 }
+          }
+        },
+        {
+          "id": "circuit_breaker",
+          "positionIndex": 11,
+          "name": "Circuit Breaker",
+          "description": "Drones now fire chain lightning dealing their damage as lightning and inflicting lightning break.",
+          "maxRank": 3,
+          "effects": {
+            "base": {
+              "arcane_skill_damage": 0,
+              "lightning_break": 0,
+              "projectile_bounces": 0
+            },
+            "perRank": {
+              "arcane_skill_damage": 17.5,
+              "lightning_break": 30,
+              "projectile_bounces": 2
+            }
+          },
+          "proc": {
+            "trigger": "on_hit",
+            "chance": { "base": 100, "perRank": 0 },
+            "appliesStates": [
+              {
+                "state": "lightning_break",
+                "amount": { "base": 0, "perRank": 30 }
+              }
+            ]
+          }
+        },
+        {
+          "id": "c_y_c_l_o_p_s",
+          "positionIndex": 12,
+          "name": "C.Y.C.L.O.P.S.",
+          "description": "Drones now fire a constant laser beam that sticks onto monsters dealing arcane damage four times a second until they die.",
+          "maxRank": 3,
+          "effects": {
+            "base": {
+              "arcane_skill_damage": 0,
+              "skill_range": 0,
+              "sentry_attack_rate_fixed": 4
+            },
+            "perRank": { "arcane_skill_damage": 100, "skill_range": 15 }
+          }
+        },
+        {
+          "id": "m_e_c_h_a",
+          "positionIndex": 13,
+          "name": "M.E.C.H.A.",
+          "description": "Now only spawn a single drone scaling its damage based on the amount of drones and shooting at an increased rate of fire.",
+          "maxRank": 3,
+          "effects": {
+            "base": {
+              "of_total_damage": 0,
+              "sentry_attack_speed": 0,
+              "projectile_count": 0
+            },
+            "perRank": {
+              "of_total_damage": 40,
+              "sentry_attack_speed": 100,
+              "projectile_count": 2
+            }
+          }
+        },
+        {
+          "id": "nanodrones",
+          "positionIndex": 14,
+          "name": "Nanodrones",
+          "description": "Drone amount significantly increased. Your drones are super tiny and form two circles around you. Their attacks no longer chain but deal damage in a small area around the target.",
+          "maxRank": 3,
+          "effects": {
+            "base": {
+              "arcane_skill_damage": 0,
+              "sentry_max_amount": 0
+            },
+            "perRank": {
+              "arcane_skill_damage": 15,
+              "sentry_max_amount": 5
+            }
+          }
+        }
+      ]
+    },
     "heavy_ball": {
       "subskills": [
         {

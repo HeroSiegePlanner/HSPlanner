@@ -43,6 +43,23 @@ describe('encode/decode round-trip', () => {
     expect(decoded!.snapshot.disabledPotions).toEqual({ potion_1: true })
   })
 
+  it('round-trips a picked random skill on an equipped item', () => {
+    const snap = makeSnapshot({
+      inventory: {
+        charm_1: {
+          baseId: 'charm_satanic_engineer_s_mini_drone',
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          randomSkillId: 'gunner_drone',
+        },
+      },
+    })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.inventory.charm_1?.randomSkillId).toBe('gunner_drone')
+  })
+
   it('defaults disabledPotions to empty when absent from the payload', () => {
     const decoded = decodeShareToBuild(encodeBuildToShare(makeSnapshot()))
     expect(decoded!.snapshot.disabledPotions).toEqual({})

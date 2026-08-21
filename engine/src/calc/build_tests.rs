@@ -272,6 +272,62 @@ fn entity_rate_config_scales_dps_and_player_fcr_does_not() {
     );
 }
 
+// A pinned entity rate (C.Y.C.L.O.P.S. lasers) ignores both the config knob and
+// sentry attack speed, so a maxed Rapidfire buys the laser build nothing.
+#[test]
+fn pinned_entity_rate_ignores_config_knob_and_sentry_speed() {
+    let pin: &[(&str, &str)] = &[("sentry_attack_rate_fixed", "4")];
+    let plain = perf_with_stats("marksman", "gunner_drone", 10, &[], &[], 1.0);
+    let pinned = perf_with_stats("marksman", "gunner_drone", 10, &[], pin, 1.0);
+    let pinned_fast_knob = perf_with_stats("marksman", "gunner_drone", 10, &[], pin, 3.0);
+    let pinned_hasted = perf_with_stats(
+        "marksman",
+        "gunner_drone",
+        10,
+        &[],
+        &[
+            ("sentry_attack_rate_fixed", "4"),
+            ("sentry_attack_speed", "100"),
+        ],
+        1.0,
+    );
+
+    let (Some(base), Some(p), Some(knob), Some(hasted)) = (
+        plain.avg_hit_dps_max,
+        pinned.avg_hit_dps_max,
+        pinned_fast_knob.avg_hit_dps_max,
+        pinned_hasted.avg_hit_dps_max,
+    ) else {
+        panic!("expected dps");
+    };
+    assert!(
+        (p / base - 4.0).abs() < 1e-9,
+        "a 4/s pin should quadruple 1/s dps, got x{}",
+        p / base
+    );
+    assert!((knob - p).abs() < 1e-9, "config knob must not move a pinned rate");
+    assert!(
+        (hasted - p).abs() < 1e-9,
+        "sentry attack speed must not move a pinned rate"
+    );
+}
+
+// The S10 node carries the pin; without it the drone stays on the config knob.
+#[test]
+fn cyclops_pins_the_drone_to_four_ticks_a_second() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let laser: &[(&str, u32)] = &[("c_y_c_l_o_p_s", 1)];
+    let at_one = perf_with_stats("marksman", "gunner_drone", 10, laser, &[], 1.0);
+    let at_three = perf_with_stats("marksman", "gunner_drone", 10, laser, &[], 3.0);
+    let (Some(one), Some(three)) = (at_one.avg_hit_dps_max, at_three.avg_hit_dps_max) else {
+        panic!("expected dps");
+    };
+    assert!(
+        (one - three).abs() < 1e-9,
+        "C.Y.C.L.O.P.S. must pin the rate, got {one} vs {three}"
+    );
+}
+
 #[allow(clippy::too_many_arguments)]
 fn perf_with_stats(
     class_id: &str,
