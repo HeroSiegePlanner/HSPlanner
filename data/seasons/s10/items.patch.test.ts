@@ -100,7 +100,7 @@ describe('S10 item changes', () => {
       },
     ])
     expect(axe.skillBonuses).toEqual({ 'Demon Form': [1, 10] })
-    expect((axe.implicit as Rec).attack_rating).toBe(250)
+    expect(axe.implicit).toEqual({})
   })
 
   it('Demon Form buff scales 24%+6%/lvl attack damage, 8%+2%/lvl attack speed', () => {
