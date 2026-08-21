@@ -17,7 +17,7 @@ import type {
   ItemBase,
   SocketType,
 } from '../../types'
-import { shouldScaleImplicit, statName } from './stats'
+import { isZero, shouldScaleImplicit, statName } from './stats'
 import {
   RARITY_LABELS,
   descriptionWithoutValue,
@@ -259,6 +259,7 @@ export async function parseItemText(
   let socketTypes: SocketType[] = []
   let augment: { id: string; level: number } | undefined = undefined
   const implicitOverrides: Record<string, number> = {}
+  const keptImplicitKeys = new Set<string>()
   const affixCustomChecks: {
     list: EquippedAffix[]
     index: number
@@ -358,10 +359,10 @@ export async function parseItemText(
         const explicitCustom = /\[custom]\s*$/i.test(text)
         const body = text.replace(/\[custom]\s*$/i, '').trim()
         if (!body) continue
-        if (!explicitCustom && valueLooksLikeRange(body)) continue
+        const isBaseRange = !explicitCustom && valueLooksLikeRange(body)
 
-        const userValue = parseValuePrefix(body)
-        if (userValue === null) {
+        const userValue = isBaseRange ? null : parseValuePrefix(body)
+        if (!isBaseRange && userValue === null) {
           errors.push({
             line: lineNum,
             message: `Implicit line missing numeric value: "${text}"`,
@@ -381,6 +382,8 @@ export async function parseItemText(
           })
           continue
         }
+        keptImplicitKeys.add(key)
+        if (isBaseRange || userValue === null) continue
 
         if (!explicitCustom) {
           const baseValue = base.implicit?.[key]
@@ -564,6 +567,11 @@ export async function parseItemText(
       message: `Unknown section starting with: "${firstLine}"`,
       severity: 'warning',
     })
+  }
+
+  // Base implicit line deleted or replaced by the user: zero it so it doesn't resurface
+  for (const [key, value] of Object.entries(base.implicit ?? {})) {
+    if (!isZero(value) && !keptImplicitKeys.has(key)) implicitOverrides[key] = 0
   }
 
   const hasErrors = errors.some((e) => e.severity === 'error')

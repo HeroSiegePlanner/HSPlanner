@@ -1,3 +1,7 @@
+## Features
+- Item text editor: "Custom affixes" list — click a stat to insert a `[custom]` implicit line
+
 ## Fixes
+- Item text editor: deleting or replacing a base implicit line now removes it instead of re-adding it on save
 - Fix skipping node link #2113 
 - C.Y.C.L.O.P.S. now pins gunner drones to 4 attacks/s
