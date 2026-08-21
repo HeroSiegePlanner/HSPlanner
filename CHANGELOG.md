@@ -1,2 +1,3 @@
 ## Fixes
-- Shadow Lantern (Heroic Shield, Uber Reaper) added - it was missing from the planner entirely
+- Shadow Lantern was missing from the planner entirely
+- Fix attack damage calculation

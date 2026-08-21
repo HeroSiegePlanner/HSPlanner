@@ -69,20 +69,32 @@ impl From<DamageRowDto> for calc::DamageRow {
 #[derive(Deserialize)]
 #[serde(tag = "per", rename_all = "snake_case")]
 pub enum BonusSourceDto {
-    AttributePoint { source: String, value: f64 },
-    SkillLevel { source: String, value: f64 },
+    AttributePoint {
+        source: String,
+        #[serde(default)]
+        stat: String,
+        value: f64,
+    },
+    SkillLevel {
+        source: String,
+        #[serde(default)]
+        stat: String,
+        value: f64,
+    },
 }
 impl From<BonusSourceDto> for calc::BonusSource {
     fn from(v: BonusSourceDto) -> Self {
         match v {
-            BonusSourceDto::AttributePoint { source, value } => {
+            BonusSourceDto::AttributePoint { source, stat, value } => {
                 calc::BonusSource::AttributePoint {
                     source: norm(&source),
+                    stat,
                     value,
                 }
             }
-            BonusSourceDto::SkillLevel { source, value } => calc::BonusSource::SkillLevel {
+            BonusSourceDto::SkillLevel { source, stat, value } => calc::BonusSource::SkillLevel {
                 source: norm(&source),
+                stat,
                 value,
             },
         }
@@ -103,9 +115,17 @@ pub struct SkillDto {
     pub damage_per_rank: Option<Vec<DamageRowDto>>,
     #[serde(default)]
     pub bonus_sources: Vec<BonusSourceDto>,
+    #[serde(default)]
+    pub attack_kind: Option<crate::calc::types::AttackKindSpec>,
+    #[serde(default)]
+    pub attack_scaling: Option<crate::calc::types::AttackSkillScalingSpec>,
 }
 impl From<SkillDto> for calc::Skill {
     fn from(v: SkillDto) -> Self {
+        let to_formula = |f: crate::calc::types::DamageFormulaSpec| calc::DamageFormula {
+            base: f.base,
+            per_level: f.per_level,
+        };
         calc::Skill {
             name: norm(&v.name),
             tags: v.tags,
@@ -115,8 +135,16 @@ impl From<SkillDto> for calc::Skill {
                 .damage_per_rank
                 .map(|t| t.into_iter().map(Into::into).collect()),
             bonus_sources: v.bonus_sources.into_iter().map(Into::into).collect(),
-            attack_kind: None,
-            attack_scaling: None,
+            attack_kind: v.attack_kind.map(|k| match k {
+                crate::calc::types::AttackKindSpec::Attack => calc::AttackKind::Attack,
+                crate::calc::types::AttackKindSpec::Spell => calc::AttackKind::Spell,
+            }),
+            attack_scaling: v.attack_scaling.map(|s| calc::AttackSkillScaling {
+                weapon_damage_pct: s.weapon_damage_pct.map(to_formula),
+                flat_physical_min: s.flat_physical_min.map(to_formula),
+                flat_physical_max: s.flat_physical_max.map(to_formula),
+                attack_rating_pct: s.attack_rating_pct.map(to_formula),
+            }),
         }
     }
 }

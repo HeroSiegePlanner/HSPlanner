@@ -62,8 +62,18 @@ pub struct DamageRow {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "per", rename_all = "snake_case")]
 pub enum BonusSource {
-    AttributePoint { source: String, value: f64 },
-    SkillLevel { source: String, value: f64 },
+    AttributePoint {
+        source: String,
+        #[serde(default)]
+        stat: String,
+        value: f64,
+    },
+    SkillLevel {
+        source: String,
+        #[serde(default)]
+        stat: String,
+        value: f64,
+    },
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]

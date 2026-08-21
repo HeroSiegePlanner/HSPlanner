@@ -235,6 +235,214 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
     calc::compute_skill_damage(&inp).map(Into::into)
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackSkillDamageInput {
+    #[serde(flatten)]
+    pub base: SkillDamageInput,
+    #[serde(default)]
+    pub weapon: Option<WeaponDto>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackSkillDamageOutput {
+    pub effective_rank_min: f64,
+    pub effective_rank_max: f64,
+    pub weapon_damage_pct_min: f64,
+    pub weapon_damage_pct_max: f64,
+    pub skill_flat_phys_min: f64,
+    pub skill_flat_phys_max: f64,
+    pub attack_rating_pct_min: f64,
+    pub attack_rating_pct_max: f64,
+    pub synergy_min_pct: f64,
+    pub synergy_max_pct: f64,
+    pub projectile_count: u32,
+    pub weapon_damage_min: f64,
+    pub weapon_damage_max: f64,
+    pub enhanced_damage_min_pct: f64,
+    pub enhanced_damage_max_pct: f64,
+    pub additive_physical_min: f64,
+    pub additive_physical_max: f64,
+    pub attack_damage_min_pct: f64,
+    pub attack_damage_max_pct: f64,
+    pub crushing_blow_modifier: f64,
+    pub armor_break_pct: f64,
+    pub deadly_blow_chance: f64,
+    pub crit_chance: f64,
+    pub crit_damage_pct: f64,
+    pub crit_multiplier_avg: f64,
+    pub extra_damage_sources: Vec<ExtraSourceOut>,
+    pub physical_hit_min: i64,
+    pub physical_hit_max: i64,
+    pub physical_avg_min: i64,
+    pub physical_avg_max: i64,
+    pub poison_hit_min: i64,
+    pub poison_hit_max: i64,
+    pub poison_avg_min: i64,
+    pub poison_avg_max: i64,
+    pub combined_hit_min: i64,
+    pub combined_hit_max: i64,
+    pub combined_avg_min: i64,
+    pub combined_avg_max: i64,
+    pub attacks_per_second_min: f64,
+    pub attacks_per_second_max: f64,
+    pub dps_min: f64,
+    pub dps_max: f64,
+}
+impl From<calc::AttackSkillDamageBreakdown> for AttackSkillDamageOutput {
+    fn from(v: calc::AttackSkillDamageBreakdown) -> Self {
+        Self {
+            effective_rank_min: v.effective_rank_min,
+            effective_rank_max: v.effective_rank_max,
+            weapon_damage_pct_min: v.weapon_damage_pct_min,
+            weapon_damage_pct_max: v.weapon_damage_pct_max,
+            skill_flat_phys_min: v.skill_flat_phys_min,
+            skill_flat_phys_max: v.skill_flat_phys_max,
+            attack_rating_pct_min: v.attack_rating_pct_min,
+            attack_rating_pct_max: v.attack_rating_pct_max,
+            synergy_min_pct: v.synergy_min_pct,
+            synergy_max_pct: v.synergy_max_pct,
+            projectile_count: v.projectile_count,
+            weapon_damage_min: v.weapon_damage_min,
+            weapon_damage_max: v.weapon_damage_max,
+            enhanced_damage_min_pct: v.enhanced_damage_min_pct,
+            enhanced_damage_max_pct: v.enhanced_damage_max_pct,
+            additive_physical_min: v.additive_physical_min,
+            additive_physical_max: v.additive_physical_max,
+            attack_damage_min_pct: v.attack_damage_min_pct,
+            attack_damage_max_pct: v.attack_damage_max_pct,
+            crushing_blow_modifier: v.crushing_blow_modifier,
+            armor_break_pct: v.armor_break_pct,
+            deadly_blow_chance: v.deadly_blow_chance,
+            crit_chance: v.crit_chance,
+            crit_damage_pct: v.crit_damage_pct,
+            crit_multiplier_avg: v.crit_multiplier_avg,
+            extra_damage_sources: v
+                .extra_damage_sources
+                .into_iter()
+                .map(|e| ExtraSourceOut {
+                    label: e.label.to_string(),
+                    pct: e.pct,
+                })
+                .collect(),
+            physical_hit_min: v.physical_hit_min,
+            physical_hit_max: v.physical_hit_max,
+            physical_avg_min: v.physical_avg_min,
+            physical_avg_max: v.physical_avg_max,
+            poison_hit_min: v.poison_hit_min,
+            poison_hit_max: v.poison_hit_max,
+            poison_avg_min: v.poison_avg_min,
+            poison_avg_max: v.poison_avg_max,
+            combined_hit_min: v.combined_hit_min,
+            combined_hit_max: v.combined_hit_max,
+            combined_avg_min: v.combined_avg_min,
+            combined_avg_max: v.combined_avg_max,
+            attacks_per_second_min: v.attacks_per_second_min,
+            attacks_per_second_max: v.attacks_per_second_max,
+            dps_min: v.dps_min,
+            dps_max: v.dps_max,
+        }
+    }
+}
+
+// Standalone per-card preview of an attack skill: weapon physical plus the
+// skill's elemental part, mirroring the attack branch in build.rs.
+#[tauri::command]
+pub fn compute_attack_skill_damage(
+    input: AttackSkillDamageInput,
+) -> Option<AttackSkillDamageOutput> {
+    let weapon: Option<calc::Weapon> = input.weapon.map(Into::into);
+    let b = input.base;
+    let skill: calc::Skill = b.skill.into();
+    let attributes = ranged_map(normalized_keys(b.attributes));
+    let stats = ranged_map(normalized_keys(b.stats));
+    let skill_ranks = normalized_keys(b.skill_ranks_by_name);
+    let item_bonuses = normalized_keys(b.item_skill_bonuses);
+    let skills_by_name: HashMap<String, calc::Skill> = b
+        .skills_by_name
+        .into_iter()
+        .map(|(k, v)| (norm(&k), v.into()))
+        .collect();
+
+    let no_scoped = calc::StatMap::new();
+    let spell_input = calc::SkillInput {
+        skill: &skill,
+        allocated_rank: b.allocated_rank,
+        attributes: &attributes,
+        stats: &stats,
+        skill_ranks_by_name: &skill_ranks,
+        item_skill_bonuses: &item_bonuses,
+        enemy_conditions: &b.enemy_conditions,
+        enemy_resistances: &b.enemy_resistances,
+        skills_by_name: &skills_by_name,
+        projectile_count: b.projectile_count.max(0.0) as u32,
+        of_total_damage: b.of_total_damage,
+        scoped: &no_scoped,
+        conversion_flat: 0.0,
+        conversion_skill_damage_pct: 0.0,
+    };
+    let elemental = calc::compute_skill_damage(&spell_input);
+
+    let attack_input = calc::AttackSkillInput {
+        skill: &skill,
+        allocated_rank: b.allocated_rank,
+        attributes: &attributes,
+        stats: &stats,
+        skill_ranks_by_name: &skill_ranks,
+        skills_by_name: &skills_by_name,
+        item_skill_bonuses: &item_bonuses,
+        enemy_conditions: &b.enemy_conditions,
+        weapon: weapon.as_ref(),
+        poison_breakdown: elemental.as_ref(),
+        scoped: &no_scoped,
+        projectile_count: b.projectile_count.max(0.0) as u32,
+        conversion_flat: 0.0,
+    };
+    calc::compute_attack_skill_damage(&attack_input).map(Into::into)
+}
+
+#[cfg(test)]
+mod attack_preview_tests {
+    use super::*;
+
+    #[test]
+    fn attack_preview_scales_weapon_damage_by_skill_pct_and_aps() {
+        let input: AttackSkillDamageInput = serde_json::from_value(serde_json::json!({
+            "skill": {
+                "name": "Heavy Ball",
+                "damageType": "physical",
+                "attackKind": "attack",
+                "attackScaling": {
+                    "weaponDamagePct": { "base": 100.0, "perLevel": 0.0 }
+                }
+            },
+            "allocatedRank": 1.0,
+            "stats": { "attacks_per_second": 2.0 },
+            "weapon": { "name": "Test Maul", "damageMin": 100.0, "damageMax": 100.0 }
+        }))
+        .unwrap();
+
+        let out = compute_attack_skill_damage(input).expect("attack breakdown");
+        // 100 weapon dmg * 100% skill pct * 1.5 default crushing blow -> 150
+        // per hit, 2 APS -> 300 dps.
+        assert_eq!(out.combined_hit_min, 150);
+        assert_eq!(out.combined_hit_max, 150);
+        assert!((out.attacks_per_second_min - 2.0).abs() < 1e-9);
+        assert!((out.dps_min - 300.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn attack_preview_without_scaling_returns_none() {
+        let input: AttackSkillDamageInput = serde_json::from_value(serde_json::json!({
+            "skill": { "name": "Plain Spell" },
+            "allocatedRank": 1.0
+        }))
+        .unwrap();
+        assert!(compute_attack_skill_damage(input).is_none());
+    }
+}
+
 #[tauri::command]
 pub fn compute_weapon_damage(input: WeaponDamageInput) -> WeaponDamageOutput {
     let weapon: Option<calc::Weapon> = input.weapon.map(Into::into);
