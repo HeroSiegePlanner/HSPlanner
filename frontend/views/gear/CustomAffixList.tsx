@@ -4,13 +4,15 @@ import type { StatDef } from '../../types'
 
 export type StatRow = Pick<StatDef, 'key' | 'name' | 'format'>
 
-// Same name → key rule as the parser: last definition wins for duplicate names
+// Last definition wins for duplicate names (parser rule) and duplicate keys (statName rule)
 const STAT_ROWS: StatRow[] = (() => {
   const byName = new Map<string, StatRow>()
   for (const s of gameConfig.stats) {
     byName.set(s.name.toLowerCase(), { key: s.key, name: s.name, format: s.format })
   }
-  return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name))
+  const byKey = new Map<string, StatRow>()
+  for (const row of byName.values()) byKey.set(row.key, row)
+  return [...byKey.values()].sort((a, b) => a.name.localeCompare(b.name))
 })()
 
 interface Props {
