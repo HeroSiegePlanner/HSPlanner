@@ -46,6 +46,98 @@ describe('S10 item changes', () => {
     expect(procs[0]).toMatchObject({ trigger: 'on_kill', chance: 4 })
   })
 
+  it('Amulet of Colosseum implicit is % increased attack speed, not flat APS', () => {
+    const impl = patchedItem('amulet_heroic_amulet_of_colosseum').implicit as Rec
+    expect(impl.increased_attack_speed).toEqual([5, 10])
+    expect(impl.attacks_per_second).toBeUndefined()
+    expect(impl.all_skills).toEqual([2, 4])
+  })
+
+  it('Angel gun gains base damage and APS moved out of implicit', () => {
+    const angel = patchedItem('gun_satanic_angel')
+    expect(angel.attackSpeed).toBe(1.75)
+    expect(angel.damageMin).toBeGreaterThan(0)
+    expect(angel.damageMax).toBeGreaterThanOrEqual(angel.damageMin as number)
+    const impl = angel.implicit as Rec
+    expect(impl.attacks_per_second).toBeUndefined()
+    expect(impl.enhanced_damage).toEqual([430, 580])
+  })
+
+  it('every weapon has base damage and attack speed, none hides APS in implicit', () => {
+    const out = applyListPatch(baseItems, patches.items, 'items')
+    // Spears absent from hero-siege-helper; s10_ weapons are new-season
+    // scaffolding the helper does not list yet.
+    const missingInSource = new Set([
+      'base_throwing_short_spear',
+      'base_polearm_tribal_spear',
+      's10_ethereal_musket',
+      's10_grimtides_scimitar',
+      's10_conjured_tentacle',
+      's10_phantom_scimitar',
+      's10_phantom_strike',
+      's10_leviathans_spine',
+    ])
+    const weapons = out.data.filter(
+      (i) => (i as Rec).slot === 'weapon' && !missingInSource.has((i as Rec).id as string),
+    ) as Rec[]
+    const noDamage = weapons.filter((w) => typeof w.damageMin !== 'number')
+    const noAps = weapons.filter((w) => typeof w.attackSpeed !== 'number')
+    const apsInImplicit = weapons.filter(
+      (w) => ((w.implicit ?? {}) as Rec).attacks_per_second !== undefined,
+    )
+    expect(noDamage.map((w) => w.id)).toEqual([])
+    expect(noAps.map((w) => w.id)).toEqual([])
+    expect(apsInImplicit.map((w) => w.id)).toEqual([])
+  })
+
+  it('Shadow Lantern shield exists with its sentry package', () => {
+    const sl = patchedItem('shield_heroic_shadow_lantern')
+    expect(sl.slot).toBe('offhand')
+    expect(sl.rarity).toBe('heroic')
+    expect(sl.requiresLevel).toBe(98)
+    expect(sl.implicit).toEqual({
+      all_skills: [2, 3],
+      skill_haste: [15, 35],
+      sentry_damage: [25, 50],
+      sentry_skills: [3, 5],
+      sentry_duration: 33,
+      sentry_max_amount: [1, 3],
+    })
+    expect(sl.uniqueEffects).toEqual(['Unholy', 'Unholy'])
+    expect(sl.maxAffixes).toBe(2)
+    expect(sl.randomAffixGroupId).toBe('random_unholy')
+    expect(sl.sockets).toBe(3)
+    expect(sl.maxSockets).toBe(4)
+  })
+
+  it('Skull Axe grants the Demon Form proc buff', () => {
+    const axe = patchedItem('relic_relic_skull_axe')
+    expect(axe.procs).toEqual([
+      {
+        trigger: 'on_attack',
+        chance: 20,
+        description: 'cast Demon Form Level [1-10]',
+      },
+    ])
+    expect(axe.skillBonuses).toEqual({ 'Demon Form': [1, 10] })
+    expect(axe.implicit).toEqual({})
+  })
+
+  it('Demon Form buff scales 24%+6%/lvl attack damage, 8%+2%/lvl attack speed', () => {
+    const out = applyListPatch(
+      itemGrantedSkillsJson as Rec[],
+      patches.itemGrantedSkills,
+      'item-granted-skills',
+      'name',
+    )
+    const df = out.data.find((s) => (s as Rec).name === 'Demon Form') as Rec
+    expect(df).toBeDefined()
+    expect(df.condition).toBe('demon_form_buff')
+    const ps = df.passiveStats as Rec
+    expect(ps.base).toEqual({ attack_damage: 18, increased_attack_speed: 6 })
+    expect(ps.perRank).toEqual({ attack_damage: 6, increased_attack_speed: 2 })
+  })
+
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
     const out = applyListPatch(
       itemGrantedSkillsJson as Rec[],

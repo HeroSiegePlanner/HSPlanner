@@ -3,7 +3,11 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 fn main() {
-    tauri_build::build();
+    // Lib tests need no tauri artifacts; skipping lets `cargo test --lib` run
+    // while a concurrent `tauri dev` owns the generated files.
+    if env::var_os("HSP_SKIP_TAURI_BUILD").is_none() {
+        tauri_build::build();
+    }
     emit_data_includes();
 }
 

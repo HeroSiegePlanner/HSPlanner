@@ -226,6 +226,24 @@ export interface AttackSkillDamageBreakdown {
   skillFlatPhysMax: number
   attackRatingPctMin: number
   attackRatingPctMax: number
+  synergyMinPct: number
+  synergyMaxPct: number
+  projectileCount: number
+  weaponDamageMin: number
+  weaponDamageMax: number
+  enhancedDamageMinPct: number
+  enhancedDamageMaxPct: number
+  additivePhysicalMin: number
+  additivePhysicalMax: number
+  attackDamageMinPct: number
+  attackDamageMaxPct: number
+  crushingBlowModifier: number
+  armorBreakPct: number
+  deadlyBlowChance: number
+  critChance: number
+  critDamagePct: number
+  critMultiplierAvg: number
+  extraDamageSources: Array<{ label: string; pct: number }>
   physicalHitMin: number
   physicalHitMax: number
   physicalAvgMin: number

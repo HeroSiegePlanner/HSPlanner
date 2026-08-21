@@ -53,6 +53,7 @@ export interface ItemBase {
 
 export type ProcTrigger =
   | 'on_hit'
+  | 'on_attack'
   | 'when_struck'
   | 'on_kill'
   | 'on_cast'

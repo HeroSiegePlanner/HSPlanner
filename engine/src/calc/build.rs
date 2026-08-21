@@ -105,10 +105,12 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
                     .filter_map(|b| match b.per.as_str() {
                         "attribute_point" => Some(BonusSource::AttributePoint {
                             source: normalize_skill_name(&b.source),
+                            stat: b.stat.clone(),
                             value: b.value,
                         }),
                         "skill_level" => Some(BonusSource::SkillLevel {
                             source: normalize_skill_name(&b.source),
+                            stat: b.stat.clone(),
                             value: b.value,
                         }),
                         _ => None,
@@ -338,12 +340,16 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 let input = AttackSkillInput {
                     skill: calc_skill,
                     allocated_rank: active_rank as f64,
+                    attributes: &computed.attributes,
                     stats: &computed.stats,
+                    skill_ranks_by_name: &skill_ranks_by_name,
+                    skills_by_name: &skills_by_name,
                     item_skill_bonuses,
                     enemy_conditions: deps.enemy_conditions,
                     weapon: weapon_for_attack.as_ref(),
                     poison_breakdown: damage.as_ref(),
                     scoped: main_scoped,
+                    projectile_count: effective_projectiles.unwrap_or(1),
                     // The elemental breakdown already consumed the conversion;
                     // adding it to the physical swing too would count it twice.
                     conversion_flat: if damage.is_some() {

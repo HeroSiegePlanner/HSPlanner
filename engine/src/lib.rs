@@ -39,6 +39,7 @@ pub fn run() {
     })
     .invoke_handler(tauri::generate_handler![
       calc::commands::compute_skill_damage,
+      calc::commands::compute_attack_skill_damage,
       calc::commands::compute_weapon_damage,
       calc::commands::calc_build_performance,
       calc::commands::rank_slot_items,

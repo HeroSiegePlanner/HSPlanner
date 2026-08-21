@@ -66,6 +66,7 @@ export default function LeftStatsPanel() {
   const statsCombined = performance?.statsCombined ?? {};
   const diminishedRaw = performance?.diminishedRaw ?? {};
   const damage = performance?.damage ?? null;
+  const attackDamage = performance?.attackDamage ?? null;
   const hitDpsMin = performance?.hitDpsMin;
   const hitDpsMax = performance?.hitDpsMax;
   const combinedDpsMin = performance?.combinedDpsMin;
@@ -386,6 +387,14 @@ export default function LeftStatsPanel() {
                     damage ? (
                       <span className="text-text">
                         {compactRange(damage.finalMin, damage.finalMax, numberScale)}
+                      </span>
+                    ) : attackDamage ? (
+                      <span className="text-text">
+                        {compactRange(
+                          attackDamage.combinedHitMin,
+                          attackDamage.combinedHitMax,
+                          numberScale,
+                        )}
                       </span>
                     ) : (
                       <span className="text-muted">—</span>

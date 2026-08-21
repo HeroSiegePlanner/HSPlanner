@@ -62,8 +62,18 @@ pub struct DamageRow {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "per", rename_all = "snake_case")]
 pub enum BonusSource {
-    AttributePoint { source: String, value: f64 },
-    SkillLevel { source: String, value: f64 },
+    AttributePoint {
+        source: String,
+        #[serde(default)]
+        stat: String,
+        value: f64,
+    },
+    SkillLevel {
+        source: String,
+        #[serde(default)]
+        stat: String,
+        value: f64,
+    },
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -72,6 +82,19 @@ pub struct SkillProc {
     pub chance: f64,
     pub trigger: String,
     pub target: String,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AttackScalingRef {
+    #[serde(default)]
+    pub weapon_damage_pct: Option<DamageFormula>,
+    #[serde(default)]
+    pub flat_physical_min: Option<DamageFormula>,
+    #[serde(default)]
+    pub flat_physical_max: Option<DamageFormula>,
+    #[serde(default)]
+    pub attack_rating_pct: Option<DamageFormula>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -97,6 +120,10 @@ pub struct SkillRef {
     pub uses_attack_speed: bool,
     #[serde(default)]
     pub proc: Option<SkillProc>,
+    #[serde(default)]
+    pub attack_kind: Option<String>,
+    #[serde(default)]
+    pub attack_scaling: Option<AttackScalingRef>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]

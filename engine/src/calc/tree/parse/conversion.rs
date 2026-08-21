@@ -292,31 +292,6 @@ pub(crate) static CONVERSION_RULES: Lazy<Vec<ConversionRule>> = Lazy::new(|| {
         },
         ConversionRule {
             test: Regex::new(
-                r"(?i)^([+\-\d.]+)%\s+to\s+Enhanced\s+Damage\s+when\s+using\s+(Bow|Throwing\s+Weapon|Gun|Axe)$",
-            )
-            .unwrap(),
-            build: |m| {
-                let weapon = m[2].to_ascii_lowercase();
-                let target_key = if weapon == "bow" {
-                    "damage_with_bow"
-                } else if weapon == "gun" {
-                    "damage_with_gun"
-                } else if weapon == "axe" {
-                    "damage_with_axe"
-                } else {
-                    "damage_with_throwing"
-                };
-                Some(ParsedConversion {
-                    from_key: "enhanced_damage".to_string(),
-                    from_kind: ConvertKind::Stat,
-                    to_key: target_key.to_string(),
-                    to_kind: ConvertKind::Stat,
-                    pct: num(&m[1]),
-                })
-            },
-        },
-        ConversionRule {
-            test: Regex::new(
                 r"(?i)^([+\-\d.]+)%\s+of\s+Physical\s+Damage\s+converted\s+to\s+(arcane|cold|fire|lightning|poison)$",
             )
             .unwrap(),

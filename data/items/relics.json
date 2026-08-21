@@ -1618,10 +1618,7 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "attack_rating": 250,
-      "to_strength": 40
-    }
+    "implicit": {}
   },
   {
     "id": "relic_relic_skullbat",
