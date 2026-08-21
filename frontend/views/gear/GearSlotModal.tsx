@@ -17,6 +17,7 @@ import { ForgedModsSection } from './sections/ForgedModsSection'
 import { RunewordPresets } from './sections/RunewordPresets'
 import { SocketsSection } from './sections/SocketsSection'
 import { StarsSection } from './sections/StarsSection'
+import { RandomSkillSection } from './sections/RandomSkillSection'
 import { RARITY_LABEL, RARITY_TEXT } from './lib/rarity'
 import { useGearDraft } from './lib/useGearDraft'
 
@@ -230,6 +231,14 @@ export function GearSlotModal({
 
                   {canStarForge(slot, activeSeasonId) && (
                     <StarsSection stars={draft.stars ?? 0} onChange={d.setStars} />
+                  )}
+
+                  {base.randomSkillPool && (
+                    <RandomSkillSection
+                      equipped={draft}
+                      pool={base.randomSkillPool}
+                      onChange={d.setRandomSkill}
+                    />
                   )}
 
                   {(base.rarity === 'common' || base.randomAffixGroupId) && (

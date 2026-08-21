@@ -194,6 +194,23 @@
     }
   ],
   "change": {
+    "charm_satanic_engineer_s_mini_drone": {
+      "implicit": {
+        "all_skills_marksman": [
+          1,
+          2
+        ],
+        "sentry_attack_speed": 15,
+        "sentry_damage": [
+          20,
+          35
+        ]
+      },
+      "randomSkillPool": {
+        "classId": "marksman",
+        "tree": "Engineer"
+      }
+    },
     "relic_relic_skull_axe": {
       "procs": [
         {

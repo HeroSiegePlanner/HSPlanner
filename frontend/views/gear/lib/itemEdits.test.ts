@@ -10,6 +10,7 @@ import {
   withAugmentLevel,
   withForgedModAdded,
   withForgedModRemoved,
+  withRandomSkill,
   withRuneword,
   withSocketCount,
   withSocketType,
@@ -194,6 +195,25 @@ describe('itemEdits — withAugment', () => {
     const item: EquippedItem = { ...synthItem(), augment: { id, level: 3 } }
     const next = withAugment(item, id)
     expect(next.augment?.level).toBe(3)
+  })
+})
+
+describe('itemEdits — withRandomSkill', () => {
+  it('stamps the picked skill on the item', () => {
+    const next = withRandomSkill(synthItem(), 'gunner_drone')
+    expect(next.randomSkillId).toBe('gunner_drone')
+  })
+
+  it('removes the key entirely when null is passed', () => {
+    const item: EquippedItem = { ...synthItem(), randomSkillId: 'gunner_drone' }
+    const next = withRandomSkill(item, null)
+    expect('randomSkillId' in next).toBe(false)
+  })
+
+  it('returns the same object when nothing changes', () => {
+    const item: EquippedItem = { ...synthItem(), randomSkillId: 'gunner_drone' }
+    expect(withRandomSkill(item, 'gunner_drone')).toBe(item)
+    expect(withRandomSkill(synthItem(), null)).toEqual(synthItem())
   })
 })
 

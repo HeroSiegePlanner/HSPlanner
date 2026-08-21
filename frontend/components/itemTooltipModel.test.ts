@@ -37,6 +37,33 @@ function deps(over: Partial<TooltipModelDeps> = {}): TooltipModelDeps {
 }
 
 describe('buildItemTooltipModel', () => {
+  it('names the picked skill on a "+X to Random Skill" line', () => {
+    const base = getItem('charm_satanic_engineer_s_mini_drone')
+    if (!base) throw new Error('fixture item missing from game data')
+    // A rank here is what pulls the line into Granted Skill Effects.
+    const display = {
+      ...emptyDisplay(),
+      skillRankScaled: { 'Random Skill': [3, 5] as [number, number] },
+    }
+    const granted = (m: ReturnType<typeof buildItemTooltipModel>) =>
+      m.sections.some((s) => s.header?.text === 'Granted Skill Effects')
+
+    const unrolled = buildItemTooltipModel(base, eq(base.id), deps({ display }))
+    expect(granted(unrolled)).toBe(false)
+    expect(JSON.stringify(unrolled.sections)).toContain('Random Skill (not rolled)')
+
+    const rolled = buildItemTooltipModel(
+      base,
+      eq(base.id, { randomSkillId: 'gunner_drone' }),
+      deps({ display }),
+    )
+    expect(granted(rolled)).toBe(false)
+    const text = JSON.stringify(rolled.sections)
+    // Star-scaled ranks, not the raw [1-3] from item data.
+    expect(text).toContain('[3-5] to Gunner Drone')
+    expect(text).not.toContain('Random Skill')
+  })
+
   it('puts base stats first as row lines (Defense/Damage/Block/Attacks per sec)', () => {
     const base = getItem('sword_angelic_st_mika_s_zweih_nder')
     if (!base) throw new Error('fixture item missing from game data')

@@ -563,6 +563,21 @@ pub fn apply_stat_fan_outs(stat_sources: &mut SourceMap) {
     }
 }
 
+// "+X to All Skills (Class)" pays out only for that class; the stat key carries
+// the class id, so item data needs no extra field and other classes see nothing.
+pub fn apply_class_scoped_all_skills(class_id: Option<&str>, stat_sources: &mut SourceMap) {
+    let Some(class_id) = class_id else {
+        return;
+    };
+    let key = format!("all_skills_{class_id}");
+    let Some(list) = stat_sources.remove(&key) else {
+        return;
+    };
+    for src in list {
+        push_source(stat_sources, "all_skills", src);
+    }
+}
+
 // Every point of summed elemental resistance adds `damage_per_resist_point`% ED.
 // Runs after fan-out so buckets already include the all_resistances spread.
 pub fn apply_damage_per_resist(stat_sources: &mut SourceMap) {

@@ -740,6 +740,9 @@ pub struct EquippedItem {
     pub augment: Option<AugmentRef>,
     #[serde(default)]
     pub implicit_overrides: HashMap<String, f64>,
+    /// Which skill the item's "Random Skill" roll landed on, picked by the user.
+    #[serde(default)]
+    pub random_skill_id: Option<String>,
 }
 
 pub type Inventory = HashMap<SlotKey, EquippedItem>;

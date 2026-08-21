@@ -13,6 +13,7 @@ import {
   getItem,
   getItemGrantedSkillByName,
   getItemSet,
+  skills,
 } from '@data'
 import { BONUS_SOCKET_MOD_ID } from '../store/itemRules'
 import type {
@@ -189,9 +190,16 @@ export function buildItemTooltipModel(
   const grantedSkillNames = new Set(
     grantedSkillEntries.map((e) => e.skill.name.trim().toLowerCase()),
   )
-  const visibleSkillBonusEntries = skillBonusEntries.filter(
-    ([skill]) => !grantedSkillNames.has(skill.trim().toLowerCase()),
-  )
+  const visibleSkillBonusEntries = skillBonusEntries
+    .filter(([skill]) => !grantedSkillNames.has(skill.trim().toLowerCase()))
+    .map(([skill, val]): [string, typeof val] =>
+      skill === RANDOM_SKILL_NAME
+        ? [
+            randomSkillLabel(equipped?.randomSkillId),
+            display.skillRankScaled[skill] ?? val,
+          ]
+        : [skill, val],
+    )
   const runewordEntries = runeword
     ? Object.entries(runeword.stats).filter(([, v]) => v !== 0)
     : []
@@ -478,6 +486,14 @@ function buildImplicitEntries(
 
 const round2 = (n: number): number => Math.round(n * 100) / 100
 
+// Item data names the roll; the tooltip shows what the user says it landed on.
+export const RANDOM_SKILL_NAME = 'Random Skill'
+
+function randomSkillLabel(skillId: string | undefined): string {
+  if (!skillId) return `${RANDOM_SKILL_NAME} (not rolled)`
+  return skills.find((s) => s.id === skillId)?.name ?? RANDOM_SKILL_NAME
+}
+
 function buildGrantedSkillEntries(
   base: ItemBase,
   display: TooltipModelDeps['display'],
@@ -485,6 +501,9 @@ function buildGrantedSkillEntries(
   if (!base.skillBonuses) return []
   const out: GrantedSkillEntry[] = []
   for (const skillName of Object.keys(base.skillBonuses)) {
+    // The catalog carries an empty "Random Skill" placeholder; the roll grants
+    // ranks in a real skill, so it belongs on an implicit line, not here.
+    if (skillName === RANDOM_SKILL_NAME) continue
     const skill = getItemGrantedSkillByName(skillName)
     if (!skill) continue
     const [sMin, sMax] = display.skillRankScaled[skillName] ?? [0, 0]

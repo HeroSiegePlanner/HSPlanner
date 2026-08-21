@@ -359,6 +359,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
+    // 15b. Class-scoped "+X to All Skills (Class)" folds into all_skills.
+    apply_class_scoped_all_skills(input.class_id, &mut stat_sources);
+
     // 16. Stat fan-outs (all_resistances → per-element variants)
     apply_stat_fan_outs(&mut stat_sources);
 

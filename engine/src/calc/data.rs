@@ -352,6 +352,15 @@ pub fn get_class(id: &str) -> Option<&'static CharacterClass> {
     data().classes.get(id)
 }
 
+pub fn skill_name_by_id(skill_id: &str) -> Option<&'static str> {
+    data()
+        .skills_by_class
+        .values()
+        .flatten()
+        .find(|s| s.id == skill_id)
+        .map(|s| s.name.as_str())
+}
+
 pub fn get_skills_by_class(class_id: &str) -> &'static [SkillSpec] {
     data()
         .skills_by_class

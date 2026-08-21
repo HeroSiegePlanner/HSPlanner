@@ -106,6 +106,7 @@ const equippedItemSchema = z
         message: 'too many implicit overrides',
       })
       .optional(),
+    randomSkillId: SAFE_STRING.optional(),
   })
   .passthrough()
 
@@ -408,6 +409,9 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       forgedMods: Array.isArray(item.forgedMods) ? item.forgedMods : [],
       ...(aug ? { augment: aug } : {}),
       ...(implicitOverrides ? { implicitOverrides } : {}),
+      ...(typeof item.randomSkillId === 'string'
+        ? { randomSkillId: item.randomSkillId }
+        : {}),
     }
   }
   return out

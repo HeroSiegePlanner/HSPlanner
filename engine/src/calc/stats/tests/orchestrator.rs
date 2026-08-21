@@ -144,6 +144,64 @@ fn side_skill_overrides_swap_the_main_skill_subtree() {
 }
 
 #[test]
+fn class_scoped_all_skills_only_pays_out_for_that_class() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    inventory.insert(
+        "charm_1".to_string(),
+        crate::calc::types::EquippedItem {
+            base_id: "charm_satanic_engineer_s_mini_drone".to_string(),
+            ..Default::default()
+        },
+    );
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+
+    let marksman = compute_build_stats(&BuildStatsInput {
+        class_id: Some("marksman"),
+        ..base_input
+    });
+    assert_eq!(
+        marksman.stats.get("all_skills").copied(),
+        Some((1.0, 2.0)),
+        "the charm's +[1-2] All Skills (Marksman) must reach a marksman"
+    );
+    assert!(
+        !marksman.stats.contains_key("all_skills_marksman"),
+        "the class-scoped key folds into all_skills instead of lingering"
+    );
+
+    let amazon = compute_build_stats(&BuildStatsInput {
+        class_id: Some("amazon"),
+        ..base_input
+    });
+    assert_eq!(
+        amazon.stats.get("all_skills").copied().unwrap_or((0.0, 0.0)),
+        (0.0, 0.0),
+        "another class gets nothing from it"
+    );
+}
+
+#[test]
 fn incarnation_nodes_contribute_to_build_stats() {
     // S10: patch sezonu podmienia całe drzewo — nody liczą się przez to
     // samo allocated_tree_nodes.

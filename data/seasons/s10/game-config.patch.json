@@ -23,6 +23,12 @@
         "name": "Sentry Attack Rate",
         "category": "offense",
         "format": "flat"
+      },
+      {
+        "key": "all_skills_marksman",
+        "name": "All Skills (Marksman)",
+        "category": "base",
+        "format": "flat"
       }
     ]
   }

@@ -738,7 +738,6 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 100,
-    "twoHanded": true,
     "damageMin": 82,
     "damageMax": 94,
     "attackSpeed": 1.9,
