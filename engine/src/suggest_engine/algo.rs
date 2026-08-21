@@ -34,12 +34,16 @@ fn skill_ref_to_calc(skill: &SkillRef) -> calc::Skill {
             .bonus_sources
             .iter()
             .map(|b| match b {
-                BonusSource::AttributePoint { source, value } => calc::BonusSource::AttributePoint {
+                BonusSource::AttributePoint { source, stat, value } => {
+                    calc::BonusSource::AttributePoint {
+                        source: source.trim().to_lowercase(),
+                        stat: stat.clone(),
+                        value: *value,
+                    }
+                }
+                BonusSource::SkillLevel { source, stat, value } => calc::BonusSource::SkillLevel {
                     source: source.trim().to_lowercase(),
-                    value: *value,
-                },
-                BonusSource::SkillLevel { source, value } => calc::BonusSource::SkillLevel {
-                    source: source.trim().to_lowercase(),
+                    stat: stat.clone(),
                     value: *value,
                 },
             })
@@ -151,12 +155,16 @@ fn compute_dps(state: &FinalState, input: &PrecomputedInput, ctx: &DpsContext) -
         let attack_input = calc::AttackSkillInput {
             skill: &ctx.active_calc,
             allocated_rank: input.active_skill_rank as f64,
+            attributes: &attrs_norm,
             stats: &state.stats,
+            skill_ranks_by_name: &ctx.skill_ranks_norm,
+            skills_by_name: &ctx.skills_by_name,
             item_skill_bonuses: &ctx.item_bonuses_norm,
             enemy_conditions: &input.enemy_conditions,
             weapon: ctx.weapon.as_ref(),
             poison_breakdown: hit_breakdown.as_ref(),
             scoped: &no_scoped,
+            projectile_count: input.projectile_count.unwrap_or(1),
             conversion_flat: 0.0,
         };
         if let Some(ad) = calc::compute_attack_skill_damage(&attack_input) {
@@ -685,6 +693,7 @@ mod tests {
             damage_formula: Some(DamageFormula { base: 100.0, per_level: 0.0 }),
             bonus_sources: vec![BonusSource::AttributePoint {
                 source: "strength".to_string(),
+                stat: "skill_damage".to_string(),
                 value: 1.0,
             }],
             ..Default::default()

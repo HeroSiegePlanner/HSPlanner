@@ -121,6 +121,71 @@ fn archetype_skill_damage(stats: &StatMap, tags: &[String]) -> (Ranged, Ranged) 
     )
 }
 
+// Shared by the spell and attack paths: each bonus source contributes
+// value% per effective source rank (or per attribute point). The attack path
+// consumes only attack_damage synergies; the spell path everything else
+// (attack_rating is no damage stat on either side).
+pub(super) fn bonus_source_synergy_pct(
+    s: &Skill,
+    attributes: &AttrMap,
+    stats: &StatMap,
+    skill_ranks_by_name: &SkillRanks,
+    skills_by_name: &HashMap<String, Skill>,
+    item_skill_bonuses: &ItemSkillBonuses,
+    for_attack: bool,
+) -> Ranged {
+    let mut synergy_min = 0.0;
+    let mut synergy_max = 0.0;
+    for bs in &s.bonus_sources {
+        // Summons keep attack_damage synergies in their spell hit; for
+        // attack-kind skills the attack path consumes them instead.
+        let is_attack_kind = s.attack_kind == Some(super::AttackKind::Attack);
+        let wanted = if for_attack {
+            bs.stat() == "attack_damage"
+        } else {
+            bs.stat() != "attack_rating" && !(bs.stat() == "attack_damage" && is_attack_kind)
+        };
+        if !wanted {
+            continue;
+        }
+        match bs {
+            BonusSource::AttributePoint { source, value, .. } => {
+                let v = attributes.get(source).copied().unwrap_or((0.0, 0.0));
+                synergy_min += r_min(v) * value;
+                synergy_max += r_max(v) * value;
+            }
+            BonusSource::SkillLevel { source, value, .. } => {
+                let br = *skill_ranks_by_name.get(source).unwrap_or(&0.0);
+                if br <= 0.0 {
+                    continue;
+                }
+                if let Some(s2) = skills_by_name.get(source) {
+                    let all = rg(stats, "all_skills");
+                    let (el_min, el_max): Ranged =
+                        match s2.damage_type.as_deref().and_then(element_keys) {
+                            Some(k) => {
+                                let e = rg(stats, k.skills);
+                                (r_min(e), r_max(e))
+                            }
+                            None => (0.0, 0.0),
+                        };
+                    let it = item_skill_bonuses
+                        .get(source)
+                        .copied()
+                        .unwrap_or((0.0, 0.0));
+                    let (tg_min, tg_max) = tag_skills_bonus(stats, s2);
+                    synergy_min += (br + r_min(all) + el_min + tg_min + it.0) * value;
+                    synergy_max += (br + r_max(all) + el_max + tg_max + it.1) * value;
+                } else {
+                    synergy_min += br * value;
+                    synergy_max += br * value;
+                }
+            }
+        }
+    }
+    (synergy_min, synergy_max)
+}
+
 pub struct SkillInput<'a> {
     pub skill: &'a Skill,
     pub allocated_rank: f64,
@@ -229,45 +294,15 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     flat_min += input.conversion_flat;
     flat_max += input.conversion_flat;
 
-    let mut synergy_min = 0.0;
-    let mut synergy_max = 0.0;
-    for bs in &s.bonus_sources {
-        match bs {
-            BonusSource::AttributePoint { source, value } => {
-                let v = input.attributes.get(source).copied().unwrap_or((0.0, 0.0));
-                synergy_min += r_min(v) * value;
-                synergy_max += r_max(v) * value;
-            }
-            BonusSource::SkillLevel { source, value } => {
-                let br = *input.skill_ranks_by_name.get(source).unwrap_or(&0.0);
-                if br <= 0.0 {
-                    continue;
-                }
-                if let Some(s2) = input.skills_by_name.get(source) {
-                    let all = rg(input.stats, "all_skills");
-                    let (el_min, el_max): Ranged =
-                        match s2.damage_type.as_deref().and_then(element_keys) {
-                            Some(k) => {
-                                let e = rg(input.stats, k.skills);
-                                (r_min(e), r_max(e))
-                            }
-                            None => (0.0, 0.0),
-                        };
-                    let it = input
-                        .item_skill_bonuses
-                        .get(source)
-                        .copied()
-                        .unwrap_or((0.0, 0.0));
-                    let (tg_min, tg_max) = tag_skills_bonus(input.stats, s2);
-                    synergy_min += (br + r_min(all) + el_min + tg_min + it.0) * value;
-                    synergy_max += (br + r_max(all) + el_max + tg_max + it.1) * value;
-                } else {
-                    synergy_min += br * value;
-                    synergy_max += br * value;
-                }
-            }
-        }
-    }
+    let (synergy_min, synergy_max) = bonus_source_synergy_pct(
+        s,
+        input.attributes,
+        input.stats,
+        input.skill_ranks_by_name,
+        input.skills_by_name,
+        input.item_skill_bonuses,
+        false,
+    );
 
     let magic = rg(input.stats, "magic_skill_damage");
     let elem = keys

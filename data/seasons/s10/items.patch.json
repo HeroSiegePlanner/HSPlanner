@@ -1,6 +1,28 @@
 {
   "add": [
     {
+      "id": "shield_heroic_shadow_lantern",
+      "name": "Shadow Lantern",
+      "baseType": "Shield",
+      "slot": "offhand",
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 98,
+      "implicit": {
+        "all_skills": [2, 3],
+        "skill_haste": [15, 35],
+        "sentry_damage": [25, 50],
+        "sentry_skills": [3, 5],
+        "sentry_duration": 33,
+        "sentry_max_amount": [1, 3]
+      },
+      "uniqueEffects": ["Unholy", "Unholy"],
+      "maxAffixes": 2,
+      "randomAffixGroupId": "random_unholy",
+      "sockets": 3,
+      "maxSockets": 4
+    },
+    {
       "id": "s10_captains_anchor",
       "name": "Captain's Anchor",
       "baseType": "Charm",

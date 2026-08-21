@@ -501,6 +501,7 @@ export default function StatsView() {
           skillsByNormalizedName={skillsByNormalizedName}
           rankBonuses={rankBonuses}
           skillBreakdown={mainPerformance?.damage ?? null}
+          attackDamage={mainPerformance?.attackDamage ?? null}
           stats={mainSkillStats}
           mcrRange={mainSkillStats.mana_cost_reduction ?? 0}
           paidInLifeRange={mainSkillStats.mana_cost_paid_in_life ?? 0}
@@ -544,6 +545,7 @@ export default function StatsView() {
                       skillProjectiles={skillProjectiles}
                       subtreeScoped={skillScoped[skill.id] ?? NO_SUBTREE}
                       isMain={activeSkillIds.includes(skill.id)}
+                      weapon={weaponInput.weapon}
                     />
                   )
                 })}
