@@ -308,6 +308,25 @@ describe('itemTextFormat — removing / replacing base implicits', () => {
     expect(again).toContain('+50% Increased Strength [custom]')
   })
 
+  it('rejects an implicit line with an unknown stat name instead of dropping it', async () => {
+    const base = blaster()
+    if (!base) return
+    const text = await serializeEquippedItem(bare(base.id), base, stubMath)
+    const edited = text.replace(
+      '+25% Increased Sentry Duration',
+      '+25% Increased Sentry Durationn',
+    )
+
+    const parsed = await parseItemText(edited, base.id, stubMath)
+    expect(parsed.equipped).toBeNull()
+    expect(parsed.errors).toContainEqual(
+      expect.objectContaining({
+        severity: 'error',
+        message: expect.stringContaining('Unknown implicit stat'),
+      }),
+    )
+  })
+
   it('deleting a base implicit line zeroes only that stat', async () => {
     const base = blaster()
     if (!base) return

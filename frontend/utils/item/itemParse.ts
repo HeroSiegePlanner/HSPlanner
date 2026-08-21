@@ -377,8 +377,8 @@ export async function parseItemText(
         if (!key) {
           errors.push({
             line: lineNum,
-            message: `Unknown implicit stat: "${statText}"`,
-            severity: 'warning',
+            message: `Unknown implicit stat: "${statText}" — pick a name from the Custom affixes list`,
+            severity: 'error',
           })
           continue
         }
