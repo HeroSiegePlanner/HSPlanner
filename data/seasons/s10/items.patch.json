@@ -27,119 +27,582 @@
       "name": "Captain's Anchor",
       "baseType": "Charm",
       "slot": "charm_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "height": 2,
+      "width": 2,
+      "implicit": {
+        "random_skill_element": 5,
+        "phys_dmg_taken_as_cold": [
+          10,
+          20
+        ],
+        "enemy_all_resist": 20,
+        "light_radius": [
+          4,
+          8
+        ]
+      }
     },
     {
       "id": "s10_ghastly_skull",
       "name": "Ghastly Skull",
       "baseType": "Charm",
       "slot": "charm_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "height": 2,
+      "width": 1,
+      "implicit": {
+        "summon_skills": [
+          3,
+          5
+        ]
+      },
+      "skillBonuses": {
+        "Will-O-Wisp": [
+          1,
+          5
+        ]
+      }
     },
     {
       "id": "s10_grimtides_necklace",
       "name": "Grimtide's Necklace",
       "baseType": "Amulet",
       "slot": "amulet",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "implicit": {
+        "life": [
+          200,
+          250
+        ],
+        "all_resistances": 15,
+        "gold_find": [
+          35,
+          50
+        ],
+        "magic_find": [
+          80,
+          200
+        ]
+      },
+      "sockets": 1,
+      "maxSockets": 1
     },
     {
       "id": "s10_skeleton_crews_band",
       "name": "Skeleton Crew's Band",
       "baseType": "Ring",
       "slot": "ring_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "implicit": {
+        "summon_skills": [
+          2,
+          4
+        ],
+        "all_skills": 2,
+        "summon_attack_speed": [
+          15,
+          25
+        ],
+        "summon_reduced_dmg_taken": 15,
+        "enemy_all_resist": 15
+      },
+      "skillBonuses": {
+        "Ghost Crew": [
+          1,
+          3
+        ]
+      }
     },
     {
       "id": "s10_ethereal_musket",
       "name": "Ethereal Musket",
       "baseType": "Rifle Gun",
       "slot": "weapon",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "twoHanded": true,
+      "grade": "SS",
+      "requiresLevel": 100,
+      "damageMin": 160,
+      "damageMax": 175,
+      "attackSpeed": 1,
+      "implicit": {
+        "enhanced_damage": [
+          930,
+          1120
+        ],
+        "all_skills": [
+          4,
+          6
+        ],
+        "melee_range": 40,
+        "increased_attack_speed": [
+          15,
+          30
+        ],
+        "less_dmg_with_cd_skills": 80,
+        "crit_chance": 25,
+        "life_steal": 10,
+        "crit_damage": 66,
+        "defense_ignored": 50
+      },
+      "skillBonuses": {
+        "Spectral Scatter": [
+          1,
+          3
+        ]
+      },
+      "uniqueEffects": [
+        "Piercing Attack"
+      ],
+      "sockets": 6,
+      "maxSockets": 6
     },
     {
       "id": "s10_grimtides_scimitar",
       "name": "Grimtide's Scimitar",
       "baseType": "Sword",
       "slot": "weapon",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "damageMin": 68,
+      "damageMax": 78,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "enhanced_damage": [
+          550,
+          680
+        ],
+        "all_skills": 2,
+        "increased_attack_speed": [
+          45,
+          70
+        ],
+        "crit_chance": 25,
+        "crit_damage": 55,
+        "defense_ignored": 35,
+        "extra_damage_stunned": [
+          25,
+          40
+        ],
+        "to_strength": [
+          20,
+          30
+        ]
+      },
+      "procs": [
+        {
+          "trigger": "on_attack",
+          "chance": 15,
+          "description": "cast Tides of Chaos Level 1",
+          "details": "Conjure tides of chaos sending forward ghastly waves and summoning torrents dealing damage and stunning monsters on hit. Damage 20%"
+        }
+      ],
+      "sockets": 3,
+      "maxSockets": 3
     },
     {
       "id": "s10_ghostplunderers_marchers",
       "name": "Ghostplunderer's Marchers",
       "baseType": "Boots",
       "slot": "boots",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 72,
+      "defenseMax": 90,
+      "implicit": {
+        "enhanced_defense": [
+          180,
+          225
+        ],
+        "all_skills": 2,
+        "explosion_skills": [
+          5,
+          8
+        ],
+        "movement_speed": 80,
+        "explosion_damage": [
+          20,
+          30
+        ],
+        "explosion_aoe": [
+          30,
+          50
+        ],
+        "all_resistances": 15
+      },
+      "uniqueEffects": [
+        "Movement Phasing"
+      ],
+      "sockets": 2,
+      "maxSockets": 2
     },
     {
       "id": "s10_captains_attire",
       "name": "Captain's Attire",
       "baseType": "Body Armor",
       "slot": "armor",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 110,
+      "defenseMax": 140,
+      "implicit": {
+        "enhanced_defense": [
+          270,
+          400
+        ],
+        "all_skills": 2,
+        "life": [
+          450,
+          600
+        ],
+        "increased_life": 8,
+        "physical_damage_reduction": [
+          8,
+          18
+        ],
+        "magic_damage_reduction": [
+          8,
+          18
+        ],
+        "all_resistances": [
+          20,
+          30
+        ]
+      },
+      "skillBonuses": {
+        "Oasis Aura": [
+          25,
+          35
+        ]
+      },
+      "sockets": 5,
+      "maxSockets": 6
     },
     {
       "id": "s10_parasitic_heart",
       "name": "Parasitic Heart",
       "baseType": "Charm",
       "slot": "charm_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "height": 2,
+      "width": 1,
+      "implicit": {
+        "all_skills": [
+          2,
+          4
+        ],
+        "attack_damage": [
+          35,
+          70
+        ],
+        "magic_skill_damage": [
+          35,
+          70
+        ],
+        "increased_life": -25
+      }
     },
     {
       "id": "s10_parasite_queens_tiara",
       "name": "Parasite Queen's Tiara",
       "baseType": "Helmet",
       "slot": "helmet",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 90,
+      "defenseMax": 140,
+      "implicit": {
+        "enhanced_defense": [
+          140,
+          240
+        ],
+        "summon_skills": [
+          5,
+          8
+        ],
+        "summon_attack_speed": 25,
+        "summon_damage": [
+          15,
+          30
+        ],
+        "summon_movement_speed": 20
+      },
+      "skillBonuses": {
+        "Scarlet Sacrifice": [
+          1,
+          3
+        ]
+      },
+      "sockets": 2,
+      "maxSockets": 3
     },
     {
       "id": "s10_blood_maggot_pendant",
       "name": "Blood Maggot Pendant",
       "baseType": "Amulet",
       "slot": "amulet",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "implicit": {
+        "all_skills": [
+          2,
+          3
+        ],
+        "increased_attack_speed": [
+          25,
+          35
+        ],
+        "enemy_arcane_resist": 15,
+        "magic_skill_damage": [
+          20,
+          35
+        ],
+        "guardian_additional_attack": 15,
+        "guardian_attack_range": [
+          50,
+          75
+        ],
+        "increased_life": -15
+      },
+      "sockets": 1,
+      "maxSockets": 1
     },
     {
       "id": "s10_conjured_tentacle",
       "name": "Conjured Tentacle",
       "baseType": "Wand",
       "slot": "weapon",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "damageMin": 32,
+      "damageMax": 42,
+      "attackSpeed": 1.5,
+      "implicit": {
+        "all_skills": [
+          2,
+          3
+        ],
+        "cold_skills": [
+          2,
+          5
+        ],
+        "cold_resistance_converted_to_cold_damage": 15,
+        "faster_cast_rate": 50,
+        "extra_dmg_to_deep_frozen": [
+          25,
+          40
+        ],
+        "flat_cold_skill_damage": [
+          35,
+          55
+        ],
+        "cold_skill_damage": [
+          55,
+          75
+        ],
+        "enemy_cold_resist": [
+          30,
+          45
+        ]
+      },
+      "skillBonuses": {
+        "Heart Surge": [
+          1,
+          4
+        ]
+      },
+      "sockets": 3,
+      "maxSockets": 3
     },
     {
       "id": "s10_overgrowth",
       "name": "Overgrowth",
       "baseType": "Shield",
       "slot": "offhand",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 150,
+      "defenseMax": 180,
+      "blockChance": 80,
+      "implicit": {
+        "enhanced_defense": [
+          540,
+          640
+        ],
+        "life": [
+          350,
+          550
+        ],
+        "faster_hit_recovery": 150,
+        "physical_damage_reduction": 15,
+        "magic_damage_reduction": 15,
+        "all_resistances": [
+          50,
+          75
+        ],
+        "max_all_resistances": -5
+      },
+      "procs": [
+        {
+          "trigger": "when_struck",
+          "chance": 10,
+          "description": "cast Sanguine Flow Level 1",
+          "details": "Spawn life globes around you. Damage 20%"
+        }
+      ],
+      "sockets": 4,
+      "maxSockets": 6
     },
     {
       "id": "s10_infected_grasp",
       "name": "Infected Grasp",
       "baseType": "Gloves",
       "slot": "gloves",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 120,
+      "defenseMax": 120,
+      "implicit": {
+        "enhanced_defense": [
+          35,
+          50
+        ],
+        "all_skills": 2,
+        "poison_skills": [
+          2,
+          5
+        ],
+        "poison_resistance_converted_to_poison_damage": [
+          20,
+          40
+        ],
+        "faster_cast_rate": [
+          20,
+          35
+        ],
+        "increased_attack_speed": [
+          20,
+          35
+        ],
+        "extra_poison_dmg_to_poisoned": [
+          15,
+          25
+        ],
+        "poison_skill_damage": [
+          20,
+          30
+        ],
+        "increased_poisoned_frequency": 20,
+        "poison_resistance": [
+          40,
+          60
+        ]
+      }
     },
     {
       "id": "s10_jar_of_parasites",
       "name": "Jar of Parasites",
       "baseType": "Charm",
       "slot": "charm_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "height": 2,
+      "width": 1,
+      "implicit": {
+        "all_skills": [
+          2,
+          3
+        ],
+        "skill_haste": [
+          10,
+          100
+        ],
+        "physical_damage_reduction": 25,
+        "magic_damage_reduction": 25
+      }
     },
     {
       "id": "s10_parasite_loop",
       "name": "Parasite Loop",
       "baseType": "Ring",
       "slot": "ring_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "implicit": {
+        "all_skills": [
+          1,
+          2
+        ],
+        "skill_haste": [
+          15,
+          35
+        ],
+        "enemy_all_resist": 15,
+        "increased_life": -15,
+        "all_resistances": [
+          15,
+          25
+        ]
+      },
+      "procs": [
+        {
+          "trigger": "on_cast",
+          "chance": 8,
+          "description": "cast Sanguine Leech Level 1",
+          "details": "Summon a Sanguine Leech dealing damage and providing you increased life replenish for a short duration. Arcane Damage 12287, Life Replenish 800%"
+        }
+      ]
     },
     {
       "id": "s10_ghost_armada",
       "name": "Ghost Armada",
       "baseType": "Charm",
       "slot": "charm_1",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "height": 2,
+      "width": 3,
+      "implicit": {
+        "all_skills": [
+          3,
+          5
+        ],
+        "attack_radius": [
+          25,
+          60
+        ],
+        "increased_attack_speed": [
+          25,
+          50
+        ],
+        "deadly_blow": [
+          10,
+          20
+        ],
+        "crushing_blow_chance": 25
+      }
     },
     {
       "id": "s10_phantom_scimitar",
@@ -147,14 +610,89 @@
       "baseType": "Sword",
       "slot": "weapon",
       "rarity": "heroic",
-      "twoHanded": true
+      "twoHanded": true,
+      "grade": "SS",
+      "requiresLevel": 100,
+      "damageMin": 125,
+      "damageMax": 150,
+      "attackSpeed": 1.2,
+      "implicit": {
+        "enhanced_damage": [
+          825,
+          960
+        ],
+        "all_skills": 2,
+        "physical_skills": [
+          3,
+          5
+        ],
+        "crit_chance": 35,
+        "increased_attack_rating": 10,
+        "attack_rating": 1250,
+        "crit_damage": [
+          90,
+          125
+        ],
+        "to_strength": [
+          50,
+          75
+        ]
+      },
+      "uniqueEffects": [
+        "Attacks can hit multiple enemies"
+      ],
+      "procs": [
+        {
+          "trigger": "on_kill",
+          "chance": 5,
+          "description": "cast Phantom Slice Level 1",
+          "details": "Summon Phantom Leviathan's essence to strike monsters dealing area of effect damage. Damage 100%"
+        },
+        {
+          "trigger": "on_attack",
+          "chance": 25,
+          "description": "cast Phantom Slice Level 1",
+          "details": "Summon Phantom Leviathan's essence to strike monsters dealing area of effect damage. Damage 100%"
+        }
+      ],
+      "sockets": 5,
+      "maxSockets": 5
     },
     {
       "id": "s10_leviathans_crown",
       "name": "Leviathan's Crown",
       "baseType": "Helmet",
       "slot": "helmet",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 90,
+      "defenseMax": 140,
+      "implicit": {
+        "enhanced_defense": [
+          140,
+          240
+        ],
+        "all_skills": 3,
+        "aoe_skills": [
+          4,
+          8
+        ],
+        "spell_aoe_radius": [
+          25,
+          35
+        ],
+        "all_attributes": [
+          20,
+          40
+        ],
+        "all_resistances": [
+          20,
+          30
+        ]
+      },
+      "sockets": 3,
+      "maxSockets": 4
     },
     {
       "id": "s10_phantom_strike",
@@ -162,28 +700,180 @@
       "baseType": "Bow",
       "slot": "weapon",
       "rarity": "heroic",
-      "twoHanded": true
+      "twoHanded": true,
+      "grade": "SS",
+      "requiresLevel": 100,
+      "damageMin": 120,
+      "damageMax": 130,
+      "attackSpeed": 1.25,
+      "implicit": {
+        "enhanced_damage": [
+          900,
+          1000
+        ],
+        "all_skills": [
+          3,
+          5
+        ],
+        "increased_attack_speed": [
+          25,
+          40
+        ],
+        "crit_chance": [
+          20,
+          30
+        ],
+        "crit_damage": [
+          40,
+          60
+        ],
+        "defense_ignored": 40,
+        "increased_dexterity": 8
+      },
+      "procs": [
+        {
+          "trigger": "on_attack",
+          "chance": 20,
+          "description": "cast Arrow Rain Level 100",
+          "details": "Unleash a rain of arrows from the sky dealing increased damage. Attack Damage 2700%, Attack Rating 300%"
+        }
+      ],
+      "sockets": 4,
+      "maxSockets": 6
     },
     {
       "id": "s10_leviathans_spine",
       "name": "Leviathan's Spine",
       "baseType": "Cane",
       "slot": "weapon",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "twoHanded": true,
+      "grade": "SS",
+      "requiresLevel": 100,
+      "damageMin": 32,
+      "damageMax": 42,
+      "attackSpeed": 1.15,
+      "implicit": {
+        "all_skills": [
+          8,
+          12
+        ],
+        "suppress_spell_hits": 25,
+        "faster_cast_rate": [
+          70,
+          100
+        ],
+        "phys_dmg_taken_as_arcane": 25,
+        "enemy_all_resist": [
+          25,
+          40
+        ],
+        "magic_damage_reduction": 25,
+        "all_resistances": [
+          45,
+          60
+        ]
+      },
+      "procs": [
+        {
+          "trigger": "on_cast",
+          "chance": 40,
+          "description": "cast Odin's Fury Level 99",
+          "details": "Powerful warcry which deals arcane damage and stuns monsters around you. Arcane Damage 98320"
+        }
+      ],
+      "sockets": 5,
+      "maxSockets": 6
     },
     {
       "id": "s10_leviathans_ribcage",
       "name": "Leviathan's Ribcage",
       "baseType": "Body Armor",
       "slot": "armor",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 230,
+      "defenseMax": 310,
+      "implicit": {
+        "enhanced_defense": [
+          375,
+          430
+        ],
+        "all_skills": 3,
+        "melee_skills": [
+          8,
+          12
+        ],
+        "ranged_skills": [
+          8,
+          12
+        ],
+        "reduced_movement_diminish": 25,
+        "attack_rating": [
+          1400,
+          1800
+        ],
+        "life_steal": [
+          6,
+          10
+        ],
+        "mana_steal": [
+          6,
+          12
+        ],
+        "projectile_speed": 15,
+        "to_strength": 50,
+        "increased_dexterity": 6,
+        "enhanced_damage_based_on_level": 165
+      },
+      "procs": [
+        {
+          "trigger": "on_hit",
+          "chance": 4,
+          "description": "cast Warrior's Path Level 13",
+          "details": "Increases your attack damage and magic skill damage for a short period. Magic Skill Damage 39%, Attack Damage 58.50%"
+        }
+      ],
+      "sockets": 4,
+      "maxSockets": 4
     },
     {
       "id": "s10_phantoms_step",
       "name": "Phantom's Step",
       "baseType": "Boots",
       "slot": "boots",
-      "rarity": "heroic"
+      "rarity": "heroic",
+      "grade": "SS",
+      "requiresLevel": 100,
+      "defenseMin": 72,
+      "defenseMax": 90,
+      "implicit": {
+        "enhanced_defense": [
+          180,
+          225
+        ],
+        "all_skills": [
+          2,
+          4
+        ],
+        "random_skill_element": 5,
+        "movement_speed": [
+          75,
+          100
+        ],
+        "faster_cast_rate": 25,
+        "increased_attack_speed": 25,
+        "faster_hit_recovery": 120
+      },
+      "skillBonuses": {
+        "Phantom Momentum": 1
+      },
+      "uniqueEffects": [
+        "Movement Phasing"
+      ],
+      "sockets": 2,
+      "maxSockets": 2
     },
     {
       "id": "s10_leviathans_blood",
@@ -194,6 +884,28 @@
     }
   ],
   "change": {
+    "belt_heroic_belt_of_infinite_wealth": {
+      "implicit": {
+        "enhanced_defense": [
+          45,
+          60
+        ],
+        "physical_damage_reduction": 10,
+        "gold_find": [
+          25,
+          40
+        ],
+        "magic_find": [
+          20,
+          25
+        ],
+        "experience_gain": [
+          1,
+          5
+        ],
+        "magic_find_based_on_level": 25
+      }
+    },
     "mace_heroic_rakhul_s_legion_crusher": {
       "randomAffixGroupId": "random_unholy",
       "maxAffixes": 2
@@ -3419,7 +4131,7 @@
         ],
         "mana_replenish_pct": 25,
         "increased_life": -10,
-        "physical_damage_reduction": -10,
+        "physical_damage_reduction": 10,
         "all_resistances": -50,
         "flat_magic_skill_damage": [
           15,

@@ -191,6 +191,24 @@
         "name": "Flat Magic Skill Damage",
         "category": "offense",
         "format": "flat"
+      },
+      {
+        "key": "enemy_arcane_resist",
+        "name": "Enemy Arcane Resist",
+        "category": "offense",
+        "format": "percent"
+      },
+      {
+        "key": "enemy_cold_resist",
+        "name": "Enemy Cold Resist",
+        "category": "offense",
+        "format": "percent"
+      },
+      {
+        "key": "poison_resistance_converted_to_poison_damage",
+        "name": "of Poison Resistance is Converted to Poison Skill Damage",
+        "category": "offense",
+        "format": "percent"
       }
     ]
   }
