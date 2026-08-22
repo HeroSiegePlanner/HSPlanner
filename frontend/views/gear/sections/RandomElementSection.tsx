@@ -36,6 +36,7 @@ export function RandomElementSection({
         onChange={(id) => onChange(id as SkillElement | null)}
         placeholder="Pick the rolled element"
         clearLabel="No element"
+        searchable={false}
       />
       <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] leading-snug text-faint">
         The element is random in game — pick the one yours landed on to count
