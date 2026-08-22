@@ -1,7 +1,7 @@
 import { getAugment, getItem, getRuneword } from '@data'
 import { MAX_STARS, maxSocketsFor } from '../../../store/itemRules'
 import { AUGMENT_MAX_LEVEL } from '../../../types'
-import type { EquippedItem, SocketType } from '../../../types'
+import type { EquippedItem, SkillElement, SocketType } from '../../../types'
 
 export function makeEquippedItem(baseId: string): EquippedItem | null {
   const base = getItem(baseId)
@@ -72,6 +72,20 @@ export function withRandomSkill(
   }
   if (item.randomSkillId === skillId) return item
   return { ...item, randomSkillId: skillId }
+}
+
+export function withRandomElement(
+  item: EquippedItem,
+  element: SkillElement | null,
+): EquippedItem {
+  if (element === null) {
+    if (!item.randomSkillElement) return item
+    const { randomSkillElement: _drop, ...rest } = item
+    void _drop
+    return rest
+  }
+  if (item.randomSkillElement === element) return item
+  return { ...item, randomSkillElement: element }
 }
 
 export function withAffixAdded(

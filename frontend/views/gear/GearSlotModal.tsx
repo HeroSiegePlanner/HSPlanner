@@ -17,6 +17,7 @@ import { ForgedModsSection } from './sections/ForgedModsSection'
 import { RunewordPresets } from './sections/RunewordPresets'
 import { SocketsSection } from './sections/SocketsSection'
 import { StarsSection } from './sections/StarsSection'
+import { RandomElementSection } from './sections/RandomElementSection'
 import { RandomSkillSection } from './sections/RandomSkillSection'
 import { RARITY_LABEL, RARITY_TEXT } from './lib/rarity'
 import { useGearDraft } from './lib/useGearDraft'
@@ -239,6 +240,10 @@ export function GearSlotModal({
                       pool={base.randomSkillPool}
                       onChange={d.setRandomSkill}
                     />
+                  )}
+
+                  {base.implicit?.random_skill_element !== undefined && (
+                    <RandomElementSection equipped={draft} onChange={d.setRandomElement} />
                   )}
 
                   {(base.rarity === 'common' || base.randomAffixGroupId) && (

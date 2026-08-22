@@ -77,6 +77,20 @@ describe('buildItemTooltipModel', () => {
     expect(text).not.toContain('Random Skill')
   })
 
+  it('names the picked element on a "Random Skill Element" implicit line', () => {
+    const base = getItem('s10_phantoms_step')
+    if (!base) throw new Error('fixture item missing from game data')
+    const unrolled = JSON.stringify(buildItemTooltipModel(base, eq(base.id), deps()).sections)
+    expect(unrolled).toContain('+[4-5] to Random Element Skills (not rolled)')
+
+    const rolled = JSON.stringify(
+      buildItemTooltipModel(base, eq(base.id, { randomSkillElement: 'cold' }), deps())
+        .sections,
+    )
+    expect(rolled).toContain('+[4-5] to Cold Skills (random element)')
+    expect(rolled).not.toContain('Random Element')
+  })
+
   it('puts base stats first as row lines (Defense/Damage/Block/Attacks per sec)', () => {
     const base = getItem('sword_angelic_st_mika_s_zweih_nder')
     if (!base) throw new Error('fixture item missing from game data')

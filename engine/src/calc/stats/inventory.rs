@@ -70,6 +70,17 @@ pub fn apply_inventory(
 
         if let Some(implicit) = base.implicit.as_ref() {
             for (stat_key, value) in implicit.iter() {
+                // "+X to Random Skill Element" only lands once the user picks the element.
+                let rerouted: String;
+                let stat_key = if stat_key == "random_skill_element" {
+                    let Some(element) = item.random_skill_element.as_deref() else {
+                        continue;
+                    };
+                    rerouted = format!("{element}_skills");
+                    &rerouted
+                } else {
+                    stat_key
+                };
                 let override_val = item.implicit_overrides.get(stat_key).copied();
                 let scaled: Ranged = match override_val {
                     Some(ov) => (ov, ov),

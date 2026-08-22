@@ -1,4 +1,5 @@
 ## Features
+- Random Skill Element: items that roll "+X to Random Skill Element" (Phantom's Step, Captain's Anchor, Crow's Whisper…) get an element picker in the gear slot, and the ranks land on the picked element's skills
 - Season 10 heroic items get their stats: Ghost Armada, Jar of Parasites, Parasitic Heart, Ghastly Skull, Captain's Anchor, Parasite Loop, Skeleton Crew's Band, Blood Maggot Pendant, Grimtide's Necklace, Infected Grasp, Leviathan's Ribcage, Captain's Attire, Phantom's Step, Ghostplunderer's Marchers, Leviathan's Crown, Parasite Queen's Tiara, Overgrowth, Leviathan's Spine, Phantom Strike, Phantom Scimitar, Conjured Tentacle, Grimtide's Scimitar, Ethereal Musket
 - Season 10 item skills (Will-O-Wisp, Ghost Crew, Phantom Momentum, Scarlet Sacrifice, Heart Surge, Spectral Scatter) show their descriptions in item tooltips
 - Unholy slots: items with "Unholy" special effects list them as their own tooltip section

@@ -60,6 +60,23 @@ describe('encode/decode round-trip', () => {
     expect(decoded!.snapshot.inventory.charm_1?.randomSkillId).toBe('gunner_drone')
   })
 
+  it('round-trips the picked random skill element', () => {
+    const snap = makeSnapshot({
+      inventory: {
+        boots: {
+          baseId: 's10_phantoms_step',
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          randomSkillElement: 'cold',
+        },
+      },
+    })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.inventory.boots?.randomSkillElement).toBe('cold')
+  })
+
   it('defaults disabledPotions to empty when absent from the payload', () => {
     const decoded = decodeShareToBuild(encodeBuildToShare(makeSnapshot()))
     expect(decoded!.snapshot.disabledPotions).toEqual({})

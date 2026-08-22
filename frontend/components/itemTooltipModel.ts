@@ -219,7 +219,9 @@ export function buildItemTooltipModel(
   const implicitLines: TooltipLine[] = [
     ...implicitEntries.map(([key, value, isCustom]) =>
       textLine(
-        `${formatValue(value, key)} ${statName(key)}`,
+        key === RANDOM_ELEMENT_KEY
+          ? `${formatValue(value, '')} ${randomElementLabel(equipped?.randomSkillElement)}`
+          : `${formatValue(value, key)} ${statName(key)}`,
         'implicit',
         isCustom ? { badge: 'custom' } : undefined,
       ),
@@ -503,6 +505,14 @@ export const RANDOM_SKILL_NAME = 'Random Skill'
 function randomSkillLabel(skillId: string | undefined): string {
   if (!skillId) return `${RANDOM_SKILL_NAME} (not rolled)`
   return skills.find((s) => s.id === skillId)?.name ?? RANDOM_SKILL_NAME
+}
+
+// Same idea for "+X to Random Skill Element": the element is the user's pick.
+const RANDOM_ELEMENT_KEY = 'random_skill_element'
+
+function randomElementLabel(element: string | undefined): string {
+  if (!element) return 'to Random Element Skills (not rolled)'
+  return `to ${element.charAt(0).toUpperCase()}${element.slice(1)} Skills (random element)`
 }
 
 function buildGrantedSkillEntries(

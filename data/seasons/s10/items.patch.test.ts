@@ -322,7 +322,7 @@ describe('S10 item changes', () => {
     expect(boots.implicit).toEqual({
       enhanced_defense: [180, 225],
       all_skills: [2, 4],
-      random_skill_element: 5,
+      random_skill_element: [4, 5],
       movement_speed: [75, 100],
       faster_cast_rate: 25,
       increased_attack_speed: 25,

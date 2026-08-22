@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import type { EquippedItem, SocketType } from '../../../types'
+import type { EquippedItem, SkillElement, SocketType } from '../../../types'
 import * as edits from './itemEdits'
 
 export function isSameItem(
@@ -55,6 +55,10 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     (skillId: string | null) => edit((cur) => edits.withRandomSkill(cur, skillId)),
     [edit],
   )
+  const setRandomElement = useCallback(
+    (element: SkillElement | null) => edit((cur) => edits.withRandomElement(cur, element)),
+    [edit],
+  )
   const addAffix = useCallback(
     (affixId: string, tier: number) => edit((cur) => edits.withAffixAdded(cur, affixId, tier)),
     [edit],
@@ -96,6 +100,7 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     setSocketType,
     setStars,
     setRandomSkill,
+    setRandomElement,
     addAffix,
     removeAffix,
     addForgedMod,

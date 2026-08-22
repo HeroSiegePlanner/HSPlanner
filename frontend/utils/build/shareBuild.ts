@@ -12,7 +12,7 @@ import type {
   SocketType,
   TreeSocketContent,
 } from '../../types'
-import { AUGMENT_MAX_LEVEL } from '../../types'
+import { AUGMENT_MAX_LEVEL, SKILL_ELEMENTS } from '../../types'
 import { activeSeasonId } from '@data'
 import { isKnownSeasonId, LEGACY_SEASON_ID } from '@data/seasons/registry'
 import { sanitizeHtml } from '../sanitizeHtml'
@@ -107,6 +107,7 @@ const equippedItemSchema = z
       })
       .optional(),
     randomSkillId: SAFE_STRING.optional(),
+    randomSkillElement: z.enum(SKILL_ELEMENTS).optional(),
   })
   .passthrough()
 
@@ -412,6 +413,7 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       ...(typeof item.randomSkillId === 'string'
         ? { randomSkillId: item.randomSkillId }
         : {}),
+      ...(item.randomSkillElement ? { randomSkillElement: item.randomSkillElement } : {}),
     }
   }
   return out

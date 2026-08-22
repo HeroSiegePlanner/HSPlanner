@@ -857,7 +857,10 @@
           2,
           4
         ],
-        "random_skill_element": 5,
+        "random_skill_element": [
+          4,
+          5
+        ],
         "movement_speed": [
           75,
           100

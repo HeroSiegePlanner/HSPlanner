@@ -592,6 +592,42 @@ fn apply_inventory_implicit_overrides_replace_base_implicits() {
     assert!(in_stats || in_attrs, "override value not found anywhere");
 }
 
+#[test]
+fn random_skill_element_lands_on_the_picked_element_skills() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "boots".into(),
+        EquippedItem {
+            base_id: "s10_phantoms_step".into(),
+            random_skill_element: Some("cold".into()),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let cold = stats.get("cold_skills").expect("picked element gets the ranks");
+    assert!(cold.iter().any(|c| c.value == (4.0, 5.0)));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+#[test]
+fn random_skill_element_is_inert_until_an_element_is_picked() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "boots".into(),
+        EquippedItem {
+            base_id: "s10_phantoms_step".into(),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(!stats.contains_key("cold_skills"));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
 // ---- charm star scaling gated by season ----
 
 // A charm's percent-star-scaling implicit must star-scale under s10 but stay
