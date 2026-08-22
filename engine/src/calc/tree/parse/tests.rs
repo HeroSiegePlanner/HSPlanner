@@ -472,6 +472,7 @@ fn rule_element_skill_damage() {
     assert_mod("25% Increased Lightning Skill Damage", "lightning_skill_damage", 25.0);
     assert_mod("+5 to Fire Skill Damage", "flat_fire_skill_damage", 5.0);
     assert_mod("+3 to Cold Skill Damage", "flat_cold_skill_damage", 3.0);
+    assert_mod("+4 to Magic Skill Damage", "flat_magic_skill_damage", 4.0);
 }
 
 #[test]

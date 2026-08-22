@@ -291,4 +291,12 @@ mod tests {
         assert!(!is_stat_star_immune(Some("to_strength"))); // Percent
         assert!(!is_stat_star_immune(Some("fire_skills"))); // FlatSkillStaircase
     }
+
+    #[test]
+    fn flat_magic_skill_damage_scales_like_the_other_flats() {
+        assert_eq!(
+            stat_star_percent_multiplier(Some("flat_magic_skill_damage"), Some(5)),
+            1.25
+        );
+    }
 }

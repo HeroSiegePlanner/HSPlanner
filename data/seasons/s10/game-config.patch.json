@@ -185,6 +185,12 @@
         "name": "All Skills (White Mage)",
         "category": "base",
         "format": "flat"
+      },
+      {
+        "key": "flat_magic_skill_damage",
+        "name": "Flat Magic Skill Damage",
+        "category": "offense",
+        "format": "flat"
       }
     ]
   }

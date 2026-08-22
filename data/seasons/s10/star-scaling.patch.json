@@ -1,0 +1,7 @@
+{
+  "change": {
+    "map": {
+      "flat_magic_skill_damage": { "kind": "percent", "perStar": 5 }
+    }
+  }
+}
