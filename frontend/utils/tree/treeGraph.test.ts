@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { ADJ, START_IDS, START_SET } from './treeGraph'
+import { ADJ, START_IDS, START_SET, withToggled } from './treeGraph'
+
+describe('withToggled', () => {
+  it('removes only the hovered node, keeping nodes it bridged to', () => {
+    const allocated = new Set([0, 4, 5])
+    expect([...withToggled(allocated, 4)].sort()).toEqual([0, 5])
+    expect(allocated.has(4)).toBe(true)
+  })
+
+  it('adds an unallocated node without its path', () => {
+    expect([...withToggled(new Set([0]), 5)].sort()).toEqual([0, 5])
+  })
+})
 
 describe('treeGraph season-aware build', () => {
   it('derives START_IDS from the active season\'s root nodes (s10)', () => {
