@@ -16,7 +16,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 77.5, "perLevel": 22.5 },
+      "weaponDamagePct": { "base": 77.5, "perLevel": 25 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -36,7 +36,7 @@
       },
       {
         "id": "radiant_glory",
-        "positionIndex": 1,
+        "positionIndex": 3,
         "name": "Radiant Glory",
         "description": "Increases the damage dealt by glorious strike.",
         "maxRank": 5,
@@ -58,13 +58,13 @@
       },
       {
         "id": "jousting_master",
-        "positionIndex": 3,
+        "positionIndex": 1,
         "name": "Jousting Master",
         "description": "Increases attack area of effect radius of glorious strike.",
-        "maxRank": 5,
+        "maxRank": 2,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": { "area_of_effect": 25 },
+          "perRank": { "area_of_effect": 25 }
         }
       },
       {
@@ -973,7 +973,7 @@
       },
       {
         "id": "gradient_strikes",
-        "positionIndex": 2,
+        "positionIndex": 6,
         "name": "Gradient Strikes",
         "description": "Increases the attack rating of shield slam.",
         "maxRank": 5,
@@ -1018,13 +1018,13 @@
       },
       {
         "id": "field_coverage",
-        "positionIndex": 6,
+        "positionIndex": 2,
         "name": "Field Coverage",
         "description": "Increases the area of effect of shield slam.",
-        "maxRank": 5,
+        "maxRank": 2,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": { "area_of_effect": 25 },
+          "perRank": { "area_of_effect": 25 }
         }
       },
       {
@@ -1638,7 +1638,8 @@
           }
         }
       }
-    ]
+    ],
+    "cooldown": 5
   },
   {
     "id": "damage_reflect",

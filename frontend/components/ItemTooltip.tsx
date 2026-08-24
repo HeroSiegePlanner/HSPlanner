@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useCalcResult } from '../hooks/useCalcResult'
 import {
-  activeSeasonId,
   detectRuneword,
   effectiveStars,
   getAffix,
@@ -84,7 +83,7 @@ function useItemDisplayValues(
 ): TooltipDisplayValues | null {
   return useCalcResult<TooltipDisplayValues | null>(
     () => {
-      const stars = effectiveStars(base.slot, activeSeasonId, equipped?.stars)
+      const stars = effectiveStars(base.slot, equipped?.stars)
       const toPair = (v: RangedValue): [number, number] => [
         rangedMin(v),
         rangedMax(v),

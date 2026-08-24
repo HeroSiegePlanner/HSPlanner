@@ -15,7 +15,7 @@
     "position": { "row": 0, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "damageFormula": { "base": 5.2, "perLevel": 13.53 },
+    "damageFormula": { "base": 5.2, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Whiplash", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -1893,7 +1893,7 @@
           "chance": { "base": 0, "perRank": 15 },
           "effects": {
             "base": { "cold_skill_damage": 0, "projectile_size": 0 },
-            "perRank": { "cold_skill_damage": 36, "projectile_size": 12 }
+            "perRank": { "cold_skill_damage": 32, "projectile_size": 12 }
           }
         }
       },
@@ -1927,7 +1927,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 95, "area_of_effect": 20 }
+          "perRank": { "cold_skill_damage": 60, "area_of_effect": 20 }
         }
       }
     ]

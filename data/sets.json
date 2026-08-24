@@ -145,10 +145,10 @@
       {
         "pieces": 2,
         "stats": {
-          "life": 575
+          "life": 300
         },
         "descriptions": [
-          "+575 Life"
+          "+300 Life"
         ]
       },
       {
@@ -213,8 +213,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 3,
-          "ignore_poison_res": 25
+          "ignore_poison_res": 25,
+          "all_skills_amazon": 3
         },
         "descriptions": [
           "+3 to All Skills (Amazon)",
@@ -304,7 +304,7 @@
         "pieces": 4,
         "stats": {
           "to_dexterity": 35,
-          "all_skills": 4
+          "all_skills_marauder": 4
         },
         "descriptions": [
           "+35 to Dexterity",
@@ -363,7 +363,7 @@
         "pieces": 4,
         "stats": {
           "all_resistances": 50,
-          "all_skills": 4
+          "all_skills_marauder": 4
         },
         "descriptions": [
           "+50% All Resistances",
@@ -421,8 +421,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "attack_damage": 50
+          "attack_damage": 50,
+          "all_skills_plague_doctor": 4
         },
         "descriptions": [
           "+4 to All Skills (Plague Doctor)",
@@ -470,7 +470,7 @@
         "pieces": 3,
         "stats": {
           "arcane_skill_damage": 20,
-          "all_skills": 3
+          "all_skills_demonspawn": 3
         },
         "descriptions": [
           "+20% Arcane Skill Damage",
@@ -538,7 +538,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5
+          "all_skills_shaman": 5
         },
         "descriptions": [
           "+5 to All Skills (Shaman)",
@@ -596,7 +596,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 3
+          "all_skills_illusionist": 3
         },
         "descriptions": [
           "+3 to All Skills (Illusionist)",
@@ -654,8 +654,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "attack_damage": 30
+          "attack_damage": 30,
+          "all_skills_shield_lancer": 4
         },
         "descriptions": [
           "+4 to All Skills (Lancer)",
@@ -713,8 +713,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "ignore_fire_res": 25
+          "ignore_fire_res": 25,
+          "all_skills_pyromancer": 5
         },
         "descriptions": [
           "+5 to All Skills (Pyromancer)",
@@ -772,7 +772,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5
+          "all_skills_illusionist": 5
         },
         "descriptions": [
           "+5 to All Skills (Illusionist)",
@@ -873,8 +873,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 7,
-          "attack_rating_pct": 40
+          "attack_rating_pct": 40,
+          "all_skills_demon_slayer": 7
         },
         "descriptions": [
           "+7 to All Skills (Demon Slayer)",
@@ -932,8 +932,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "ignore_arcane_res": 25
+          "ignore_arcane_res": 25,
+          "all_skills_necromancer": 5
         },
         "descriptions": [
           "+5 to All Skills (Necromancer)",
@@ -1077,8 +1077,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "mana_per_kill": 35
+          "mana_per_kill": 35,
+          "all_skills_demonspawn": 5
         },
         "descriptions": [
           "+5 to All Skills (Demon Spawn)",
@@ -1200,8 +1200,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 6,
-          "crit_damage": 75
+          "crit_damage": 75,
+          "all_skills_demon_slayer": 6
         },
         "descriptions": [
           "+6 to All Skills (Demon Slayer)",
@@ -1259,8 +1259,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "ignore_poison_res": 15
+          "ignore_poison_res": 15,
+          "all_skills_plague_doctor": 5
         },
         "descriptions": [
           "+5 to All Skills (Plague Doctor)",
@@ -1319,7 +1319,7 @@
         "pieces": 4,
         "stats": {
           "physical_damage_reduction": 15,
-          "all_skills": 5
+          "all_skills_marksman": 5
         },
         "descriptions": [
           "+15% Physical Damage Reduction",
@@ -1377,8 +1377,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "fire_skill_damage": 40
+          "fire_skill_damage": 40,
+          "all_skills_pyromancer": 5
         },
         "descriptions": [
           "+5 to All Skills (Pyromancer)",
@@ -1436,8 +1436,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "explosion_aoe": 75
+          "explosion_aoe": 75,
+          "all_skills_samurai": 4
         },
         "descriptions": [
           "+4 to All Skills (Samurai)",
@@ -1495,7 +1495,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5
+          "all_skills_pirate": 5
         },
         "descriptions": [
           "+6 to Anchor Swing (Pirate)",
@@ -1553,8 +1553,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "arcane_skill_damage": 35
+          "arcane_skill_damage": 35,
+          "all_skills_white_mage": 5
         },
         "descriptions": [
           "+5 to All Skills (White Mage)",
@@ -1759,7 +1759,7 @@
         "pieces": 4,
         "stats": {
           "physical_damage_reduction": 15,
-          "all_skills": 5
+          "all_skills_necromancer": 5
         },
         "descriptions": [
           "+15% Physical Damage Reduction",
@@ -1816,8 +1816,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "ignore_cold_res": 25
+          "ignore_cold_res": 25,
+          "all_skills_jotunn": 4
         },
         "descriptions": [
           "+4 to All Skills (Jotunn)",
@@ -1860,7 +1860,7 @@
         "pieces": 3,
         "stats": {
           "attack_rating": 1250,
-          "all_skills": 5
+          "all_skills_viking": 5
         },
         "descriptions": [
           "+1250 Attack Rating",
@@ -1918,7 +1918,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 3
+          "all_skills_paladin": 3
         },
         "descriptions": [
           "+3 to All Skills (Paladin)",
@@ -1976,7 +1976,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 3
+          "all_skills_nomad": 3
         },
         "descriptions": [
           "+3 to All Skills (Nomad)",
@@ -2077,8 +2077,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "physical_damage_reduction": 30
+          "physical_damage_reduction": 30,
+          "all_skills_shield_lancer": 4
         },
         "descriptions": [
           "+4 to All Skills (Lancer)",
@@ -2136,8 +2136,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "deadly_blow": 50
+          "deadly_blow": 50,
+          "all_skills_samurai": 5
         },
         "descriptions": [
           "+5 to All Skills (Samurai)",
@@ -2195,7 +2195,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 3
+          "all_skills_marksman": 3
         },
         "descriptions": [
           "+3 to All Skills (Marksman)",
@@ -2313,7 +2313,7 @@
         "pieces": 4,
         "stats": {
           "to_strength": 30,
-          "all_skills": 4
+          "all_skills_nomad": 4
         },
         "descriptions": [
           "+30 to Strength",
@@ -2371,8 +2371,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "fire_skill_damage": 50
+          "fire_skill_damage": 50,
+          "all_skills_pirate": 5
         },
         "descriptions": [
           "+5 to All Skills (Pirate)",
@@ -2431,7 +2431,7 @@
         "pieces": 4,
         "stats": {
           "to_vitality": 40,
-          "all_skills": 4
+          "all_skills_viking": 4
         },
         "descriptions": [
           "+40 to Vitality",
@@ -2489,8 +2489,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "faster_cast_rate": 40
+          "faster_cast_rate": 40,
+          "all_skills_exo": 4
         },
         "descriptions": [
           "+4 to All Skills (Exo)",
@@ -2548,7 +2548,7 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 3
+          "all_skills_paladin": 3
         },
         "descriptions": [
           "+3 to All Skills (Paladin)",
@@ -2593,8 +2593,8 @@
         "pieces": 3,
         "stats": {
           "additive_lightning_damage": 1235,
-          "all_skills": 4,
-          "lightning_skill_damage": 35
+          "lightning_skill_damage": 35,
+          "all_skills_amazon": 4
         },
         "descriptions": [
           "+1235 Additive Lightning Damage",
@@ -2653,8 +2653,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "faster_cast_rate": 50
+          "faster_cast_rate": 50,
+          "all_skills_white_mage": 4
         },
         "descriptions": [
           "+4 to All Skills (White Mage)",
@@ -2712,8 +2712,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 5,
-          "physical_damage_reduction": 20
+          "physical_damage_reduction": 20,
+          "all_skills_redneck": 5
         },
         "descriptions": [
           "+5 to All Skills (Redneck)",
@@ -2758,7 +2758,7 @@
         "pieces": 3,
         "stats": {
           "fire_skill_damage": 40,
-          "all_skills": 3
+          "all_skills_redneck": 3
         },
         "descriptions": [
           "+40% Fire Skill Damage",
@@ -2916,8 +2916,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "to_dexterity": 250
+          "to_dexterity": 250,
+          "all_skills_butcher": 4
         },
         "descriptions": [
           "+4 to All Skills (Butcher)",
@@ -3058,8 +3058,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "increased_attack_speed": 40
+          "increased_attack_speed": 40,
+          "all_skills_jotunn": 4
         },
         "descriptions": [
           "+4 to All Skills (Jotunn)",
@@ -3117,8 +3117,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "ignore_cold_res": 40
+          "ignore_cold_res": 40,
+          "all_skills_exo": 4
         },
         "descriptions": [
           "+4 to All Skills (Exo)",
@@ -3175,8 +3175,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "ignore_lightning_res": 30
+          "ignore_lightning_res": 30,
+          "all_skills_stormweaver": 4
         },
         "descriptions": [
           "+4 to All Skills (Stormweaver)",
@@ -3357,8 +3357,8 @@
       {
         "pieces": 4,
         "stats": {
-          "all_skills": 4,
-          "summon_life": 75
+          "summon_life": 75,
+          "all_skills_prophet": 4
         },
         "descriptions": [
           "+4 to All Skills (Prophet)",
@@ -3406,7 +3406,7 @@
         "pieces": 3,
         "stats": {
           "increased_attack_speed": 30,
-          "all_skills": 4
+          "all_skills_prophet": 4
         },
         "descriptions": [
           "+30% Attack Speed",

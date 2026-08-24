@@ -29,7 +29,7 @@ import mercenariesJson from './mercenaries.json'
 import starScalingJson from './star-scaling.json'
 import affixTagsJson from './affix-tags.json'
 import subskillTagsJson from './subskill-tags.json'
-import { resolveActiveSeasonId, SEASON_BEFORE_CHARM_STARS } from './seasons/registry'
+import { resolveActiveSeasonId } from './seasons/registry'
 import { loadSeasonPatchSet } from './seasons/load'
 import {
   applyEtherTreePatch,
@@ -263,20 +263,15 @@ export function isCharmSlot(slot: string): boolean {
   return slot.startsWith('charm_')
 }
 
-export function charmsAllowStarsForge(season: string): boolean {
-  return season !== SEASON_BEFORE_CHARM_STARS
-}
-
-export function canStarForge(slot: string, season: string): boolean {
-  return isGearSlot(slot) || (isCharmSlot(slot) && charmsAllowStarsForge(season))
+export function canStarForge(slot: string): boolean {
+  return isGearSlot(slot) || isCharmSlot(slot)
 }
 
 export function effectiveStars(
   slot: string,
-  season: string,
   stars: number | null | undefined,
 ): number | null {
-  return canStarForge(slot, season) ? (stars ?? null) : null
+  return canStarForge(slot) ? (stars ?? null) : null
 }
 
 const starScaling = patched(

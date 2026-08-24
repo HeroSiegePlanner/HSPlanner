@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { EASE_OUT } from "../../utils/motion";
 import { useBuild } from "../../store/build";
 import { activeSeasonId } from "@data";
-import { getSeason } from "@data/seasons/registry";
+import { getSeason, SEASONS } from "@data/seasons/registry";
 
 const DISMISS_MS = 3500;
 
@@ -19,6 +19,8 @@ export default function SeasonToast() {
     const timer = window.setTimeout(() => setVisible(false), DISMISS_MS);
     return () => window.clearTimeout(timer);
   }, [activeBuildId]);
+
+  if (SEASONS.length < 2) return null;
 
   return (
     <AnimatePresence>

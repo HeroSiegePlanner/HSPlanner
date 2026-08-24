@@ -1194,7 +1194,7 @@
       },
       {
         "id": "adrenaline_secretion",
-        "positionIndex": 1,
+        "positionIndex": 8,
         "name": "Adrenaline Secretion",
         "description": "Increases the projectile speed of blood bolts.",
         "maxRank": 3,
@@ -1275,7 +1275,7 @@
       },
       {
         "id": "high_hemoglobin",
-        "positionIndex": 8,
+        "positionIndex": 1,
         "name": "High Hemoglobin",
         "description": "Increases the amount of blood bolts.",
         "maxRank": 3,
@@ -1317,14 +1317,8 @@
         "description": "Summon a following blood demon unleashing blood bolts to nearby monsters with increased blood bolt amount and attack speed.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "summon_max_amount": 1,
-            "summon_attack_speed": 0
-          },
-          "perRank": {
-            "summon_max_amount": 1,
-            "summon_attack_speed": 30
-          }
+          "base": { "summon_max_amount": 1, "summon_attack_speed": 0 },
+          "perRank": { "summon_max_amount": 1, "summon_attack_speed": 30 }
         }
       },
       {

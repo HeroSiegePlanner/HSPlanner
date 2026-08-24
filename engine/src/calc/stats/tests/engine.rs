@@ -628,12 +628,11 @@ fn random_skill_element_is_inert_until_an_element_is_picked() {
     assert!(!stats.contains_key("random_skill_element"));
 }
 
-// ---- charm star scaling gated by season ----
+// ---- charm star scaling ----
 
-// A charm's percent-star-scaling implicit must star-scale under s10 but stay
-// starless under s9, since can_star_forge(charm_1) is false in s9.
+// A charm's percent-star-scaling implicit must star-scale like gear does.
 #[test]
-fn charm_stars_scale_only_outside_s9() {
+fn charm_stars_scale() {
     const CHARM_ID: &str = "charm_angelic_air_melon";
     const STAT_KEY: &str = "lightning_skill_damage";
 
@@ -660,16 +659,10 @@ fn charm_stars_scale_only_outside_s9() {
         },
     );
 
-    let lsd_total = |season: &str| -> Ranged {
-        let _s = crate::calc::season::SeasonScope::enter(Some(season.to_string()));
-        let mut attrs: SourceMap = HashMap::new();
-        let mut stats: SourceMap = HashMap::new();
-        apply_inventory(&inv, &mut attrs, &mut stats);
-        sum_ranged_from_map(&stats, STAT_KEY)
-    };
-
-    let s9 = lsd_total("s9");
-    let s10 = lsd_total("s10");
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let scaled = sum_ranged_from_map(&stats, STAT_KEY);
 
     let base_value = base
         .implicit
@@ -679,14 +672,9 @@ fn charm_stars_scale_only_outside_s9() {
         .copied()
         .unwrap()
         .as_ranged();
-    assert_eq!(
-        s9,
-        (base_value.0.floor(), base_value.1.floor()),
-        "s9 must apply no star scaling to charms"
-    );
     // Assert `>` rather than exact values so the test survives perStar tuning.
     assert!(
-        s10.0 > s9.0 && s10.1 > s9.1,
-        "s10 should star-scale the charm above s9 baseline (s9={s9:?}, s10={s10:?})"
+        scaled.0 > base_value.0 && scaled.1 > base_value.1,
+        "five stars should scale the charm above its base roll (base={base_value:?}, scaled={scaled:?})"
     );
 }

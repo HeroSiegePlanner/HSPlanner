@@ -439,8 +439,8 @@
         80
       ],
       "extra_damage_ailments": [
-        15,
-        25
+        8,
+        15
       ],
       "all_attributes": 40,
       "magic_skill_damage": [
@@ -2914,8 +2914,11 @@
     },
     "uniqueEffects": [
       "Unholy",
-      "Unholy"
-    ]
+      "Unholy",
+      "Killing Spree: gain stacks of Movement Speed and Attack Speed after each kill, up to 100 stacks"
+    ],
+    "randomAffixGroupId": "random_unholy",
+    "maxAffixes": 2
   },
   {
     "id": "boots_unholy_peg_leg",
@@ -2956,7 +2959,8 @@
         40
       ],
       "summon_all_resist": 25,
-      "summon_reduced_dmg_taken": 20
+      "summon_reduced_dmg_taken": 20,
+      "cold_resistance_converted_to_cold_damage": 20
     },
     "sockets": 1,
     "maxSockets": 1,
@@ -2970,5 +2974,82 @@
         30
       ]
     }
+  },
+  {
+    "id": "s10_ghostplunderers_marchers",
+    "name": "Ghostplunderer's Marchers",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": 2,
+      "explosion_skills": [
+        5,
+        8
+      ],
+      "movement_speed": 80,
+      "explosion_damage": [
+        20,
+        30
+      ],
+      "explosion_aoe": [
+        30,
+        50
+      ],
+      "all_resistances": 15
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
+  },
+  {
+    "id": "s10_phantoms_step",
+    "name": "Phantom's Step",
+    "baseType": "Boots",
+    "slot": "boots",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 72,
+    "defenseMax": 90,
+    "implicit": {
+      "enhanced_defense": [
+        180,
+        225
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "random_skill_element": [
+        4,
+        5
+      ],
+      "movement_speed": [
+        75,
+        100
+      ],
+      "faster_cast_rate": 25,
+      "increased_attack_speed": 25,
+      "faster_hit_recovery": 120
+    },
+    "skillBonuses": {
+      "Phantom Momentum": 1
+    },
+    "uniqueEffects": [
+      "Movement Phasing"
+    ],
+    "sockets": 2,
+    "maxSockets": 2
   }
 ]

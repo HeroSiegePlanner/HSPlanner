@@ -12,8 +12,8 @@ import {
 } from './registry'
 
 describe('season registry', () => {
-  it('contains s9 and s10 with s9 as default', () => {
-    expect(SEASONS.map((s) => s.id)).toEqual(['s9', 's10'])
+  it('ships only s10, which is the default', () => {
+    expect(SEASONS.map((s) => s.id)).toEqual(['s10'])
     expect(DEFAULT_SEASON_ID).toBe('s10')
   })
 
@@ -38,7 +38,8 @@ describe('season registry', () => {
   })
 
   it('returns true for known season ids and false otherwise', () => {
-    expect(isKnownSeasonId('s9')).toBe(true)
+    expect(isKnownSeasonId('s10')).toBe(true)
+    expect(isKnownSeasonId('s9')).toBe(false)
     expect(isKnownSeasonId('')).toBe(false)
   })
 

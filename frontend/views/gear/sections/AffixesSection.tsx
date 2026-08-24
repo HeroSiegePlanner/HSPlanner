@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react'
 import { useCalcResult } from '../../../hooks/useCalcResult'
 import PickerModal, { type PickerRow } from '../PickerModal'
-import { activeSeasonId, affixes, effectiveStars, getAffix } from '@data'
+import { affixes, effectiveStars, getAffix } from '@data'
 import {
   formatAffixRangeFromValues,
   formatValue,
@@ -128,7 +128,7 @@ export function AffixesSection({
   )
   const affixRanges = useAffixDisplayRanges(
     equippedAffixItems,
-    effectiveStars(base?.slot ?? '', activeSeasonId, equipped.stars),
+    effectiveStars(base?.slot ?? '', equipped.stars),
   )
 
   const pickerRows = useMemo<PickerRow[]>(() => {

@@ -1,60 +1,48 @@
 import { describe, expect, it } from 'vitest'
-import { loadSeasonPatchSet } from '../load'
-import { applyListPatch } from '../resolve'
-import itemGrantedSkillsJson from '../../item-granted-skills.json'
+import { gameConfig, gems, getItem, getItemGrantedSkillByName, getItemSet, items } from './index'
+import setsJson from './sets.json'
 
 type Rec = Record<string, unknown>
 
-const itemModules = import.meta.glob<{ default: Rec[] }>('../../items/*.json', {
-  eager: true,
-})
-const baseItems: Rec[] = Object.values(itemModules).flatMap((m) => m.default)
+function item(id: string): Rec {
+  const found = getItem(id)
+  if (!found) throw new Error(`item ${id} missing`)
+  return found as unknown as Rec
+}
 
-const gemModules = import.meta.glob<{ default: Rec[] }>('../../gems/*.json', {
-  eager: true,
-})
-const gemsBase: Rec[] = Object.values(gemModules).flatMap((m) => m.default)
-
-const { patches, errors } = loadSeasonPatchSet('s10')
-
-function patchedItem(id: string): Rec {
-  const out = applyListPatch(baseItems, patches.items, 'items')
-  const found = out.data.find((i) => (i as Rec).id === id)
-  if (!found) throw new Error(`item ${id} missing after patch`)
-  return found as Rec
+function grantedSkill(name: string): Rec {
+  const found = getItemGrantedSkillByName(name)
+  if (!found) throw new Error(`item-granted skill ${name} missing`)
+  return found as unknown as Rec
 }
 
 describe('S10 item changes', () => {
-  it('loads the s10 patch set without validation errors', () => {
-    expect(errors).toEqual([])
-  })
-
   it("Ukko's Revenge nerfs lightning skill damage and stasis lightning", () => {
-    const impl = patchedItem('weapons_heroic_ukkos_revenge').implicit as Rec
+    const impl = item('weapons_heroic_ukkos_revenge').implicit as Rec
     expect(impl.lightning_skill_damage).toEqual([25, 40])
     expect(impl.extra_lightning_dmg_stasis).toEqual([20, 30])
   })
 
   it('Chaoswalkers nerfs extra damage per ailment', () => {
-    const impl = patchedItem('boots_heroic_chaoswalkers').implicit as Rec
+    const impl = item('boots_heroic_chaoswalkers').implicit as Rec
     expect(impl.extra_damage_ailments).toEqual([8, 15])
   })
 
   it('Glacier Talons nerfs the Blizzard on-kill proc rate to 4%', () => {
-    const procs = patchedItem('claw_heroic_glacier_talons').procs as Rec[]
+    const procs = item('claw_heroic_glacier_talons').procs as Rec[]
     expect(procs).toHaveLength(1)
     expect(procs[0]).toMatchObject({ trigger: 'on_kill', chance: 4 })
   })
 
   it('Amulet of Colosseum implicit is % increased attack speed, not flat APS', () => {
-    const impl = patchedItem('amulet_heroic_amulet_of_colosseum').implicit as Rec
+    const impl = item('amulet_heroic_amulet_of_colosseum').implicit as Rec
     expect(impl.increased_attack_speed).toEqual([5, 10])
     expect(impl.attacks_per_second).toBeUndefined()
     expect(impl.all_skills).toEqual([2, 4])
   })
 
   it('Angel gun gains base damage and APS moved out of implicit', () => {
-    const angel = patchedItem('gun_satanic_angel')
+    const angel = item('gun_satanic_angel')
     expect(angel.attackSpeed).toBe(1.75)
     expect(angel.damageMin).toBeGreaterThan(0)
     expect(angel.damageMax).toBeGreaterThanOrEqual(angel.damageMin as number)
@@ -64,7 +52,6 @@ describe('S10 item changes', () => {
   })
 
   it('every weapon has base damage and attack speed, none hides APS in implicit', () => {
-    const out = applyListPatch(baseItems, patches.items, 'items')
     // Spears absent from hero-siege-helper; s10_ weapons are new-season
     // scaffolding the helper does not list yet.
     const missingInSource = new Set([
@@ -77,9 +64,9 @@ describe('S10 item changes', () => {
       's10_phantom_strike',
       's10_leviathans_spine',
     ])
-    const weapons = out.data.filter(
-      (i) => (i as Rec).slot === 'weapon' && !missingInSource.has((i as Rec).id as string),
-    ) as Rec[]
+    const weapons = (items as unknown as Rec[]).filter(
+      (i) => i.slot === 'weapon' && !missingInSource.has(i.id as string),
+    )
     const noDamage = weapons.filter((w) => typeof w.damageMin !== 'number')
     const noAps = weapons.filter((w) => typeof w.attackSpeed !== 'number')
     const apsInImplicit = weapons.filter(
@@ -91,7 +78,7 @@ describe('S10 item changes', () => {
   })
 
   it('Shadow Lantern shield exists with its sentry package', () => {
-    const sl = patchedItem('shield_heroic_shadow_lantern')
+    const sl = item('shield_heroic_shadow_lantern')
     expect(sl.slot).toBe('offhand')
     expect(sl.rarity).toBe('heroic')
     expect(sl.requiresLevel).toBe(98)
@@ -111,7 +98,7 @@ describe('S10 item changes', () => {
   })
 
   it('Ghost Armada charm carries its S10 stats', () => {
-    const ga = patchedItem('s10_ghost_armada')
+    const ga = item('s10_ghost_armada')
     expect(ga.slot).toBe('charm_1')
     expect(ga.grade).toBe('SS')
     expect(ga.requiresLevel).toBe(100)
@@ -126,7 +113,7 @@ describe('S10 item changes', () => {
   })
 
   it('Jar of Parasites charm: "Reduced by -25%" in game is a real 25% reduction', () => {
-    const jar = patchedItem('s10_jar_of_parasites')
+    const jar = item('s10_jar_of_parasites')
     expect(jar.grade).toBe('SS')
     expect(jar.requiresLevel).toBe(100)
     expect([jar.width, jar.height]).toEqual([1, 2])
@@ -139,16 +126,16 @@ describe('S10 item changes', () => {
   })
 
   it('"Damage Taken Reduced by -10%" on Unholy Bible and Belt of Infinite Wealth is a real reduction', () => {
-    const bible = patchedItem('book_satanic_satan_s_unholy_bible').implicit as Rec
+    const bible = item('book_satanic_satan_s_unholy_bible').implicit as Rec
     expect(bible.physical_damage_reduction).toBe(10)
     expect(bible.all_resistances).toBe(-50)
-    const belt = patchedItem('belt_heroic_belt_of_infinite_wealth').implicit as Rec
+    const belt = item('belt_heroic_belt_of_infinite_wealth').implicit as Rec
     expect(belt.physical_damage_reduction).toBe(10)
     expect(belt.gold_find).toEqual([25, 40])
   })
 
   it('Ghastly Skull charm buffs summons and Will-O-Wisp with an orbiting-skull effect', () => {
-    const skull = patchedItem('s10_ghastly_skull')
+    const skull = item('s10_ghastly_skull')
     expect(skull.grade).toBe('SS')
     expect(skull.requiresLevel).toBe(100)
     expect([skull.width, skull.height]).toEqual([1, 2])
@@ -158,7 +145,7 @@ describe('S10 item changes', () => {
   })
 
   it("Captain's Anchor charm rolls a random element for its +5 skills", () => {
-    const anchor = patchedItem('s10_captains_anchor')
+    const anchor = item('s10_captains_anchor')
     expect(anchor.grade).toBe('SS')
     expect(anchor.requiresLevel).toBe(100)
     expect([anchor.width, anchor.height]).toEqual([2, 2])
@@ -171,7 +158,7 @@ describe('S10 item changes', () => {
   })
 
   it('Parasite Loop ring procs Sanguine Leech on cast', () => {
-    const loop = patchedItem('s10_parasite_loop')
+    const loop = item('s10_parasite_loop')
     expect(loop.slot).toBe('ring_1')
     expect(loop.grade).toBe('SS')
     expect(loop.requiresLevel).toBe(100)
@@ -194,7 +181,7 @@ describe('S10 item changes', () => {
   })
 
   it("Skeleton Crew's Band ring lets summons call a Ghost Crew member", () => {
-    const band = patchedItem('s10_skeleton_crews_band')
+    const band = item('s10_skeleton_crews_band')
     expect(band.slot).toBe('ring_1')
     expect(band.grade).toBe('SS')
     expect(band.requiresLevel).toBe(100)
@@ -210,7 +197,7 @@ describe('S10 item changes', () => {
   })
 
   it('Blood Maggot Pendant amulet buffs guardians at the cost of life', () => {
-    const pendant = patchedItem('s10_blood_maggot_pendant')
+    const pendant = item('s10_blood_maggot_pendant')
     expect(pendant.slot).toBe('amulet')
     expect(pendant.grade).toBe('SS')
     expect(pendant.requiresLevel).toBe(100)
@@ -227,7 +214,7 @@ describe('S10 item changes', () => {
   })
 
   it("Grimtide's Necklace amulet is a magic-find piece", () => {
-    const necklace = patchedItem('s10_grimtides_necklace')
+    const necklace = item('s10_grimtides_necklace')
     expect(necklace.grade).toBe('SS')
     expect(necklace.requiresLevel).toBe(100)
     expect([necklace.sockets, necklace.maxSockets]).toEqual([1, 1])
@@ -240,7 +227,7 @@ describe('S10 item changes', () => {
   })
 
   it('Infected Grasp gloves convert poison resistance into poison skill damage', () => {
-    const gloves = patchedItem('s10_infected_grasp')
+    const gloves = item('s10_infected_grasp')
     expect(gloves.slot).toBe('gloves')
     expect(gloves.grade).toBe('SS')
     expect(gloves.requiresLevel).toBe(100)
@@ -260,7 +247,7 @@ describe('S10 item changes', () => {
   })
 
   it("Leviathan's Ribcage armor procs Warrior's Path on hit", () => {
-    const ribcage = patchedItem('s10_leviathans_ribcage')
+    const ribcage = item('s10_leviathans_ribcage')
     expect(ribcage.slot).toBe('armor')
     expect(ribcage.grade).toBe('SS')
     expect(ribcage.requiresLevel).toBe(100)
@@ -292,7 +279,7 @@ describe('S10 item changes', () => {
   })
 
   it("Captain's Attire armor grants Oasis Aura", () => {
-    const attire = patchedItem('s10_captains_attire')
+    const attire = item('s10_captains_attire')
     expect(attire.slot).toBe('armor')
     expect(attire.grade).toBe('SS')
     expect(attire.requiresLevel).toBe(100)
@@ -311,7 +298,7 @@ describe('S10 item changes', () => {
   })
 
   it("Phantom's Step boots grant Phantom Momentum and a random element skill bonus", () => {
-    const boots = patchedItem('s10_phantoms_step')
+    const boots = item('s10_phantoms_step')
     expect(boots.slot).toBe('boots')
     expect(boots.grade).toBe('SS')
     expect(boots.requiresLevel).toBe(100)
@@ -331,7 +318,7 @@ describe('S10 item changes', () => {
   })
 
   it("Ghostplunderer's Marchers boots are the explosion pair", () => {
-    const boots = patchedItem('s10_ghostplunderers_marchers')
+    const boots = item('s10_ghostplunderers_marchers')
     expect(boots.grade).toBe('SS')
     expect(boots.requiresLevel).toBe(100)
     expect([boots.defenseMin, boots.defenseMax]).toEqual([72, 90])
@@ -349,7 +336,7 @@ describe('S10 item changes', () => {
   })
 
   it("Leviathan's Crown helmet is the AoE caster helm", () => {
-    const crown = patchedItem('s10_leviathans_crown')
+    const crown = item('s10_leviathans_crown')
     expect(crown.slot).toBe('helmet')
     expect(crown.grade).toBe('SS')
     expect(crown.requiresLevel).toBe(100)
@@ -366,7 +353,7 @@ describe('S10 item changes', () => {
   })
 
   it("Parasite Queen's Tiara helmet enrages summons through Scarlet Sacrifice", () => {
-    const tiara = patchedItem('s10_parasite_queens_tiara')
+    const tiara = item('s10_parasite_queens_tiara')
     expect(tiara.grade).toBe('SS')
     expect(tiara.requiresLevel).toBe(100)
     expect([tiara.defenseMin, tiara.defenseMax]).toEqual([90, 140])
@@ -383,7 +370,7 @@ describe('S10 item changes', () => {
   })
 
   it('Overgrowth shield procs Sanguine Flow when struck', () => {
-    const shield = patchedItem('s10_overgrowth')
+    const shield = item('s10_overgrowth')
     expect(shield.slot).toBe('offhand')
     expect(shield.grade).toBe('SS')
     expect(shield.requiresLevel).toBe(100)
@@ -410,7 +397,7 @@ describe('S10 item changes', () => {
   })
 
   it("Leviathan's Spine cane procs Odin's Fury on cast", () => {
-    const spine = patchedItem('s10_leviathans_spine')
+    const spine = item('s10_leviathans_spine')
     expect(spine.slot).toBe('weapon')
     expect(spine.twoHanded).toBe(true)
     expect(spine.grade).toBe('SS')
@@ -438,7 +425,7 @@ describe('S10 item changes', () => {
   })
 
   it('Phantom Strike bow procs Arrow Rain on attack', () => {
-    const bow = patchedItem('s10_phantom_strike')
+    const bow = item('s10_phantom_strike')
     expect(bow.twoHanded).toBe(true)
     expect(bow.grade).toBe('SS')
     expect(bow.requiresLevel).toBe(100)
@@ -465,7 +452,7 @@ describe('S10 item changes', () => {
   })
 
   it('Phantom Scimitar procs Phantom Slice both on kill and on attack', () => {
-    const sword = patchedItem('s10_phantom_scimitar')
+    const sword = item('s10_phantom_scimitar')
     expect(sword.twoHanded).toBe(true)
     expect(sword.grade).toBe('SS')
     expect(sword.requiresLevel).toBe(100)
@@ -491,7 +478,7 @@ describe('S10 item changes', () => {
   })
 
   it('Conjured Tentacle wand grants Heart Surge and converts cold resistance', () => {
-    const wand = patchedItem('s10_conjured_tentacle')
+    const wand = item('s10_conjured_tentacle')
     expect(wand.twoHanded).toBeUndefined()
     expect(wand.grade).toBe('SS')
     expect(wand.requiresLevel).toBe(100)
@@ -511,7 +498,7 @@ describe('S10 item changes', () => {
   })
 
   it("Grimtide's Scimitar procs Tides of Chaos on attack", () => {
-    const sword = patchedItem('s10_grimtides_scimitar')
+    const sword = item('s10_grimtides_scimitar')
     expect(sword.twoHanded).toBeUndefined()
     expect(sword.grade).toBe('SS')
     expect(sword.requiresLevel).toBe(100)
@@ -539,7 +526,7 @@ describe('S10 item changes', () => {
   })
 
   it('Ethereal Musket gun grants Spectral Scatter and pays with cooldown skill damage', () => {
-    const gun = patchedItem('s10_ethereal_musket')
+    const gun = item('s10_ethereal_musket')
     expect(gun.twoHanded).toBe(true)
     expect(gun.grade).toBe('SS')
     expect(gun.requiresLevel).toBe(100)
@@ -561,7 +548,6 @@ describe('S10 item changes', () => {
   })
 
   it('S10 granted skills carry their descriptions', () => {
-    const names = (patches.itemGrantedSkills?.add ?? []).map((e) => (e as Rec).name)
     for (const n of [
       'Will-O-Wisp',
       'Ghost Crew',
@@ -570,12 +556,12 @@ describe('S10 item changes', () => {
       'Heart Surge',
       'Spectral Scatter',
     ]) {
-      expect(names).toContain(n)
+      expect(grantedSkill(n).description, n).toBeTruthy()
     }
   })
 
   it('Parasitic Heart charm trades life for damage', () => {
-    const heart = patchedItem('s10_parasitic_heart')
+    const heart = item('s10_parasitic_heart')
     expect(heart.grade).toBe('SS')
     expect(heart.requiresLevel).toBe(100)
     expect([heart.width, heart.height]).toEqual([1, 2])
@@ -588,7 +574,7 @@ describe('S10 item changes', () => {
   })
 
   it('Skull Axe grants the Demon Form proc buff', () => {
-    const axe = patchedItem('relic_relic_skull_axe')
+    const axe = item('relic_relic_skull_axe')
     expect(axe.procs).toEqual([
       {
         trigger: 'on_attack',
@@ -601,14 +587,7 @@ describe('S10 item changes', () => {
   })
 
   it('Demon Form buff scales 24%+6%/lvl attack damage, 8%+2%/lvl attack speed', () => {
-    const out = applyListPatch(
-      itemGrantedSkillsJson as Rec[],
-      patches.itemGrantedSkills,
-      'item-granted-skills',
-      'name',
-    )
-    const df = out.data.find((s) => (s as Rec).name === 'Demon Form') as Rec
-    expect(df).toBeDefined()
+    const df = grantedSkill('Demon Form')
     expect(df.condition).toBe('demon_form_buff')
     const ps = df.passiveStats as Rec
     expect(ps.base).toEqual({ attack_damage: 18, increased_attack_speed: 6 })
@@ -616,21 +595,13 @@ describe('S10 item changes', () => {
   })
 
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
-    const out = applyListPatch(
-      itemGrantedSkillsJson as Rec[],
-      patches.itemGrantedSkills,
-      'item-granted-skills',
-      'name',
-    )
-    const skill = out.data.find(
-      (s) => (s as Rec).name === "Fallen God's Bloodlust",
-    ) as Rec
+    const skill = grantedSkill("Fallen God's Bloodlust")
     const perRank = (skill.passiveConverts as Rec).perRank as Rec[]
     expect(perRank[0].pct).toBe(7)
   })
 })
 
-describe('S10 new items (scaffolding, no affixes yet)', () => {
+describe('S10 new items', () => {
   const NEW_ITEM_IDS = [
     's10_captains_anchor', 's10_ghastly_skull', 's10_grimtides_necklace',
     's10_skeleton_crews_band', 's10_ethereal_musket', 's10_grimtides_scimitar',
@@ -641,32 +612,123 @@ describe('S10 new items (scaffolding, no affixes yet)', () => {
     's10_leviathans_spine', 's10_leviathans_ribcage', 's10_phantoms_step', 's10_leviathans_blood',
   ]
 
-  const resolvedItems = (): Rec[] =>
-    applyListPatch(baseItems, patches.items, 'items').data as Rec[]
-
-  it('adds every new item as a net-new id (no collision, all present)', () => {
-    const baseIds = new Set(baseItems.map((i) => i.id))
-    const patchedIds = new Set(resolvedItems().map((i) => i.id))
+  it('ships every new item exactly once', () => {
     for (const id of NEW_ITEM_IDS) {
-      expect(baseIds.has(id)).toBe(false)
-      expect(patchedIds.has(id)).toBe(true)
+      expect(items.filter((i) => i.id === id), id).toHaveLength(1)
     }
   })
 
   it('routes new items to the right slots', () => {
-    const items = resolvedItems()
-    const byId = (id: string) => items.find((i) => i.id === id) as Rec
-    expect(byId('s10_captains_anchor').slot).toBe('charm_1')
-    expect(byId('s10_leviathans_blood').slot).toBe('potion_1')
-    expect(byId('s10_overgrowth').slot).toBe('offhand')
-    expect(byId('s10_phantom_scimitar').twoHanded).toBe(true)
-    expect(byId('s10_phantom_strike').twoHanded).toBe(true)
+    expect(item('s10_captains_anchor').slot).toBe('charm_1')
+    expect(item('s10_leviathans_blood').slot).toBe('potion_1')
+    expect(item('s10_overgrowth').slot).toBe('offhand')
+    expect(item('s10_phantom_scimitar').twoHanded).toBe(true)
+    expect(item('s10_phantom_strike').twoHanded).toBe(true)
   })
 
-  it("adds Cthulhu's Soul Gem to the gems collection", () => {
-    const gems = applyListPatch(gemsBase, patches.gems, 'gems').data as Rec[]
-    const gem = gems.find((g) => g.id === 's10_cthulhus_soul_gem') as Rec
-    expect(gem).toBeDefined()
-    expect(gem.name).toBe("Cthulhu's Soul Gem")
+  it("ships Cthulhu's Soul Gem", () => {
+    const gem = gems.find((g) => g.id === 's10_cthulhus_soul_gem')
+    expect(gem?.name).toBe("Cthulhu's Soul Gem")
+  })
+})
+
+describe('S10 item stat changes (second batch)', () => {
+  it('Soulforged Ring swaps XP gain for XP below level 100', () => {
+    const impl = item('ring_heroic_soulforged_ring').implicit as Rec
+    expect(impl.experience_gain).toBeUndefined()
+    expect(impl.increased_experience_gain_below_100).toBe(25)
+  })
+
+  it('Absolute Zero softens the cold res penalty and drops max cold res', () => {
+    const impl = item('ring_unholy_absolute_zero').implicit as Rec
+    expect(impl.cold_resistance).toBe(-30)
+    expect(impl.max_cold_resistance).toBeUndefined()
+  })
+
+  it("Serpent's Tooth grants +15-20 to Envenom", () => {
+    const sb = item('dagger_heroic_serpent_s_tooth').skillBonuses as Rec
+    expect(sb.Envenom).toEqual([15, 20])
+  })
+
+  it('Mask of the Celestial gains flat +3 all skills', () => {
+    const impl = item('helmet_angelic_mask_of_the_celestial').implicit as Rec
+    expect(impl.all_skills).toBe(3)
+  })
+
+  it('Tablet of Awakening has built-in rainbow sockets at positions 2-4', () => {
+    const tablet = item('charm_heroic_tablet_of_awakening')
+    expect(tablet.rainbowSockets).toEqual([2, 3, 4])
+  })
+
+  it("Serpent's Tooth rolls attack speed instead of FCR and loses the Envenom proc", () => {
+    const st = item('dagger_heroic_serpent_s_tooth')
+    const impl = st.implicit as Rec
+    expect(impl.faster_cast_rate).toBeUndefined()
+    expect(impl.increased_attack_speed).toEqual([30, 45])
+    expect(st.procs).toEqual([])
+  })
+
+  it("Ra's Band is promoted to SS heroic tier", () => {
+    const rb = item('ring_satanic_ra_s_band')
+    expect(rb.rarity).toBe('heroic')
+    expect(rb.grade).toBe('SS')
+  })
+
+  it("Gurag's Fury tier-1 bonus drops to 300 life", () => {
+    const gurag = getItemSet('gurag_s_fury') as unknown as Rec
+    const bonuses = gurag.bonuses as Rec[]
+    expect((bonuses[0].stats as Rec).life).toBe(300)
+  })
+
+  it('class-labelled set bonuses carry a class-scoped all_skills key', () => {
+    const statKeys = gameConfig.stats.map((s) => s.key)
+
+    let classScoped = 0
+    for (const set of setsJson as Rec[]) {
+      for (const bonus of (set.bonuses ?? []) as Rec[]) {
+        const stats = bonus.stats as Rec
+        const labelled = ((bonus.descriptions ?? []) as string[]).some((d) =>
+          /All Skills \(/.test(d),
+        )
+        if (!labelled) continue
+        expect(stats.all_skills).toBeUndefined()
+        const key = Object.keys(stats).find((k) => k.startsWith('all_skills_'))
+        expect(key, `${set.id as string} lost its class-scoped key`).toBeDefined()
+        expect(statKeys).toContain(key)
+        classScoped++
+      }
+    }
+    expect(classScoped).toBe(43)
+  })
+
+  it('unlabelled set bonuses keep the global all_skills key', () => {
+    const gurag = getItemSet('gurag_s_fury') as unknown as Rec
+    const tier2 = (gurag.bonuses as Rec[])[1].stats as Rec
+    expect(tier2.all_skills).toBe(4)
+  })
+
+  it('every item with Unholy slots can actually roll them', () => {
+    const ids = [
+      'mace_heroic_rakhul_s_legion_crusher',
+      'axe_satanic_abomination_s_gut_ripper',
+      'boots_unholy_marcher_s_of_hatred',
+      'gloves_heroic_manahungerers',
+      'amulet_satanic_damien_s_soulstone',
+    ]
+    for (const id of ids) {
+      const it = item(id)
+      const slots = ((it.uniqueEffects ?? []) as string[]).filter(
+        (e) => e.trim() === 'Unholy',
+      ).length
+      expect(slots, `${id} lost its Unholy slots`).toBeGreaterThan(0)
+      expect(it.randomAffixGroupId, id).toBe('random_unholy')
+      expect(it.maxAffixes, id).toBe(slots)
+    }
+  })
+
+  it('game config carries the cold-res-to-cold-damage stat for Peg Leg', () => {
+    expect(gameConfig.stats.some((s) => s.key === 'cold_resistance_converted_to_cold_damage')).toBe(true)
+    const impl = item('boots_unholy_peg_leg').implicit as Rec
+    expect(impl.cold_resistance_converted_to_cold_damage).toBe(20)
   })
 })

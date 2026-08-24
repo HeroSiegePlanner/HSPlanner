@@ -179,7 +179,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 100 }
+          "perRank": { "physical_skill_damage": 70 }
         }
       },
       {

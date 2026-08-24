@@ -1,4 +1,5 @@
 ## Features
+- Season 9 support removed: Season 10 is now the base game data (no more season patches). Old Season 9 builds and share codes open as Season 10 — tree and ether allocations reset, items and skills that no longer exist are dropped. The season switcher stays hidden while only one season ships
 - Dropdowns (class, season, sort, random skill / element pickers) now match the item picker lists: hairline borders, plain rows, gold only on the selected entry, no keyboard-hint footer
 - Random Skill Element: items that roll "+X to Random Skill Element" (Phantom's Step, Captain's Anchor, Crow's Whisper…) get an element picker in the gear slot, and the ranks land on the picked element's skills
 - Season 10 heroic items get their stats: Ghost Armada, Jar of Parasites, Parasitic Heart, Ghastly Skull, Captain's Anchor, Parasite Loop, Skeleton Crew's Band, Blood Maggot Pendant, Grimtide's Necklace, Infected Grasp, Leviathan's Ribcage, Captain's Attire, Phantom's Step, Ghostplunderer's Marchers, Leviathan's Crown, Parasite Queen's Tiara, Overgrowth, Leviathan's Spine, Phantom Strike, Phantom Scimitar, Conjured Tentacle, Grimtide's Scimitar, Ethereal Musket

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import ItemTooltip from '../../components/ItemTooltip'
 import Dropdown, { type DropdownOption } from '../../components/ui/Dropdown'
 import {
-  activeSeasonId,
   detectRuneword,
   effectiveStars,
   gameConfig,
@@ -36,7 +35,7 @@ function StashRow({ entry }: { entry: StashEntry }) {
   const sprite = getItemImage(base.id)
   const rarityText = runeword ? 'text-accent-hot' : RARITY_TEXT[base.rarity]
 
-  const stars = effectiveStars(base.slot, activeSeasonId, entry.item.stars) ?? 0
+  const stars = effectiveStars(base.slot, entry.item.stars) ?? 0
   const badges: string[] = []
   if (stars > 0) badges.push('★'.repeat(Math.min(stars, 5)))
   if (entry.item.socketCount > 0)

@@ -394,5 +394,12 @@
         5
       ]
     }
+  },
+  {
+    "id": "s10_leviathans_blood",
+    "name": "Leviathan's Blood",
+    "baseType": "Potion",
+    "slot": "potion_1",
+    "rarity": "heroic"
   }
 ]

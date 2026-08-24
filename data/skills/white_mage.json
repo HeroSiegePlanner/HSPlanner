@@ -573,9 +573,9 @@
             "mana_replenish_pct": 0
           },
           "perRank": {
-            "arcane_skill_damage": 10,
-            "life_replenish_pct": 5,
-            "mana_replenish_pct": 5
+            "arcane_skill_damage": 3,
+            "life_replenish_pct": 3,
+            "mana_replenish_pct": 3
           }
         }
       }
@@ -2717,7 +2717,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "spell_crit_chance": 0, "conversion_energy": 0 },
-          "perRank": { "spell_crit_chance": 3, "conversion_energy": 15 }
+          "perRank": { "spell_crit_chance": 3, "conversion_energy": 10 }
         }
       },
       {

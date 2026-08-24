@@ -94,8 +94,8 @@
       },
       {
         "source": "Toxic Remains",
-        "stat": "attack_rating",
-        "value": 2.5,
+        "stat": "poison_skill_damage",
+        "value": 15,
         "per": "skill_level"
       },
       {
@@ -623,26 +623,26 @@
     "bonusSources": [
       {
         "source": "Noxious Strike",
-        "stat": "attack_damage",
-        "value": 2.75,
+        "stat": "poison_skill_damage",
+        "value": 8,
         "per": "skill_level"
       },
       {
         "source": "Envenom",
-        "stat": "attack_damage",
-        "value": 3,
+        "stat": "poison_skill_damage",
+        "value": 20,
         "per": "skill_level"
       },
       {
         "source": "Jungle Camouflage",
-        "stat": "attack_rating",
-        "value": 2.25,
+        "stat": "poison_skill_damage",
+        "value": 15,
         "per": "skill_level"
       },
       {
         "source": "Intelligence",
         "stat": "poison_skill_damage",
-        "value": 6.85,
+        "value": 7.5,
         "per": "attribute_point"
       }
     ],
@@ -933,10 +933,7 @@
     "kind": "passive",
     "description": "Killing a monster causes them to explode into toxic gas inflicting Poisoned on monsters hit.",
     "damageType": "poison",
-    "tags": [
-      "Passive",
-      "Poison"
-    ],
+    "tags": ["Passive", "Poison", "Area of Effect", "Spell"],
     "maxRank": 20,
     "requiresLevel": 24,
     "ranks": [
@@ -992,13 +989,7 @@
     "kind": "active",
     "description": "Call down a rain of falling spears on target location dealing poison damage and slowing monsters struck.",
     "damageType": "poison",
-    "tags": [
-      "Cast",
-      "Active",
-      "Spell",
-      "Area of Effect",
-      "Poison"
-    ],
+    "tags": ["Cast", "Active", "Spell", "Area of Effect", "Poison", "Ranged"],
     "movementDuringUse": 65,
     "range": 240,
     "maxRank": 20,
@@ -1220,7 +1211,8 @@
           "perRank": { "area_of_effect": 35, "projectile_count": 4 }
         }
       }
-    ]
+    ],
+    "usesAttackSpeed": true
   },
   {
     "id": "envenom",
@@ -1229,11 +1221,7 @@
     "kind": "passive",
     "description": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned.",
     "damageType": "poison",
-    "tags": [
-      "Passive",
-      "Explosion",
-      "Poison"
-    ],
+    "tags": ["Passive", "Explosion", "Poison", "Spell"],
     "maxRank": 20,
     "requiresLevel": 30,
     "ranks": [
@@ -1246,20 +1234,13 @@
       "row": 4,
       "col": 0
     },
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 26
-    },
+    "damageFormula": { "base": 1, "perLevel": 24 },
     "passiveStats": {
       "base": {
         "extra_damage_poisoned": 50
       }
     },
-    "proc": {
-      "chance": 8,
-      "trigger": "on_hit",
-      "target": "Envenom"
-    },
+    "proc": { "chance": 18, "trigger": "on_kill", "target": "Envenom" },
     "bonusSources": [
       {
         "source": "Jungle Camouflage",
@@ -1299,8 +1280,8 @@
         "positionIndex": 1,
         "name": "Toxic Fortune",
         "description": "Increases envenom proc chance.",
-        "maxRank": 5,
-        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 4 } }
+        "maxRank": 3,
+        "proc": { "trigger": "on_hit", "chance": { "base": 5, "perRank": 5 } }
       },
       {
         "id": "empowered_toxin",
@@ -2709,7 +2690,7 @@
         "positionIndex": 5,
         "name": "Storm´s Wisdom",
         "description": "Chance to critically hit dealing increased damage based on your intelligence.",
-        "maxRank": 3,
+        "maxRank": 2,
         "effects": {
           "base": { "crit_chance": 0, "conversion_intelligence": 0 },
           "perRank": { "crit_chance": 5, "conversion_intelligence": 25 }
@@ -2789,8 +2770,8 @@
         "description": "Release chain lightning on hit with an increased number of bounces.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 0, "lightning_skill_damage": 0 },
-          "perRank": { "projectile_bounces": 2, "lightning_skill_damage": 35 }
+          "base": { "projectile_bounces": 2, "lightning_skill_damage": 0 },
+          "perRank": { "projectile_bounces": 1, "lightning_skill_damage": 30 }
         }
       },
       {

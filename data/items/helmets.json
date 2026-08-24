@@ -66,7 +66,8 @@
       "buffing_aura_effectiveness": [
         80,
         125
-      ]
+      ],
+      "all_skills": 3
     }
   },
   {
@@ -309,7 +310,11 @@
         30,
         40
       ],
-      "damage_based_on_level": 100
+      "damage_based_on_level": 100,
+      "enhanced_damage": [
+        100,
+        150
+      ]
     }
   },
   {
@@ -549,8 +554,8 @@
         20
       ],
       "Random Buff Skill": [
-        15,
-        20
+        20,
+        30
       ]
     }
   },
@@ -3023,5 +3028,76 @@
       "lightning_resistance": 20
     },
     "setId": "thunder_god_s_wrath"
+  },
+  {
+    "id": "s10_parasite_queens_tiara",
+    "name": "Parasite Queen's Tiara",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 90,
+    "defenseMax": 140,
+    "implicit": {
+      "enhanced_defense": [
+        140,
+        240
+      ],
+      "summon_skills": [
+        5,
+        8
+      ],
+      "summon_attack_speed": 25,
+      "summon_damage": [
+        15,
+        30
+      ],
+      "summon_movement_speed": 20
+    },
+    "skillBonuses": {
+      "Scarlet Sacrifice": [
+        1,
+        3
+      ]
+    },
+    "sockets": 2,
+    "maxSockets": 3
+  },
+  {
+    "id": "s10_leviathans_crown",
+    "name": "Leviathan's Crown",
+    "baseType": "Helmet",
+    "slot": "helmet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 90,
+    "defenseMax": 140,
+    "implicit": {
+      "enhanced_defense": [
+        140,
+        240
+      ],
+      "all_skills": 3,
+      "aoe_skills": [
+        4,
+        8
+      ],
+      "spell_aoe_radius": [
+        25,
+        35
+      ],
+      "all_attributes": [
+        20,
+        40
+      ],
+      "all_resistances": [
+        20,
+        30
+      ]
+    },
+    "sockets": 3,
+    "maxSockets": 4
   }
 ]

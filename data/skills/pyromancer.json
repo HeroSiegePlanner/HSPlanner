@@ -1236,7 +1236,7 @@
     "tree": "Arsonist",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1 }],
-    "damageFormula": { "base": 0, "perLevel": 15.5 },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "bonusSources": [
       { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },

@@ -10,7 +10,6 @@ pub fn apply_inventory(
     stat_sources: &mut SourceMap,
 ) -> bool {
     let mut weapon_has_attack_speed = false;
-    let season = crate::calc::season::current_season_id();
 
     for (slot_key, item) in inventory.iter() {
         let Some(base) = data::get_item(&item.base_id) else {
@@ -23,7 +22,7 @@ pub fn apply_inventory(
             item.socketed.iter().map(|s| s.as_deref()).collect();
         let runeword = data::detect_runeword(base, &socketed_refs);
         let scale_implicit = runeword.is_none();
-        let can_sf = data::can_star_forge(slot_key, &season);
+        let can_sf = data::can_star_forge(slot_key);
         let effective_stars: Option<u32> = if can_sf { item.stars } else { None };
 
         let aps_in_implicit = base

@@ -171,15 +171,9 @@ describe('season sweep', () => {
   }
 })
 
-describe('s10 incarnation node skill tags', () => {
-  it('patched nodes carry g tags from game data', () => {
-    const load = loadSeasonPatchSet('s10')
-    const r = applyRecordMergePatch(
-      incarnationNodesJson as Record<string, Rec>,
-      load.patches.incarnationNodes as unknown as RecordPatch<Rec> | undefined,
-      'incarnation-nodes',
-    )
-    const nodes = r.data as Record<string, { t: string; g?: string[] }>
+describe('incarnation node skill tags', () => {
+  it('nodes carry g tags from game data', () => {
+    const nodes = incarnationNodesJson as Record<string, { t: string; g?: string[] }>
     expect(nodes['443'].g).toEqual(['Ranged', 'Projectile'])
     expect(nodes['1951'].g).toEqual(['Area of Effect'])
     expect(nodes['0'].g).toBeUndefined()

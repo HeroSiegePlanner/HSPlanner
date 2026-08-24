@@ -568,13 +568,33 @@
     "tree": "Chronomancer",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 16, "perLevel": 13 },
+    "damageFormula": { "base": 16, "perLevel": 7.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
-      { "source": "Dimensional Displacement", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
-      { "source": "Temporal Heroes", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Expansive Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9, "per": "attribute_point" }
+      {
+        "source": "Dimensional Displacement",
+        "stat": "arcane_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Temporal Heroes",
+        "stat": "arcane_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Expansive Mind",
+        "stat": "arcane_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "arcane_skill_damage",
+        "value": 8.25,
+        "per": "attribute_point"
+      }
     ],
     "subskills": [
       {
@@ -592,7 +612,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "perRank": { "arcane_skill_damage": 12 }
         }
       },
       {
@@ -640,13 +660,13 @@
         "maxRank": 5,
         "effects": {
           "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 30 }
+          "perRank": { "arcane_break": 20 }
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 4 },
           "appliesStates": [
-            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 20 } }
           ]
         }
       },
@@ -710,7 +730,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
-          "perRank": { "faster_cast_rate": 8, "arcane_skill_damage": 25 }
+          "perRank": { "faster_cast_rate": 8, "arcane_skill_damage": 15 }
         }
       },
       {
@@ -721,7 +741,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 7.5, "area_of_effect": 2.5 }
+          "perRank": { "arcane_skill_damage": 4, "area_of_effect": 2.5 }
         }
       },
       {
@@ -732,7 +752,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "arcane_skill_damage": 0, "max_targets": 0 },
-          "perRank": { "arcane_skill_damage": 85, "max_targets": 1 }
+          "perRank": { "arcane_skill_damage": 25, "max_targets": 1 }
         }
       },
       {
@@ -743,7 +763,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "arcane_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "arcane_skill_damage": 65, "faster_cast_rate": 7.5 }
+          "perRank": { "arcane_skill_damage": 45, "faster_cast_rate": 7.5 }
         }
       },
       {

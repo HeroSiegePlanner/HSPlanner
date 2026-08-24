@@ -567,7 +567,7 @@
       },
       {
         "id": "rupturing_lightning",
-        "positionIndex": 5,
+        "positionIndex": 6,
         "name": "Rupturing Lightning",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
@@ -588,7 +588,7 @@
       },
       {
         "id": "concentrated_aura",
-        "positionIndex": 6,
+        "positionIndex": 5,
         "name": "Concentrated Aura",
         "description": "Holy shock aura now deals increased damage in a cone in front of you instead.",
         "maxRank": 5,
@@ -2059,7 +2059,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "arcane_skill_damage": 0, "arcane_break": 0 },
-          "perRank": { "arcane_skill_damage": 60, "arcane_break": 50 }
+          "perRank": { "arcane_skill_damage": 40, "arcane_break": 50 }
         },
         "proc": {
           "trigger": "on_hit",

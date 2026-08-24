@@ -7,7 +7,6 @@ import {
 } from './entityRates'
 import { effectiveSkillTags, entityTagOf } from '../skills/skillTags'
 import {
-  activeSeasonId,
   detectRuneword,
   effectiveStars,
   gameConfig,
@@ -363,7 +362,7 @@ async function computeItemDisplay(
   equipped: EquippedItem,
   scaleImplicit: boolean,
 ): Promise<TooltipModelDeps['display']> {
-  const stars = effectiveStars(base.slot, activeSeasonId, equipped.stars)
+  const stars = effectiveStars(base.slot, equipped.stars)
   const toPair = (v: RangedValue): [number, number] => [rangedMin(v), rangedMax(v)]
   const implicitEntries = scaleImplicit && base.implicit ? Object.entries(base.implicit) : []
   const skillEntries = base.skillBonuses ? Object.entries(base.skillBonuses) : []

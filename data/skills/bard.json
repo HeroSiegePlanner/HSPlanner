@@ -1620,7 +1620,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 8 }
+          "perRank": { "increased_attack_speed": 5 }
         }
       },
       {
@@ -1668,7 +1668,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 18 }
+          "perRank": { "area_of_effect": 12 }
         }
       },
       {

@@ -184,7 +184,7 @@
         45,
         60
       ],
-      "physical_damage_reduction": -10,
+      "physical_damage_reduction": 10,
       "gold_find": [
         25,
         40

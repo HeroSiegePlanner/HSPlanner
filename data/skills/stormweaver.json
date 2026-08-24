@@ -17,7 +17,7 @@
     "ranks": [
       { "rank": 1, "manaCost": 4 }
     ],
-    "damageFormula": { "base": 4.5, "perLevel": 11 },
+    "damageFormula": { "base": 4.5, "perLevel": 9.25 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "bonusSources": [
       {
@@ -197,7 +197,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "projectile_count": 0, "lightning_skill_damage": 0 },
-          "perRank": { "projectile_count": 4, "lightning_skill_damage": 25 }
+          "perRank": { "projectile_count": 4, "lightning_skill_damage": 15 }
         }
       },
       {
@@ -422,10 +422,10 @@
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 1 },
           "effects": {
             "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 25 }
+            "perRank": { "of_total_damage": 15 }
           },
           "target": "Storm Cloud"
         }

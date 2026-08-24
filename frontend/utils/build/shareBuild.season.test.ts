@@ -1,6 +1,7 @@
 import { compressToEncodedURIComponent } from 'lz-string'
 import { describe, expect, it } from 'vitest'
 import { activeSeasonId } from '@data'
+import { DEFAULT_SEASON_ID } from '@data/seasons/registry'
 import { makeSnapshot } from './buildSnapshot.fixture'
 import {
   decodeShareToBuild,
@@ -23,16 +24,19 @@ describe('share schema v2 season', () => {
     const decoded = decodeShareToBuild(code)
     expect(decoded).not.toBeNull()
     expect(decoded!.season).toBe(activeSeasonId)
+    expect(decoded!.snapshot.allocatedTreeNodes).toEqual(new Set([0, 2]))
   })
 
-  it('encodes with an explicit seasonId override, independent of the active season', () => {
+  it('a code from a dropped season opens in the default season with tree allocations reset', () => {
     const code = encodeBuildToShare(snapshot(), undefined, 's9')
     const decoded = decodeShareToBuild(code)
     expect(decoded).not.toBeNull()
-    expect(decoded!.season).toBe('s9')
+    expect(decoded!.season).toBe(DEFAULT_SEASON_ID)
+    expect(decoded!.snapshot.allocatedTreeNodes.size).toBe(0)
+    expect(decoded!.snapshot.level).toBe(10)
   })
 
-  it('v1 payload (no se field) decodes as legacy season s9', () => {
+  it('v1 payload (no se field) decodes as the default season', () => {
     const snap = snapshot()
     const v1Payload = {
       v: 1,
@@ -54,7 +58,8 @@ describe('share schema v2 season', () => {
     const code = compressToEncodedURIComponent(JSON.stringify(v1Payload))
     const decoded = decodeShareToBuild(code)
     expect(decoded).not.toBeNull()
-    expect(decoded!.season).toBe('s9')
+    expect(decoded!.season).toBe(DEFAULT_SEASON_ID)
+    expect(decoded!.snapshot.allocatedTreeNodes.size).toBe(0)
     expect(decoded!.snapshot.classId).toBe('amazon')
     expect(decoded!.snapshot.level).toBe(10)
   })

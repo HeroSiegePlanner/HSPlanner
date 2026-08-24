@@ -58,23 +58,6 @@ fn classify_tree_nodes_partitions_every_node_line() {
 }
 
 #[test]
-fn s9_tree_node_lines_all_parse() {
-    // Every S9 tree-node line must classify as parsed, so an unrecognized
-    // pattern fails here. S10 has its own test with an exemption list.
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s9".to_string()));
-    let map = classify_tree_nodes_impl();
-    let nodes = super::super::data::tree_nodes();
-    for (id, cls) in &map {
-        assert!(
-            cls.unsupported.is_empty(),
-            "s9 node {id} ({}) has unsupported lines: {:?}",
-            nodes.get(id).map(|n| n.title.as_str()).unwrap_or(""),
-            cls.unsupported,
-        );
-    }
-}
-
-#[test]
 fn subskill_aggregation_unknown_skill_returns_empty() {
     let input = SubskillAggregationInput {
         class_id: "no_such_class".to_string(),
