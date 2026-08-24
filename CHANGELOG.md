@@ -22,5 +22,6 @@
 - Fix skipping node link #2113 
 - Incarnation tree: Malicious Veins shows "+25% of Maximum life dealt as Arcane Damage"
 - Incarnation tree: Vital Heart, First Aid, Rapid Mending and Vitalizing Charge are notables, as in game
+- Shadow Lantern has its sprite
 - Crow's Whisper is 2-handed staff instead 1-handed wand
 - C.Y.C.L.O.P.S. now pins gunner drones to 4 attacks/s
