@@ -1,12 +1,14 @@
 import { rangedMax, rangedMin } from '../../utils/item/stats'
 import { manaCostAtRank, splitManaCost } from '../../utils/build/manaCost'
+import { skillBaseRate } from '../../utils/build/skillRate'
 import type { RangedValue, Skill } from '../../types'
 
 export interface EffectiveSkillCost {
   baseManaMin: number | undefined
   baseManaMax: number | undefined
   mcrMax: number
-  fcrMax: number
+  baseRate: number | undefined
+  speedMax: number
   effectiveManaMin: number | undefined
   effectiveManaMax: number | undefined
   lifeCostMin: number | undefined
@@ -18,7 +20,7 @@ export interface EffectiveSkillCost {
 export function effectiveSkillCost(
   skill: Skill,
   mcrRange: RangedValue,
-  fcrRange: RangedValue,
+  speedRange: RangedValue,
   paidInLifeRange: RangedValue = 0,
   rankMin = 1,
   rankMax = rankMin,
@@ -35,8 +37,9 @@ export function effectiveSkillCost(
       : Math.max(costAtMin, costAtMax)
   const mcrMin = rangedMin(mcrRange)
   const mcrMax = rangedMax(mcrRange)
-  const fcrMin = rangedMin(fcrRange)
-  const fcrMax = rangedMax(fcrRange)
+  const speedMin = rangedMin(speedRange)
+  const speedMax = rangedMax(speedRange)
+  const baseRate = skillBaseRate(skill)
   const costMin =
     baseManaMin !== undefined
       ? Math.max(0, baseManaMin * (1 - mcrMax / 100))
@@ -50,18 +53,15 @@ export function effectiveSkillCost(
     baseManaMin,
     baseManaMax,
     mcrMax,
-    fcrMax,
+    baseRate,
+    speedMax,
     effectiveManaMin: split.manaMin,
     effectiveManaMax: split.manaMax,
     lifeCostMin: split.lifeMin,
     lifeCostMax: split.lifeMax,
     effectiveCastRateMin:
-      skill.baseCastRate !== undefined
-        ? skill.baseCastRate * (1 + fcrMin / 100)
-        : undefined,
+      baseRate !== undefined ? baseRate * (1 + speedMin / 100) : undefined,
     effectiveCastRateMax:
-      skill.baseCastRate !== undefined
-        ? skill.baseCastRate * (1 + fcrMax / 100)
-        : undefined,
+      baseRate !== undefined ? baseRate * (1 + speedMax / 100) : undefined,
   }
 }

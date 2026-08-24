@@ -398,6 +398,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 stat("increased_attack_speed_more"),
             ),
         )
+    } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
+        // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
+        (
+            active_skill.and_then(|s| {
+                s.base_cooldown
+                    .filter(|cd| *cd > 0.0)
+                    .map(|cd| 1.0 / cd)
+                    .or(s.base_cast_rate)
+            }),
+            stat("skill_haste"),
+        )
     } else {
         (
             active_skill.and_then(|s| s.base_cast_rate),

@@ -10,6 +10,7 @@
 - Item text editor: "Custom affixes" list — click a stat to insert a `[custom]` implicit line
 
 ## Fixes
+- Orb of Frost: casts once per its 1.75 s cooldown and speeds up with Skill Haste instead of Faster Cast Rate
 - Satan's Unholy Bible and Belt of Infinite Wealth: "Physical Damage Taken Reduced by -10%" is a real 10% reduction, not a penalty
 - Tree node tooltip: "This Node" now shows only the hovered node's own contribution; the nodes it would orphan stay under "With Cleanup" (it used to show the whole cleanup twice)
 - Magic Skill Damage now means the five elements (fire, cold, lightning, poison, arcane): "+X to Magic Skill Damage" from items and the tree is a flat bonus to every elemental skill (it was dead on items and hit physical skills from the tree), and "Increased (Total) Magic Skill Damage" and "Flat Elemental Skill Damage" no longer buff physical skills

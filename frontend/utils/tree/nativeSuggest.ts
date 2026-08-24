@@ -5,6 +5,7 @@ import { effectiveSkillTags } from '../skills/skillTags'
 import type { Skill } from '../../types'
 import { normalizeSkillName, rangedMax, rangedMin } from '../item/stats'
 import { computeBuildStatsAsync } from '../calc/bridge'
+import { skillBaseRate } from '../build/skillRate'
 import { ADJ, START_IDS } from './treeGraph'
 import {
   TREE_JEWELRY_IDS,
@@ -70,8 +71,9 @@ function skillRef(skill: Skill) {
     damageFormula: skill.damageFormula ?? undefined,
     damagePerRank: skill.damagePerRank ?? undefined,
     bonusSources: skill.bonusSources ?? [],
-    baseCastRate: skill.baseCastRate ?? undefined,
+    baseCastRate: skillBaseRate(skill) ?? undefined,
     usesAttackSpeed: skill.usesAttackSpeed ?? false,
+    usesSkillHaste: skill.usesSkillHaste ?? false,
     attackKind: skill.attackKind ?? undefined,
     attackScaling: skill.attackScaling ?? undefined,
     proc: skill.proc

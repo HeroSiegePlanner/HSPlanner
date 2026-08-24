@@ -475,7 +475,7 @@
     "tags": ["Cast", "Active", "Spell", "Projectile"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "usesSkillHaste": true,
     "baseCooldown": 1.75,
     "effectDuration": 1.85,
     "maxRank": 20,

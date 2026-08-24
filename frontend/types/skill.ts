@@ -85,6 +85,7 @@ export interface Skill {
   range?: number
   baseCastRate?: number
   usesAttackSpeed?: boolean
+  usesSkillHaste?: boolean
   baseCooldown?: number
   effectDuration?: number
   damagePerRank?: DamageRange[]

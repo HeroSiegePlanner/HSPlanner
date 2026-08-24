@@ -578,6 +578,8 @@ pub struct SkillSpec {
     #[serde(default)]
     pub uses_attack_speed: bool,
     #[serde(default)]
+    pub uses_skill_haste: bool,
+    #[serde(default)]
     pub base_cooldown: Option<f64>,
     #[serde(default)]
     pub effect_duration: Option<f64>,

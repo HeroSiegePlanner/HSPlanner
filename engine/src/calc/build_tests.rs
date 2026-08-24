@@ -1025,3 +1025,62 @@ fn item_granted_proc_damage_adds_proc_dps() {
     assert_eq!(perf_off.proc_dps_min, 0.0);
     assert_eq!(perf_off.proc_dps_max, 0.0);
 }
+
+#[test]
+fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
+    let base = perf_with_stats("jotunn", "orb_of_frost", 10, &[], &[], 1.0);
+    let with_fcr = perf_with_stats(
+        "jotunn",
+        "orb_of_frost",
+        10,
+        &[],
+        &[("faster_cast_rate", "100")],
+        1.0,
+    );
+    let with_haste = perf_with_stats(
+        "jotunn",
+        "orb_of_frost",
+        10,
+        &[],
+        &[("skill_haste", "75")],
+        1.0,
+    );
+
+    let (Some(base_dps), Some(fcr_dps), Some(haste_dps), Some(hit)) = (
+        base.avg_hit_dps_max,
+        with_fcr.avg_hit_dps_max,
+        with_haste.avg_hit_dps_max,
+        base.damage.as_ref().map(|d| d.avg_max as f64),
+    ) else {
+        panic!("expected dps for orb_of_frost");
+    };
+
+    assert!(
+        (base_dps / hit - 1.0 / 1.75).abs() < 1e-9,
+        "base rate should be one cast per 1.75 s cooldown, got {}",
+        base_dps / hit
+    );
+    assert_eq!(fcr_dps, base_dps, "faster cast rate must not touch the orb");
+    assert!(
+        (haste_dps / base_dps - 1.75).abs() < 1e-9,
+        "75% skill haste should be 1.75x, got x{}",
+        haste_dps / base_dps
+    );
+
+    let tundra = perf_with_stats(
+        "jotunn",
+        "orb_of_frost",
+        10,
+        &[("timeless_tundra", 5)],
+        &[],
+        1.0,
+    );
+    let Some(tundra_dps) = tundra.avg_hit_dps_max else {
+        panic!("expected dps for orb_of_frost");
+    };
+    assert!(
+        (tundra_dps / base_dps - 1.5).abs() < 1e-9,
+        "Timeless Tundra's 50% skill haste should be 1.5x, got x{}",
+        tundra_dps / base_dps
+    );
+}
