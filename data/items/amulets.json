@@ -1,5 +1,40 @@
 [
   {
+    "id": "amulets_normal_golden_amulet",
+    "name": "Amulet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_silver_necklace",
+    "name": "Locket",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_skull_trophy",
+    "name": "Talisman",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_hawks_claw_amulet",
+    "name": "Carcanet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_elven_necklace",
+    "name": "Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
     "id": "amulet_heroic_compass_of_wealth",
     "name": "Compass of Wealth",
     "baseType": "Amulet",

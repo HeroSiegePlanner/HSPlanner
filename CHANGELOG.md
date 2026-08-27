@@ -1,4 +1,6 @@
 ## Features
+- Six white ring bases (Bronze Ring, Iron Ring, Ring, Socket Ring, Primal Ring, Golden Ring)
+- Five white amulet bases (Amulet, Locket, Talisman, Carcanet, Necklace)
 - Item-granted skill ranks are rollable too (issue #136): "Stat Rolls" also lists every ranged "+[X-Y] to <Skill>" bonus the item grants
 - The affix picker lists one entry per affix family instead of one per tier
 - Affix pools per item type (data mined)

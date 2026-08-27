@@ -70,6 +70,77 @@
     }
   },
   {
+    "id": "rings_normal_bronze_ring",
+    "name": "Bronze Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "increased_attack_speed": [
+        5,
+        15
+      ]
+    }
+  },
+  {
+    "id": "rings_normal_iron_ring",
+    "name": "Iron Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "faster_cast_rate": [
+        10,
+        16
+      ]
+    }
+  },
+  {
+    "id": "rings_normal_ring",
+    "name": "Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "all_attributes": [
+        5,
+        15
+      ]
+    }
+  },
+  {
+    "id": "rings_normal_socketed_ring",
+    "name": "Socket Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "sockets": 0,
+    "maxSockets": 1
+  },
+  {
+    "id": "rings_normal_primal_ring",
+    "name": "Primal Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "max_all_resistances": 1
+    }
+  },
+  {
+    "id": "rings_normal_golden_ring",
+    "name": "Golden Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "magic_find": [
+        10,
+        28
+      ]
+    }
+  },
+  {
     "id": "ring_heroic_azazel_s_despair",
     "name": "Azazel's Despair",
     "baseType": "Ring",
