@@ -1,5 +1,5 @@
 ## Features
-- Skill hit model (data mined): a lingering damage object re-arms every `tickFrequency` seconds, so one cast lands `floor(lifetime / tickFrequency) + 1` hits on a target that stays in it. 31 skills carry the extracted numbers; every other skill hits once, as the game's damage parent does. Hit DPS and ailment application both scale with it, Skill Duration now buys extra ticks instead of doing nothing, and the skill panel shows "Hit interval" and "Hits per cast". Blazing Trail hits 6 times per cast, Blade Barrier 16, Sand Vortex 21
+- Skill hit model (data mined)
 - Six white ring bases (Bronze Ring, Iron Ring, Ring, Socket Ring, Primal Ring, Golden Ring)
 - Five white amulet bases (Amulet, Locket, Talisman, Carcanet, Necklace)
 - Item-granted skill ranks are rollable too (issue #136): "Stat Rolls" also lists every ranged "+[X-Y] to <Skill>" bonus the item grants
@@ -13,11 +13,8 @@
 - Items that roll "+X to Random Skill Element" (Phantom's Step, Captain's Anchor, Crow's Whisper, etc.) get an element picker in the gear slot, and the ranks land on the picked element's skills
 
 ## Fixes
-- The "to x" affixes (Sinister…Sacrilegious, Wishing…Anunnaki) claimed to grant "Increased Attack Speed when below 40% Maximum Life". Nothing else in the game data carries that stat and the engine never reads it, so the key was a guess against an unresolved description — cleared, and those affixes now sit under "Not Yet Supported" until the real stat is known
-- Two affix groups each held two unrelated families under one id, so the picker collapsed them into a single nonsense row ("+[1-7] to x"). Split apart and given the item types the dump records: Sinister…Sacrilegious roll on chests, Wishing…Anunnaki on belts, gloves, helmets and weapons, Freljord ("Cannot be Frozen") on chests, while Tundra carries no item types anywhere and is hidden
-- Codex affixes (Greed, Gluttony, Envy, Treasure, Darkness, Fear, Legion, Dwelling, Delirious, Heroic) were offered on gear. The decompile files them under `stat_codex_*` with no item types at all — gear rolls its own separate families for the same effects — so they are hidden from the picker, along with the equally item-typeless "N/A" summon-skill entries and Movement Phasing. Ticking "Show all affixes" still brings them back
-- Unholy affixes leaked into the normal "Add Affix" list on every item. They are one flat pool of 74 unrelated stats rather than a tier ladder, so grouping mashed them into a single nonsense row ("+[1-800] to Strength · 74 tiers"). They are now offered only on the bases that actually roll them
-- "+X to Random Skill Element" only worked when the base itself carried it (Phantom's Step and friends). Rolled as an affix it did nothing: no stat key, no element picker in the gear slot, and the engine only rerouted the implicit. All three are wired now — the affix lands on the picked element's skills like the implicit always did
+- Unholy affixes leaked into the normal "Add Affix" list on every item
+- "+X to Random Skill Element" only worked when the base itself carried it (Phantom's Step). Rolled as an affix it did nothing: no stat key, no element picker in the gear slot, and the engine only rerouted the implicit
 - Runeword presets were missing on white caster weapons (wands, canes, staves, tomes, spellblades), which were all typed "Spell" and matched no runeword
 - Wooden Shield, Buckler, Aegis and Monarch had no socket data, so no shield runeword ever showed up on them
 - Lone Mystic runeword was an empty stub: no base types, no stats
