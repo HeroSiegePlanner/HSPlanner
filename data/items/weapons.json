@@ -5795,7 +5795,7 @@
     },
     "setId": "damien_s_legacy",
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "damageMin": 30,
     "damageMax": 35,
     "attackSpeed": 1.75
