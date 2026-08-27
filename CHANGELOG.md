@@ -1,27 +1,20 @@
 ## Features
-- Season 9 support removed: Season 10 is now the base game data (no more season patches). Old Season 9 builds and share codes open as Season 10 — tree and ether allocations reset, items and skills that no longer exist are dropped. The season switcher stays hidden while only one season ships
-- Dropdowns (class, season, sort, random skill / element pickers) now match the item picker lists: hairline borders, plain rows, gold only on the selected entry, no keyboard-hint footer
-- Random Skill Element: items that roll "+X to Random Skill Element" (Phantom's Step, Captain's Anchor, Crow's Whisper…) get an element picker in the gear slot, and the ranks land on the picked element's skills
-- Season 10 heroic items get their stats: Ghost Armada, Jar of Parasites, Parasitic Heart, Ghastly Skull, Captain's Anchor, Parasite Loop, Skeleton Crew's Band, Blood Maggot Pendant, Grimtide's Necklace, Infected Grasp, Leviathan's Ribcage, Captain's Attire, Phantom's Step, Ghostplunderer's Marchers, Leviathan's Crown, Parasite Queen's Tiara, Overgrowth, Leviathan's Spine, Phantom Strike, Phantom Scimitar, Conjured Tentacle, Grimtide's Scimitar, Ethereal Musket
-- Season 10 item skills (Will-O-Wisp, Ghost Crew, Phantom Momentum, Scarlet Sacrifice, Heart Surge, Spectral Scatter) show their descriptions in item tooltips
-- Unholy slots: items with "Unholy" special effects list them as their own tooltip section
-- Random Skill rolls: items that roll "+X to Random Skill" get a skill picker in the gear slot, and the ranks land on the picked skill
-- Season 10 is now the default season. Everyone starts there unless they switch
-- Item text editor: "Custom affixes" list — click a stat to insert a `[custom]` implicit line
+- Item-granted skill ranks are rollable too (issue #136): "Stat Rolls" also lists every ranged "+[X-Y] to <Skill>" bonus the item grants
+- The affix picker lists one entry per affix family instead of one per tier
+- Affix pools per item type (data mined)
+- Roll sliders in the gear slot editor (issue #136)
+- The gear slot configure panel is a single column of collapsible sections with an "Expand all / Collapse all" bar
+- Cleaner rows in the gear slot editor
+- Season 9 support removed
+- Dropdowns (class, season, sort, random skill / element pickers) now match the item picker lists
+- Items that roll "+X to Random Skill Element" (Phantom's Step, Captain's Anchor, Crow's Whisper, etc.) get an element picker in the gear slot, and the ranks land on the picked element's skills
 
 ## Fixes
+- Four affix families now count towards the build instead of sitting under "Not Yet Supported"
+- Rolled affixes get their own "Affixes" heading in item tooltips, so they no longer run together with the section above
+- Affix rows in the gear slot editor lead with the stat they grant and keep the roll name in brackets after it instead of showing only the name
+- Item tooltips dropped the text of any affix whose value is printed without brackets
+- Item tooltips showed the affix range instead of the value the roll actually landed on
 - Orb of Frost: casts once per its 1.75 s cooldown and speeds up with Skill Haste instead of Faster Cast Rate
-- Satan's Unholy Bible and Belt of Infinite Wealth: "Physical Damage Taken Reduced by -10%" is a real 10% reduction, not a penalty
-- Tree node tooltip: "This Node" now shows only the hovered node's own contribution; the nodes it would orphan stay under "With Cleanup" (it used to show the whole cleanup twice)
-- Magic Skill Damage now means the five elements (fire, cold, lightning, poison, arcane): "+X to Magic Skill Damage" from items and the tree is a flat bonus to every elemental skill (it was dead on items and hit physical skills from the tree), and "Increased (Total) Magic Skill Damage" and "Flat Elemental Skill Damage" no longer buff physical skills
+- Magic Skill Damage now means the five elements (fire, cold, lightning, poison, arcane): "+X to Magic Skill Damage" from items and the tree is a flat bonus to every elemental skill
 - Heroic and Satanic Set rarity colors were swapped everywhere: Heroic is green, Satanic Set is lime
-- Celestial Might now actually converts elemental skill damage into arcane instead of being ignored
-- Engineer's Mini Drone: "+[1-2] to All Skills" is Marksman-only, as the item says
-- Class set bonuses: all 43 "+X to All Skills (Class)" 4-set bonuses now only pay out for that class
-- Item text editor: deleting or replacing a base implicit line now removes it instead of re-adding it on save
-- Fix skipping node link #2113 
-- Incarnation tree: Malicious Veins shows "+25% of Maximum life dealt as Arcane Damage"
-- Incarnation tree: Vital Heart, First Aid, Rapid Mending and Vitalizing Charge are notables, as in game
-- Shadow Lantern has its sprite
-- Crow's Whisper is 2-handed staff instead 1-handed wand
-- C.Y.C.L.O.P.S. now pins gunner drones to 4 attacks/s
