@@ -746,6 +746,9 @@ pub struct EquippedItem {
     pub augment: Option<AugmentRef>,
     #[serde(default)]
     pub implicit_overrides: HashMap<String, f64>,
+    /// Pinned totals for item-granted skill ranks, keyed by base skillBonuses name.
+    #[serde(default)]
+    pub skill_bonus_overrides: HashMap<String, f64>,
     /// Which skill the item's "Random Skill" roll landed on, picked by the user.
     #[serde(default)]
     pub random_skill_id: Option<String>,

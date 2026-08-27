@@ -37,6 +37,8 @@ export interface EquippedItem {
   forgedMods?: EquippedAffix[]
   augment?: { id: string; level: number }
   implicitOverrides?: Record<string, number>
+  /** Pinned totals for item-granted skill ranks, keyed by base skillBonuses name. */
+  skillBonusOverrides?: Record<string, number>
   randomSkillId?: string
   randomSkillElement?: SkillElement
 }

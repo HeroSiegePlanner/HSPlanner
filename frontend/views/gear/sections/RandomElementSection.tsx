@@ -2,6 +2,7 @@ import { SKILL_ELEMENTS } from '../../../types'
 import type { EquippedItem, SkillElement } from '../../../types'
 import Dropdown from '../../../components/ui/Dropdown'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 
 const OPTIONS = SKILL_ELEMENTS.map((e) => ({
   id: e,
@@ -20,13 +21,16 @@ export function RandomElementSection({
   return (
     <SectionCard
       label="Random Skill Element"
+      icon={<SectionIcon kind="element" />}
+      collapsible
+      defaultOpen={picked != null}
       rightSlot={
         <span
-          className={`font-mono text-[10px] tracking-[0.04em] ${
+          className={`font-mono text-[10px] uppercase tracking-[0.04em] ${
             picked ? 'text-accent-hot' : 'text-faint'
           }`}
         >
-          {picked ? 'rolled' : 'not rolled'}
+          {picked ?? 'not rolled'}
         </span>
       }
     >

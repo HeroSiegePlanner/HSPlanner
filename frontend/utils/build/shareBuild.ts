@@ -107,6 +107,12 @@ const equippedItemSchema = z
         message: 'too many implicit overrides',
       })
       .optional(),
+    skillBonusOverrides: z
+      .record(SAFE_STRING, FINITE_NUMBER)
+      .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+        message: 'too many skill bonus overrides',
+      })
+      .optional(),
     randomSkillId: SAFE_STRING.optional(),
     randomSkillElement: z.enum(SKILL_ELEMENTS).optional(),
   })
@@ -397,6 +403,12 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       !Array.isArray(item.implicitOverrides)
         ? item.implicitOverrides
         : undefined
+    const skillBonusOverrides =
+      item.skillBonusOverrides &&
+      typeof item.skillBonusOverrides === 'object' &&
+      !Array.isArray(item.skillBonusOverrides)
+        ? item.skillBonusOverrides
+        : undefined
     out[slot as SlotKey] = {
       baseId: item.baseId,
       affixes: Array.isArray(item.affixes) ? item.affixes : [],
@@ -408,6 +420,7 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       forgedMods: Array.isArray(item.forgedMods) ? item.forgedMods : [],
       ...(aug ? { augment: aug } : {}),
       ...(implicitOverrides ? { implicitOverrides } : {}),
+      ...(skillBonusOverrides ? { skillBonusOverrides } : {}),
       ...(typeof item.randomSkillId === 'string'
         ? { randomSkillId: item.randomSkillId }
         : {}),

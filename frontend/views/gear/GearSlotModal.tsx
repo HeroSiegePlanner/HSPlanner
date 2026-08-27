@@ -8,7 +8,12 @@ import type { EquippedItem, Inventory, ItemBase, SlotKey } from '../../types'
 import { useSetHoverPreview } from '../../contexts/HoverContext'
 import { type BuildSummaryDeps } from './lib/diff'
 import { Modal } from '../../components/ui/Modal'
-import { SectionCard } from './SectionCard'
+import {
+  SectionCard,
+  SectionsOpenContext,
+  type SectionsOpenState,
+} from './SectionCard'
+import { SectionIcon } from './sectionIcons'
 import { CompareColumn } from './CompareColumn'
 import { ItemListRail } from './ItemListRail'
 import { AffixesSection } from './sections/AffixesSection'
@@ -19,6 +24,7 @@ import { SocketsSection } from './sections/SocketsSection'
 import { StarsSection } from './sections/StarsSection'
 import { RandomElementSection } from './sections/RandomElementSection'
 import { RandomSkillSection } from './sections/RandomSkillSection'
+import { RollsSection } from './sections/RollsSection'
 import { RARITY_LABEL, RARITY_TEXT } from './lib/rarity'
 import { useGearDraft } from './lib/useGearDraft'
 
@@ -71,6 +77,17 @@ export function GearSlotModal({
   const [textEditorOpen, setTextEditorOpen] = useState(false)
   const [confirmingClose, setConfirmingClose] = useState(false)
   const [commitError, setCommitError] = useState<string | null>(null)
+  const [sectionsMode, setSectionsMode] = useState<'expanded' | 'collapsed' | null>(null)
+  const [sectionOverrides, setSectionOverrides] = useState<Record<string, boolean>>({})
+  const sectionsCtx = useMemo<SectionsOpenState>(
+    () => ({
+      mode: sectionsMode,
+      overrides: sectionOverrides,
+      setSection: (label, open) =>
+        setSectionOverrides((cur) => ({ ...cur, [label]: open })),
+    }),
+    [sectionsMode, sectionOverrides],
+  )
 
   const requestClose = () => {
     if (dirty) {
@@ -162,6 +179,8 @@ export function GearSlotModal({
         onSelect={(id) => {
           d.pickBase(id)
           setCommitError(null)
+          setSectionsMode(null)
+          setSectionOverrides({})
           setStep('configure')
         }}
         onHoverBase={(baseId) =>
@@ -171,6 +190,7 @@ export function GearSlotModal({
     )
   } else {
     body = (
+      <SectionsOpenContext.Provider value={sectionsCtx}>
       <div className="flex min-h-0 flex-1 flex-row">
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {draft && base ? (
@@ -198,7 +218,36 @@ export function GearSlotModal({
                 </button>
               </div>
 
-              <div className="space-y-4 p-5">
+              <div key={draft.baseId} className="space-y-4 p-5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint">
+                    ◆ Configure
+                  </span>
+                  <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSectionsMode('expanded')
+                        setSectionOverrides({})
+                      }}
+                      className="text-muted transition-colors hover:text-accent-hot"
+                    >
+                      Expand all
+                    </button>
+                    <span className="text-faint/50">|</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSectionsMode('collapsed')
+                        setSectionOverrides({})
+                      }}
+                      className="text-muted transition-colors hover:text-accent-hot"
+                    >
+                      Collapse all
+                    </button>
+                  </div>
+                </div>
+
                 {set && set.bonuses.length > 0 && (
                   <SetSummary
                     set={set}
@@ -219,7 +268,13 @@ export function GearSlotModal({
                   dpsPreviewEnabled={dpsPreviewEnabled}
                 />
 
-                <div className="columns-2 gap-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
+                <RollsSection
+                    equipped={draft}
+                    base={base}
+                    onSetOverride={d.setImplicitOverride}
+                    onSetSkillOverride={d.setSkillBonusOverride}
+                  />
+
                   <RunewordPresets
                     slot={slot}
                     equipped={draft}
@@ -253,6 +308,7 @@ export function GearSlotModal({
                       maxAffixes={base.maxAffixes}
                       onAdd={d.addAffix}
                       onRemove={d.removeAffix}
+                      onSetRoll={d.setAffixRoll}
                     />
                   )}
 
@@ -264,7 +320,6 @@ export function GearSlotModal({
                       onRemove={d.removeForgedMod}
                     />
                   )}
-                </div>
 
                 {slot === 'armor' && (
                   <AugmentSection
@@ -308,6 +363,7 @@ export function GearSlotModal({
           />
         )}
       </div>
+      </SectionsOpenContext.Provider>
     )
   }
 
@@ -448,6 +504,9 @@ function SetSummary({
     <SectionCard
       label={set.name}
       tone="set"
+      icon={<SectionIcon kind="set" />}
+      collapsible
+      defaultOpen={count >= 2}
       rightSlot={
         <span className="font-mono text-[10px] tabular-nums text-green-300/80">
           {count}/{set.items.length} pieces

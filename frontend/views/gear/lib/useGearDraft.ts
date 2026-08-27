@@ -67,6 +67,21 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     (idx: number) => edit((cur) => edits.withAffixRemoved(cur, idx)),
     [edit],
   )
+  const setAffixRoll = useCallback(
+    (idx: number, roll: number, affixId?: string) =>
+      edit((cur) => edits.withAffixRoll(cur, idx, roll, affixId)),
+    [edit],
+  )
+  const setImplicitOverride = useCallback(
+    (statKey: string, value: number | null) =>
+      edit((cur) => edits.withImplicitOverride(cur, statKey, value)),
+    [edit],
+  )
+  const setSkillBonusOverride = useCallback(
+    (skillName: string, value: number | null) =>
+      edit((cur) => edits.withSkillBonusOverride(cur, skillName, value)),
+    [edit],
+  )
   const addForgedMod = useCallback(
     (modId: string, tier: number) => edit((cur) => edits.withForgedModAdded(cur, modId, tier)),
     [edit],
@@ -103,6 +118,9 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     setRandomElement,
     addAffix,
     removeAffix,
+    setAffixRoll,
+    setImplicitOverride,
+    setSkillBonusOverride,
     addForgedMod,
     removeForgedMod,
     applyRuneword,
