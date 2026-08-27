@@ -992,7 +992,7 @@
   {
     "id": "base_spell_spellblade",
     "name": "Spellblade",
-    "baseType": "Spell",
+    "baseType": "Spellblade",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.75,
@@ -1005,7 +1005,7 @@
   {
     "id": "base_spell_yew_wand",
     "name": "Yew Wand",
-    "baseType": "Spell",
+    "baseType": "Wand",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.75,
@@ -1018,7 +1018,7 @@
   {
     "id": "base_spell_cane",
     "name": "Cane",
-    "baseType": "Spell",
+    "baseType": "Cane",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
@@ -1032,7 +1032,7 @@
   {
     "id": "base_spell_arcane_fork",
     "name": "Arcane Fork",
-    "baseType": "Spell",
+    "baseType": "Staff",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
@@ -1046,7 +1046,7 @@
   {
     "id": "base_spell_magic_tome",
     "name": "Magic Tome",
-    "baseType": "Spell",
+    "baseType": "Book",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
@@ -1059,7 +1059,7 @@
   {
     "id": "base_spell_gnarled_staff",
     "name": "Gnarled Staff",
-    "baseType": "Spell",
+    "baseType": "Staff",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.25,
@@ -1073,7 +1073,7 @@
   {
     "id": "base_spell_wand",
     "name": "Wand",
-    "baseType": "Spell",
+    "baseType": "Wand",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.25,

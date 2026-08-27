@@ -10,6 +10,9 @@
 - Items that roll "+X to Random Skill Element" (Phantom's Step, Captain's Anchor, Crow's Whisper, etc.) get an element picker in the gear slot, and the ranks land on the picked element's skills
 
 ## Fixes
+- Runeword presets were missing on white caster weapons (wands, canes, staves, tomes, spellblades), which were all typed "Spell" and matched no runeword
+- Wooden Shield, Buckler, Aegis and Monarch had no socket data, so no shield runeword ever showed up on them
+- Lone Mystic runeword was an empty stub: no base types, no stats
 - Four affix families now count towards the build instead of sitting under "Not Yet Supported"
 - Rolled affixes get their own "Affixes" heading in item tooltips, so they no longer run together with the section above
 - Affix rows in the gear slot editor lead with the stat they grant and keep the roll name in brackets after it instead of showing only the name
