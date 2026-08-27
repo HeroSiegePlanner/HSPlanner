@@ -36,7 +36,6 @@ const POOL_BY_WEAPON_BASE: Record<string, AffixPoolType> = {
   Wand: 'Weapon:Caster',
   Book: 'Weapon:Caster',
   Spellblade: 'Weapon:Caster',
-  Spell: 'Weapon:Caster',
   Flask: 'Weapon:Caster',
 }
 
