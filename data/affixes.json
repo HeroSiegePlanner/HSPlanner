@@ -1110,7 +1110,7 @@
     "tier": 1,
     "name": "Devoted",
     "description": "+1 to Random Skill Element",
-    "statKey": null,
+    "statKey": "random_skill_element",
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
@@ -1123,7 +1123,7 @@
     "tier": 2,
     "name": "Smitten",
     "description": "+[1-2] to Random Skill Element",
-    "statKey": null,
+    "statKey": "random_skill_element",
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
@@ -1136,7 +1136,7 @@
     "tier": 3,
     "name": "Malice",
     "description": "+[1-3] to Random Skill Element",
-    "statKey": null,
+    "statKey": "random_skill_element",
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
@@ -1149,7 +1149,7 @@
     "tier": 4,
     "name": "Incubus",
     "description": "+[1-4] to Random Skill Element",
-    "statKey": null,
+    "statKey": "random_skill_element",
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
@@ -1162,7 +1162,7 @@
     "tier": 5,
     "name": "Kindred",
     "description": "+[2-5] to Random Skill Element",
-    "statKey": null,
+    "statKey": "random_skill_element",
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
@@ -1370,11 +1370,12 @@
     "tier": 1,
     "name": "Sinister",
     "description": "to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_x_t2_malevolent",
@@ -1382,11 +1383,12 @@
     "tier": 2,
     "name": "Malevolent",
     "description": "to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_x_t3_demonic",
@@ -1394,11 +1396,12 @@
     "tier": 3,
     "name": "Demonic",
     "description": "+[2-4] to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "to_x_t4_diabolic",
@@ -1406,11 +1409,12 @@
     "tier": 4,
     "name": "Diabolic",
     "description": "to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_x_t5_sacrilegious",
@@ -1418,11 +1422,12 @@
     "tier": 5,
     "name": "Sacrilegious",
     "description": "to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_attack_rating_t1_precise",
@@ -6656,19 +6661,21 @@
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "half_freeze_duration_t2_freljord",
-    "groupId": "half_freeze_duration",
-    "tier": 2,
+    "groupId": "cannot_be_frozen",
+    "tier": 1,
     "name": "Freljord",
     "description": "Cannot be Frozen",
     "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "15_30_of_damage_returned_to_the_attacker_t1_quillboard",
@@ -8422,63 +8429,68 @@
   },
   {
     "id": "to_x_t1_wishing",
-    "groupId": "to_x",
+    "groupId": "singular_skill",
     "tier": 1,
     "name": "Wishing",
     "description": "to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "to_x_t2_prayer",
-    "groupId": "to_x",
+    "groupId": "singular_skill",
     "tier": 2,
     "name": "Prayer",
     "description": "to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "to_x_t3_pinealgland",
-    "groupId": "to_x",
+    "groupId": "singular_skill",
     "tier": 3,
     "name": "Pinealgland",
     "description": "+[1-4] to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "to_x_t4_atlantis",
-    "groupId": "to_x",
+    "groupId": "singular_skill",
     "tier": 4,
     "name": "Atlantis",
     "description": "+5 to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "to_x_t5_anunnaki",
-    "groupId": "to_x",
+    "groupId": "singular_skill",
     "tier": 5,
     "name": "Anunnaki",
     "description": "+[5-7] to x",
-    "statKey": "attack_speed_below_40_life",
+    "statKey": null,
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 7
+    "valueMax": 7,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_stunned_monsters_2_5_t1_stunning",

@@ -268,6 +268,7 @@ export function buildItemTooltipModel(
   const { supported, unsupported: unsupportedAffixes, unholy } = buildAffixLines(
     equipped?.affixes ?? [],
     display,
+    equipped?.randomSkillElement,
   )
   if (supported.length > 0) {
     sections.push({ header: { text: 'Affixes', tone: 'gold' }, lines: supported })
@@ -596,6 +597,7 @@ function countUnholySlots(base: ItemBase): number {
 function buildAffixLines(
   equippedAffixes: EquippedAffix[],
   display: TooltipModelDeps['display'],
+  randomElement: string | undefined,
 ): {
   supported: TooltipLine[]
   unsupported: TooltipLine[]
@@ -608,7 +610,13 @@ function buildAffixLines(
     const affix = getAffix(eq.affixId)
     if (!affix) return
     const isUnholy = affix.groupId === 'random_unholy'
-    const line = buildAffixLine(eq, affix, isUnholy, display.affixRanges[idx] ?? null)
+    const line = buildAffixLine(
+      eq,
+      affix,
+      isUnholy,
+      display.affixRanges[idx] ?? null,
+      randomElement,
+    )
     if (isUnholy) unholy.push(line)
     else if (affix.statKey) supported.push(line)
     else unsupported.push(line)
@@ -621,6 +629,7 @@ function buildAffixLine(
   affix: Affix,
   isUnholy: boolean,
   range: AffixValueOutput | null,
+  randomElement: string | undefined,
 ): TooltipLine {
   // Affixes the engine cannot calculate still show their roll, under "Not Yet Supported".
   const style: TooltipLineStyle = isUnholy
@@ -632,6 +641,13 @@ function buildAffixLine(
   const value = eq.customValue ?? range?.value
   if (value === undefined) return textLine(affix.description, style)
   const badge = eq.customValue !== undefined ? { badge: 'custom' } : undefined
+  if (affix.statKey === RANDOM_ELEMENT_KEY) {
+    return textLine(
+      `${formatValue(value, '')} ${randomElementLabel(randomElement)}`,
+      style,
+      badge,
+    )
+  }
   const described = describeAffixValue(affix, value)
   if (described) return textLine(described, style, badge)
   const shown = affix.statKey

@@ -1,4 +1,15 @@
 use super::*;
+use std::borrow::Cow;
+
+const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
+
+// "+X to Random Skill Element" only lands once the user picks the element.
+fn resolved_stat_key<'a>(stat_key: &'a str, element: Option<&str>) -> Option<Cow<'a, str>> {
+    if stat_key != RANDOM_ELEMENT_KEY {
+        return Some(Cow::Borrowed(stat_key));
+    }
+    element.map(|e| Cow::Owned(format!("{e}_skills")))
+}
 
 // ---------- inventory loop ----------
 
@@ -69,17 +80,12 @@ pub fn apply_inventory(
 
         if let Some(implicit) = base.implicit.as_ref() {
             for (stat_key, value) in implicit.iter() {
-                // "+X to Random Skill Element" only lands once the user picks the element.
-                let rerouted: String;
-                let stat_key = if stat_key == "random_skill_element" {
-                    let Some(element) = item.random_skill_element.as_deref() else {
-                        continue;
-                    };
-                    rerouted = format!("{element}_skills");
-                    &rerouted
-                } else {
-                    stat_key
+                let Some(stat_key) =
+                    resolved_stat_key(stat_key, item.random_skill_element.as_deref())
+                else {
+                    continue;
                 };
+                let stat_key = stat_key.as_ref();
                 let override_val = item.implicit_overrides.get(stat_key).copied();
                 let scaled: Ranged = match override_val {
                     Some(ov) => (ov, ov),
@@ -144,6 +150,10 @@ pub fn apply_inventory(
             let Some(stat_key) = affix.stat_key.as_deref() else {
                 continue;
             };
+            let Some(stat_key) = resolved_stat_key(stat_key, item.random_skill_element.as_deref())
+            else {
+                continue;
+            };
             let signed: f64 = if let Some(cv) = eq.custom_value {
                 cv
             } else {
@@ -156,7 +166,7 @@ pub fn apply_inventory(
             apply_contribution(
                 attr_sources,
                 stat_sources,
-                stat_key,
+                stat_key.as_ref(),
                 (signed, signed),
                 label,
                 SourceType::Item,

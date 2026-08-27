@@ -287,6 +287,33 @@ describe('buildItemTooltipModel', () => {
     )
   })
 
+  it('names the picked element on a rolled "to Random Skill Element" affix', () => {
+    const base = getItem('boots_satanic_boots_of_wild')
+    if (!base) throw new Error('fixture item missing from game data')
+    const display = {
+      implicitScaled: {},
+      skillRankScaled: {},
+      affixRanges: [{ value: 5, rangeMin: 2, rangeMax: 5 }],
+    }
+    const affixes = [
+      { affixId: '1_to_random_skill_element_t5_kindred', tier: 5, roll: 1 },
+    ]
+
+    const unrolled = buildItemTooltipModel(base, eq(base.id, { affixes }), deps({ display }))
+    expect(JSON.stringify(unrolled.sections)).toContain(
+      '+5 to Random Element Skills (not rolled)',
+    )
+
+    const rolled = buildItemTooltipModel(
+      base,
+      eq(base.id, { affixes, randomSkillElement: 'fire' }),
+      deps({ display }),
+    )
+    const text = JSON.stringify(rolled.sections)
+    expect(text).toContain('+5 to Fire Skills (random element)')
+    expect(text).not.toContain('Random Skill Element')
+  })
+
   it('files an affix the engine cannot calculate under Not Yet Supported', () => {
     const base = getItem('boots_satanic_boots_of_wild')
     if (!base) throw new Error('fixture item missing from game data')

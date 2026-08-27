@@ -6,8 +6,10 @@ import {
   buildAffixGroups,
   describeAffixValue,
   groupBounds,
+  isRandomPoolAffix,
   tierIndexForValue,
 } from './affixGroups'
+import { affixes } from '@data'
 import type { Affix } from '../../../types'
 
 const tier = (
@@ -207,6 +209,26 @@ describe('tierIndexForValue', () => {
   test('returns -1 when no tier rolls', () => {
     const tiers = [tier(1, 'A', null, null, 'x')]
     expect(tierIndexForValue(tiers, asRanges(tiers), 3)).toBe(-1)
+  })
+})
+
+describe('isRandomPoolAffix', () => {
+  test('flags a pool that only its own bases can roll', () => {
+    const unholy = affixes.find((a) => a.groupId === 'random_unholy')
+    if (!unholy) throw new Error('unholy affix missing from game data')
+    expect(isRandomPoolAffix(unholy)).toBe(true)
+  })
+
+  test('leaves normal affixes alone', () => {
+    const normal = affixes.find((a) => a.groupId === '25_50_enhanced_defense')
+    if (!normal) throw new Error('fixture affix missing from game data')
+    expect(isRandomPoolAffix(normal)).toBe(false)
+  })
+
+  test('every random pool is a flat bag, never a five-tier ladder', () => {
+    const pooled = affixes.filter(isRandomPoolAffix)
+    expect(pooled.length).toBeGreaterThan(0)
+    expect(buildAffixGroups(pooled).every((g) => g.tiers.length > 5)).toBe(true)
   })
 })
 

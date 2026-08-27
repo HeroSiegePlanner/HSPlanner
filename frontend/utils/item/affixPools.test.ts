@@ -71,8 +71,54 @@ describe('affix-pools.json', () => {
       base('potion_1', 'Potion'),
     ].map((b) => affixPoolTypeFor(b)!)
     const unreachable = Object.entries(affixPools)
-      .filter(([, types]) => !types.some((t) => slots.includes(t)))
+      .filter(([, types]) => types.length > 0 && !types.some((t) => slots.includes(t)))
       .map(([g]) => g)
     expect(unreachable).toEqual([])
+  })
+
+  // Codex affixes (stat_codex_* in the Ghidra dump) carry no item types at all —
+  // gear rolls its own families for the same effects (Pickpocket, Luck, …).
+  test('codex-only groups roll on nothing, so no gear slot offers them', () => {
+    const codexGroups = [
+      '15_75_increased_codex_drop_rates',
+      '1_3_chance_for_ancients_to_spawn_as_legions',
+      '5_15_increased_amount_of_heroic_and_angelic_drops',
+      '5_20_increased_dungeon_key_drop_rates',
+      '5_20_increased_rune_drop_rates',
+      'amount_of_gold_dropped_from_monsters_increased_by_5_20',
+      'ancient_monster_pack_size_increased_by_25_50',
+      'experience_gain_increased_by_5_20',
+      'loot_amount_increased_by_1_3',
+      'total_magic_find_increased_by_5_20',
+      'n_a',
+      'movement_phasing',
+    ]
+    for (const groupId of codexGroups) {
+      expect(affixPools[groupId], groupId).toEqual([])
+      expect(affixFitsPool(affix(groupId), 'Helmet'), groupId).toBe(false)
+      expect(affixFitsPool(affix(groupId), 'Charm'), groupId).toBe(false)
+    }
+  })
+
+  test('the gear families for those same effects still roll', () => {
+    expect(affixFitsPool(affix('1_5_extra_gold_dropped_from_kills'), 'Belt')).toBe(true)
+    expect(affixFitsPool(affix('1_increased_experience_gain'), 'Helmet')).toBe(true)
+  })
+
+  // `to_x` and `half_freeze_duration` each held two families with different pools;
+  // splitting them let each half take the item types the dump records.
+  test('the split families each keep their own pool', () => {
+    expect(affixFitsPool(affix('to_x'), 'Chest')).toBe(true)
+    expect(affixFitsPool(affix('to_x'), 'Helmet')).toBe(false)
+
+    expect(affixFitsPool(affix('singular_skill'), 'Helmet')).toBe(true)
+    expect(affixFitsPool(affix('singular_skill'), 'Weapon:Melee')).toBe(true)
+    expect(affixFitsPool(affix('singular_skill'), 'Chest')).toBe(false)
+
+    expect(affixFitsPool(affix('cannot_be_frozen'), 'Chest')).toBe(true)
+    expect(affixFitsPool(affix('cannot_be_frozen'), 'Boots')).toBe(false)
+
+    // Tundra carries no item types anywhere in the dump.
+    expect(affixFitsPool(affix('half_freeze_duration'), 'Chest')).toBe(false)
   })
 })

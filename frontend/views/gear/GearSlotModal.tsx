@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import ItemTextEditorModal from './ItemTextEditorModal'
 import type { PickerRow } from './PickerModal'
-import { canStarForge, detectRuneword, forgeKindFor, getItem, getItemSet } from '@data'
+import { canStarForge, detectRuneword, forgeKindFor, getAffix, getItem, getItemSet } from '@data'
 import { maxSocketsFor, useBuild } from '../../store/build'
 import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
 import type { EquippedItem, Inventory, ItemBase, SlotKey } from '../../types'
@@ -116,6 +116,12 @@ export function GearSlotModal({
   }
 
   const base = draft ? getItem(draft.baseId) : undefined
+  // The element can come baked into the base or from a rolled affix.
+  const hasRandomElement =
+    base?.implicit?.random_skill_element !== undefined ||
+    (draft?.affixes ?? []).some(
+      (eq) => getAffix(eq.affixId)?.statKey === 'random_skill_element',
+    )
   const maxSockets = draft ? maxSocketsFor(draft.baseId, draft.forgedMods) : 0
   const set = base?.setId ? getItemSet(base.setId) : undefined
   const setEquippedCount = base?.setId
@@ -297,7 +303,7 @@ export function GearSlotModal({
                     />
                   )}
 
-                  {base.implicit?.random_skill_element !== undefined && (
+                  {hasRandomElement && (
                     <RandomElementSection equipped={draft} onChange={d.setRandomElement} />
                   )}
 

@@ -20,6 +20,7 @@ import {
   affixTiers,
   buildAffixGroups,
   groupBounds,
+  isRandomPoolAffix,
   tierIndexForValue,
   type AffixGroup,
 } from '../lib/affixGroups'
@@ -206,10 +207,11 @@ export function AffixesSection({
         )
         .map((a) => affixToPickerRow(a, { useDescriptionAsName: isUnholy }))
     }
+    const rollable = affixes.filter((a) => !isRandomPoolAffix(a))
     const source =
       showAllAffixes || !poolType
-        ? affixes
-        : affixes.filter((a) => affixFitsPool(a, poolType))
+        ? rollable
+        : rollable.filter((a) => affixFitsPool(a, poolType))
     return buildAffixGroups(source)
       .sort(
         (a, b) =>

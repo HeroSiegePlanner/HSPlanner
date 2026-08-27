@@ -1,4 +1,4 @@
-import { affixes, getAffix } from '@data'
+import { affixes, getAffix, items } from '@data'
 import { descriptionWithoutValue } from '../../../utils/item/itemTextShared'
 import type { Affix } from '../../../types'
 
@@ -90,6 +90,16 @@ export function buildAffixGroups(list: Affix[]): AffixGroup[] {
     const tiers = members.slice().sort((a, b) => a.tier - b.tier)
     return { groupId, tiers, label: groupLabel(tiers), topTier: topTierOf(tiers) }
   })
+}
+
+// Unholy-style pools are one flat bag of unrelated stats, not a tier ladder, and
+// only the bases that roll them can ever offer them.
+const RANDOM_POOL_GROUP_IDS = new Set(
+  items.map((i) => i.randomAffixGroupId).filter((id): id is string => !!id),
+)
+
+export function isRandomPoolAffix(affix: Affix): boolean {
+  return RANDOM_POOL_GROUP_IDS.has(affix.groupId)
 }
 
 const TIERS_BY_GROUP = new Map<string, Affix[]>()

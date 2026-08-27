@@ -1,5 +1,5 @@
 use super::super::*;
-use crate::calc::types::EquippedItem;
+use crate::calc::types::{EquippedAffix, EquippedItem};
 
 #[test]
 fn apply_increased_all_attributes_applies_to_each() {
@@ -608,6 +608,54 @@ fn random_skill_element_lands_on_the_picked_element_skills() {
     apply_inventory(&inv, &mut attrs, &mut stats);
     let cold = stats.get("cold_skills").expect("picked element gets the ranks");
     assert!(cold.iter().any(|c| c.value == (4.0, 5.0)));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+#[test]
+fn a_rolled_random_element_affix_lands_on_the_picked_element_skills() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "helmet".into(),
+        EquippedItem {
+            base_id: "helmet_normal_cap".into(),
+            affixes: vec![EquippedAffix {
+                affix_id: "1_to_random_skill_element_t5_kindred".into(),
+                tier: 5,
+                roll: 1.0,
+                custom_value: None,
+            }],
+            random_skill_element: Some("fire".into()),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let fire = stats.get("fire_skills").expect("picked element gets the ranks");
+    assert!(fire.iter().any(|c| c.value == (5.0, 5.0)));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+#[test]
+fn a_rolled_random_element_affix_is_inert_until_an_element_is_picked() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "helmet".into(),
+        EquippedItem {
+            base_id: "helmet_normal_cap".into(),
+            affixes: vec![EquippedAffix {
+                affix_id: "1_to_random_skill_element_t5_kindred".into(),
+                tier: 5,
+                roll: 1.0,
+                custom_value: None,
+            }],
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(!stats.contains_key("fire_skills"));
     assert!(!stats.contains_key("random_skill_element"));
 }
 

@@ -137,5 +137,21 @@
   "5_20_increased_jumping_power": ["Boots"],
   "3_chance_to_gain_a_potion_stack_on_kill": ["Flask"],
   "0_05_potion_stacks_per_second": ["Flask"],
-  "to_physical_skills": ["Helmet", "Weapon:Caster", "Weapon:Melee", "Weapon:Ranged"]
+  "to_physical_skills": ["Helmet", "Weapon:Caster", "Weapon:Melee", "Weapon:Ranged"],
+  "15_75_increased_codex_drop_rates": [],
+  "1_3_chance_for_ancients_to_spawn_as_legions": [],
+  "5_15_increased_amount_of_heroic_and_angelic_drops": [],
+  "5_20_increased_dungeon_key_drop_rates": [],
+  "5_20_increased_rune_drop_rates": [],
+  "amount_of_gold_dropped_from_monsters_increased_by_5_20": [],
+  "ancient_monster_pack_size_increased_by_25_50": [],
+  "experience_gain_increased_by_5_20": [],
+  "loot_amount_increased_by_1_3": [],
+  "total_magic_find_increased_by_5_20": [],
+  "n_a": [],
+  "movement_phasing": [],
+  "to_x": ["Chest"],
+  "singular_skill": ["Belt", "Gloves", "Helmet", "Weapon:Caster", "Weapon:Melee", "Weapon:Ranged"],
+  "cannot_be_frozen": ["Chest"],
+  "half_freeze_duration": []
 }
