@@ -269,6 +269,7 @@
     "tree": "Storm Conjurer",
     "position": { "row": 1, "col": 2 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Lightning_Surge.png?a7fb06",
+    "hitModel": { "object": "Stormweaver_Lightning_Surge_Tether_Create", "tickFrequency": 0.4, "lifetime": 2 },
     "ranks": [
       { "rank": 1 }
     ],
@@ -790,6 +791,7 @@
     "tree": "Storm Conjurer",
     "position": { "row": 3, "col": 1 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Storm_Cloud.png?544344",
+    "hitModel": { "object": "Stormweaver_Storm_Cloud_Create", "tickFrequency": 0.5 },
     "ranks": [
       { "rank": 1 }
     ],
@@ -1138,6 +1140,7 @@
     "tree": "Essence of Storm",
     "position": { "row": 3, "col": 2 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Apocalyptic_Thunder.png?764449",
+    "hitModel": { "object": "Stormweaver_Apocalyptic_Thunder_Create", "tickFrequency": 0.25 },
     "ranks": [
       { "rank": 1 }
     ],

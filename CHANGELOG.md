@@ -1,4 +1,5 @@
 ## Features
+- Skill hit model (data mined): a lingering damage object re-arms every `tickFrequency` seconds, so one cast lands `floor(lifetime / tickFrequency) + 1` hits on a target that stays in it. 31 skills carry the extracted numbers; every other skill hits once, as the game's damage parent does. Hit DPS and ailment application both scale with it, Skill Duration now buys extra ticks instead of doing nothing, and the skill panel shows "Hit interval" and "Hits per cast". Blazing Trail hits 6 times per cast, Blade Barrier 16, Sand Vortex 21
 - Six white ring bases (Bronze Ring, Iron Ring, Ring, Socket Ring, Primal Ring, Golden Ring)
 - Five white amulet bases (Amulet, Locket, Talisman, Carcanet, Necklace)
 - Item-granted skill ranks are rollable too (issue #136): "Stat Rolls" also lists every ranged "+[X-Y] to <Skill>" bonus the item grants

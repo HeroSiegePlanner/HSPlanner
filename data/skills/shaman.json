@@ -1309,6 +1309,7 @@
     "description": "Rip the ground open with magic causing cracks that release fissures dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 30,
+    "hitModel": { "object": "Shaman_Fissures_Create", "tickFrequency": 0.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",

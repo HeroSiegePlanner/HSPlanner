@@ -2833,6 +2833,7 @@
       "row": 2,
       "col": 2
     },
+    "hitModel": { "object": "Prophet_Maelstrom_Create", "tickFrequency": 0.5 },
     "ranks": [
       {
         "rank": 1,

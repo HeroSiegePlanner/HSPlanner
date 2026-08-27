@@ -1084,3 +1084,42 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
         tundra_dps / base_dps
     );
 }
+
+// Blazing Trail's fire lives 2.5 s and re-arms every 0.5 s, so one cast lands
+// floor(2.5 / 0.5) + 1 = 6 hits on a target that stays in it.
+#[test]
+fn hit_model_multiplies_dps_by_hits_per_cast() {
+    let trail = perf("pyromancer", "blazing_trail", 10, &[], &[]);
+    assert_eq!(trail.hits_per_cast, Some((6.0, 6.0)));
+    let (Some(dps), Some(damage)) = (trail.avg_hit_dps_max, trail.damage.as_ref()) else {
+        panic!("expected dps for blazing_trail");
+    };
+    // baseCastRate 1/s, no FCR: the whole DPS is damage x hits.
+    assert!(
+        (dps / damage.avg_max as f64 - 6.0).abs() < 1e-9,
+        "6 hits per cast should be 6x the hit damage, got x{}",
+        dps / damage.avg_max as f64
+    );
+
+    let fireball = perf("pyromancer", "fireball", 10, &[], &[]);
+    assert_eq!(
+        fireball.hits_per_cast, None,
+        "a skill without a hit model hits once"
+    );
+}
+
+// Timed Fire adds 10% Skill Duration per rank: 2.5 s -> 3.75 s buys two more ticks.
+#[test]
+fn skill_duration_buys_extra_ticks() {
+    let base = perf("pyromancer", "blazing_trail", 10, &[], &[]);
+    let longer = perf("pyromancer", "blazing_trail", 10, &[("timed_fire", 5)], &[]);
+    assert_eq!(longer.hits_per_cast, Some((8.0, 8.0)));
+    let (Some(base_dps), Some(long_dps)) = (base.avg_hit_dps_max, longer.avg_hit_dps_max) else {
+        panic!("expected dps for blazing_trail");
+    };
+    assert!(
+        (long_dps / base_dps - 8.0 / 6.0).abs() < 1e-9,
+        "8 hits over 6 should be 1.33x, got x{}",
+        long_dps / base_dps
+    );
+}

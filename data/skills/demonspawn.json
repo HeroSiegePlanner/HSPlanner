@@ -1471,6 +1471,7 @@
     "requiresLevel": 24,
     "tree": "Blood Lord",
     "position": { "row": 3, "col": 0 },
+    "hitModel": { "object": "Demonspawn_Blood_Surge_Create", "tickFrequency": 0.75 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 0.4, "perLevel": 8.4 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },

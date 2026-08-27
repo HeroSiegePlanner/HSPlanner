@@ -1000,6 +1000,7 @@
       "col": 2
     },
     "icon": "https://herosiege.wiki.gg/images/Amazon_Death_from_Above.png",
+    "hitModel": { "object": "Amazon_Death_From_Above_Damage_Create", "tickFrequency": 0.25 },
     "ranks": [
       {
         "rank": 1,

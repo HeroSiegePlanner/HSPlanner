@@ -449,6 +449,7 @@
     "requiresLevel": 8,
     "tree": "Venomancer",
     "position": { "row": 1, "col": 2 },
+    "hitModel": { "object": "Necromancer_Poison_Breath_Create", "tickFrequency": 0.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 20, "perLevel": 9.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },

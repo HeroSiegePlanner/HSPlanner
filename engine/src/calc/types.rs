@@ -468,6 +468,19 @@ pub struct SkillProcSpec {
     pub target: String,
 }
 
+/// Damage object the skill spawns, from the Hero Siege hit model. `lifetime` is
+/// absent when the game kills the object by animation/alarm instead of a timer.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct HitModelSpec {
+    #[serde(default)]
+    pub object: String,
+    #[serde(default)]
+    pub tick_frequency: Option<f64>,
+    #[serde(default)]
+    pub lifetime: Option<f64>,
+}
+
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SubskillEffectSpec {
@@ -595,6 +608,8 @@ pub struct SkillSpec {
     pub passive_stats: Option<PassiveStatsSpec>,
     #[serde(default)]
     pub proc: Option<SkillProcSpec>,
+    #[serde(default)]
+    pub hit_model: Option<HitModelSpec>,
     #[serde(default)]
     pub subskills: Option<Vec<SubskillNodeSpec>>,
     #[serde(default)]

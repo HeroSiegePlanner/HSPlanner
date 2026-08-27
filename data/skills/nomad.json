@@ -933,6 +933,7 @@
     "requiresLevel": 30,
     "tree": "Wanderer",
     "position": { "row": 4, "col": 0 },
+    "hitModel": { "object": "Sand_Vortex_Create", "tickFrequency": 0.25, "lifetime": 5 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 1, "perLevel": 17 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },

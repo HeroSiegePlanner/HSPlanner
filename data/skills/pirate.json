@@ -1704,6 +1704,7 @@
     "description": "Summon a pool of corrupted water on target location bursting into a massive torrent that knocks up monsters struck dealing cold damage.",
     "maxRank": 20,
     "requiresLevel": 1,
+    "hitModel": { "object": "Pirate_Torrent_Vortex_Create", "tickFrequency": 0.25, "lifetime": 3 },
     "ranks": [
       {
         "rank": 1,

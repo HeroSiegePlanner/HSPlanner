@@ -302,6 +302,7 @@
       "row": 1,
       "col": 0
     },
+    "hitModel": { "object": "Bard_Visceral_Growl_Create", "tickFrequency": 0.25 },
     "ranks": [
       {
         "rank": 1,
@@ -2160,6 +2161,7 @@
       "row": 3,
       "col": 1
     },
+    "hitModel": { "object": "Bard_Craving_For_Attention_Create", "tickFrequency": 0.5, "lifetime": 4 },
     "ranks": [
       {
         "rank": 1
