@@ -28,6 +28,7 @@ import incarnationTreeJson from './incarnation-tree.json'
 import mercenariesJson from './mercenaries.json'
 import starScalingJson from './star-scaling.json'
 import affixTagsJson from './affix-tags.json'
+import affixPoolsJson from './affix-pools.json'
 import subskillTagsJson from './subskill-tags.json'
 import { resolveActiveSeasonId } from './seasons/registry'
 import { loadSeasonPatchSet } from './seasons/load'
@@ -82,6 +83,9 @@ export interface AffixTag {
 
 // statKey -> skill tags the affix works with (all of them at once)
 export const affixTags = affixTagsJson as Record<string, AffixTag>
+
+// affix groupId -> game item types the affix can roll on; absent = unrestricted
+export const affixPools = affixPoolsJson as Record<string, string[]>
 
 export interface SubskillTagChange {
   add?: string[]

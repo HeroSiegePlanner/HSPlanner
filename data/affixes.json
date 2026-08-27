@@ -9,7 +9,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_increased_experience_gain_t2_fieldtested",
@@ -21,7 +22,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_increased_experience_gain_t3_wartorned",
@@ -33,7 +35,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_increased_experience_gain_t4_posttraumatic",
@@ -45,7 +48,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_increased_experience_gain_t5_warlegend",
@@ -57,7 +61,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "3_7_to_flat_physical_damage_t1_savage",
@@ -69,7 +74,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 7
+    "valueMax": 7,
+    "kind": "prefix"
   },
   {
     "id": "3_7_to_flat_physical_damage_t2_brutal",
@@ -81,7 +87,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "3_7_to_flat_physical_damage_t3_feral",
@@ -93,7 +100,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 18
+    "valueMax": 18,
+    "kind": "prefix"
   },
   {
     "id": "3_7_to_flat_physical_damage_t4_merciless",
@@ -105,7 +113,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 12,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_7_to_flat_physical_damage_t5_ferocious",
@@ -117,7 +126,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 18,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "10_20_to_attack_rating_t1_owl",
@@ -129,7 +139,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "10_20_to_attack_rating_t2_crow",
@@ -141,7 +152,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "10_20_to_attack_rating_t3_hawk",
@@ -153,7 +165,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "10_20_to_attack_rating_t4_falcon",
@@ -165,7 +178,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 100,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "prefix"
   },
   {
     "id": "10_20_to_attack_rating_t5_eagle",
@@ -177,7 +191,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 200,
-    "valueMax": 400
+    "valueMax": 400,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_mana_t1_cobra",
@@ -189,7 +204,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_mana_t2_basilisk",
@@ -201,7 +217,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_mana_t3_serpent",
@@ -213,7 +230,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 60,
-    "valueMax": 120
+    "valueMax": 120,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_mana_t4_dragon",
@@ -225,7 +243,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 120,
-    "valueMax": 260
+    "valueMax": 260,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_mana_t5_wyrm",
@@ -237,7 +256,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 260,
-    "valueMax": 400
+    "valueMax": 400,
+    "kind": "prefix"
   },
   {
     "id": "100_to_mana_based_on_level_t1_king_cobra",
@@ -249,7 +269,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 100,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "100_to_mana_based_on_level_t2_king_basilisk",
@@ -261,7 +282,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 200,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "prefix"
   },
   {
     "id": "100_to_mana_based_on_level_t3_king_serpent",
@@ -273,7 +295,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 300,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "prefix"
   },
   {
     "id": "100_to_mana_based_on_level_t4_king_dragon",
@@ -285,7 +308,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 400,
-    "valueMax": 400
+    "valueMax": 400,
+    "kind": "prefix"
   },
   {
     "id": "100_to_mana_based_on_level_t5_king_wyrm",
@@ -297,7 +321,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 500,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_defense_t1_armorer_s",
@@ -309,7 +334,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_defense_t2_defender_s",
@@ -321,7 +347,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_defense_t3_bastion_s",
@@ -333,7 +360,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 35,
-    "valueMax": 80
+    "valueMax": 80,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_defense_t4_sentinel_s",
@@ -345,7 +373,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 110
+    "valueMax": 110,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_defense_t5_guardian_s",
@@ -357,7 +386,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 65,
-    "valueMax": 225
+    "valueMax": 225,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_life_t1_bear",
@@ -369,7 +399,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_life_t2_rhino",
@@ -381,7 +412,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_life_t3_whale",
@@ -393,7 +425,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 60,
-    "valueMax": 120
+    "valueMax": 120,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_life_t4_mammoth",
@@ -405,7 +438,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 120,
-    "valueMax": 260
+    "valueMax": 260,
+    "kind": "prefix"
   },
   {
     "id": "15_30_to_life_t5_mastodon",
@@ -417,7 +451,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 260,
-    "valueMax": 400
+    "valueMax": 400,
+    "kind": "prefix"
   },
   {
     "id": "100_to_life_based_on_level_t1_apex_bear",
@@ -429,7 +464,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 100,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "100_to_life_based_on_level_t2_apex_rhino",
@@ -441,7 +477,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 200,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "prefix"
   },
   {
     "id": "100_to_life_based_on_level_t3_apex_whale",
@@ -453,7 +490,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 300,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "prefix"
   },
   {
     "id": "100_to_life_based_on_level_t4_apex_mammoth",
@@ -465,7 +503,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 400,
-    "valueMax": 400
+    "valueMax": 400,
+    "kind": "prefix"
   },
   {
     "id": "100_to_life_based_on_level_t5_apex_mastodon",
@@ -477,7 +516,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 500,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_fire_resistance_t1_firecloaking",
@@ -489,7 +529,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_fire_resistance_t2_fireproof",
@@ -501,7 +542,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 16,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_fire_resistance_t3_fireresisting",
@@ -513,7 +555,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_fire_resistance_t4_fireshielding",
@@ -525,7 +568,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 36,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_fire_resistance_t5_fireimmune",
@@ -537,7 +581,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_cold_resistance_t1_coldcloaking",
@@ -549,7 +594,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_cold_resistance_t2_coldproof",
@@ -561,7 +607,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 16,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_cold_resistance_t3_coldresisting",
@@ -573,7 +620,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_cold_resistance_t4_coldshielding",
@@ -585,7 +633,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 36,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_cold_resistance_t5_coldimmune",
@@ -597,7 +646,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_poison_resistance_t1_poisoncloaking",
@@ -609,7 +659,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_poison_resistance_t2_poisonproof",
@@ -621,7 +672,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 16,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_poison_resistance_t3_poisonresisting",
@@ -633,7 +685,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_poison_resistance_t4_poisonshielding",
@@ -645,7 +698,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 36,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_poison_resistance_t5_poisonimmune",
@@ -657,7 +711,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_lightning_resistance_t1_lightningcloaking",
@@ -669,7 +724,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_lightning_resistance_t2_lightningproof",
@@ -681,7 +737,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 16,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_lightning_resistance_t3_lightningresisting",
@@ -693,7 +750,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_lightning_resistance_t4_lightningshielding",
@@ -705,7 +763,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 36,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_lightning_resistance_t5_lightningimmune",
@@ -717,7 +776,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_arcane_resistance_t1_arcanecloaking",
@@ -729,7 +789,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_arcane_resistance_t2_arcaneproof",
@@ -741,7 +802,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 16,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_arcane_resistance_t3_arcaneresisting",
@@ -753,7 +815,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_arcane_resistance_t4_arcaneshielding",
@@ -765,7 +828,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 36,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "prefix"
   },
   {
     "id": "7_15_to_arcane_resistance_t5_arcaneimmune",
@@ -777,7 +841,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "prefix"
   },
   {
     "id": "1_2_life_per_second_t1_leeching",
@@ -789,7 +854,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_2_life_per_second_t2_blood_drinking",
@@ -801,7 +867,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_2_life_per_second_t3_lifevamping",
@@ -813,7 +880,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_2_life_per_second_t4_vampiric",
@@ -825,7 +893,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 4,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "1_2_life_per_second_t5_draculs",
@@ -837,7 +906,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_2_mana_per_second_t1_cavebat",
@@ -849,7 +919,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_2_mana_per_second_t2_vesperbat",
@@ -861,7 +932,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_2_mana_per_second_t3_brownbat",
@@ -873,7 +945,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_2_mana_per_second_t4_colossalbat",
@@ -885,7 +958,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 4,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "1_2_mana_per_second_t5_citadelbat",
@@ -897,7 +971,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_t1_peasant_s",
@@ -909,7 +984,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_t2_archon_s",
@@ -921,7 +997,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_t3_avenger_s",
@@ -933,7 +1010,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_t4_keeper_s",
@@ -945,7 +1023,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_t5_archangel_s",
@@ -957,7 +1036,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_to_maximum_all_resists_t1_mystic_pond",
@@ -969,7 +1049,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_maximum_all_resists_t2_mystic_lake",
@@ -981,7 +1062,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_maximum_all_resists_t3_mystic_ocean",
@@ -993,7 +1075,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_maximum_all_resists_t4_mystic_fountain",
@@ -1005,7 +1088,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_maximum_all_resists_t5_mystic_spring",
@@ -1017,7 +1101,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_to_random_skill_element_t1_devoted",
@@ -1029,7 +1114,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_random_skill_element_t2_smitten",
@@ -1041,7 +1127,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_random_skill_element_t3_malice",
@@ -1053,7 +1140,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_random_skill_element_t4_incubus",
@@ -1065,7 +1153,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_random_skill_element_t5_kindred",
@@ -1077,7 +1166,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_to_explosion_skills_t1_ignited",
@@ -1089,7 +1179,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_explosion_skills_t2_lit",
@@ -1101,7 +1192,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_explosion_skills_t3_timed",
@@ -1113,7 +1205,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_explosion_skills_t4_fired",
@@ -1125,7 +1218,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_explosion_skills_t5_doomed",
@@ -1137,7 +1231,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_to_sentry_skills_t1_ward",
@@ -1149,7 +1244,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_sentry_skills_t2_eye",
@@ -1161,7 +1257,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_sentry_skills_t3_sentry",
@@ -1173,7 +1270,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_sentry_skills_t4_turret",
@@ -1185,7 +1283,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_sentry_skills_t5_guard_tower",
@@ -1197,7 +1296,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_2_reduced_damage_taken_by_summons_t1_lingering",
@@ -1209,7 +1309,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_2_reduced_damage_taken_by_summons_t2_willowing",
@@ -1221,7 +1322,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_2_reduced_damage_taken_by_summons_t3_hallowing",
@@ -1233,7 +1335,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "1_2_reduced_damage_taken_by_summons_t4_festering",
@@ -1245,7 +1348,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_2_reduced_damage_taken_by_summons_t5_slendering",
@@ -1257,7 +1361,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "to_x_t1_sinister",
@@ -1329,7 +1434,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_attack_rating_t2_accurate",
@@ -1341,7 +1447,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_attack_rating_t3_locked",
@@ -1353,7 +1460,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_attack_rating_t4_bullseye",
@@ -1365,7 +1473,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_attack_rating_t5_sniper",
@@ -1377,7 +1486,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "100_to_attack_rating_based_on_level_t1_accursed",
@@ -1389,7 +1499,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 100,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "100_to_attack_rating_based_on_level_t2_perfected",
@@ -1401,7 +1512,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 200,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "prefix"
   },
   {
     "id": "100_to_attack_rating_based_on_level_t3_hardlocked",
@@ -1413,7 +1525,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 300,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "prefix"
   },
   {
     "id": "100_to_attack_rating_based_on_level_t4_sharpsight",
@@ -1425,7 +1538,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 400,
-    "valueMax": 400
+    "valueMax": 400,
+    "kind": "prefix"
   },
   {
     "id": "100_to_attack_rating_based_on_level_t5_marksman",
@@ -1437,7 +1551,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 500,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "prefix"
   },
   {
     "id": "1_5_life_after_each_kill_t1_gravedigger",
@@ -1449,7 +1564,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_5_life_after_each_kill_t2_gravescavenger",
@@ -1461,7 +1577,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "1_5_life_after_each_kill_t3_corpsemaggot",
@@ -1473,7 +1590,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "1_5_life_after_each_kill_t4_corpsemuncher",
@@ -1485,7 +1603,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_5_life_after_each_kill_t5_cannibal",
@@ -1497,7 +1616,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "1_5_mana_after_each_kill_t1_disciple",
@@ -1509,7 +1629,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_5_mana_after_each_kill_t2_monk",
@@ -1521,7 +1642,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "1_5_mana_after_each_kill_t3_priest",
@@ -1533,7 +1655,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "1_5_mana_after_each_kill_t4_gypsy",
@@ -1545,7 +1668,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_5_mana_after_each_kill_t5_exorcist",
@@ -1557,7 +1681,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "2_15_increased_movement_speed_t1_walking",
@@ -1569,7 +1694,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "2_15_increased_movement_speed_t2_traveling",
@@ -1581,7 +1707,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "2_15_increased_movement_speed_t3_sneaking",
@@ -1593,7 +1720,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "2_15_increased_movement_speed_t4_blinking",
@@ -1605,7 +1733,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "2_15_increased_movement_speed_t5_phasing",
@@ -1617,7 +1746,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "prefix"
   },
   {
     "id": "3_10_increased_critical_strike_damage_t1_scarface",
@@ -1629,7 +1759,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "3_10_increased_critical_strike_damage_t2_hitman",
@@ -1641,7 +1772,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "3_10_increased_critical_strike_damage_t3_assassin",
@@ -1653,7 +1785,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_10_increased_critical_strike_damage_t4_ninja",
@@ -1665,7 +1798,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "3_10_increased_critical_strike_damage_t5_deadeye",
@@ -1677,7 +1811,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_critical_strike_chance_t1_wanderer",
@@ -1685,11 +1820,12 @@
     "tier": 1,
     "name": "Wanderer",
     "description": "+[1-4]% Increased Critical Strike Chance",
-    "statKey": null,
+    "statKey": "crit_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_critical_strike_chance_t2_stalker",
@@ -1697,11 +1833,12 @@
     "tier": 2,
     "name": "Stalker",
     "description": "+[2-8]% Increased Critical Strike Chance",
-    "statKey": null,
+    "statKey": "crit_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_critical_strike_chance_t3_packleader",
@@ -1709,11 +1846,12 @@
     "tier": 3,
     "name": "Packleader",
     "description": "+[3-12]% Increased Critical Strike Chance",
-    "statKey": null,
+    "statKey": "crit_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_critical_strike_chance_t4_apex",
@@ -1721,11 +1859,12 @@
     "tier": 4,
     "name": "Apex",
     "description": "+[4-16]% Increased Critical Strike Chance",
-    "statKey": null,
+    "statKey": "crit_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "1_4_increased_critical_strike_chance_t5_predator",
@@ -1733,11 +1872,12 @@
     "tier": 5,
     "name": "Predator",
     "description": "+[5-20]% Increased Critical Strike Chance",
-    "statKey": null,
+    "statKey": "crit_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_5_extra_gold_dropped_from_kills_t1_pickpocket",
@@ -1745,11 +1885,12 @@
     "tier": 1,
     "name": "Pickpocket",
     "description": "+[1-5]% Extra Gold Dropped From Kills",
-    "statKey": null,
+    "statKey": "gold_find",
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_5_extra_gold_dropped_from_kills_t2_thieve_s",
@@ -1757,11 +1898,12 @@
     "tier": 2,
     "name": "Thieve´s",
     "description": "+[2-10]% Extra Gold Dropped From Kills",
-    "statKey": null,
+    "statKey": "gold_find",
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "1_5_extra_gold_dropped_from_kills_t3_vulture_s",
@@ -1769,11 +1911,12 @@
     "tier": 3,
     "name": "Vulture´s",
     "description": "+[3-15]% Extra Gold Dropped From Kills",
-    "statKey": null,
+    "statKey": "gold_find",
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "1_5_extra_gold_dropped_from_kills_t4_greedy",
@@ -1781,11 +1924,12 @@
     "tier": 4,
     "name": "Greedy",
     "description": "+[4-20]% Extra Gold Dropped From Kills",
-    "statKey": null,
+    "statKey": "gold_find",
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_5_extra_gold_dropped_from_kills_t5_whitecollar",
@@ -1793,11 +1937,12 @@
     "tier": 5,
     "name": "Whitecollar",
     "description": "+[5-26]% Extra Gold Dropped From Kills",
-    "statKey": null,
+    "statKey": "gold_find",
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 26
+    "valueMax": 26,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_crushing_blow_t1_mangling",
@@ -1809,7 +1954,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_crushing_blow_t2_trashing",
@@ -1821,7 +1967,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_crushing_blow_t3_breaking",
@@ -1833,7 +1980,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_crushing_blow_t4_maiming",
@@ -1845,7 +1993,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_crushing_blow_t5_crushing",
@@ -1857,7 +2006,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_deadly_blow_t1_crucial",
@@ -1869,7 +2019,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_deadly_blow_t2_sharp",
@@ -1881,7 +2032,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_deadly_blow_t3_deadly",
@@ -1893,7 +2045,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_deadly_blow_t4_fatal",
@@ -1905,7 +2058,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_for_a_deadly_blow_t5_eliminating",
@@ -1917,7 +2071,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_to_open_wounds_t1_scarring",
@@ -1929,7 +2084,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_to_open_wounds_t2_blistering",
@@ -1941,7 +2097,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_to_open_wounds_t3_ripping",
@@ -1953,7 +2110,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_to_open_wounds_t4_slashing",
@@ -1965,7 +2123,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "1_4_chance_to_open_wounds_t5_hemorrhaging",
@@ -1977,7 +2136,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "slows_target_by_t1_stuttering",
@@ -1989,7 +2149,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "slows_target_by_t2_entangling",
@@ -2001,7 +2162,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "slows_target_by_t3_disrupting",
@@ -2013,7 +2175,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "slows_target_by_t4_slowing",
@@ -2025,7 +2188,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "slows_target_by_t5_crippling",
@@ -2037,7 +2201,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "life_increased_by_1_4_t1_foxheart_s",
@@ -2049,7 +2214,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "life_increased_by_1_4_t2_wolfheart_s",
@@ -2061,7 +2227,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "life_increased_by_1_4_t3_jaguarheart_s",
@@ -2073,7 +2240,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "life_increased_by_1_4_t4_tigerheart_s",
@@ -2085,7 +2253,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "life_increased_by_1_4_t5_lionheart_s",
@@ -2097,7 +2266,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "mana_increased_by_1_3_t1_earthworm_s",
@@ -2109,7 +2279,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "mana_increased_by_1_3_t2_maggot_s",
@@ -2121,7 +2292,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "mana_increased_by_1_3_t3_snake_s",
@@ -2133,7 +2305,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "mana_increased_by_1_3_t4_python_s",
@@ -2145,7 +2318,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "mana_increased_by_1_3_t5_anaconda_s",
@@ -2157,7 +2331,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_5_to_all_resistances_t1_forest",
@@ -2169,7 +2344,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "1_5_to_all_resistances_t2_wilderness",
@@ -2181,7 +2357,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "1_5_to_all_resistances_t3_oasis",
@@ -2193,7 +2370,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "1_5_to_all_resistances_t4_nature",
@@ -2205,7 +2383,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "1_5_to_all_resistances_t5_prophet",
@@ -2217,7 +2396,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_cold_resistance_t1_coldignoring",
@@ -2229,7 +2409,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_cold_resistance_t2_coldpenetrating",
@@ -2241,7 +2422,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_cold_resistance_t3_coldbreaking",
@@ -2253,7 +2435,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_cold_resistance_t4_coldpiercing",
@@ -2265,7 +2448,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_cold_resistance_t5_coldshattering",
@@ -2277,7 +2461,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_fire_resistance_t1_fireignoring",
@@ -2289,7 +2474,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_fire_resistance_t2_firepenetrating",
@@ -2301,7 +2487,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_fire_resistance_t3_firebreaking",
@@ -2313,7 +2500,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_fire_resistance_t4_firepiercing",
@@ -2325,7 +2513,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_fire_resistance_t5_fireshattering",
@@ -2337,7 +2526,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_poison_resistance_t1_poisonignoring",
@@ -2349,7 +2539,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_poison_resistance_t2_poisonpenetrating",
@@ -2361,7 +2552,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_poison_resistance_t3_poisonbreaking",
@@ -2373,7 +2565,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_poison_resistance_t4_poisonpiercing",
@@ -2385,7 +2578,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_poison_resistance_t5_poisonshattering",
@@ -2397,7 +2591,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_lightning_resistance_t1_lightiningignoring",
@@ -2409,7 +2604,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_lightning_resistance_t2_lightningpenetrating",
@@ -2421,7 +2617,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_lightning_resistance_t3_lightningbreaking",
@@ -2433,7 +2630,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_lightning_resistance_t4_lightningpiercing",
@@ -2445,7 +2643,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_lightning_resistance_t5_lightningshattering",
@@ -2457,7 +2656,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_arcane_resistance_t1_arcaneignoring",
@@ -2469,7 +2669,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_arcane_resistance_t2_arcanepenetrating",
@@ -2481,7 +2682,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_arcane_resistance_t3_arcanebreaking",
@@ -2493,7 +2695,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_arcane_resistance_t4_arcanepiercing",
@@ -2505,7 +2708,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "to_enemy_arcane_resistance_t5_arcaneshattering",
@@ -2517,7 +2721,8 @@
     "sign": "-",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "ailment_damage_increased_by_t1_callous",
@@ -2589,7 +2794,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_class_t2_fool_s",
@@ -2601,7 +2807,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_class_t3_jester_s",
@@ -2613,7 +2820,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_class_t4_trickster_s",
@@ -2625,7 +2833,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_all_skills_class_t5_royal_jester_s",
@@ -2637,7 +2846,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "attack_damage_increased_by_5_20_t1_striking",
@@ -2649,7 +2859,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "attack_damage_increased_by_5_20_t2_slicing",
@@ -2661,7 +2872,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "attack_damage_increased_by_5_20_t3_wounding",
@@ -2673,7 +2885,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "prefix"
   },
   {
     "id": "attack_damage_increased_by_5_20_t4_mutilating",
@@ -2685,7 +2898,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 55
+    "valueMax": 55,
+    "kind": "prefix"
   },
   {
     "id": "attack_damage_increased_by_5_20_t5_killing",
@@ -2697,7 +2911,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 75
+    "valueMax": 75,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_cold_skill_damage_t1_chilling",
@@ -2709,7 +2924,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_cold_skill_damage_t2_frozen",
@@ -2721,7 +2937,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_cold_skill_damage_t3_coldsnap",
@@ -2733,7 +2950,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_cold_skill_damage_t4_frostburning",
@@ -2745,7 +2963,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 12,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_cold_skill_damage_t5_glacial",
@@ -2757,7 +2976,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 18,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_fire_skill_damage_t1_melting",
@@ -2769,7 +2989,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_fire_skill_damage_t2_flaming",
@@ -2781,7 +3002,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_fire_skill_damage_t3_molten",
@@ -2793,7 +3015,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_fire_skill_damage_t4_burning",
@@ -2805,7 +3028,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 12,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_fire_skill_damage_t5_scorching",
@@ -2817,7 +3041,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 18,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_lightning_skill_damage_t1_shocked",
@@ -2829,7 +3054,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_lightning_skill_damage_t2_lightning",
@@ -2841,7 +3067,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_lightning_skill_damage_t3_static",
@@ -2853,7 +3080,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_lightning_skill_damage_t4_thunder",
@@ -2865,7 +3093,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 12,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_lightning_skill_damage_t5_monsoon",
@@ -2877,7 +3106,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 18,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_poison_skill_damage_t1_poisonous",
@@ -2889,7 +3119,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_poison_skill_damage_t2_venomous",
@@ -2901,7 +3132,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_poison_skill_damage_t3_toxic",
@@ -2913,7 +3145,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_poison_skill_damage_t4_asphyxiating",
@@ -2925,7 +3158,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 12,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_poison_skill_damage_t5_corroding",
@@ -2937,7 +3171,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 18,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_arcane_skill_damage_t1_magic",
@@ -2949,7 +3184,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_arcane_skill_damage_t2_arcanist",
@@ -2961,7 +3197,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_arcane_skill_damage_t3_conjured",
@@ -2973,7 +3210,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_arcane_skill_damage_t4_mystic",
@@ -2985,7 +3223,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 12,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "3_8_to_arcane_skill_damage_t5_rift",
@@ -2997,7 +3236,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 18,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_casting_to_cast_x_level_x_t1_magewrath",
@@ -3009,7 +3249,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_casting_to_cast_x_level_x_t2_magewrath",
@@ -3021,7 +3262,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_casting_to_cast_x_level_x_t3_magewrath",
@@ -3033,7 +3275,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_casting_to_cast_x_level_x_t4_magewrath",
@@ -3045,7 +3288,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_casting_to_cast_x_level_x_t5_magewrath",
@@ -3057,7 +3301,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_attacking_to_cast_x_level_x_t1_warrior_s",
@@ -3069,7 +3314,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_attacking_to_cast_x_level_x_t2_warrior_s",
@@ -3081,7 +3327,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_attacking_to_cast_x_level_x_t3_warrior_s",
@@ -3093,7 +3340,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_attacking_to_cast_x_level_x_t4_warrior_s",
@@ -3105,7 +3353,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_attacking_to_cast_x_level_x_t5_warrior_s",
@@ -3117,7 +3366,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_striking_to_cast_x_level_x_t1_brute_s",
@@ -3129,7 +3379,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_striking_to_cast_x_level_x_t2_brute_s",
@@ -3141,7 +3392,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_striking_to_cast_x_level_x_t3_brute_s",
@@ -3153,7 +3405,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_striking_to_cast_x_level_x_t4_brute_s",
@@ -3165,7 +3418,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_striking_to_cast_x_level_x_t5_brute_s",
@@ -3177,7 +3431,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_struck_to_cast_x_level_x_t1_juggernaut_s",
@@ -3189,7 +3444,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_struck_to_cast_x_level_x_t2_juggernaut_s",
@@ -3201,7 +3457,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_struck_to_cast_x_level_x_t3_juggernaut_s",
@@ -3213,7 +3470,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_struck_to_cast_x_level_x_t4_juggernaut_s",
@@ -3225,7 +3483,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "chance_when_struck_to_cast_x_level_x_t5_juggernaut_s",
@@ -3237,7 +3496,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_damage_t1_soldier_s",
@@ -3249,7 +3509,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_damage_t2_berserker_s",
@@ -3261,7 +3522,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 75
+    "valueMax": 75,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_damage_t3_crusader_s",
@@ -3273,7 +3535,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 75,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_damage_t4_legionnaire_s",
@@ -3285,7 +3548,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 100,
-    "valueMax": 125
+    "valueMax": 125,
+    "kind": "prefix"
   },
   {
     "id": "25_50_enhanced_damage_t5_warlord_s",
@@ -3297,7 +3561,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 125,
-    "valueMax": 150
+    "valueMax": 150,
+    "kind": "prefix"
   },
   {
     "id": "5_15_increased_attack_speed_t1_swift",
@@ -3309,7 +3574,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "5_15_increased_attack_speed_t2_rapid",
@@ -3321,7 +3587,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "5_15_increased_attack_speed_t3_quickened",
@@ -3333,7 +3600,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "5_15_increased_attack_speed_t4_fleet",
@@ -3345,7 +3613,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "prefix"
   },
   {
     "id": "5_15_increased_attack_speed_t5_zephyr_s",
@@ -3357,7 +3626,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_fire_t1_fireinfusion",
@@ -3369,7 +3639,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_fire_t2_fireinfusion",
@@ -3381,7 +3652,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_fire_t3_fireinfusion",
@@ -3393,7 +3665,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_fire_t4_fireinfusion",
@@ -3405,7 +3678,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_fire_t5_fireinfusion",
@@ -3417,7 +3691,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_cold_t1_coldinfusion",
@@ -3429,7 +3704,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_cold_t2_coldinfusion",
@@ -3441,7 +3717,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_cold_t3_coldinfusion",
@@ -3453,7 +3730,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_cold_t4_coldinfusion",
@@ -3465,7 +3743,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_cold_t5_coldinfusion",
@@ -3477,7 +3756,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_lightning_t1_lightninginfusion",
@@ -3489,7 +3769,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_lightning_t2_lightninginfusion",
@@ -3501,7 +3782,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_lightning_t3_lightninginfusion",
@@ -3513,7 +3795,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_lightning_t4_lightninginfusion",
@@ -3525,7 +3808,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_lightning_t5_lightninginfusion",
@@ -3537,7 +3821,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_arcane_t1_arcaneinfusion",
@@ -3549,7 +3834,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_arcane_t2_arcaneinfusion",
@@ -3561,7 +3847,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_arcane_t3_arcaneinfusion",
@@ -3573,7 +3860,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_arcane_t4_arcaneinfusion",
@@ -3585,7 +3873,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "of_physical_damage_taken_as_arcane_t5_arcaneinfusion",
@@ -3597,7 +3886,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "summon_damage_increased_by_2_10_t1_skeleton_s",
@@ -3609,7 +3899,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "summon_damage_increased_by_2_10_t2_zombie_s",
@@ -3621,7 +3912,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "summon_damage_increased_by_2_10_t3_ghoul_s",
@@ -3633,7 +3925,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "summon_damage_increased_by_2_10_t4_lich",
@@ -3645,7 +3938,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "summon_damage_increased_by_2_10_t5_black_knight_s",
@@ -3657,7 +3951,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "summon_life_increased_by_1_4_t1_dark",
@@ -3669,7 +3964,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "summon_life_increased_by_1_4_t2_black",
@@ -3681,7 +3977,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "summon_life_increased_by_1_4_t3_pitchblack",
@@ -3693,7 +3990,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "summon_life_increased_by_1_4_t4_eerie",
@@ -3705,7 +4003,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "prefix"
   },
   {
     "id": "summon_life_increased_by_1_4_t5_limbo",
@@ -3717,7 +4016,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "explosion_damage_increased_by_2_10_t1_miner",
@@ -3729,7 +4029,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "explosion_damage_increased_by_2_10_t2_detonator",
@@ -3741,7 +4042,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "explosion_damage_increased_by_2_10_t3_fusing",
@@ -3753,7 +4055,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "explosion_damage_increased_by_2_10_t4_ticking",
@@ -3765,7 +4068,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "explosion_damage_increased_by_2_10_t5_exploding",
@@ -3777,7 +4081,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "sentry_damage_increased_by_2_10_t1_lurking",
@@ -3789,7 +4094,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "sentry_damage_increased_by_2_10_t2_watching",
@@ -3801,7 +4107,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "sentry_damage_increased_by_2_10_t3_monitoring",
@@ -3813,7 +4120,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "sentry_damage_increased_by_2_10_t4_scanning",
@@ -3825,7 +4133,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "sentry_damage_increased_by_2_10_t5_surveilling",
@@ -3837,7 +4146,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "sentry_duration_increased_by_5_10_t1_timing",
@@ -3849,7 +4159,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "sentry_duration_increased_by_5_10_t2_enduring",
@@ -3861,7 +4172,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "sentry_duration_increased_by_5_10_t3_lasting",
@@ -3873,7 +4185,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "sentry_duration_increased_by_5_10_t4_weaving",
@@ -3885,7 +4198,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "sentry_duration_increased_by_5_10_t5_everlasting",
@@ -3897,7 +4211,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "mana_costs_decreased_by_1_5_t1_manaleak",
@@ -3909,7 +4224,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "mana_costs_decreased_by_1_5_t2_manaspill",
@@ -3921,7 +4237,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "mana_costs_decreased_by_1_5_t3_manasplash",
@@ -3933,7 +4250,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "mana_costs_decreased_by_1_5_t4_manaflow",
@@ -3945,7 +4263,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "mana_costs_decreased_by_1_5_t5_manahunger",
@@ -3957,7 +4276,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "damage_taken_reduced_by_1_10_t1_mitigating",
@@ -3969,7 +4289,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "prefix"
   },
   {
     "id": "damage_taken_reduced_by_1_10_t2_deflecting",
@@ -3981,7 +4302,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "prefix"
   },
   {
     "id": "damage_taken_reduced_by_1_10_t3_defending",
@@ -3993,7 +4315,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 10,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "damage_taken_reduced_by_1_10_t4_armored",
@@ -4005,7 +4328,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "prefix"
   },
   {
     "id": "damage_taken_reduced_by_1_10_t5_bulwark",
@@ -4017,7 +4341,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 350
+    "valueMax": 350,
+    "kind": "prefix"
   },
   {
     "id": "1_to_summon_skills_t1_reanimator",
@@ -4029,7 +4354,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "prefix"
   },
   {
     "id": "1_to_summon_skills_t2_deathcaller",
@@ -4041,7 +4367,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "prefix"
   },
   {
     "id": "1_to_summon_skills_t3_unholy",
@@ -4053,7 +4380,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "prefix"
   },
   {
     "id": "1_to_summon_skills_t4_summoner",
@@ -4065,7 +4393,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "prefix"
   },
   {
     "id": "1_to_summon_skills_t5_necromancer",
@@ -4077,7 +4406,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "enhanced_defense_damage_and_1_affix_t1_superior",
@@ -4569,7 +4899,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 21,
-    "valueMax": 21
+    "valueMax": 21,
+    "kind": "prefix"
   },
   {
     "id": "mana_regeneration_increased_by_21_t2_sparkling",
@@ -4581,7 +4912,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 26
+    "valueMax": 26,
+    "kind": "prefix"
   },
   {
     "id": "mana_regeneration_increased_by_21_t3_luminated",
@@ -4593,7 +4925,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "prefix"
   },
   {
     "id": "mana_regeneration_increased_by_21_t4_luxified",
@@ -4605,7 +4938,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 61,
-    "valueMax": 61
+    "valueMax": 61,
+    "kind": "prefix"
   },
   {
     "id": "mana_regeneration_increased_by_21_t5_lightburning",
@@ -4617,7 +4951,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 75,
-    "valueMax": 75
+    "valueMax": 75,
+    "kind": "prefix"
   },
   {
     "id": "life_regeneration_increased_by_17_22_t1_regenerating",
@@ -4629,7 +4964,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 17,
-    "valueMax": 22
+    "valueMax": 22,
+    "kind": "prefix"
   },
   {
     "id": "life_regeneration_increased_by_17_22_t2_healing",
@@ -4641,7 +4977,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 21
+    "valueMax": 21,
+    "kind": "prefix"
   },
   {
     "id": "life_regeneration_increased_by_17_22_t3_fulfilling",
@@ -4653,7 +4990,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "prefix"
   },
   {
     "id": "life_regeneration_increased_by_17_22_t4_vitalizing",
@@ -4665,7 +5003,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "life_regeneration_increased_by_17_22_t5_consuming",
@@ -4677,7 +5016,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 44,
-    "valueMax": 44
+    "valueMax": 44,
+    "kind": "prefix"
   },
   {
     "id": "17_faster_regeneration_t1_shortlived",
@@ -4689,7 +5029,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 17,
-    "valueMax": 17
+    "valueMax": 17,
+    "kind": "prefix"
   },
   {
     "id": "17_faster_regeneration_t2_fast",
@@ -4701,7 +5042,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 21,
-    "valueMax": 21
+    "valueMax": 21,
+    "kind": "prefix"
   },
   {
     "id": "17_faster_regeneration_t3_accelerated",
@@ -4713,7 +5055,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "17_faster_regeneration_t4_hyperloop",
@@ -4725,7 +5068,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 44,
-    "valueMax": 44
+    "valueMax": 44,
+    "kind": "prefix"
   },
   {
     "id": "17_faster_regeneration_t5_entangled",
@@ -4737,7 +5081,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 47,
-    "valueMax": 47
+    "valueMax": 47,
+    "kind": "prefix"
   },
   {
     "id": "19_of_mana_regeneration_happens_instantly_t1_soul_recon",
@@ -4749,7 +5094,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 19,
-    "valueMax": 19
+    "valueMax": 19,
+    "kind": "prefix"
   },
   {
     "id": "19_of_mana_regeneration_happens_instantly_t2_soul_infused",
@@ -4761,7 +5107,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "prefix"
   },
   {
     "id": "19_of_mana_regeneration_happens_instantly_t3_soul_hungry",
@@ -4773,7 +5120,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "prefix"
   },
   {
     "id": "19_of_mana_regeneration_happens_instantly_t4_soul_filled",
@@ -4785,7 +5133,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "19_of_mana_regeneration_happens_instantly_t5_soul_funneled",
@@ -4797,7 +5146,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "19_of_life_regeneration_happens_instantly_t1_vital_recon",
@@ -4809,7 +5159,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 19,
-    "valueMax": 19
+    "valueMax": 19,
+    "kind": "prefix"
   },
   {
     "id": "19_of_life_regeneration_happens_instantly_t2_vital_infused",
@@ -4821,7 +5172,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 24,
-    "valueMax": 24
+    "valueMax": 24,
+    "kind": "prefix"
   },
   {
     "id": "19_of_life_regeneration_happens_instantly_t3_vital_hungry",
@@ -4833,7 +5185,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 29,
-    "valueMax": 49
+    "valueMax": 49,
+    "kind": "prefix"
   },
   {
     "id": "19_of_life_regeneration_happens_instantly_t4_vital_filled",
@@ -4845,7 +5198,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "prefix"
   },
   {
     "id": "19_of_life_regeneration_happens_instantly_t5_vital_funneled",
@@ -4857,7 +5211,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 40,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "prefix"
   },
   {
     "id": "2_5_increased_sentry_attack_speed_t1_quick_sentry",
@@ -4869,7 +5224,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "prefix"
   },
   {
     "id": "2_5_increased_sentry_attack_speed_t2_fast_sentry",
@@ -4881,7 +5237,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "prefix"
   },
   {
     "id": "2_5_increased_sentry_attack_speed_t3_speed_sentry",
@@ -4893,7 +5250,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "prefix"
   },
   {
     "id": "2_5_increased_sentry_attack_speed_t4_rapid_sentry",
@@ -4905,7 +5263,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "prefix"
   },
   {
     "id": "2_5_increased_sentry_attack_speed_t5_fleet_sentry",
@@ -4917,7 +5276,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "prefix"
   },
   {
     "id": "15_75_increased_codex_drop_rates_t1_delirious",
@@ -5061,7 +5421,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_strength_t2_power",
@@ -5073,7 +5434,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_strength_t3_force",
@@ -5085,7 +5447,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_strength_t4_might",
@@ -5097,7 +5460,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_strength_t5_fury",
@@ -5109,7 +5473,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_dexterity_t1_dexterity",
@@ -5121,7 +5486,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_dexterity_t2_sleight",
@@ -5133,7 +5499,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_dexterity_t3_skill",
@@ -5145,7 +5512,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_dexterity_t4_reflex",
@@ -5157,7 +5525,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_dexterity_t5_agility",
@@ -5169,7 +5538,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_energy_t1_energy",
@@ -5181,7 +5551,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_energy_t2_illumination",
@@ -5193,7 +5564,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_energy_t3_mysticism",
@@ -5205,7 +5577,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_energy_t4_spirit",
@@ -5217,7 +5590,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_energy_t5_resonance",
@@ -5229,7 +5603,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_intelligence_t1_sorcer",
@@ -5241,7 +5616,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_intelligence_t2_mage",
@@ -5253,7 +5629,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_intelligence_t3_warlock",
@@ -5265,7 +5642,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_intelligence_t4_wizard",
@@ -5277,7 +5655,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_intelligence_t5_witch",
@@ -5289,7 +5668,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_armor_t1_armor",
@@ -5301,7 +5681,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_armor_t2_ward",
@@ -5313,7 +5694,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_armor_t3_guard",
@@ -5325,7 +5707,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_armor_t4_bulwark",
@@ -5337,7 +5720,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_armor_t5_bastion",
@@ -5349,7 +5733,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_vitality_t1_vitality",
@@ -5361,7 +5746,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_vitality_t2_endurance",
@@ -5373,7 +5759,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_vitality_t3_stamina",
@@ -5385,7 +5772,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_vitality_t4_vigor",
@@ -5397,7 +5785,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 7,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "1_5_to_vitality_t5_fortitude",
@@ -5409,7 +5798,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 8,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "physical_damage_taken_reduced_by_1_2_t1_mitigation",
@@ -5421,7 +5811,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "physical_damage_taken_reduced_by_1_2_t2_absorption",
@@ -5433,7 +5824,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "physical_damage_taken_reduced_by_1_2_t3_shielding",
@@ -5445,7 +5837,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "physical_damage_taken_reduced_by_1_2_t4_resilience",
@@ -5457,7 +5850,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "physical_damage_taken_reduced_by_1_2_t5_protection",
@@ -5469,7 +5863,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "magic_damage_taken_reduced_by_1_2_t1_spellshield",
@@ -5481,7 +5876,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "magic_damage_taken_reduced_by_1_2_t2_spellabsorb",
@@ -5493,7 +5889,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "magic_damage_taken_reduced_by_1_2_t3_manashielding",
@@ -5505,7 +5902,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "magic_damage_taken_reduced_by_1_2_t4_spellcutter",
@@ -5517,7 +5915,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "magic_damage_taken_reduced_by_1_2_t5_spellpurge",
@@ -5529,7 +5928,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "all_damage_taken_reduced_by_t1_absolute",
@@ -5541,7 +5941,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "all_damage_taken_reduced_by_t2_untouchable",
@@ -5553,7 +5954,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "all_damage_taken_reduced_by_t3_fortification",
@@ -5565,7 +5967,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "all_damage_taken_reduced_by_t4_divinity",
@@ -5577,7 +5980,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "all_damage_taken_reduced_by_t5_immortality",
@@ -5589,7 +5993,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "10_25_faster_hit_recovery_t1_balance",
@@ -5601,7 +6006,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "10_25_faster_hit_recovery_t2_reaction",
@@ -5613,7 +6019,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "10_25_faster_hit_recovery_t3_libra",
@@ -5625,7 +6032,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 75
+    "valueMax": 75,
+    "kind": "suffix"
   },
   {
     "id": "10_25_faster_hit_recovery_t4_recovery",
@@ -5637,7 +6045,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 40,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "10_25_faster_hit_recovery_t5_equilibrium",
@@ -5649,7 +6058,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 150
+    "valueMax": 150,
+    "kind": "suffix"
   },
   {
     "id": "4_8_increased_attack_speed_t1_flash",
@@ -5661,7 +6071,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "4_8_increased_attack_speed_t2_tempo",
@@ -5673,7 +6084,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "4_8_increased_attack_speed_t3_swiftness",
@@ -5685,7 +6097,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "4_8_increased_attack_speed_t4_frenzy",
@@ -5697,7 +6110,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "4_8_increased_attack_speed_t5_blitzkrieg",
@@ -5709,7 +6123,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "5_10_faster_cast_rate_t1_swiftcast",
@@ -5721,7 +6136,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "5_10_faster_cast_rate_t2_rapidchant",
@@ -5733,7 +6149,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "5_10_faster_cast_rate_t3_spellhaste",
@@ -5745,7 +6162,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "5_10_faster_cast_rate_t4_quickspell",
@@ -5757,7 +6175,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_10_faster_cast_rate_t5_rapidcasting",
@@ -5769,7 +6188,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "3_10_increased_magic_find_t1_luck",
@@ -5781,7 +6201,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "3_10_increased_magic_find_t2_fortune",
@@ -5793,7 +6214,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "3_10_increased_magic_find_t3_scavenger",
@@ -5805,7 +6227,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "3_10_increased_magic_find_t4_tombraider",
@@ -5817,7 +6240,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "3_10_increased_magic_find_t5_rngesus",
@@ -5829,7 +6253,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 12,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_2_life_stolen_per_hit_t1_leeching",
@@ -5841,7 +6266,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "1_2_life_stolen_per_hit_t2_locust",
@@ -5853,7 +6279,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "1_2_life_stolen_per_hit_t3_lifesurge",
@@ -5865,7 +6292,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "1_2_life_stolen_per_hit_t4_lifedrain",
@@ -5877,7 +6305,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "suffix"
   },
   {
     "id": "1_2_life_stolen_per_hit_t5_lifetap",
@@ -5889,7 +6318,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "1_2_mana_stolen_per_hit_t1_manavamp",
@@ -5901,7 +6331,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "1_2_mana_stolen_per_hit_t2_manadrain",
@@ -5913,7 +6344,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "1_2_mana_stolen_per_hit_t3_manatide",
@@ -5925,7 +6357,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "1_2_mana_stolen_per_hit_t4_manasiphon",
@@ -5937,7 +6370,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "suffix"
   },
   {
     "id": "1_2_mana_stolen_per_hit_t5_manawraith",
@@ -5949,7 +6383,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "10_25_defense_vs_missiles_t1_dartguard",
@@ -5961,7 +6396,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "10_25_defense_vs_missiles_t2_arrowguard",
@@ -5973,7 +6409,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "10_25_defense_vs_missiles_t3_flightguard",
@@ -5985,7 +6422,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 75
+    "valueMax": 75,
+    "kind": "suffix"
   },
   {
     "id": "10_25_defense_vs_missiles_t4_projectileguard",
@@ -5997,7 +6435,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 75,
-    "valueMax": 150
+    "valueMax": 150,
+    "kind": "suffix"
   },
   {
     "id": "10_25_defense_vs_missiles_t5_missileguard",
@@ -6009,7 +6448,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 150
+    "valueMax": 150,
+    "kind": "suffix"
   },
   {
     "id": "replenish_life_5_10_t1_lifeinflux",
@@ -6021,7 +6461,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "replenish_life_5_10_t2_lifepulse",
@@ -6033,7 +6474,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "replenish_life_5_10_t3_lifeflow",
@@ -6045,7 +6487,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "replenish_life_5_10_t4_lifespring",
@@ -6057,7 +6500,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "replenish_life_5_10_t5_lifebloom",
@@ -6069,7 +6513,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "replenish_mana_5_10_t1_manaflux",
@@ -6081,7 +6526,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "replenish_mana_5_10_t2_manawell",
@@ -6093,7 +6539,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "replenish_mana_5_10_t3_manaflow",
@@ -6105,7 +6552,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "replenish_mana_5_10_t4_manaspring",
@@ -6117,7 +6565,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "replenish_mana_5_10_t5_manabloom",
@@ -6129,7 +6578,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "5_10_increased_chance_of_blocking_t1_blockade",
@@ -6137,11 +6587,12 @@
     "tier": 1,
     "name": "Blockade",
     "description": "+[5-10]% Increased Chance of Blocking",
-    "statKey": null,
+    "statKey": "block_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "5_10_increased_chance_of_blocking_t2_deflection",
@@ -6149,11 +6600,12 @@
     "tier": 2,
     "name": "Deflection",
     "description": "+[10-20]% Increased Chance of Blocking",
-    "statKey": null,
+    "statKey": "block_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "5_10_increased_chance_of_blocking_t3_warding",
@@ -6161,11 +6613,12 @@
     "tier": 3,
     "name": "Warding",
     "description": "+[15-30]% Increased Chance of Blocking",
-    "statKey": null,
+    "statKey": "block_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "5_10_increased_chance_of_blocking_t4_barrier",
@@ -6173,11 +6626,12 @@
     "tier": 4,
     "name": "Barrier",
     "description": "+[20-40]% Increased Chance of Blocking",
-    "statKey": null,
+    "statKey": "block_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_10_increased_chance_of_blocking_t5_shieldwall",
@@ -6185,11 +6639,12 @@
     "tier": 5,
     "name": "Shieldwall",
     "description": "+[25-50]% Increased Chance of Blocking",
-    "statKey": null,
+    "statKey": "block_chance",
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "half_freeze_duration_t1_tundra",
@@ -6225,7 +6680,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "15_30_of_damage_returned_to_the_attacker_t2_oak",
@@ -6237,7 +6693,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "15_30_of_damage_returned_to_the_attacker_t3_thorns",
@@ -6249,7 +6706,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "15_30_of_damage_returned_to_the_attacker_t4_needle",
@@ -6261,7 +6719,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 100,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "suffix"
   },
   {
     "id": "15_30_of_damage_returned_to_the_attacker_t5_armadillo",
@@ -6273,7 +6732,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 200,
-    "valueMax": 350
+    "valueMax": 350,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_mana_t1_manablock",
@@ -6285,7 +6745,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_mana_t2_manadeflect",
@@ -6297,7 +6758,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_mana_t3_manaward",
@@ -6309,7 +6771,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_mana_t4_manabarrier",
@@ -6321,7 +6784,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_mana_t5_manawall",
@@ -6333,7 +6797,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_life_t1_lifeblock",
@@ -6345,7 +6810,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_life_t2_lifedeflect",
@@ -6357,7 +6823,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_life_t3_lifeward",
@@ -6369,7 +6836,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_life_t4_lifebarrier",
@@ -6381,7 +6849,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_4_of_damage_taken_recouped_as_life_t5_lifewall",
@@ -6393,7 +6862,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "30_to_strength_based_on_level_t1_king",
@@ -6405,7 +6875,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "30_to_strength_based_on_level_t2_king",
@@ -6417,7 +6888,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 35,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "30_to_strength_based_on_level_t3_king",
@@ -6429,7 +6901,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "30_to_strength_based_on_level_t4_king",
@@ -6441,7 +6914,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "suffix"
   },
   {
     "id": "30_to_strength_based_on_level_t5_king",
@@ -6453,7 +6927,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "30_to_dexterity_based_on_level_t1_archery",
@@ -6465,7 +6940,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "30_to_dexterity_based_on_level_t2_archery",
@@ -6477,7 +6953,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 35,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "30_to_dexterity_based_on_level_t3_archery",
@@ -6489,7 +6966,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "30_to_dexterity_based_on_level_t4_archery",
@@ -6501,7 +6979,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "suffix"
   },
   {
     "id": "30_to_dexterity_based_on_level_t5_archery",
@@ -6513,7 +6992,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "30_to_energy_based_on_level_t1_intellect",
@@ -6525,7 +7005,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "30_to_energy_based_on_level_t2_intellect",
@@ -6537,7 +7018,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 35,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "30_to_energy_based_on_level_t3_intellect",
@@ -6549,7 +7031,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "30_to_energy_based_on_level_t4_intellect",
@@ -6561,7 +7044,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "suffix"
   },
   {
     "id": "30_to_energy_based_on_level_t5_intellect",
@@ -6573,7 +7057,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "30_to_intelligence_based_on_level_t1_spellpower",
@@ -6585,7 +7070,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "30_to_intelligence_based_on_level_t2_spellpower",
@@ -6597,7 +7083,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 35,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "30_to_intelligence_based_on_level_t3_spellpower",
@@ -6609,7 +7096,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "30_to_intelligence_based_on_level_t4_spellpower",
@@ -6621,7 +7109,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "suffix"
   },
   {
     "id": "30_to_intelligence_based_on_level_t5_spellpower",
@@ -6633,7 +7122,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "30_to_armor_based_on_level_t1_defender",
@@ -6645,7 +7135,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "30_to_armor_based_on_level_t2_defender",
@@ -6657,7 +7148,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 35,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "30_to_armor_based_on_level_t3_defender",
@@ -6669,7 +7161,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "30_to_armor_based_on_level_t4_defender",
@@ -6681,7 +7174,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "suffix"
   },
   {
     "id": "30_to_armor_based_on_level_t5_defender",
@@ -6693,7 +7187,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "30_to_vitality_based_on_level_t1_holy_vigor",
@@ -6705,7 +7200,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "30_to_vitality_based_on_level_t2_holy_vigor",
@@ -6717,7 +7213,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 35,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "30_to_vitality_based_on_level_t3_holy_vigor",
@@ -6729,7 +7226,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "30_to_vitality_based_on_level_t4_holy_vigor",
@@ -6741,7 +7239,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 45,
-    "valueMax": 45
+    "valueMax": 45,
+    "kind": "suffix"
   },
   {
     "id": "30_to_vitality_based_on_level_t5_holy_vigor",
@@ -6753,7 +7252,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "20_enhanced_damage_based_on_level_t1_lonewolf",
@@ -6765,7 +7265,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "20_enhanced_damage_based_on_level_t2_legend",
@@ -6777,7 +7278,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 40,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "20_enhanced_damage_based_on_level_t3_hero",
@@ -6789,7 +7291,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 60,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "suffix"
   },
   {
     "id": "20_enhanced_damage_based_on_level_t4_samurai",
@@ -6801,7 +7304,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 80,
-    "valueMax": 80
+    "valueMax": 80,
+    "kind": "suffix"
   },
   {
     "id": "20_enhanced_damage_based_on_level_t5_ronin",
@@ -6813,7 +7317,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 100,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "magic_skill_damage_increased_by_3_10_t1_battlemagus",
@@ -6825,7 +7330,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "magic_skill_damage_increased_by_3_10_t2_spellcaster",
@@ -6837,7 +7343,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "magic_skill_damage_increased_by_3_10_t3_highsorcery",
@@ -6849,7 +7356,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "magic_skill_damage_increased_by_3_10_t4_grandwizard",
@@ -6861,7 +7369,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "magic_skill_damage_increased_by_3_10_t5_archwarlock",
@@ -6873,7 +7382,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "fire_skill_damage_increased_by_t1_fire_god",
@@ -6885,7 +7395,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "fire_skill_damage_increased_by_t2_flame_god",
@@ -6897,7 +7408,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "fire_skill_damage_increased_by_t3_lava_god",
@@ -6909,7 +7421,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "fire_skill_damage_increased_by_t4_inferno_god",
@@ -6921,7 +7434,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "fire_skill_damage_increased_by_t5_hellfire_god",
@@ -6933,7 +7447,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "cold_skill_damage_increased_by_3_10_t1_ice_god",
@@ -6945,7 +7460,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "cold_skill_damage_increased_by_3_10_t2_frost_god",
@@ -6957,7 +7473,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "cold_skill_damage_increased_by_3_10_t3_rime_god",
@@ -6969,7 +7486,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "cold_skill_damage_increased_by_3_10_t4_tundra_god",
@@ -6981,7 +7499,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "cold_skill_damage_increased_by_3_10_t5_glacial_god",
@@ -6993,7 +7512,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "arcane_skill_damage_increased_by_t1_arcane_god",
@@ -7005,7 +7525,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "arcane_skill_damage_increased_by_t2_mage_god",
@@ -7017,7 +7538,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "arcane_skill_damage_increased_by_t3_spell_god",
@@ -7029,7 +7551,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "arcane_skill_damage_increased_by_t4_rift_god",
@@ -7041,7 +7564,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "arcane_skill_damage_increased_by_t5_ether_god",
@@ -7053,7 +7577,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "lightning_skill_damage_increased_by_t1_shock_god",
@@ -7065,7 +7590,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "lightning_skill_damage_increased_by_t2_stasis_god",
@@ -7077,7 +7603,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "lightning_skill_damage_increased_by_t3_lightning_god",
@@ -7089,7 +7616,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "lightning_skill_damage_increased_by_t4_thunder_god",
@@ -7101,7 +7629,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "lightning_skill_damage_increased_by_t5_storm_god",
@@ -7113,7 +7642,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "poison_skill_damage_increased_by_t1_poison_god",
@@ -7125,7 +7655,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "poison_skill_damage_increased_by_t2_venom_god",
@@ -7137,7 +7668,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "poison_skill_damage_increased_by_t3_toxic_god",
@@ -7149,7 +7681,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "poison_skill_damage_increased_by_t4_plague_god",
@@ -7161,7 +7694,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "poison_skill_damage_increased_by_t5_black_god",
@@ -7173,7 +7707,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "2_10_of_target_defense_ignored_t1_ignoring",
@@ -7185,7 +7720,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "2_10_of_target_defense_ignored_t2_drilling",
@@ -7197,7 +7733,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "2_10_of_target_defense_ignored_t3_penetration",
@@ -7209,7 +7746,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "2_10_of_target_defense_ignored_t4_piercing",
@@ -7221,7 +7759,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "2_10_of_target_defense_ignored_t5_armorcrushing",
@@ -7233,7 +7772,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "1_3_to_all_attributes_t1_wholeness",
@@ -7245,7 +7785,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "suffix"
   },
   {
     "id": "1_3_to_all_attributes_t2_totality",
@@ -7257,7 +7798,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "1_3_to_all_attributes_t3_versatility",
@@ -7269,7 +7811,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "suffix"
   },
   {
     "id": "1_3_to_all_attributes_t4_unity",
@@ -7281,7 +7824,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "1_3_to_all_attributes_t5_harmony",
@@ -7293,7 +7837,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_3_increased_all_attributes_t1_wholesome",
@@ -7365,7 +7910,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "10_magic_find_based_on_level_t2_goblin",
@@ -7377,7 +7923,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "10_magic_find_based_on_level_t3_hobgoblin",
@@ -7389,7 +7936,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "10_magic_find_based_on_level_t4_ethergoblin",
@@ -7401,7 +7949,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "10_magic_find_based_on_level_t5_treasuregoblin",
@@ -7413,7 +7962,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 30,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "skill_haste_increased_by_3_8_t1_vision",
@@ -7425,7 +7975,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "skill_haste_increased_by_3_8_t2_memory",
@@ -7437,7 +7988,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 11
+    "valueMax": 11,
+    "kind": "suffix"
   },
   {
     "id": "skill_haste_increased_by_3_8_t3_brain",
@@ -7449,7 +8001,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 14
+    "valueMax": 14,
+    "kind": "suffix"
   },
   {
     "id": "skill_haste_increased_by_3_8_t4_illusion",
@@ -7461,7 +8014,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 17
+    "valueMax": 17,
+    "kind": "suffix"
   },
   {
     "id": "skill_haste_increased_by_3_8_t5_mind",
@@ -7473,7 +8027,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 7,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_cold_damage_t1_ice",
@@ -7485,7 +8040,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_cold_damage_t2_frost",
@@ -7497,7 +8053,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_cold_damage_t3_chill",
@@ -7509,7 +8066,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_cold_damage_t4_rime",
@@ -7521,7 +8079,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 150,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_cold_damage_t5_glacier",
@@ -7533,7 +8092,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 350,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_fire_damage_t1_fire",
@@ -7545,7 +8105,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_fire_damage_t2_flames",
@@ -7557,7 +8118,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_fire_damage_t3_lava",
@@ -7569,7 +8131,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_fire_damage_t4_volcano",
@@ -7581,7 +8144,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 150,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_fire_damage_t5_inferno",
@@ -7593,7 +8157,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 350,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_lightning_damage_t1_shock",
@@ -7605,7 +8170,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_lightning_damage_t2_stasis",
@@ -7617,7 +8183,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_lightning_damage_t3_voltage",
@@ -7629,7 +8196,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_lightning_damage_t4_lightning",
@@ -7641,7 +8209,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 150,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_lightning_damage_t5_thunder",
@@ -7653,7 +8222,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 350,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_poison_damage_t1_poison",
@@ -7665,7 +8235,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_poison_damage_t2_toxicity",
@@ -7677,7 +8248,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_poison_damage_t3_vile",
@@ -7689,7 +8261,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_poison_damage_t4_plague",
@@ -7701,7 +8274,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 150,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_poison_damage_t5_pandemic",
@@ -7713,7 +8287,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 350,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_arcane_damage_t1_arcanum",
@@ -7725,7 +8300,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_arcane_damage_t2_arcanist",
@@ -7737,7 +8313,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 20,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_arcane_damage_t3_arcana",
@@ -7749,7 +8326,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_arcane_damage_t4_arcanesurge",
@@ -7761,7 +8339,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 150,
-    "valueMax": 300
+    "valueMax": 300,
+    "kind": "suffix"
   },
   {
     "id": "5_15_to_additive_arcane_damage_t5_arcanewrath",
@@ -7773,7 +8352,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 350,
-    "valueMax": 500
+    "valueMax": 500,
+    "kind": "suffix"
   },
   {
     "id": "explosion_area_of_effect_increased_by_1_2_t1_shaking",
@@ -7785,7 +8365,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "explosion_area_of_effect_increased_by_1_2_t2_trembling",
@@ -7797,7 +8378,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "explosion_area_of_effect_increased_by_1_2_t3_fissure",
@@ -7809,7 +8391,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "explosion_area_of_effect_increased_by_1_2_t4_earthquake",
@@ -7821,7 +8404,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "explosion_area_of_effect_increased_by_1_2_t5_cataclysm",
@@ -7833,7 +8417,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "to_x_t1_wishing",
@@ -7905,7 +8490,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_stunned_monsters_2_5_t2_stunning",
@@ -7917,7 +8503,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_stunned_monsters_2_5_t3_stunning",
@@ -7929,7 +8516,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_stunned_monsters_2_5_t4_stunning",
@@ -7941,7 +8529,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_stunned_monsters_2_5_t5_stunning",
@@ -7953,7 +8542,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_bleeding_monsters_2_5_t1_bleeding",
@@ -7965,7 +8555,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_bleeding_monsters_2_5_t2_bleeding",
@@ -7977,7 +8568,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_bleeding_monsters_2_5_t3_bleeding",
@@ -7989,7 +8581,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_bleeding_monsters_2_5_t4_bleeding",
@@ -8001,7 +8594,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_bleeding_monsters_2_5_t5_bleeding",
@@ -8013,7 +8607,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_deep_frozen_monsters_2_5_t1_frostbiting",
@@ -8025,7 +8620,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_deep_frozen_monsters_2_5_t2_frostbiting",
@@ -8037,7 +8633,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_deep_frozen_monsters_2_5_t3_frostbiting",
@@ -8049,7 +8646,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_deep_frozen_monsters_2_5_t4_frostbiting",
@@ -8061,7 +8659,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_deep_frozen_monsters_2_5_t5_frostbiting",
@@ -8073,7 +8672,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_poisoned_monsters_2_5_t1_poisoning",
@@ -8085,7 +8685,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_poisoned_monsters_2_5_t2_poisoning",
@@ -8097,7 +8698,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_poisoned_monsters_2_5_t3_poisoning",
@@ -8109,7 +8711,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_poisoned_monsters_2_5_t4_poisoning",
@@ -8121,7 +8724,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_poisoned_monsters_2_5_t5_poisoning",
@@ -8133,7 +8737,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_burning_monsters_2_5_t1_burning",
@@ -8145,7 +8750,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_burning_monsters_2_5_t2_burning",
@@ -8157,7 +8763,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_burning_monsters_2_5_t3_burning",
@@ -8169,7 +8776,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 6,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_burning_monsters_2_5_t4_burning",
@@ -8181,7 +8789,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 8,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "extra_damage_to_burning_monsters_2_5_t5_burning",
@@ -8193,7 +8802,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "0_5_to_projectile_speed_t1_velocity",
@@ -8205,7 +8815,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 0.5,
-    "valueMax": 0.5
+    "valueMax": 0.5,
+    "kind": "suffix"
   },
   {
     "id": "0_5_to_projectile_speed_t2_swiftdart",
@@ -8217,7 +8828,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 1
+    "valueMax": 1,
+    "kind": "suffix"
   },
   {
     "id": "0_5_to_projectile_speed_t3_quickslug",
@@ -8229,7 +8841,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1.5,
-    "valueMax": 1.5
+    "valueMax": 1.5,
+    "kind": "suffix"
   },
   {
     "id": "0_5_to_projectile_speed_t4_rapidbolt",
@@ -8241,7 +8854,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "0_5_to_projectile_speed_t5_flashfire",
@@ -8253,7 +8867,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2.5,
-    "valueMax": 2.5
+    "valueMax": 2.5,
+    "kind": "suffix"
   },
   {
     "id": "attack_range_increased_by_1_3_t1_ranger",
@@ -8265,7 +8880,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "suffix"
   },
   {
     "id": "attack_range_increased_by_1_3_t2_scout",
@@ -8277,7 +8893,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "attack_range_increased_by_1_3_t3_sniper",
@@ -8289,7 +8906,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 9
+    "valueMax": 9,
+    "kind": "suffix"
   },
   {
     "id": "attack_range_increased_by_1_3_t4_marksman",
@@ -8301,7 +8919,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "attack_range_increased_by_1_3_t5_sharpshooter",
@@ -8313,7 +8932,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "1_2_to_light_radius_t1_glimmer",
@@ -8325,7 +8945,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "1_2_to_light_radius_t2_light",
@@ -8337,7 +8958,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "1_2_to_light_radius_t3_torch",
@@ -8349,7 +8971,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "1_2_to_light_radius_t4_lantern",
@@ -8361,7 +8984,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "1_2_to_light_radius_t5_wildfire",
@@ -8373,7 +8997,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "poison_length_reduced_by_3_10_t1_vial",
@@ -8385,7 +9010,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 10
+    "valueMax": 10,
+    "kind": "suffix"
   },
   {
     "id": "poison_length_reduced_by_3_10_t2_flask",
@@ -8397,7 +9023,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 15
+    "valueMax": 15,
+    "kind": "suffix"
   },
   {
     "id": "poison_length_reduced_by_3_10_t3_cleanse",
@@ -8409,7 +9036,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "poison_length_reduced_by_3_10_t4_purge",
@@ -8421,7 +9049,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 35
+    "valueMax": 35,
+    "kind": "suffix"
   },
   {
     "id": "poison_length_reduced_by_3_10_t5_antidote",
@@ -8433,7 +9062,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "1_4_increased_defense_t1_guardsman",
@@ -8445,7 +9075,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "1_4_increased_defense_t2_watchman",
@@ -8457,7 +9088,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "1_4_increased_defense_t3_towns_guard",
@@ -8469,7 +9101,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 6
+    "valueMax": 6,
+    "kind": "suffix"
   },
   {
     "id": "1_4_increased_defense_t4_royal_guard",
@@ -8481,7 +9114,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "suffix"
   },
   {
     "id": "1_4_increased_defense_t5_kings_guard",
@@ -8493,7 +9127,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "50_enhanced_defense_based_on_level_t1_fallen_sentry",
@@ -8505,7 +9140,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "50_enhanced_defense_based_on_level_t2_fallen_guard",
@@ -8517,7 +9153,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 100,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "50_enhanced_defense_based_on_level_t3_fallen_berserker",
@@ -8529,7 +9166,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 150,
-    "valueMax": 150
+    "valueMax": 150,
+    "kind": "suffix"
   },
   {
     "id": "50_enhanced_defense_based_on_level_t4_fallen_knight",
@@ -8541,7 +9179,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 200,
-    "valueMax": 200
+    "valueMax": 200,
+    "kind": "suffix"
   },
   {
     "id": "50_enhanced_defense_based_on_level_t5_fallen_templar",
@@ -8553,7 +9192,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 250,
-    "valueMax": 250
+    "valueMax": 250,
+    "kind": "suffix"
   },
   {
     "id": "25_defense_based_on_level_t1_rugged_colossus",
@@ -8565,7 +9205,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 25,
-    "valueMax": 25
+    "valueMax": 25,
+    "kind": "suffix"
   },
   {
     "id": "25_defense_based_on_level_t2_stern_colossus",
@@ -8577,7 +9218,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 50,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "25_defense_based_on_level_t3_vital_colossus",
@@ -8589,7 +9231,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 75,
-    "valueMax": 75
+    "valueMax": 75,
+    "kind": "suffix"
   },
   {
     "id": "25_defense_based_on_level_t4_resilient_colossus",
@@ -8601,7 +9244,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 100,
-    "valueMax": 100
+    "valueMax": 100,
+    "kind": "suffix"
   },
   {
     "id": "25_defense_based_on_level_t5_fortified_colossus",
@@ -8613,7 +9257,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 125,
-    "valueMax": 125
+    "valueMax": 125,
+    "kind": "suffix"
   },
   {
     "id": "fire_damage_absorbed_t1_flame_hunger",
@@ -8625,7 +9270,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "fire_damage_absorbed_t2_flame_hunger",
@@ -8637,7 +9283,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "fire_damage_absorbed_t3_flame_hunger",
@@ -8649,7 +9296,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "fire_damage_absorbed_t4_flame_hunger",
@@ -8661,7 +9309,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "suffix"
   },
   {
     "id": "fire_damage_absorbed_t5_flame_hunger",
@@ -8673,7 +9322,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "cold_damage_absorbed_t1_frost_hunger",
@@ -8685,7 +9335,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "cold_damage_absorbed_t2_frost_hunger",
@@ -8697,7 +9348,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "cold_damage_absorbed_t3_frost_hunger",
@@ -8709,7 +9361,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "cold_damage_absorbed_t4_frost_hunger",
@@ -8721,7 +9374,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "suffix"
   },
   {
     "id": "cold_damage_absorbed_t5_frost_hunger",
@@ -8733,7 +9387,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "lightning_damage_absorbed_t1_storm_hunger",
@@ -8745,7 +9400,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "lightning_damage_absorbed_t2_storm_hunger",
@@ -8757,7 +9413,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "lightning_damage_absorbed_t3_storm_hunger",
@@ -8769,7 +9426,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "lightning_damage_absorbed_t4_storm_hunger",
@@ -8781,7 +9439,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "suffix"
   },
   {
     "id": "lightning_damage_absorbed_t5_storm_hunger",
@@ -8793,7 +9452,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "poison_damage_absorbed_t1_plague_hunger",
@@ -8805,7 +9465,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "poison_damage_absorbed_t2_plague_hunger",
@@ -8817,7 +9478,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "poison_damage_absorbed_t3_plague_hunger",
@@ -8829,7 +9491,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "poison_damage_absorbed_t4_plague_hunger",
@@ -8841,7 +9504,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "suffix"
   },
   {
     "id": "poison_damage_absorbed_t5_plague_hunger",
@@ -8853,7 +9517,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "arcane_damage_absorbed_t1_arcane_hunger",
@@ -8865,7 +9530,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "arcane_damage_absorbed_t2_arcane_hunger",
@@ -8877,7 +9543,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "arcane_damage_absorbed_t3_arcane_hunger",
@@ -8889,7 +9556,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "arcane_damage_absorbed_t4_arcane_hunger",
@@ -8901,7 +9569,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 16
+    "valueMax": 16,
+    "kind": "suffix"
   },
   {
     "id": "arcane_damage_absorbed_t5_arcane_hunger",
@@ -8913,7 +9582,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "2_8_to_summon_resistances_t1_demon_vigor",
@@ -8925,7 +9595,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 2,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "2_8_to_summon_resistances_t2_demon_vigor",
@@ -8937,7 +9608,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "2_8_to_summon_resistances_t3_demon_vigor",
@@ -8949,7 +9621,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 12
+    "valueMax": 12,
+    "kind": "suffix"
   },
   {
     "id": "2_8_to_summon_resistances_t4_demon_vigor",
@@ -8961,7 +9634,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "2_8_to_summon_resistances_t5_demon_vigor",
@@ -8973,7 +9647,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "5_20_increased_jumping_power_t1_jumping",
@@ -8985,7 +9660,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 20
+    "valueMax": 20,
+    "kind": "suffix"
   },
   {
     "id": "5_20_increased_jumping_power_t2_leaping",
@@ -8997,7 +9673,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 10,
-    "valueMax": 30
+    "valueMax": 30,
+    "kind": "suffix"
   },
   {
     "id": "5_20_increased_jumping_power_t3_parkour",
@@ -9009,7 +9686,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 15,
-    "valueMax": 40
+    "valueMax": 40,
+    "kind": "suffix"
   },
   {
     "id": "5_20_increased_jumping_power_t4_flying",
@@ -9021,7 +9699,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 20,
-    "valueMax": 50
+    "valueMax": 50,
+    "kind": "suffix"
   },
   {
     "id": "5_20_increased_jumping_power_t5_bunnyhopping",
@@ -9033,7 +9712,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 25,
-    "valueMax": 60
+    "valueMax": 60,
+    "kind": "suffix"
   },
   {
     "id": "movement_phasing_t1_phasing",
@@ -9057,7 +9737,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 3,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "suffix"
   },
   {
     "id": "3_chance_to_gain_a_potion_stack_on_kill_t2_beyond",
@@ -9069,7 +9750,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "3_chance_to_gain_a_potion_stack_on_kill_t3_death_realm",
@@ -9081,7 +9763,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 4,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "3_chance_to_gain_a_potion_stack_on_kill_t4_grave_siphoner",
@@ -9093,7 +9776,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": 5,
-    "valueMax": 8
+    "valueMax": 8,
+    "kind": "suffix"
   },
   {
     "id": "3_chance_to_gain_a_potion_stack_on_kill_t5_soul_reaper",
@@ -9105,7 +9789,8 @@
     "sign": "+",
     "format": "percent",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "0_05_potion_stacks_per_second_t1_timewarp",
@@ -9117,7 +9802,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 0.05,
-    "valueMax": 0.05
+    "valueMax": 0.05,
+    "kind": "suffix"
   },
   {
     "id": "0_05_potion_stacks_per_second_t2_clockwork",
@@ -9129,7 +9815,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 0.07,
-    "valueMax": 0.07
+    "valueMax": 0.07,
+    "kind": "suffix"
   },
   {
     "id": "0_05_potion_stacks_per_second_t3_mechanism",
@@ -9141,7 +9828,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 0.1,
-    "valueMax": 0.1
+    "valueMax": 0.1,
+    "kind": "suffix"
   },
   {
     "id": "0_05_potion_stacks_per_second_t4_event_horizon",
@@ -9153,7 +9841,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 0.12,
-    "valueMax": 0.12
+    "valueMax": 0.12,
+    "kind": "suffix"
   },
   {
     "id": "0_05_potion_stacks_per_second_t5_dimension",
@@ -9165,7 +9854,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 0.17,
-    "valueMax": 0.17
+    "valueMax": 0.17,
+    "kind": "suffix"
   },
   {
     "id": "to_physical_skills_t1_stone",
@@ -9177,7 +9867,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": null,
-    "valueMax": null
+    "valueMax": null,
+    "kind": "suffix"
   },
   {
     "id": "to_physical_skills_t2_tombstone",
@@ -9189,7 +9880,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 2
+    "valueMax": 2,
+    "kind": "suffix"
   },
   {
     "id": "to_physical_skills_t3_monument",
@@ -9201,7 +9893,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 3
+    "valueMax": 3,
+    "kind": "suffix"
   },
   {
     "id": "to_physical_skills_t4_obelisk",
@@ -9213,7 +9906,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 1,
-    "valueMax": 4
+    "valueMax": 4,
+    "kind": "suffix"
   },
   {
     "id": "to_physical_skills_t5_monolith",
@@ -9225,7 +9919,8 @@
     "sign": "+",
     "format": "flat",
     "valueMin": 2,
-    "valueMax": 5
+    "valueMax": 5,
+    "kind": "suffix"
   },
   {
     "id": "amount_of_gold_dropped_from_monsters_increased_by_5_20_t1_greed",
@@ -9245,7 +9940,7 @@
     "tier": 1,
     "name": "Gluttony",
     "description": "Experience Gain increased by [5-20]%",
-    "statKey": null,
+    "statKey": "experience_gain",
     "sign": "+",
     "format": "percent",
     "valueMin": 5,

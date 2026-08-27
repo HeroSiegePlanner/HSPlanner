@@ -7,11 +7,33 @@ import {
   formatAffixRangeFromValues,
   formatValue,
 } from '../../../utils/item/stats'
+import {
+  formatAffixValue,
+  rollFromValue,
+  sliderPct,
+  sliderStep,
+  valueFromRoll,
+} from '../lib/rollMath'
+import {
+  affixStatLabel,
+  affixTierLabel,
+  affixTiers,
+  buildAffixGroups,
+  groupBounds,
+  tierIndexForValue,
+  type AffixGroup,
+} from '../lib/affixGroups'
+import {
+  affixFitsPool,
+  affixPoolLabel,
+  affixPoolTypeFor,
+} from '../../../utils/item/affixPools'
 import { displayValuesNative } from '../../../utils/calc/bridge'
 import type { AffixValueOutput } from '../../../utils/calc/bridge'
 import type { Affix, EquippedItem, ItemBase } from '../../../types'
-import { buildAffixTooltip } from '../tooltips'
+import { buildAffixGroupTooltip, buildAffixTooltip } from '../tooltips'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 
 type AffixRangeDef = Parameters<typeof formatAffixRangeFromValues>[0] & {
   statKey: string | null
@@ -85,6 +107,25 @@ function InvertedCrossIcon({ color = '#cf6db0' }: { color?: string }) {
   )
 }
 
+function kindOrder(a: Affix): number {
+  return a.kind === 'prefix' ? 0 : a.kind === 'suffix' ? 1 : 2
+}
+
+function affixGroupToPickerRow(g: AffixGroup): PickerRow {
+  const names = [...new Set(g.tiers.map((t) => t.name))]
+  const kind = g.topTier.kind
+  return {
+    id: g.topTier.id,
+    name: g.label,
+    group: kind ? (kind === 'prefix' ? 'Prefixes' : 'Suffixes') : undefined,
+    kindLabel: kind?.toUpperCase() ?? 'AFFIX',
+    meta: names.join(' · '),
+    searchTerms: `${names.join(' ')} ${g.tiers.map((t) => t.description).join(' ')}`,
+    iconColor: 'var(--color-accent)',
+    tooltip: buildAffixGroupTooltip(g.tiers, g.label),
+  }
+}
+
 function affixToPickerRow(a: Affix, opts?: { useDescriptionAsName?: boolean }): PickerRow {
   const primary = opts?.useDescriptionAsName ? a.description : a.name
   const meta = opts?.useDescriptionAsName ? a.name : a.description
@@ -93,6 +134,7 @@ function affixToPickerRow(a: Affix, opts?: { useDescriptionAsName?: boolean }): 
     id: a.id,
     name: primary,
     tier: a.tier,
+    group: a.kind ? (a.kind === 'prefix' ? 'Prefixes' : 'Suffixes') : undefined,
     kindLabel: a.kind?.toUpperCase() ?? 'AFFIX',
     meta,
     iconColor: isUnholy ? '#cf6db0' : 'var(--color-accent)',
@@ -107,14 +149,17 @@ export function AffixesSection({
   maxAffixes,
   onAdd,
   onRemove,
+  onSetRoll,
 }: {
   equipped: EquippedItem
   base?: ItemBase
   maxAffixes?: number
   onAdd: (affixId: string, tier: number) => void
   onRemove: (index: number) => void
+  onSetRoll?: (index: number, roll: number, affixId?: string) => void
 }) {
   const [open, setOpen] = useState(false)
+  const [showAllAffixes, setShowAllAffixes] = useState(false)
   const atCap =
     maxAffixes !== undefined && equipped.affixes.length >= maxAffixes
   const modalOpen = open && !atCap
@@ -122,29 +167,57 @@ export function AffixesSection({
   const randomGroupId = base?.randomAffixGroupId ?? null
   const isUnholy = randomGroupId === 'random_unholy'
 
-  const equippedAffixItems = useMemo(
-    () => equipped.affixes.map((eq) => ({ def: getAffix(eq.affixId) })),
+  // Every tier of every equipped affix, so the slider can span the whole group.
+  const equippedTiers = useMemo(
+    () => equipped.affixes.map((eq) => affixTiers(eq.affixId)),
     [equipped.affixes],
   )
-  const affixRanges = useAffixDisplayRanges(
-    equippedAffixItems,
+  const tierItems = useMemo(
+    () => equippedTiers.flatMap((tiers) => tiers.map((def) => ({ def }))),
+    [equippedTiers],
+  )
+  const tierRanges = useAffixDisplayRanges(
+    tierItems,
     effectiveStars(base?.slot ?? '', equipped.stars),
   )
+  const rangesByAffix = useMemo(() => {
+    const out: (AffixValueOutput | null)[][] = []
+    let at = 0
+    for (const tiers of equippedTiers) {
+      out.push(tierRanges.slice(at, at + tiers.length))
+      at += tiers.length
+    }
+    return out
+  }, [equippedTiers, tierRanges])
+
+  const poolType = affixPoolTypeFor(base)
 
   const pickerRows = useMemo<PickerRow[]>(() => {
-    const source = randomGroupId
-      ? affixes.filter((a) => a.groupId === randomGroupId)
-      : affixes
-    return source
-      .slice()
+    // Unholy items roll one of many single-tier affixes, so those stay one row each.
+    if (randomGroupId) {
+      return affixes
+        .filter((a) => a.groupId === randomGroupId)
+        .slice()
+        .sort(
+          (a, b) =>
+            (isUnholy ? a.description : a.name).localeCompare(
+              isUnholy ? b.description : b.name,
+            ) || a.tier - b.tier,
+        )
+        .map((a) => affixToPickerRow(a, { useDescriptionAsName: isUnholy }))
+    }
+    const source =
+      showAllAffixes || !poolType
+        ? affixes
+        : affixes.filter((a) => affixFitsPool(a, poolType))
+    return buildAffixGroups(source)
       .sort(
         (a, b) =>
-          (isUnholy ? a.description : a.name).localeCompare(
-            isUnholy ? b.description : b.name,
-          ) || a.tier - b.tier,
+          kindOrder(a.topTier) - kindOrder(b.topTier) ||
+          a.label.localeCompare(b.label),
       )
-      .map((a) => affixToPickerRow(a, { useDescriptionAsName: isUnholy }))
-  }, [randomGroupId, isUnholy])
+      .map(affixGroupToPickerRow)
+  }, [randomGroupId, isUnholy, poolType, showAllAffixes])
 
   const sectionTitle = isUnholy ? 'Unholy Affixes' : 'Affixes'
   const modalTitle = isUnholy ? 'Pick Unholy Affix' : 'Add Affix'
@@ -152,6 +225,9 @@ export function AffixesSection({
   return (
     <SectionCard
       label={sectionTitle}
+      icon={<SectionIcon kind="affixes" />}
+      collapsible
+      defaultOpen={equipped.affixes.length > 0}
       rightSlot={
         <>
           <span className="font-mono text-[10px] tabular-nums tracking-[0.04em] text-accent-hot/80">
@@ -184,43 +260,102 @@ export function AffixesSection({
         equipped.affixes.map((eq, idx) => {
           const affix = getAffix(eq.affixId)
           if (!affix) return null
+          const tiers = equippedTiers[idx] ?? []
+          const ranges = rangesByAffix[idx] ?? []
+          const range = ranges[tiers.findIndex((t) => t.id === eq.affixId)] ?? null
+          // Affixes the engine cannot calculate still roll a value worth pinning.
+          const bounds = groupBounds(tiers, ranges)
+          const sliderRange = bounds && bounds.lo !== bounds.hi ? bounds : null
+          const lo = sliderRange?.lo ?? 0
+          const hi = sliderRange?.hi ?? 0
+          // The slider runs on magnitudes so dragging right always strengthens.
+          const rolled =
+            sliderRange && range
+              ? Math.abs(
+                  valueFromRoll(eq.roll, range.rangeMin, range.rangeMax, affix.format),
+                )
+              : 0
+          const current = sliderRange
+            ? Math.min(hi, Math.max(lo, Math.abs(eq.customValue ?? rolled)))
+            : 0
+          const statLabel = affixStatLabel(affix)
           return (
             <div
               key={idx}
-              className="flex items-center gap-1.5 rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
+              className="rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
             >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
-                {idx + 1}
-              </span>
-              <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
-                <span className="font-mono font-semibold tabular-nums text-accent-hot">
-                  {eq.customValue !== undefined && affix.statKey
-                    ? formatValue(eq.customValue, affix.statKey)
-                    : formatAffixRangeFromValues(
-                        affix,
-                        affixRanges[idx] ?? null,
-                      )}
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 shrink-0 text-center font-mono text-[10px] tabular-nums text-faint">
+                  {idx + 1}
                 </span>
-                <span className="truncate text-text/85">{affix.name}</span>
-                <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
-                  T{affix.tier}
-                </span>
-                {eq.customValue !== undefined && (
-                  <span
-                    className="rounded-xs border border-accent-hot/60 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot"
-                    title="Custom value override"
-                  >
-                    custom
+                <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
+                  <span className="font-mono font-semibold tabular-nums text-accent-hot">
+                    {eq.customValue !== undefined
+                      ? affix.statKey
+                        ? formatValue(eq.customValue, affix.statKey)
+                        : formatAffixValue(affix, eq.customValue)
+                      : sliderRange
+                        ? formatAffixValue(affix, rolled)
+                        : formatAffixRangeFromValues(affix, range)}
                   </span>
-                )}
-              </span>
-              <button
-                onClick={() => onRemove(idx)}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-border-2 font-mono text-[12px] leading-none text-faint transition-colors hover:border-stat-red hover:text-stat-red"
-                aria-label="Remove affix"
-              >
-                ×
-              </button>
+                  <span className="truncate text-text/85">
+                    {statLabel}
+                    {statLabel.toLowerCase().includes(affix.name.toLowerCase()) ? null : (
+                      <span className="text-faint"> ({affix.name})</span>
+                    )}
+                  </span>
+                  <span className="rounded-xs border border-accent-deep/40 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot/75">
+                    {affixTierLabel(affix.tier)}
+                  </span>
+                  {eq.customValue !== undefined && (
+                    <span
+                      className="rounded-xs border border-accent-hot/60 px-1 py-px font-mono text-[9px] tabular-nums text-accent-hot"
+                      title="Custom value override"
+                    >
+                      custom
+                    </span>
+                  )}
+                </span>
+                <button
+                  onClick={() => onRemove(idx)}
+                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-border-2 font-mono text-[12px] leading-none text-faint transition-colors hover:border-stat-red hover:text-stat-red"
+                  aria-label="Remove affix"
+                >
+                  ×
+                </button>
+              </div>
+              {sliderRange && onSetRoll && (
+                <div className="mt-1 flex items-center gap-2 pl-[26px] pr-0.5">
+                  <input
+                    type="range"
+                    min={lo}
+                    max={hi}
+                    step={sliderStep(lo, hi)}
+                    value={current}
+                    aria-label={`${affix.name} roll`}
+                    onChange={(e) => {
+                      const value = Number(e.target.value)
+                      const ti = tierIndexForValue(tiers, ranges, value)
+                      const tier = tiers[ti]
+                      const tierRange = ranges[ti]
+                      if (!tier || !tierRange) return
+                      onSetRoll(
+                        idx,
+                        rollFromValue(value, tierRange.rangeMin, tierRange.rangeMax),
+                        tier.id,
+                      )
+                    }}
+                    style={{ ['--sl-pct' as never]: sliderPct(current, lo, hi) }}
+                    className="min-w-0 flex-1"
+                  />
+                  <span className="shrink-0 font-mono text-[9px] tabular-nums text-faint">
+                    {formatAffixRangeFromValues(affix, {
+                      rangeMin: lo,
+                      rangeMax: hi,
+                    })}
+                  </span>
+                </div>
+              )}
             </div>
           )
         })
@@ -234,6 +369,19 @@ export function AffixesSection({
           searchPlaceholder="Search affixes…"
           emptyMessage="No matching affixes"
           width={680}
+          footerActions={
+            !randomGroupId && poolType ? (
+              <label className="flex cursor-pointer items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:text-accent-hot">
+                <input
+                  type="checkbox"
+                  checked={showAllAffixes}
+                  onChange={(e) => setShowAllAffixes(e.target.checked)}
+                  className="accent-[var(--color-accent)]"
+                />
+                Show all affixes (outside the {affixPoolLabel(poolType)} pool)
+              </label>
+            ) : undefined
+          }
           onSelect={(id) => {
             const a = affixes.find((x) => x.id === id)
             if (!a) return
