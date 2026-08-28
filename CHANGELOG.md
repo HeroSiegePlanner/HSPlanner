@@ -1,4 +1,5 @@
 ## Features
+- Arch Linux package (.pkg.tar.zst) in releases
 - Skill hit model (data mined)
 - Six white ring bases (Bronze Ring, Iron Ring, Ring, Socket Ring, Primal Ring, Golden Ring)
 - Five white amulet bases (Amulet, Locket, Talisman, Carcanet, Necklace)
