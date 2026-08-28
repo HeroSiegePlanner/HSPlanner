@@ -103,6 +103,22 @@ describe('buildItemTooltipModel', () => {
     ])
   })
 
+  it('Wraith Forged Cleaver shows +100% crit damage, not +100% crit chance', () => {
+    const base = getItem('axe_heroic_wraith_forged_cleaver')
+    if (!base) throw new Error('fixture item missing from game data')
+    expect(base.implicit?.crit_damage).toBe(100)
+    expect(base.implicit).not.toHaveProperty('crit_chance')
+
+    const model = buildItemTooltipModel(base, eq(base.id), deps())
+    const impl = model.sections.find((s) => s.header?.text === 'Implicit')
+    if (!impl) throw new Error('implicit section missing')
+    const text = JSON.stringify(impl.lines)
+    expect(text).toContain(
+      `${formatValue(100, 'crit_damage')} ${statName('crit_damage')}`,
+    )
+    expect(text).not.toContain(statName('crit_chance'))
+  })
+
   it('renders implicit section with custom-override badge', () => {
     const base = getItem('boots_satanic_boots_of_wild')
     if (!base) throw new Error('fixture item missing from game data')
