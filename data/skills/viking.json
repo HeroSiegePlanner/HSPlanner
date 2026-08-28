@@ -1006,10 +1006,7 @@
       "col": 1
     },
     "damageType": "arcane",
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 27
-    },
+    "damageFormula": { "base": 0, "perLevel": 30 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1039,7 +1036,7 @@
       {
         "source": "Intelligence",
         "stat": "arcane_skill_damage",
-        "value": 7.25,
+        "value": 8.75,
         "per": "attribute_point"
       }
     ],
@@ -1244,22 +1241,10 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 75,
-        "perLevel": 25
-      },
-      "flatPhysicalMin": {
-        "base": 4,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 11,
-        "perLevel": 1
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 5
-      }
+      "weaponDamagePct": { "base": 75, "perLevel": 30 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
       {
@@ -1510,22 +1495,10 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 8,
-        "perLevel": 15
-      },
-      "flatPhysicalMin": {
-        "base": 2,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 6,
-        "perLevel": 1
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 5
-      }
+      "weaponDamagePct": { "base": 8, "perLevel": 23.5 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
       {
@@ -1751,22 +1724,10 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 50,
-        "perLevel": 44
-      },
-      "flatPhysicalMin": {
-        "base": 2,
-        "perLevel": 1
-      },
-      "flatPhysicalMax": {
-        "base": 8,
-        "perLevel": 3
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 5
-      }
+      "weaponDamagePct": { "base": 50, "perLevel": 40 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
+      "flatPhysicalMax": { "base": 8, "perLevel": 3 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
       {
@@ -2006,22 +1967,10 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 91,
-        "perLevel": 18
-      },
-      "flatPhysicalMin": {
-        "base": 4,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 11,
-        "perLevel": 1
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 5
-      }
+      "weaponDamagePct": { "base": 91, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
       {
@@ -2268,22 +2217,10 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 2,
-        "perLevel": 3
-      },
-      "flatPhysicalMin": {
-        "base": 2,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 6,
-        "perLevel": 0
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 4
-      }
+      "weaponDamagePct": { "base": 2, "perLevel": 3.5 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6, "perLevel": 0 },
+      "attackRatingPct": { "base": 0, "perLevel": 4 }
     },
     "passiveStats": {
       "base": {
@@ -2521,12 +2458,8 @@
     },
     "damageType": "physical",
     "passiveStats": {
-      "base": {
-        "physical_skill_damage": 20
-      },
-      "perRank": {
-        "physical_skill_damage": 4
-      }
+      "base": { "physical_skill_damage": 20 },
+      "perRank": { "physical_skill_damage": 5 }
     }
   }
 ]

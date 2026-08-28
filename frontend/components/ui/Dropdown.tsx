@@ -277,18 +277,6 @@ export default function Dropdown({
                 })
               )}
             </div>
-
-            {searchable && (
-              <div className="hs-dd-foot">
-                <span>
-                  <kbd>↑</kbd>
-                  <kbd>↓</kbd> navigate <kbd>↵</kbd> select
-                </span>
-                <span>
-                  <kbd>esc</kbd> close
-                </span>
-              </div>
-            )}
           </div>,
           document.body,
         )}

@@ -194,6 +194,8 @@ fn compute_dps(state: &FinalState, input: &PrecomputedInput, ctx: &DpsContext) -
         } else {
             let (speed_key, base_cast) = if ctx.active.uses_attack_speed {
                 ("increased_attack_speed", stat("attacks_per_second").1)
+            } else if ctx.active.uses_skill_haste {
+                ("skill_haste", ctx.active.base_cast_rate.unwrap_or(0.0))
             } else {
                 ("faster_cast_rate", ctx.active.base_cast_rate.unwrap_or(0.0))
             };

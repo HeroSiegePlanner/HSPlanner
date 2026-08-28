@@ -53,6 +53,39 @@ export function applyListPatch<T extends object>(
   return { data: [...byKey.values()], errors }
 }
 
+// Values are whole lists, so change replaces instead of merging fields.
+export function applyStringListRecordPatch(
+  base: Record<string, string[]>,
+  patch: RecordPatch<string[]> | undefined,
+  label: string,
+): PatchResult<Record<string, string[]>> {
+  if (!patch) return { data: base, errors: [] }
+  const errors: string[] = []
+  const out: Record<string, string[]> = { ...base }
+  for (const id of patch.remove ?? []) {
+    if (!(id in out)) {
+      errors.push(`${label}: remove unknown id "${id}"`)
+      continue
+    }
+    delete out[id]
+  }
+  for (const [id, value] of Object.entries(patch.change ?? {})) {
+    if (!(id in out)) {
+      errors.push(`${label}: change unknown id "${id}"`)
+      continue
+    }
+    out[id] = value as string[]
+  }
+  for (const [id, value] of Object.entries(patch.add ?? {})) {
+    if (id in out) {
+      errors.push(`${label}: add duplicates id "${id}"`)
+      continue
+    }
+    out[id] = value as string[]
+  }
+  return { data: out, errors }
+}
+
 export function applyRecordMergePatch<T extends object>(
   base: Record<string, T>,
   patch: RecordPatch<Record<string, unknown>> | undefined,

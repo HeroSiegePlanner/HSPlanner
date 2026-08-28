@@ -468,6 +468,19 @@ pub struct SkillProcSpec {
     pub target: String,
 }
 
+/// Damage object the skill spawns, from the Hero Siege hit model. `lifetime` is
+/// absent when the game kills the object by animation/alarm instead of a timer.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct HitModelSpec {
+    #[serde(default)]
+    pub object: String,
+    #[serde(default)]
+    pub tick_frequency: Option<f64>,
+    #[serde(default)]
+    pub lifetime: Option<f64>,
+}
+
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct SubskillEffectSpec {
@@ -578,6 +591,8 @@ pub struct SkillSpec {
     #[serde(default)]
     pub uses_attack_speed: bool,
     #[serde(default)]
+    pub uses_skill_haste: bool,
+    #[serde(default)]
     pub base_cooldown: Option<f64>,
     #[serde(default)]
     pub effect_duration: Option<f64>,
@@ -593,6 +608,8 @@ pub struct SkillSpec {
     pub passive_stats: Option<PassiveStatsSpec>,
     #[serde(default)]
     pub proc: Option<SkillProcSpec>,
+    #[serde(default)]
+    pub hit_model: Option<HitModelSpec>,
     #[serde(default)]
     pub subskills: Option<Vec<SubskillNodeSpec>>,
     #[serde(default)]
@@ -744,9 +761,15 @@ pub struct EquippedItem {
     pub augment: Option<AugmentRef>,
     #[serde(default)]
     pub implicit_overrides: HashMap<String, f64>,
+    /// Pinned totals for item-granted skill ranks, keyed by base skillBonuses name.
+    #[serde(default)]
+    pub skill_bonus_overrides: HashMap<String, f64>,
     /// Which skill the item's "Random Skill" roll landed on, picked by the user.
     #[serde(default)]
     pub random_skill_id: Option<String>,
+    /// Which element the item's "Random Skill Element" roll landed on.
+    #[serde(default)]
+    pub random_skill_element: Option<String>,
 }
 
 pub type Inventory = HashMap<SlotKey, EquippedItem>;

@@ -1,5 +1,6 @@
 import { DAMAGE_COLORS, skillHeroBg } from '../../utils/damageColors'
 import { effectiveSkillCost } from './effectiveSkillCost'
+import { skillSpeedKey } from '../../utils/build/skillRate'
 import { visibleEffectiveSkillTags } from '../../utils/skills/skillTags'
 import { useBuild } from '../../store/build'
 import type {
@@ -237,7 +238,7 @@ function SkillDamageHero({
   } = effectiveSkillCost(
     skill,
     mcrRange,
-    stats.faster_cast_rate ?? 0,
+    stats[skillSpeedKey(skill)] ?? 0,
     paidInLifeRange,
     Math.max(1, breakdown.effectiveRankMin),
     Math.max(1, breakdown.effectiveRankMax),

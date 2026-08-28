@@ -475,7 +475,7 @@
     "tags": ["Cast", "Active", "Spell", "Projectile"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "usesSkillHaste": true,
     "baseCooldown": 1.75,
     "effectDuration": 1.85,
     "maxRank": 20,
@@ -650,7 +650,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "cold_skill_damage": 0, "max_targets": 0 },
-          "perRank": { "cold_skill_damage": 55, "max_targets": 6 }
+          "perRank": { "cold_skill_damage": 15, "max_targets": 6 }
         }
       },
       {
@@ -661,7 +661,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "cold_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "cold_skill_damage": 40, "projectile_count": 1 }
+          "perRank": { "cold_skill_damage": 10, "projectile_count": 1 }
         }
       }
     ]

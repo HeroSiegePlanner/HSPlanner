@@ -10,6 +10,7 @@ import {
   getItemGrantedSkillByName,
   getItemSet,
   getRuneword,
+  items,
 } from '@data'
 import { formatValue, statName } from '../utils/item/stats'
 import { collectSocketGroups } from '../utils/item/socketStats'
@@ -77,6 +78,20 @@ describe('buildItemTooltipModel', () => {
     expect(text).not.toContain('Random Skill')
   })
 
+  it('names the picked element on a "Random Skill Element" implicit line', () => {
+    const base = getItem('s10_phantoms_step')
+    if (!base) throw new Error('fixture item missing from game data')
+    const unrolled = JSON.stringify(buildItemTooltipModel(base, eq(base.id), deps()).sections)
+    expect(unrolled).toContain('+[4-5] to Random Element Skills (not rolled)')
+
+    const rolled = JSON.stringify(
+      buildItemTooltipModel(base, eq(base.id, { randomSkillElement: 'cold' }), deps())
+        .sections,
+    )
+    expect(rolled).toContain('+[4-5] to Cold Skills (random element)')
+    expect(rolled).not.toContain('Random Element')
+  })
+
   it('puts base stats first as row lines (Defense/Damage/Block/Attacks per sec)', () => {
     const base = getItem('sword_angelic_st_mika_s_zweih_nder')
     if (!base) throw new Error('fixture item missing from game data')
@@ -106,6 +121,61 @@ describe('buildItemTooltipModel', () => {
       style: 'implicit',
       badge: 'custom',
     })
+  })
+
+  it('renders a pinned skill bonus with custom badge', () => {
+    // A skill outside the granted-skill catalog stays on an implicit line.
+    let found: [ReturnType<typeof getItem>, string] | undefined
+    for (const it of items) {
+      if (!it.skillBonuses) continue
+      const key = Object.keys(it.skillBonuses).find(
+        (k) =>
+          Array.isArray(it.skillBonuses![k]) &&
+          !getItemGrantedSkillByName(k),
+      )
+      if (key) {
+        found = [it, key]
+        break
+      }
+    }
+    expect(found).toBeDefined()
+    if (!found) return
+    const [base, skill] = found
+    const model = buildItemTooltipModel(
+      base!,
+      eq(base!.id, { skillBonusOverrides: { [skill]: 15 } }),
+      deps(),
+    )
+    const impl = model.sections.find((s) => s.header?.text === 'Implicit')
+    if (!impl) throw new Error('implicit section missing')
+    expect(impl.lines).toContainEqual({
+      kind: 'text',
+      text: `+15 to ${skill}`,
+      style: 'implicit',
+      badge: 'custom',
+    })
+  })
+
+  it('pins the granted skill rank and its per-rank effects', () => {
+    const base = getItem('armors_heroic_gabriels_broken_wings')
+    if (!base) throw new Error('fixture item missing from game data')
+    const display = {
+      ...emptyDisplay(),
+      skillRankScaled: {
+        "Fallen God's Bloodlust": [1, 10] as [number, number],
+        'Wings of Hatred': [1, 1] as [number, number],
+      },
+    }
+    const model = buildItemTooltipModel(
+      base,
+      eq(base.id, { skillBonusOverrides: { "Fallen God's Bloodlust": 8 } }),
+      deps({ display }),
+    )
+    const text = JSON.stringify(model.sections)
+    expect(text).toContain('rank 8')
+    expect(text).not.toContain('rank 1-10')
+    expect(text).toContain('56% of')
+    expect(text).not.toContain('7–70%')
   })
 
   it('lists unrolled Unholy slots in the Unholy Affixes section, not Special Effects', () => {
@@ -156,9 +226,7 @@ describe('buildItemTooltipModel', () => {
       }),
       deps(),
     )
-    const standard = model.sections.find(
-      (s) => !s.header && s.lines.some((l) => l.kind === 'text' && l.style === 'affix'),
-    )
+    const standard = model.sections.find((s) => s.header?.text === 'Affixes')
     if (!standard) throw new Error('standard affix section missing')
     const stdLine = standard.lines.find((l) => l.kind === 'text' && l.style === 'affix')
     expect(stdLine).toMatchObject({ kind: 'text', style: 'affix', badge: 'custom' })
@@ -169,6 +237,108 @@ describe('buildItemTooltipModel', () => {
     const unLine = unholy.lines.find((l) => l.kind === 'text' && l.style === 'unholy')
     expect(unLine).toMatchObject({ kind: 'text', style: 'unholy', badge: 'custom' })
     expect(unLine && unLine.kind === 'text' && unLine.text).toMatch(/^\+50 .*Strength$/)
+  })
+
+  it('shows the rolled affix value, not the whole range', () => {
+    const base = getItem('boots_satanic_boots_of_wild')
+    if (!base) throw new Error('fixture item missing from game data')
+    const model = buildItemTooltipModel(
+      base,
+      eq(base.id, {
+        affixes: [{ affixId: '15_30_to_life_t1_bear', tier: 1, roll: 0.5 }],
+      }),
+      deps({
+        display: {
+          implicitScaled: {},
+          skillRankScaled: {},
+          affixRanges: [{ value: 23, rangeMin: 15, rangeMax: 30 }],
+        },
+      }),
+    )
+    const line = model.sections
+      .flatMap((s) => s.lines)
+      .find((l) => l.kind === 'text' && l.style === 'affix')
+    expect(line && line.kind === 'text' && line.text).toMatch(/^\+23 /)
+  })
+
+  it('keeps the description text on an affix whose value carries no brackets', () => {
+    const base = getItem('boots_satanic_boots_of_wild')
+    if (!base) throw new Error('fixture item missing from game data')
+    const model = buildItemTooltipModel(
+      base,
+      eq(base.id, {
+        affixes: [
+          { affixId: '1_increased_experience_gain_t1_battlescarred', tier: 1, roll: 1 },
+        ],
+      }),
+      deps({
+        display: {
+          implicitScaled: {},
+          skillRankScaled: {},
+          affixRanges: [{ value: 1, rangeMin: 1, rangeMax: 1 }],
+        },
+      }),
+    )
+    const line = model.sections
+      .flatMap((s) => s.lines)
+      .find((l) => l.kind === 'text' && l.style === 'affix')
+    expect(line && line.kind === 'text' && line.text).toBe(
+      '+1% Increased Experience Gain',
+    )
+  })
+
+  it('names the picked element on a rolled "to Random Skill Element" affix', () => {
+    const base = getItem('boots_satanic_boots_of_wild')
+    if (!base) throw new Error('fixture item missing from game data')
+    const display = {
+      implicitScaled: {},
+      skillRankScaled: {},
+      affixRanges: [{ value: 5, rangeMin: 2, rangeMax: 5 }],
+    }
+    const affixes = [
+      { affixId: '1_to_random_skill_element_t5_kindred', tier: 5, roll: 1 },
+    ]
+
+    const unrolled = buildItemTooltipModel(base, eq(base.id, { affixes }), deps({ display }))
+    expect(JSON.stringify(unrolled.sections)).toContain(
+      '+5 to Random Element Skills (not rolled)',
+    )
+
+    const rolled = buildItemTooltipModel(
+      base,
+      eq(base.id, { affixes, randomSkillElement: 'fire' }),
+      deps({ display }),
+    )
+    const text = JSON.stringify(rolled.sections)
+    expect(text).toContain('+5 to Fire Skills (random element)')
+    expect(text).not.toContain('Random Skill Element')
+  })
+
+  it('files an affix the engine cannot calculate under Not Yet Supported', () => {
+    const base = getItem('boots_satanic_boots_of_wild')
+    if (!base) throw new Error('fixture item missing from game data')
+    const model = buildItemTooltipModel(
+      base,
+      eq(base.id, {
+        affixes: [
+          { affixId: '1_to_maximum_all_resists_t5_mystic_spring', tier: 5, roll: 0.75 },
+        ],
+      }),
+      deps({
+        display: {
+          implicitScaled: {},
+          skillRankScaled: {},
+          affixRanges: [{ value: 4, rangeMin: 1, rangeMax: 5 }],
+        },
+      }),
+    )
+    expect(model.sections.find((s) => s.header?.text === 'Affixes')).toBeUndefined()
+    const section = model.sections.find((s) => s.header?.text === 'Not Yet Supported')
+    if (!section) throw new Error('not-supported section missing')
+    const line = section.lines.find((l) => l.kind === 'text' && l.style === 'unsupported')
+    expect(line && line.kind === 'text' && line.text).toBe(
+      '+4% to Maximum All Resists',
+    )
   })
 
   it('builds granted skill entries with rank suffix, desc and computed lines', () => {

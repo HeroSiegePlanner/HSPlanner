@@ -16,7 +16,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 82, "perLevel": 18 },
+      "weaponDamagePct": { "base": 82, "perLevel": 22 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -222,7 +222,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 82, "perLevel": 18 },
+      "weaponDamagePct": { "base": 82, "perLevel": 32 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 }
     },
@@ -419,10 +419,10 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 82, "perLevel": 20 },
+      "weaponDamagePct": { "base": 82, "perLevel": 26.5 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
-      "attackRatingPct": { "base": 0, "perLevel": 4.75 }
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
       { "source": "Trickshot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
@@ -572,8 +572,8 @@
         "description": "Multishot now fires a decreased amount of projectiles which when landing or hitting a monster split into multiple projectiles flying in all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 20, "projectile_count": 4 }
+          "base": { "of_total_damage": 0, "projectile_count": 2 },
+          "perRank": { "of_total_damage": 20, "projectile_count": 2 }
         }
       },
       {
@@ -626,7 +626,7 @@
     "damageFormula": { "base": 1, "perLevel": 19 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 0, "perLevel": 22 },
+      "weaponDamagePct": { "base": 0, "perLevel": 28 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 3 }
@@ -676,7 +676,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 7, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 133, "perLevel": 22 },
+      "weaponDamagePct": { "base": 133, "perLevel": 28 },
       "flatPhysicalMin": { "base": 5, "perLevel": 0 },
       "flatPhysicalMax": { "base": 14, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 3.75 }
@@ -1111,7 +1111,7 @@
     "damageFormula": { "base": 1, "perLevel": 21 },
     "manaCostFormula": { "base": 9, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 8, "perLevel": 15 },
+      "weaponDamagePct": { "base": 8, "perLevel": 18 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 3 }
@@ -2410,7 +2410,11 @@
         "description": "Drones now fire a constant laser beam that sticks onto monsters dealing arcane damage four times a second until they die.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
+          "base": {
+            "arcane_skill_damage": 0,
+            "skill_range": 0,
+            "sentry_attack_rate_fixed": 4
+          },
           "perRank": { "arcane_skill_damage": 100, "skill_range": 15 }
         }
       },
@@ -2440,14 +2444,8 @@
         "description": "Drone amount significantly increased. Your drones are super tiny and form two circles around you. Their attacks no longer chain but deal damage in a small area around the target.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "sentry_max_amount": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 15,
-            "sentry_max_amount": 5
-          }
+          "base": { "arcane_skill_damage": 0, "sentry_max_amount": 0 },
+          "perRank": { "arcane_skill_damage": 15, "sentry_max_amount": 5 }
         }
       }
     ]

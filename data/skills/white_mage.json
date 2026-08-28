@@ -41,6 +41,7 @@
     "description": "Gather your inner darkness and unleash a powerful piercing shadow bolt that deals arcane damage to monsters on its path. The shadow bolt slows down after hitting a target.",
     "maxRank": 20,
     "requiresLevel": 1,
+    "hitModel": { "object": "White_Mage_Shadow_Bolt_Create", "tickFrequency": 0.25, "lifetime": 2 },
     "ranks": [
       {
         "rank": 1,
@@ -322,6 +323,7 @@
     "description": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana.",
     "maxRank": 20,
     "requiresLevel": 8,
+    "hitModel": { "object": "White_Mage_Soul_Spurn_AOE_Create", "tickFrequency": 0.1, "lifetime": 1 },
     "ranks": [
       {
         "rank": 1,
@@ -573,9 +575,9 @@
             "mana_replenish_pct": 0
           },
           "perRank": {
-            "arcane_skill_damage": 10,
-            "life_replenish_pct": 5,
-            "mana_replenish_pct": 5
+            "arcane_skill_damage": 3,
+            "life_replenish_pct": 3,
+            "mana_replenish_pct": 3
           }
         }
       }
@@ -1396,6 +1398,7 @@
     "description": "Summon all the coven's cultists to march in the name of satan inflicting arcane damage to monsters on their path.",
     "maxRank": 20,
     "requiresLevel": 30,
+    "hitModel": { "object": "White_Mage_Black_Mass_Cultist_Create", "tickFrequency": 0.35, "lifetime": 5 },
     "ranks": [
       {
         "rank": 1,
@@ -1639,6 +1642,7 @@
     "description": "Light the target location into holy fire dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 1,
+    "hitModel": { "object": "White_Mage_Heavenly_Fire_Create", "tickFrequency": 0.5, "lifetime": 3 },
     "ranks": [
       {
         "rank": 1,
@@ -2576,6 +2580,7 @@
     "description": "Bless the area around you with divine energy healing yourself and nearby allies.",
     "maxRank": 20,
     "requiresLevel": 24,
+    "hitModel": { "object": "White_Mage_Healing_Zone_Create", "tickFrequency": 1, "lifetime": 5 },
     "ranks": [
       {
         "rank": 1,
@@ -2717,7 +2722,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "spell_crit_chance": 0, "conversion_energy": 0 },
-          "perRank": { "spell_crit_chance": 3, "conversion_energy": 15 }
+          "perRank": { "spell_crit_chance": 3, "conversion_energy": 10 }
         }
       },
       {

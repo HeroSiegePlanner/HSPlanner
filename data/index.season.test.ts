@@ -3,7 +3,6 @@ import {
   activeSeasonId,
   affixes,
   canStarForge,
-  charmsAllowStarsForge,
   effectiveStars,
   incarnationNodeInfo,
   incarnationTree,
@@ -22,15 +21,11 @@ describe('data hub season resolution (default season)', () => {
     expect(seasonDataErrors).toEqual([])
   })
 
-  it('serves base data for collections the season leaves alone', () => {
+  it('serves base data when the season ships no patches', () => {
     expect(affixes).toEqual(affixesJson)
-  })
-
-  it('serves patched data for the incarnation tree', () => {
-    expect(incarnationNodeInfo).not.toEqual(incarnationNodesJson)
-    expect(incarnationTree.nodes).not.toEqual(incarnationTreeJson.nodes)
-    expect(incarnationTree.edges).not.toEqual(incarnationTreeJson.edges)
-    expect(incarnationTree.viewBox).not.toBe(incarnationTreeJson.viewBox)
+    expect(incarnationNodeInfo).toEqual(incarnationNodesJson)
+    expect(incarnationTree.nodes).toEqual(incarnationTreeJson.nodes)
+    expect(incarnationTree.viewBox).toBe(incarnationTreeJson.viewBox)
   })
 })
 
@@ -42,28 +37,19 @@ describe('charm stars/forge eligibility', () => {
     expect(isCharmSlot('relic')).toBe(false)
   })
 
-  it('charmsAllowStarsForge is true for every season except s9', () => {
-    expect(charmsAllowStarsForge('s9')).toBe(false)
-    expect(charmsAllowStarsForge('s10')).toBe(true)
-    expect(charmsAllowStarsForge('s11')).toBe(true)
+  it('canStarForge: gear and charms yes, other slots never', () => {
+    expect(canStarForge('weapon')).toBe(true)
+    expect(canStarForge('charm_1')).toBe(true)
+    expect(canStarForge('charm_30')).toBe(true)
+    expect(canStarForge('relic')).toBe(false)
   })
 
-  it('canStarForge: gear always, charms only outside s9, other never', () => {
-    expect(canStarForge('weapon', 's9')).toBe(true)
-    expect(canStarForge('weapon', 's10')).toBe(true)
-    expect(canStarForge('charm_1', 's9')).toBe(false)
-    expect(canStarForge('charm_1', 's10')).toBe(true)
-    expect(canStarForge('relic', 's10')).toBe(false)
-  })
-
-  it('effectiveStars: charm stars vanish in s9 but apply elsewhere', () => {
-    expect(effectiveStars('charm_1', 's9', 3)).toBe(null)
-    expect(effectiveStars('charm_1', 's10', 3)).toBe(3)
-    expect(effectiveStars('weapon', 's9', 3)).toBe(3)
-    expect(effectiveStars('weapon', 's10', 3)).toBe(3)
-    expect(effectiveStars('relic_1', 's10', 3)).toBe(null)
-    expect(effectiveStars('charm_1', 's9', null)).toBe(null)
-    expect(effectiveStars('weapon', 's9', null)).toBe(null)
+  it('effectiveStars: stars apply on gear and charms, vanish elsewhere', () => {
+    expect(effectiveStars('charm_1', 3)).toBe(3)
+    expect(effectiveStars('weapon', 3)).toBe(3)
+    expect(effectiveStars('relic_1', 3)).toBe(null)
+    expect(effectiveStars('charm_1', null)).toBe(null)
+    expect(effectiveStars('weapon', undefined)).toBe(null)
   })
 })
 

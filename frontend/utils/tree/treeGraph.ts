@@ -62,6 +62,13 @@ export function findPath(
   return null
 }
 
+// The node's own contribution: no path in, no orphan cleanup out.
+export function withToggled(allocated: ReadonlySet<number>, id: number): Set<number> {
+  const next = new Set(allocated)
+  if (!next.delete(id)) next.add(id)
+  return next
+}
+
 export function reachableFromAny(
   starts: Iterable<number>,
   allowed: Set<number>,

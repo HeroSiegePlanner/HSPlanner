@@ -3,6 +3,7 @@ import { skills } from '@data'
 import type { EquippedItem, RandomSkillPool } from '../../../types'
 import Dropdown from '../../../components/ui/Dropdown'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 
 export function RandomSkillSection({
   equipped,
@@ -27,13 +28,18 @@ export function RandomSkillSection({
   return (
     <SectionCard
       label="Random Skill"
+      icon={<SectionIcon kind="randomSkill" />}
+      collapsible
+      defaultOpen={picked != null}
       rightSlot={
         <span
-          className={`font-mono text-[10px] tracking-[0.04em] ${
+          className={`max-w-[200px] truncate font-mono text-[10px] tracking-[0.04em] ${
             picked ? 'text-accent-hot' : 'text-faint'
           }`}
         >
-          {picked ? 'rolled' : 'not rolled'}
+          {picked
+            ? (options.find((o) => o.id === picked)?.label ?? 'rolled')
+            : 'not rolled'}
         </span>
       }
     >

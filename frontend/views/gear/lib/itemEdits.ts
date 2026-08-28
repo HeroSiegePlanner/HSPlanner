@@ -1,7 +1,7 @@
-import { getAugment, getItem, getRuneword } from '@data'
+import { getAffix, getAugment, getItem, getRuneword } from '@data'
 import { MAX_STARS, maxSocketsFor } from '../../../store/itemRules'
 import { AUGMENT_MAX_LEVEL } from '../../../types'
-import type { EquippedItem, SocketType } from '../../../types'
+import type { EquippedItem, SkillElement, SocketType } from '../../../types'
 
 export function makeEquippedItem(baseId: string): EquippedItem | null {
   const base = getItem(baseId)
@@ -74,6 +74,20 @@ export function withRandomSkill(
   return { ...item, randomSkillId: skillId }
 }
 
+export function withRandomElement(
+  item: EquippedItem,
+  element: SkillElement | null,
+): EquippedItem {
+  if (element === null) {
+    if (!item.randomSkillElement) return item
+    const { randomSkillElement: _drop, ...rest } = item
+    void _drop
+    return rest
+  }
+  if (item.randomSkillElement === element) return item
+  return { ...item, randomSkillElement: element }
+}
+
 export function withAffixAdded(
   item: EquippedItem,
   affixId: string,
@@ -89,6 +103,65 @@ export function withAffixAdded(
 export function withAffixRemoved(item: EquippedItem, index: number): EquippedItem {
   if (index < 0 || index >= item.affixes.length) return item
   return { ...item, affixes: item.affixes.filter((_, i) => i !== index) }
+}
+
+export function withAffixRoll(
+  item: EquippedItem,
+  index: number,
+  roll: number,
+  affixId?: string,
+): EquippedItem {
+  if (index < 0 || index >= item.affixes.length) return item
+  const clamped = Math.max(0, Math.min(1, roll))
+  // A group slider spans every tier, so a big enough roll moves the affix to another tier.
+  const tier = affixId ? getAffix(affixId)?.tier : undefined
+  const affixes = item.affixes.map((a, i) => {
+    if (i !== index) return a
+    const { customValue: _drop, ...rest } = a
+    void _drop
+    return {
+      ...rest,
+      roll: clamped,
+      ...(affixId && tier !== undefined ? { affixId, tier } : {}),
+    }
+  })
+  return { ...item, affixes }
+}
+
+function withOverrideKey(
+  item: EquippedItem,
+  field: 'implicitOverrides' | 'skillBonusOverrides',
+  key: string,
+  value: number | null,
+): EquippedItem {
+  const cur = item[field] ?? {}
+  if (value === null) {
+    if (!(key in cur)) return item
+    const { [key]: _drop, ...rest } = cur
+    void _drop
+    if (Object.keys(rest).length > 0) return { ...item, [field]: rest }
+    const { [field]: _all, ...bare } = item
+    void _all
+    return bare
+  }
+  if (cur[key] === value) return item
+  return { ...item, [field]: { ...cur, [key]: value } }
+}
+
+export function withImplicitOverride(
+  item: EquippedItem,
+  statKey: string,
+  value: number | null,
+): EquippedItem {
+  return withOverrideKey(item, 'implicitOverrides', statKey, value)
+}
+
+export function withSkillBonusOverride(
+  item: EquippedItem,
+  skillName: string,
+  value: number | null,
+): EquippedItem {
+  return withOverrideKey(item, 'skillBonusOverrides', skillName, value)
 }
 
 export function withForgedModAdded(

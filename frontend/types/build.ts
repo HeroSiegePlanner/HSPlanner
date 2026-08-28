@@ -23,6 +23,9 @@ export type TreeSocketContent = TreeSocketEquipped | TreeSocketCrafted
 
 export const UNCUT_JEWEL_MAX_AFFIXES = 4
 
+export const SKILL_ELEMENTS = ['fire', 'cold', 'lightning', 'poison', 'arcane'] as const
+export type SkillElement = (typeof SKILL_ELEMENTS)[number]
+
 export interface EquippedItem {
   baseId: string
   affixes: EquippedAffix[]
@@ -34,7 +37,10 @@ export interface EquippedItem {
   forgedMods?: EquippedAffix[]
   augment?: { id: string; level: number }
   implicitOverrides?: Record<string, number>
+  /** Pinned totals for item-granted skill ranks, keyed by base skillBonuses name. */
+  skillBonusOverrides?: Record<string, number>
   randomSkillId?: string
+  randomSkillElement?: SkillElement
 }
 
 export type Inventory = Partial<Record<SlotKey, EquippedItem>>

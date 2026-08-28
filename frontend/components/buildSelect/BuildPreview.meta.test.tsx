@@ -76,9 +76,9 @@ const SNAPSHOT_PREVIEW = {
 
 describe('<BuildPreview> metadata', () => {
   it('shows the build season in the header line', () => {
-    renderPreview('s9', SNAPSHOT_PREVIEW)
-    expect(screen.getByText('S9')).toBeInTheDocument()
-    expect(screen.getByTitle('Season 9')).toBeInTheDocument()
+    renderPreview('s10', SNAPSHOT_PREVIEW)
+    expect(screen.getByText('S10')).toBeInTheDocument()
+    expect(screen.getByTitle('Season 10')).toBeInTheDocument()
   })
 
   it('shows ether node count and merc class from the snapshot', () => {

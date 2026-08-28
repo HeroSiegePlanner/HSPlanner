@@ -7,6 +7,7 @@ import { buildRunewordTooltip, NetChangeBlock } from '../tooltips'
 import { withRuneword } from '../lib/itemEdits'
 import { useHoverDpsDiff } from '../lib/useHoverDpsDiff'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 
 function RunewordSelectedPanel({
   state,
@@ -127,6 +128,9 @@ export function RunewordPresets({
   return (
     <SectionCard
       label="Runeword Presets"
+      icon={<SectionIcon kind="runeword" />}
+      collapsible
+      defaultOpen={!!activeRw}
       rightSlot={
         <span className="font-mono text-[10px] tabular-nums text-faint">
           {compatible.length} compatible

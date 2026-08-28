@@ -1,5 +1,5 @@
 use super::super::*;
-use crate::calc::types::EquippedItem;
+use crate::calc::types::{EquippedAffix, EquippedItem};
 
 #[test]
 fn apply_increased_all_attributes_applies_to_each() {
@@ -592,12 +592,95 @@ fn apply_inventory_implicit_overrides_replace_base_implicits() {
     assert!(in_stats || in_attrs, "override value not found anywhere");
 }
 
-// ---- charm star scaling gated by season ----
-
-// A charm's percent-star-scaling implicit must star-scale under s10 but stay
-// starless under s9, since can_star_forge(charm_1) is false in s9.
 #[test]
-fn charm_stars_scale_only_outside_s9() {
+fn random_skill_element_lands_on_the_picked_element_skills() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "boots".into(),
+        EquippedItem {
+            base_id: "s10_phantoms_step".into(),
+            random_skill_element: Some("cold".into()),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let cold = stats.get("cold_skills").expect("picked element gets the ranks");
+    assert!(cold.iter().any(|c| c.value == (4.0, 5.0)));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+#[test]
+fn a_rolled_random_element_affix_lands_on_the_picked_element_skills() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "helmet".into(),
+        EquippedItem {
+            base_id: "helmet_normal_cap".into(),
+            affixes: vec![EquippedAffix {
+                affix_id: "1_to_random_skill_element_t5_kindred".into(),
+                tier: 5,
+                roll: 1.0,
+                custom_value: None,
+            }],
+            random_skill_element: Some("fire".into()),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let fire = stats.get("fire_skills").expect("picked element gets the ranks");
+    assert!(fire.iter().any(|c| c.value == (5.0, 5.0)));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+#[test]
+fn a_rolled_random_element_affix_is_inert_until_an_element_is_picked() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "helmet".into(),
+        EquippedItem {
+            base_id: "helmet_normal_cap".into(),
+            affixes: vec![EquippedAffix {
+                affix_id: "1_to_random_skill_element_t5_kindred".into(),
+                tier: 5,
+                roll: 1.0,
+                custom_value: None,
+            }],
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(!stats.contains_key("fire_skills"));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+#[test]
+fn random_skill_element_is_inert_until_an_element_is_picked() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "boots".into(),
+        EquippedItem {
+            base_id: "s10_phantoms_step".into(),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(!stats.contains_key("cold_skills"));
+    assert!(!stats.contains_key("random_skill_element"));
+}
+
+// ---- charm star scaling ----
+
+// A charm's percent-star-scaling implicit must star-scale like gear does.
+#[test]
+fn charm_stars_scale() {
     const CHARM_ID: &str = "charm_angelic_air_melon";
     const STAT_KEY: &str = "lightning_skill_damage";
 
@@ -624,16 +707,10 @@ fn charm_stars_scale_only_outside_s9() {
         },
     );
 
-    let lsd_total = |season: &str| -> Ranged {
-        let _s = crate::calc::season::SeasonScope::enter(Some(season.to_string()));
-        let mut attrs: SourceMap = HashMap::new();
-        let mut stats: SourceMap = HashMap::new();
-        apply_inventory(&inv, &mut attrs, &mut stats);
-        sum_ranged_from_map(&stats, STAT_KEY)
-    };
-
-    let s9 = lsd_total("s9");
-    let s10 = lsd_total("s10");
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let scaled = sum_ranged_from_map(&stats, STAT_KEY);
 
     let base_value = base
         .implicit
@@ -643,14 +720,9 @@ fn charm_stars_scale_only_outside_s9() {
         .copied()
         .unwrap()
         .as_ranged();
-    assert_eq!(
-        s9,
-        (base_value.0.floor(), base_value.1.floor()),
-        "s9 must apply no star scaling to charms"
-    );
     // Assert `>` rather than exact values so the test survives perStar tuning.
     assert!(
-        s10.0 > s9.0 && s10.1 > s9.1,
-        "s10 should star-scale the charm above s9 baseline (s9={s9:?}, s10={s10:?})"
+        scaled.0 > base_value.0 && scaled.1 > base_value.1,
+        "five stars should scale the charm above its base roll (base={base_value:?}, scaled={scaled:?})"
     );
 }

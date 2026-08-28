@@ -70,6 +70,77 @@
     }
   },
   {
+    "id": "rings_normal_bronze_ring",
+    "name": "Bronze Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "increased_attack_speed": [
+        5,
+        15
+      ]
+    }
+  },
+  {
+    "id": "rings_normal_iron_ring",
+    "name": "Iron Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "faster_cast_rate": [
+        10,
+        16
+      ]
+    }
+  },
+  {
+    "id": "rings_normal_ring",
+    "name": "Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "all_attributes": [
+        5,
+        15
+      ]
+    }
+  },
+  {
+    "id": "rings_normal_socketed_ring",
+    "name": "Socket Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "sockets": 0,
+    "maxSockets": 1
+  },
+  {
+    "id": "rings_normal_primal_ring",
+    "name": "Primal Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "max_all_resistances": 1
+    }
+  },
+  {
+    "id": "rings_normal_golden_ring",
+    "name": "Golden Ring",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "common",
+    "implicit": {
+      "magic_find": [
+        10,
+        28
+      ]
+    }
+  },
+  {
     "id": "ring_heroic_azazel_s_despair",
     "name": "Azazel's Despair",
     "baseType": "Ring",
@@ -267,7 +338,7 @@
       "increased_life": 15,
       "increased_mana": 15,
       "all_resistances": 15,
-      "experience_gain": 12
+      "increased_experience_gain_below_100": 25
     },
     "uniqueEffects": [
       "Herobound"
@@ -465,12 +536,12 @@
     "implicit": {
       "all_attributes": 35,
       "magic_find": [
-        20,
-        200
+        1,
+        150
       ],
       "experience_gain": [
-        3,
-        8
+        1,
+        5
       ]
     },
     "sockets": 1,
@@ -1280,8 +1351,8 @@
     "name": "Ra's Band",
     "baseType": "Ring",
     "slot": "ring_1",
-    "rarity": "satanic",
-    "grade": "B",
+    "rarity": "heroic",
+    "grade": "SS",
     "requiresLevel": 37,
     "implicit": {
       "to_vitality": [
@@ -1590,8 +1661,7 @@
         15,
         25
       ],
-      "cold_resistance": -66,
-      "max_cold_resistance": -5,
+      "cold_resistance": -30,
       "phys_dmg_taken_as_cold": [
         15,
         25
@@ -1600,5 +1670,66 @@
     "skillBonuses": {
       "Freezing Touch": 1
     }
+  },
+  {
+    "id": "s10_skeleton_crews_band",
+    "name": "Skeleton Crew's Band",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "summon_skills": [
+        2,
+        4
+      ],
+      "all_skills": 2,
+      "summon_attack_speed": [
+        15,
+        25
+      ],
+      "summon_reduced_dmg_taken": 15,
+      "enemy_all_resist": 15
+    },
+    "skillBonuses": {
+      "Ghost Crew": [
+        1,
+        3
+      ]
+    }
+  },
+  {
+    "id": "s10_parasite_loop",
+    "name": "Parasite Loop",
+    "baseType": "Ring",
+    "slot": "ring_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ],
+      "skill_haste": [
+        15,
+        35
+      ],
+      "enemy_all_resist": 15,
+      "increased_life": -15,
+      "all_resistances": [
+        15,
+        25
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 8,
+        "description": "cast Sanguine Leech Level 1",
+        "details": "Summon a Sanguine Leech dealing damage and providing you increased life replenish for a short duration. Arcane Damage 12287, Life Replenish 800%"
+      }
+    ]
   }
 ]

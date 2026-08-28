@@ -41,6 +41,15 @@ export const recordPatchSchema = z
   })
   .strict()
 
+// Record-of-string-lists patches (affix pools): change replaces the whole list.
+export const stringListPatchSchema = z
+  .object({
+    add: z.record(z.string(), z.array(z.string())).optional(),
+    change: z.record(z.string(), z.array(z.string())).optional(),
+    remove: z.array(z.string()).optional(),
+  })
+  .strict()
+
 export const gameConfigPatchSchema = z
   .object({
     change: z.record(z.string(), z.unknown()).optional(),
@@ -145,6 +154,7 @@ export interface SeasonPatchSet {
   incarnationTree?: IncarnationTreePatch
   gameConfig?: GameConfigPatch
   starScaling?: RecordPatch<Record<string, unknown>>
+  affixPools?: RecordPatch<string[]>
   etherTree?: EtherTreePatch
   mercenaries?: MercDataPatch
 }

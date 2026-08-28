@@ -40,6 +40,7 @@ export interface BuildPerformance {
   itemSkillBonuses: Record<string, [number, number]>
   rankBonuses: Record<string, [number, number]>
   entityCount?: [number, number]
+  hitsPerCast?: [number, number]
   perSkill?: PerSkillDps[]
 }
 

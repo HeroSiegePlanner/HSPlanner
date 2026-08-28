@@ -13,9 +13,9 @@ const RARITY_TEXT: Record<ItemRarity, string> = {
   rare: 'text-accent-hot',
   mythic: 'text-purple-400',
   satanic: 'text-red-500',
-  heroic: 'text-lime-400',
+  heroic: 'text-green-400',
   angelic: 'text-yellow-200',
-  satanic_set: 'text-green-400',
+  satanic_set: 'text-lime-400',
   unholy: 'text-pink-400',
   relic: 'text-orange-300',
 }
@@ -410,6 +410,18 @@ export default function PickerModal({
   )
 }
 
+const FALLBACK_TINT: Partial<Record<ItemRarity, string>> = {
+  satanic: '#d96b5a',
+  satanic_set: '#96c95a',
+  angelic: '#e0d36a',
+  unholy: '#cf6db0',
+  heroic: '#74c98a',
+  mythic: '#a070c8',
+  rare: '#c9a560',
+  uncommon: '#5a8fc9',
+  relic: '#d18a4a',
+}
+
 function FallbackIcon({
   color,
   rarity,
@@ -417,25 +429,7 @@ function FallbackIcon({
   color?: string
   rarity?: ItemRarity
 }) {
-  const c =
-    color ??
-    (rarity === 'satanic' || rarity === 'satanic_set'
-      ? '#d96b5a'
-      : rarity === 'angelic'
-        ? '#e0d36a'
-        : rarity === 'unholy'
-          ? '#cf6db0'
-          : rarity === 'heroic'
-            ? '#96c95a'
-            : rarity === 'mythic'
-              ? '#a070c8'
-              : rarity === 'rare'
-                ? '#c9a560'
-                : rarity === 'uncommon'
-                  ? '#5a8fc9'
-                  : rarity === 'relic'
-                    ? '#d18a4a'
-                    : '#5a5448')
+  const c = color ?? (rarity && FALLBACK_TINT[rarity]) ?? '#5a5448'
   return (
     <span
       className="block h-7 w-7 rotate-45 rounded-[3px]"

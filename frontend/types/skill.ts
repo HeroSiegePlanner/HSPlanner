@@ -69,6 +69,14 @@ export interface SkillProc {
   target: string
 }
 
+// Damage object the skill spawns. `lifetime` is absent when the game destroys the
+// object by animation/alarm instead of a timer — then it counts as a single hit.
+export interface SkillHitModel {
+  object: string
+  tickFrequency: number
+  lifetime?: number
+}
+
 export interface Skill {
   id: string
   classId: string
@@ -85,6 +93,7 @@ export interface Skill {
   range?: number
   baseCastRate?: number
   usesAttackSpeed?: boolean
+  usesSkillHaste?: boolean
   baseCooldown?: number
   effectDuration?: number
   damagePerRank?: DamageRange[]
@@ -95,6 +104,7 @@ export interface Skill {
   attackScaling?: AttackSkillScaling
   passiveStats?: PassiveStats
   proc?: SkillProc
+  hitModel?: SkillHitModel
   subskills?: SubskillNode[]
   tree?: string
   position?: SkillPosition

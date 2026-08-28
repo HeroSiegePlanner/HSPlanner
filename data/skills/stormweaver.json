@@ -17,7 +17,7 @@
     "ranks": [
       { "rank": 1, "manaCost": 4 }
     ],
-    "damageFormula": { "base": 4.5, "perLevel": 11 },
+    "damageFormula": { "base": 4.5, "perLevel": 9.25 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "bonusSources": [
       {
@@ -197,7 +197,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "projectile_count": 0, "lightning_skill_damage": 0 },
-          "perRank": { "projectile_count": 4, "lightning_skill_damage": 25 }
+          "perRank": { "projectile_count": 4, "lightning_skill_damage": 15 }
         }
       },
       {
@@ -269,6 +269,7 @@
     "tree": "Storm Conjurer",
     "position": { "row": 1, "col": 2 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Lightning_Surge.png?a7fb06",
+    "hitModel": { "object": "Stormweaver_Lightning_Surge_Tether_Create", "tickFrequency": 0.4, "lifetime": 2 },
     "ranks": [
       { "rank": 1 }
     ],
@@ -422,10 +423,10 @@
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 1 },
           "effects": {
             "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 25 }
+            "perRank": { "of_total_damage": 15 }
           },
           "target": "Storm Cloud"
         }
@@ -790,6 +791,7 @@
     "tree": "Storm Conjurer",
     "position": { "row": 3, "col": 1 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Storm_Cloud.png?544344",
+    "hitModel": { "object": "Stormweaver_Storm_Cloud_Create", "tickFrequency": 0.5 },
     "ranks": [
       { "rank": 1 }
     ],
@@ -1138,6 +1140,7 @@
     "tree": "Essence of Storm",
     "position": { "row": 3, "col": 2 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Apocalyptic_Thunder.png?764449",
+    "hitModel": { "object": "Stormweaver_Apocalyptic_Thunder_Create", "tickFrequency": 0.25 },
     "ranks": [
       { "rank": 1 }
     ],

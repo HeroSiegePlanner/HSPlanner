@@ -1,6 +1,6 @@
 import ItemTooltip from '../../components/ItemTooltip'
 import { CornerMarks } from '../../components/ui/CornerMarks'
-import { activeSeasonId, detectRuneword, effectiveStars, getItem, getItemImage } from '@data'
+import { detectRuneword, effectiveStars, getItem, getItemImage } from '@data'
 import type { EquippedItem, SlotKey } from '../../types'
 import { RARITY_BG, RARITY_BORDER, RARITY_TEXT } from './lib/rarity'
 
@@ -50,7 +50,7 @@ export function SlotRow({
       badges.push(
         `${equipped.socketed.filter(Boolean).length}/${equipped.socketCount}◇`,
       )
-    const stars = effectiveStars(slot.key, activeSeasonId, equipped.stars) ?? 0
+    const stars = effectiveStars(slot.key, equipped.stars) ?? 0
     if (stars > 0) badges.push(`${'★'.repeat(stars)}`)
     if (base.requiresLevel) badges.push(`L${base.requiresLevel}`)
   }

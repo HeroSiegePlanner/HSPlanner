@@ -276,15 +276,20 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         (val(eff_min, false), val(eff_max, true))
     };
 
+    // Magic and Elemental Skill Damage cover the five elements; a physical hit never sees them.
+    let is_elemental = s
+        .damage_type
+        .as_deref()
+        .is_some_and(|dt| ELEMENTS.contains(&dt));
+    let mut flat_keys = vec!["flat_skill_damage"];
+    if is_elemental {
+        flat_keys.extend(["flat_elemental_skill_damage", "flat_magic_skill_damage"]);
+    }
+    flat_keys.extend(keys.map(|k| k.flat_skill_damage));
     let mut flat_min = 0.0;
     let mut flat_max = 0.0;
-    for k in ["flat_skill_damage", "flat_elemental_skill_damage"] {
+    for k in flat_keys {
         let v = rg(input.stats, k);
-        flat_min += r_min(v);
-        flat_max += r_max(v);
-    }
-    if let Some(k) = keys {
-        let v = rg(input.stats, k.flat_skill_damage);
         flat_min += r_min(v);
         flat_max += r_max(v);
     }
@@ -304,7 +309,11 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         false,
     );
 
-    let magic = rg(input.stats, "magic_skill_damage");
+    let magic = if is_elemental {
+        rg(input.stats, "magic_skill_damage")
+    } else {
+        (0.0, 0.0)
+    };
     let elem = keys
         .map(|k| rg(input.stats, k.skill_damage))
         .unwrap_or((0.0, 0.0));
@@ -312,7 +321,11 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let skill_dmg_min = r_min(magic) + r_min(elem) + arch_add.0 + input.conversion_skill_damage_pct;
     let skill_dmg_max = r_max(magic) + r_max(elem) + arch_add.1 + input.conversion_skill_damage_pct;
 
-    let magic_more = rg(input.stats, "magic_skill_damage_more");
+    let magic_more = if is_elemental {
+        rg(input.stats, "magic_skill_damage_more")
+    } else {
+        (0.0, 0.0)
+    };
     let elem_more = keys
         .map(|k| rg(input.stats, k.skill_damage_more))
         .unwrap_or((0.0, 0.0));
@@ -347,10 +360,6 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
     let resistance_mult = 1.0 - eff_res_pct / 100.0;
 
-    let is_elemental = s
-        .damage_type
-        .as_deref()
-        .is_some_and(|dt| ELEMENTS.contains(&dt));
     let elemental_break_pct = if is_elemental {
         let base = r_max(rg(input.stats, "elemental_break"));
         let on = if is_spell {
@@ -777,5 +786,61 @@ mod tests {
         assert_eq!(tag_skills_bonus(&s, &skill), (7.0, 7.0), "tag keys stack");
         skill.tags = tags(&["Active", "Spell"]);
         assert_eq!(tag_skills_bonus(&s, &skill), (0.0, 0.0));
+    }
+
+    #[test]
+    fn flat_magic_skill_damage_is_a_flat_for_every_element_but_physical() {
+        let fire = breakdown(&Case {
+            damage_type: "fire",
+            stats: stats(&[("flat_magic_skill_damage", 50.0)]),
+            ..Default::default()
+        });
+        assert_eq!(fire.flat_max, 50.0);
+        assert_eq!(fire.hit_max, 150);
+        let physical = breakdown(&Case {
+            damage_type: "physical",
+            stats: stats(&[("flat_magic_skill_damage", 50.0)]),
+            ..Default::default()
+        });
+        assert_eq!(physical.flat_max, 0.0);
+        assert_eq!(physical.hit_max, 100);
+    }
+
+    #[test]
+    fn flat_elemental_skill_damage_skips_physical() {
+        let fire = breakdown(&Case {
+            damage_type: "fire",
+            stats: stats(&[("flat_elemental_skill_damage", 50.0)]),
+            ..Default::default()
+        });
+        assert_eq!(fire.flat_max, 50.0);
+        let physical = breakdown(&Case {
+            damage_type: "physical",
+            stats: stats(&[("flat_elemental_skill_damage", 50.0)]),
+            ..Default::default()
+        });
+        assert_eq!(physical.flat_max, 0.0);
+        assert_eq!(physical.hit_max, 100);
+    }
+
+    #[test]
+    fn magic_skill_damage_shares_one_bracket_with_the_element_and_skips_physical() {
+        let fire = breakdown(&Case {
+            damage_type: "fire",
+            stats: stats(&[("magic_skill_damage", 50.0), ("fire_skill_damage", 50.0)]),
+            ..Default::default()
+        });
+        assert_eq!(fire.skill_damage_max_pct, 100.0, "one additive bracket");
+        assert_eq!(fire.hit_max, 200);
+        let physical = breakdown(&Case {
+            damage_type: "physical",
+            stats: stats(&[
+                ("magic_skill_damage", 50.0),
+                ("magic_skill_damage_more", 50.0),
+            ]),
+            ..Default::default()
+        });
+        assert_eq!(physical.skill_damage_max_pct, 0.0);
+        assert_eq!(physical.hit_max, 100);
     }
 }

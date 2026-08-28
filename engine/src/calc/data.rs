@@ -41,12 +41,8 @@ pub fn is_charm_slot(slot: &str) -> bool {
     slot.starts_with("charm_")
 }
 
-pub fn charms_allow_stars_forge(season: &str) -> bool {
-    season != "s9"
-}
-
-pub fn can_star_forge(slot: &str, season: &str) -> bool {
-    is_gear_slot(slot) || (is_charm_slot(slot) && charms_allow_stars_forge(season))
+pub fn can_star_forge(slot: &str) -> bool {
+    is_gear_slot(slot) || is_charm_slot(slot)
 }
 
 const SATANIC_CRYSTAL_RARITIES: &[&str] = &[
@@ -242,8 +238,8 @@ fn load_for(season_id: &str) -> GameData {
         PatchKind::RecordMerge,
         "subskill-tags.json",
     );
-    // Drzewo incarnation (zakładka Tree): baza = S9, sezony podmieniają
-    // zawartość patchem — jedna kolekcja dla wszystkich sezonów.
+    // Drzewo incarnation (zakładka Tree): jedna kolekcja, sezony podmieniają
+    // zawartość patchem.
     let tree_nodes: HashMap<String, TreeNodeInfo> = load_patched(
         INCARNATION_NODES_JSON,
         &patches,
@@ -504,9 +500,6 @@ mod tests {
         let a = super::data_for("definitely-unknown") as *const GameData;
         let b = super::data_for("also-unknown") as *const GameData;
         assert_eq!(a, b, "patchless ids must share one base cache entry");
-        let base = super::data_for("definitely-unknown");
-        let s9 = super::data_for("s9");
-        assert_eq!(base.affixes.len(), s9.affixes.len());
     }
 
     // Every embedded season patch dir must deserialize into GameData without panicking.
@@ -522,8 +515,6 @@ mod tests {
             let d = super::data_for(dir);
             assert!(!d.affixes.is_empty(), "season {dir} lost all affixes");
         }
-        let s9 = super::data_for("s9");
-        assert!(!s9.affixes.is_empty());
     }
 
     #[test]
@@ -535,14 +526,6 @@ mod tests {
             ));
             assert_eq!(default_ptr, super::data() as *const GameData);
         }
-        let _scope = crate::calc::season::SeasonScope::enter(Some(
-            "scope-unknown-season".to_string(),
-        ));
-        assert_ne!(
-            default_ptr,
-            super::data() as *const GameData,
-            "an unknown season serves base data, the patched default does not"
-        );
     }
 
     #[test]
@@ -645,16 +628,12 @@ mod tests {
     }
 
     #[test]
-    fn can_star_forge_gates_charms_by_season() {
-        assert!(super::can_star_forge("weapon", "s9"));
-        assert!(super::can_star_forge("weapon", "s10"));
-        assert!(!super::can_star_forge("charm_1", "s9"));
-        assert!(super::can_star_forge("charm_1", "s10"));
-        assert!(super::can_star_forge("charm_30", "s11"));
-        assert!(!super::can_star_forge("relic", "s10"));
+    fn can_star_forge_covers_gear_and_charms_only() {
+        assert!(super::can_star_forge("weapon"));
+        assert!(super::can_star_forge("charm_1"));
+        assert!(super::can_star_forge("charm_30"));
+        assert!(!super::can_star_forge("relic"));
         assert!(super::is_charm_slot("charm_1"));
         assert!(!super::is_charm_slot("weapon"));
-        assert!(!super::charms_allow_stars_forge("s9"));
-        assert!(super::charms_allow_stars_forge("s10"));
     }
 }

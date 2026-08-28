@@ -43,7 +43,7 @@ describe('<Dropdown>', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
   })
 
-  it('renders a search box and footer by default (searchable)', async () => {
+  it('renders a search box by default (searchable)', async () => {
     render(
       <Dropdown
         value={null}
@@ -54,7 +54,6 @@ describe('<Dropdown>', () => {
     )
     await userEvent.click(screen.getByRole('button'))
     expect(screen.getByPlaceholderText('Find…')).toBeInTheDocument()
-    expect(document.querySelector('.hs-dd-foot')).toBeInTheDocument()
   })
 
   it('filters options by the search query', async () => {
@@ -65,7 +64,7 @@ describe('<Dropdown>', () => {
     expect(screen.getByText('Bard')).toBeInTheDocument()
   })
 
-  it('hides the search box and footer when searchable is false', async () => {
+  it('hides the search box when searchable is false', async () => {
     render(
       <Dropdown
         value={null}
@@ -77,7 +76,6 @@ describe('<Dropdown>', () => {
     await userEvent.click(screen.getByRole('button'))
     expect(screen.getByRole('listbox')).toBeInTheDocument()
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
-    expect(document.querySelector('.hs-dd-foot')).not.toBeInTheDocument()
   })
 
   it('supports arrow-key navigation and Enter selection when not searchable', async () => {

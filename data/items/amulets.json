@@ -1,5 +1,40 @@
 [
   {
+    "id": "amulets_normal_golden_amulet",
+    "name": "Amulet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_silver_necklace",
+    "name": "Locket",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_skull_trophy",
+    "name": "Talisman",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_hawks_claw_amulet",
+    "name": "Carcanet",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
+    "id": "amulets_normal_elven_necklace",
+    "name": "Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "common"
+  },
+  {
     "id": "amulet_heroic_compass_of_wealth",
     "name": "Compass of Wealth",
     "baseType": "Amulet",
@@ -155,7 +190,7 @@
         2,
         4
       ],
-      "attacks_per_second": [
+      "increased_attack_speed": [
         5,
         10
       ],
@@ -829,7 +864,9 @@
     "uniqueEffects": [
       "Unholy"
     ],
-    "setId": "damien_s_legacy"
+    "setId": "damien_s_legacy",
+    "randomAffixGroupId": "random_unholy",
+    "maxAffixes": 1
   },
   {
     "id": "amulet_satanic_dark_lord_s_sigil",
@@ -1985,9 +2022,67 @@
     "procs": [
       {
         "trigger": "on_kill",
-        "chance": 2,
+        "chance": 10,
         "description": "cast Liliths Rage Level 1"
       }
     ]
+  },
+  {
+    "id": "s10_grimtides_necklace",
+    "name": "Grimtide's Necklace",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "life": [
+        200,
+        250
+      ],
+      "all_resistances": 15,
+      "gold_find": [
+        35,
+        50
+      ],
+      "magic_find": [
+        80,
+        200
+      ]
+    },
+    "sockets": 1,
+    "maxSockets": 1
+  },
+  {
+    "id": "s10_blood_maggot_pendant",
+    "name": "Blood Maggot Pendant",
+    "baseType": "Amulet",
+    "slot": "amulet",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "increased_attack_speed": [
+        25,
+        35
+      ],
+      "enemy_arcane_resist": 15,
+      "magic_skill_damage": [
+        20,
+        35
+      ],
+      "guardian_additional_attack": 15,
+      "guardian_attack_range": [
+        50,
+        75
+      ],
+      "increased_life": -15
+    },
+    "sockets": 1,
+    "maxSockets": 1
   }
 ]

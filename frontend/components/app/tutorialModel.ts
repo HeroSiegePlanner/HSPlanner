@@ -1,4 +1,5 @@
 import type { Section } from '../../App'
+import { SEASONS } from '@data/seasons/registry'
 
 export const TUTORIAL_DONE_KEY = 'hsplanner.tutorial.done.v1'
 
@@ -148,11 +149,15 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     title: 'Live Stats',
     body: 'This panel is always in view and recalculates with every point you spend, item you equip and toggle you flip.',
   },
-  {
-    target: 'season',
-    title: 'Season',
-    body: 'Switch the active season — items, trees and calculations follow it. Each season switch resets your incarnation/ether tree',
-  },
+  ...(SEASONS.length > 1
+    ? [
+        {
+          target: 'season',
+          title: 'Season',
+          body: 'Switch the active season — items, trees and calculations follow it. Each season switch resets your incarnation/ether tree',
+        },
+      ]
+    : []),
   {
     target: 'bottombar',
     title: 'Status Bar',

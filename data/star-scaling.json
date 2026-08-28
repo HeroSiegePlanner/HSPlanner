@@ -56,6 +56,7 @@
     "flat_arcane_skill_damage": { "kind": "percent", "perStar": 5 },
     "flat_skill_damage": { "kind": "percent", "perStar": 5 },
     "flat_elemental_skill_damage": { "kind": "percent", "perStar": 5 },
+    "flat_magic_skill_damage": { "kind": "percent", "perStar": 5 },
     "attack_damage": { "kind": "percent", "perStar": 3 },
     "enhanced_damage": { "kind": "percent", "perStar": 3 },
     "enhanced_defense": { "kind": "none" },

@@ -119,6 +119,8 @@ pub struct SkillRef {
     #[serde(default)]
     pub uses_attack_speed: bool,
     #[serde(default)]
+    pub uses_skill_haste: bool,
+    #[serde(default)]
     pub proc: Option<SkillProc>,
     #[serde(default)]
     pub attack_kind: Option<String>,

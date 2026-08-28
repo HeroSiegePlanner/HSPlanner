@@ -22,6 +22,8 @@ export default function SeasonSwitcher() {
     changeActiveSeason(pending);
   };
 
+  if (SEASONS.length < 2) return null;
+
   return (
     <>
       <label data-tour="season" className="flex items-center gap-2">

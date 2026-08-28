@@ -342,3 +342,152 @@ describe('itemTextFormat — removing / replacing base implicits', () => {
     expect(again).toContain('+25% Increased Sentry Duration')
   })
 })
+
+describe('itemTextFormat — skillBonusOverrides support', () => {
+  function findItemWithRangedSkillBonus(): [ItemBase, string] | undefined {
+    for (const it of items) {
+      if (!it.skillBonuses) continue
+      const key = Object.keys(it.skillBonuses).find((k) => {
+        const v = it.skillBonuses![k]
+        return Array.isArray(v) && v[0] !== v[1]
+      })
+      if (key) return [it, key]
+    }
+    return undefined
+  }
+
+  function bareEquipped(baseId: string): EquippedItem {
+    return {
+      baseId,
+      affixes: [],
+      socketCount: 0,
+      socketed: [],
+      socketTypes: [],
+      stars: 0,
+    }
+  }
+
+  it('serialize emits a Skill Bonuses section with the ranged value', async () => {
+    const found = findItemWithRangedSkillBonus()
+    expect(found).toBeDefined()
+    if (!found) return
+    const [baseItem, skill] = found
+
+    const text = await serializeEquippedItem(bareEquipped(baseItem.id), baseItem, stubMath)
+    expect(text).toContain('Skill Bonuses:')
+    expect(text).toContain(`to ${skill}`)
+    expect(text).toMatch(/\+\[\d+(\.\d+)?-\d+(\.\d+)?] to /)
+  })
+
+  it('serialize includes [custom] suffix for a pinned skill bonus', async () => {
+    const found = findItemWithRangedSkillBonus()
+    if (!found) return
+    const [baseItem, skill] = found
+
+    const equipped: EquippedItem = {
+      ...bareEquipped(baseItem.id),
+      skillBonusOverrides: { [skill]: 777 },
+    }
+    const text = await serializeEquippedItem(equipped, baseItem, stubMath)
+    expect(text).toContain(`+777 to ${skill} [custom]`)
+  })
+
+  it('parser leaves untouched ranged skill bonus lines as base (no override)', async () => {
+    const found = findItemWithRangedSkillBonus()
+    if (!found) return
+    const [baseItem] = found
+
+    const text = await serializeEquippedItem(bareEquipped(baseItem.id), baseItem, stubMath)
+    const parsed = await parseItemText(text, baseItem.id, stubMath)
+    expect(parsed.equipped).not.toBeNull()
+    expect(parsed.equipped!.skillBonusOverrides).toBeUndefined()
+  })
+
+  it('serialize → parse round-trip preserves a pinned skill bonus', async () => {
+    const found = findItemWithRangedSkillBonus()
+    if (!found) return
+    const [baseItem, skill] = found
+
+    const equipped: EquippedItem = {
+      ...bareEquipped(baseItem.id),
+      skillBonusOverrides: { [skill]: 15 },
+    }
+    const text = await serializeEquippedItem(equipped, baseItem, stubMath)
+    const parsed = await parseItemText(text, baseItem.id, stubMath)
+    expect(parsed.equipped).not.toBeNull()
+    expect(parsed.equipped!.skillBonusOverrides).toEqual({ [skill]: 15 })
+  })
+
+  it('parser pins a plain numeric skill bonus line without [custom]', async () => {
+    const found = findItemWithRangedSkillBonus()
+    if (!found) return
+    const [baseItem, skill] = found
+
+    const text = `Rarity: ${baseItem.rarity.toUpperCase()}
+${baseItem.name}
+${baseItem.baseType}
+--------
+Stars: 0
+--------
+Skill Bonuses:
++14 to ${skill}`
+
+    const result = await parseItemText(text, baseItem.id, stubMath)
+    expect(result.equipped).not.toBeNull()
+    expect(result.equipped!.skillBonusOverrides).toEqual({ [skill]: 14 })
+  })
+
+  it('parser errors on an unknown skill bonus name', async () => {
+    const found = findItemWithRangedSkillBonus()
+    if (!found) return
+    const [baseItem] = found
+
+    const text = `Rarity: ${baseItem.rarity.toUpperCase()}
+${baseItem.name}
+${baseItem.baseType}
+--------
+Stars: 0
+--------
+Skill Bonuses:
++5 to Nonexistent Skill Xyz`
+
+    const result = await parseItemText(text, baseItem.id, stubMath)
+    expect(result.equipped).toBeNull()
+    expect(result.errors.some((e) => e.severity === 'error')).toBe(true)
+  })
+
+  it('parser zeroes a skill bonus deleted from a present section', async () => {
+    const multi = items.find(
+      (it) => it.skillBonuses && Object.keys(it.skillBonuses).length >= 2,
+    )
+    expect(multi).toBeDefined()
+    if (!multi) return
+    const keys = Object.keys(multi.skillBonuses!)
+    const removed = keys[0]!
+
+    const text = await serializeEquippedItem(bareEquipped(multi.id), multi, stubMath)
+    const withoutLine = text
+      .split('\n')
+      .filter((l) => !(l.includes(`to ${removed}`) && !l.startsWith('Skill Bonuses')))
+      .join('\n')
+    const parsed = await parseItemText(withoutLine, multi.id, stubMath)
+    expect(parsed.equipped).not.toBeNull()
+    expect(parsed.equipped!.skillBonusOverrides?.[removed]).toBe(0)
+  })
+
+  it('parser leaves overrides alone when the whole section is absent (legacy text)', async () => {
+    const found = findItemWithRangedSkillBonus()
+    if (!found) return
+    const [baseItem] = found
+
+    const text = `Rarity: ${baseItem.rarity.toUpperCase()}
+${baseItem.name}
+${baseItem.baseType}
+--------
+Stars: 0`
+
+    const result = await parseItemText(text, baseItem.id, stubMath)
+    expect(result.equipped).not.toBeNull()
+    expect(result.equipped!.skillBonusOverrides).toBeUndefined()
+  })
+})

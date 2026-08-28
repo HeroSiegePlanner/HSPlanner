@@ -263,6 +263,7 @@
     "description": "Throw three piercing Shurikens at your target dealing increased damage.",
     "maxRank": 20,
     "requiresLevel": 1,
+    "hitModel": { "object": "Samurai_Shuriken_Step", "tickFrequency": 0.5, "lifetime": 1.25 },
     "ranks": [
       {
         "rank": 1,
@@ -791,6 +792,7 @@
     "description": "Explode a smoke bomb dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 16,
+    "hitModel": { "object": "Samurai_Smoke_Bomb_Create", "tickFrequency": 1, "lifetime": 3.5 },
     "ranks": [
       {
         "rank": 1,
@@ -1419,6 +1421,7 @@
     "description": "Summon a barrier of rotating blades around you dealing Physical Damage and additional Arcane Damage.",
     "maxRank": 20,
     "requiresLevel": 1,
+    "hitModel": { "object": "Samurai_Blade_Barrier_Step", "tickFrequency": 0.33, "lifetime": 5 },
     "ranks": [
       {
         "rank": 1,

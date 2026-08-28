@@ -8,7 +8,7 @@
         {
           "from": "increased_attack_speed",
           "to": "faster_cast_rate",
-          "pct": 10
+          "pct": 7
         }
       ]
     }
@@ -279,7 +279,39 @@
   {
     "id": "celestial_might",
     "name": "Celestial Might",
-    "description": "All Elemental Skill damage increases are converted to Arcane."
+    "description": "All Elemental Skill damage increases are converted to Arcane.",
+    "passiveConverts": {
+      "perRank": [
+        {
+          "from": "fire_skill_damage",
+          "to": "arcane_skill_damage",
+          "pct": 0,
+          "basePct": 100,
+          "replaces": true
+        },
+        {
+          "from": "cold_skill_damage",
+          "to": "arcane_skill_damage",
+          "pct": 0,
+          "basePct": 100,
+          "replaces": true
+        },
+        {
+          "from": "lightning_skill_damage",
+          "to": "arcane_skill_damage",
+          "pct": 0,
+          "basePct": 100,
+          "replaces": true
+        },
+        {
+          "from": "poison_skill_damage",
+          "to": "arcane_skill_damage",
+          "pct": 0,
+          "basePct": 100,
+          "replaces": true
+        }
+      ]
+    }
   },
   {
     "id": "chain_trap",
@@ -1036,7 +1068,7 @@
   {
     "id": "reaper_s_culling",
     "name": "Reaper's Culling",
-    "description": "You can no longer critically hit or miss the target and now deal increased physical damage."
+    "description": "You can no longer critically hit or miss the target and now deal increased physical damage. Culling is always 100% and no longer scales with star or skill levels."
   },
   {
     "id": "remiges",
@@ -2061,5 +2093,51 @@
       }
     ],
     "procCooldown": 0.25
+  },
+  {
+    "id": "will_o_wisp",
+    "name": "Will-O-Wisp",
+    "description": "Summons have ghastly skulls orbiting them, inflicting Burning on hit for a portion of the summon's damage. Burning Damage 50%, Projectiles 8"
+  },
+  {
+    "id": "ghost_crew",
+    "name": "Ghost Crew",
+    "description": "Summons have a chance on hit to summon a Ghost Crew member to fight on your side for a short duration. Fire Damage 22914, Life 24000, Proc Chance 6%"
+  },
+  {
+    "id": "phantom_momentum",
+    "name": "Phantom Momentum",
+    "description": "Gain stacks of Phantom Momentum while moving, providing increased movement speed and dodge chance; lose the stacks once you get hit. Movement Speed 3%, Dodge Chance 1%"
+  },
+  {
+    "id": "scarlet_sacrifice",
+    "name": "Scarlet Sacrifice",
+    "description": "Summons have a chance when attacking to become enraged, gaining increased damage and attack speed; enraged summons die after a short duration. Damage 75%, Attack Speed 50%, Proc Chance 4%"
+  },
+  {
+    "id": "heart_surge",
+    "name": "Heart Surge",
+    "description": "When you cast, a floating projectile of blood is created; after a short delay when you stop casting, all of these projectiles are launched forward. Cold Damage 12120, Chance to fork on hit 28%"
+  },
+  {
+    "id": "spectral_scatter",
+    "name": "Spectral Scatter",
+    "description": "Your ranged projectiles fork after a short delay, dealing increased damage. Damage 25%, Projectiles 4"
+  },
+  {
+    "id": "demon_form",
+    "name": "Demon Form",
+    "description": "Transform into a demon, increasing your attack damage and attack speed.",
+    "condition": "demon_form_buff",
+    "passiveStats": {
+      "base": {
+        "attack_damage": 18,
+        "increased_attack_speed": 6
+      },
+      "perRank": {
+        "attack_damage": 6,
+        "increased_attack_speed": 2
+      }
+    }
   }
 ]

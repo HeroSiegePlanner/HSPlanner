@@ -376,7 +376,12 @@
     "sockets": 1,
     "maxSockets": 4,
     "width": 2,
-    "height": 2
+    "height": 2,
+    "rainbowSockets": [
+      2,
+      3,
+      4
+    ]
   },
   {
     "id": "charm_heroic_tarethiel_s_ancient_wisdom",
@@ -1184,7 +1189,7 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "all_skills": [
+      "all_skills_marksman": [
         1,
         2
       ],
@@ -1192,10 +1197,6 @@
       "sentry_damage": [
         20,
         35
-      ],
-      "random_skill": [
-        1,
-        3
       ]
     },
     "setId": "engineer_s_combat_gear",
@@ -1206,6 +1207,10 @@
         1,
         3
       ]
+    },
+    "randomSkillPool": {
+      "classId": "marksman",
+      "tree": "Engineer"
     }
   },
   {
@@ -2251,5 +2256,130 @@
     },
     "width": 2,
     "height": 2
+  },
+  {
+    "id": "s10_captains_anchor",
+    "name": "Captain's Anchor",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "height": 2,
+    "width": 2,
+    "implicit": {
+      "random_skill_element": 5,
+      "phys_dmg_taken_as_cold": [
+        10,
+        20
+      ],
+      "enemy_all_resist": 20,
+      "light_radius": [
+        4,
+        8
+      ]
+    }
+  },
+  {
+    "id": "s10_ghastly_skull",
+    "name": "Ghastly Skull",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "height": 2,
+    "width": 1,
+    "implicit": {
+      "summon_skills": [
+        3,
+        5
+      ]
+    },
+    "skillBonuses": {
+      "Will-O-Wisp": [
+        1,
+        5
+      ]
+    }
+  },
+  {
+    "id": "s10_parasitic_heart",
+    "name": "Parasitic Heart",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "height": 2,
+    "width": 1,
+    "implicit": {
+      "all_skills": [
+        2,
+        4
+      ],
+      "attack_damage": [
+        35,
+        70
+      ],
+      "magic_skill_damage": [
+        35,
+        70
+      ],
+      "increased_life": -25
+    }
+  },
+  {
+    "id": "s10_jar_of_parasites",
+    "name": "Jar of Parasites",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "height": 2,
+    "width": 1,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "skill_haste": [
+        10,
+        100
+      ],
+      "physical_damage_reduction": 25,
+      "magic_damage_reduction": 25
+    }
+  },
+  {
+    "id": "s10_ghost_armada",
+    "name": "Ghost Armada",
+    "baseType": "Charm",
+    "slot": "charm_1",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "height": 2,
+    "width": 3,
+    "implicit": {
+      "all_skills": [
+        3,
+        5
+      ],
+      "attack_radius": [
+        25,
+        60
+      ],
+      "increased_attack_speed": [
+        25,
+        50
+      ],
+      "deadly_blow": [
+        10,
+        20
+      ],
+      "crushing_blow_chance": 25
+    }
   }
 ]
