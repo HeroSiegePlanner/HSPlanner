@@ -1,5 +1,5 @@
 import ItemTooltip from '../../components/ItemTooltip'
-import { activeSeasonId, detectRuneword, effectiveStars, gameConfig, getItem, getItemImage } from '@data'
+import { detectRuneword, effectiveStars, gameConfig, getItem, getItemImage } from '@data'
 import { useBuild } from '../../store/build'
 import type { EquippedItem, SlotKey } from '../../types'
 import { RARITY_BG, RARITY_BORDER, RARITY_TEXT } from './lib/rarity'
@@ -44,7 +44,7 @@ function SlotCell({
   const bg = base ? RARITY_BG[base.rarity] : locked ? 'bg-panel-2/40' : 'bg-[#120c08]'
 
   const stars = equipped
-    ? (effectiveStars(slotKey, activeSeasonId, equipped.stars) ?? 0)
+    ? (effectiveStars(slotKey, equipped.stars) ?? 0)
     : 0
   const socketsFilled = equipped ? equipped.socketed.filter(Boolean).length : 0
 

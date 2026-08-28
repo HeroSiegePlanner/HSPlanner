@@ -99,7 +99,9 @@
     "grade": "D",
     "defenseMin": 4,
     "defenseMax": 6,
-    "blockChance": 18
+    "blockChance": 18,
+    "sockets": 0,
+    "maxSockets": 5
   },
   {
     "id": "shields_normal_buckler",
@@ -108,7 +110,9 @@
     "slot": "offhand",
     "rarity": "common",
     "grade": "C",
-    "blockChance": 18
+    "blockChance": 18,
+    "sockets": 0,
+    "maxSockets": 5
   },
   {
     "id": "shields_normal_steel_ward",
@@ -141,7 +145,9 @@
     "grade": "B",
     "defenseMin": 22,
     "defenseMax": 40,
-    "blockChance": 38
+    "blockChance": 38,
+    "sockets": 0,
+    "maxSockets": 5
   },
   {
     "id": "shields_normal_kite_shield",
@@ -200,7 +206,9 @@
     "grade": "S",
     "defenseMin": 80,
     "defenseMax": 100,
-    "blockChance": 65
+    "blockChance": 65,
+    "sockets": 0,
+    "maxSockets": 5
   },
   {
     "id": "shields_normal_tribal_ward",
@@ -2132,5 +2140,85 @@
     },
     "sockets": 0,
     "maxSockets": 4
+  },
+  {
+    "id": "shield_heroic_shadow_lantern",
+    "name": "Shadow Lantern",
+    "baseType": "Shield",
+    "slot": "offhand",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 98,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "skill_haste": [
+        15,
+        35
+      ],
+      "sentry_damage": [
+        25,
+        50
+      ],
+      "sentry_skills": [
+        3,
+        5
+      ],
+      "sentry_duration": 33,
+      "sentry_max_amount": [
+        1,
+        3
+      ]
+    },
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ],
+    "maxAffixes": 2,
+    "randomAffixGroupId": "random_unholy",
+    "sockets": 3,
+    "maxSockets": 4
+  },
+  {
+    "id": "s10_overgrowth",
+    "name": "Overgrowth",
+    "baseType": "Shield",
+    "slot": "offhand",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 150,
+    "defenseMax": 180,
+    "blockChance": 80,
+    "implicit": {
+      "enhanced_defense": [
+        540,
+        640
+      ],
+      "life": [
+        350,
+        550
+      ],
+      "faster_hit_recovery": 150,
+      "physical_damage_reduction": 15,
+      "magic_damage_reduction": 15,
+      "all_resistances": [
+        50,
+        75
+      ],
+      "max_all_resistances": -5
+    },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Sanguine Flow Level 1",
+        "details": "Spawn life globes around you. Damage 20%"
+      }
+    ],
+    "sockets": 4,
+    "maxSockets": 6
   }
 ]

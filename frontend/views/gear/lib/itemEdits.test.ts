@@ -6,12 +6,16 @@ import {
   makeEquippedItem,
   withAffixAdded,
   withAffixRemoved,
+  withAffixRoll,
   withAugment,
   withAugmentLevel,
   withForgedModAdded,
   withForgedModRemoved,
+  withImplicitOverride,
+  withRandomElement,
   withRandomSkill,
   withRuneword,
+  withSkillBonusOverride,
   withSocketCount,
   withSocketType,
   withSocketed,
@@ -37,6 +41,88 @@ describe('itemEdits — immutability', () => {
     expect(next).not.toBe(item)
     expect(next.stars).toBe(3)
     expect(item.stars).toBe(0)
+  })
+})
+
+describe('itemEdits — rolls', () => {
+  it('withAffixRoll clamps to 0..1 and clears customValue', () => {
+    const item = {
+      ...synthItem(),
+      affixes: [{ affixId: 'a', tier: 1, roll: 1, customValue: 99 }],
+    }
+    const next = withAffixRoll(item, 0, 2)
+    expect(next.affixes[0]).toEqual({ affixId: 'a', tier: 1, roll: 1 })
+    const low = withAffixRoll(item, 0, -1)
+    expect(low.affixes[0]?.roll).toBe(0)
+    expect(item.affixes[0]?.customValue).toBe(99)
+  })
+
+  it('withAffixRoll ignores out-of-range indices', () => {
+    const item = synthItem()
+    expect(withAffixRoll(item, 0, 0.5)).toBe(item)
+  })
+
+  it('withAffixRoll moves the affix to another tier when given an affixId', () => {
+    const item = {
+      ...synthItem(),
+      affixes: [
+        { affixId: '1_increased_experience_gain_t1_battlescarred', tier: 1, roll: 1 },
+      ],
+    }
+    const next = withAffixRoll(
+      item,
+      0,
+      0.5,
+      '1_increased_experience_gain_t4_posttraumatic',
+    )
+    expect(next.affixes[0]).toEqual({
+      affixId: '1_increased_experience_gain_t4_posttraumatic',
+      tier: 4,
+      roll: 0.5,
+    })
+    expect(item.affixes[0]?.tier).toBe(1)
+  })
+
+  it('withAffixRoll keeps the current tier when the affixId is unknown', () => {
+    const item = { ...synthItem(), affixes: [{ affixId: 'a', tier: 2, roll: 1 }] }
+    const next = withAffixRoll(item, 0, 0.25, 'nope')
+    expect(next.affixes[0]).toEqual({ affixId: 'a', tier: 2, roll: 0.25 })
+  })
+
+  it('withImplicitOverride sets, replaces and removes keys immutably', () => {
+    const item = synthItem()
+    const set = withImplicitOverride(item, 'to_strength', 17)
+    expect(set.implicitOverrides).toEqual({ to_strength: 17 })
+    expect(item.implicitOverrides).toBeUndefined()
+    const two = withImplicitOverride(set, 'to_dexterity', 5)
+    const one = withImplicitOverride(two, 'to_strength', null)
+    expect(one.implicitOverrides).toEqual({ to_dexterity: 5 })
+    const none = withImplicitOverride(one, 'to_dexterity', null)
+    expect('implicitOverrides' in none).toBe(false)
+  })
+
+  it('withImplicitOverride is a no-op for same value or missing key removal', () => {
+    const item = withImplicitOverride(synthItem(), 'to_strength', 17)
+    expect(withImplicitOverride(item, 'to_strength', 17)).toBe(item)
+    expect(withImplicitOverride(item, 'nope', null)).toBe(item)
+  })
+
+  it('withSkillBonusOverride sets, replaces and removes keys immutably', () => {
+    const item = synthItem()
+    const set = withSkillBonusOverride(item, 'Whirlwind', 2)
+    expect(set.skillBonusOverrides).toEqual({ Whirlwind: 2 })
+    expect(item.skillBonusOverrides).toBeUndefined()
+    const two = withSkillBonusOverride(set, 'Execute', 15)
+    const one = withSkillBonusOverride(two, 'Whirlwind', null)
+    expect(one.skillBonusOverrides).toEqual({ Execute: 15 })
+    const none = withSkillBonusOverride(one, 'Execute', null)
+    expect('skillBonusOverrides' in none).toBe(false)
+  })
+
+  it('withSkillBonusOverride is a no-op for same value or missing key removal', () => {
+    const item = withSkillBonusOverride(synthItem(), 'Whirlwind', 2)
+    expect(withSkillBonusOverride(item, 'Whirlwind', 2)).toBe(item)
+    expect(withSkillBonusOverride(item, 'nope', null)).toBe(item)
   })
 })
 
@@ -214,6 +300,24 @@ describe('itemEdits — withRandomSkill', () => {
     const item: EquippedItem = { ...synthItem(), randomSkillId: 'gunner_drone' }
     expect(withRandomSkill(item, 'gunner_drone')).toBe(item)
     expect(withRandomSkill(synthItem(), null)).toEqual(synthItem())
+  })
+})
+
+describe('itemEdits — withRandomElement', () => {
+  it('stamps the picked element on the item', () => {
+    const next = withRandomElement(synthItem(), 'cold')
+    expect(next.randomSkillElement).toBe('cold')
+  })
+
+  it('removes the key entirely when null is passed', () => {
+    const item: EquippedItem = { ...synthItem(), randomSkillElement: 'cold' }
+    expect('randomSkillElement' in withRandomElement(item, null)).toBe(false)
+  })
+
+  it('returns the same object when nothing changes', () => {
+    const item: EquippedItem = { ...synthItem(), randomSkillElement: 'cold' }
+    expect(withRandomElement(item, 'cold')).toBe(item)
+    expect(withRandomElement(synthItem(), null)).toEqual(synthItem())
   })
 })
 

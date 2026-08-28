@@ -43,6 +43,25 @@ describe('encode/decode round-trip', () => {
     expect(decoded!.snapshot.disabledPotions).toEqual({ potion_1: true })
   })
 
+  it('round-trips skill bonus overrides on an equipped item', () => {
+    const snap = makeSnapshot({
+      inventory: {
+        amulet: {
+          baseId: 'amulet_heroic_gryphon_s_claw',
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          skillBonusOverrides: { Execute: 15 },
+        },
+      },
+    })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.inventory.amulet?.skillBonusOverrides).toEqual({
+      Execute: 15,
+    })
+  })
+
   it('round-trips a picked random skill on an equipped item', () => {
     const snap = makeSnapshot({
       inventory: {
@@ -58,6 +77,23 @@ describe('encode/decode round-trip', () => {
     })
     const decoded = decodeShareToBuild(encodeBuildToShare(snap))
     expect(decoded!.snapshot.inventory.charm_1?.randomSkillId).toBe('gunner_drone')
+  })
+
+  it('round-trips the picked random skill element', () => {
+    const snap = makeSnapshot({
+      inventory: {
+        boots: {
+          baseId: 's10_phantoms_step',
+          affixes: [],
+          socketCount: 0,
+          socketed: [],
+          socketTypes: [],
+          randomSkillElement: 'cold',
+        },
+      },
+    })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.inventory.boots?.randomSkillElement).toBe('cold')
   })
 
   it('defaults disabledPotions to empty when absent from the payload', () => {

@@ -6,7 +6,7 @@
     "kind": "active",
     "description": "Throw a grenade that bounces exploding into shrapnel on impact, dealing area of effect fire damage.",
     "damageType": "fire",
-    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "tags": ["Cast", "Active", "Spell", "Explosion", "Projectile"],
     "movementDuringUse": 65,
     "range": 320,
     "baseCastRate": 1,
@@ -247,7 +247,7 @@
       },
       {
         "id": "the_bigger_the_better",
-        "positionIndex": 1,
+        "positionIndex": 8,
         "name": "The Bigger the Better",
         "description": "Increases the size of heavy ball.",
         "maxRank": 5,
@@ -269,7 +269,7 @@
       },
       {
         "id": "surprise_bombing",
-        "positionIndex": 3,
+        "positionIndex": 6,
         "name": "Surprise Bombing",
         "description": "Chance to unleash a big bo-om on hit.",
         "maxRank": 5,
@@ -277,7 +277,7 @@
       },
       {
         "id": "fire_frenzy",
-        "positionIndex": 4,
+        "positionIndex": 7,
         "name": "Fire Frenzy",
         "description": "Chance to unleash burning flames below the target on hit.",
         "maxRank": 5,
@@ -304,7 +304,7 @@
       },
       {
         "id": "machine_drilled_spikes",
-        "positionIndex": 6,
+        "positionIndex": 3,
         "name": "Machine Drilled Spikes",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
@@ -322,7 +322,7 @@
       },
       {
         "id": "gladiators_strength",
-        "positionIndex": 7,
+        "positionIndex": 4,
         "name": "Gladiator's Strength",
         "description": "Increases the range of heavy ball.",
         "maxRank": 5,
@@ -333,7 +333,7 @@
       },
       {
         "id": "precision_and_power",
-        "positionIndex": 8,
+        "positionIndex": 1,
         "name": "Precision and Power",
         "description": "Increases the attack rating and damage dealt by heavy ball.",
         "maxRank": 5,
@@ -439,7 +439,7 @@
     "kind": "active",
     "description": "Throw a huge bo-omb scattering into shrapnel on impact dealing area of effect fire damage.",
     "damageType": "fire",
-    "tags": ["Cast", "Active", "Spell", "Explosion"],
+    "tags": ["Cast", "Active", "Spell", "Explosion", "Projectile"],
     "movementDuringUse": 65,
     "range": 260,
     "baseCastRate": 1,
@@ -732,10 +732,10 @@
         "positionIndex": 6,
         "name": "In Flames",
         "description": "Scorch the ground around the point of impact dealing damage over time.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 25 }
+          "perRank": { "of_total_damage": 8 }
         }
       },
       {
@@ -1144,7 +1144,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 60, "area_of_effect": 15 }
+          "perRank": { "of_total_damage": 40, "area_of_effect": 8 }
         }
       }
     ]

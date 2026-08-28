@@ -9,6 +9,7 @@ import {
   normalizeSkillName,
   statName,
 } from '../../utils/item/stats'
+import { hitsPerCast } from '../../utils/skill/hitModel'
 import { synergyEffectText } from '../../utils/skill/synergyText'
 import type {
   AttributeKey,
@@ -371,6 +372,7 @@ export function SkillEffectsBlock({
     skill.range !== undefined ||
     skill.baseCooldown !== undefined ||
     skill.effectDuration !== undefined ||
+    skill.hitModel !== undefined ||
     !!skill.requiresLevel ||
     !!skill.requiresSkill
 
@@ -523,6 +525,21 @@ export function SkillEffectsBlock({
             suffix="s"
             color="text-text"
           />
+        )}
+        {skill.hitModel && (
+          <>
+            <EffRow
+              label="Hit interval"
+              cur={String(skill.hitModel.tickFrequency)}
+              suffix="s"
+              color="text-text"
+            />
+            <EffRow
+              label="Hits per cast"
+              cur={String(hitsPerCast(skill.hitModel) ?? 'unknown')}
+              color="text-text"
+            />
+          </>
         )}
         {skill.requiresLevel && (
           <EffRow

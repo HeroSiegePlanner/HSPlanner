@@ -553,14 +553,9 @@ fn apply_diminishing_returns_skips_unconfigured_and_absent_keys() {
     assert!(!stats.contains_key("gold_find"));
 }
 
-// Season plumbing: base config carries the 4 pre-S10 curves, S10 adds FCR,
-// deadly blow and skill haste on top.
+// S10 config carries the four original curves plus FCR, deadly blow and skill haste.
 #[test]
-fn diminishing_returns_config_is_season_aware() {
-    let s9 = crate::calc::data::data_for("s9").game_config.diminishing_returns.as_ref().unwrap();
-    assert_eq!(s9.len(), 4);
-    assert!(!s9.contains_key("faster_cast_rate"));
-
+fn diminishing_returns_config_has_s10_curves() {
     let s10 = crate::calc::data::data_for("s10").game_config.diminishing_returns.as_ref().unwrap();
     assert_eq!(s10.len(), 7);
     let db = &s10["deadly_blow"];

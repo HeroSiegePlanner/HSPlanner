@@ -169,3 +169,54 @@ jobs:
              | .platforms["linux-x86_64-appimage"] |= (.signature=$sig | .url=$url)' \
             latest.json > latest.json.tmp && mv latest.json.tmp latest.json
           gh release upload ${{ inputs.tag }} latest.json --clobber -R ${{ github.repository }}
+
+  # Tauri has no pacman bundler, so repack the deb payload into a pacman package.
+  build-arch:
+    needs: build
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install tools
+        run: pacman -Syu --noconfirm --needed github-cli
+
+      - name: Download deb from release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download ${{ inputs.tag }} -R ${{ github.repository }} -p '*.deb'
+
+      - name: Repack deb into pacman package
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          DEB=$(ls *.deb)
+          VERSION=${TAG#v}
+          cat > PKGBUILD <<EOF
+          pkgname=hsplanner-bin
+          pkgver=${VERSION//-/_}
+          pkgrel=1
+          pkgdesc="Hero Siege build planner"
+          arch=('x86_64')
+          url="https://github.com/${{ github.repository }}"
+          license=('custom')
+          depends=('webkit2gtk-4.1' 'gtk3')
+          provides=('hsplanner')
+          conflicts=('hsplanner')
+          options=('!strip' '!debug')
+          source=("$DEB")
+          noextract=("$DEB")
+          sha256sums=('SKIP')
+
+          package() {
+            cd "\$srcdir"
+            bsdtar -xf "$DEB"
+            bsdtar -xf data.tar.* -C "\$pkgdir"
+          }
+          EOF
+          useradd -m builder
+          chown -R builder .
+          su builder -c "makepkg --nodeps --noconfirm"
+
+      - name: Upload pacman package to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ inputs.tag }} *.pkg.tar.zst --clobber -R ${{ github.repository }}

@@ -3989,5 +3989,101 @@
         15
       ]
     }
+  },
+  {
+    "id": "s10_captains_attire",
+    "name": "Captain's Attire",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 110,
+    "defenseMax": 140,
+    "implicit": {
+      "enhanced_defense": [
+        270,
+        400
+      ],
+      "all_skills": 2,
+      "life": [
+        450,
+        600
+      ],
+      "increased_life": 8,
+      "physical_damage_reduction": [
+        8,
+        18
+      ],
+      "magic_damage_reduction": [
+        8,
+        18
+      ],
+      "all_resistances": [
+        20,
+        30
+      ]
+    },
+    "skillBonuses": {
+      "Oasis Aura": [
+        25,
+        35
+      ]
+    },
+    "sockets": 5,
+    "maxSockets": 6
+  },
+  {
+    "id": "s10_leviathans_ribcage",
+    "name": "Leviathan's Ribcage",
+    "baseType": "Body Armor",
+    "slot": "armor",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 230,
+    "defenseMax": 310,
+    "implicit": {
+      "enhanced_defense": [
+        375,
+        430
+      ],
+      "all_skills": 3,
+      "melee_skills": [
+        8,
+        12
+      ],
+      "ranged_skills": [
+        8,
+        12
+      ],
+      "reduced_movement_diminish": 25,
+      "attack_rating": [
+        1400,
+        1800
+      ],
+      "life_steal": [
+        6,
+        10
+      ],
+      "mana_steal": [
+        6,
+        12
+      ],
+      "projectile_speed": 15,
+      "to_strength": 50,
+      "increased_dexterity": 6,
+      "enhanced_damage_based_on_level": 165
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 4,
+        "description": "cast Warrior's Path Level 13",
+        "details": "Increases your attack damage and magic skill damage for a short period. Magic Skill Damage 39%, Attack Damage 58.50%"
+      }
+    ],
+    "sockets": 4,
+    "maxSockets": 4
   }
 ]

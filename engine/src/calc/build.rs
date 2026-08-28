@@ -76,6 +76,9 @@ pub struct BuildPerformance {
     /// How many entities the skill fields (1 + Maximum Sentry/Summon/Guardian
     /// Amount). Already folded into the DPS; exported so views can show it.
     pub entity_count: Option<Ranged>,
+    /// How many times one cast hits the same target. Already folded into the DPS;
+    /// exported so views can show it. `None` when the skill hits once.
+    pub hits_per_cast: Option<Ranged>,
 }
 
 fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
@@ -129,6 +132,25 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
             attack_rating_pct: s.attack_rating_pct.map(to_formula),
         }),
     }
+}
+
+/// Hits one target takes per cast. The damage object clears its hit list every
+/// `tickFrequency`, so it lands `floor(lifetime / tick) + 1` hits on a target that
+/// stays in range. Objects the game kills by animation or alarm have no extracted
+/// lifetime and count as a single hit.
+fn hits_per_cast(spec: Option<&SkillSpec>, duration_bonus: Ranged) -> Ranged {
+    let Some(model) = spec.and_then(|s| s.hit_model.as_ref()) else {
+        return (1.0, 1.0);
+    };
+    let (Some(tick), Some(lifetime)) = (model.tick_frequency, model.lifetime) else {
+        return (1.0, 1.0);
+    };
+    if tick <= 0.0 || lifetime <= 0.0 {
+        return (1.0, 1.0);
+    }
+    // An object always lands at least one hit, even below -100% duration.
+    let hits = |bonus: f64| ((lifetime * (1.0 + bonus / 100.0) / tick).floor() + 1.0).max(1.0);
+    (hits(duration_bonus.0), hits(duration_bonus.1))
 }
 
 /// Per-state chance (%) that the main skill's subtree inflicts a state; nodes that
@@ -398,6 +420,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 stat("increased_attack_speed_more"),
             ),
         )
+    } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
+        // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
+        (
+            active_skill.and_then(|s| {
+                s.base_cooldown
+                    .filter(|cd| *cd > 0.0)
+                    .map(|cd| 1.0 / cd)
+                    .or(s.base_cast_rate)
+            }),
+            stat("skill_haste"),
+        )
     } else {
         (
             active_skill.and_then(|s| s.base_cast_rate),
@@ -419,6 +452,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     } else {
         (1.0, 1.0)
     };
+
+    // Skill Duration stretches the damage object's life, which buys extra ticks.
+    let duration_scoped = rg(main_scoped, "skill_duration");
+    let duration_global = stat("skill_duration");
+    let (hits_min, hits_max) = hits_per_cast(
+        active_skill,
+        (
+            duration_scoped.0 + duration_global.0,
+            duration_scoped.1 + duration_global.1,
+        ),
+    );
 
     let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max) = if let Some(ad) =
         attack_damage.as_ref()
@@ -445,10 +489,10 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c)),
         )
     };
-    let hit_dps_min = hit_dps_min.map(|v| v * count_min);
-    let hit_dps_max = hit_dps_max.map(|v| v * count_max);
-    let avg_hit_dps_min = avg_hit_dps_min.map(|v| v * count_min);
-    let avg_hit_dps_max = avg_hit_dps_max.map(|v| v * count_max);
+    let hit_dps_min = hit_dps_min.map(|v| v * count_min * hits_min);
+    let hit_dps_max = hit_dps_max.map(|v| v * count_max * hits_max);
+    let avg_hit_dps_min = avg_hit_dps_min.map(|v| v * count_min * hits_min);
+    let avg_hit_dps_max = avg_hit_dps_max.map(|v| v * count_max * hits_max);
 
     let ctx = ProcContext {
         computed: &computed,
@@ -599,14 +643,14 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     };
     let ailment_min = ailment::ailment_dps(
         hit_avg_min,
-        rate_min * count_min,
+        rate_min * count_min * hits_min,
         &computed.stats,
         main_scoped,
         &apply_chances,
     );
     let ailment_max = ailment::ailment_dps(
         hit_avg_max,
-        rate_max * count_max,
+        rate_max * count_max * hits_max,
         &computed.stats,
         main_scoped,
         &apply_chances,
@@ -658,6 +702,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         item_skill_bonuses: computed.item_skill_bonuses,
         rank_bonuses: computed.rank_bonuses,
         entity_count: is_entity.then_some((count_min, count_max)),
+        hits_per_cast: (hits_max > 1.0).then_some((hits_min, hits_max)),
     }
 }
 

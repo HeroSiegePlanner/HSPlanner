@@ -39,6 +39,7 @@
   "spell_aoe_radius": { "tags": ["Spell", "Area of Effect"], "effect": "none" },
 
   "spell_projectile_damage": { "tags": ["Spell", "Projectile"], "effect": "damage" },
+  "spell_projectile_damage_more": { "tags": ["Spell", "Projectile"], "effect": "damage_more" },
   "spell_projectile_size": { "tags": ["Spell", "Projectile"], "effect": "none" },
   "additional_spell_projectile": { "tags": ["Spell", "Projectile"], "effect": "none" },
   "extra_spell_projectiles_pct": { "tags": ["Spell", "Projectile"], "effect": "none" },

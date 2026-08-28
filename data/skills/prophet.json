@@ -569,7 +569,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 12.5 }
+          "perRank": { "summon_attack_speed": 15 }
         }
       },
       {
@@ -591,13 +591,13 @@
         "maxRank": 5,
         "effects": {
           "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 25 }
+          "perRank": { "increased_poisoned_damage": 40 }
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 100, "perRank": 0 },
           "appliesStates": [
-            { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
+            { "state": "poisoned", "amount": { "base": 0, "perRank": 40 } }
           ]
         }
       },
@@ -620,7 +620,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "perRank": { "projectile_size": 18 }
         }
       },
       {
@@ -634,7 +634,7 @@
           "chance": { "base": 0, "perRank": 4 },
           "effects": {
             "base": { "poison_skill_damage": 0 },
-            "perRank": { "poison_skill_damage": 25 }
+            "perRank": { "poison_skill_damage": 35 }
           },
           "appliesStates": ["stun"]
         }
@@ -650,7 +650,7 @@
           "chance": { "base": 0, "perRank": 5 },
           "effects": {
             "base": { "poison_skill_damage": 0 },
-            "perRank": { "poison_skill_damage": 20 }
+            "perRank": { "poison_skill_damage": 25 }
           }
         }
       },
@@ -693,7 +693,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "movement_speed": 0, "area_of_effect": 0 },
-          "perRank": { "movement_speed": 10, "area_of_effect": 12.5 }
+          "perRank": { "movement_speed": 20, "area_of_effect": 12.5 }
         }
       },
       {
@@ -703,8 +703,8 @@
         "description": "Deal a portion of the damage to all nearby monsters slowing them.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 0, "summon_attack_speed": 0 },
-          "perRank": { "splash_of_total_damage": 75, "summon_attack_speed": 15 }
+          "base": { "splash_of_total_damage": 0, "faster_cast_rate": 0 },
+          "perRank": { "splash_of_total_damage": 75, "faster_cast_rate": 22.5 }
         }
       },
       {
@@ -715,7 +715,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "poison_skill_damage": 0, "projectile_size": 75 },
-          "perRank": { "poison_skill_damage": 40, "projectile_size": 25 }
+          "perRank": { "poison_skill_damage": 50, "projectile_size": 25 }
         }
       },
       {
@@ -726,7 +726,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "poison_skill_damage": 0, "projectile_count": 3 },
-          "perRank": { "poison_skill_damage": 25, "projectile_count": 1 }
+          "perRank": { "poison_skill_damage": 35, "projectile_count": 1 }
         }
       },
       {
@@ -740,7 +740,7 @@
           "chance": { "base": 0, "perRank": 10 },
           "effects": {
             "base": { "increased_life": 0, "life_replenish_pct": 0 },
-            "perRank": { "increased_life": 5, "life_replenish_pct": 25 }
+            "perRank": { "increased_life": 2.5, "life_replenish_pct": 25 }
           }
         }
       }
@@ -1846,14 +1846,8 @@
       }
     ],
     "passiveStats": {
-      "base": {
-        "life": 100,
-        "attack_damage": 1
-      },
-      "perRank": {
-        "life": 0,
-        "attack_damage": 0.2
-      }
+      "base": { "life": 100, "attack_damage": 1 },
+      "perRank": { "life": 8, "attack_damage": 0.2 }
     }
   },
   {
@@ -1964,13 +1958,13 @@
         "maxRank": 5,
         "effects": {
           "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "perRank": { "increased_bleeding_damage": 25 }
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 4 },
           "appliesStates": [
-            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
           ]
         }
       },
@@ -2009,7 +2003,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 12.5 }
+          "perRank": { "increased_attack_speed": 10 }
         }
       },
       {
@@ -2045,7 +2039,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "perRank": { "crit_damage": 15 }
         }
       },
       {
@@ -2067,7 +2061,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "physical_skill_damage": 0, "area_of_effect": 75 },
-          "perRank": { "physical_skill_damage": 80, "area_of_effect": 25 }
+          "perRank": { "physical_skill_damage": 50, "area_of_effect": 25 }
         }
       },
       {
@@ -2098,7 +2092,7 @@
             "max_skill_stacks": 2
           },
           "perRank": {
-            "physical_skill_damage": 10,
+            "physical_skill_damage": 8,
             "increased_attack_speed": 10,
             "max_skill_stacks": 1
           }
@@ -2155,22 +2149,10 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 76,
-        "perLevel": 28
-      },
-      "flatPhysicalMin": {
-        "base": 4,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 11,
-        "perLevel": 1
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 5
-      }
+      "weaponDamagePct": { "base": 76, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 4, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 11, "perLevel": 1 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
       {
@@ -2218,13 +2200,13 @@
         "maxRank": 5,
         "effects": {
           "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "perRank": { "increased_bleeding_damage": 25 }
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 4 },
           "appliesStates": [
-            { "state": "bleeding", "amount": { "base": 0, "perRank": 30 } }
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
           ]
         }
       },
@@ -2236,7 +2218,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "life_steal": 0 },
-          "perRank": { "life_steal": 4 }
+          "perRank": { "life_steal": 2.5 }
         }
       },
       {
@@ -2247,7 +2229,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "perRank": { "skill_range": 10 }
         }
       },
       {
@@ -2269,7 +2251,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 4, "crit_damage": 25 }
+          "perRank": { "crit_chance": 4, "crit_damage": 20 }
         }
       },
       {
@@ -2280,7 +2262,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "deadly_blow": 0, "deadly_blow_effectiveness": 0 },
-          "perRank": { "deadly_blow": 5, "deadly_blow_effectiveness": 12.5 }
+          "perRank": { "deadly_blow": 3, "deadly_blow_effectiveness": 10 }
         }
       },
       {
@@ -2317,7 +2299,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "physical_skill_damage": 0, "projectile_count": 1 },
-          "perRank": { "physical_skill_damage": 30, "projectile_count": 1 }
+          "perRank": { "physical_skill_damage": 18, "projectile_count": 1 }
         }
       },
       {
@@ -2328,7 +2310,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 50, "area_of_effect": 25 }
+          "perRank": { "physical_skill_damage": 45, "area_of_effect": 25 }
         }
       },
       {
@@ -2339,7 +2321,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "physical_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "physical_skill_damage": 60, "projectile_size": 20 }
+          "perRank": { "physical_skill_damage": 45, "projectile_size": 20 }
         }
       },
       {
@@ -2352,8 +2334,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 10 },
           "effects": {
-            "base": { "physical_skill_damage": 0, "projectile_count": 4 },
-            "perRank": { "physical_skill_damage": 30, "projectile_count": 1 }
+            "base": { "physical_skill_damage": 0, "projectile_count": 3 },
+            "perRank": { "physical_skill_damage": 22, "projectile_count": 1 }
           }
         }
       }
@@ -2508,7 +2490,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 4, "crit_damage": 25 }
+          "perRank": { "crit_chance": 3, "crit_damage": 15 }
         }
       },
       {
@@ -2851,6 +2833,7 @@
       "row": 2,
       "col": 2
     },
+    "hitModel": { "object": "Prophet_Maelstrom_Create", "tickFrequency": 0.5 },
     "ranks": [
       {
         "rank": 1,
@@ -3086,7 +3069,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "area_of_effect": 0, "execute_below": 0 },
-          "perRank": { "area_of_effect": 25, "execute_below": 2 }
+          "perRank": { "area_of_effect": 25, "execute_below": 3 }
         }
       },
       {
@@ -3103,7 +3086,7 @@
           },
           "perRank": {
             "cold_skill_damage": 15,
-            "area_of_effect": 30,
+            "area_of_effect": 22.5,
             "faster_cast_rate": 15
           }
         }

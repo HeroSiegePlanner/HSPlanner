@@ -436,7 +436,9 @@
     },
     "uniqueEffects": [
       "Unholy"
-    ]
+    ],
+    "randomAffixGroupId": "random_unholy",
+    "maxAffixes": 1
   },
   {
     "id": "gloves_heroic_midas_hands",
@@ -2273,6 +2275,53 @@
       "Accelerated Flames": [
         1,
         3
+      ]
+    }
+  },
+  {
+    "id": "s10_infected_grasp",
+    "name": "Infected Grasp",
+    "baseType": "Gloves",
+    "slot": "gloves",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "defenseMin": 120,
+    "defenseMax": 120,
+    "implicit": {
+      "enhanced_defense": [
+        35,
+        50
+      ],
+      "all_skills": 2,
+      "poison_skills": [
+        2,
+        5
+      ],
+      "poison_resistance_converted_to_poison_damage": [
+        20,
+        40
+      ],
+      "faster_cast_rate": [
+        20,
+        35
+      ],
+      "increased_attack_speed": [
+        20,
+        35
+      ],
+      "extra_poison_dmg_to_poisoned": [
+        15,
+        25
+      ],
+      "poison_skill_damage": [
+        20,
+        30
+      ],
+      "increased_poisoned_frequency": 20,
+      "poison_resistance": [
+        40,
+        60
       ]
     }
   }

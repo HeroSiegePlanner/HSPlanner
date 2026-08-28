@@ -6,6 +6,7 @@ import {
   listPatchSchema,
   mercDataPatchSchema,
   recordPatchSchema,
+  stringListPatchSchema,
   type SeasonPatchSet,
 } from './patchTypes'
 
@@ -29,6 +30,7 @@ const FILE_TO_KEY: Record<string, { key: keyof SeasonPatchSet; schema: ZodType }
   'incarnation-tree': { key: 'incarnationTree', schema: incarnationTreePatchSchema },
   'game-config': { key: 'gameConfig', schema: gameConfigPatchSchema },
   'star-scaling': { key: 'starScaling', schema: recordPatchSchema },
+  'affix-pools': { key: 'affixPools', schema: stringListPatchSchema },
   'ether-tree': { key: 'etherTree', schema: etherTreePatchSchema },
   'mercenaries': { key: 'mercenaries', schema: mercDataPatchSchema },
 }

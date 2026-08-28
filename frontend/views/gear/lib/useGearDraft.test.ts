@@ -48,6 +48,37 @@ describe('useGearDraft', () => {
     expect(result.current.dirty).toBe(true)
   })
 
+  it('setImplicitOverride pins and clears a stat roll', () => {
+    const { result } = renderHook(() => useGearDraft(equippedFixture(items[0].id)))
+    act(() => result.current.setImplicitOverride('to_strength', 17))
+    expect(result.current.draft?.implicitOverrides).toEqual({ to_strength: 17 })
+    expect(result.current.dirty).toBe(true)
+    act(() => result.current.setImplicitOverride('to_strength', null))
+    expect(result.current.draft?.implicitOverrides).toBeUndefined()
+    expect(result.current.dirty).toBe(false)
+  })
+
+  it('setSkillBonusOverride pins and clears a skill rank roll', () => {
+    const { result } = renderHook(() => useGearDraft(equippedFixture(items[0].id)))
+    act(() => result.current.setSkillBonusOverride('Whirlwind', 2))
+    expect(result.current.draft?.skillBonusOverrides).toEqual({ Whirlwind: 2 })
+    expect(result.current.dirty).toBe(true)
+    act(() => result.current.setSkillBonusOverride('Whirlwind', null))
+    expect(result.current.draft?.skillBonusOverrides).toBeUndefined()
+    expect(result.current.dirty).toBe(false)
+  })
+
+  it('setAffixRoll updates the roll on the indexed affix', () => {
+    const eq = {
+      ...equippedFixture(items[0].id),
+      affixes: [{ affixId: 'x', tier: 1, roll: 1 }],
+    }
+    const { result } = renderHook(() => useGearDraft(eq))
+    act(() => result.current.setAffixRoll(0, 0.25))
+    expect(result.current.draft?.affixes[0]?.roll).toBe(0.25)
+    expect(result.current.dirty).toBe(true)
+  })
+
   it('reverting an edit clears dirty', () => {
     const { result } = renderHook(() => useGearDraft(equippedFixture(items[0].id)))
     act(() => result.current.setStars(3))

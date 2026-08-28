@@ -17,7 +17,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 170, "perLevel": 30 },
+      "weaponDamagePct": { "base": 210, "perLevel": 30 },
       "flatPhysicalMin": { "base": 6, "perLevel": 0 },
       "flatPhysicalMax": { "base": 17, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -241,7 +241,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 168, "perLevel": 32 },
+      "weaponDamagePct": { "base": 168, "perLevel": 28 },
       "flatPhysicalMin": { "base": 6, "perLevel": 0 },
       "flatPhysicalMax": { "base": 17, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -437,7 +437,7 @@
           "chance": { "base": 0, "perRank": 10 },
           "effects": {
             "base": { "fire_skill_damage": 0 },
-            "perRank": { "fire_skill_damage": 15 }
+            "perRank": { "fire_skill_damage": 2 }
           }
         }
       }
@@ -1712,7 +1712,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 37.5, "perLevel": 17.5 },
+      "weaponDamagePct": { "base": 37.5, "perLevel": 15 },
       "flatPhysicalMin": { "base": 3, "perLevel": 0 },
       "flatPhysicalMax": { "base": 8, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }

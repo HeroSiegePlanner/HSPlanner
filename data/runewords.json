@@ -1011,8 +1011,20 @@
       "rune_um",
       "rune_qi"
     ],
-    "allowedBaseTypes": [],
-    "stats": {},
+    "allowedBaseTypes": [
+      "Wand",
+      "Book",
+      "Spellblade",
+      "Sword"
+    ],
+    "stats": {
+      "all_skills": 1,
+      "sentry_skills": 3,
+      "all_attributes": 20,
+      "sentry_attack_speed": 20,
+      "sentry_damage": 25,
+      "sentry_max_amount": 1
+    },
     "requiresLevel": 57,
     "requiresItemLevel": 1
   },

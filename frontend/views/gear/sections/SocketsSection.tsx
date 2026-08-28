@@ -8,6 +8,7 @@ import { buildSocketableTooltip, NetChangeBlock } from '../tooltips'
 import { withSocketed } from '../lib/itemEdits'
 import { useHoverDpsDiff } from '../lib/useHoverDpsDiff'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 
 function SocketSelectedPanel({
   state,
@@ -259,49 +260,32 @@ function SocketTypeToggle({
         title="Built-in rainbow socket: +50% effect"
         className={`shrink-0 rounded-xs ${rainbowRing}`}
       >
-        <span className="flex rounded-[3px] bg-bg/95 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-[0.06em]">
+        <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[3px] bg-bg/95 font-mono text-[10px] font-semibold">
           <span className={rainbowText}>R</span>
         </span>
       </span>
     )
   }
-  const rainbowActive = value === 'rainbow'
-  return (
-    <div
-      className={`flex shrink-0 overflow-hidden rounded-xs ${
-        rainbowActive ? rainbowRing : 'border border-accent-deep/30'
-      }`}
+  return value === 'rainbow' ? (
+    <button
+      type="button"
+      onClick={() => onChange('normal')}
+      title="Rainbow socket: +50% effect — click for Normal"
+      className={`shrink-0 rounded-xs ${rainbowRing}`}
     >
-      <div className="flex overflow-hidden rounded-[3px] font-mono text-[10px] font-semibold tracking-[0.06em]">
-        <button
-          type="button"
-          onClick={() => onChange('normal')}
-          className={`px-2 py-0.5 transition-colors ${
-            value === 'normal'
-              ? 'bg-accent-deep/20 text-accent-hot'
-              : 'bg-bg/95 text-faint hover:text-muted'
-          }`}
-        >
-          N
-        </button>
-        <button
-          type="button"
-          onClick={() => onChange('rainbow')}
-          title="Rainbow socket: +50% effect"
-          className={`px-2 py-0.5 transition-colors ${
-            rainbowActive ? 'bg-bg/95' : 'bg-bg/40'
-          }`}
-        >
-          <span
-            className={
-              rainbowActive ? rainbowText : 'text-faint hover:text-muted'
-            }
-          >
-            R
-          </span>
-        </button>
-      </div>
-    </div>
+      <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[3px] bg-bg/95 font-mono text-[10px] font-semibold">
+        <span className={rainbowText}>R</span>
+      </span>
+    </button>
+  ) : (
+    <button
+      type="button"
+      onClick={() => onChange('rainbow')}
+      title="Normal socket — click for Rainbow (+50% effect)"
+      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-bg/60 font-mono text-[10px] font-semibold text-faint transition-colors hover:border-accent-hot hover:text-muted"
+    >
+      N
+    </button>
   )
 }
 
@@ -327,11 +311,29 @@ export function SocketsSection({
   dpsPreviewEnabled?: boolean
 }) {
   if (maxSockets === 0) return null
+  const filledNames = equipped.socketed
+    .filter((s): s is string => !!s)
+    .map((id) => socketPickerRows.find((r) => r.id === id)?.name ?? id)
+  const uniqueNames = [...new Set(filledNames)]
+  const socketedSummary =
+    filledNames.length === 0
+      ? null
+      : uniqueNames.length === 1
+        ? `${uniqueNames[0]} ×${filledNames.length}`
+        : `${filledNames.length} socketed`
   return (
     <SectionCard
       label="Sockets"
+      icon={<SectionIcon kind="sockets" />}
+      collapsible
+      defaultOpen={equipped.socketed.some(Boolean)}
       rightSlot={
         <>
+          {socketedSummary && (
+            <span className="mr-1 max-w-[220px] truncate font-mono text-[10px] uppercase tracking-[0.08em] text-faint">
+              {socketedSummary}
+            </span>
+          )}
           <button
             onClick={() => onSocketCount(equipped.socketCount - 1)}
             disabled={equipped.socketCount === 0}
@@ -372,7 +374,7 @@ export function SocketsSection({
                 key={i}
                 className="flex items-center gap-1.5 rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
               >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
+                <span className="w-3 shrink-0 text-center font-mono text-[10px] tabular-nums text-faint">
                   {i + 1}
                 </span>
                 <SocketTypeToggle

@@ -7,7 +7,6 @@ import {
 } from './entityRates'
 import { effectiveSkillTags, entityTagOf } from '../skills/skillTags'
 import {
-  activeSeasonId,
   detectRuneword,
   effectiveStars,
   gameConfig,
@@ -363,7 +362,7 @@ async function computeItemDisplay(
   equipped: EquippedItem,
   scaleImplicit: boolean,
 ): Promise<TooltipModelDeps['display']> {
-  const stars = effectiveStars(base.slot, activeSeasonId, equipped.stars)
+  const stars = effectiveStars(base.slot, equipped.stars)
   const toPair = (v: RangedValue): [number, number] => [rangedMin(v), rangedMax(v)]
   const implicitEntries = scaleImplicit && base.implicit ? Object.entries(base.implicit) : []
   const skillEntries = base.skillBonuses ? Object.entries(base.skillBonuses) : []
@@ -374,7 +373,16 @@ async function computeItemDisplay(
     .filter((x) => x.def)
     .map((x) => ({ affix: x.def, roll: x.eq.roll ?? 0, stars }))
   const scaled = [
-    ...implicitEntries.map(([k, v]) => ({ value: toPair(v), statKey: k, stars })),
+    // Star scaling keys off the resolved stat (engine rewrites
+    // random_skill_element to {element}_skills before scaling).
+    ...implicitEntries.map(([k, v]) => ({
+      value: toPair(v),
+      statKey:
+        k === 'random_skill_element' && equipped.randomSkillElement
+          ? `${equipped.randomSkillElement}_skills`
+          : k,
+      stars,
+    })),
     ...skillEntries.map(([, v]) => ({ value: toPair(v), statKey: 'item_granted_skill_rank', stars })),
   ]
   if (affixReqs.length === 0 && scaled.length === 0) return EMPTY_ITEM_DISPLAY

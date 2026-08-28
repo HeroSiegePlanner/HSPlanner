@@ -11,6 +11,7 @@
     "requiresLevel": 1,
     "tree": "Sanguine Physician",
     "position": { "row": 0, "col": 0 },
+    "hitModel": { "object": "Plague_Doctor_Miasma_Create", "tickFrequency": 0.5, "lifetime": 1.25 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
     "manaCostFormula": { "base": 4, "perLevel": 1 },
@@ -599,6 +600,7 @@
     "requiresLevel": 1,
     "tree": "Plague Caller",
     "position": { "row": 0, "col": 1 },
+    "hitModel": { "object": "Plague_Doctor_Toxic_Flask_Cloud_Create", "tickFrequency": 0.5, "lifetime": 1.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 7, "perLevel": 54.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
@@ -1256,6 +1258,7 @@
     "requiresLevel": 8,
     "tree": "Plague Caller",
     "position": { "row": 1, "col": 2 },
+    "hitModel": { "object": "Plague_Doctor_Oops_Create", "tickFrequency": 0.5, "lifetime": 1 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
       "base": { "poison_damage": 4, "slow_duration": 3 },

@@ -47,13 +47,13 @@ export function gemTintForRarity(rarity: ItemRarity | undefined): string {
     case 'satanic':
       return '#d96b5a'
     case 'satanic_set':
-      return '#74c98a'
+      return '#96c95a'
     case 'angelic':
       return '#e0d36a'
     case 'unholy':
       return '#cf6db0'
     case 'heroic':
-      return '#96c95a'
+      return '#74c98a'
     case 'mythic':
       return '#a070c8'
     case 'rare':

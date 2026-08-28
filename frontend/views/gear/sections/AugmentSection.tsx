@@ -9,6 +9,7 @@ import { withAugment, withAugmentLevel } from '../lib/itemEdits'
 import { useHoverDpsDiff } from '../lib/useHoverDpsDiff'
 import { augmentIconForId } from '../lib/gearIcons'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 
 const AUGMENT_PICKER_ROWS: PickerRow[] = augments
   .slice()
@@ -95,15 +96,23 @@ export function AugmentSection({
     <SectionCard
       label="Angelic Augment"
       tone="angelic"
+      icon={<SectionIcon kind="augment" />}
+      collapsible
+      defaultOpen={aug != null}
       rightSlot={
         aug ? (
-          <button
-            onClick={() => onSetAugment(null)}
-            className="rounded-xs border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
-            aria-label="Remove augment"
-          >
-            Remove
-          </button>
+          <>
+            <span className="max-w-[220px] truncate font-mono text-[10px] uppercase tracking-[0.06em] text-yellow-200/80">
+              {aug.name} · Lv {level}
+            </span>
+            <button
+              onClick={() => onSetAugment(null)}
+              className="rounded-xs border border-border-2 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-faint transition-colors hover:border-stat-red hover:text-stat-red"
+              aria-label="Remove augment"
+            >
+              Remove
+            </button>
+          </>
         ) : undefined
       }
       bodyClassName="p-3 space-y-2.5"

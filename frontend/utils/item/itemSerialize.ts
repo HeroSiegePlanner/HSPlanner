@@ -46,13 +46,23 @@ export async function serializeEquippedItem(
   const affixDefs = equipped.affixes.map((eq) => getAffix(eq.affixId))
   const forgedList = equipped.forgedMods ?? []
   const forgedDefs = forgedList.map((eq) => getCrystalMod(eq.affixId))
-  const scaledReqs: ScaledValueRequest[] = scaleImplicitEarly
+  const implicitReqs: ScaledValueRequest[] = scaleImplicitEarly
     ? implicitBaseEntries.map(([k, v]) => ({
         value: toPair(v),
         statKey: k,
         stars,
       }))
     : []
+  // Skill bonuses star-scale regardless of runewords (mirrors calc/rank.rs).
+  const skillBonusBaseEntries = base.skillBonuses
+    ? Object.entries(base.skillBonuses)
+    : []
+  const skillReqs: ScaledValueRequest[] = skillBonusBaseEntries.map(([, v]) => ({
+    value: toPair(v),
+    statKey: 'item_granted_skill_rank',
+    stars,
+  }))
+  const scaledReqs = [...implicitReqs, ...skillReqs]
   const presentDefs = [...affixDefs, ...forgedDefs].filter(
     (d): d is NonNullable<typeof d> => !!d,
   )
@@ -66,9 +76,14 @@ export async function serializeEquippedItem(
       ? await math.batch({ affixes: affixReqs, scaled: scaledReqs })
       : EMPTY_BATCH
   const implicitScaled = new Map<string, [number, number]>()
-  scaledReqs.forEach((r, i) => {
+  implicitReqs.forEach((r, i) => {
     const v = batch.scaled[i]
     if (v) implicitScaled.set(r.statKey, v)
+  })
+  const skillRankScaled = new Map<string, [number, number]>()
+  skillBonusBaseEntries.forEach(([name], i) => {
+    const v = batch.scaled[implicitReqs.length + i]
+    if (v) skillRankScaled.set(name, v)
   })
   const rangeByDef = new Map<object, AffixValueOutput>()
   presentDefs.forEach((def, i) => {
@@ -125,6 +140,20 @@ export async function serializeEquippedItem(
     }
     for (const [k, v] of extraImplicits) {
       lines.push(`${formatValue(v, k)} ${statName(k)} [custom]`)
+    }
+  }
+
+  if (skillBonusBaseEntries.length > 0) {
+    lines.push(SEP)
+    lines.push('Skill Bonuses:')
+    for (const [skillName, v] of skillBonusBaseEntries) {
+      const override = equipped.skillBonusOverrides?.[skillName]
+      if (override !== undefined) {
+        lines.push(`${formatValue(override, '')} to ${skillName} [custom]`)
+      } else {
+        const shown = skillRankScaled.get(skillName) ?? toPair(v)
+        lines.push(`${formatValue(shown, '')} to ${skillName}`)
+      }
     }
   }
 

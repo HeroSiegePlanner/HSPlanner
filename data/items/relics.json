@@ -1618,7 +1618,20 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {}
+    "implicit": {},
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 20,
+        "description": "cast Demon Form Level [1-10]"
+      }
+    ],
+    "skillBonuses": {
+      "Demon Form": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_skullbat",

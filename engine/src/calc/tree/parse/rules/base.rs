@@ -405,7 +405,7 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)\s+to\s+Magic\s+Skill\s+Damage$",
-            "flat_skill_damage"
+            "flat_magic_skill_damage"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Spell\s+Damage$",

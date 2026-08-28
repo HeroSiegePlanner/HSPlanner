@@ -28,8 +28,9 @@ import incarnationTreeJson from './incarnation-tree.json'
 import mercenariesJson from './mercenaries.json'
 import starScalingJson from './star-scaling.json'
 import affixTagsJson from './affix-tags.json'
+import affixPoolsJson from './affix-pools.json'
 import subskillTagsJson from './subskill-tags.json'
-import { resolveActiveSeasonId, SEASON_BEFORE_CHARM_STARS } from './seasons/registry'
+import { resolveActiveSeasonId } from './seasons/registry'
 import { loadSeasonPatchSet } from './seasons/load'
 import {
   applyEtherTreePatch,
@@ -38,6 +39,7 @@ import {
   applyListPatch,
   applyMercDataPatch,
   applyRecordMergePatch,
+  applyStringListRecordPatch,
   type PatchResult,
 } from './seasons/resolve'
 import type { ListPatch, TreeNodeInfo } from './seasons/patchTypes'
@@ -82,6 +84,16 @@ export interface AffixTag {
 
 // statKey -> skill tags the affix works with (all of them at once)
 export const affixTags = affixTagsJson as Record<string, AffixTag>
+
+// affix groupId -> game item types the affix can roll on; absent = unrestricted
+export const affixPools = patched(
+  affixPoolsJson as Record<string, string[]>,
+  applyStringListRecordPatch(
+    affixPoolsJson as Record<string, string[]>,
+    seasonPatches.affixPools,
+    'affix-pools',
+  ),
+)
 
 export interface SubskillTagChange {
   add?: string[]
@@ -263,20 +275,15 @@ export function isCharmSlot(slot: string): boolean {
   return slot.startsWith('charm_')
 }
 
-export function charmsAllowStarsForge(season: string): boolean {
-  return season !== SEASON_BEFORE_CHARM_STARS
-}
-
-export function canStarForge(slot: string, season: string): boolean {
-  return isGearSlot(slot) || (isCharmSlot(slot) && charmsAllowStarsForge(season))
+export function canStarForge(slot: string): boolean {
+  return isGearSlot(slot) || isCharmSlot(slot)
 }
 
 export function effectiveStars(
   slot: string,
-  season: string,
   stars: number | null | undefined,
 ): number | null {
-  return canStarForge(slot, season) ? (stars ?? null) : null
+  return canStarForge(slot) ? (stars ?? null) : null
 }
 
 const starScaling = patched(

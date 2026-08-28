@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::affix::apply_stars_to_ranged_value;
-use super::data::is_gear_slot;
+use super::data::can_star_forge;
 use super::skills::{ItemSkillBonuses, Ranged, Skill, StatMap, r_max, r_min, rg};
 use super::types::{Inventory, ItemBase};
 
@@ -76,7 +76,8 @@ pub fn aggregate_item_skill_bonuses(
         let Some(skill_bonuses) = base.skill_bonuses.as_ref() else {
             continue;
         };
-        let stars = if is_gear_slot(slot_key) {
+        // Charm stars scale skill ranks too, matching implicit scaling and the UI.
+        let stars = if can_star_forge(slot_key) {
             item.stars
         } else {
             None
@@ -93,15 +94,26 @@ pub fn aggregate_item_skill_bonuses(
             } else {
                 skill_name.as_str()
             };
-            let scaled = apply_stars_to_ranged_value(
-                val.as_ranged(),
-                "item_granted_skill_rank",
-                stars,
-            );
-            // No-op on the hot starred path (already floored); rounds away
-            // fractional item-data fallback values.
-            let min = r_min(scaled).round();
-            let max = r_max(scaled).round();
+            // implicit_overrides contract: a pin is the final total — no range, no star scaling.
+            let override_val = item.skill_bonus_overrides.get(skill_name).copied().or_else(|| {
+                let want = normalize_skill_name(skill_name);
+                item.skill_bonus_overrides
+                    .iter()
+                    .find_map(|(k, v)| (normalize_skill_name(k) == want).then_some(*v))
+            });
+            let (min, max) = if let Some(ov) = override_val {
+                let pinned = ov.round();
+                (pinned, pinned)
+            } else {
+                let scaled = apply_stars_to_ranged_value(
+                    val.as_ranged(),
+                    "item_granted_skill_rank",
+                    stars,
+                );
+                // No-op on the hot starred path (already floored); rounds away
+                // fractional item-data fallback values.
+                (r_min(scaled).round(), r_max(scaled).round())
+            };
             let key = normalize_skill_name(target);
             let cur = out.entry(key).or_insert((0.0, 0.0));
             cur.0 += min;
@@ -436,5 +448,56 @@ mod tests {
         let out = aggregate_item_skill_bonuses(&inv, &db);
         assert_eq!(out.len(), 1);
         assert_eq!(out.get("fireball"), Some(&(3.0, 3.0)));
+    }
+
+    #[test]
+    fn aggregate_override_collapses_range_and_skips_stars() {
+        // 4 stars would add +2 flat; a pinned total ignores both range and stars.
+        let mut db: HashMap<String, ItemBase> = HashMap::new();
+        db.insert(
+            "amulet_ov".into(),
+            item_base("amulet_ov", "amulet", &[("Fireball", (1.0, 3.0))]),
+        );
+        let mut inv: Inventory = HashMap::new();
+        let mut eq = equipped("amulet_ov", Some(4));
+        eq.skill_bonus_overrides.insert("Fireball".into(), 2.0);
+        inv.insert("amulet".into(), eq);
+        let out = aggregate_item_skill_bonuses(&inv, &db);
+        assert_eq!(out.get("fireball"), Some(&(2.0, 2.0)));
+    }
+
+    #[test]
+    fn aggregate_override_matches_normalized_key_and_rounds() {
+        let mut db: HashMap<String, ItemBase> = HashMap::new();
+        db.insert(
+            "amulet_ov".into(),
+            item_base("amulet_ov", "amulet", &[("Fireball", (1.0, 3.0))]),
+        );
+        let mut inv: Inventory = HashMap::new();
+        let mut eq = equipped("amulet_ov", None);
+        eq.skill_bonus_overrides.insert("  FIREBALL  ".into(), 2.4);
+        inv.insert("amulet".into(), eq);
+        let out = aggregate_item_skill_bonuses(&inv, &db);
+        assert_eq!(out.get("fireball"), Some(&(2.0, 2.0)));
+    }
+
+    #[test]
+    fn aggregate_override_sums_with_other_items() {
+        let mut db: HashMap<String, ItemBase> = HashMap::new();
+        db.insert(
+            "amulet_ov".into(),
+            item_base("amulet_ov", "amulet", &[("Fireball", (1.0, 3.0))]),
+        );
+        db.insert(
+            "ring_a".into(),
+            item_base("ring_a", "ring_1", &[("Fireball", (1.0, 2.0))]),
+        );
+        let mut inv: Inventory = HashMap::new();
+        let mut eq = equipped("amulet_ov", None);
+        eq.skill_bonus_overrides.insert("Fireball".into(), 2.0);
+        inv.insert("amulet".into(), eq);
+        inv.insert("ring_1".into(), equipped("ring_a", None));
+        let out = aggregate_item_skill_bonuses(&inv, &db);
+        assert_eq!(out.get("fireball"), Some(&(3.0, 4.0)));
     }
 }

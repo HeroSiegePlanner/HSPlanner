@@ -357,10 +357,7 @@
     "damageType": "fire",
     "attackKind": "attack",
     "range": 8,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 9.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "attackScaling": {
       "weaponDamagePct": {
         "base": 15,
@@ -397,7 +394,7 @@
       {
         "source": "Intelligence",
         "stat": "fire_skill_damage",
-        "value": 7.25,
+        "value": 8.5,
         "per": "attribute_point"
       }
     ],
@@ -626,22 +623,10 @@
       "perLevel": 10
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 16,
-        "perLevel": 16
-      },
-      "flatPhysicalMin": {
-        "base": 2,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 6.5,
-        "perLevel": 0.5
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 3.5
-      }
+      "weaponDamagePct": { "base": 16, "perLevel": 20 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 6.5, "perLevel": 0.5 },
+      "attackRatingPct": { "base": 0, "perLevel": 3.5 }
     },
     "manaCostFormula": {
       "base": 4,
@@ -1719,6 +1704,7 @@
     "description": "Summon a pool of corrupted water on target location bursting into a massive torrent that knocks up monsters struck dealing cold damage.",
     "maxRank": 20,
     "requiresLevel": 1,
+    "hitModel": { "object": "Pirate_Torrent_Vortex_Create", "tickFrequency": 0.25, "lifetime": 3 },
     "ranks": [
       {
         "rank": 1,
@@ -1981,22 +1967,10 @@
       "perLevel": 8.5
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": -0.5,
-        "perLevel": 12.5
-      },
-      "flatPhysicalMin": {
-        "base": 2,
-        "perLevel": 0
-      },
-      "flatPhysicalMax": {
-        "base": 5.5,
-        "perLevel": 0.5
-      },
-      "attackRatingPct": {
-        "base": 0,
-        "perLevel": 1.5
-      }
+      "weaponDamagePct": { "base": -0.5, "perLevel": 18 },
+      "flatPhysicalMin": { "base": 2, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 5.5, "perLevel": 0.5 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "manaCostFormula": {
       "base": 4,
@@ -2572,10 +2546,7 @@
     "baseCastRate": 1,
     "baseCooldown": 2,
     "range": 360,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 24
-    },
+    "damageFormula": { "base": 0, "perLevel": 22 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2762,7 +2733,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "cold_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "cold_skill_damage": 135, "skill_range": 70 }
+          "perRank": { "cold_skill_damage": 135, "skill_range": 20 }
         }
       },
       {

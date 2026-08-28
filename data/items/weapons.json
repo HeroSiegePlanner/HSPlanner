@@ -812,7 +812,8 @@
     "damageMin": 9,
     "damageMax": 13,
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "attackSpeed": 1.5
   },
   {
     "id": "base_flask_caustic_vial",
@@ -821,7 +822,10 @@
     "slot": "weapon",
     "rarity": "common",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 14,
+    "damageMax": 20,
+    "attackSpeed": 1.25
   },
   {
     "id": "base_gun_hand_cannon",
@@ -935,7 +939,10 @@
     "slot": "weapon",
     "rarity": "common",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 5,
+    "damageMax": 7,
+    "attackSpeed": 1.5
   },
   {
     "id": "base_throwing_pilum",
@@ -946,7 +953,8 @@
     "damageMin": 20,
     "damageMax": 24,
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "attackSpeed": 1.5
   },
   {
     "id": "base_throwing_simbilan",
@@ -957,7 +965,8 @@
     "damageMin": 26,
     "damageMax": 30,
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "attackSpeed": 1.5
   },
   {
     "id": "base_throwing_short_spear",
@@ -975,12 +984,15 @@
     "slot": "weapon",
     "rarity": "common",
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 12,
+    "damageMax": 16,
+    "attackSpeed": 1.5
   },
   {
     "id": "base_spell_spellblade",
     "name": "Spellblade",
-    "baseType": "Spell",
+    "baseType": "Spellblade",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.75,
@@ -993,7 +1005,7 @@
   {
     "id": "base_spell_yew_wand",
     "name": "Yew Wand",
-    "baseType": "Spell",
+    "baseType": "Wand",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.75,
@@ -1006,7 +1018,7 @@
   {
     "id": "base_spell_cane",
     "name": "Cane",
-    "baseType": "Spell",
+    "baseType": "Cane",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
@@ -1020,7 +1032,7 @@
   {
     "id": "base_spell_arcane_fork",
     "name": "Arcane Fork",
-    "baseType": "Spell",
+    "baseType": "Staff",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
@@ -1034,7 +1046,7 @@
   {
     "id": "base_spell_magic_tome",
     "name": "Magic Tome",
-    "baseType": "Spell",
+    "baseType": "Book",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
@@ -1047,7 +1059,7 @@
   {
     "id": "base_spell_gnarled_staff",
     "name": "Gnarled Staff",
-    "baseType": "Spell",
+    "baseType": "Staff",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.25,
@@ -1061,7 +1073,7 @@
   {
     "id": "base_spell_wand",
     "name": "Wand",
-    "baseType": "Spell",
+    "baseType": "Wand",
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.25,
@@ -1484,7 +1496,9 @@
     "rarity": "common",
     "attackSpeed": 1.6,
     "sockets": 0,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 5,
+    "damageMax": 7
   },
   {
     "id": "base_mace_spiked_club",
@@ -2390,7 +2404,7 @@
         25,
         45
       ],
-      "projectile_speed": 1,
+      "projectile_speed": 2,
       "magic_skill_damage": [
         25,
         60
@@ -3009,7 +3023,9 @@
       "all_attributes": [
         25,
         40
-      ]
+      ],
+      "crit_chance": 15,
+      "crit_damage": 35
     },
     "uniqueEffects": [
       "Unholy",
@@ -3084,8 +3100,8 @@
       "intelligence_based_on_level": 75,
       "reduced_movement_diminish": 50,
       "extra_dmg_to_deep_frozen": [
-        30,
-        50
+        25,
+        40
       ]
     },
     "sockets": 2,
@@ -3093,7 +3109,7 @@
     "procs": [
       {
         "trigger": "on_kill",
-        "chance": 10,
+        "chance": 4,
         "description": "cast Blizzard Level 80",
         "details": "Cast a freezing blizzard dealing area of effect cold damage and freezing monsters in the target area."
       }
@@ -3689,7 +3705,9 @@
         "chance": 12,
         "description": "cast King Rakhuls Carnage Level 9"
       }
-    ]
+    ],
+    "randomAffixGroupId": "random_unholy",
+    "maxAffixes": 2
   },
   {
     "id": "bow_heroic_recurving_corrosion",
@@ -3917,10 +3935,6 @@
         5
       ],
       "movement_speed": 35,
-      "faster_cast_rate": [
-        30,
-        45
-      ],
       "extra_damage_poisoned": [
         15,
         30
@@ -3937,18 +3951,21 @@
       "extra_poison_dmg_to_poisoned": [
         15,
         30
+      ],
+      "increased_attack_speed": [
+        30,
+        45
       ]
     },
     "sockets": 3,
     "maxSockets": 5,
-    "procs": [
-      {
-        "trigger": "on_cast",
-        "chance": 30,
-        "description": "cast Envenom Level 100",
-        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
-      }
-    ]
+    "procs": [],
+    "skillBonuses": {
+      "Envenom": [
+        15,
+        20
+      ]
+    }
   },
   {
     "id": "sword_heroic_shadow_carver",
@@ -4716,13 +4733,13 @@
         55
       ],
       "extra_lightning_dmg_stasis": [
-        30,
-        40
+        20,
+        30
       ],
       "to_intelligence": 25,
       "lightning_skill_damage": [
-        35,
-        50
+        25,
+        40
       ],
       "ignore_lightning_res": [
         15,
@@ -4740,7 +4757,6 @@
     "grade": "SS",
     "requiresLevel": 98,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         660,
         740
@@ -4782,7 +4798,12 @@
         "description": "cast Chainslice Level 125",
         "details": "Perform an enhanced attack that causes a sharp blade to chain between nearby monsters dealing damage."
       }
-    ]
+    ],
+    "randomAffixGroupId": "random_unholy",
+    "maxAffixes": 1,
+    "damageMin": 82,
+    "damageMax": 90,
+    "attackSpeed": 1.25
   },
   {
     "id": "flask_satanic_ancient_mucus",
@@ -4793,7 +4814,6 @@
     "grade": "C",
     "requiresLevel": 26,
     "implicit": {
-      "attacks_per_second": 1.25,
       "to_energy": 8,
       "to_vitality": 5,
       "flat_poison_skill_damage": [
@@ -4810,7 +4830,10 @@
         15
       ],
       "mana_replenish": 25
-    }
+    },
+    "damageMin": 15,
+    "damageMax": 20,
+    "attackSpeed": 1.25
   },
   {
     "id": "staff_satanic_ancient_sun_beacon",
@@ -4821,7 +4844,6 @@
     "grade": "B",
     "requiresLevel": 36,
     "implicit": {
-      "attacks_per_second": 1.5,
       "flat_fire_skill_damage": [
         7,
         18
@@ -4845,7 +4867,10 @@
         "description": "cast Fireball Level 28",
         "details": "Cast a fireball dealing fire damage to monsters."
       }
-    ]
+    ],
+    "damageMin": 28,
+    "damageMax": 38,
+    "attackSpeed": 1.5
   },
   {
     "id": "gun_satanic_angel",
@@ -4856,7 +4881,6 @@
     "grade": "S",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         430,
         580
@@ -4874,7 +4898,10 @@
       "mana_per_kill": 5,
       "increased_attack_rating": 3
     },
-    "setId": "gabriel_s_devotion"
+    "setId": "gabriel_s_devotion",
+    "damageMin": 44,
+    "damageMax": 52,
+    "attackSpeed": 1.75
   },
   {
     "id": "staff_satanic_apocalypto",
@@ -4885,7 +4912,6 @@
     "grade": "C",
     "requiresLevel": 29,
     "implicit": {
-      "attacks_per_second": 1.35,
       "all_attributes": 15,
       "fire_skill_damage": [
         20,
@@ -4901,7 +4927,10 @@
         10,
         20
       ]
-    }
+    },
+    "damageMin": 16,
+    "damageMax": 27,
+    "attackSpeed": 1.35
   },
   {
     "id": "staff_satanic_archangel_staff",
@@ -4912,7 +4941,6 @@
     "grade": "A",
     "requiresLevel": 52,
     "implicit": {
-      "attacks_per_second": 1.25,
       "all_skills": [
         1,
         2
@@ -4957,7 +4985,10 @@
         "description": "cast Arch Angel's Fury Level 19",
         "details": "Cast to unleash apocalypse on small AOE around you dealing Magic Damage."
       }
-    ]
+    ],
+    "damageMin": 40,
+    "damageMax": 47,
+    "attackSpeed": 1.25
   },
   {
     "id": "sword_satanic_ashbringer",
@@ -4968,7 +4999,6 @@
     "grade": "B",
     "requiresLevel": 37,
     "implicit": {
-      "attacks_per_second": 1.1,
       "enhanced_damage": [
         290,
         340
@@ -5000,7 +5030,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 40,
+    "damageMax": 46,
+    "attackSpeed": 1.1
   },
   {
     "id": "sword_satanic_azure_s_wrath",
@@ -5011,7 +5044,6 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         285,
         320
@@ -5044,7 +5076,10 @@
       ]
     },
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.75
   },
   {
     "id": "wand_satanic_battle_mage_s_wand",
@@ -5055,7 +5090,6 @@
     "grade": "B",
     "requiresLevel": 36,
     "implicit": {
-      "attacks_per_second": 1.75,
       "faster_cast_rate": 50,
       "life_replenish": [
         4,
@@ -5088,7 +5122,10 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 16,
+    "damageMax": 23,
+    "attackSpeed": 1.75
   },
   {
     "id": "book_satanic_book_of_revelations",
@@ -5099,7 +5136,6 @@
     "grade": "D",
     "requiresLevel": 16,
     "implicit": {
-      "attacks_per_second": 1.75,
       "faster_cast_rate": [
         10,
         20
@@ -5126,7 +5162,10 @@
         "description": "cast Satan's Mark Level 14",
         "details": "Mark the monsters on target area for satan causing them to unleash pulses of arcane damage when struck by other abilities and attacks. "
       }
-    ]
+    ],
+    "damageMin": 7,
+    "damageMax": 10,
+    "attackSpeed": 1.75
   },
   {
     "id": "bow_satanic_buriza_ko_nu",
@@ -5137,7 +5176,6 @@
     "grade": "A",
     "requiresLevel": 66,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         360,
         400
@@ -5177,7 +5215,10 @@
         "description": "cast Trigger Finger Level 17",
         "details": "Fire a burst shot dealing physical damage."
       }
-    ]
+    ],
+    "damageMin": 66,
+    "damageMax": 78,
+    "attackSpeed": 1.65
   },
   {
     "id": "cane_satanic_cane_of_the_tundra",
@@ -5188,7 +5229,6 @@
     "grade": "S",
     "requiresLevel": 87,
     "implicit": {
-      "attacks_per_second": 1.15,
       "all_skills": [
         2,
         4
@@ -5225,7 +5265,10 @@
         "description": "cast Blizzard Level 44",
         "details": "Cast a freezing blizzard dealing area of effect cold damage and freezing monsters in the target area."
       }
-    ]
+    ],
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 1.15
   },
   {
     "id": "dagger_satanic_ceremonial_dagger",
@@ -5236,7 +5279,6 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         240,
         270
@@ -5270,7 +5312,10 @@
         "description": "cast Poison Nova Level 54",
         "details": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 53,
+    "attackSpeed": 1.65
   },
   {
     "id": "polearm_satanic_champion_s_flag_lance",
@@ -5281,7 +5326,6 @@
     "grade": "S",
     "requiresLevel": 63,
     "implicit": {
-      "attacks_per_second": 1.15,
       "enhanced_damage": [
         410,
         540
@@ -5309,13 +5353,15 @@
       "life_based_on_level": 300
     },
     "setId": "champion_s_valor",
-    "twoHanded": true,
     "skillBonuses": {
       "Honed Defenses": [
         4,
         8
       ]
-    }
+    },
+    "damageMin": 45,
+    "damageMax": 54,
+    "attackSpeed": 1.15
   },
   {
     "id": "gun_satanic_chills_of_war",
@@ -5326,7 +5372,6 @@
     "grade": "B",
     "requiresLevel": 36,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         350,
         475
@@ -5350,7 +5395,10 @@
         8,
         12
       ]
-    }
+    },
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.75
   },
   {
     "id": "wand_satanic_clafaxier",
@@ -5361,7 +5409,6 @@
     "grade": "C",
     "requiresLevel": 23,
     "implicit": {
-      "attacks_per_second": 1.5,
       "mana_replenish": [
         2,
         6
@@ -5385,7 +5432,10 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 9,
+    "damageMax": 15,
+    "attackSpeed": 1.5
   },
   {
     "id": "flask_satanic_cobra_blood_vial",
@@ -5396,7 +5446,6 @@
     "grade": "A",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1.3,
       "all_skills": [
         1,
         2
@@ -5417,7 +5466,10 @@
       ],
       "mana_replenish_pct": 35,
       "mana_replenish": 35
-    }
+    },
+    "damageMin": 34,
+    "damageMax": 41,
+    "attackSpeed": 1.3
   },
   {
     "id": "polearm_satanic_crusader_halberd",
@@ -5428,7 +5480,6 @@
     "grade": "B",
     "requiresLevel": 45,
     "implicit": {
-      "attacks_per_second": 1.6,
       "enhanced_damage": [
         280,
         310
@@ -5466,7 +5517,10 @@
       ]
     },
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 42,
+    "damageMax": 48,
+    "attackSpeed": 1.6
   },
   {
     "id": "cane_satanic_crystal_cane_of_ice",
@@ -5477,7 +5531,6 @@
     "grade": "C",
     "requiresLevel": 24,
     "implicit": {
-      "attacks_per_second": 1.25,
       "all_skills": 1,
       "mana_replenish": [
         4,
@@ -5514,7 +5567,10 @@
       "ailment_crit_chance": 20,
       "ailment_crit_damage": 25
     },
-    "twoHanded": true
+    "twoHanded": true,
+    "damageMin": 4,
+    "damageMax": 7,
+    "attackSpeed": 1.25
   },
   {
     "id": "axe_satanic_crystal_infused_axe",
@@ -5525,7 +5581,6 @@
     "grade": "D",
     "requiresLevel": 10,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         125,
         180
@@ -5538,7 +5593,10 @@
       "mana_per_kill": 3
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 8,
+    "damageMax": 11,
+    "attackSpeed": 1.35
   },
   {
     "id": "gun_satanic_crystal_infused_pistol",
@@ -5549,7 +5607,6 @@
     "grade": "D",
     "requiresLevel": 10,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         220,
         340
@@ -5568,7 +5625,10 @@
       ]
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 8,
+    "damageMax": 11,
+    "attackSpeed": 1.25
   },
   {
     "id": "sword_satanic_crystal_infused_sword",
@@ -5579,7 +5639,6 @@
     "grade": "D",
     "requiresLevel": 11,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         180,
         210
@@ -5605,7 +5664,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 0,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 14,
+    "damageMax": 18,
+    "attackSpeed": 1.25
   },
   {
     "id": "wand_satanic_crystal_infused_wand",
@@ -5616,7 +5678,6 @@
     "grade": "D",
     "requiresLevel": 12,
     "implicit": {
-      "attacks_per_second": 1.5,
       "mana_replenish": [
         3,
         6
@@ -5642,7 +5703,10 @@
       "magic_skill_damage": 15
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 4,
+    "damageMax": 7,
+    "attackSpeed": 1.5
   },
   {
     "id": "sword_satanic_daisy",
@@ -5653,7 +5717,6 @@
     "grade": "SS",
     "requiresLevel": 97,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         775,
         850
@@ -5695,7 +5758,10 @@
     ],
     "setId": "blood_bond",
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "damageMin": 90,
+    "damageMax": 105,
+    "attackSpeed": 1.25
   },
   {
     "id": "book_satanic_damien_s_head",
@@ -5706,7 +5772,6 @@
     "grade": "S",
     "requiresLevel": 60,
     "implicit": {
-      "attacks_per_second": 1.75,
       "all_skills": 1,
       "faster_cast_rate": 30,
       "mana_replenish": [
@@ -5729,7 +5794,10 @@
     },
     "setId": "damien_s_legacy",
     "sockets": 1,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 30,
+    "damageMax": 35,
+    "attackSpeed": 1.75
   },
   {
     "id": "sword_satanic_dante_s_demon_blade",
@@ -5740,7 +5808,6 @@
     "grade": "S",
     "requiresLevel": 68,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         520,
         580
@@ -5765,7 +5832,10 @@
     ],
     "setId": "dante_s_nightmare",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 82,
+    "damageMax": 90,
+    "attackSpeed": 1.25
   },
   {
     "id": "dagger_satanic_darkness",
@@ -5776,7 +5846,6 @@
     "grade": "C",
     "requiresLevel": 30,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         110,
         140
@@ -5793,7 +5862,10 @@
       "to_dexterity": 15
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 16,
+    "damageMax": 20,
+    "attackSpeed": 1.5
   },
   {
     "id": "dagger_satanic_death_s_mirror",
@@ -5804,7 +5876,6 @@
     "grade": "SS",
     "requiresLevel": 87,
     "implicit": {
-      "attacks_per_second": 1.1,
       "enhanced_damage": [
         240,
         270
@@ -5821,7 +5892,10 @@
       "magic_find_based_on_level": 50
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 48,
+    "damageMax": 53,
+    "attackSpeed": 1.1
   },
   {
     "id": "polearm_satanic_death_s_scythe",
@@ -5832,7 +5906,6 @@
     "grade": "S",
     "requiresLevel": 66,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         450,
         500
@@ -5864,7 +5937,10 @@
         "description": "cast Agility Level 30",
         "details": "Temporarily increases your movement speed and attack speed."
       }
-    ]
+    ],
+    "damageMin": 72,
+    "damageMax": 78,
+    "attackSpeed": 1.35
   },
   {
     "id": "gun_satanic_demon",
@@ -5875,7 +5951,6 @@
     "grade": "S",
     "requiresLevel": 58,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         430,
         580
@@ -5893,7 +5968,10 @@
       "mana_per_kill": 5,
       "increased_attack_rating": 3
     },
-    "setId": "gabriel_s_devotion"
+    "setId": "gabriel_s_devotion",
+    "damageMin": 44,
+    "damageMax": 52,
+    "attackSpeed": 1.75
   },
   {
     "id": "flask_satanic_demon_blood_flask",
@@ -5904,7 +5982,6 @@
     "grade": "B",
     "requiresLevel": 44,
     "implicit": {
-      "attacks_per_second": 1.25,
       "all_skills": [
         1,
         2
@@ -5917,7 +5994,10 @@
       ],
       "mana_per_kill": 15,
       "mana_replenish": 25
-    }
+    },
+    "damageMin": 26,
+    "damageMax": 33,
+    "attackSpeed": 1.25
   },
   {
     "id": "flask_satanic_doctor_s_potion",
@@ -5928,7 +6008,6 @@
     "grade": "SS",
     "requiresLevel": 58,
     "implicit": {
-      "attacks_per_second": 1.25,
       "all_skills": [
         2,
         3
@@ -5957,7 +6036,10 @@
       "mana_per_kill": 15,
       "magic_find": 20
     },
-    "setId": "doctor_s_medkit"
+    "setId": "doctor_s_medkit",
+    "damageMin": 46,
+    "damageMax": 54,
+    "attackSpeed": 1.25
   },
   {
     "id": "axe_satanic_doom_cutter",
@@ -5968,7 +6050,6 @@
     "grade": "B",
     "requiresLevel": 37,
     "implicit": {
-      "attacks_per_second": 1.1,
       "enhanced_damage": [
         275,
         325
@@ -5989,7 +6070,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 53,
+    "damageMax": 58,
+    "attackSpeed": 1.1
   },
   {
     "id": "chainsaw_satanic_doomsaw",
@@ -6000,7 +6084,6 @@
     "grade": "C",
     "requiresLevel": 25,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         180,
         190
@@ -6037,7 +6120,10 @@
         "description": "cast Chainsaw Slash Level 14",
         "details": "Perform an area of effect attack attaching a spinning chainsaw on monsters for a short period of time."
       }
-    ]
+    ],
+    "damageMin": 26,
+    "damageMax": 34,
+    "attackSpeed": 1.5
   },
   {
     "id": "flask_satanic_doomweed_vial",
@@ -6048,7 +6134,6 @@
     "grade": "S",
     "requiresLevel": 76,
     "implicit": {
-      "attacks_per_second": 1.25,
       "poison_skills": [
         2,
         5
@@ -6079,7 +6164,10 @@
         25,
         45
       ]
-    }
+    },
+    "damageMin": 46,
+    "damageMax": 54,
+    "attackSpeed": 1.25
   },
   {
     "id": "chainsaw_satanic_doublesaw_4000",
@@ -6090,7 +6178,6 @@
     "grade": "B",
     "requiresLevel": 56,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         180,
         190
@@ -6125,7 +6212,10 @@
         "description": "cast Revved Up Level 8",
         "details": "Temporarily increases your attack speed and damage."
       }
-    ]
+    ],
+    "damageMin": 42,
+    "damageMax": 48,
+    "attackSpeed": 1.5
   },
   {
     "id": "mace_satanic_dragon_knight_s_flail",
@@ -6136,7 +6226,6 @@
     "grade": "S",
     "requiresLevel": 76,
     "implicit": {
-      "attacks_per_second": 1.45,
       "enhanced_damage": [
         220,
         280
@@ -6166,7 +6255,10 @@
       "ignore_arcane_res": 25
     },
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 48,
+    "damageMax": 52,
+    "attackSpeed": 1.45
   },
   {
     "id": "spellblade_satanic_dragon_s_breath",
@@ -6177,7 +6269,6 @@
     "grade": "S",
     "requiresLevel": 74,
     "implicit": {
-      "attacks_per_second": 1.5,
       "increased_attack_speed": 50,
       "increased_burning_damage": [
         12,
@@ -6206,7 +6297,10 @@
         "description": "cast Breath of Fire Level 59",
         "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.5
   },
   {
     "id": "claw_satanic_earth_shaper_s_talons",
@@ -6217,7 +6311,6 @@
     "grade": "S",
     "requiresLevel": 49,
     "implicit": {
-      "attacks_per_second": 1.25,
       "arcane_skills": [
         2,
         4
@@ -6239,7 +6332,10 @@
         "description": "cast Earth Bind Level 27",
         "details": "Raise vines from the ground dealing poison damage, poisoning and rooting monsters in place."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.25
   },
   {
     "id": "bow_satanic_electro",
@@ -6250,7 +6346,6 @@
     "grade": "A",
     "requiresLevel": 61,
     "implicit": {
-      "attacks_per_second": 1.7,
       "enhanced_damage": [
         260,
         380
@@ -6293,7 +6388,10 @@
         "description": "cast Storm Bolt Level 27",
         "details": "Unleash a bolt of lightning dealing area of effect lightning damage."
       }
-    ]
+    ],
+    "damageMin": 66,
+    "damageMax": 78,
+    "attackSpeed": 1.7
   },
   {
     "id": "claw_satanic_elemental_claws",
@@ -6304,7 +6402,6 @@
     "grade": "D",
     "requiresLevel": 8,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         110,
         140
@@ -6333,7 +6430,10 @@
       "mana_per_kill": 3
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 7,
+    "damageMax": 12,
+    "attackSpeed": 1.85
   },
   {
     "id": "sword_satanic_eternal_glaive",
@@ -6344,7 +6444,6 @@
     "grade": "S",
     "requiresLevel": 85,
     "implicit": {
-      "attacks_per_second": 1.8,
       "enhanced_damage": [
         425,
         460
@@ -6380,7 +6479,10 @@
         "description": "cast Chainslice Level 47",
         "details": "Perform an enhanced attack that causes a sharp blade to chain between nearby monsters dealing damage."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.8
   },
   {
     "id": "gun_satanic_f4_tactical_rifle",
@@ -6391,7 +6493,6 @@
     "grade": "S",
     "requiresLevel": 90,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         580,
         620
@@ -6420,7 +6521,10 @@
     },
     "sockets": 2,
     "maxSockets": 2,
-    "twoHanded": true
+    "twoHanded": true,
+    "damageMin": 74,
+    "damageMax": 80,
+    "attackSpeed": 1.85
   },
   {
     "id": "staff_satanic_flame_of_the_phoenix",
@@ -6431,7 +6535,6 @@
     "grade": "A",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1.25,
       "all_skills": [
         2,
         3
@@ -6479,7 +6582,10 @@
         "description": "cast Blazing Trail Level 16",
         "details": "Leave behind a trail of fire dealing fire damage to monsters."
       }
-    ]
+    ],
+    "damageMin": 40,
+    "damageMax": 47,
+    "attackSpeed": 1.25
   },
   {
     "id": "bow_satanic_flamebringer",
@@ -6490,7 +6596,6 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         350,
         550
@@ -6522,7 +6627,10 @@
         "description": "cast Comet Level 22",
         "details": "Call down a huge comet exploding on impact dealing area of effect fire damage."
       }
-    ]
+    ],
+    "damageMin": 80,
+    "damageMax": 92,
+    "attackSpeed": 1.25
   },
   {
     "id": "gun_satanic_flamecannon",
@@ -6533,7 +6641,6 @@
     "grade": "S",
     "requiresLevel": 82,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         450,
         500
@@ -6560,7 +6667,10 @@
         "description": "cast Fireball Level 60",
         "details": "Cast a fireball dealing fire damage to monsters."
       }
-    ]
+    ],
+    "damageMin": 74,
+    "damageMax": 80,
+    "attackSpeed": 1.85
   },
   {
     "id": "gun_satanic_fred",
@@ -6571,7 +6681,6 @@
     "grade": "B",
     "requiresLevel": 40,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         350,
         475
@@ -6592,7 +6701,10 @@
         8,
         12
       ]
-    }
+    },
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.75
   },
   {
     "id": "mace_satanic_frozen_carver",
@@ -6603,7 +6715,6 @@
     "grade": "B",
     "requiresLevel": 38,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         150,
         250
@@ -6639,7 +6750,10 @@
         "description": "cast Flash Freeze Level 14",
         "details": "Perform an attack enhanced with ice that unleashes a chaining orb of ice, exploding into icicles at the end dealing additional cold damage."
       }
-    ]
+    ],
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.35
   },
   {
     "id": "sword_satanic_genji_s_sword_of_fate",
@@ -6650,7 +6764,6 @@
     "grade": "SS",
     "requiresLevel": 66,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         650,
         800
@@ -6684,7 +6797,10 @@
         "chance": 16,
         "description": "cast Empires Slash Level 44"
       }
-    ]
+    ],
+    "damageMin": 88,
+    "damageMax": 100,
+    "attackSpeed": 1.35
   },
   {
     "id": "mace_satanic_gladiator_s_skullcrusher",
@@ -6695,7 +6811,6 @@
     "grade": "A",
     "requiresLevel": 49,
     "implicit": {
-      "attacks_per_second": 1.4,
       "enhanced_damage": [
         310,
         370
@@ -6734,7 +6849,10 @@
         4,
         8
       ]
-    }
+    },
+    "damageMin": 56,
+    "damageMax": 62,
+    "attackSpeed": 1.4
   },
   {
     "id": "mace_satanic_gladiator_s_wrecking_ball",
@@ -6745,7 +6863,6 @@
     "grade": "S",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         240,
         280
@@ -6770,7 +6887,10 @@
       ]
     },
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "damageMin": 82,
+    "damageMax": 90,
+    "attackSpeed": 1.5
   },
   {
     "id": "bow_satanic_glimmerfury",
@@ -6781,7 +6901,6 @@
     "grade": "D",
     "requiresLevel": 8,
     "implicit": {
-      "attacks_per_second": 1.4,
       "enhanced_damage": [
         210,
         340
@@ -6822,7 +6941,10 @@
         "description": "cast Frozen Boulder Level 15",
         "details": "Throw a frozen boulder dealing cold damage to monsters on its path."
       }
-    ]
+    ],
+    "damageMin": 16,
+    "damageMax": 22,
+    "attackSpeed": 1.4
   },
   {
     "id": "book_satanic_god_s_benevolence",
@@ -6833,7 +6955,6 @@
     "grade": "B",
     "requiresLevel": 41,
     "implicit": {
-      "attacks_per_second": 1.75,
       "magic_skill_damage": 10,
       "faster_hit_recovery": 20,
       "physical_damage_reduction": 15,
@@ -6859,7 +6980,10 @@
         "description": "cast Chain of Holy Lightning Level 27",
         "details": "Cast a holy lightning jumping from monster to monster dealing arcane damage."
       }
-    ]
+    ],
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.75
   },
   {
     "id": "sword_satanic_godfather",
@@ -6870,7 +6994,6 @@
     "grade": "A",
     "requiresLevel": 65,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         375,
         425
@@ -6900,7 +7023,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 6,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 62,
+    "damageMax": 66,
+    "attackSpeed": 1.25
   },
   {
     "id": "polearm_satanic_golden_god_s_gladius",
@@ -6911,7 +7037,6 @@
     "grade": "C",
     "requiresLevel": 26,
     "implicit": {
-      "attacks_per_second": 1.6,
       "enhanced_damage": [
         190,
         210
@@ -6950,7 +7075,10 @@
         "description": "cast Flash Heal Level 12",
         "details": "Heal yourself and any nearby allies."
       }
-    ]
+    ],
+    "damageMin": 15,
+    "damageMax": 20,
+    "attackSpeed": 1.6
   },
   {
     "id": "mace_satanic_gurag_s_stone_crusher",
@@ -6961,7 +7089,6 @@
     "grade": "S",
     "requiresLevel": 52,
     "implicit": {
-      "attacks_per_second": 1.1,
       "enhanced_damage": [
         420,
         475
@@ -6990,7 +7117,10 @@
     ],
     "setId": "gurag_s_fury",
     "sockets": 6,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 165,
+    "damageMax": 180,
+    "attackSpeed": 0.85
   },
   {
     "id": "sword_satanic_gut_s_bfs",
@@ -7001,7 +7131,6 @@
     "grade": "A",
     "requiresLevel": 52,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         420,
         480
@@ -7030,7 +7159,10 @@
         "description": "cast Whirlwind Level 22",
         "details": "Spin your weapons around you dealing damage to monsters struck."
       }
-    ]
+    ],
+    "damageMin": 56,
+    "damageMax": 62,
+    "attackSpeed": 1.25
   },
   {
     "id": "sword_satanic_gut_s_hfs",
@@ -7041,7 +7173,6 @@
     "grade": "SS",
     "requiresLevel": 94,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         620,
         680
@@ -7070,7 +7201,10 @@
         "description": "cast Whirlwind Level 42",
         "details": "Spin your weapons around you dealing damage to monsters struck."
       }
-    ]
+    ],
+    "damageMin": 90,
+    "damageMax": 110,
+    "attackSpeed": 1.25
   },
   {
     "id": "sword_satanic_hanzo_s_flaming_katana",
@@ -7081,7 +7215,6 @@
     "grade": "B",
     "requiresLevel": 34,
     "implicit": {
-      "attacks_per_second": 1.2,
       "enhanced_damage": [
         350,
         400
@@ -7119,7 +7252,10 @@
         "description": "cast Fire Nova Level 27",
         "details": "Cast a nova of fire around you dealing fire damage."
       }
-    ]
+    ],
+    "damageMin": 40,
+    "damageMax": 46,
+    "attackSpeed": 1.2
   },
   {
     "id": "bow_satanic_hellspawn_eradicator",
@@ -7130,7 +7266,6 @@
     "grade": "S",
     "requiresLevel": 81,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         410,
         540
@@ -7167,7 +7302,10 @@
         "description": "cast Orb of Frost Level 49",
         "details": "Cast a frozen orb traveling in target direction releasing icicles, freezing and dealing cold damage to monsters on its path."
       }
-    ]
+    ],
+    "damageMin": 80,
+    "damageMax": 94,
+    "attackSpeed": 1.25
   },
   {
     "id": "claw_satanic_hemorrhage",
@@ -7178,7 +7316,6 @@
     "grade": "A",
     "requiresLevel": 57,
     "implicit": {
-      "attacks_per_second": 1.6,
       "enhanced_damage": [
         280,
         360
@@ -7199,7 +7336,10 @@
         "description": "cast Rupture Level 33",
         "details": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
       }
-    ]
+    ],
+    "damageMin": 33,
+    "damageMax": 36,
+    "attackSpeed": 1.6
   },
   {
     "id": "sword_satanic_hiyoki_s_vorpal_katana",
@@ -7210,7 +7350,6 @@
     "grade": "C",
     "requiresLevel": 28,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         225,
         280
@@ -7242,7 +7381,10 @@
     ],
     "twoHanded": true,
     "sockets": 0,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 26,
+    "damageMax": 32,
+    "attackSpeed": 1.5
   },
   {
     "id": "sword_satanic_holy_warrior_s_phase_blade",
@@ -7253,7 +7395,6 @@
     "grade": "A",
     "requiresLevel": 66,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         220,
         280
@@ -7288,7 +7429,10 @@
         "description": "cast Holy Hammer Level 29",
         "details": "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
       }
-    ]
+    ],
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1.25
   },
   {
     "id": "mace_satanic_icy_crusher",
@@ -7299,7 +7443,6 @@
     "grade": "A",
     "requiresLevel": 47,
     "implicit": {
-      "attacks_per_second": 1.45,
       "enhanced_damage": [
         320,
         375
@@ -7335,7 +7478,10 @@
         "description": "cast Frozen Boulder Level 22",
         "details": "Throw a frozen boulder dealing cold damage to monsters on its path."
       }
-    ]
+    ],
+    "damageMin": 34,
+    "damageMax": 39,
+    "attackSpeed": 1.45
   },
   {
     "id": "dagger_satanic_icy_shank",
@@ -7346,7 +7492,6 @@
     "grade": "A",
     "requiresLevel": 57,
     "implicit": {
-      "attacks_per_second": 1.6,
       "enhanced_damage": [
         170,
         200
@@ -7372,7 +7517,10 @@
         "description": "cast Orb of Frost Level 19",
         "details": "Cast a frozen orb traveling in target direction releasing icicles, freezing and dealing cold damage to monsters on its path."
       }
-    ]
+    ],
+    "damageMin": 31,
+    "damageMax": 35,
+    "attackSpeed": 1.6
   },
   {
     "id": "axe_satanic_inferno_slayer",
@@ -7383,7 +7531,6 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "attacks_per_second": 1.2,
       "enhanced_damage": 250,
       "additive_fire_damage": [
         1850,
@@ -7407,7 +7554,10 @@
         35,
         50
       ]
-    }
+    },
+    "damageMin": 78,
+    "damageMax": 88,
+    "attackSpeed": 1.2
   },
   {
     "id": "gun_satanic_jack",
@@ -7418,7 +7568,6 @@
     "grade": "B",
     "requiresLevel": 38,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         350,
         475
@@ -7439,7 +7588,10 @@
         8,
         12
       ]
-    }
+    },
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.75
   },
   {
     "id": "sword_satanic_jade_warrior_s_gladius",
@@ -7450,7 +7602,6 @@
     "grade": "C",
     "requiresLevel": 27,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         225,
         280
@@ -7471,7 +7622,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 26,
+    "damageMax": 32,
+    "attackSpeed": 1.35
   },
   {
     "id": "polearm_satanic_jousting_lance",
@@ -7482,7 +7636,6 @@
     "grade": "A",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1,
       "enhanced_damage": [
         210,
         240
@@ -7517,7 +7670,10 @@
         "description": "cast Combat Orders Level 10",
         "details": "Powerful warcry which buffs your and your party members maximum life and mana."
       }
-    ]
+    ],
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1
   },
   {
     "id": "polearm_satanic_lancer_s_glory",
@@ -7528,7 +7684,6 @@
     "grade": "S",
     "requiresLevel": 58,
     "implicit": {
-      "attacks_per_second": 1.6,
       "enhanced_damage": [
         360,
         400
@@ -7549,7 +7704,10 @@
       "open_wound_chance": 20
     },
     "setId": "wall_of_god",
-    "twoHanded": true
+    "twoHanded": true,
+    "damageMin": 42,
+    "damageMax": 50,
+    "attackSpeed": 1.6
   },
   {
     "id": "chainsaw_satanic_lumberjack_s_chainsaw",
@@ -7560,7 +7718,6 @@
     "grade": "S",
     "requiresLevel": 70,
     "implicit": {
-      "attacks_per_second": 1.4,
       "enhanced_damage": [
         365,
         380
@@ -7598,7 +7755,10 @@
         2,
         5
       ]
-    }
+    },
+    "damageMin": 76,
+    "damageMax": 82,
+    "attackSpeed": 1.4
   },
   {
     "id": "gun_satanic_marine_s_buddy",
@@ -7609,7 +7769,6 @@
     "grade": "B",
     "requiresLevel": 34,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         370,
         425
@@ -7637,7 +7796,10 @@
       "increased_attack_rating": 10
     },
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 42,
+    "damageMax": 48,
+    "attackSpeed": 1.5
   },
   {
     "id": "bow_satanic_marksman_s_hunting_bow",
@@ -7648,7 +7810,6 @@
     "grade": "S",
     "requiresLevel": 64,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         440,
         520
@@ -7678,7 +7839,10 @@
     "setId": "marksman_s_hunting_gear",
     "twoHanded": true,
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "damageMin": 80,
+    "damageMax": 94,
+    "attackSpeed": 1.5
   },
   {
     "id": "sword_satanic_masamune",
@@ -7689,7 +7853,6 @@
     "grade": "S",
     "requiresLevel": 85,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         430,
         480
@@ -7710,7 +7873,10 @@
         "description": "cast Zeal Level 28",
         "details": "Strike three fast and powerful attacks with increased attack rating."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.5
   },
   {
     "id": "mace_satanic_metal_vocalist_s_warlock",
@@ -7721,7 +7887,6 @@
     "grade": "SS",
     "requiresLevel": 80,
     "implicit": {
-      "attacks_per_second": 1.75,
       "extra_damage_stasis": [
         20,
         30
@@ -7735,7 +7900,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 102,
+    "damageMax": 108,
+    "attackSpeed": 1.75
   },
   {
     "id": "dagger_satanic_molten_dagger",
@@ -7746,7 +7914,6 @@
     "grade": "D",
     "requiresLevel": 8,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         90,
         120
@@ -7766,7 +7933,10 @@
       "fire_resistance": 40
     },
     "sockets": 0,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "damageMin": 7,
+    "damageMax": 10,
+    "attackSpeed": 1.5
   },
   {
     "id": "mace_satanic_molten_hammer",
@@ -7777,7 +7947,6 @@
     "grade": "SS",
     "requiresLevel": 86,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         650,
         725
@@ -7814,7 +7983,10 @@
         "description": "cast Scorching Whip Level 44",
         "details": "Cast a scorching solar flare that whips forward dealing fire damage to monsters hit."
       }
-    ]
+    ],
+    "damageMin": 57,
+    "damageMax": 62,
+    "attackSpeed": 1.65
   },
   {
     "id": "claw_satanic_molten_paw",
@@ -7825,7 +7997,6 @@
     "grade": "S",
     "requiresLevel": 86,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         380,
         420
@@ -7846,7 +8017,10 @@
         15,
         30
       ]
-    }
+    },
+    "damageMin": 57,
+    "damageMax": 62,
+    "attackSpeed": 1.5
   },
   {
     "id": "sword_satanic_molten_sword",
@@ -7857,7 +8031,6 @@
     "grade": "B",
     "requiresLevel": 39,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         300,
         370
@@ -7882,7 +8055,10 @@
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
-    ]
+    ],
+    "damageMin": 40,
+    "damageMax": 46,
+    "attackSpeed": 1.35
   },
   {
     "id": "sword_satanic_muramasa",
@@ -7893,7 +8069,6 @@
     "grade": "S",
     "requiresLevel": 83,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         430,
         480
@@ -7918,7 +8093,10 @@
         "description": "cast Battle Glance Level 27",
         "details": "Perform an area of effect attack with increased damage and attack rating."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.5
   },
   {
     "id": "staff_satanic_necrobutcher_s_curse",
@@ -7929,7 +8107,6 @@
     "grade": "SS",
     "requiresLevel": 88,
     "implicit": {
-      "attacks_per_second": 1.25,
       "summon_skills": [
         3,
         4
@@ -7968,7 +8145,10 @@
       ]
     },
     "sockets": 4,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "damageMin": 40,
+    "damageMax": 47,
+    "attackSpeed": 1.25
   },
   {
     "id": "mace_satanic_nightmare_slasher",
@@ -7979,7 +8159,6 @@
     "grade": "A",
     "requiresLevel": 40,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         400,
         475
@@ -7999,7 +8178,10 @@
       "enemy_all_resist": 10
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1.65
   },
   {
     "id": "mace_satanic_nobunaga_s_battle_slicer",
@@ -8010,7 +8192,6 @@
     "grade": "S",
     "requiresLevel": 54,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         340,
         390
@@ -8039,7 +8220,10 @@
     ],
     "setId": "nobunaga_s_empire",
     "sockets": 3,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "damageMin": 72,
+    "damageMax": 78,
+    "attackSpeed": 1.65
   },
   {
     "id": "sword_satanic_nomad_s_sandslicer",
@@ -8050,7 +8234,6 @@
     "grade": "S",
     "requiresLevel": 51,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         520,
         580
@@ -8075,7 +8258,10 @@
     ],
     "setId": "elder_of_mos_arathim",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 84,
+    "damageMax": 95,
+    "attackSpeed": 1.5
   },
   {
     "id": "axe_satanic_odin_s_battle_axe",
@@ -8086,7 +8272,6 @@
     "grade": "S",
     "requiresLevel": 82,
     "implicit": {
-      "attacks_per_second": 1.2,
       "enhanced_damage": [
         275,
         305
@@ -8112,7 +8297,10 @@
         "description": "cast Shockwave Level 17",
         "details": "Smash the ground causing a shockwave that deals area of effect damage and stuns monsters. "
       }
-    ]
+    ],
+    "damageMin": 72,
+    "damageMax": 78,
+    "attackSpeed": 1.2
   },
   {
     "id": "polearm_satanic_odin_s_battle_spear",
@@ -8123,7 +8311,6 @@
     "grade": "A",
     "requiresLevel": 65,
     "implicit": {
-      "attacks_per_second": 1.7,
       "enhanced_damage": [
         280,
         340
@@ -8159,7 +8346,10 @@
         "description": "cast Vengeance Level 14",
         "details": "Strike monsters with a lightning shock that splits towards nearby monsters, dealing physical damage and lightning damage."
       }
-    ]
+    ],
+    "damageMin": 56,
+    "damageMax": 62,
+    "attackSpeed": 1.7
   },
   {
     "id": "mace_satanic_pillar_of_niflheim",
@@ -8170,7 +8360,6 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "attacks_per_second": 1.15,
       "enhanced_damage": [
         510,
         570
@@ -8205,7 +8394,10 @@
         "description": "cast Shockwave Level 32",
         "details": "Smash the ground causing a shockwave that deals area of effect damage and stuns monsters. "
       }
-    ]
+    ],
+    "damageMin": 72,
+    "damageMax": 78,
+    "attackSpeed": 1.15
   },
   {
     "id": "mace_satanic_pit_fighter_s_brutalizer",
@@ -8216,7 +8408,6 @@
     "grade": "SS",
     "requiresLevel": 83,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         630,
         780
@@ -8239,7 +8430,10 @@
       "Movement Phasing"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 68,
+    "damageMax": 76,
+    "attackSpeed": 1.85
   },
   {
     "id": "mace_satanic_pit_fighter_s_skullcracker",
@@ -8250,7 +8444,6 @@
     "grade": "SS",
     "requiresLevel": 83,
     "implicit": {
-      "attacks_per_second": 1.15,
       "enhanced_damage": [
         630,
         780
@@ -8268,7 +8461,10 @@
       ]
     },
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 78,
+    "damageMax": 86,
+    "attackSpeed": 1.35
   },
   {
     "id": "bow_satanic_poison_ivy",
@@ -8279,7 +8475,6 @@
     "grade": "C",
     "requiresLevel": 22,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         260,
         380
@@ -8322,7 +8517,10 @@
         "description": "cast Death from Above Level 22",
         "details": "Call down a rain of falling spears on target location dealing poison damage and slowing monsters struck."
       }
-    ]
+    ],
+    "damageMin": 44,
+    "damageMax": 52,
+    "attackSpeed": 1.5
   },
   {
     "id": "polearm_satanic_poseidon_s_might",
@@ -8333,7 +8531,6 @@
     "grade": "C",
     "requiresLevel": 22,
     "implicit": {
-      "attacks_per_second": 1.88,
       "enhanced_damage": [
         150,
         175
@@ -8360,7 +8557,10 @@
     },
     "twoHanded": true,
     "sockets": 0,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 26,
+    "damageMax": 32,
+    "attackSpeed": 1.88
   },
   {
     "id": "staff_satanic_raise_of_the_dead",
@@ -8371,7 +8571,6 @@
     "grade": "A",
     "requiresLevel": 55,
     "implicit": {
-      "attacks_per_second": 1.25,
       "summon_skills": [
         1,
         2
@@ -8403,7 +8602,10 @@
         2,
         4
       ]
-    }
+    },
+    "damageMin": 40,
+    "damageMax": 47,
+    "attackSpeed": 1.25
   },
   {
     "id": "mace_satanic_revenant_s_lasher",
@@ -8414,7 +8616,6 @@
     "grade": "SS",
     "requiresLevel": 94,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         830,
         980
@@ -8462,7 +8663,10 @@
         "description": "cast Symphony of Thunder Level 20",
         "details": "Gain increased lightning damage for a short period of time also zapping all monsters with thunderbolts when hit by a lightning skill."
       }
-    ]
+    ],
+    "damageMin": 63,
+    "damageMax": 68,
+    "attackSpeed": 1.75
   },
   {
     "id": "axe_satanic_rift_commander_s_axe",
@@ -8473,7 +8677,6 @@
     "grade": "A",
     "requiresLevel": 66,
     "implicit": {
-      "attacks_per_second": 1.1,
       "enhanced_damage": [
         320,
         380
@@ -8495,7 +8698,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 54,
+    "damageMax": 62,
+    "attackSpeed": 1.1
   },
   {
     "id": "chainsaw_satanic_royal_decapitator",
@@ -8506,7 +8712,6 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "attacks_per_second": 1,
       "enhanced_damage": [
         500,
         550
@@ -8538,7 +8743,10 @@
         3,
         6
       ]
-    }
+    },
+    "damageMin": 74,
+    "damageMax": 80,
+    "attackSpeed": 1
   },
   {
     "id": "gun_satanic_rt_xqc_4910",
@@ -8549,7 +8757,6 @@
     "grade": "S",
     "requiresLevel": 77,
     "implicit": {
-      "attacks_per_second": 1,
       "enhanced_damage": [
         480,
         520
@@ -8573,7 +8780,10 @@
       ]
     },
     "sockets": 5,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "damageMin": 74,
+    "damageMax": 80,
+    "attackSpeed": 1
   },
   {
     "id": "mace_satanic_sacred_whip",
@@ -8584,7 +8794,6 @@
     "grade": "A",
     "requiresLevel": 65,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         280,
         320
@@ -8607,7 +8816,10 @@
       ]
     },
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1.75
   },
   {
     "id": "sword_satanic_sand_crusader_s_scimitar",
@@ -8618,7 +8830,6 @@
     "grade": "B",
     "requiresLevel": 42,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         180,
         220
@@ -8638,7 +8849,10 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.65
   },
   {
     "id": "dagger_satanic_sand_dagger",
@@ -8649,7 +8863,6 @@
     "grade": "B",
     "requiresLevel": 41,
     "implicit": {
-      "attacks_per_second": 1.45,
       "enhanced_damage": [
         240,
         270
@@ -8676,7 +8889,10 @@
       "open_wound_chance": 20
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.45
   },
   {
     "id": "book_satanic_sands_of_time",
@@ -8687,7 +8903,6 @@
     "grade": "A",
     "requiresLevel": 61,
     "implicit": {
-      "attacks_per_second": 1.75,
       "all_skills": 2,
       "faster_cast_rate": 20,
       "to_energy": 8,
@@ -8706,7 +8921,10 @@
       ]
     },
     "sockets": 3,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 30,
+    "damageMax": 35,
+    "attackSpeed": 1.75
   },
   {
     "id": "sword_satanic_sanguine_blade",
@@ -8717,7 +8935,6 @@
     "grade": "C",
     "requiresLevel": 30,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         150,
         175
@@ -8739,7 +8956,10 @@
       "life_replenish": 8
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 15,
+    "damageMax": 20,
+    "attackSpeed": 1.65
   },
   {
     "id": "book_satanic_satan_s_unholy_bible",
@@ -8750,7 +8970,6 @@
     "grade": "C",
     "requiresLevel": 27,
     "implicit": {
-      "attacks_per_second": 1.75,
       "faster_cast_rate": 40,
       "magic_skill_damage": [
         20,
@@ -8758,7 +8977,7 @@
       ],
       "mana_replenish_pct": 25,
       "increased_life": -10,
-      "physical_damage_reduction": -10,
+      "physical_damage_reduction": 10,
       "all_resistances": -50,
       "flat_magic_skill_damage": [
         15,
@@ -8776,7 +8995,10 @@
         "description": "cast Soul Spurn Level 18",
         "details": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana."
       }
-    ]
+    ],
+    "damageMin": 15,
+    "damageMax": 19,
+    "attackSpeed": 1.75
   },
   {
     "id": "chainsaw_satanic_sawgun",
@@ -8787,7 +9009,6 @@
     "grade": "A",
     "requiresLevel": 58,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         225,
         250
@@ -8818,7 +9039,10 @@
         "description": "cast Trigger Finger Level 15",
         "details": "Fire a burst shot dealing physical damage."
       }
-    ]
+    ],
+    "damageMin": 37,
+    "damageMax": 42,
+    "attackSpeed": 1.35
   },
   {
     "id": "sword_satanic_shattered_dimensions",
@@ -8829,7 +9053,6 @@
     "grade": "B",
     "requiresLevel": 36,
     "implicit": {
-      "attacks_per_second": 1.2,
       "enhanced_damage": [
         300,
         370
@@ -8845,7 +9068,10 @@
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
-    ]
+    ],
+    "damageMin": 40,
+    "damageMax": 46,
+    "attackSpeed": 1.2
   },
   {
     "id": "book_satanic_solar_prophet_s_tablet",
@@ -8856,7 +9082,6 @@
     "grade": "SS",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1.75,
       "fire_skills": [
         2,
         3
@@ -8887,7 +9112,10 @@
         "description": "cast Solar Flare Level 60",
         "details": "Unleash solar flare projectiles that homes towards monsters."
       }
-    ]
+    ],
+    "damageMin": 30,
+    "damageMax": 35,
+    "attackSpeed": 1.75
   },
   {
     "id": "spellblade_satanic_spellshard",
@@ -8898,7 +9126,6 @@
     "grade": "A",
     "requiresLevel": 56,
     "implicit": {
-      "attacks_per_second": 1.75,
       "faster_cast_rate": [
         20,
         30
@@ -8923,7 +9150,10 @@
         10,
         15
       ]
-    }
+    },
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1.75
   },
   {
     "id": "flask_satanic_spirit_urn",
@@ -8934,7 +9164,6 @@
     "grade": "D",
     "requiresLevel": 10,
     "implicit": {
-      "attacks_per_second": 1.25,
       "mana_steal": 8,
       "to_energy": [
         10,
@@ -8951,7 +9180,10 @@
       ],
       "mana_replenish": 15,
       "mana_based_on_level": 50
-    }
+    },
+    "damageMin": 8,
+    "damageMax": 12,
+    "attackSpeed": 1.45
   },
   {
     "id": "claw_satanic_spirit_walker_s_guide",
@@ -8962,7 +9194,6 @@
     "grade": "B",
     "requiresLevel": 37,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         180,
         220
@@ -8976,7 +9207,10 @@
       "mana_replenish_pct": 10,
       "mana": 35,
       "mana_replenish": 10
-    }
+    },
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 1.25
   },
   {
     "id": "mace_satanic_spiritus",
@@ -8987,7 +9221,6 @@
     "grade": "S",
     "requiresLevel": 82,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         225,
         260
@@ -9026,7 +9259,10 @@
         "description": "cast Flash Heal Level 31",
         "details": "Heal yourself and any nearby allies."
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 52,
+    "attackSpeed": 1.75
   },
   {
     "id": "staff_satanic_staff_of_nether_flame",
@@ -9037,7 +9273,6 @@
     "grade": "B",
     "requiresLevel": 40,
     "implicit": {
-      "attacks_per_second": 1.5,
       "faster_cast_rate": [
         5,
         50
@@ -9060,7 +9295,10 @@
         8,
         16
       ]
-    }
+    },
+    "damageMin": 28,
+    "damageMax": 38,
+    "attackSpeed": 1.5
   },
   {
     "id": "gun_satanic_steve_s_bang",
@@ -9071,7 +9309,6 @@
     "grade": "S",
     "requiresLevel": 54,
     "implicit": {
-      "attacks_per_second": 1.75,
       "enhanced_damage": [
         440,
         590
@@ -9112,7 +9349,10 @@
         "description": "cast Steve's Itchy Sack Level 59",
         "details": "Send’s Stickman Steve on the offense dealing arcane damage"
       }
-    ]
+    ],
+    "damageMin": 44,
+    "damageMax": 52,
+    "attackSpeed": 1.75
   },
   {
     "id": "sword_satanic_steve_s_mighty_sword",
@@ -9123,7 +9363,6 @@
     "grade": "S",
     "requiresLevel": 58,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         490,
         560
@@ -9172,7 +9411,10 @@
         "description": "cast Steve's Itchy Sack Level 39",
         "details": "Send’s Stickman Steve on the offense dealing arcane damage"
       }
-    ]
+    ],
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.5
   },
   {
     "id": "bow_satanic_steve_s_punchbow",
@@ -9183,7 +9425,6 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         440,
         580
@@ -9231,7 +9472,10 @@
         "description": "cast Impale Level 22",
         "details": "Summon spikes from the ground impaling monsters in a target area dealing arcane damage and knocking them up."
       }
-    ]
+    ],
+    "damageMin": 80,
+    "damageMax": 94,
+    "attackSpeed": 1.5
   },
   {
     "id": "wand_satanic_steve_s_wand_of_fortune",
@@ -9242,7 +9486,6 @@
     "grade": "SS",
     "requiresLevel": 88,
     "implicit": {
-      "attacks_per_second": 1.8,
       "all_skills": [
         2,
         4
@@ -9277,7 +9520,10 @@
         "chance": 20,
         "description": "cast Steves Itchy Sack Level 70"
       }
-    ]
+    ],
+    "damageMin": 24,
+    "damageMax": 31,
+    "attackSpeed": 0.5
   },
   {
     "id": "sword_satanic_storm_katana",
@@ -9288,7 +9534,6 @@
     "grade": "B",
     "requiresLevel": 38,
     "implicit": {
-      "attacks_per_second": 1.4,
       "enhanced_damage": [
         310,
         370
@@ -9324,7 +9569,10 @@
         "description": "cast Lightning Fury Level 13",
         "details": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage."
       }
-    ]
+    ],
+    "damageMin": 40,
+    "damageMax": 46,
+    "attackSpeed": 1.4
   },
   {
     "id": "claw_satanic_talons_of_wisdom",
@@ -9335,7 +9583,6 @@
     "grade": "C",
     "requiresLevel": 24,
     "implicit": {
-      "attacks_per_second": 1.25,
       "enhanced_damage": [
         140,
         180
@@ -9361,7 +9608,10 @@
         15,
         25
       ]
-    }
+    },
+    "damageMin": 16,
+    "damageMax": 20,
+    "attackSpeed": 1.25
   },
   {
     "id": "chainsaw_satanic_the_annihilator",
@@ -9372,7 +9622,6 @@
     "grade": "D",
     "requiresLevel": 14,
     "implicit": {
-      "attacks_per_second": 1.4,
       "enhanced_damage": [
         140,
         160
@@ -9399,7 +9648,10 @@
     ],
     "twoHanded": true,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "damageMin": 15,
+    "damageMax": 20,
+    "attackSpeed": 1.4
   },
   {
     "id": "staff_satanic_the_iris",
@@ -9410,7 +9662,6 @@
     "grade": "C",
     "requiresLevel": 42,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         75,
         125
@@ -9441,7 +9692,10 @@
         40
       ]
     },
-    "twoHanded": true
+    "twoHanded": true,
+    "damageMin": 16,
+    "damageMax": 27,
+    "attackSpeed": 1.35
   },
   {
     "id": "sword_satanic_the_undying",
@@ -9452,7 +9706,6 @@
     "grade": "S",
     "requiresLevel": 75,
     "implicit": {
-      "attacks_per_second": 1.2,
       "enhanced_damage": [
         550,
         600
@@ -9476,7 +9729,10 @@
       "Attacks can hit multiple enemies"
     ],
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 82,
+    "damageMax": 90,
+    "attackSpeed": 1.2
   },
   {
     "id": "sword_satanic_thor_s_battle_sword",
@@ -9487,7 +9743,6 @@
     "grade": "S",
     "requiresLevel": 56,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         220,
         280
@@ -9512,7 +9767,10 @@
     },
     "setId": "thor_s_thunder_hammer",
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "damageMin": 48,
+    "damageMax": 54,
+    "attackSpeed": 1.5
   },
   {
     "id": "staff_satanic_thorn_of_helheim",
@@ -9523,7 +9781,6 @@
     "grade": "S",
     "requiresLevel": 67,
     "implicit": {
-      "attacks_per_second": 1.25,
       "all_skills": [
         3,
         5
@@ -9554,7 +9811,10 @@
         "chance": 35,
         "description": "cast Odins Demise Level 73"
       }
-    ]
+    ],
+    "damageMin": 50,
+    "damageMax": 58,
+    "attackSpeed": 1.25
   },
   {
     "id": "polearm_satanic_thorn_of_noxus",
@@ -9565,7 +9825,6 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "attacks_per_second": 0.5,
       "enhanced_damage": [
         650,
         750
@@ -9602,7 +9861,10 @@
         "description": "cast Envenom Level 34",
         "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
       }
-    ]
+    ],
+    "damageMin": 226,
+    "damageMax": 232,
+    "attackSpeed": 0.5
   },
   {
     "id": "dagger_satanic_thunder_dagger",
@@ -9613,7 +9875,6 @@
     "grade": "A",
     "requiresLevel": 64,
     "implicit": {
-      "attacks_per_second": 1.8,
       "enhanced_damage": [
         170,
         200
@@ -9641,7 +9902,10 @@
         "description": "cast Lightning Surge Level 32",
         "details": "Unleash a surge of lightning dealing lightning damage."
       }
-    ]
+    ],
+    "damageMin": 31,
+    "damageMax": 35,
+    "attackSpeed": 1.8
   },
   {
     "id": "wand_satanic_uabel_s_wand",
@@ -9652,7 +9916,6 @@
     "grade": "SS",
     "requiresLevel": 92,
     "implicit": {
-      "attacks_per_second": 1.75,
       "all_skills": [
         4,
         6
@@ -9691,7 +9954,10 @@
         "description": "cast Arcane Infused Psychosis Level 2",
         "details": "Breaks target’s Arcane Resistance causing all skills to deal increased arcane damage"
       }
-    ]
+    ],
+    "damageMin": 26,
+    "damageMax": 32,
+    "attackSpeed": 1.75
   },
   {
     "id": "mace_satanic_unholy_god_s_flail",
@@ -9702,7 +9968,6 @@
     "grade": "A",
     "requiresLevel": 48,
     "implicit": {
-      "attacks_per_second": 1.8,
       "enhanced_damage": [
         370,
         410
@@ -9730,7 +9995,10 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1.8
   },
   {
     "id": "gun_satanic_vampire_hunter",
@@ -9741,7 +10009,6 @@
     "grade": "A",
     "requiresLevel": 60,
     "implicit": {
-      "attacks_per_second": 1.5,
       "enhanced_damage": [
         310,
         450
@@ -9774,7 +10041,10 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 5
+    "maxSockets": 5,
+    "damageMin": 56,
+    "damageMax": 62,
+    "attackSpeed": 1.5
   },
   {
     "id": "polearm_satanic_vanguard_s_lance",
@@ -9785,7 +10055,6 @@
     "grade": "B",
     "requiresLevel": 44,
     "implicit": {
-      "attacks_per_second": 2.2,
       "enhanced_damage": [
         160,
         190
@@ -9814,7 +10083,10 @@
     },
     "twoHanded": true,
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 24,
+    "damageMax": 28,
+    "attackSpeed": 2.2
   },
   {
     "id": "axe_satanic_viking_s_sacred_axe",
@@ -9825,7 +10097,6 @@
     "grade": "S",
     "requiresLevel": 75,
     "implicit": {
-      "attacks_per_second": 1.35,
       "enhanced_damage": [
         285,
         340
@@ -9856,7 +10127,10 @@
         6,
         8
       ]
-    }
+    },
+    "damageMin": 72,
+    "damageMax": 78,
+    "attackSpeed": 1.35
   },
   {
     "id": "wand_satanic_voodoo_magician_s_skull",
@@ -9867,7 +10141,6 @@
     "grade": "S",
     "requiresLevel": 65,
     "implicit": {
-      "attacks_per_second": 1.5,
       "summon_skills": [
         1,
         3
@@ -9891,7 +10164,10 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 1.5
   },
   {
     "id": "chainsaw_satanic_vorpal_sharktooth",
@@ -9902,7 +10178,6 @@
     "grade": "A",
     "requiresLevel": 63,
     "implicit": {
-      "attacks_per_second": 1.8,
       "enhanced_damage": [
         255,
         290
@@ -9946,7 +10221,10 @@
         "description": "cast Slice of Shadows Level 28",
         "details": "Perform an attack that releases a wave of shadow dealing physical damage."
       }
-    ]
+    ],
+    "damageMin": 72,
+    "damageMax": 78,
+    "attackSpeed": 1.8
   },
   {
     "id": "polearm_satanic_war_god_s_lance",
@@ -9957,7 +10235,6 @@
     "grade": "D",
     "requiresLevel": 13,
     "implicit": {
-      "attacks_per_second": 1.45,
       "enhanced_damage": [
         120,
         180
@@ -9973,7 +10250,10 @@
     },
     "twoHanded": true,
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 8,
+    "damageMax": 12,
+    "attackSpeed": 1.45
   },
   {
     "id": "gun_satanic_warbringer",
@@ -9984,7 +10264,6 @@
     "grade": "C",
     "requiresLevel": 28,
     "implicit": {
-      "attacks_per_second": 1.85,
       "enhanced_damage": [
         350,
         470
@@ -10014,7 +10293,10 @@
         "description": "cast Trigger Finger Level 8",
         "details": "Fire a burst shot dealing physical damage."
       }
-    ]
+    ],
+    "damageMin": 16,
+    "damageMax": 20,
+    "attackSpeed": 1.85
   },
   {
     "id": "sword_satanic_wind_guardian_s_gladius",
@@ -10025,7 +10307,6 @@
     "grade": "A",
     "requiresLevel": 61,
     "implicit": {
-      "attacks_per_second": 1,
       "enhanced_damage": [
         240,
         280
@@ -10056,7 +10337,10 @@
         "description": "cast Sand Guardians Level 15",
         "details": "Conjure a Sand Guardian that attacks nearby monsters dealing arcane damage. "
       }
-    ]
+    ],
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1
   },
   {
     "id": "bow_satanic_wind_s_force",
@@ -10067,7 +10351,6 @@
     "grade": "S",
     "requiresLevel": 87,
     "implicit": {
-      "attacks_per_second": 1.8,
       "enhanced_damage": [
         500,
         600
@@ -10094,7 +10377,10 @@
         "description": "cast Rapid Fire Level 10",
         "details": "Temporarily increase your attack speed and physical damage."
       }
-    ]
+    ],
+    "damageMin": 94,
+    "damageMax": 106,
+    "attackSpeed": 1.8
   },
   {
     "id": "wand_satanic_witch_s_wand",
@@ -10105,7 +10391,6 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "attacks_per_second": 1.5,
       "faster_cast_rate": -50,
       "faster_cast_rate_more": -50,
       "follower_relic_damage": [
@@ -10124,7 +10409,10 @@
         1,
         3
       ]
-    }
+    },
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 1.5
   },
   {
     "id": "spellblade_satanic_wormclaw",
@@ -10135,7 +10423,6 @@
     "grade": "A",
     "requiresLevel": 63,
     "implicit": {
-      "attacks_per_second": 1.75,
       "poison_skills": [
         1,
         3
@@ -10152,7 +10439,10 @@
       "increased_poisoned_frequency": 10
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 1,
+    "damageMin": 32,
+    "damageMax": 36,
+    "attackSpeed": 1.75
   },
   {
     "id": "wand_satanic_wraithbone",
@@ -10163,7 +10453,6 @@
     "grade": "B",
     "requiresLevel": 30,
     "implicit": {
-      "attacks_per_second": 1.5,
       "summon_skills": 2,
       "all_attributes": [
         10,
@@ -10179,7 +10468,10 @@
       ]
     },
     "sockets": 0,
-    "maxSockets": 2
+    "maxSockets": 2,
+    "damageMin": 16,
+    "damageMax": 23,
+    "attackSpeed": 1.5
   },
   {
     "id": "claw_satanic_yoshi_s_throat_cutters",
@@ -10190,7 +10482,6 @@
     "grade": "SS",
     "requiresLevel": 72,
     "implicit": {
-      "attacks_per_second": 1.65,
       "enhanced_damage": [
         850,
         925
@@ -10217,7 +10508,10 @@
         15,
         20
       ]
-    }
+    },
+    "damageMin": 86,
+    "damageMax": 92,
+    "attackSpeed": 1.65
   },
   {
     "id": "book_satanic_zealot_s_book_of_prophecy",
@@ -10228,7 +10522,6 @@
     "grade": "A",
     "requiresLevel": 62,
     "implicit": {
-      "attacks_per_second": 1.75,
       "skill_haste": [
         5,
         10
@@ -10255,7 +10548,10 @@
         7,
         12
       ]
-    }
+    },
+    "damageMin": 31,
+    "damageMax": 36,
+    "attackSpeed": 1.75
   },
   {
     "id": "gun_unholy_glock_22",
@@ -10410,6 +10706,287 @@
       "Double Jump"
     ],
     "sockets": 6,
+    "maxSockets": 6
+  },
+  {
+    "id": "s10_ethereal_musket",
+    "name": "Ethereal Musket",
+    "baseType": "Rifle Gun",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "twoHanded": true,
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 160,
+    "damageMax": 175,
+    "attackSpeed": 1,
+    "implicit": {
+      "enhanced_damage": [
+        930,
+        1120
+      ],
+      "all_skills": [
+        4,
+        6
+      ],
+      "melee_range": 40,
+      "increased_attack_speed": [
+        15,
+        30
+      ],
+      "less_dmg_with_cd_skills": 80,
+      "crit_chance": 25,
+      "life_steal": 10,
+      "crit_damage": 66,
+      "defense_ignored": 50
+    },
+    "skillBonuses": {
+      "Spectral Scatter": [
+        1,
+        3
+      ]
+    },
+    "uniqueEffects": [
+      "Piercing Attack"
+    ],
+    "sockets": 6,
+    "maxSockets": 6
+  },
+  {
+    "id": "s10_grimtides_scimitar",
+    "name": "Grimtide's Scimitar",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 68,
+    "damageMax": 78,
+    "attackSpeed": 1.5,
+    "implicit": {
+      "enhanced_damage": [
+        550,
+        680
+      ],
+      "all_skills": 2,
+      "increased_attack_speed": [
+        45,
+        70
+      ],
+      "crit_chance": 25,
+      "crit_damage": 55,
+      "defense_ignored": 35,
+      "extra_damage_stunned": [
+        25,
+        40
+      ],
+      "to_strength": [
+        20,
+        30
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 15,
+        "description": "cast Tides of Chaos Level 1",
+        "details": "Conjure tides of chaos sending forward ghastly waves and summoning torrents dealing damage and stunning monsters on hit. Damage 20%"
+      }
+    ],
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "s10_conjured_tentacle",
+    "name": "Conjured Tentacle",
+    "baseType": "Wand",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 1.5,
+    "implicit": {
+      "all_skills": [
+        2,
+        3
+      ],
+      "cold_skills": [
+        2,
+        5
+      ],
+      "cold_resistance_converted_to_cold_damage": 15,
+      "faster_cast_rate": 50,
+      "extra_dmg_to_deep_frozen": [
+        25,
+        40
+      ],
+      "flat_cold_skill_damage": [
+        35,
+        55
+      ],
+      "cold_skill_damage": [
+        55,
+        75
+      ],
+      "enemy_cold_resist": [
+        30,
+        45
+      ]
+    },
+    "skillBonuses": {
+      "Heart Surge": [
+        1,
+        4
+      ]
+    },
+    "sockets": 3,
+    "maxSockets": 3
+  },
+  {
+    "id": "s10_phantom_scimitar",
+    "name": "Phantom Scimitar",
+    "baseType": "Sword",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "twoHanded": true,
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 125,
+    "damageMax": 150,
+    "attackSpeed": 1.2,
+    "implicit": {
+      "enhanced_damage": [
+        825,
+        960
+      ],
+      "all_skills": 2,
+      "physical_skills": [
+        3,
+        5
+      ],
+      "crit_chance": 35,
+      "increased_attack_rating": 10,
+      "attack_rating": 1250,
+      "crit_damage": [
+        90,
+        125
+      ],
+      "to_strength": [
+        50,
+        75
+      ]
+    },
+    "uniqueEffects": [
+      "Attacks can hit multiple enemies"
+    ],
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 5,
+        "description": "cast Phantom Slice Level 1",
+        "details": "Summon Phantom Leviathan's essence to strike monsters dealing area of effect damage. Damage 100%"
+      },
+      {
+        "trigger": "on_attack",
+        "chance": 25,
+        "description": "cast Phantom Slice Level 1",
+        "details": "Summon Phantom Leviathan's essence to strike monsters dealing area of effect damage. Damage 100%"
+      }
+    ],
+    "sockets": 5,
+    "maxSockets": 5
+  },
+  {
+    "id": "s10_phantom_strike",
+    "name": "Phantom Strike",
+    "baseType": "Bow",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "twoHanded": true,
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 120,
+    "damageMax": 130,
+    "attackSpeed": 1.25,
+    "implicit": {
+      "enhanced_damage": [
+        900,
+        1000
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "increased_attack_speed": [
+        25,
+        40
+      ],
+      "crit_chance": [
+        20,
+        30
+      ],
+      "crit_damage": [
+        40,
+        60
+      ],
+      "defense_ignored": 40,
+      "increased_dexterity": 8
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 20,
+        "description": "cast Arrow Rain Level 100",
+        "details": "Unleash a rain of arrows from the sky dealing increased damage. Attack Damage 2700%, Attack Rating 300%"
+      }
+    ],
+    "sockets": 4,
+    "maxSockets": 6
+  },
+  {
+    "id": "s10_leviathans_spine",
+    "name": "Leviathan's Spine",
+    "baseType": "Cane",
+    "slot": "weapon",
+    "rarity": "heroic",
+    "twoHanded": true,
+    "grade": "SS",
+    "requiresLevel": 100,
+    "damageMin": 32,
+    "damageMax": 42,
+    "attackSpeed": 1.15,
+    "implicit": {
+      "all_skills": [
+        8,
+        12
+      ],
+      "suppress_spell_hits": 25,
+      "faster_cast_rate": [
+        70,
+        100
+      ],
+      "phys_dmg_taken_as_arcane": 25,
+      "enemy_all_resist": [
+        25,
+        40
+      ],
+      "magic_damage_reduction": 25,
+      "all_resistances": [
+        45,
+        60
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 40,
+        "description": "cast Odin's Fury Level 99",
+        "details": "Powerful warcry which deals arcane damage and stuns monsters around you. Arcane Damage 98320"
+      }
+    ],
+    "sockets": 5,
     "maxSockets": 6
   }
 ]

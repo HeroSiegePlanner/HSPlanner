@@ -194,6 +194,15 @@ const STAT_NAME_TO_KEY: Map<string, string> = (() => {
   return m
 })()
 
+function lookupSkillBonusKey(base: ItemBase, displayName: string): string | null {
+  if (!base.skillBonuses) return null
+  const norm = normalizeWhitespace(displayName).toLowerCase()
+  for (const k of Object.keys(base.skillBonuses)) {
+    if (normalizeWhitespace(k).toLowerCase() === norm) return k
+  }
+  return null
+}
+
 function lookupImplicitKey(base: ItemBase, displayName: string): string | null {
   const norm = normalizeWhitespace(displayName).toLowerCase()
   if (base.implicit) {
@@ -267,6 +276,16 @@ export async function parseItemText(
     checkStars: number
   }[] = []
   const implicitPendingChecks: {
+    key: string
+    value: [number, number]
+    userValue: number
+    checkStars: number
+  }[] = []
+  const skillBonusOverrides: Record<string, number> = {}
+  const keptSkillBonusKeys = new Set<string>()
+  // Legacy texts predate the section; only zero deleted lines when it's present.
+  let sawSkillBonusSection = false
+  const skillBonusPendingChecks: {
     key: string
     value: [number, number]
     userValue: number
@@ -405,6 +424,57 @@ export async function parseItemText(
         }
 
         implicitOverrides[key] = userValue
+      }
+      continue
+    }
+
+    if (firstLine === 'Skill Bonuses:') {
+      sawSkillBonusSection = true
+      for (let i = 1; i < sec.length; i++) {
+        const { text, lineNum } = sec[i]!
+        const explicitCustom = /\[custom]\s*$/i.test(text)
+        const body = text.replace(/\[custom]\s*$/i, '').trim()
+        if (!body) continue
+        const isBaseRange = !explicitCustom && valueLooksLikeRange(body)
+
+        const userValue = isBaseRange ? null : parseValuePrefix(body)
+        if (!isBaseRange && userValue === null) {
+          errors.push({
+            line: lineNum,
+            message: `Skill bonus line missing numeric value: "${text}"`,
+            severity: 'error',
+          })
+          continue
+        }
+        const skillText = descriptionWithoutValue(body).replace(/^to\s+/i, '')
+        if (!skillText) continue
+
+        const key = lookupSkillBonusKey(base, skillText)
+        if (!key) {
+          errors.push({
+            line: lineNum,
+            message: `Unknown skill bonus: "${skillText}" — must match one of the item's granted skill names`,
+            severity: 'error',
+          })
+          continue
+        }
+        keptSkillBonusKeys.add(key)
+        if (isBaseRange || userValue === null) continue
+
+        if (!explicitCustom) {
+          const baseValue = base.skillBonuses?.[key]
+          if (baseValue !== undefined) {
+            skillBonusPendingChecks.push({
+              key,
+              value: toPair(baseValue),
+              userValue,
+              checkStars: stars,
+            })
+            continue
+          }
+        }
+
+        skillBonusOverrides[key] = userValue
       }
       continue
     }
@@ -573,24 +643,40 @@ export async function parseItemText(
   for (const [key, value] of Object.entries(base.implicit ?? {})) {
     if (!isZero(value) && !keptImplicitKeys.has(key)) implicitOverrides[key] = 0
   }
+  if (sawSkillBonusSection) {
+    for (const [key, value] of Object.entries(base.skillBonuses ?? {})) {
+      if (!isZero(value) && !keptSkillBonusKeys.has(key)) skillBonusOverrides[key] = 0
+    }
+  }
 
   const hasErrors = errors.some((e) => e.severity === 'error')
   if (hasErrors) {
     return { equipped: null, errors }
   }
 
-  if (affixCustomChecks.length > 0 || implicitPendingChecks.length > 0) {
+  if (
+    affixCustomChecks.length > 0 ||
+    implicitPendingChecks.length > 0 ||
+    skillBonusPendingChecks.length > 0
+  ) {
     const res = await math.batch({
       affixes: affixCustomChecks.map((c) => ({
         affix: c.check.affix,
         roll: c.check.roll,
         stars: c.checkStars,
       })),
-      scaled: implicitPendingChecks.map((c) => ({
-        value: c.value,
-        statKey: c.key,
-        stars: c.checkStars,
-      })),
+      scaled: [
+        ...implicitPendingChecks.map((c) => ({
+          value: c.value,
+          statKey: c.key,
+          stars: c.checkStars,
+        })),
+        ...skillBonusPendingChecks.map((c) => ({
+          value: c.value,
+          statKey: 'item_granted_skill_rank',
+          stars: c.checkStars,
+        })),
+      ],
     })
     const epsilon = 0.005
     affixCustomChecks.forEach((c, i) => {
@@ -608,6 +694,11 @@ export async function parseItemText(
       if (mn === mx && Math.abs(c.userValue - mn) <= epsilon) return
       implicitOverrides[c.key] = c.userValue
     })
+    skillBonusPendingChecks.forEach((c, i) => {
+      const [mn, mx] = res.scaled[implicitPendingChecks.length + i] ?? c.value
+      if (mn === mx && Math.abs(c.userValue - mn) <= epsilon) return
+      skillBonusOverrides[c.key] = c.userValue
+    })
   }
 
   const equipped: EquippedItem = {
@@ -621,6 +712,8 @@ export async function parseItemText(
     augment,
     implicitOverrides:
       Object.keys(implicitOverrides).length > 0 ? implicitOverrides : undefined,
+    skillBonusOverrides:
+      Object.keys(skillBonusOverrides).length > 0 ? skillBonusOverrides : undefined,
   }
 
   return { equipped, errors }

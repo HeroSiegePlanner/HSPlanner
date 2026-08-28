@@ -12,7 +12,7 @@ import {
   writeStorage,
 } from '../storage'
 import { activeSeasonId } from '@data'
-import { LEGACY_SEASON_ID } from '@data/seasons/registry'
+import { DEFAULT_SEASON_ID, isKnownSeasonId } from '@data/seasons/registry'
 import type { StashEntry } from '../../types'
 
 const STORAGE_KEY_V1 = 'hsplanner.savedBuilds.v1'
@@ -191,9 +191,9 @@ function cleanBuild(
     favorite: b.favorite === true,
     tags: sanitizeTags(b.tags),
     season:
-      typeof (b as { season?: unknown }).season === 'string'
-        ? (b as { season: string }).season
-        : LEGACY_SEASON_ID,
+      typeof b.season === 'string' && isKnownSeasonId(b.season)
+        ? b.season
+        : DEFAULT_SEASON_ID,
     stash: sanitizeStash(b.stash),
   }
 }
@@ -304,7 +304,7 @@ function migrateV1(list: SavedBuildV1[]): SavedBuild[] {
       folderId: null,
       favorite: false,
       tags: [],
-      season: LEGACY_SEASON_ID,
+      season: DEFAULT_SEASON_ID,
       stash: [],
     }
   })

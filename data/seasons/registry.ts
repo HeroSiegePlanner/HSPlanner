@@ -6,15 +6,10 @@ export interface Season {
 }
 
 export const SEASONS: ReadonlyArray<Season> = [
-  { id: 's9', name: 'Season 9' },
   { id: 's10', name: 'Season 10' },
 ]
 
 export const DEFAULT_SEASON_ID = 's10' as const
-
-export const LEGACY_SEASON_ID = 's9'
-
-export const SEASON_BEFORE_CHARM_STARS = 's9'
 
 // Bumped to v2 at the S10 default flip: dropping the stored pick is the point,
 // so everyone lands on DEFAULT_SEASON_ID instead of their old season.

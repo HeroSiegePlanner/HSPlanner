@@ -6,6 +6,7 @@ import { formatValue, statName } from '../../utils/item/stats'
 import { gameConfig } from '@data'
 import type { BuildStatDiff } from '../../utils/build/buildPerformance'
 import type { Affix } from '../../types'
+import { affixTierLabel } from './lib/affixGroups'
 import { augmentIconForId, socketableIconForName } from './lib/gearIcons'
 
 const PERCENT_STAT_KEYS = new Set(
@@ -151,7 +152,7 @@ export function buildAffixTooltip(a: Affix): ReactNode {
     <>
       <TooltipHeader
         title={a.description}
-        subtitle={`Affix · ${a.name} · Tier ${a.tier}`}
+        subtitle={`Affix · ${a.name} · Tier ${affixTierLabel(a.tier)}`}
       />
       {range && (
         <TooltipSection>
@@ -164,6 +165,45 @@ export function buildAffixTooltip(a: Affix): ReactNode {
       {a.kind && (
         <TooltipFooter>
           {a.kind === 'prefix' ? 'Prefix' : 'Suffix'} · group {a.groupId}
+        </TooltipFooter>
+      )}
+    </>
+  )
+}
+
+export function buildAffixGroupTooltip(tiers: Affix[], label: string): ReactNode {
+  const first = tiers[0]
+  if (!first) return null
+  const suffix = first.format === 'percent' ? '%' : ''
+  return (
+    <>
+      <TooltipHeader
+        title={label}
+        subtitle={`Affix · ${tiers.length} tier${tiers.length === 1 ? '' : 's'}`}
+      />
+      <TooltipSection>
+        {tiers.map((t) => (
+          <TooltipStat
+            key={t.id}
+            label={`${affixTierLabel(t.tier)} · ${t.name}`}
+            value={
+              t.valueMin === null || t.valueMax === null
+                ? '—'
+                : t.valueMin === t.valueMax
+                  ? `${t.sign}${t.valueMin}${suffix}`
+                  : `${t.sign}${t.valueMin}${suffix} – ${t.sign}${t.valueMax}${suffix}`
+            }
+          />
+        ))}
+      </TooltipSection>
+      {first.statKey && (
+        <TooltipSection>
+          <TooltipStat label="Stat" value={statName(first.statKey)} />
+        </TooltipSection>
+      )}
+      {first.kind && (
+        <TooltipFooter>
+          {first.kind === 'prefix' ? 'Prefix' : 'Suffix'} · group {first.groupId}
         </TooltipFooter>
       )}
     </>

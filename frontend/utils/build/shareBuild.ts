@@ -12,9 +12,10 @@ import type {
   SocketType,
   TreeSocketContent,
 } from '../../types'
-import { AUGMENT_MAX_LEVEL } from '../../types'
+import { AUGMENT_MAX_LEVEL, SKILL_ELEMENTS } from '../../types'
 import { activeSeasonId } from '@data'
-import { isKnownSeasonId, LEGACY_SEASON_ID } from '@data/seasons/registry'
+import { DEFAULT_SEASON_ID, isKnownSeasonId } from '@data/seasons/registry'
+import { clearSeasonBoundAllocations } from './seasonMigration'
 import { sanitizeHtml } from '../sanitizeHtml'
 
 const SCHEMA_VERSION = 2
@@ -106,7 +107,14 @@ const equippedItemSchema = z
         message: 'too many implicit overrides',
       })
       .optional(),
+    skillBonusOverrides: z
+      .record(SAFE_STRING, FINITE_NUMBER)
+      .refine((r) => Object.keys(r).length <= MAX_RECORD_ENTRIES, {
+        message: 'too many skill bonus overrides',
+      })
+      .optional(),
     randomSkillId: SAFE_STRING.optional(),
+    randomSkillElement: z.enum(SKILL_ELEMENTS).optional(),
   })
   .passthrough()
 
@@ -304,12 +312,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
       `Unsupported share schema v${encoded.v} (expected v1..v${SCHEMA_VERSION})`,
     )
   }
-  const season =
-    encoded.v === 1
-      ? LEGACY_SEASON_ID
-      : encoded.se && isKnownSeasonId(encoded.se)
-        ? encoded.se
-        : LEGACY_SEASON_ID
+  const knownSeason = encoded.se && isKnownSeasonId(encoded.se) ? encoded.se : null
   const snapshot: BuildSnapshot = {
     classId: encoded.c ?? null,
     level: clampLevel(encoded.l ?? 1),
@@ -357,10 +360,12 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
     mercInventory: normalizeInventory(encoded.mi),
     mercDisabledAuras: encoded.mda ?? {},
   }
+  // Codes from a season we no longer ship open in the current one; tree ids
+  // do not carry over, so the season-bound allocations start empty.
   return {
-    snapshot,
+    snapshot: knownSeason ? snapshot : clearSeasonBoundAllocations(snapshot),
     notes: encoded.n ? sanitizeHtml(encoded.n) : '',
-    season,
+    season: knownSeason ?? DEFAULT_SEASON_ID,
   }
 }
 
@@ -398,6 +403,12 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       !Array.isArray(item.implicitOverrides)
         ? item.implicitOverrides
         : undefined
+    const skillBonusOverrides =
+      item.skillBonusOverrides &&
+      typeof item.skillBonusOverrides === 'object' &&
+      !Array.isArray(item.skillBonusOverrides)
+        ? item.skillBonusOverrides
+        : undefined
     out[slot as SlotKey] = {
       baseId: item.baseId,
       affixes: Array.isArray(item.affixes) ? item.affixes : [],
@@ -409,9 +420,11 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       forgedMods: Array.isArray(item.forgedMods) ? item.forgedMods : [],
       ...(aug ? { augment: aug } : {}),
       ...(implicitOverrides ? { implicitOverrides } : {}),
+      ...(skillBonusOverrides ? { skillBonusOverrides } : {}),
       ...(typeof item.randomSkillId === 'string'
         ? { randomSkillId: item.randomSkillId }
         : {}),
+      ...(item.randomSkillElement ? { randomSkillElement: item.randomSkillElement } : {}),
     }
   }
   return out

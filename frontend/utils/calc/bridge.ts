@@ -82,6 +82,7 @@ export interface BuildPerformanceOutput {
   itemSkillBonuses: Record<string, RustRanged>
   rankBonuses: Record<string, RustRanged>
   entityCount: RustRanged | null
+  hitsPerCast: RustRanged | null
 }
 
 async function computeBuildPerformanceNative(
@@ -167,6 +168,7 @@ function toLegacyBuildPerformance(
     itemSkillBonuses: raw.itemSkillBonuses,
     rankBonuses: raw.rankBonuses,
     entityCount: raw.entityCount ?? undefined,
+    hitsPerCast: raw.hitsPerCast ?? undefined,
   }
 }
 

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import type { EquippedItem, SocketType } from '../../../types'
+import type { EquippedItem, SkillElement, SocketType } from '../../../types'
 import * as edits from './itemEdits'
 
 export function isSameItem(
@@ -55,12 +55,31 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     (skillId: string | null) => edit((cur) => edits.withRandomSkill(cur, skillId)),
     [edit],
   )
+  const setRandomElement = useCallback(
+    (element: SkillElement | null) => edit((cur) => edits.withRandomElement(cur, element)),
+    [edit],
+  )
   const addAffix = useCallback(
     (affixId: string, tier: number) => edit((cur) => edits.withAffixAdded(cur, affixId, tier)),
     [edit],
   )
   const removeAffix = useCallback(
     (idx: number) => edit((cur) => edits.withAffixRemoved(cur, idx)),
+    [edit],
+  )
+  const setAffixRoll = useCallback(
+    (idx: number, roll: number, affixId?: string) =>
+      edit((cur) => edits.withAffixRoll(cur, idx, roll, affixId)),
+    [edit],
+  )
+  const setImplicitOverride = useCallback(
+    (statKey: string, value: number | null) =>
+      edit((cur) => edits.withImplicitOverride(cur, statKey, value)),
+    [edit],
+  )
+  const setSkillBonusOverride = useCallback(
+    (skillName: string, value: number | null) =>
+      edit((cur) => edits.withSkillBonusOverride(cur, skillName, value)),
     [edit],
   )
   const addForgedMod = useCallback(
@@ -96,8 +115,12 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     setSocketType,
     setStars,
     setRandomSkill,
+    setRandomElement,
     addAffix,
     removeAffix,
+    setAffixRoll,
+    setImplicitOverride,
+    setSkillBonusOverride,
     addForgedMod,
     removeForgedMod,
     applyRuneword,

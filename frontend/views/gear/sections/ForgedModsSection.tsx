@@ -9,6 +9,7 @@ import {
 import type { EquippedItem } from '../../../types'
 import { affixAverageStats, buildCrystalModTooltip } from '../tooltips'
 import { SectionCard } from '../SectionCard'
+import { SectionIcon } from '../sectionIcons'
 import { useAffixDisplayRanges } from './AffixesSection'
 
 export function ForgedModsSection({
@@ -64,14 +65,30 @@ export function ForgedModsSection({
     [previousStats],
   )
 
-  const canAdd = mods.length === 0
+  const firstMod = mods[0]
+  const firstDef = firstMod ? getCrystalMod(firstMod.affixId) : undefined
+  const headerSummary =
+    firstMod && firstDef
+      ? `${
+          firstMod.customValue !== undefined && firstDef.statKey
+            ? formatValue(firstMod.customValue, firstDef.statKey)
+            : formatAffixRangeFromValues(firstDef, modRanges[0] ?? null)
+        } ${firstDef.name} · T${firstMod.tier}`
+      : null
 
   return (
     <SectionCard
       label={`${sourceLabel} · Forged`}
       tone="satanic"
+      icon={<SectionIcon kind="forged" />}
+      collapsible
+      defaultOpen={mods.length > 0}
       rightSlot={
-        canAdd ? (
+        headerSummary ? (
+          <span className="max-w-[260px] truncate font-mono text-[10px] tabular-nums uppercase tracking-[0.06em] text-stat-red/80">
+            {headerSummary}
+          </span>
+        ) : (
           <button
             onClick={() => setOpen(true)}
             className="rounded-xs border border-red-500/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-red-300 transition-all hover:border-red-400 hover:text-red-200 hover:shadow-[0_0_10px_rgba(239,68,68,0.25)]"
@@ -81,7 +98,7 @@ export function ForgedModsSection({
           >
             + Add
           </button>
-        ) : undefined
+        )
       }
       bodyClassName={mods.length > 0 ? 'p-2 space-y-1.5' : 'px-3 py-2'}
     >
@@ -98,7 +115,7 @@ export function ForgedModsSection({
               key={idx}
               className="flex items-center gap-1.5 rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5"
             >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-xs border border-accent-deep/30 bg-panel-2/60 font-mono text-[10px] tabular-nums text-accent-hot/80">
+              <span className="w-3 shrink-0 text-center font-mono text-[10px] tabular-nums text-faint">
                 {idx + 1}
               </span>
               <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">

@@ -709,6 +709,7 @@
     "requiresLevel": 24,
     "tree": "Gunslinger",
     "position": { "row": 3, "col": 0 },
+    "hitModel": { "object": "Demon_Slayer_Shredder_Trap_Create", "tickFrequency": 0.4, "lifetime": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackKind": "attack",

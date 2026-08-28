@@ -1309,6 +1309,7 @@
     "description": "Rip the ground open with magic causing cracks that release fissures dealing arcane damage.",
     "maxRank": 20,
     "requiresLevel": 30,
+    "hitModel": { "object": "Shaman_Fissures_Create", "tickFrequency": 0.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "tags": ["Active"],
     "tree": "Elementalist",
@@ -2206,16 +2207,36 @@
     "tree": "Chieftain",
     "position": { "row": 3, "col": 0 },
     "damageType": "fire",
-    "damageFormula": { "base": 0, "perLevel": 10.5 },
+    "damageFormula": { "base": 0, "perLevel": 11 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "baseCastRate": 1,
     "baseCooldown": 15,
     "movementDuringUse": 85,
     "bonusSources": [
-      { "source": "Chaos Totem", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Fractal Mind", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
-      { "source": "Astral Intellect", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "fire_skill_damage", "value": 9, "per": "attribute_point" }
+      {
+        "source": "Chaos Totem",
+        "stat": "fire_skill_damage",
+        "value": 15,
+        "per": "skill_level"
+      },
+      {
+        "source": "Fractal Mind",
+        "stat": "fire_skill_damage",
+        "value": 12.5,
+        "per": "skill_level"
+      },
+      {
+        "source": "Astral Intellect",
+        "stat": "fire_skill_damage",
+        "value": 10,
+        "per": "skill_level"
+      },
+      {
+        "source": "Intelligence",
+        "stat": "fire_skill_damage",
+        "value": 9.5,
+        "per": "attribute_point"
+      }
     ],
     "subskills": [
       {
@@ -2256,7 +2277,7 @@
       },
       {
         "id": "scattering_flames",
-        "positionIndex": 3,
+        "positionIndex": 5,
         "name": "Scattering Flames",
         "description": "Chance to inflict fire break on hit.",
         "maxRank": 5,
@@ -2266,7 +2287,7 @@
         },
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 5 },
           "appliesStates": [
             { "state": "fire_break", "amount": { "base": 0, "perRank": 30 } }
           ]
@@ -2285,7 +2306,7 @@
       },
       {
         "id": "burning_radius",
-        "positionIndex": 5,
+        "positionIndex": 3,
         "name": "Burning Radius",
         "description": "Increases the size of fire totem.",
         "maxRank": 5,

@@ -156,29 +156,13 @@ pub struct BuildStatsInput<'a> {
     pub main_skill_id: Option<&'a str>,
 }
 
-// Base-tier caster items are typed "Spell" in data; recover the real weapon
-// kind from the item name so "wielding a wand" style gates still match.
+// A few bases carry their own long type names; tree gates say "Throwing"/"Gun".
 fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
-    if base.base_type == "1-Handed Throwing Weapon" {
-        return "Throwing".to_string();
+    match base.base_type.as_str() {
+        "1-Handed Throwing Weapon" => "Throwing".to_string(),
+        "Rifle Gun" => "Gun".to_string(),
+        _ => base.base_type.clone(),
     }
-    if base.base_type != "Spell" {
-        return base.base_type.clone();
-    }
-    let name = base.name.to_ascii_lowercase();
-    for (needle, kind) in [
-        ("spellblade", "Spellblade"),
-        ("wand", "Wand"),
-        ("cane", "Cane"),
-        ("staff", "Staff"),
-        ("fork", "Staff"),
-        ("tome", "Book"),
-    ] {
-        if name.contains(needle) {
-            return kind.to_string();
-        }
-    }
-    base.base_type.clone()
 }
 
 // Single pass of the full stat-aggregation pipeline; compute_build_stats
