@@ -38,4 +38,7 @@
 - "Increased Total Spell Projectile Damage" tree lines parsed but moved no number
 - Negative Skill Duration below -100% no longer flips hit-model DPS negative
 - Affix pools go through the season patch layer like every other collection
-- Removed from `Wraith Forged Cleaver` increased critical strike chance stat
+- Removed from `Wraith Forged Cleaver` increased critical strike chance stat (@ChandlerFerry #142)
+
+## New contributors
+- @ChandlerFerry made their first contribution
