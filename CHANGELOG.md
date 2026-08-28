@@ -26,3 +26,14 @@
 - Orb of Frost: casts once per its 1.75 s cooldown and speeds up with Skill Haste instead of Faster Cast Rate
 - Magic Skill Damage now means the five elements (fire, cold, lightning, poison, arcane): "+X to Magic Skill Damage" from items and the tree is a flat bonus to every elemental skill
 - Heroic and Satanic Set rarity colors were swapped everywhere: Heroic is green, Satanic Set is lime
+- Dragging an Unholy affix's roll slider silently swapped it for a different stat from the pool
+- Deleting an item's "+X to Random Skill Element" line in the text editor changed nothing: the engine kept applying the base range
+- Charm stars scale the skill ranks a charm grants (the engine now agrees)
+- Zero-pinned rolls showed as the range minimum in Stat Rolls and as "+0 to <Skill>" lines in tooltips
+- Tooltips skipped star scaling on random-element implicits and on skill bonuses outside the granted-skill catalog
+- Attack-speed skills (Death from Above, Explosive Kunai) showed "0.00 throws/s" rate row
+- Rifle Gun bases never matched "when using a Gun" tree bonuses
+- The left stats panel showed only the elemental slice of an attack skill's hit damage
+- "Increased Total Spell Projectile Damage" tree lines parsed but moved no number
+- Negative Skill Duration below -100% no longer flips hit-model DPS negative
+- Affix pools go through the season patch layer like every other collection

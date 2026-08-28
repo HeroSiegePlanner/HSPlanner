@@ -39,7 +39,10 @@ export function effectiveSkillCost(
   const mcrMax = rangedMax(mcrRange)
   const speedMin = rangedMin(speedRange)
   const speedMax = rangedMax(speedRange)
-  const baseRate = skillBaseRate(skill)
+  // No attacks_per_second here — attack-speed skills fall back to their
+  // baseCastRate (or hide the row) instead of skillBaseRate's default 0.
+  const baseRate =
+    skill.usesAttackSpeed === true ? skill.baseCastRate : skillBaseRate(skill)
   const costMin =
     baseManaMin !== undefined
       ? Math.max(0, baseManaMin * (1 - mcrMax / 100))

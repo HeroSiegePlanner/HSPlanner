@@ -80,13 +80,20 @@ pub fn apply_inventory(
 
         if let Some(implicit) = base.implicit.as_ref() {
             for (stat_key, value) in implicit.iter() {
+                // Frontend keys overrides by the raw base key, so check it first —
+                // random_skill_element resolves to {element}_skills below.
+                let raw_key = stat_key.as_str();
                 let Some(stat_key) =
                     resolved_stat_key(stat_key, item.random_skill_element.as_deref())
                 else {
                     continue;
                 };
                 let stat_key = stat_key.as_ref();
-                let override_val = item.implicit_overrides.get(stat_key).copied();
+                let override_val = item
+                    .implicit_overrides
+                    .get(raw_key)
+                    .or_else(|| item.implicit_overrides.get(stat_key))
+                    .copied();
                 let scaled: Ranged = match override_val {
                     Some(ov) => (ov, ov),
                     None if scale_implicit => apply_stars_to_ranged_value(

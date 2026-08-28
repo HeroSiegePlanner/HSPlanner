@@ -199,13 +199,11 @@ export function buildItemTooltipModel(
         skill === RANDOM_SKILL_NAME
           ? randomSkillLabel(equipped?.randomSkillId)
           : skill
-      const shown =
-        override ??
-        (skill === RANDOM_SKILL_NAME
-          ? (display.skillRankScaled[skill] ?? val)
-          : val)
+      const shown = override ?? display.skillRankScaled[skill] ?? val
       return [label, shown, override !== undefined]
     })
+    // A zeroed override means the line was deleted — hide it, like implicits do.
+    .filter(([, shown]) => !isZero(shown))
   const runewordEntries = runeword
     ? Object.entries(runeword.stats).filter(([, v]) => v !== 0)
     : []

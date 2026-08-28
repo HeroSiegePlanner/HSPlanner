@@ -39,6 +39,7 @@ import {
   applyListPatch,
   applyMercDataPatch,
   applyRecordMergePatch,
+  applyStringListRecordPatch,
   type PatchResult,
 } from './seasons/resolve'
 import type { ListPatch, TreeNodeInfo } from './seasons/patchTypes'
@@ -85,7 +86,14 @@ export interface AffixTag {
 export const affixTags = affixTagsJson as Record<string, AffixTag>
 
 // affix groupId -> game item types the affix can roll on; absent = unrestricted
-export const affixPools = affixPoolsJson as Record<string, string[]>
+export const affixPools = patched(
+  affixPoolsJson as Record<string, string[]>,
+  applyStringListRecordPatch(
+    affixPoolsJson as Record<string, string[]>,
+    seasonPatches.affixPools,
+    'affix-pools',
+  ),
+)
 
 export interface SubskillTagChange {
   add?: string[]

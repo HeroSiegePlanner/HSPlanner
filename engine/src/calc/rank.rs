@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::affix::apply_stars_to_ranged_value;
-use super::data::is_gear_slot;
+use super::data::can_star_forge;
 use super::skills::{ItemSkillBonuses, Ranged, Skill, StatMap, r_max, r_min, rg};
 use super::types::{Inventory, ItemBase};
 
@@ -76,7 +76,8 @@ pub fn aggregate_item_skill_bonuses(
         let Some(skill_bonuses) = base.skill_bonuses.as_ref() else {
             continue;
         };
-        let stars = if is_gear_slot(slot_key) {
+        // Charm stars scale skill ranks too, matching implicit scaling and the UI.
+        let stars = if can_star_forge(slot_key) {
             item.stars
         } else {
             None

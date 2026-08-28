@@ -390,17 +390,19 @@ export default function LeftStatsPanel() {
                 <Row
                   label="Hit damage"
                   value={
-                    damage ? (
-                      <span className="text-text">
-                        {compactRange(damage.finalMin, damage.finalMax, numberScale)}
-                      </span>
-                    ) : attackDamage ? (
+                    // Attack skills first: combined already includes the elemental
+                    // part (mirrors MainSkillPanel and the Hit DPS row).
+                    attackDamage ? (
                       <span className="text-text">
                         {compactRange(
                           attackDamage.combinedHitMin,
                           attackDamage.combinedHitMax,
                           numberScale,
                         )}
+                      </span>
+                    ) : damage ? (
+                      <span className="text-text">
+                        {compactRange(damage.finalMin, damage.finalMax, numberScale)}
                       </span>
                     ) : (
                       <span className="text-muted">—</span>

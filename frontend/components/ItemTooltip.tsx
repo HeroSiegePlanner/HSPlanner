@@ -100,9 +100,14 @@ function useItemDisplayValues(
         .filter((x) => x.def)
         .map((x) => ({ affix: x.def, roll: x.eq.roll ?? 0, stars }))
       const scaled = [
+        // Star scaling keys off the resolved stat (engine rewrites
+        // random_skill_element to {element}_skills before scaling).
         ...implicitEntries.map(([k, v]) => ({
           value: toPair(v),
-          statKey: k,
+          statKey:
+            k === 'random_skill_element' && equipped?.randomSkillElement
+              ? `${equipped.randomSkillElement}_skills`
+              : k,
           stars,
         })),
         ...skillEntries.map(([, v]) => ({

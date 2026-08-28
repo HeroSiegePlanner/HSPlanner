@@ -148,7 +148,8 @@ fn hits_per_cast(spec: Option<&SkillSpec>, duration_bonus: Ranged) -> Ranged {
     if tick <= 0.0 || lifetime <= 0.0 {
         return (1.0, 1.0);
     }
-    let hits = |bonus: f64| (lifetime * (1.0 + bonus / 100.0) / tick).floor() + 1.0;
+    // An object always lands at least one hit, even below -100% duration.
+    let hits = |bonus: f64| ((lifetime * (1.0 + bonus / 100.0) / tick).floor() + 1.0).max(1.0);
     (hits(duration_bonus.0), hits(duration_bonus.1))
 }
 

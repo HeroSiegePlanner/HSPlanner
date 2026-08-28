@@ -36,14 +36,16 @@ function RollRow({
   onSet: (value: number | null) => void
 }) {
   const pinned = override !== undefined
-  const value = Math.min(hi, Math.max(lo, override ?? hi))
+  // Show the pin verbatim (a zeroed line really contributes 0); clamp only the slider.
+  const shown = override ?? hi
+  const value = Math.min(hi, Math.max(lo, shown))
   const range = formatValue([lo, hi] as RangedValue, formatKey)
   return (
     <div className="rounded-[3px] border border-accent-deep/15 bg-bg/40 p-1.5">
       <div className="flex items-center gap-1.5">
         <span className="flex min-w-0 flex-1 items-baseline gap-1.5 truncate text-[12px] leading-snug">
           <span className="font-mono font-semibold tabular-nums text-accent-hot">
-            {pinned ? formatValue(value, formatKey) : range}
+            {pinned ? formatValue(shown, formatKey) : range}
           </span>
           <span className="truncate text-text/85">{label}</span>
           {pinned && (

@@ -169,8 +169,15 @@ export function AffixesSection({
   const isUnholy = randomGroupId === 'random_unholy'
 
   // Every tier of every equipped affix, so the slider can span the whole group.
+  // Random-pool affixes keep only their own range — a drag must not swap identity.
   const equippedTiers = useMemo(
-    () => equipped.affixes.map((eq) => affixTiers(eq.affixId)),
+    () =>
+      equipped.affixes.map((eq) => {
+        const affix = getAffix(eq.affixId)
+        return affix && isRandomPoolAffix(affix)
+          ? [affix]
+          : affixTiers(eq.affixId)
+      }),
     [equipped.affixes],
   )
   const tierItems = useMemo(
