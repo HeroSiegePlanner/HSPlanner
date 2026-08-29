@@ -74,6 +74,45 @@ pub(crate) const AILMENT_DURATION_PREFIXES: &[&str] = &[
     "stasis",
 ];
 
+// "+X% <stat> per N Mana" tree lines. Mana is only final after the multiplier
+// pass, so this runs late and returns touched keys for re-sum.
+const PER_MANA_STATS: &[(&str, &str, f64)] = &[
+    ("magic_skill_damage_per_750_mana", "magic_skill_damage", 750.0),
+    ("ranged_physical_per_500_mana", "ranged_projectile_damage", 500.0),
+    ("additive_physical_per_500_mana", "enhanced_damage", 500.0),
+];
+
+pub fn apply_per_mana_stats(
+    stats: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+) -> HashSet<String> {
+    let mut touched: HashSet<String> = HashSet::new();
+    let mana = stats.get("mana").copied().unwrap_or((0.0, 0.0));
+    for (source_key, target_key, per) in PER_MANA_STATS.iter() {
+        let rate = stats.get(*source_key).copied().unwrap_or((0.0, 0.0));
+        if rate == (0.0, 0.0) {
+            continue;
+        }
+        // Only full steps pay out; a partial 749 mana is worth nothing.
+        let value = (
+            rate.0 * (mana.0 / per).floor(),
+            rate.1 * (mana.1 / per).floor(),
+        );
+        push_source(
+            stat_sources,
+            target_key,
+            SourceContribution {
+                label: format!("{} (per {per} Mana)", stat_name(target_key)),
+                source_type: SourceType::Tree,
+                value,
+                forge: None,
+            },
+        );
+        touched.insert((*target_key).to_string());
+    }
+    touched
+}
+
 // Item-granted skill conversions; returns touched keys for re-sum.
 pub fn apply_item_granted_conversions(
     item_granted_ranks: &HashMap<String, Ranged>,

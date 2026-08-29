@@ -1196,3 +1196,66 @@ fn axe_damage_node_is_independent_of_flat_physical() {
         geared * 100.0
     );
 }
+
+// Frost Sunder throws a fan of 4 icicles before any subskill adds more.
+#[test]
+fn frost_sunder_starts_at_four_projectiles() {
+    let p = perf("jotunn", "frost_sunder", 20, &[], &[]);
+    let attack = p.attack_damage.as_ref().expect("frost sunder attack breakdown");
+    assert_eq!(attack.projectile_count, 4);
+    // Frost Shrapnel adds 2 per rank on top of the base.
+    let boosted = perf("jotunn", "frost_sunder", 20, &[("frost_shrapnel", 3)], &[]);
+    let boosted_attack = boosted.attack_damage.as_ref().expect("boosted breakdown");
+    assert_eq!(boosted_attack.projectile_count, 4 + 6);
+}
+
+// Frost Sunder Onslaught is an explosion layered on the icicle, not a bigger
+// icicle: its damage sits on top instead of joining the cold skill damage pool,
+// so a build already stacking cold damage gets the same multiplier out of it.
+#[test]
+fn frost_sunder_onslaught_lands_on_top_of_the_cold_pool() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let cold_avg = |rank: u32, cold_pool: f64| -> f64 {
+        let allocated = HashMap::new();
+        let inventory = HashMap::new();
+        let mut skill_ranks = HashMap::new();
+        skill_ranks.insert("frost_sunder".to_string(), 20u32);
+        let mut subskill_ranks = HashMap::new();
+        if rank > 0 {
+            subskill_ranks.insert(subskill_key("frost_sunder", "frost_sunder_onslaught"), rank);
+        }
+        let active_buffs = HashMap::new();
+        let custom_stats: Vec<CustomStat> = vec![CustomStat {
+            stat_key: "cold_skill_damage".to_string(),
+            value: format!("{cold_pool}"),
+        }];
+        let alloc_tree = HashSet::new();
+        let tree_socketed = HashMap::new();
+        let enemy_conditions = HashMap::new();
+        let player_conditions = HashMap::new();
+        let skill_projectiles = HashMap::new();
+        let enemy_resistances = HashMap::new();
+        let proc_toggles = HashMap::new();
+        let mut deps = empty_deps(
+            &allocated, &inventory, &skill_ranks, &subskill_ranks, &active_buffs,
+            &custom_stats, &alloc_tree, &tree_socketed, &enemy_conditions,
+            &player_conditions, &skill_projectiles, &enemy_resistances, &proc_toggles,
+        );
+        deps.class_id = Some("jotunn");
+        deps.level = 50;
+        deps.main_skill_id = Some("frost_sunder");
+        compute_build_performance(&deps)
+            .attack_damage
+            .map(|a| a.poison_avg_max as f64)
+            .unwrap_or(0.0)
+    };
+
+    // Rank 3 is 3 x 75% of total damage on top of the hit.
+    for pool in [0.0, 500.0] {
+        let ratio = cold_avg(3, pool) / cold_avg(0, pool);
+        assert!(
+            (ratio - 3.25).abs() < 0.02,
+            "onslaught must be worth 3.25x with a {pool}% cold pool, got {ratio:.3}"
+        );
+    }
+}

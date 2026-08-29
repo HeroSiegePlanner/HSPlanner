@@ -589,6 +589,8 @@ pub struct SkillSpec {
     #[serde(default)]
     pub base_cast_rate: Option<f64>,
     #[serde(default)]
+    pub base_projectiles: Option<u32>,
+    #[serde(default)]
     pub uses_attack_speed: bool,
     #[serde(default)]
     pub uses_skill_haste: bool,

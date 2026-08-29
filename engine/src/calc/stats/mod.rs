@@ -383,8 +383,15 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
+    // 20b. "per N Mana" lines read the finalized mana total.
+    let touched_mana = apply_per_mana_stats(&stats, &mut stat_sources);
+
     // 21. Re-sum touched stat keys after conversions injected new sources.
-    for k in touched_item.iter().chain(touched_tree.iter()) {
+    for k in touched_item
+        .iter()
+        .chain(touched_tree.iter())
+        .chain(touched_mana.iter())
+    {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }

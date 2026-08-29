@@ -92,6 +92,7 @@ export interface Skill {
   movementDuringUse?: number
   range?: number
   baseCastRate?: number
+  baseProjectiles?: number
   usesAttackSpeed?: boolean
   usesSkillHaste?: boolean
   baseCooldown?: number

@@ -760,3 +760,49 @@ fn accurate_cleaver_folds_both_lines_only_with_an_axe() {
         );
     }
 }
+
+// Node 773 "Soulburn Essence": +1% Increased Magic Skills Damage per 750 points
+// in Mana. Reads the finalized mana total, so it runs after the multiplier pass.
+#[test]
+fn soulburn_essence_scales_magic_skill_damage_with_mana() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = vec![CustomStat {
+        stat_key: "mana".to_string(),
+        value: "3000".to_string(),
+    }];
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+    let nodes: HashSet<u32> = [773].into_iter().collect();
+    let out = compute_build_stats(&BuildStatsInput {
+        allocated_tree_nodes: &nodes,
+        ..base_input
+    });
+
+    let mana = out.stats.get("mana").copied().unwrap_or((0.0, 0.0)).1;
+    let expected = (mana / 750.0).floor();
+    assert!(expected >= 1.0, "test needs enough mana to clear one step, got {mana}");
+    assert_eq!(
+        out.stats.get("magic_skill_damage").copied().unwrap_or((0.0, 0.0)).1,
+        expected,
+        "node 773 should grant 1% per full 750 mana ({mana} mana)"
+    );
+}

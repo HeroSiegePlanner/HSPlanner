@@ -1825,6 +1825,7 @@
     "damageType": "cold",
     "tags": ["Attack", "Active", "Melee", "Projectile"],
     "movementDuringUse": 65,
+    "baseProjectiles": 4,
     "maxRank": 20,
     "requiresLevel": 24,
     "tree": "Son of Aurgelmir",
@@ -1988,8 +1989,8 @@
         "description": "Icicles explode on contact unleashing an explosion dealing damage on a large radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 75, "area_of_effect": 25 }
+          "base": { "of_total_damage": 0, "area_of_effect": 0 },
+          "perRank": { "of_total_damage": 75, "area_of_effect": 25 }
         }
       },
       {

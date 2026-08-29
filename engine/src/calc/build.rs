@@ -285,7 +285,11 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     let active_projectile_boost: u32 = subtree_stat("projectile_count") as u32;
     let active_of_total_damage: f64 = subtree_stat("of_total_damage");
     let effective_projectiles: Option<u32> = active_skill.map(|s| {
-        let base = deps.skill_projectiles.get(&s.id).copied().unwrap_or(1);
+        let base = deps
+            .skill_projectiles
+            .get(&s.id)
+            .copied()
+            .unwrap_or_else(|| s.base_projectiles.unwrap_or(1));
         base + active_projectile_boost
     });
 
