@@ -25,7 +25,9 @@ import { StarsSection } from './sections/StarsSection'
 import { RandomElementSection } from './sections/RandomElementSection'
 import { RandomSkillSection } from './sections/RandomSkillSection'
 import { SubskillBoostSection } from './sections/SubskillBoostSection'
+import { AllSkillsClassSection } from './sections/AllSkillsClassSection'
 import { SUBSKILL_BOOST_KEY } from '../../utils/build/subskillBoost'
+import { ALL_SKILLS_CLASS_KEY } from '../../components/itemTooltipModel'
 import { RollsSection } from './sections/RollsSection'
 import { RARITY_LABEL, RARITY_TEXT } from './lib/rarity'
 import { useGearDraft } from './lib/useGearDraft'
@@ -123,6 +125,12 @@ export function GearSlotModal({
     base?.implicit?.random_skill_element !== undefined ||
     (draft?.affixes ?? []).some(
       (eq) => getAffix(eq.affixId)?.statKey === 'random_skill_element',
+    )
+  const hasAllSkillsClass =
+    base?.implicit?.[ALL_SKILLS_CLASS_KEY] !== undefined ||
+    draft?.implicitOverrides?.[ALL_SKILLS_CLASS_KEY] !== undefined ||
+    (draft?.affixes ?? []).some(
+      (eq) => getAffix(eq.affixId)?.statKey === ALL_SKILLS_CLASS_KEY,
     )
   const grantsSubskills =
     base?.implicit?.[SUBSKILL_BOOST_KEY] !== undefined ||
@@ -316,6 +324,13 @@ export function GearSlotModal({
                     <SubskillBoostSection
                       equipped={draft}
                       onChange={d.setSubskillBoost}
+                    />
+                  )}
+
+                  {hasAllSkillsClass && (
+                    <AllSkillsClassSection
+                      equipped={draft}
+                      onChange={d.setAllSkillsClass}
                     />
                   )}
 

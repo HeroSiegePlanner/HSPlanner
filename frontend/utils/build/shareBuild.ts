@@ -116,6 +116,7 @@ const equippedItemSchema = z
     randomSkillId: SAFE_STRING.optional(),
     randomSkillElement: z.enum(SKILL_ELEMENTS).optional(),
     subskillBoostSkillId: SAFE_STRING.optional(),
+    allSkillsClassId: SAFE_STRING.optional(),
   })
   .passthrough()
 
@@ -434,6 +435,9 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
       ...(item.randomSkillElement ? { randomSkillElement: item.randomSkillElement } : {}),
       ...(typeof item.subskillBoostSkillId === 'string'
         ? { subskillBoostSkillId: item.subskillBoostSkillId }
+        : {}),
+      ...(typeof item.allSkillsClassId === 'string'
+        ? { allSkillsClassId: item.allSkillsClassId }
         : {}),
     }
   }

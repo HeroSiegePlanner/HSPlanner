@@ -817,6 +817,9 @@ pub struct EquippedItem {
     /// Which element the item's "Random Skill Element" roll landed on.
     #[serde(default)]
     pub random_skill_element: Option<String>,
+    /// Which class the item's "All Skills (Class) (Any)" roll landed on.
+    #[serde(default)]
+    pub all_skills_class_id: Option<String>,
 }
 
 pub type Inventory = HashMap<SlotKey, EquippedItem>;

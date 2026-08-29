@@ -4011,6 +4011,12 @@
       "format": "flat"
     },
     {
+      "key": "all_skills_class",
+      "name": "All Skills (Class)",
+      "category": "base",
+      "format": "flat"
+    },
+    {
       "key": "all_skills_marksman",
       "name": "All Skills (Marksman)",
       "category": "base",

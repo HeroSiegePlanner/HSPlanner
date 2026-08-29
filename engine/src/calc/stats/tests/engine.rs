@@ -612,6 +612,45 @@ fn random_skill_element_lands_on_the_picked_element_skills() {
 }
 
 #[test]
+fn all_skills_class_lands_on_the_picked_class() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "charm_1".into(),
+        EquippedItem {
+            base_id: "charm_heroic_torch_of_shadow".into(),
+            all_skills_class_id: Some("jotunn".into()),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let picked = stats
+        .get("all_skills_jotunn")
+        .expect("the roll lands on the picked class");
+    assert!(picked.iter().any(|c| c.value == (1.0, 3.0)));
+    assert!(!stats.contains_key("all_skills"));
+    assert!(!stats.contains_key("all_skills_class"));
+}
+
+#[test]
+fn all_skills_class_is_inert_until_a_class_is_picked() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "charm_1".into(),
+        EquippedItem {
+            base_id: "charm_heroic_torch_of_shadow".into(),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(!stats.contains_key("all_skills"));
+    assert!(!stats.contains_key("all_skills_class"));
+}
+
+#[test]
 fn a_rolled_random_element_affix_lands_on_the_picked_element_skills() {
     let mut inv: Inventory = HashMap::new();
     inv.insert(

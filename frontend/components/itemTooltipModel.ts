@@ -3,6 +3,7 @@ import { describeAffixValue } from '../views/gear/lib/affixGroups'
 import { formatAffixValue } from '../views/gear/lib/rollMath'
 import {
   canStarForge,
+  classes,
   detectRuneword,
   effectiveStars,
   FORGE_KIND_LABEL,
@@ -226,6 +227,8 @@ export function buildItemTooltipModel(
       textLine(
         key === RANDOM_ELEMENT_KEY
           ? `${formatValue(value, '')} ${randomElementLabel(equipped?.randomSkillElement)}`
+          : key === ALL_SKILLS_CLASS_KEY
+            ? `${formatValue(value, '')} ${allSkillsClassLabel(equipped?.allSkillsClassId)}`
           : key === SUBSKILL_BOOST_KEY
             ? `${formatValue(value, '')} ${subskillBoostLabel(equipped?.subskillBoostSkillId)}`
             : `${formatValue(value, key)} ${statName(key)}`,
@@ -527,6 +530,15 @@ function randomSkillLabel(skillId: string | undefined): string {
 
 // Same idea for "+X to Random Skill Element": the element is the user's pick.
 const RANDOM_ELEMENT_KEY = 'random_skill_element'
+
+// "+[1-3] to All Skills (Class) (Any)": which class it rolled is the user's pick.
+export const ALL_SKILLS_CLASS_KEY = 'all_skills_class'
+
+function allSkillsClassLabel(classId: string | undefined): string {
+  if (!classId) return 'to All Skills (Class) (not rolled)'
+  const name = classes.find((c) => c.id === classId)?.name
+  return name ? `to All Skills (${name})` : 'to All Skills (Class)'
+}
 
 function subskillBoostLabel(skillId: string | undefined): string {
   if (!skillId) return 'to Random Skill Sub Skills (not rolled)'

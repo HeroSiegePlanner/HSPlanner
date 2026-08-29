@@ -2141,6 +2141,18 @@
     }
   },
   {
+    "id": "shadowflames",
+    "name": "Shadowflames",
+    "description": "Erupting shadowflames deal arcane damage to nearby monsters.",
+    "procDamage": [
+      {
+        "type": "arcane",
+        "base": 500,
+        "perRank": 1250
+      }
+    ]
+  },
+  {
     "id": "set_sail",
     "name": "Set Sail",
     "description": "Temporarily increases your cold skill damage and mana replenish.",

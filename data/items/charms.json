@@ -601,7 +601,7 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": [
+      "all_skills_class": [
         1,
         3
       ],
@@ -615,8 +615,19 @@
         20
       ]
     },
-    "uniqueEffects": [
-      "All Skills Class"
+    "skillBonuses": {
+      "Shadowflames": [
+        1,
+        3
+      ]
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 5,
+        "description": "cast Shadowflames Level [1-3]",
+        "details": "Erupting shadowflames deal arcane damage to nearby monsters."
+      }
     ],
     "width": 1,
     "height": 2

@@ -594,6 +594,32 @@ describe('S10 item changes', () => {
     expect(ps.perRank).toEqual({ attack_damage: 6, increased_attack_speed: 2 })
   })
 
+  it('Torch of Shadow rolls its All Skills on one class', () => {
+    const torch = item('charm_heroic_torch_of_shadow')
+    const implicit = torch.implicit as Rec
+    // the roll is class-scoped, so it must not sit in the global all_skills
+    expect(implicit.all_skills).toBeUndefined()
+    expect(implicit.all_skills_class).toEqual([1, 3])
+    expect(torch.uniqueEffects).toBeUndefined()
+  })
+
+  it('Torch of Shadow procs Shadowflames on hit', () => {
+    const torch = item('charm_heroic_torch_of_shadow')
+    expect(torch.skillBonuses).toEqual({ Shadowflames: [1, 3] })
+    expect(torch.procs).toEqual([
+      {
+        trigger: 'on_hit',
+        chance: 5,
+        description: 'cast Shadowflames Level [1-3]',
+        details: 'Erupting shadowflames deal arcane damage to nearby monsters.',
+      },
+    ])
+    const flames = grantedSkill('Shadowflames')
+    expect(flames.procDamage).toEqual([
+      { type: 'arcane', base: 500, perRank: 1250 },
+    ])
+  })
+
   it("Tundra Hunter's Long Coat grants the Set Sail proc buff", () => {
     const coat = item('body_armor_heroic_tundra_hunter_s_long_coat')
     expect(coat.skillBonuses).toEqual({ 'Set Sail': [20, 30] })
