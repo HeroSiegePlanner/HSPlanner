@@ -2,7 +2,7 @@ use super::*;
 
 // ---------- compute_build_performance command ----------
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct BuildPerformanceInput {
     #[serde(default)]
@@ -84,6 +84,42 @@ pub(crate) fn perf_deps<'a>(
     }
 }
 
+// Mirrors frontend mergeCombinedPerformance: per-skill execute multipliers,
+// proc DPS counted once from the primary skill, ailment DPS included.
+pub(crate) fn combined_dps_mid<F>(active_skill_ids: &[String], run: F) -> f64
+where
+    F: Fn(Option<&str>) -> BuildPerformance,
+{
+    if active_skill_ids.len() > 1 {
+        let runs: Vec<BuildPerformance> = active_skill_ids
+            .iter()
+            .map(|sid| run(Some(sid)))
+            .collect();
+        let exec_sum = |pick: fn(&BuildPerformance) -> Option<f64>| -> f64 {
+            runs.iter()
+                .filter_map(|r| pick(r).map(|v| v * r.execute_mult))
+                .sum()
+        };
+        let primary_exec = runs[0].execute_mult;
+        let min = exec_sum(|r| r.avg_hit_dps_min)
+            + runs[0].proc_dps_min * primary_exec
+            + exec_sum(|r| r.ailment_dps_min);
+        let max = exec_sum(|r| r.avg_hit_dps_max)
+            + runs[0].proc_dps_max * primary_exec
+            + exec_sum(|r| r.ailment_dps_max);
+        (min + max) / 2.0
+    } else {
+        let p = run(active_skill_ids.first().map(String::as_str));
+        let mid = |a: Option<f64>, b: Option<f64>| match (a, b) {
+            (Some(x), Some(y)) => Some((x + y) / 2.0),
+            _ => None,
+        };
+        mid(p.combined_dps_min, p.combined_dps_max)
+            .or_else(|| mid(p.hit_dps_min, p.hit_dps_max))
+            .unwrap_or(0.0)
+    }
+}
+
 #[tauri::command]
 pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
     let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
@@ -109,10 +145,6 @@ pub struct RankSlotItemsInput {
 #[tauri::command]
 pub fn rank_slot_items(input: RankSlotItemsInput) -> HashMap<String, f64> {
     let _scope = crate::calc::season::SeasonScope::enter(input.perf.season.clone());
-    let mid = |a: Option<f64>, b: Option<f64>| match (a, b) {
-        (Some(x), Some(y)) => Some((x + y) / 2.0),
-        _ => None,
-    };
     let mut out: HashMap<String, f64> = HashMap::with_capacity(input.base_ids.len());
     for base_id in &input.base_ids {
         let mut inventory = input.perf.inventory.clone();
@@ -123,35 +155,10 @@ pub fn rank_slot_items(input: RankSlotItemsInput) -> HashMap<String, f64> {
                 ..Default::default()
             },
         );
-        let dps = if input.active_skill_ids.len() > 1 {
-            let mut sum: Option<(f64, f64)> = None;
-            let mut proc = (0.0, 0.0);
-            for (i, sid) in input.active_skill_ids.iter().enumerate() {
-                let p =
-                    compute_build_performance(&perf_deps(&input.perf, &inventory, Some(sid)));
-                if let (Some(a), Some(b)) = (p.avg_hit_dps_min, p.avg_hit_dps_max) {
-                    let s = sum.unwrap_or((0.0, 0.0));
-                    sum = Some((s.0 + a, s.1 + b));
-                }
-                if i == 0 {
-                    proc = (p.proc_dps_min, p.proc_dps_max);
-                }
-            }
-            match sum {
-                Some((a, b)) => (a + proc.0 + b + proc.1) / 2.0,
-                None => (proc.0 + proc.1) / 2.0,
-            }
-        } else {
-            let main = input
-                .active_skill_ids
-                .first()
-                .map(String::as_str)
-                .or(input.perf.main_skill_id.as_deref());
-            let p = compute_build_performance(&perf_deps(&input.perf, &inventory, main));
-            mid(p.combined_dps_min, p.combined_dps_max)
-                .or_else(|| mid(p.hit_dps_min, p.hit_dps_max))
-                .unwrap_or(0.0)
-        };
+        let dps = combined_dps_mid(&input.active_skill_ids, |main| {
+            let main = main.or(input.perf.main_skill_id.as_deref());
+            compute_build_performance(&perf_deps(&input.perf, &inventory, main))
+        });
         out.insert(base_id.clone(), dps);
     }
     out

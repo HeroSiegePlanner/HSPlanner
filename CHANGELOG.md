@@ -1,5 +1,7 @@
 ## Features
+- Tree node suggester rebuilt on the real calc engine
 - Difficulty preset (Normal / Nightmare / Hell / Inferno) under Config → Character
+- Torch of Shadow: pick which class its "+[1-3] to All Skills (Class)" rolled it only pays out on a build of that class
 - Item procs that cast a class skill now add proc DPS, toggled under Config → Procs
 - Proc-cast skills now count the points spent in their own subtree
 - Tundra Hunter's Long Coat: its Set Sail proc buff now grants cold skill damage and mana replenish, toggled under Item Blessings

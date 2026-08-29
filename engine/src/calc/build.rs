@@ -50,7 +50,7 @@ pub struct BuildPerformanceDeps<'a> {
     pub difficulty: Option<&'a str>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BuildPerformance {
     pub attributes: HashMap<String, Ranged>,

@@ -111,7 +111,7 @@ function filterTreeSocketed(
   return out
 }
 
-function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
+export function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   return {
     classId: deps.classId,
     level: deps.level,
