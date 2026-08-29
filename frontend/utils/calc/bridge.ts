@@ -54,6 +54,7 @@ export interface BuildPerformanceInput {
   procToggles?: Record<string, boolean>
   killsPerSec?: number
   entityRates?: Record<string, number>
+  stackCounts?: Record<string, number>
   season?: string
   grantedSkillRanks?: Record<string, [number, number]>
 }
@@ -130,6 +131,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     procToggles: deps.procToggles,
     killsPerSec: deps.killsPerSec,
     entityRates: deps.entityRates,
+    stackCounts: deps.stackCounts,
     season: deps.season ?? activeSeasonId,
     grantedSkillRanks: deps.grantedSkillRanks,
   }

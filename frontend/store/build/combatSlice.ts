@@ -7,11 +7,13 @@ type CombatSlice = Pick<
   BuildStore,
   | 'killsPerSec'
   | 'entityRates'
+  | 'stackCounts'
   | 'enemyConditions'
   | 'playerConditions'
   | 'enemyResistances'
   | 'setKillsPerSec'
   | 'setEntityRate'
+  | 'setStackCount'
   | 'setEnemyCondition'
   | 'setPlayerCondition'
   | 'setEnemyResistance'
@@ -25,6 +27,7 @@ export const createCombatSlice: StateCreator<
 > = (set) => ({
   killsPerSec: 1,
   entityRates: defaultEntityRates(),
+  stackCounts: {},
   enemyConditions: {},
   playerConditions: {},
   enemyResistances: defaultEnemyResistances(),
@@ -36,6 +39,14 @@ export const createCombatSlice: StateCreator<
     set((s) => ({
       entityRates: { ...s.entityRates, [kind]: Math.max(0, rate) },
     })),
+
+  setStackCount: (key, count) =>
+    set((s) => {
+      const next = { ...s.stackCounts }
+      if (count === null || !Number.isFinite(count)) delete next[key]
+      else next[key] = Math.max(0, Math.floor(count))
+      return { stackCounts: next }
+    }),
 
   setEnemyCondition: (key, enabled) =>
     set((s) => {

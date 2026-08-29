@@ -45,6 +45,7 @@ pub struct BuildPerformanceDeps<'a> {
     /// values, so they are Config knobs - one per kind, they are not the same
     /// thing.
     pub entity_rates: &'a HashMap<String, f64>,
+    pub stack_counts: &'a HashMap<String, u32>,
     pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
 }
 
@@ -238,6 +239,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         player_conditions: deps.player_conditions,
         subskill_ranks: deps.subskill_ranks,
         enemy_conditions: deps.enemy_conditions,
+        stack_counts: deps.stack_counts,
         granted_skill_ranks: deps.granted_skill_ranks,
         main_skill_id: deps.main_skill_id,
     };

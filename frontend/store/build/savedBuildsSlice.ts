@@ -143,6 +143,7 @@ export const createSavedBuildsSlice: StateCreator<
       disabledPotions: s.disabledPotions,
       killsPerSec: s.killsPerSec,
       entityRates: s.entityRates,
+      stackCounts: s.stackCounts,
       customStats: s.customStats,
       allocatedEtherNodes: s.allocatedEtherNodes,
       mercClassId: s.mercClassId,

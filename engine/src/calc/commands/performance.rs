@@ -44,6 +44,8 @@ pub struct BuildPerformanceInput {
     #[serde(default)]
     pub entity_rates: HashMap<String, f64>,
     #[serde(default)]
+    pub stack_counts: HashMap<String, u32>,
+    #[serde(default)]
     pub season: Option<String>,
     #[serde(default)]
     pub granted_skill_ranks: HashMap<String, calc::Ranged>,
@@ -74,6 +76,7 @@ pub(crate) fn perf_deps<'a>(
         proc_toggles: &input.proc_toggles,
         kills_per_sec: input.kills_per_sec,
         entity_rates: &input.entity_rates,
+        stack_counts: &input.stack_counts,
         granted_skill_ranks: Some(&input.granted_skill_ranks),
     }
 }
@@ -218,6 +221,7 @@ pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
         player_conditions: &input.player_conditions,
         subskill_ranks: &input.subskill_ranks,
         enemy_conditions: &input.enemy_conditions,
+        stack_counts: &input.stack_counts,
         granted_skill_ranks: Some(&input.granted_skill_ranks),
         main_skill_id: input.main_skill_id.as_deref(),
     };
@@ -261,6 +265,7 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         player_conditions: &input.deps.player_conditions,
         subskill_ranks: &input.deps.subskill_ranks,
         enemy_conditions: &input.deps.enemy_conditions,
+        stack_counts: &input.deps.stack_counts,
         granted_skill_ranks: Some(&input.deps.granted_skill_ranks),
         main_skill_id: input.deps.main_skill_id.as_deref(),
     };

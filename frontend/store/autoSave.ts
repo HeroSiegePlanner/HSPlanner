@@ -24,6 +24,7 @@ export const SNAPSHOT_KEYS = [
   'disabledPotions',
   'killsPerSec',
   'entityRates',
+  'stackCounts',
   'customStats',
   'allocatedEtherNodes',
   'mercClassId',

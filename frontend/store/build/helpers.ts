@@ -40,6 +40,7 @@ export function snapshotPatch(rawSnap: BuildSnapshot) {
     disabledPotions: snap.disabledPotions ?? {},
     killsPerSec: snap.killsPerSec,
     entityRates: entityRatesFrom(snap.entityRates, snap.entityAttacksPerSecond),
+    stackCounts: snap.stackCounts ?? {},
     customStats: snap.customStats ?? [],
     allocatedEtherNodes: snap.allocatedEtherNodes ?? new Set<number>(),
     mercClassId: snap.mercClassId ?? null,

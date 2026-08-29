@@ -1,5 +1,7 @@
 use super::*;
 
+static NO_STACKS: Lazy<HashMap<String, u32>> = Lazy::new(HashMap::new);
+
 fn contrib(value: Ranged) -> SourceContribution {
     SourceContribution {
         label: "test".to_string(),
@@ -36,6 +38,7 @@ fn empty_input<'a>(
         player_conditions,
         subskill_ranks,
         enemy_conditions,
+        stack_counts: &NO_STACKS,
         granted_skill_ranks: None,
         main_skill_id: None,
     }

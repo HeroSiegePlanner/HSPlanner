@@ -1,4 +1,5 @@
 ## Features
+- Rage stacks: the incarnation tree's "+1 to Maximum Rage Stacks" now pays off — each stack gives 5% Attack Speed and multiplies the tree's damage-per-rage-stack bonuses. A "Combat Stacks" panel in Config sets how many stacks to assume (defaults to the build's cap)
 - Arch Linux package (.pkg.tar.zst) in releases
 - Skill hit model (data mined)
 - Six white ring bases (Bronze Ring, Iron Ring, Ring, Socket Ring, Primal Ring, Golden Ring)

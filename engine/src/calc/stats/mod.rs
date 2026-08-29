@@ -122,6 +122,7 @@ mod helpers;
 mod inventory;
 mod sets;
 mod skills;
+mod stacks;
 mod tree;
 
 pub use attributes::*;
@@ -131,6 +132,7 @@ pub use helpers::*;
 pub use inventory::*;
 pub use sets::*;
 pub use skills::*;
+pub use stacks::*;
 pub use tree::*;
 
 // ---------- orchestrator ----------
@@ -150,6 +152,8 @@ pub struct BuildStatsInput<'a> {
     pub player_conditions: &'a HashMap<String, bool>,
     pub subskill_ranks: &'a HashMap<String, u32>,
     pub enemy_conditions: &'a HashMap<String, bool>,
+    /// Active in-combat stacks per stack type; absent means "at cap".
+    pub stack_counts: &'a HashMap<String, u32>,
     pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
     /// Scopes subskill aggregation: only this skill's subtree feeds the
     /// shared stat map.
@@ -297,6 +301,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
             }
         }
     }
+
+    // 7d. In-combat stacks (Rage): count × per-stack effects.
+    apply_stack_effects(input.stack_counts, &mut attr_sources, &mut stat_sources);
 
     // 8. Skill ranks → passive stats
     apply_skill_ranks(

@@ -47,6 +47,7 @@ export function snapshotToDeps(snapshot: BuildSnapshot): BuildPerformanceDeps {
     procToggles: snapshot.procToggles,
     killsPerSec: snapshot.killsPerSec,
     entityRates: entityRatesFrom(snapshot.entityRates, snapshot.entityAttacksPerSecond),
+    stackCounts: snapshot.stackCounts ?? {},
     grantedSkillRanks: mercGrantedSkillRanks(
       snapshot.mercInventory,
       snapshot.mercDisabledAuras,

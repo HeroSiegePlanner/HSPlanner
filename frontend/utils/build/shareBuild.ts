@@ -221,6 +221,7 @@ export interface BuildSnapshot {
   entityRates?: EntityRates
   /// Pre-split builds carried one rate for all three entity kinds.
   entityAttacksPerSecond?: number
+  stackCounts?: Record<string, number>
   customStats: CustomStat[]
   treeSocketed: Record<number, TreeSocketContent | null>
   allocatedEtherNodes: Set<number>

@@ -671,6 +671,21 @@ pub struct DiminishDef {
     pub cap: Option<f64>,
 }
 
+/// A resource that stacks in combat; the count is a Config knob and each stack
+/// re-applies `per_stack` plus every `per_stack_stats` rate.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct StackTypeDef {
+    pub key: String,
+    pub name: String,
+    pub max_stat: String,
+    #[serde(default)]
+    pub per_stack: HashMap<String, f64>,
+    /// Source stat already expressed "per stack" -> the stat it feeds.
+    #[serde(default)]
+    pub per_stack_stats: HashMap<String, String>,
+}
+
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GameConfig {
@@ -705,6 +720,8 @@ pub struct GameConfig {
     pub attribute_divided_stats: Option<HashMap<String, HashMap<String, f64>>>,
     #[serde(default)]
     pub diminishing_returns: Option<HashMap<String, DiminishDef>>,
+    #[serde(default)]
+    pub stack_types: Vec<StackTypeDef>,
 }
 
 // ---------- build state ----------

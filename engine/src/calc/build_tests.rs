@@ -37,9 +37,13 @@ fn empty_deps<'a>(
         proc_toggles,
         kills_per_sec: 0.0,
         entity_rates: &DEFAULT_RATES,
+        stack_counts: &NO_STACKS,
         granted_skill_ranks: None,
     }
 }
+
+static NO_STACKS: once_cell::sync::Lazy<HashMap<String, u32>> =
+    once_cell::sync::Lazy::new(HashMap::new);
 
 static DEFAULT_RATES: once_cell::sync::Lazy<HashMap<String, f64>> =
     once_cell::sync::Lazy::new(|| entity_rates(1.0));

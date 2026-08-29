@@ -64,6 +64,7 @@ export interface BuildPerformanceDeps {
   procToggles: Record<string, boolean>
   killsPerSec: number
   entityRates?: EntityRates
+  stackCounts?: Record<string, number>
   season?: string
   grantedSkillRanks?: Record<string, [number, number]>
 }

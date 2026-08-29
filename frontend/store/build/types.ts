@@ -28,6 +28,7 @@ export interface BuildState {
   disabledPotions: Record<string, boolean>
   killsPerSec: number
   entityRates: EntityRates
+  stackCounts: Record<string, number>
   activeBuffs: Record<string, boolean>
   enemyConditions: Record<string, boolean>
   playerConditions: Record<string, boolean>
@@ -94,6 +95,7 @@ export interface BuildActions {
   setPotionDisabled: (slot: SlotKey, disabled: boolean) => void
   setKillsPerSec: (rate: number) => void
   setEntityRate: (kind: EntityKind, rate: number) => void
+  setStackCount: (key: string, count: number | null) => void
   setBuffActive: (skillId: string, enabled: boolean) => void
   setEnemyCondition: (key: string, enabled: boolean) => void
   setPlayerCondition: (key: string, enabled: boolean) => void

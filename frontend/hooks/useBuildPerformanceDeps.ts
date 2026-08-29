@@ -27,6 +27,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
   const entityRates = useBuild((s) => s.entityRates)
+  const stackCounts = useBuild((s) => s.stackCounts)
   const mercInventory = useBuild((s) => s.mercInventory)
   const mercDisabledAuras = useBuild((s) => s.mercDisabledAuras)
 
@@ -61,6 +62,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       procToggles,
       killsPerSec,
       entityRates,
+      stackCounts,
       grantedSkillRanks,
     }),
     [
@@ -83,6 +85,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       procToggles,
       killsPerSec,
       entityRates,
+      stackCounts,
       grantedSkillRanks,
     ],
   )

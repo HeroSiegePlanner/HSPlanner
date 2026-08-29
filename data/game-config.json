@@ -61,6 +61,18 @@
     "energy": { "mana_replenish": 6 },
     "vitality": { "life_replenish": 8 }
   },
+  "stackTypes": [
+    {
+      "key": "rage",
+      "name": "Rage",
+      "maxStat": "max_rage_stacks",
+      "perStack": { "increased_attack_speed": 5 },
+      "perStackStats": {
+        "damage_per_rage_stack": "enhanced_damage",
+        "ranged_damage_per_rage_stack": "ranged_projectile_damage"
+      }
+    }
+  ],
   "attributes": [
     { "key": "strength", "name": "Strength" },
     { "key": "dexterity", "name": "Dexterity" },
