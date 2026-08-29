@@ -49,7 +49,7 @@ body:
 				- Ubuntu/Debian
 				- Fedora/Bazzite
 				- Arch/CachyOS
-				- Other (describe it below)
+				- Other, i will describe it below
 		validations:
 			required: true
 	- type: textarea
