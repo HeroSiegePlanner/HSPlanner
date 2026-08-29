@@ -15,6 +15,7 @@ pub struct TreeAggregation {
 const GROUP_GATED_KEYS: &[(&str, &str, &str)] = &[
     ("Spell", "magic_skill_damage", "spell_damage"),
     ("Spell", "magic_skill_damage_more", "spell_damage_more"),
+    ("Spell", "elemental_break", "elemental_break_on_spell"),
 ];
 
 pub(crate) fn group_gated_key<'a>(key: &'a str, groups: Option<&Vec<String>>) -> &'a str {

@@ -178,6 +178,10 @@ pub struct PrecomputedInput {
     #[serde(default)]
     pub game_config: GameConfig,
     #[serde(default)]
+    pub difficulty: Option<String>,
+    #[serde(default)]
+    pub stack_counts: HashMap<String, u32>,
+    #[serde(default)]
     pub proc_toggles: HashMap<String, bool>,
     #[serde(default)]
     pub skill_ranks_by_id: HashMap<String, f64>,

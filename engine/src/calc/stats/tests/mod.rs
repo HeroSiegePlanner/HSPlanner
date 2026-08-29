@@ -41,6 +41,7 @@ fn empty_input<'a>(
         stack_counts: &NO_STACKS,
         granted_skill_ranks: None,
         main_skill_id: None,
+        difficulty: None,
     }
 }
 

@@ -149,6 +149,7 @@ const shareableBuildSchema = z.object({
   pt: recordOfBooleans,
   dp: recordOfBooleans.optional(),
   kps: NON_NEGATIVE_NUMBER,
+  df: z.string().max(MAX_KEY_LENGTH).optional(),
   n: z.string().max(MAX_NOTES_LENGTH).optional(),
   cs: z
     .array(
@@ -188,6 +189,7 @@ export interface ShareableBuild {
   pt: Record<string, boolean>
   dp?: Record<string, boolean>
   kps: number
+  df?: string
   n?: string
   cs?: { k: string; v: string }[]
   ts?: Record<string, TreeSocketContent | null>
@@ -203,6 +205,7 @@ export interface ShareableBuild {
 export interface BuildSnapshot {
   classId: string | null
   level: number
+  difficulty?: string
   allocated: Record<AttributeKey, number>
   inventory: Inventory
   skillRanks: Record<string, number>
@@ -264,6 +267,7 @@ function serialize(
       ? { er: snapshot.enemyResistances }
       : {}),
     kps: snapshot.killsPerSec,
+    ...(snapshot.difficulty ? { df: snapshot.difficulty } : {}),
     se: seasonId,
   }
   if (snapshot.allocatedEtherNodes.size > 0) {
@@ -318,6 +322,7 @@ function deserialize(encoded: ShareableBuild): DecodedShare {
   const snapshot: BuildSnapshot = {
     classId: encoded.c ?? null,
     level: clampLevel(encoded.l ?? 1),
+    difficulty: encoded.df,
     allocated: encoded.a ?? {},
     inventory: normalizeInventory(encoded.i),
     skillRanks: encoded.s ?? {},

@@ -56,6 +56,7 @@ export interface BuildPerformanceInput {
   entityRates?: Record<string, number>
   stackCounts?: Record<string, number>
   season?: string
+  difficulty?: string
   grantedSkillRanks?: Record<string, [number, number]>
 }
 
@@ -132,6 +133,7 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     killsPerSec: deps.killsPerSec,
     entityRates: deps.entityRates,
     stackCounts: deps.stackCounts,
+    difficulty: deps.difficulty,
     season: deps.season ?? activeSeasonId,
     grantedSkillRanks: deps.grantedSkillRanks,
   }

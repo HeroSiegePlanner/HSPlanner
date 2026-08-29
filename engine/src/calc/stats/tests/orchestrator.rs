@@ -265,6 +265,52 @@ fn class_labelled_set_bonus_only_pays_out_for_that_class() {
 }
 
 #[test]
+fn hell_difficulty_drops_every_elemental_resistance() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+    let baseline = compute_build_stats(&base_input);
+    let hell = compute_build_stats(&BuildStatsInput {
+        difficulty: Some("hell"),
+        ..base_input
+    });
+
+    for key in [
+        "fire_resistance",
+        "cold_resistance",
+        "lightning_resistance",
+        "poison_resistance",
+        "arcane_resistance",
+    ] {
+        let before = baseline.stats.get(key).copied().unwrap_or((0.0, 0.0)).1;
+        let after = hell.stats.get(key).copied().unwrap_or((0.0, 0.0)).1;
+        assert!(
+            (before - after - 45.0).abs() < 1e-6,
+            "{key} should drop by 45 on Hell (before {before}, after {after})"
+        );
+    }
+}
+
+#[test]
 fn incarnation_nodes_contribute_to_build_stats() {
     // S10: patch sezonu podmienia całe drzewo — nody liczą się przez to
     // samo allocated_tree_nodes.

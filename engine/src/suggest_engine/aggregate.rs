@@ -6,17 +6,16 @@ use super::types::{
 };
 use crate::calc::tree::parse::{classify_tree_node_line, ParsedMod, TreeLineClass};
 
+pub const RESIST_KEYS: &[&str] = &[
+    "fire_resistance",
+    "cold_resistance",
+    "lightning_resistance",
+    "poison_resistance",
+    "arcane_resistance",
+];
+
 const STAT_FAN_OUTS: &[(&str, &[&str])] = &[
-    (
-        "all_resistances",
-        &[
-            "fire_resistance",
-            "cold_resistance",
-            "lightning_resistance",
-            "poison_resistance",
-            "arcane_resistance",
-        ],
-    ),
+    ("all_resistances", RESIST_KEYS),
     (
         "all_attributes",
         &[

@@ -7,6 +7,7 @@ import {
   type BuildPerformanceDeps,
 } from '../../utils/build/buildPerformance'
 import { mercGrantedSkillRanks } from '../../utils/build/mercStats'
+import { DEFAULT_DIFFICULTY } from '../../store/build/helpers'
 import { getActiveProfile, type SavedBuild } from '../../utils/build/savedBuilds'
 import { type BuildSnapshot, decodeShareToBuild } from '../../utils/build/shareBuild'
 import { boostedSubskillRanks } from '../../utils/build/subskillBoost'
@@ -50,6 +51,7 @@ export function snapshotToDeps(snapshot: BuildSnapshot): BuildPerformanceDeps {
     killsPerSec: snapshot.killsPerSec,
     entityRates: entityRatesFrom(snapshot.entityRates, snapshot.entityAttacksPerSecond),
     stackCounts: snapshot.stackCounts ?? {},
+    difficulty: snapshot.difficulty ?? DEFAULT_DIFFICULTY,
     grantedSkillRanks: mercGrantedSkillRanks(
       snapshot.mercInventory,
       snapshot.mercDisabledAuras,

@@ -66,6 +66,27 @@ pub fn apply_base_attributes(
     }
 }
 
+// ---------- difficulty ----------
+
+// Higher difficulties cut every resistance; the penalty rides `all_resistances`
+// so it fans out per element and feeds the negative-resist conversions.
+pub fn apply_difficulty_penalty(difficulty: Option<&str>, stat_sources: &mut SourceMap) {
+    let Some(def) = data::get_difficulty(difficulty) else { return };
+    if def.resist_penalty == 0.0 {
+        return;
+    }
+    push_source(
+        stat_sources,
+        "all_resistances",
+        SourceContribution {
+            label: format!("{} difficulty", def.name),
+            source_type: SourceType::Custom,
+            value: (def.resist_penalty, def.resist_penalty),
+            forge: None,
+        },
+    );
+}
+
 // ---------- class baseline + per-level ----------
 
 pub fn apply_class_baseline(

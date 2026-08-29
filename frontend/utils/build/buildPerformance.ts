@@ -66,6 +66,7 @@ export interface BuildPerformanceDeps {
   entityRates?: EntityRates
   stackCounts?: Record<string, number>
   season?: string
+  difficulty?: string
   grantedSkillRanks?: Record<string, [number, number]>
 }
 

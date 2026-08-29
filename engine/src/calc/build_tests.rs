@@ -39,6 +39,7 @@ fn empty_deps<'a>(
         entity_rates: &DEFAULT_RATES,
         stack_counts: &NO_STACKS,
         granted_skill_ranks: None,
+        difficulty: None,
     }
 }
 

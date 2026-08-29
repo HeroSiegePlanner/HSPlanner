@@ -41,7 +41,7 @@ import {
   defaultEnemyResistances,
   encodeBuildToShare,
 } from '../../utils/build/shareBuild'
-import { bumpSavedBuilds, emptyAllocation, snapshotPatch } from './helpers'
+import { bumpSavedBuilds, DEFAULT_DIFFICULTY, emptyAllocation, snapshotPatch } from './helpers'
 import type { BuildStore } from './types'
 
 type SavedBuildsSlice = Pick<
@@ -126,6 +126,7 @@ export const createSavedBuildsSlice: StateCreator<
     return {
       classId: s.classId,
       level: s.level,
+      difficulty: s.difficulty,
       allocated: s.allocated,
       inventory: s.inventory,
       skillRanks: s.skillRanks,
@@ -192,6 +193,7 @@ export const createSavedBuildsSlice: StateCreator<
     set(() => ({
       classId: classes[0]?.id ?? null,
       level: 1,
+      difficulty: DEFAULT_DIFFICULTY,
       allocated: emptyAllocation(),
       inventory: {},
       skillRanks: {},

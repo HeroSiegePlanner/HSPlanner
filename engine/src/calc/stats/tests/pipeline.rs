@@ -81,6 +81,28 @@ fn spell_branch_node_gates_magic_skill_damage_to_spells() {
     apply_tree_contributions(&alloc, &HashMap::new(), &mut attrs, &mut stats);
     assert!(stats.contains_key("spell_damage_more"));
     assert!(!stats.contains_key("magic_skill_damage_more"));
+
+    let mut alloc = HashSet::new();
+    alloc.insert(704); // Elemental Break, same branch
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_tree_contributions(&alloc, &HashMap::new(), &mut attrs, &mut stats);
+    assert!(stats.contains_key("elemental_break_on_spell"));
+    assert!(!stats.contains_key("elemental_break"));
+}
+
+#[test]
+fn difficulty_penalty_cuts_all_resistances() {
+    let mut stats: SourceMap = HashMap::new();
+    apply_difficulty_penalty(Some("hell"), &mut stats);
+    let pushed = stats.get("all_resistances").expect("hell must cut resistances");
+    assert_eq!(pushed[0].value, (-45.0, -45.0));
+
+    let mut none: SourceMap = HashMap::new();
+    apply_difficulty_penalty(Some("normal"), &mut none);
+    apply_difficulty_penalty(None, &mut none);
+    apply_difficulty_penalty(Some("not-a-difficulty"), &mut none);
+    assert!(none.is_empty());
 }
 
 #[test]

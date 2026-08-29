@@ -158,6 +158,7 @@ pub struct BuildStatsInput<'a> {
     /// Scopes subskill aggregation: only this skill's subtree feeds the
     /// shared stat map.
     pub main_skill_id: Option<&'a str>,
+    pub difficulty: Option<&'a str>,
 }
 
 // A few bases carry their own long type names; tree gates say "Throwing"/"Gun".
@@ -207,6 +208,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 6b. Item mana/life "Based on Level" scaled by character level.
     apply_stats_based_on_level(input.level, &mut attr_sources, &mut stat_sources);
+
+    // 6c. Difficulty resistance penalty
+    apply_difficulty_penalty(input.difficulty, &mut stat_sources);
 
     // 7. Custom user-defined stats
     apply_custom_stats(input.custom_stats, &mut attr_sources, &mut stat_sources);

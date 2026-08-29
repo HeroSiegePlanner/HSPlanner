@@ -47,6 +47,7 @@ pub struct BuildPerformanceDeps<'a> {
     pub entity_rates: &'a HashMap<String, f64>,
     pub stack_counts: &'a HashMap<String, u32>,
     pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
+    pub difficulty: Option<&'a str>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -286,6 +287,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         stack_counts: deps.stack_counts,
         granted_skill_ranks: deps.granted_skill_ranks,
         main_skill_id: deps.main_skill_id,
+        difficulty: deps.difficulty,
     };
     let computed = compute_build_stats(&stats_input);
 

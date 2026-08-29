@@ -380,6 +380,8 @@ pub fn suggest(input: &PrecomputedInput, app: Option<&AppHandle>) -> SuggestResu
             player_conditions: &input.player_conditions,
             jewelry_ids: &jewelry_set,
             game_config: game_cfg,
+            difficulty: input.difficulty.as_deref(),
+            stack_counts: &input.stack_counts,
         };
         compute_final_state(&inputs)
     };

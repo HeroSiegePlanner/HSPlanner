@@ -49,6 +49,8 @@ pub struct BuildPerformanceInput {
     pub season: Option<String>,
     #[serde(default)]
     pub granted_skill_ranks: HashMap<String, calc::Ranged>,
+    #[serde(default)]
+    pub difficulty: Option<String>,
 }
 
 pub(crate) fn perf_deps<'a>(
@@ -78,6 +80,7 @@ pub(crate) fn perf_deps<'a>(
         entity_rates: &input.entity_rates,
         stack_counts: &input.stack_counts,
         granted_skill_ranks: Some(&input.granted_skill_ranks),
+        difficulty: input.difficulty.as_deref(),
     }
 }
 
@@ -224,6 +227,7 @@ pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
         stack_counts: &input.stack_counts,
         granted_skill_ranks: Some(&input.granted_skill_ranks),
         main_skill_id: input.main_skill_id.as_deref(),
+        difficulty: input.difficulty.as_deref(),
     };
     compute_build_stats(&stats_input)
 }
@@ -268,6 +272,7 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         stack_counts: &input.deps.stack_counts,
         granted_skill_ranks: Some(&input.deps.granted_skill_ranks),
         main_skill_id: input.deps.main_skill_id.as_deref(),
+        difficulty: input.deps.difficulty.as_deref(),
     };
     let computed = compute_build_stats(&stats_input);
     let sources = match input.kind {

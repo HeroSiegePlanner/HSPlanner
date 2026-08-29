@@ -9,8 +9,8 @@ use once_cell::sync::Lazy;
 
 use super::season;
 use super::types::{
-    Affix, AffixTag, AngelicAugment, CharacterClass, GameConfig, Gem, ItemBase, ItemGrantedSkill,
-    ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange, TreeNodeInfo,
+    Affix, AffixTag, AngelicAugment, CharacterClass, DifficultyDef, GameConfig, Gem, ItemBase,
+    ItemGrantedSkill, ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange, TreeNodeInfo,
 };
 
 #[allow(dead_code)]
@@ -383,6 +383,15 @@ pub fn subskill_tag_changes(skill_id: &str) -> Option<&'static HashMap<String, S
 
 pub fn runewords() -> &'static [Runeword] {
     &data().runewords
+}
+
+pub fn get_difficulty(id: Option<&str>) -> Option<&'static DifficultyDef> {
+    let id = id?;
+    game_config().difficulties.iter().find(|d| d.id == id)
+}
+
+pub fn difficulty_resist_penalty(id: Option<&str>) -> f64 {
+    get_difficulty(id).map_or(0.0, |d| d.resist_penalty)
 }
 
 pub fn tree_nodes() -> &'static HashMap<String, TreeNodeInfo> {

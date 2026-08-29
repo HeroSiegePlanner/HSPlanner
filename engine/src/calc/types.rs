@@ -741,6 +741,17 @@ pub struct GameConfig {
     pub diminishing_returns: Option<HashMap<String, DiminishDef>>,
     #[serde(default)]
     pub stack_types: Vec<StackTypeDef>,
+    #[serde(default)]
+    pub difficulties: Vec<DifficultyDef>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DifficultyDef {
+    pub id: String,
+    pub name: String,
+    #[serde(default)]
+    pub resist_penalty: f64,
 }
 
 // ---------- build state ----------

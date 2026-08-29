@@ -44,6 +44,12 @@ export interface StackTypeDef {
   perStackStats?: Record<string, string>
 }
 
+export interface DifficultyDef {
+  id: string
+  name: string
+  resistPenalty: number
+}
+
 export interface GameConfig {
   version: string
   attributes: AttributeDef[]
@@ -60,4 +66,5 @@ export interface GameConfig {
   defaultStatsPerAttribute?: Record<AttributeKey, StatMap>
   attributeDividedStats?: Record<AttributeKey, Record<string, number>>
   stackTypes?: StackTypeDef[]
+  difficulties?: DifficultyDef[]
 }

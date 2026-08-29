@@ -184,6 +184,8 @@ export async function suggestNodesNative(
     skillRanksById: deps.skillRanks ?? {},
     skillProjectiles: deps.skillProjectiles ?? {},
     killsPerSec: deps.killsPerSec ?? 0,
+    difficulty: deps.difficulty,
+    stackCounts: deps.stackCounts ?? {},
     season: activeSeasonId,
   }
 

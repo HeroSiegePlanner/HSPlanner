@@ -17,6 +17,7 @@ export type AttrMap = Record<AttributeKey, number>
 export interface BuildState {
   classId: string | null
   level: number
+  difficulty: string
   allocated: AttrMap
   inventory: Inventory
   skillRanks: Record<string, number>
@@ -52,6 +53,7 @@ export interface BuildState {
 export interface BuildActions {
   setClass: (id: string) => void
   setLevel: (lvl: number) => void
+  setDifficulty: (id: string) => void
   incAttr: (key: AttributeKey, amount?: number) => void
   decAttr: (key: AttributeKey, amount?: number) => void
   resetAttrs: () => void

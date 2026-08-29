@@ -6,6 +6,12 @@
   "talentPointsPerLevel": 1,
   "skillPointsPerLevel": 1,
   "levelsPerSubskillPoint": 5,
+  "difficulties": [
+    { "id": "normal", "name": "Normal", "resistPenalty": 0 },
+    { "id": "nightmare", "name": "Nightmare", "resistPenalty": -10 },
+    { "id": "hell", "name": "Hell", "resistPenalty": -45 },
+    { "id": "inferno", "name": "Inferno", "resistPenalty": -85 }
+  ],
   "diminishingReturns": {
     "gold_find": { "threshold": 200, "power": 0.75 },
     "movement_speed": { "threshold": 200, "power": 0.86, "cap": 600 },

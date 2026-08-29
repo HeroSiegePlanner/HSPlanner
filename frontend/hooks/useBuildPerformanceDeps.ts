@@ -27,6 +27,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
+  const difficulty = useBuild((s) => s.difficulty)
   const entityRates = useBuild((s) => s.entityRates)
   const stackCounts = useBuild((s) => s.stackCounts)
   const mercInventory = useBuild((s) => s.mercInventory)
@@ -69,6 +70,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       killsPerSec,
       entityRates,
       stackCounts,
+      difficulty,
       grantedSkillRanks,
     }),
     [
@@ -92,6 +94,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       killsPerSec,
       entityRates,
       stackCounts,
+      difficulty,
       grantedSkillRanks,
     ],
   )

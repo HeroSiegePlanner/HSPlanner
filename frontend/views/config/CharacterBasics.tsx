@@ -8,14 +8,19 @@ import { allocationStep } from '../../utils/allocationStep'
 export default function CharacterBasics() {
   const classId = useBuild((s) => s.classId)
   const level = useBuild((s) => s.level)
+  const difficulty = useBuild((s) => s.difficulty)
   const allocated = useBuild((s) => s.allocated)
   const setClass = useBuild((s) => s.setClass)
   const setLevel = useBuild((s) => s.setLevel)
+  const setDifficulty = useBuild((s) => s.setDifficulty)
   const incAttr = useBuild((s) => s.incAttr)
   const decAttr = useBuild((s) => s.decAttr)
   const resetAttrs = useBuild((s) => s.resetAttrs)
 
   const cls = classId ? getClass(classId) : undefined
+  const difficulties = gameConfig.difficulties ?? []
+  const difficultyPenalty =
+    difficulties.find((d) => d.id === difficulty)?.resistPenalty ?? 0
   const finals = finalAttributes(classId, allocated)
   const spent = Object.values(allocated).reduce((s, v) => s + v, 0)
   const total = attrPointsFor(level)
@@ -84,6 +89,38 @@ export default function CharacterBasics() {
           </div>
         </Panel>
       </div>
+
+      {difficulties.length > 0 && (
+        <Panel
+          title="Difficulty"
+          subtitle="Higher difficulties cut every resistance, which lowers survivability and any damage that scales off resistances."
+          trailing={
+            <span
+              className={`font-mono text-[10px] uppercase tracking-[0.14em] ${
+                difficultyPenalty < 0 ? 'text-stat-red' : 'text-muted'
+              }`}
+            >
+              {difficultyPenalty}% all resistances
+            </span>
+          }
+        >
+          <Dropdown
+            value={difficulty}
+            onChange={(id) => {
+              if (id) setDifficulty(id)
+            }}
+            options={difficulties.map((d) => ({
+              id: d.id,
+              label:
+                d.resistPenalty === 0
+                  ? d.name
+                  : `${d.name} (${d.resistPenalty}% resistances)`,
+            }))}
+            placeholder="Select difficulty…"
+            searchPlaceholder="Search difficulty…"
+          />
+        </Panel>
+      )}
 
       <Panel
         title="Attributes"

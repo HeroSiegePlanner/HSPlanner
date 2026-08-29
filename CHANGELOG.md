@@ -1,4 +1,5 @@
 ## Features
+- Difficulty preset (Normal / Nightmare / Hell / Inferno) under Config → Character
 - Item procs that cast a class skill now add proc DPS, toggled under Config → Procs
 - Proc-cast skills now count the points spent in their own subtree
 - Tundra Hunter's Long Coat: its Set Sail proc buff now grants cold skill damage and mana replenish, toggled under Item Blessings
@@ -6,7 +7,8 @@
 - Rage stacks now working and each stack gives 5% Attack Speed
 
 ## Fixes
-- Manahunger and other Spell-branch tree notes no longer boost skills without the Spell tag
+- Tree-node suggester ignored stack payouts, so it scored every Rage node (max stacks, damage/attack speed per stack) as worth nothing
+- Manahunger, Elemental Break and other Spell-branch tree notes no longer boost skills without the Spell tag
 - "+X% Increased Spell Damage" tree notes did nothing
 - Frost Sunder Onslaught works as intended
 - Frost Sunder throws 4 icicles instead 1

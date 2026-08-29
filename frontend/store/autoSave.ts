@@ -7,6 +7,7 @@ export const AUTO_SAVE_DEBOUNCE_MS = 800
 export const SNAPSHOT_KEYS = [
   'classId',
   'level',
+  'difficulty',
   'allocated',
   'inventory',
   'skillRanks',
