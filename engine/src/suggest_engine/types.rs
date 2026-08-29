@@ -34,6 +34,8 @@ pub struct TreeNodeInfo {
     pub kind: String,
     #[serde(rename = "l", default)]
     pub lines: Vec<String>,
+    #[serde(rename = "g", default)]
+    pub groups: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]

@@ -684,6 +684,7 @@ mod tests {
             title: String::new(),
             kind: kind.to_string(),
             lines: vec![line.to_string()],
+            groups: None,
         }
     }
 
@@ -812,7 +813,7 @@ mod tests {
         for i in [0u32, 1, 2] {
             nodes.insert(i, node("minor", "+5 to Strength"));
         }
-        nodes.insert(10, TreeNodeInfo { title: String::new(), kind: "minor".to_string(), lines: vec![] });
+        nodes.insert(10, TreeNodeInfo { title: String::new(), kind: "minor".to_string(), lines: vec![], groups: None });
         nodes.insert(11, node("minor", "+100 to Strength"));
         let input = base_input(graph, nodes, 3);
 

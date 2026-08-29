@@ -10,6 +10,21 @@ pub struct TreeAggregation {
     pub disables: HashSet<DisableTarget>,
 }
 
+// A branch's `g` tags gate only the lines whose own text carries no tag; every
+// other key stays a global stat.
+const GROUP_GATED_KEYS: &[(&str, &str, &str)] = &[
+    ("Spell", "magic_skill_damage", "spell_damage"),
+    ("Spell", "magic_skill_damage_more", "spell_damage_more"),
+];
+
+pub(crate) fn group_gated_key<'a>(key: &'a str, groups: Option<&Vec<String>>) -> &'a str {
+    let Some(groups) = groups else { return key };
+    GROUP_GATED_KEYS
+        .iter()
+        .find(|(tag, from, _)| *from == key && groups.iter().any(|g| g == tag))
+        .map_or(key, |(_, _, to)| *to)
+}
+
 // Walks allocated non-jewelry tree nodes; pushes mod contributions and
 // collects conversions/disables for the caller to apply later.
 pub fn apply_tree_contributions(
@@ -76,7 +91,7 @@ pub(crate) fn apply_node_line_contributions(
                 apply_contribution(
                     attr_sources,
                     stat_sources,
-                    &parsed.key,
+                    group_gated_key(&parsed.key, info.groups.as_ref()),
                     (parsed.value, parsed.value),
                     label,
                     SourceType::Tree,

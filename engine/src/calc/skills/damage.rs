@@ -722,6 +722,16 @@ mod tests {
     }
 
     #[test]
+    fn archetype_spell_damage_needs_the_spell_tag() {
+        let s = stats(&[("spell_damage", 10.0), ("spell_damage_more", 25.0)]);
+        assert_eq!(archetype_skill_damage(&s, &tags(&["Spell"])), ((10.0, 10.0), (1.25, 1.25)));
+        assert_eq!(
+            archetype_skill_damage(&s, &tags(&["Attack", "Melee"])),
+            ((0.0, 0.0), (1.0, 1.0)),
+        );
+    }
+
+    #[test]
     fn archetype_sentry_applies_additive_and_more() {
         let s = stats(&[("sentry_damage", 30.0), ("sentry_damage_more", 50.0)]);
         let (add, more) = archetype_skill_damage(&s, &tags(&["Sentry"]));

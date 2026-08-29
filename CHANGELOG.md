@@ -6,6 +6,8 @@
 - Rage stacks now working and each stack gives 5% Attack Speed
 
 ## Fixes
+- Manahunger and other Spell-branch tree notes no longer boost skills without the Spell tag
+- "+X% Increased Spell Damage" tree notes did nothing
 - Frost Sunder Onslaught works as intended
 - Frost Sunder throws 4 icicles instead 1
 - "Increased Magic Skills Damage per 750 points in Mana" (Soulburn Essence) did nothing

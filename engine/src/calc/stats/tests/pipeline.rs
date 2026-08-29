@@ -73,6 +73,17 @@ fn apply_tree_contributions_pushes_parseable_mod_line() {
 }
 
 #[test]
+fn spell_branch_node_gates_magic_skill_damage_to_spells() {
+    let mut alloc = HashSet::new();
+    alloc.insert(777); // Manahunger, a Spell-branch notable
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_tree_contributions(&alloc, &HashMap::new(), &mut attrs, &mut stats);
+    assert!(stats.contains_key("spell_damage_more"));
+    assert!(!stats.contains_key("magic_skill_damage_more"));
+}
+
+#[test]
 fn apply_tree_jewelry_sockets_empty_alloc_is_noop() {
     let alloc: HashSet<u32> = HashSet::new();
     let socketed: HashMap<u32, TreeSocketContent> = HashMap::new();

@@ -195,8 +195,11 @@ pub fn aggregate_tree_mods(
         }
         for line in &info.lines {
             match classify_tree_node_line(line) {
-                TreeLineClass::Stat(parsed) => {
+                TreeLineClass::Stat(mut parsed) => {
                     if condition_active(&parsed, player_conditions) {
+                        parsed.key =
+                            crate::calc::stats::group_gated_key(&parsed.key, info.groups.as_ref())
+                                .to_string();
                         push_mod(&mut out, parsed);
                     }
                 }
@@ -294,6 +297,7 @@ mod tests {
                 title: "Test Node".to_string(),
                 kind: "normal".to_string(),
                 lines: lines.iter().map(|s| s.to_string()).collect(),
+                groups: None,
             },
         )]);
         let conds: HashMap<String, bool> = conditions
