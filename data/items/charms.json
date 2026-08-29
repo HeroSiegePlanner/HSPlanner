@@ -2250,8 +2250,6 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": 2,
-      "all_attributes": 10,
       "grant_subskills": 1
     },
     "width": 2,
