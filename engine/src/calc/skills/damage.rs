@@ -346,17 +346,24 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let extra_pct = (extra_mult - 1.0) * 100.0;
 
     let is_spell = s.tags.iter().any(|t| t == "Spell");
-    // Crit belongs to the weapon swing the attack path computes; the elemental
-    // member added on top of it never crits.
-    let crit = if s.attack_kind == Some(super::AttackKind::Attack) {
-        super::CritFactors {
-            chance: 0.0,
-            damage_pct: 0.0,
-            on_crit_mult: 1.0,
-            avg_mult: 1.0,
-        }
+    // Crit belongs to the weapon swing the attack path computes; an attack's
+    // elemental member only crits on the share a subskill converts.
+    let crit_portion = if s.attack_kind == Some(super::AttackKind::Attack) {
+        (r_max(rg(input.scoped, "crit_damage_portion"))
+            + r_max(rg(input.stats, "crit_damage_portion")))
+        .clamp(0.0, 100.0)
+            / 100.0
     } else {
-        crit_factors(input.stats, is_spell)
+        1.0
+    };
+    let crit = {
+        let base = crit_factors(input.stats, is_spell);
+        super::CritFactors {
+            chance: if crit_portion > 0.0 { base.chance } else { 0.0 },
+            damage_pct: if crit_portion > 0.0 { base.damage_pct } else { 0.0 },
+            on_crit_mult: 1.0 - crit_portion + crit_portion * base.on_crit_mult,
+            avg_mult: 1.0 - crit_portion + crit_portion * base.avg_mult,
+        }
     };
 
     let enemy_res_pct = s
@@ -719,6 +726,33 @@ mod tests {
             archetype_skill_damage(&s, &tags(&["Spell", "Area of Effect"])).0,
             (20.0, 20.0),
         );
+    }
+
+    // Weakening Precision converts 75% of Frost Sunder's cold hit into damage
+    // that can crit; without it an attack's elemental member never crits.
+    #[test]
+    fn crit_damage_portion_lets_an_attacks_elemental_member_crit() {
+        let crit = stats(&[("crit_chance", 100.0), ("crit_damage", 100.0)]);
+        let case = |scoped: StatMap| Case {
+            damage_type: "cold",
+            tags: tags(&["Attack", "Melee"]),
+            attack_kind: Some(super::super::AttackKind::Attack),
+            stats: crit.clone(),
+            scoped,
+            ..Default::default()
+        };
+        let none = breakdown(&case(StatMap::new()));
+        assert_eq!(none.crit_multiplier_avg, 1.0, "no portion, no crit");
+        assert_eq!(none.crit_chance, 0.0);
+
+        let converted = breakdown(&case(stats(&[("crit_damage_portion", 75.0)])));
+        // crit chance caps at 95%, so the doubling averages 1.95 on 75% of the hit.
+        assert!(
+            (converted.crit_multiplier_avg - 1.7125).abs() < 1e-9,
+            "got {}",
+            converted.crit_multiplier_avg
+        );
+        assert_eq!(converted.crit_chance, 100.0);
     }
 
     #[test]

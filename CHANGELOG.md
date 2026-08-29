@@ -7,6 +7,7 @@
 - Rage stacks now working and each stack gives 5% Attack Speed
 
 ## Fixes
+- Weakening Precision (Frost Sunder) did nothing
 - Tree-node suggester ignored stack payouts, so it scored every Rage node (max stacks, damage/attack speed per stack) as worth nothing
 - Manahunger, Elemental Break and other Spell-branch tree notes no longer boost skills without the Spell tag
 - "+X% Increased Spell Damage" tree notes did nothing
