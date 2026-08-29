@@ -1,4 +1,6 @@
 ## Features
+- Item procs that cast a class skill now add proc DPS, toggled under Config → Procs
+- Proc-cast skills now count the points spent in their own subtree
 - Tundra Hunter's Long Coat: its Set Sail proc buff now grants cold skill damage and mana replenish, toggled under Item Blessings
 - Overloaded Dice: pick which skill its "+1 to Random Skill Sub Skills" rolled
 - Rage stacks now working and each stack gives 5% Attack Speed

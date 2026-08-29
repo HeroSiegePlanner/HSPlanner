@@ -21,6 +21,23 @@ describe('itemProcRows', () => {
     expect(row.intervalSecs).toBe(ITEM_PROC_ICD_SECS)
   })
 
+  it('returns a toggle row for an item proc that casts a class skill', () => {
+    // weapons.json: Winter's Bite casts Breath of Ice at level 60 on hit.
+    const inventory: Record<string, EquippedItem | undefined> = {
+      weapon: { baseId: 'axe_heroic_winter_s_bite', affixes: [] },
+    }
+    const rows = itemProcRows(inventory)
+    expect(rows).toHaveLength(1)
+    const row = rows[0]!
+    expect(row.name).toBe('Breath of Ice')
+    expect(row.toggleKey).toBe('cast:axe_heroic_winter_s_bite:breath of ice')
+    expect(row.rankMin).toBe(60)
+    expect(row.rankMax).toBe(60)
+    expect(row.chance).toBe(18)
+    expect(row.trigger).toBe('on_hit')
+    expect(row.sourceName).toBe("Winter's Bite")
+  })
+
   it('returns nothing for an empty inventory', () => {
     expect(itemProcRows({})).toEqual([])
   })

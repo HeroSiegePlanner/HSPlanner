@@ -1259,3 +1259,76 @@ fn frost_sunder_onslaught_lands_on_top_of_the_cold_pool() {
         );
     }
 }
+
+fn winters_bite_perf(toggled: bool, subskills: &[(&str, u32)]) -> BuildPerformance {
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    inventory.insert(
+        "weapon".to_string(),
+        EquippedItem {
+            base_id: "axe_heroic_winter_s_bite".to_string(),
+            ..Default::default()
+        },
+    );
+    let mut skill_ranks = HashMap::new();
+    skill_ranks.insert("frost_sunder".to_string(), 10);
+    let subskill_ranks: HashMap<String, u32> = subskills
+        .iter()
+        .map(|(id, r)| (subskill_key("breath_of_ice", id), *r))
+        .collect();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let player_conditions = HashMap::new();
+    let skill_projectiles = HashMap::new();
+    let enemy_resistances = HashMap::new();
+    let mut proc_toggles = HashMap::new();
+    if toggled {
+        proc_toggles.insert(
+            "cast:axe_heroic_winter_s_bite:breath of ice".to_string(),
+            true,
+        );
+    }
+
+    let mut deps = empty_deps(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &subskill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &enemy_conditions,
+        &player_conditions,
+        &skill_projectiles,
+        &enemy_resistances,
+        &proc_toggles,
+    );
+    deps.class_id = Some("jotunn");
+    deps.level = 50;
+    deps.main_skill_id = Some("frost_sunder");
+    compute_build_performance(&deps)
+}
+
+// Winter's Bite: "18% Chance on Hit to cast Breath of Ice Level 60". The build
+// never learned Breath of Ice; the item casts it at its own level.
+#[test]
+fn item_proc_casts_a_class_skill_and_its_subtree_counts() {
+    let off = winters_bite_perf(false, &[]);
+    assert_eq!(off.proc_dps_max, 0.0, "an untoggled item proc pays nothing");
+
+    let on = winters_bite_perf(true, &[]);
+    assert!(
+        on.proc_dps_max > 0.0,
+        "the cast must reach proc dps even at rank 0 of Breath of Ice"
+    );
+
+    let with_subtree = winters_bite_perf(true, &[("fresh_mint", 5)]);
+    assert!(
+        with_subtree.proc_dps_max > on.proc_dps_max,
+        "points spent in Breath of Ice's subtree lift the skill the item casts"
+    );
+}

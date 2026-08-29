@@ -305,12 +305,19 @@ export default function ProcsPanel() {
                               rank {row.rankMin}
                               {row.rankMax !== row.rankMin && `–${row.rankMax}`}
                               {' · '}
-                              {row.types.join(' + ')}
+                              {row.sourceName ?? row.types.join(' + ')}
                             </div>
                           </span>
                         </span>
                         <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-faint tabular-nums">
-                          every {row.intervalSecs}s
+                          {row.chance != null ? (
+                            <>
+                              <span className="text-text">{row.chance}%</span>
+                              {` · ${row.trigger?.replace('on_', '') ?? ''}`}
+                            </>
+                          ) : (
+                            `every ${row.intervalSecs}s`
+                          )}
                         </span>
                       </label>
                     </li>

@@ -195,6 +195,8 @@ pub struct ItemBase {
     #[serde(default)]
     pub skill_bonuses: Option<HashMap<String, RangedValue>>,
     #[serde(default)]
+    pub procs: Option<Vec<ItemProcSpec>>,
+    #[serde(default)]
     pub unique_effects: Option<Vec<String>>,
     #[serde(default)]
     pub width: Option<u32>,
@@ -308,6 +310,21 @@ pub struct ProcDamageSpec {
     pub base: f64,
     #[serde(default)]
     pub per_rank: f64,
+}
+
+/// An item proc. Only the "cast a class skill" kind reaches the calc: `target`
+/// names the skill and `cast_level` is the rank the item casts it at.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct ItemProcSpec {
+    #[serde(default)]
+    pub trigger: String,
+    #[serde(default)]
+    pub chance: f64,
+    #[serde(default)]
+    pub target: Option<String>,
+    #[serde(default)]
+    pub cast_level: Option<u32>,
 }
 
 /// What the calc does with a tag-scoped stat; `None` = known scope, not modelled.

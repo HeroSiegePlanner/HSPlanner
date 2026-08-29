@@ -4648,6 +4648,8 @@
       {
         "trigger": "on_hit",
         "chance": 18,
+        "target": "Breath of Ice",
+        "castLevel": 60,
         "description": "cast Breath of Ice Level 60",
         "details": "Breathe glacial air freezing and dealing cold damage to monsters."
       }

@@ -74,6 +74,9 @@ export interface ProcEffect {
   trigger: ProcTrigger
   description: string
   details?: string
+  /** Set when the proc casts a class skill: its name and the level it casts at. */
+  target?: string
+  castLevel?: number
 }
 
 export interface Affix {

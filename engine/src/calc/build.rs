@@ -185,26 +185,70 @@ struct ProcContext<'a> {
     skill_ranks: &'a HashMap<String, u32>,
     all_class_skills: &'a [SkillSpec],
     empty_scoped: &'a StatMap,
+    subskill_ranks: &'a HashMap<String, u32>,
+    main_skill_id: Option<&'a str>,
+}
+
+/// Mirrored in frontend/views/config/itemProcRows.ts — both sides must agree.
+pub fn item_cast_toggle_key(base_id: &str, target_name_norm: &str) -> String {
+    format!("cast:{base_id}:{target_name_norm}")
 }
 
 fn proc_target_damage(
     ctx: &ProcContext<'_>,
     target_name_norm: &str,
+    rank_override: Option<f64>,
 ) -> Option<SkillDamageBreakdown> {
     let target_calc = ctx.skills_by_name.get(target_name_norm)?;
     let target_spec = ctx
         .all_class_skills
         .iter()
         .find(|s| normalize_skill_name(&s.name) == target_name_norm)?;
-    let target_rank = ctx.skill_ranks.get(&target_spec.id).copied().unwrap_or(0);
-    if target_rank == 0 {
-        return None;
-    }
+    let rank = match rank_override {
+        Some(r) => r,
+        None => match ctx.skill_ranks.get(&target_spec.id).copied().unwrap_or(0) {
+            0 => return None,
+            r => r as f64,
+        },
+    };
+    // Points spent in the target's own subtree count. Only the main skill hands
+    // its shared subtree stats to the global pool, so any other target gets the
+    // whole aggregation folded into its own stats instead of double counting.
+    let is_main = ctx.main_skill_id == Some(target_spec.id.as_str());
+    let subtree: StatMap = if is_main {
+        ctx.computed
+            .skill_scoped
+            .get(&target_spec.id)
+            .cloned()
+            .unwrap_or_default()
+    } else {
+        let owner = super::stats::skill_spec_to_subskill_owner(target_spec);
+        super::subskill::aggregate_subskill_stats(
+            &owner,
+            ctx.subskill_ranks,
+            Some(ctx.enemy_conditions),
+        )
+        .stats
+        .into_iter()
+        .map(|(k, v)| (k, (v, v)))
+        .collect()
+    };
+    let merged_stats: Option<StatMap> = (!is_main && !subtree.is_empty()).then(|| {
+        let mut merged = ctx.computed.stats.clone();
+        for (k, v) in subtree.iter() {
+            let cur = merged.get(k).copied().unwrap_or((0.0, 0.0));
+            merged.insert(k.clone(), (cur.0 + v.0, cur.1 + v.1));
+        }
+        merged
+    });
+    let stats: &StatMap = merged_stats.as_ref().unwrap_or(&ctx.computed.stats);
+    let scoped: &StatMap = if is_main { &subtree } else { ctx.empty_scoped };
+    let subtree_stat = |key: &str| -> f64 { r_max(rg(&subtree, key)).max(0.0) };
     let input = SkillInput {
         skill: target_calc,
-        allocated_rank: target_rank as f64,
+        allocated_rank: rank,
         attributes: &ctx.computed.attributes,
-        stats: &ctx.computed.stats,
+        stats,
         skill_ranks_by_name: ctx.skill_ranks_by_name,
         item_skill_bonuses: ctx.item_skill_bonuses,
         enemy_conditions: ctx.enemy_conditions,
@@ -214,10 +258,10 @@ fn proc_target_damage(
             .skill_projectiles
             .get(&target_spec.id)
             .copied()
-            .unwrap_or(1),
-        // Proc targets are not the active skill, so no subtree of their own.
-        of_total_damage: 0.0,
-        scoped: ctx.empty_scoped,
+            .unwrap_or(1)
+            + subtree_stat("projectile_count") as u32,
+        of_total_damage: subtree_stat("of_total_damage"),
+        scoped,
         conversion_flat: 0.0,
         conversion_skill_damage_pct: 0.0,
     };
@@ -511,6 +555,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         skill_ranks: deps.skill_ranks,
         all_class_skills,
         empty_scoped: &empty_scoped,
+        subskill_ranks: deps.subskill_ranks,
+        main_skill_id: deps.main_skill_id,
     };
     let mut proc_dps_min: f64 = 0.0;
     let mut proc_dps_max: f64 = 0.0;
@@ -531,7 +577,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
             continue;
         }
         let target_name = normalize_skill_name(&proc.target);
-        let Some(target_dmg) = proc_target_damage(&ctx, &target_name) else {
+        let Some(target_dmg) = proc_target_damage(&ctx, &target_name, None) else {
             continue;
         };
         let rate = if proc.trigger == "on_kill" {
@@ -569,7 +615,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 continue;
             }
             let target_name = normalize_skill_name(sub_target);
-            let Some(target_dmg) = proc_target_damage(&ctx, &target_name) else {
+            let Some(target_dmg) = proc_target_damage(&ctx, &target_name, None) else {
                 continue;
             };
             let chance = sub_proc.chance.base.unwrap_or(0.0)
@@ -587,6 +633,37 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
 
     // Item procs fire on this ICD even when their listed cooldown is shorter.
     const ITEM_PROC_ICD_SECS: f64 = 1.5;
+
+    // "18% Chance on Hit to cast Breath of Ice Level 60": the item casts a class
+    // skill at its own level, independent of the rank the build put into it.
+    for eq in deps.inventory.values() {
+        let Some(base) = data::get_item(&eq.base_id) else {
+            continue;
+        };
+        for proc in base.procs.as_deref().unwrap_or(&[]) {
+            let (Some(target), Some(level)) = (proc.target.as_ref(), proc.cast_level) else {
+                continue;
+            };
+            let target_name = normalize_skill_name(target);
+            let toggle_key = item_cast_toggle_key(&eq.base_id, &target_name);
+            if !deps.proc_toggles.get(&toggle_key).copied().unwrap_or(false) {
+                continue;
+            }
+            let Some(target_dmg) = proc_target_damage(&ctx, &target_name, Some(level as f64))
+            else {
+                continue;
+            };
+            let rate = if proc.trigger == "on_kill" {
+                deps.kills_per_sec
+            } else {
+                1.0
+            };
+            let factor = (rate * (proc.chance / 100.0)).min(1.0 / ITEM_PROC_ICD_SECS);
+            proc_dps_min += factor * target_dmg.avg_min as f64;
+            proc_dps_max += factor * target_dmg.avg_max as f64;
+        }
+    }
+
     {
         // ponytail: no ignore_res / crit parity with class skills — add when a proc build cares.
         let granted_ranks = &computed.item_granted_ranks;
