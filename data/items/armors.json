@@ -582,14 +582,12 @@
     },
     "sockets": 3,
     "maxSockets": 6,
-    "procs": [
-      {
-        "trigger": "when_struck",
-        "chance": 35,
-        "description": "cast Set Sail Level 24",
-        "details": "Temporarily increases your cold skill damage and mana replenish.       "
-      }
-    ]
+    "skillBonuses": {
+      "Set Sail": [
+        20,
+        30
+      ]
+    }
   },
   {
     "id": "body_armor_heroic_venomsteel_carapace",

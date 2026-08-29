@@ -806,3 +806,67 @@ fn soulburn_essence_scales_magic_skill_damage_with_mana() {
         "node 773 should grant 1% per full 750 mana ({mana} mana)"
     );
 }
+
+#[test]
+fn set_sail_blessing_adds_cold_skill_damage_when_toggled() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    inventory.insert(
+        "armor".to_string(),
+        crate::calc::types::EquippedItem {
+            base_id: "body_armor_heroic_tundra_hunter_s_long_coat".to_string(),
+            ..Default::default()
+        },
+    );
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+
+    let off_conditions = HashMap::new();
+    let off = compute_build_stats(&empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &off_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    ));
+    assert_eq!(
+        off.stats.get("cold_skill_damage").copied(),
+        Some((25.0, 40.0)),
+        "untoggled the coat only pays its own implicit"
+    );
+
+    let mut on_conditions = HashMap::new();
+    on_conditions.insert("set_sail_buff".to_string(), true);
+    let on = compute_build_stats(&empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &on_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    ));
+    assert_eq!(
+        on.stats.get("cold_skill_damage").copied(),
+        Some((75.0, 115.0)),
+        "Set Sail level 20-30 adds 2.5% per level on top"
+    );
+    assert_eq!(
+        on.stats.get("mana_replenish_pct").copied(),
+        Some((45.0, 65.0)),
+    );
+}

@@ -2139,5 +2139,21 @@
         "increased_attack_speed": 2
       }
     }
+  },
+  {
+    "id": "set_sail",
+    "name": "Set Sail",
+    "description": "Temporarily increases your cold skill damage and mana replenish.",
+    "condition": "set_sail_buff",
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 0,
+        "mana_replenish_pct": 5
+      },
+      "perRank": {
+        "cold_skill_damage": 2.5,
+        "mana_replenish_pct": 2
+      }
+    }
   }
 ]

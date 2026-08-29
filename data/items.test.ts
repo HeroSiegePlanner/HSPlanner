@@ -594,6 +594,21 @@ describe('S10 item changes', () => {
     expect(ps.perRank).toEqual({ attack_damage: 6, increased_attack_speed: 2 })
   })
 
+  it("Tundra Hunter's Long Coat grants the Set Sail proc buff", () => {
+    const coat = item('body_armor_heroic_tundra_hunter_s_long_coat')
+    expect(coat.skillBonuses).toEqual({ 'Set Sail': [20, 30] })
+    // the granted-skill section carries it now, so no duplicate proc line
+    expect(coat.procs).toBeUndefined()
+  })
+
+  it('Set Sail buff scales 0%+2.5%/lvl cold skill damage, 5%+2%/lvl mana replenish', () => {
+    const sail = grantedSkill('Set Sail')
+    expect(sail.condition).toBe('set_sail_buff')
+    const ps = sail.passiveStats as Rec
+    expect(ps.base).toEqual({ cold_skill_damage: 0, mana_replenish_pct: 5 })
+    expect(ps.perRank).toEqual({ cold_skill_damage: 2.5, mana_replenish_pct: 2 })
+  })
+
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
     const skill = grantedSkill("Fallen God's Bloodlust")
     const perRank = (skill.passiveConverts as Rec).perRank as Rec[]
