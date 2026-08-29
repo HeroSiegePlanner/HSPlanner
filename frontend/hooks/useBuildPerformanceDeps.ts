@@ -5,6 +5,7 @@ import {
   type BuildPerformanceDeps,
 } from '../utils/build/buildPerformance'
 import { mercGrantedSkillRanks } from '../utils/build/mercStats'
+import { boostedSubskillRanks } from '../utils/build/subskillBoost'
 
 export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const classId = useBuild((s) => s.classId)
@@ -36,6 +37,11 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
     [inventory, disabledPotions],
   )
 
+  const effectiveSubskillRanks = useMemo(
+    () => boostedSubskillRanks(inventoryForCalc, subskillRanks),
+    [inventoryForCalc, subskillRanks],
+  )
+
   const grantedSkillRanks = useMemo(
     () => mercGrantedSkillRanks(mercInventory, mercDisabledAuras),
     [mercInventory, mercDisabledAuras],
@@ -48,7 +54,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       allocatedAttrs,
       inventory: inventoryForCalc,
       skillRanks,
-      subskillRanks,
+      subskillRanks: effectiveSubskillRanks,
       activeAuraId,
       activeBuffs,
       customStats,
@@ -71,7 +77,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       allocatedAttrs,
       inventoryForCalc,
       skillRanks,
-      subskillRanks,
+      effectiveSubskillRanks,
       activeAuraId,
       activeBuffs,
       customStats,

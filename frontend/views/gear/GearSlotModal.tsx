@@ -24,6 +24,8 @@ import { SocketsSection } from './sections/SocketsSection'
 import { StarsSection } from './sections/StarsSection'
 import { RandomElementSection } from './sections/RandomElementSection'
 import { RandomSkillSection } from './sections/RandomSkillSection'
+import { SubskillBoostSection } from './sections/SubskillBoostSection'
+import { SUBSKILL_BOOST_KEY } from '../../utils/build/subskillBoost'
 import { RollsSection } from './sections/RollsSection'
 import { RARITY_LABEL, RARITY_TEXT } from './lib/rarity'
 import { useGearDraft } from './lib/useGearDraft'
@@ -122,6 +124,9 @@ export function GearSlotModal({
     (draft?.affixes ?? []).some(
       (eq) => getAffix(eq.affixId)?.statKey === 'random_skill_element',
     )
+  const grantsSubskills =
+    base?.implicit?.[SUBSKILL_BOOST_KEY] !== undefined ||
+    draft?.implicitOverrides?.[SUBSKILL_BOOST_KEY] !== undefined
   const maxSockets = draft ? maxSocketsFor(draft.baseId, draft.forgedMods) : 0
   const set = base?.setId ? getItemSet(base.setId) : undefined
   const setEquippedCount = base?.setId
@@ -305,6 +310,13 @@ export function GearSlotModal({
 
                   {hasRandomElement && (
                     <RandomElementSection equipped={draft} onChange={d.setRandomElement} />
+                  )}
+
+                  {grantsSubskills && (
+                    <SubskillBoostSection
+                      equipped={draft}
+                      onChange={d.setSubskillBoost}
+                    />
                   )}
 
                   {(base.rarity === 'common' || base.randomAffixGroupId) && (

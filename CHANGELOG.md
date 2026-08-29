@@ -1,4 +1,5 @@
 ## Features
+- Overloaded Dice: pick which skill its "+1 to Random Skill Sub Skills" rolled
 - Rage stacks now working and each stack gives 5% Attack Speed
 
 ## Fixes

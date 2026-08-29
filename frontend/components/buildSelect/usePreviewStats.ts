@@ -9,6 +9,7 @@ import {
 import { mercGrantedSkillRanks } from '../../utils/build/mercStats'
 import { getActiveProfile, type SavedBuild } from '../../utils/build/savedBuilds'
 import { type BuildSnapshot, decodeShareToBuild } from '../../utils/build/shareBuild'
+import { boostedSubskillRanks } from '../../utils/build/subskillBoost'
 
 const CALC_DEBOUNCE_MS = 130
 
@@ -27,13 +28,14 @@ const EMPTY: PreviewStats = {
 }
 
 export function snapshotToDeps(snapshot: BuildSnapshot): BuildPerformanceDeps {
+  const inventory = applyDisabledPotions(snapshot.inventory, snapshot.disabledPotions)
   return {
     classId: snapshot.classId,
     level: snapshot.level,
     allocatedAttrs: snapshot.allocated,
-    inventory: applyDisabledPotions(snapshot.inventory, snapshot.disabledPotions),
+    inventory,
     skillRanks: snapshot.skillRanks,
-    subskillRanks: snapshot.subskillRanks,
+    subskillRanks: boostedSubskillRanks(inventory, snapshot.subskillRanks),
     activeAuraId: snapshot.activeAuraId,
     activeBuffs: snapshot.activeBuffs,
     customStats: snapshot.customStats,

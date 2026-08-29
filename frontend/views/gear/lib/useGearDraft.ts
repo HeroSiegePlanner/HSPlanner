@@ -59,6 +59,10 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     (element: SkillElement | null) => edit((cur) => edits.withRandomElement(cur, element)),
     [edit],
   )
+  const setSubskillBoost = useCallback(
+    (skillId: string | null) => edit((cur) => edits.withSubskillBoost(cur, skillId)),
+    [edit],
+  )
   const addAffix = useCallback(
     (affixId: string, tier: number) => edit((cur) => edits.withAffixAdded(cur, affixId, tier)),
     [edit],
@@ -116,6 +120,7 @@ export function useGearDraft(equipped: EquippedItem | undefined) {
     setStars,
     setRandomSkill,
     setRandomElement,
+    setSubskillBoost,
     addAffix,
     removeAffix,
     setAffixRoll,

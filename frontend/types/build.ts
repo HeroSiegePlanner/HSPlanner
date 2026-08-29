@@ -41,6 +41,7 @@ export interface EquippedItem {
   skillBonusOverrides?: Record<string, number>
   randomSkillId?: string
   randomSkillElement?: SkillElement
+  subskillBoostSkillId?: string
 }
 
 export type Inventory = Partial<Record<SlotKey, EquippedItem>>

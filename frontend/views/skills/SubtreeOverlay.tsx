@@ -14,6 +14,10 @@ import { DAMAGE_COLORS } from '../../utils/damageColors'
 import type { BuildPerformance } from '../../utils/build/buildPerformance'
 import { computeBuildPerformanceAsync } from '../../utils/calc/bridge'
 import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
+import {
+  boostedSubskillRanks,
+  subskillBoostBySkill,
+} from '../../utils/build/subskillBoost'
 import { useCalcResult } from '../../hooks/useCalcResult'
 import { useRankProgressionPreview } from '../../hooks/useRankProgressionPreview'
 import { allocationStep } from '../../utils/allocationStep'
@@ -45,6 +49,12 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
   const incSubskillRank = useBuild((s) => s.incSubskillRank)
   const decSubskillRank = useBuild((s) => s.decSubskillRank)
   const resetSubskillsFor = useBuild((s) => s.resetSubskillsFor)
+  const inventory = useBuild((s) => s.inventory)
+
+  const boost = useMemo(
+    () => subskillBoostBySkill(inventory).get(skill.id) ?? 0,
+    [inventory, skill.id],
+  )
 
   const buildDeps = useBuildPerformanceDeps()
 
@@ -106,13 +116,16 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
       const key = subskillKey(skill.id, debouncedHover.sub.id)
       const currentRank = subskillRanks[key] ?? 0
       if (currentRank >= debouncedHover.sub.maxRank) return null
-      const previewRanks = { ...subskillRanks, [key]: currentRank + 1 }
+      const previewRanks = boostedSubskillRanks(inventory, {
+        ...subskillRanks,
+        [key]: currentRank + 1,
+      })
       return computeBuildPerformanceAsync({
         ...buildDeps,
         subskillRanks: previewRanks,
       })
     },
-    [debouncedHover, skill.id, subskillRanks, buildDeps],
+    [debouncedHover, skill.id, subskillRanks, inventory, buildDeps],
     null,
   )
 
@@ -224,6 +237,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                     ? visibleRanks[subskillKey(skill.id, sub.id)] ?? 0
                     : 0
                   const allocated = rank > 0
+                  const shownRank = allocated ? rank + boost : 0
                   const isMarker =
                     !!sub && markerId === subskillKey(skill.id, sub.id)
 
@@ -323,7 +337,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                           type="button"
                           className={`${tileClass} cursor-pointer hover:scale-105`}
                           style={tileStyle}
-                          aria-label={`${sub.name} — rank ${rank} of ${sub.maxRank}`}
+                          aria-label={`${sub.name} — rank ${shownRank} of ${sub.maxRank}`}
                           onMouseEnter={onEnter}
                           onMouseLeave={() => setHover(null)}
                           onClick={(e) => {
@@ -372,7 +386,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
                             allocated ? 'text-accent-hot' : 'text-faint'
                           }`}
                         >
-                          {rank}
+                          {shownRank}
                           <span className="text-node-base">/</span>
                           {sub.maxRank}
                         </span>
@@ -406,6 +420,7 @@ export default function SubtreeOverlay({ skill, onClose }: Props) {
             skill={skill}
             sub={hover.sub}
             rank={visibleRanks[subskillKey(skill.id, hover.sub.id)] ?? 0}
+            boost={boost}
             x={hover.x}
             y={hover.y}
             isKeystone={hover.isKeystone}

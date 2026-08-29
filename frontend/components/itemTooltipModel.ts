@@ -34,6 +34,7 @@ import {
 } from '../utils/item/stats'
 import { descriptionWithoutValue } from '../utils/item/itemTextShared'
 import { collectSocketGroups } from '../utils/item/socketStats'
+import { SUBSKILL_BOOST_KEY } from '../utils/build/subskillBoost'
 import type { AffixValueOutput } from '../utils/calc/bridge'
 import type { TooltipTone } from './tooltipTones'
 
@@ -225,7 +226,9 @@ export function buildItemTooltipModel(
       textLine(
         key === RANDOM_ELEMENT_KEY
           ? `${formatValue(value, '')} ${randomElementLabel(equipped?.randomSkillElement)}`
-          : `${formatValue(value, key)} ${statName(key)}`,
+          : key === SUBSKILL_BOOST_KEY
+            ? `${formatValue(value, '')} ${subskillBoostLabel(equipped?.subskillBoostSkillId)}`
+            : `${formatValue(value, key)} ${statName(key)}`,
         'implicit',
         isCustom ? { badge: 'custom' } : undefined,
       ),
@@ -524,6 +527,12 @@ function randomSkillLabel(skillId: string | undefined): string {
 
 // Same idea for "+X to Random Skill Element": the element is the user's pick.
 const RANDOM_ELEMENT_KEY = 'random_skill_element'
+
+function subskillBoostLabel(skillId: string | undefined): string {
+  if (!skillId) return 'to Random Skill Sub Skills (not rolled)'
+  const name = skills.find((s) => s.id === skillId)?.name
+  return name ? `to ${name} Sub Skills` : 'to Random Skill Sub Skills'
+}
 
 function randomElementLabel(element: string | undefined): string {
   if (!element) return 'to Random Element Skills (not rolled)'
