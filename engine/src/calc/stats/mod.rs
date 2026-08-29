@@ -235,7 +235,8 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         (kind == "Wand", "faster_cast_rate_with_wand", "faster_cast_rate", "While wielding a Wand"),
         (kind == "Wand", "faster_cast_rate_more_with_wand", "faster_cast_rate_more", "While wielding a Wand"),
         (kind == "Wand", "magic_skill_damage_with_wand", "magic_skill_damage", "While wielding a Wand"),
-        (kind == "Axe", "damage_with_axe", "enhanced_damage", "While wielding an Axe"),
+        (kind == "Axe", "damage_with_axe", "attack_damage", "While wielding an Axe"),
+        (kind == "Axe", "enhanced_damage_with_axe", "enhanced_damage", "While wielding an Axe"),
         (kind == "Axe", "attack_rating_with_axe_pct", "attack_rating_pct", "While wielding an Axe"),
         (kind == "Staff" || kind == "Cane", "two_handed_spell_projectile_damage", "spell_projectile_damage", "While wielding a Staff or Cane"),
         (has_shield, "attack_damage_with_shield", "attack_damage", "While using a Shield"),
@@ -245,11 +246,11 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         (has_shield, "damage_mitigation_with_shield", "damage_mitigation", "While using a Shield"),
         (has_shield, "crit_damage_more_with_shield", "crit_damage_more", "While using a Shield"),
         (has_shield, "damage_return_with_shield", "damage_return", "While using a Shield"),
-        (two_handed, "damage_with_two_handed", "enhanced_damage", "While using a Two Handed Weapon"),
+        (two_handed, "damage_with_two_handed", "attack_damage", "While using a Two Handed Weapon"),
         (two_handed, "ailment_damage_all_with_two_handed", "ailment_damage_all", "While using a Two Handed Weapon"),
         (two_handed, "ailment_damage_all_more_with_two_handed", "ailment_damage_all_more", "While using a Two Handed Weapon"),
         (two_handed, "increased_ailment_frequency_with_two_handed", "increased_ailment_frequency", "While using a Two Handed Weapon"),
-        (two_handed_melee, "damage_with_two_handed_melee", "enhanced_damage", "While using a Two Handed Melee Weapon"),
+        (two_handed_melee, "damage_with_two_handed_melee", "attack_damage", "While using a Two Handed Melee Weapon"),
         (kind == "Bow", "damage_with_bow", "ranged_projectile_damage", "While using a Bow"),
         (kind == "Bow", "enhanced_damage_with_bow", "enhanced_damage", "While using a Bow"),
         (kind == "Gun", "damage_with_gun", "ranged_projectile_damage", "While using a Gun"),
@@ -284,8 +285,8 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .is_some_and(|base| base.slot == "weapon");
     if is_dual_wielding {
         for (cond_key, target_key) in [
-            ("damage_dual_wield", "enhanced_damage"),
-            ("damage_dual_wield_more", "enhanced_damage_more"),
+            ("damage_dual_wield", "attack_damage"),
+            ("damage_dual_wield_more", "attack_damage_more"),
         ] {
             let sum = sum_ranged_from_map(&stat_sources, cond_key);
             if sum != (0.0, 0.0) {

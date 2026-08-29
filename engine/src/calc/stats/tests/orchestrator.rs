@@ -689,3 +689,74 @@ fn compute_build_stats_custom_stat_appears_in_output() {
         .expect("custom fire_skill_damage source should land in stats");
     assert_eq!(*fire_skill, (60.0, 60.0));
 }
+
+// Node 683 "Accurate Cleaver": both lines are axe-gated and fold into different
+// targets. "Increased Damage" goes to attack_damage, which multiplies the whole
+// hit -- enhanced_damage would only scale the weapon roll.
+#[test]
+fn accurate_cleaver_folds_both_lines_only_with_an_axe() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let node_683: HashSet<u32> = [683].into_iter().collect();
+    let no_nodes: HashSet<u32> = HashSet::new();
+
+    let stat = |inventory: &Inventory, nodes: &HashSet<u32>, key: &str| -> f64 {
+        let base_input = empty_input(
+            &allocated,
+            inventory,
+            &skill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &player_conditions,
+            &subskill_ranks,
+            &enemy_conditions,
+        );
+        let input = BuildStatsInput {
+            allocated_tree_nodes: nodes,
+            ..base_input
+        };
+        compute_build_stats(&input)
+            .stats
+            .get(key)
+            .copied()
+            .unwrap_or((0.0, 0.0))
+            .0
+    };
+
+    assert!(
+        data::get_item("base_melee_hand_axe").is_some_and(|b| b.base_type == "Axe"),
+        "test expects an Axe base in item data"
+    );
+    let bare: Inventory = HashMap::new();
+    let mut with_axe: Inventory = HashMap::new();
+    with_axe.insert(
+        "weapon".to_string(),
+        EquippedItem {
+            base_id: "base_melee_hand_axe".to_string(),
+            ..Default::default()
+        },
+    );
+
+    for (key, expected) in [("attack_damage", 30.0), ("attack_rating_pct", 20.0)] {
+        let bare_delta = stat(&bare, &node_683, key) - stat(&bare, &no_nodes, key);
+        assert!(
+            bare_delta.abs() < 1e-6,
+            "{key} must stay inert without an Axe (delta {bare_delta})"
+        );
+        let axe_delta = stat(&with_axe, &node_683, key) - stat(&with_axe, &no_nodes, key);
+        assert!(
+            (axe_delta - expected).abs() < 1e-6,
+            "node 683 must add +{expected} {key} with an Axe (delta {axe_delta})"
+        );
+    }
+}

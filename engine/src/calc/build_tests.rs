@@ -1127,3 +1127,72 @@ fn skill_duration_buys_extra_ticks() {
         long_dps / base_dps
     );
 }
+
+// "Increased Damage when wielding an Axe" (node 683) multiplies the whole
+// physical hit, so its worth must not decay as flat physical is stacked.
+#[test]
+fn axe_damage_node_is_independent_of_flat_physical() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let dps = |nodes: &HashSet<u32>, add_phys: f64| -> f64 {
+        let allocated = HashMap::new();
+        let mut inventory: Inventory = HashMap::new();
+        inventory.insert(
+            "weapon".to_string(),
+            EquippedItem {
+                base_id: "base_melee_hand_axe".to_string(),
+                ..Default::default()
+            },
+        );
+        let mut skill_ranks = HashMap::new();
+        skill_ranks.insert("furious_strike".to_string(), 20u32);
+        let subskill_ranks = HashMap::new();
+        let active_buffs = HashMap::new();
+        let custom_stats: Vec<CustomStat> = vec![CustomStat {
+            stat_key: "additive_physical_damage".to_string(),
+            value: format!("{add_phys}"),
+        }];
+        let tree_socketed = HashMap::new();
+        let enemy_conditions = HashMap::new();
+        let player_conditions = HashMap::new();
+        let skill_projectiles = HashMap::new();
+        let enemy_resistances = HashMap::new();
+        let proc_toggles = HashMap::new();
+        let mut deps = empty_deps(
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &subskill_ranks,
+            &active_buffs,
+            &custom_stats,
+            nodes,
+            &tree_socketed,
+            &enemy_conditions,
+            &player_conditions,
+            &skill_projectiles,
+            &enemy_resistances,
+            &proc_toggles,
+        );
+        deps.class_id = Some("butcher");
+        deps.level = 50;
+        deps.main_skill_id = Some("furious_strike");
+        compute_build_performance(&deps).combined_dps_max.unwrap_or(0.0)
+    };
+
+    let node: HashSet<u32> = [683].into_iter().collect();
+    let none: HashSet<u32> = HashSet::new();
+    let gain = |add_phys: f64| dps(&node, add_phys) / dps(&none, add_phys) - 1.0;
+
+    let bare = gain(0.0);
+    let geared = gain(5000.0);
+    assert!(
+        bare > 0.10,
+        "node 683 should be worth well over 10% on a bare build, got {:.3}%",
+        bare * 100.0
+    );
+    assert!(
+        (bare - geared).abs() < 0.01,
+        "node 683 must not decay with flat physical: {:.3}% bare vs {:.3}% with +5000 flat",
+        bare * 100.0,
+        geared * 100.0
+    );
+}

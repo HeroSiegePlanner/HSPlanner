@@ -1090,8 +1090,9 @@ pub(super) fn rules() -> Vec<ParseRule> {
             r"(?i)^([+\-\d.]+)\s+to\s+Damage\s+Returned\s+when\s+wielding\s+a\s+Shield$",
             "damage_return_with_shield"
         ),
-        // Conditional "+X% to Enhanced Damage when using <weapon>" lines; Axe
-        // shares `damage_with_axe` since both fold into enhanced_damage.
+        // Conditional "+X% to Enhanced Damage when using <weapon>" lines. Kept
+        // apart from the "Increased Damage when wielding <weapon>" family: that
+        // one multiplies the whole hit, this one only the weapon roll.
         ParseRule {
             test: Regex::new(
                 r"(?i)^([+\-\d.]+)%\s+to\s+Enhanced\s+Damage\s+when\s+using\s+(Bow|Throwing\s+Weapon|Gun|Axe)$",
@@ -1104,7 +1105,7 @@ pub(super) fn rules() -> Vec<ParseRule> {
                 } else if weapon == "gun" {
                     "enhanced_damage_with_gun"
                 } else if weapon == "axe" {
-                    "damage_with_axe"
+                    "enhanced_damage_with_axe"
                 } else {
                     "enhanced_damage_with_throwing"
                 };

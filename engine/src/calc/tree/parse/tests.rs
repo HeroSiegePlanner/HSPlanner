@@ -354,8 +354,15 @@ fn rule_weapon_conditional_lines_use_dedicated_keys() {
     );
     assert_mod(
         "+50% to Enhanced Damage when using Axe",
-        "damage_with_axe",
+        "enhanced_damage_with_axe",
         50.0,
+    );
+    // Same weapon, different wording, different bucket: this one multiplies the
+    // whole hit, the line above only the weapon roll.
+    assert_mod(
+        "+30% Increased Damage when wielding an Axe",
+        "damage_with_axe",
+        30.0,
     );
     assert_mod(
         "5% Increased Total Spell Projectile Damage",
@@ -616,7 +623,7 @@ fn meta_weapon_specific_enhanced_damage() {
     // conversion; folded into enhanced_damage when the weapon matches.
     assert_mod(
         "40% to Enhanced Damage when using Axe",
-        "damage_with_axe",
+        "enhanced_damage_with_axe",
         40.0,
     );
     assert_eq!(

@@ -79,6 +79,7 @@ pub fn compute_attack_skill_damage(
     let ed_more = rg(input.stats, "enhanced_damage_more");
     let add_phys = rg(input.stats, "additive_physical_damage");
     let atk = rg(input.stats, "attack_damage");
+    let atk_more = rg(input.stats, "attack_damage_more");
     // Synergies like Flail Mastery grant attack_damage% per source rank; they
     // stack additively with the gear/strength attack-damage stat.
     let (synergy_min, synergy_max) = bonus_source_synergy_pct(
@@ -111,8 +112,10 @@ pub fn compute_attack_skill_damage(
 
     // S8: the skill's own attack damage % is a standalone multiplier on top of
     // the gear/strength attack-damage modifier, not additive with it.
-    let atk_mult_min = 1.0 + (r_min(atk) + synergy_min) / 100.0;
-    let atk_mult_max = 1.0 + (r_max(atk) + synergy_max) / 100.0;
+    let atk_mult_min =
+        (1.0 + (r_min(atk) + synergy_min) / 100.0) * (1.0 + r_min(atk_more) / 100.0);
+    let atk_mult_max =
+        (1.0 + (r_max(atk) + synergy_max) / 100.0) * (1.0 + r_max(atk_more) / 100.0);
     let has_wdp = scaling.weapon_damage_pct.is_some();
     let skill_mult_min = if has_wdp { skill_wdp_min / 100.0 } else { 1.0 };
     let skill_mult_max = if has_wdp { skill_wdp_max / 100.0 } else { 1.0 };
