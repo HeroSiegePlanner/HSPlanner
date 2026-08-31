@@ -4,6 +4,7 @@ import { createCharacterSlice } from './characterSlice'
 import { createCombatSlice } from './combatSlice'
 import { createEtherSlice } from './etherSlice'
 import { createInventorySlice } from './inventorySlice'
+import { createLoadoutsSlice } from './loadoutsSlice'
 import { createMercSlice } from './mercSlice'
 import { createSavedBuildsSlice } from './savedBuildsSlice'
 import { createSkillsSlice } from './skillsSlice'
@@ -36,6 +37,7 @@ export const useBuild = create<BuildStore>((...a) => ({
   ...createEtherSlice(...a),
   ...createMercSlice(...a),
   ...createCombatSlice(...a),
+  ...createLoadoutsSlice(...a),
   ...createSavedBuildsSlice(...a),
 }))
 

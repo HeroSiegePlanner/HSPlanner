@@ -7,6 +7,7 @@ import type { ItemBase, SlotKey } from '../../types'
 import { canOffhand, isOffhandLocked } from '../../utils/tree/dualWield'
 import { charmBlockedCells, packCharms } from './lib/charmPacking'
 import { getSocketPickerRows } from './lib/socketPickerRows'
+import LoadoutSelect from '../../components/LoadoutSelect'
 import { CharmSection } from './CharmSection'
 import { EquipmentDoll } from './EquipmentDoll'
 import { GearSlotModal } from './GearSlotModal'
@@ -64,7 +65,7 @@ export default function GearView() {
             className="inline-block h-1.5 w-1.5 rotate-45 bg-accent-hot"
             style={{ boxShadow: '0 0 8px rgba(224,184,100,0.6)' }}
           />
-          Loadout
+          Equipment
         </div>
         <div className="flex items-end justify-between gap-3">
           <h2
@@ -73,18 +74,21 @@ export default function GearView() {
           >
             Gear
           </h2>
-          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
-            <span>
-              <span className="text-text">{items.length}</span> items
-            </span>
-            <span aria-hidden className="h-3 w-px bg-border" />
-            <span>
-              <span className="text-text">{gems.length}</span> gems
-            </span>
-            <span aria-hidden className="h-3 w-px bg-border" />
-            <span>
-              <span className="text-text">{runes.length}</span> runes
-            </span>
+          <div className="flex items-center gap-3">
+            <LoadoutSelect tab="gear" title="Progression" dataTour="gear-loadouts" />
+            <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+              <span>
+                <span className="text-text">{items.length}</span> items
+              </span>
+              <span aria-hidden className="h-3 w-px bg-border" />
+              <span>
+                <span className="text-text">{gems.length}</span> gems
+              </span>
+              <span aria-hidden className="h-3 w-px bg-border" />
+              <span>
+                <span className="text-text">{runes.length}</span> runes
+              </span>
+            </div>
           </div>
         </div>
       </header>

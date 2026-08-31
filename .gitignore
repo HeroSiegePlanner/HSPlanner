@@ -36,3 +36,7 @@ engine/target/
 
 # Build/tooling output kept local, never committed
 graphify-out/
+
+# Local agent/dev context, never committed
+AGENTS.md
+dev.debug

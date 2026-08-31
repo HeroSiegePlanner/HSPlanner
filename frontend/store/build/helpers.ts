@@ -2,6 +2,10 @@ import { entityRatesFrom } from '../../utils/build/entityRates'
 import { gameConfig, getClass } from '@data'
 import { defaultEnemyResistances } from '../../utils/build/shareBuild'
 import type { BuildSnapshot } from '../../utils/build/shareBuild'
+import {
+  emptyLoadoutSlots,
+  initialLoadoutIndexes,
+} from '../../utils/build/loadouts'
 import { pruneUnknownIds } from '../../utils/build/seasonMigration'
 import type { AttrMap, BuildState } from './types'
 
@@ -46,6 +50,8 @@ export function snapshotPatch(rawSnap: BuildSnapshot) {
     mercSkillRanks: snap.mercSkillRanks ?? {},
     mercInventory: snap.mercInventory ?? {},
     mercDisabledAuras: snap.mercDisabledAuras ?? {},
+    loadoutSlots: snap.loadoutSlots ?? emptyLoadoutSlots(),
+    activeLoadouts: snap.activeLoadouts ?? initialLoadoutIndexes(),
   }
 }
 

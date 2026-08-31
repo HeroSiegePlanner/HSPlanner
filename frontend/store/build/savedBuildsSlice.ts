@@ -149,6 +149,10 @@ export const createSavedBuildsSlice: StateCreator<
       mercSkillRanks: s.mercSkillRanks,
       mercInventory: s.mercInventory,
       mercDisabledAuras: s.mercDisabledAuras,
+      // Passed through as-is: the active slot stays empty here because its
+      // content is already in the fields above.
+      loadoutSlots: s.loadoutSlots,
+      activeLoadouts: s.activeLoadouts,
     }
   },
 

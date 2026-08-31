@@ -32,6 +32,10 @@ export const SNAPSHOT_KEYS = [
   'mercDisabledAuras',
   'notes',
   'stash',
+  // Loadout slots ride along so a slot switch is both auto-saved and undoable:
+  // undo restores the previous slot index together with the live state it held.
+  'loadoutSlots',
+  'activeLoadouts',
 ] as const satisfies readonly (keyof BuildStore)[]
 
 let timer: ReturnType<typeof setTimeout> | null = null

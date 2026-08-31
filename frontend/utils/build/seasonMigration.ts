@@ -1,5 +1,6 @@
 import { gems, items, runes, skills } from '@data'
 import type { EquippedItem, Inventory, SlotKey } from '../../types'
+import { mapAllSlotData } from './loadouts'
 import type { BuildSnapshot } from './shareBuild'
 
 export function clearSeasonBoundAllocations(snap: BuildSnapshot): BuildSnapshot {
@@ -8,6 +9,19 @@ export function clearSeasonBoundAllocations(snap: BuildSnapshot): BuildSnapshot 
     allocatedTreeNodes: new Set<number>(),
     allocatedEtherNodes: new Set<number>(),
     treeSocketed: {},
+    // Node ids do not carry across seasons, so the parked loadouts have to be
+    // cleared too — otherwise slots 2..8 keep pointing at nodes that no longer
+    // exist while the live tree is correctly empty.
+    ...(snap.loadoutSlots
+      ? {
+          loadoutSlots: mapAllSlotData(snap.loadoutSlots, (data) => ({
+            ...data,
+            ...(data.allocatedTreeNodes ? { allocatedTreeNodes: new Set<number>() } : {}),
+            ...(data.allocatedEtherNodes ? { allocatedEtherNodes: new Set<number>() } : {}),
+            ...(data.treeSocketed ? { treeSocketed: {} } : {}),
+          })),
+        }
+      : {}),
   }
 }
 
@@ -49,6 +63,26 @@ function pruneRankMap(
 export function pruneUnknownIds(snap: BuildSnapshot): BuildSnapshot {
   return {
     ...snap,
+    // Parked loadouts get the same treatment as live state: an item or skill
+    // the game dropped must not linger in an inactive slot.
+    ...(snap.loadoutSlots
+      ? {
+          loadoutSlots: mapAllSlotData(snap.loadoutSlots, (data) => ({
+            ...data,
+            ...(data.inventory ? { inventory: pruneInventory(data.inventory) } : {}),
+            ...(data.skillRanks
+              ? { skillRanks: pruneRankMap(data.skillRanks, (id) => knownSkillIds.has(id)) }
+              : {}),
+            ...(data.subskillRanks
+              ? {
+                  subskillRanks: pruneRankMap(data.subskillRanks, (key) =>
+                    knownSubskillKeys.has(key),
+                  ),
+                }
+              : {}),
+          })),
+        }
+      : {}),
     inventory: pruneInventory(snap.inventory),
     mercInventory: pruneInventory(snap.mercInventory),
     skillRanks: pruneRankMap(snap.skillRanks, (id) => knownSkillIds.has(id)),

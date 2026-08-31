@@ -42,6 +42,8 @@ export interface ShareDialogProps {
   meta?: { className?: string; level?: number };
   createWebShare: () => Promise<{ url: string }>;
   onClose: () => void;
+  /** The build was too large to carry its parked loadouts. */
+  loadoutsDropped?: boolean;
 }
 
 export function ShareDialog({
@@ -49,6 +51,7 @@ export function ShareDialog({
   meta,
   createWebShare,
   onClose,
+  loadoutsDropped,
 }: ShareDialogProps) {
   const [method, setMethod] = useState<ShareMethod>("code");
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
@@ -185,6 +188,16 @@ export function ShareDialog({
         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
           {METHOD_HINT[method]}
         </p>
+
+        {loadoutsDropped && (
+          <p
+            role="status"
+            className="font-mono text-[10px] uppercase tracking-[0.14em] text-stat-orange"
+          >
+            Too large for the extra loadout slots — this code carries the active
+            loadouts only.
+          </p>
+        )}
       </div>
 
       <footer className="flex items-center justify-between gap-3 border-t border-border bg-black/30 px-4 py-3">

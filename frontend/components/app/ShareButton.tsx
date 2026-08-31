@@ -19,7 +19,12 @@ export default function ShareButton() {
     }
     const { notes, activeBuildId } = useBuild.getState();
     const snap = exportSnapshot();
-    const code = encodeBuildToShare(snap, notes);
+    let loadoutsDropped = false;
+    const code = encodeBuildToShare(snap, notes, activeSeasonId, {
+      onLoadoutsDropped: () => {
+        loadoutsDropped = true;
+      },
+    });
     const saved = activeBuildId ? getSavedBuild(activeBuildId) : null;
     const now = new Date().toISOString();
     const clsName = snap.classId ? getClass(snap.classId)?.name : undefined;
@@ -40,6 +45,7 @@ export default function ShareButton() {
     };
     setShare({
       code,
+      loadoutsDropped,
       meta: { className: snap.classId ?? undefined, level: snap.level },
       createWebShare: async () => postWebShare(await buildSharePayload(liveBuild)),
     });
