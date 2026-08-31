@@ -10,6 +10,7 @@ import { getSocketPickerRows } from './lib/socketPickerRows'
 import { CharmSection } from './CharmSection'
 import { EquipmentDoll } from './EquipmentDoll'
 import { GearSlotModal } from './GearSlotModal'
+import ImportScreenshotModal from './ImportScreenshotModal'
 import { StashSection } from './StashSection'
 import { UpgradeAdvisor } from './UpgradeAdvisor'
 
@@ -19,6 +20,7 @@ export default function GearView() {
   const allocatedTreeNodes = useBuild((s) => s.allocatedTreeNodes)
 
   const [activeSlot, setActiveSlot] = useState<SlotKey | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
   const handleModalClose = useCallback(() => setActiveSlot(null), [])
 
   const charmFits = (slot: SlotKey, baseId: string): boolean => {
@@ -74,6 +76,14 @@ export default function GearView() {
             Gear
           </h2>
           <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
+            <button
+              type="button"
+              className="cursor-pointer rounded-[3px] border border-border-2 bg-transparent px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+              onClick={() => setImportOpen(true)}
+            >
+              Import screenshot
+            </button>
+            <span aria-hidden className="h-3 w-px bg-border" />
             <span>
               <span className="text-text">{items.length}</span> items
             </span>
@@ -108,6 +118,23 @@ export default function GearView() {
           <StashSection />
         </div>
       </div>
+
+      {importOpen && (
+        <ImportScreenshotModal
+          onClose={() => setImportOpen(false)}
+          onEquip={(item, base) => {
+            const slot = base.slot as SlotKey
+            if (slot.startsWith('charm_') && !charmFits(slot, item.baseId)) {
+              const w = base.width ?? 1
+              const h = base.height ?? 1
+              return `${base.name} (${w}×${h}) won't fit — free up space first.`
+            }
+            commitEquippedItem(slot, item)
+            useBuild.getState().addStashItem(item)
+            return null
+          }}
+        />
+      )}
 
       {activeSlot && (
         <GearSlotModal

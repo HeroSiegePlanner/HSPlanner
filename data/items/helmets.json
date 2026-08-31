@@ -649,6 +649,10 @@
         20,
         50
       ],
+      "mana_replenish": [
+        100,
+        150
+      ],
       "all_resistances": 50
     },
     "sockets": 1,

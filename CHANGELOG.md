@@ -1,4 +1,5 @@
 ## Features
+- Import items from the game: paste a tooltip screenshot (Gear → Import screenshot) and the built-in OCR reads the name, implicit rolls, augment, sockets and granted skills into an editable item
 - Tree node suggester rebuilt on the real calc engine
 - Difficulty preset (Normal / Nightmare / Hell / Inferno) under Config → Character
 - Torch of Shadow: pick which class its "+[1-3] to All Skills (Class)" rolled it only pays out on a build of that class
