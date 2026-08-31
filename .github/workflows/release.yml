@@ -84,6 +84,7 @@ jobs:
           VITE_GIST_TOKEN: ${{ secrets.VITE_GIST_TOKEN }}
           VITE_WEB_SHARE_CREATE_URL: ${{ vars.VITE_WEB_SHARE_CREATE_URL }}
           VITE_WEB_SHARE_GET_URL: ${{ vars.VITE_WEB_SHARE_GET_URL }}
+          VITE_BUG_REPORT_URL: ${{ secrets.VITE_BUG_REPORT_URL }}
         with:
           tagName: ${{ inputs.tag }}
           releaseName: ${{ inputs.tag }}
