@@ -1,7 +1,21 @@
-import { readStorage, writeStorage } from './storage'
+import { readStorage, removeStorage, writeStorage } from './storage'
 
 const AUTO_CHECK_KEY = 'hsplanner.update.auto_check'
 const LAST_CHECK_KEY = 'hsplanner.update.last_check'
+
+/**
+ * Keys written by controls that no longer exist: auto-install on quit and
+ * Skip This Version. Nothing reads them, so they are swept once at boot rather
+ * than left to sit in every existing install forever.
+ */
+const RETIRED_KEYS = [
+  'hsplanner.update.auto_install',
+  'hsplanner.update.skipped_version',
+]
+
+export function pruneRetiredUpdateKeys(): void {
+  for (const key of RETIRED_KEYS) removeStorage(key)
+}
 
 /**
  * Floor between two automatic checks. A planner session is long-lived and the

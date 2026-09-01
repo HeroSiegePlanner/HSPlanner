@@ -13,6 +13,7 @@ import App from './App.tsx'
 import UpdateProvider from './components/app/UpdateProvider'
 import { T_BASE } from './utils/motion'
 import { initRangeInputs } from './utils/initRangeInputs'
+import { pruneRetiredUpdateKeys } from './utils/updatePrefs'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -25,3 +26,4 @@ createRoot(document.getElementById('root')!).render(
 )
 
 initRangeInputs()
+pruneRetiredUpdateKeys()

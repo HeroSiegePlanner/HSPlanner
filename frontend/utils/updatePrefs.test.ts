@@ -3,6 +3,7 @@ import {
   AUTO_CHECK_COOLDOWN_MS,
   isAutoCheckEnabled,
   markChecked,
+  pruneRetiredUpdateKeys,
   readLastCheck,
   setAutoCheckEnabled,
   shouldAutoCheck,
@@ -71,5 +72,35 @@ describe('shouldAutoCheck', () => {
   it('recovers from a clock that jumped backwards', () => {
     markChecked(NOW)
     expect(shouldAutoCheck(NOW - 60_000)).toBe(true)
+  })
+})
+
+describe('pruneRetiredUpdateKeys', () => {
+  it('sweeps the keys left by auto-install and skip', () => {
+    window.localStorage.setItem('hsplanner.update.auto_install', '1')
+    window.localStorage.setItem('hsplanner.update.skipped_version', '1.2.0')
+
+    pruneRetiredUpdateKeys()
+
+    expect(
+      window.localStorage.getItem('hsplanner.update.auto_install'),
+    ).toBeNull()
+    expect(
+      window.localStorage.getItem('hsplanner.update.skipped_version'),
+    ).toBeNull()
+  })
+
+  it('leaves the keys still in use alone', () => {
+    setAutoCheckEnabled(false)
+    markChecked(NOW)
+
+    pruneRetiredUpdateKeys()
+
+    expect(isAutoCheckEnabled()).toBe(false)
+    expect(readLastCheck()).toBe(NOW)
+  })
+
+  it('is safe to run when nothing was ever stored', () => {
+    expect(() => pruneRetiredUpdateKeys()).not.toThrow()
   })
 })
