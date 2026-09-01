@@ -21,10 +21,7 @@ export function inTauriRuntime(): boolean {
   return isTauri();
 }
 
-async function runInstall(
-  onProgress: ProgressCallback,
-  relaunchAfter: boolean,
-): Promise<void> {
+async function runInstall(onProgress: ProgressCallback): Promise<void> {
   const { check } = await import("@tauri-apps/plugin-updater");
   const { relaunch } = await import("@tauri-apps/plugin-process");
 
@@ -65,11 +62,7 @@ async function runInstall(
     }
   });
 
-  if (relaunchAfter) {
-    await relaunch();
-  } else {
-    onProgress({ phase: "done" });
-  }
+  await relaunch();
 }
 
 function isSafeUpdateUrl(url: string): boolean {
@@ -93,15 +86,10 @@ export async function installUpdate(
     return;
   }
   try {
-    await runInstall(onProgress, true);
+    await runInstall(onProgress);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     onProgress({ phase: "error", error: message });
     throw err;
   }
-}
-
-export async function installUpdateOnQuit(): Promise<void> {
-  if (!inTauriRuntime()) return;
-  await runInstall(() => {}, false);
 }

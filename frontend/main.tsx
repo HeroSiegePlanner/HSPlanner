@@ -10,13 +10,16 @@ import '@fontsource/jetbrains-mono/500.css'
 import '@fontsource/jetbrains-mono/600.css'
 import './index.css'
 import App from './App.tsx'
+import UpdateProvider from './components/app/UpdateProvider'
 import { T_BASE } from './utils/motion'
 import { initRangeInputs } from './utils/initRangeInputs'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <MotionConfig reducedMotion="user" transition={T_BASE}>
-      <App />
+      <UpdateProvider>
+        <App />
+      </UpdateProvider>
     </MotionConfig>
   </StrictMode>,
 )

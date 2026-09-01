@@ -3,7 +3,6 @@ import {
   installUpdate,
   type InstallProgress,
 } from "../../utils/installUpdate";
-import { readStorage, writeStorage } from "../../utils/storage";
 import { MODAL_BTN_CLASS, MODAL_BTN_PRIMARY_CLASS, Modal } from "../ui/Modal";
 import {
   BUILD_CHANNEL,
@@ -14,9 +13,6 @@ import {
   type ChangelogTag,
   type UpdateInfo,
 } from "../../utils/version";
-
-const SKIP_KEY = "hsplanner.update.skipped_version";
-const AUTO_INSTALL_KEY = "hsplanner.update.auto_install";
 
 interface TagMeta {
   label: string;
@@ -67,14 +63,12 @@ const TAG_META: Record<ChangelogTag, TagMeta> = {
 interface Props {
   info: UpdateInfo;
   onClose: () => void;
-  onSkipVersion?: (version: string) => void;
   mode?: "update" | "changelog";
 }
 
 export default function UpdateModal({
   info,
   onClose,
-  onSkipVersion,
   mode = "update",
 }: Props) {
   const isChangelog = mode === "changelog";
@@ -83,29 +77,14 @@ export default function UpdateModal({
     [info.body],
   );
 
-  const [autoInstall, setAutoInstall] = useState<boolean>(
-    () => readStorage(AUTO_INSTALL_KEY) === "1",
-  );
   const [progress, setProgress] = useState<InstallProgress | null>(null);
   const isBusy =
     progress !== null &&
     progress.phase !== "done" &&
     progress.phase !== "error";
 
-  const onAutoInstallChange = (v: boolean) => {
-    setAutoInstall(v);
-    writeStorage(AUTO_INSTALL_KEY, v ? "1" : "0");
-  };
-
   const onRemindLater = () => {
     if (!isBusy) onClose();
-  };
-
-  const onSkip = () => {
-    if (isBusy) return;
-    writeStorage(SKIP_KEY, info.latest);
-    onSkipVersion?.(info.latest);
-    onClose();
   };
 
   const onDownload = async () => {
@@ -277,15 +256,6 @@ export default function UpdateModal({
             className="flex flex-wrap items-center gap-3 border-t border-border px-5 py-3"
             style={{ background: "rgba(0,0,0,0.3)" }}
           >
-            <label className="flex cursor-pointer items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-              <input
-                type="checkbox"
-                checked={autoInstall}
-                onChange={(e) => onAutoInstallChange(e.target.checked)}
-                disabled={isBusy}
-              />
-              Auto-install on quit
-            </label>
             <div className="ml-auto flex items-center gap-2">
               <button
                 type="button"
@@ -294,14 +264,6 @@ export default function UpdateModal({
                 className={MODAL_BTN_CLASS}
               >
                 Remind Me Later
-              </button>
-              <button
-                type="button"
-                onClick={onSkip}
-                disabled={isBusy}
-                className={MODAL_BTN_CLASS}
-              >
-                Skip This Version
               </button>
               <button
                 type="button"

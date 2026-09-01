@@ -1,3 +1,5 @@
+import UpdateStatus from '../app/UpdateStatus'
+
 interface BuildSelectFooterProps {
   buildCount: number
   folderCount: number
@@ -42,6 +44,8 @@ export function BuildSelectFooter({
         />
         <span>Auto-open last build</span>
       </label>
+      <span aria-hidden className="h-3.5 w-px bg-border" />
+      <UpdateStatus />
       <div className="flex-1" />
       <span className="inline-flex items-center gap-1.5 text-faint">
         <span className="rounded-[2px] border border-border bg-panel-2 px-[5px] py-[1px] text-[10px] text-muted">

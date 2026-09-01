@@ -72,27 +72,6 @@ describe('<UpdateModal>', () => {
     expect(onClose).toHaveBeenCalledTimes(2)
   })
 
-  it('Skip This Version persists to localStorage and notifies parent', async () => {
-    const onClose = vi.fn()
-    const onSkip = vi.fn()
-    render(
-      <UpdateModal
-        info={mockInfo}
-        onClose={onClose}
-        onSkipVersion={onSkip}
-      />,
-    )
-
-    await userEvent.click(
-      screen.getByRole('button', { name: /skip this version/i }),
-    )
-    expect(window.localStorage.getItem('hsplanner.update.skipped_version')).toBe(
-      '0.5.0',
-    )
-    expect(onSkip).toHaveBeenCalledWith('0.5.0')
-    expect(onClose).toHaveBeenCalledTimes(1)
-  })
-
   it('Download & Install opens asset URL and closes', async () => {
     const onClose = vi.fn()
     const openSpy = vi
@@ -111,18 +90,12 @@ describe('<UpdateModal>', () => {
     expect(onClose).toHaveBeenCalled()
   })
 
-  it('Auto-install toggle persists', async () => {
+  it('offers no skip or auto-install controls', () => {
     render(<UpdateModal info={mockInfo} onClose={() => {}} />)
-    const checkbox = screen.getByRole('checkbox', {
-      name: /auto-install on quit/i,
-    })
-    expect(checkbox).not.toBeChecked()
-
-    await userEvent.click(checkbox)
-    expect(checkbox).toBeChecked()
-    expect(window.localStorage.getItem('hsplanner.update.auto_install')).toBe(
-      '1',
-    )
+    expect(
+      screen.queryByRole('button', { name: /skip this version/i }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
   })
 
   it('falls back gracefully when there is no body', () => {
