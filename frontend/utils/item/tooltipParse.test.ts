@@ -45,7 +45,7 @@ describe('parseTooltipLines — Tundra Hunter tooltip (real OCR)', () => {
     expect(ov.enhanced_defense).toBe(487)
     expect(ov.all_skills).toBe(3)
     expect(ov.cold_skills).toBe(3)
-    expect(ov.extra_damage_frozen).toBe(15)
+    expect(ov.extra_dmg_to_deep_frozen).toBe(15)
     expect(ov.cold_skill_damage).toBe(25)
     expect(ov.ignore_cold_res).toBe(23)
     expect(ov.cold_resistance).toBe(40)
@@ -158,7 +158,7 @@ describe('parseTooltipLines — Grimbone tooltip (real OCR)', () => {
   })
 
   test('pins Replenish Mana implicit despite missing left bracket in OCR', () => {
-    expect(result.equipped?.implicitOverrides?.mana_replenish).toBe(115)
+    expect(result.equipped?.implicitOverrides?.mana_replenish_pct).toBe(115)
     expect(result.lines.filter((l) => l.status === 'warning')).toHaveLength(0)
   })
 })

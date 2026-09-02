@@ -34,9 +34,9 @@ describe('S10 item changes', () => {
     expect(procs[0]).toMatchObject({ trigger: 'on_kill', chance: 4 })
   })
 
-  it('Amulet of Colosseum implicit is % increased attack speed, not flat APS', () => {
+  it('Amulet of Colosseum implicit is total (more) attack speed, not flat APS', () => {
     const impl = item('amulet_heroic_amulet_of_colosseum').implicit as Rec
-    expect(impl.increased_attack_speed).toEqual([5, 10])
+    expect(impl.increased_attack_speed_more).toEqual([5, 10])
     expect(impl.attacks_per_second).toBeUndefined()
     expect(impl.all_skills).toEqual([2, 4])
   })
@@ -112,7 +112,7 @@ describe('S10 item changes', () => {
     })
   })
 
-  it('Jar of Parasites charm: "Reduced by -25%" in game is a real 25% reduction', () => {
+  it('Jar of Parasites charm: "Reduced by -25%" is stored raw as a -25 drawback', () => {
     const jar = item('s10_jar_of_parasites')
     expect(jar.grade).toBe('SS')
     expect(jar.requiresLevel).toBe(100)
@@ -120,8 +120,8 @@ describe('S10 item changes', () => {
     expect(jar.implicit).toEqual({
       all_skills: [2, 3],
       skill_haste: [10, 100],
-      physical_damage_reduction: 25,
-      magic_damage_reduction: 25,
+      physical_damage_reduction: -25,
+      magic_damage_reduction: -25,
     })
   })
 
@@ -205,7 +205,7 @@ describe('S10 item changes', () => {
     expect(pendant.implicit).toEqual({
       all_skills: [2, 3],
       increased_attack_speed: [25, 35],
-      enemy_arcane_resist: 15,
+      ignore_arcane_res: 15,
       magic_skill_damage: [20, 35],
       guardian_additional_attack: 15,
       guardian_attack_range: [50, 75],
@@ -274,7 +274,7 @@ describe('S10 item changes', () => {
       projectile_speed: 15,
       to_strength: 50,
       increased_dexterity: 6,
-      enhanced_damage_based_on_level: 165,
+      enhanced_damage_based_on_level: 275,
     })
   })
 
@@ -470,7 +470,7 @@ describe('S10 item changes', () => {
       all_skills: 2,
       physical_skills: [3, 5],
       crit_chance: 35,
-      increased_attack_rating: 10,
+      attack_rating_pct: 10,
       attack_rating: 1250,
       crit_damage: [90, 125],
       to_strength: [50, 75],
@@ -489,7 +489,9 @@ describe('S10 item changes', () => {
       all_skills: [2, 3],
       cold_skills: [2, 5],
       cold_resistance_converted_to_cold_damage: 15,
-      faster_cast_rate: 50,
+      faster_cast_rate_more: -50,
+      follower_relic_damage: [200, 300],
+      follower_relic_attack_speed: [10, 20],
       extra_dmg_to_deep_frozen: [25, 40],
       flat_cold_skill_damage: [35, 55],
       cold_skill_damage: [55, 75],
@@ -539,7 +541,7 @@ describe('S10 item changes', () => {
       all_skills: [4, 6],
       melee_range: 40,
       increased_attack_speed: [15, 30],
-      less_dmg_with_cd_skills: 80,
+      less_dmg_with_cd_skills: -80,
       crit_chance: 25,
       life_steal: 10,
       crit_damage: 66,

@@ -14,10 +14,7 @@
         450,
         500
       ],
-      "all_skills": [
-        4,
-        5
-      ],
+      "all_skills": 4,
       "damage_mitigation": [
         11,
         15
@@ -64,7 +61,7 @@
         75
       ],
       "buffing_aura_effectiveness": [
-        80,
+        85,
         125
       ],
       "all_skills": 3
@@ -192,14 +189,7 @@
         25,
         35
       ],
-      "mana_replenish": [
-        50,
-        75
-      ],
-      "faster_hit_recovery": [
-        40,
-        75
-      ],
+      "faster_hit_recovery": 75,
       "physical_damage_reduction": [
         8,
         12
@@ -213,10 +203,14 @@
         25
       ],
       "magic_find": [
-        28,
-        50
+        35,
+        60
       ],
-      "mana_based_on_level": 525
+      "mana_based_on_level": 525,
+      "mana_replenish_pct": [
+        50,
+        75
+      ]
     },
     "sockets": 2,
     "maxSockets": 3
@@ -257,10 +251,6 @@
         35
       ],
       "ignore_fire_res": 20,
-      "mana_replenish": [
-        75,
-        125
-      ],
       "fire_absorption": 10,
       "all_resistances": [
         20,
@@ -270,7 +260,11 @@
         15,
         25
       ],
-      "life_based_on_level": 475
+      "life_based_on_level": 475,
+      "mana_replenish_pct": [
+        75,
+        125
+      ]
     }
   },
   {
@@ -288,10 +282,7 @@
         150,
         165
       ],
-      "all_skills": [
-        1,
-        2
-      ],
+      "all_skills": 2,
       "physical_skills": 3,
       "increased_bleeding_damage": [
         20,
@@ -353,7 +344,7 @@
         20,
         25
       ],
-      "mana_replenish": [
+      "mana_replenish_pct": [
         75,
         150
       ]
@@ -479,18 +470,18 @@
         50,
         75
       ],
-      "life_replenish": [
-        75,
-        100
-      ],
       "faster_hit_recovery": 100,
       "increased_life": [
         22,
         30
       ],
       "damage_return": [
-        750,
-        1000
+        50,
+        75
+      ],
+      "life_replenish_pct": [
+        75,
+        100
       ]
     },
     "sockets": 4,
@@ -543,7 +534,8 @@
       "all_resistances": [
         25,
         35
-      ]
+      ],
+      "magic_absorption": 6
     },
     "sockets": 2,
     "maxSockets": 3,
@@ -566,7 +558,7 @@
     "slot": "helmet",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 92,
     "defenseMin": 150,
     "defenseMax": 200,
     "implicit": {
@@ -602,7 +594,7 @@
         30,
         50
       ],
-      "mana_replenish": [
+      "mana_replenish_pct": [
         50,
         100
       ]
@@ -649,11 +641,11 @@
         20,
         50
       ],
-      "mana_replenish": [
+      "all_resistances": 50,
+      "mana_replenish_pct": [
         100,
         150
-      ],
-      "all_resistances": 50
+      ]
     },
     "sockets": 1,
     "maxSockets": 4,
@@ -1002,7 +994,7 @@
         10,
         20
       ],
-      "ignore_lightning_res": [
+      "ignore_fire_res": [
         15,
         35
       ]
@@ -1036,7 +1028,10 @@
         10,
         20
       ],
-      "ailment_damage_all": 20,
+      "ailment_damage_all": [
+        15,
+        20
+      ],
       "max_all_resistances": [
         1,
         3
@@ -1054,7 +1049,7 @@
     "slot": "helmet",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
+    "requiresLevel": 87,
     "defenseMin": 42,
     "defenseMax": 54,
     "implicit": {
@@ -1064,7 +1059,7 @@
       ],
       "life": 75,
       "mana": 75,
-      "all_resistances": 10,
+      "all_resistances": 15,
       "magic_find": 15,
       "faster_cast_rate": [
         40,
@@ -1146,7 +1141,7 @@
         15,
         30
       ],
-      "mana_replenish": [
+      "mana_replenish_pct": [
         50,
         75
       ]
@@ -1227,11 +1222,7 @@
         130
       ],
       "life_based_on_level": 385,
-      "damage_based_on_level": 35,
-      "open_wound_chance": [
-        10,
-        15
-      ]
+      "damage_based_on_level": 35
     }
   },
   {
@@ -1256,11 +1247,24 @@
       "to_strength": 30,
       "to_dexterity": 30,
       "life": [
-        30,
-        40
+        120,
+        160
       ],
       "arcane_resistance": 45,
-      "poison_resistance": 45
+      "poison_resistance": 45,
+      "to_intelligence": 30,
+      "skill_haste": [
+        15,
+        25
+      ],
+      "flat_poison_skill_damage": [
+        12,
+        24
+      ],
+      "all_resistances": [
+        10,
+        15
+      ]
     },
     "setId": "doctor_s_medkit"
   },
@@ -1329,19 +1333,23 @@
     "slot": "helmet",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 52,
-    "defenseMin": 42,
-    "defenseMax": 54,
+    "requiresLevel": 92,
+    "defenseMin": 62,
+    "defenseMax": 74,
     "implicit": {
       "enhanced_defense": [
-        80,
-        130
+        380,
+        430
       ],
       "fire_skills": 1,
       "to_energy": 10,
       "life": 15,
       "mana": 30,
-      "fire_resistance": 40
+      "fire_resistance": 40,
+      "intelligence_converted_to_fire_skill_dmg": [
+        4,
+        8
+      ]
     },
     "setId": "flames_of_divinity"
   },
@@ -1482,7 +1490,7 @@
         160
       ],
       "poison_skills": [
-        0,
+        1,
         2
       ],
       "life_steal": [
@@ -1505,6 +1513,10 @@
       "additive_poison_damage": [
         280,
         320
+      ],
+      "to_intelligence": [
+        20,
+        30
       ]
     }
   },
@@ -1627,8 +1639,7 @@
       "light_radius": [
         1,
         2
-      ],
-      "mana_replenish": 15
+      ]
     },
     "sockets": 0,
     "maxSockets": 3,
@@ -1683,7 +1694,7 @@
         160
       ],
       "to_vitality": 10,
-      "life": 40,
+      "life": 350,
       "life_per_kill": 15
     },
     "setId": "juggernaut_s_rampart",
@@ -1830,10 +1841,7 @@
         20,
         40
       ],
-      "all_skills": [
-        0,
-        1
-      ],
+      "all_skills": 1,
       "to_energy": 20,
       "to_intelligence": 10
     }
@@ -1904,7 +1912,10 @@
         30,
         35
       ],
-      "mana_replenish": 90
+      "mana_replenish_pct": [
+        75,
+        125
+      ]
     },
     "sockets": 2,
     "maxSockets": 2
@@ -1934,7 +1945,7 @@
         8,
         20
       ],
-      "damage_mitigation": 3
+      "damage_mitigation": -3
     },
     "setId": "mevius_eye_of_chaos"
   },
@@ -2033,19 +2044,27 @@
     "slot": "helmet",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
-    "defenseMin": 42,
-    "defenseMax": 54,
+    "requiresLevel": 93,
+    "defenseMin": 72,
+    "defenseMax": 84,
     "implicit": {
       "enhanced_defense": [
-        80,
-        130
+        280,
+        330
       ],
       "to_strength": 8,
-      "to_dexterity": 15,
+      "to_dexterity": 35,
       "fire_resistance": [
         25,
         35
+      ],
+      "increased_attack_speed": [
+        20,
+        30
+      ],
+      "deadly_blow": [
+        5,
+        20
       ]
     },
     "setId": "black_beard_s_remains"
@@ -2078,8 +2097,8 @@
         55
       ],
       "to_strength": [
-        20,
-        35
+        25,
+        40
       ],
       "to_vitality": [
         10,
@@ -2116,10 +2135,6 @@
         4
       ],
       "open_wounds": [
-        5,
-        10
-      ],
-      "open_wound_chance": [
         5,
         10
       ]
@@ -2178,11 +2193,15 @@
         130
       ],
       "to_strength": 10,
-      "to_vitality": 10,
+      "to_vitality": [
+        20,
+        30
+      ],
       "life": [
-        50,
-        60
-      ]
+        160,
+        260
+      ],
+      "to_intelligence": 25
     },
     "setId": "redneck_s_work_gear"
   },
@@ -2193,7 +2212,7 @@
     "slot": "helmet",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 79,
+    "requiresLevel": 89,
     "defenseMin": 60,
     "defenseMax": 80,
     "implicit": {
@@ -2210,6 +2229,10 @@
         30
       ],
       "lightning_resistance": [
+        20,
+        30
+      ],
+      "skill_haste": [
         20,
         30
       ]
@@ -2292,7 +2315,7 @@
         5
       ],
       "increased_mana": 25,
-      "damage_return": 1500,
+      "damage_return": 65,
       "damage_recouped_as_mana": [
         25,
         35
@@ -2335,8 +2358,7 @@
       "all_skills": 1,
       "to_vitality": 15,
       "life_replenish_pct": 10,
-      "increased_life": 2,
-      "life_replenish": 10
+      "increased_life": 2
     },
     "setId": "shield_bearer_s_sanctuary",
     "skillBonuses": {
@@ -2368,8 +2390,7 @@
       "all_resistances": [
         15,
         20
-      ],
-      "cooldown_recovery": 15
+      ]
     },
     "uniqueEffects": [
       "Half Freeze Duration"
@@ -2625,13 +2646,14 @@
       ],
       "to_energy": 10,
       "ignore_arcane_res": [
-        3,
-        8
+        8,
+        15
       ],
       "mana_replenish_pct": [
         10,
         15
-      ]
+      ],
+      "all_resistances": 10
     },
     "setId": "thor_s_thunder_hammer"
   },
@@ -2742,11 +2764,17 @@
       ],
       "attack_rating_pct": 5,
       "attack_rating": [
-        50,
-        70
+        250,
+        350
       ],
       "to_strength": 20,
-      "to_dexterity": 10
+      "to_dexterity": 10,
+      "lightning_skills": [
+        1,
+        2
+      ],
+      "intelligence_based_on_level": 50,
+      "defense_ignored": 25
     },
     "setId": "valkyrie_s_battle_gear"
   },
@@ -2784,6 +2812,14 @@
       "buffing_aura_effectiveness_increased": [
         35,
         50
+      ],
+      "buffing_aura_range": [
+        35,
+        50
+      ],
+      "buffing_aura_effectiveness": [
+        35,
+        50
       ]
     }
   },
@@ -2805,7 +2841,8 @@
       "faster_cast_rate": 20,
       "to_energy": 15,
       "to_vitality": 10,
-      "life_per_kill": 12
+      "life_per_kill": 12,
+      "mana_per_kill": 12
     }
   },
   {
@@ -2823,7 +2860,7 @@
         80,
         130
       ],
-      "poison_skills": 1,
+      "poison_skills": 2,
       "arcane_skills": 1,
       "to_energy": 25,
       "mana_replenish_pct": 15,
@@ -2986,7 +3023,7 @@
     "slot": "helmet",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 62,
+    "requiresLevel": 87,
     "defenseMin": 42,
     "defenseMax": 54,
     "implicit": {
@@ -2995,10 +3032,20 @@
         130
       ],
       "arcane_skills": 2,
-      "to_energy": 15,
+      "to_energy": [
+        30,
+        40
+      ],
       "to_vitality": 5,
-      "mana": 30,
-      "increased_mana": 2
+      "mana": 500,
+      "increased_mana": [
+        5,
+        20
+      ],
+      "flat_magic_skill_damage": [
+        18,
+        48
+      ]
     },
     "setId": "zealot_s_prophecy"
   },

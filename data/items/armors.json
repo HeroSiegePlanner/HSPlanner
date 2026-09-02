@@ -102,8 +102,8 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "common",
-    "defenseMin": 10,
-    "defenseMax": 18,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "sockets": 0,
     "maxSockets": 4
   },
@@ -113,8 +113,8 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "common",
-    "defenseMin": 10,
-    "defenseMax": 18,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "sockets": 0,
     "maxSockets": 4
   },
@@ -124,8 +124,8 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "common",
-    "defenseMin": 10,
-    "defenseMax": 18,
+    "defenseMin": 22,
+    "defenseMax": 48,
     "sockets": 0,
     "maxSockets": 4
   },
@@ -247,7 +247,10 @@
         20,
         25
       ],
-      "all_resistances": 35,
+      "all_resistances": [
+        15,
+        25
+      ],
       "intelligence_converted_to_arcane_skill_dmg": [
         2,
         5
@@ -359,16 +362,16 @@
       ],
       "to_armor": 40,
       "damage_return": [
-        1250,
-        1500
-      ],
-      "all_damage_taken_reduced_pct": [
-        11,
-        16
+        125,
+        175
       ],
       "all_resistances": [
         25,
         50
+      ],
+      "damage_mitigation": [
+        11,
+        16
       ]
     },
     "sockets": 4,
@@ -411,10 +414,6 @@
         3,
         5
       ],
-      "extra_damage_burning": [
-        15,
-        25
-      ],
       "all_attributes": 20,
       "fire_skill_damage": [
         25,
@@ -427,6 +426,10 @@
       "fire_resistance": [
         30,
         50
+      ],
+      "extra_fire_dmg_to_burning": [
+        15,
+        25
       ]
     },
     "sockets": 3,
@@ -562,10 +565,6 @@
         3,
         5
       ],
-      "extra_damage_frozen": [
-        15,
-        25
-      ],
       "all_attributes": 30,
       "cold_skill_damage": [
         25,
@@ -578,6 +577,10 @@
       "cold_resistance": [
         30,
         50
+      ],
+      "extra_dmg_to_deep_frozen": [
+        15,
+        25
       ]
     },
     "sockets": 3,
@@ -687,7 +690,7 @@
         35,
         75
       ],
-      "all_damage_taken_reduced_pct": 12
+      "damage_mitigation": 12
     }
   },
   {
@@ -714,12 +717,16 @@
         100
       ],
       "damage_return": [
-        1250,
-        1500
+        40,
+        65
       ],
       "vitality_converted_to_magic_skill_dmg": [
         10,
         15
+      ],
+      "extra_damage_poisoned": [
+        20,
+        35
       ]
     },
     "sockets": 6,
@@ -738,7 +745,7 @@
     "slot": "armor",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 96,
     "defenseMin": 330,
     "defenseMax": 440,
     "implicit": {
@@ -826,7 +833,7 @@
     "slot": "armor",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 74,
     "defenseMin": 280,
     "defenseMax": 320,
     "implicit": {
@@ -838,13 +845,13 @@
         2,
         3
       ],
-      "all_damage_taken_reduced_pct": [
-        8,
-        12
-      ],
       "all_resistances": [
         30,
         40
+      ],
+      "damage_mitigation": [
+        8,
+        12
       ]
     },
     "sockets": 5,
@@ -1065,7 +1072,8 @@
         4,
         10
       ],
-      "mana_replenish_pct": 20
+      "mana_replenish_pct": 20,
+      "all_skills": 2
     }
   },
   {
@@ -1153,8 +1161,8 @@
         2
       ],
       "faster_cast_rate": [
-        10,
-        15
+        20,
+        30
       ],
       "to_energy": [
         15,
@@ -1164,6 +1172,10 @@
       "increased_mana": [
         10,
         15
+      ],
+      "all_resistances": [
+        20,
+        25
       ]
     }
   },
@@ -1214,11 +1226,14 @@
     "defenseMin": 60,
     "defenseMax": 90,
     "implicit": {
-      "enhanced_defense": 5,
+      "enhanced_defense": [
+        160,
+        180
+      ],
       "all_attributes": 10,
       "damage_return": [
-        150,
-        300
+        15,
+        25
       ],
       "physical_damage_reduction": 10,
       "all_resistances": [
@@ -1336,7 +1351,6 @@
         3,
         10
       ],
-      "life_replenish": 50,
       "dexterity_based_on_level": 35
     },
     "setId": "blood_bond",
@@ -1350,18 +1364,17 @@
     "slot": "armor",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
-    "defenseMin": 130,
-    "defenseMax": 160,
+    "requiresLevel": 97,
+    "defenseMin": 230,
+    "defenseMax": 260,
     "implicit": {
       "enhanced_defense": [
-        130,
-        160
+        530,
+        660
       ],
-      "all_skills": 1,
-      "ignore_lightning_res": [
-        20,
-        25
+      "all_skills": [
+        3,
+        4
       ],
       "life": [
         25,
@@ -1486,14 +1499,17 @@
         2
       ],
       "increased_attack_speed": [
-        20,
-        40
+        8,
+        20
       ],
       "attack_rating": [
-        110,
-        150
+        210,
+        250
       ],
-      "life_steal": 10,
+      "life_steal": [
+        5,
+        7
+      ],
       "defense_ignored": 30,
       "to_strength": 50,
       "defense_vs_missiles": [
@@ -1589,7 +1605,11 @@
         10,
         20
       ],
-      "arcane_resistance": 50
+      "arcane_resistance": 50,
+      "enhanced_defense": [
+        130,
+        160
+      ]
     },
     "setId": "satan_s_redemption"
   },
@@ -1611,10 +1631,6 @@
       "fire_skill_damage": [
         25,
         40
-      ],
-      "ignore_lightning_res": [
-        15,
-        25
       ],
       "fire_resistance": [
         50,
@@ -1807,10 +1823,10 @@
         260
       ],
       "all_skills": [
-        2,
-        4
+        4,
+        6
       ],
-      "faster_cast_rate": 10,
+      "faster_cast_rate": 30,
       "to_energy": [
         25,
         35
@@ -1819,7 +1835,13 @@
       "increased_mana": [
         15,
         25
-      ]
+      ],
+      "to_intelligence": [
+        35,
+        65
+      ],
+      "all_attributes": 25,
+      "movement_speed": 30
     }
   },
   {
@@ -1829,22 +1851,34 @@
     "slot": "armor",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
-    "defenseMin": 130,
-    "defenseMax": 160,
+    "requiresLevel": 87,
+    "defenseMin": 230,
+    "defenseMax": 260,
     "implicit": {
       "enhanced_defense": [
-        130,
-        160
+        430,
+        560
       ],
       "to_energy": 20,
-      "to_vitality": 10,
-      "all_attributes": 5,
+      "to_vitality": 50,
+      "all_attributes": [
+        30,
+        45
+      ],
       "mana_replenish_pct": 20,
       "increased_mana": [
         2,
         5
-      ]
+      ],
+      "fire_absorption": [
+        10,
+        15
+      ],
+      "mana_costs_decreased": [
+        10,
+        15
+      ],
+      "to_intelligence": 50
     },
     "setId": "flames_of_divinity"
   },
@@ -1956,7 +1990,7 @@
     "slot": "armor",
     "rarity": "satanic",
     "grade": "D",
-    "requiresLevel": 12,
+    "requiresLevel": 13,
     "defenseMin": 10,
     "defenseMax": 18,
     "implicit": {
@@ -2024,10 +2058,6 @@
         4,
         8
       ],
-      "increased_attack_rating": [
-        5,
-        10
-      ],
       "strength_based_on_level": 75
     },
     "sockets": 2,
@@ -2052,15 +2082,12 @@
         1,
         2
       ],
-      "faster_cast_rate": 30,
+      "faster_cast_rate": 20,
       "physical_damage_reduction": [
         10,
         15
       ],
-      "all_resistances": [
-        20,
-        35
-      ]
+      "all_resistances": 20
     }
   },
   {
@@ -2084,12 +2111,12 @@
       ],
       "to_vitality": 10,
       "flat_poison_skill_damage": [
-        7,
-        18
+        8,
+        15
       ],
       "ignore_poison_res": [
-        8,
-        20
+        10,
+        15
       ],
       "all_resistances": 10,
       "poison_resistance": 50,
@@ -2167,10 +2194,6 @@
         20,
         30
       ],
-      "life_replenish": [
-        10,
-        15
-      ],
       "max_fire_resistance": 5
     },
     "sockets": 0,
@@ -2196,7 +2219,7 @@
       "to_intelligence": 10,
       "cold_skill_damage": [
         15,
-        20
+        25
       ],
       "cold_resistance": 50,
       "ignore_cold_res": [
@@ -2232,7 +2255,7 @@
         180
       ],
       "movement_speed": [
-        -4,
+        -5,
         10
       ],
       "to_vitality": 15,
@@ -2243,6 +2266,10 @@
       ],
       "magic_damage_reduction": [
         4,
+        10
+      ],
+      "all_resistances": [
+        5,
         10
       ]
     }
@@ -2297,7 +2324,9 @@
       ],
       "mana_per_kill": 8,
       "lightning_resistance": 50,
-      "max_lightning_resistance": 5
+      "max_lightning_resistance": 5,
+      "lightning_skills": 1,
+      "all_resistances": 15
     },
     "setId": "justiciar_s_thunder_raiment"
   },
@@ -2384,7 +2413,7 @@
         60,
         100
       ],
-      "life": 1,
+      "life": 1000,
       "increased_life": [
         15,
         25
@@ -2420,7 +2449,6 @@
         30
       ],
       "mana_replenish_pct": 50,
-      "mana_replenish": 50,
       "energy_based_on_level": 35
     },
     "sockets": 0,
@@ -2441,7 +2469,10 @@
         130,
         160
       ],
-      "mana_steal": 5,
+      "mana_steal": [
+        8,
+        12
+      ],
       "to_strength": 20,
       "to_dexterity": 10,
       "additive_fire_damage": [
@@ -2450,7 +2481,8 @@
       ],
       "cold_resistance": 40,
       "fire_resistance": 40,
-      "lightning_resistance": 40
+      "lightning_resistance": 40,
+      "additive_physical_damage": 25
     },
     "setId": "master_s_legacy"
   },
@@ -2507,7 +2539,6 @@
       "mana_replenish_pct": 15,
       "physical_damage_reduction": 8,
       "arcane_resistance": 50,
-      "mana_replenish": 15,
       "max_arcane_resistance": 5
     },
     "sockets": 0,
@@ -2530,14 +2561,22 @@
         60
       ],
       "increased_attack_speed": [
-        30,
-        40
+        12,
+        20
       ],
       "life_steal": [
         3,
         5
       ],
-      "arcane_skill_damage": 8
+      "arcane_skill_damage": 8,
+      "mana_steal": [
+        3,
+        5
+      ],
+      "all_resistances": [
+        5,
+        10
+      ]
     }
   },
   {
@@ -2558,10 +2597,6 @@
       "fire_skill_damage": [
         10,
         15
-      ],
-      "ignore_lightning_res": [
-        20,
-        30
       ],
       "fire_resistance": 40,
       "ignore_fire_res": [
@@ -2639,10 +2674,6 @@
       "defense": [
         110,
         150
-      ],
-      "life_replenish": [
-        10,
-        15
       ]
     },
     "sockets": 3,
@@ -2673,8 +2704,7 @@
       "explosion_aoe": [
         15,
         30
-      ],
-      "all_damage_taken_reduced_pct": -3
+      ]
     },
     "sockets": 2,
     "maxSockets": 2,
@@ -2696,10 +2726,6 @@
         225
       ],
       "fire_skills": 2,
-      "ignore_lightning_res": [
-        8,
-        25
-      ],
       "faster_hit_recovery": 75,
       "damage_mitigation": 8,
       "fire_resistance": 75,
@@ -2707,7 +2733,6 @@
         8,
         25
       ],
-      "all_damage_taken_reduced_pct": 8,
       "max_fire_resistance": 5
     },
     "sockets": 1,
@@ -2720,17 +2745,23 @@
     "slot": "armor",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 60,
-    "defenseMin": 135,
-    "defenseMax": 165,
+    "requiresLevel": 84,
+    "defenseMin": 535,
+    "defenseMax": 565,
     "implicit": {
       "enhanced_defense": [
-        260,
-        300
+        660,
+        700
       ],
-      "all_skills": 1,
-      "physical_damage_reduction": 10,
-      "all_resistances": 20,
+      "all_skills": [
+        3,
+        5
+      ],
+      "physical_damage_reduction": [
+        10,
+        20
+      ],
+      "all_resistances": 30,
       "magic_find_based_on_level": 100
     },
     "sockets": 3,
@@ -2875,26 +2906,34 @@
     "slot": "armor",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
-    "defenseMin": 130,
-    "defenseMax": 160,
+    "requiresLevel": 97,
+    "defenseMin": 230,
+    "defenseMax": 260,
     "implicit": {
       "enhanced_defense": [
-        130,
-        160
+        530,
+        660
       ],
       "movement_speed": [
         10,
         20
       ],
       "to_dexterity": [
-        10,
-        20
+        40,
+        65
       ],
-      "to_vitality": 15,
+      "to_vitality": 50,
       "flat_fire_skill_damage": [
         12,
         26
+      ],
+      "life": [
+        500,
+        750
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        4,
+        8
       ]
     },
     "setId": "black_beard_s_remains"
@@ -2946,8 +2985,8 @@
     "defenseMax": 240,
     "implicit": {
       "enhanced_defense": [
-        1,
-        3
+        160,
+        200
       ],
       "flat_cold_skill_damage": [
         18,
@@ -2962,10 +3001,6 @@
         30
       ],
       "cold_resistance": 40,
-      "mana_replenish": [
-        20,
-        30
-      ],
       "defense": [
         1,
         3
@@ -2991,10 +3026,7 @@
         250,
         350
       ],
-      "all_skills": [
-        2,
-        3
-      ],
+      "all_skills": 2,
       "physical_damage_reduction": [
         10,
         15
@@ -3081,7 +3113,7 @@
     "slot": "armor",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
+    "requiresLevel": 87,
     "defenseMin": 130,
     "defenseMax": 160,
     "implicit": {
@@ -3089,22 +3121,26 @@
         130,
         160
       ],
-      "all_skills": 2,
+      "all_skills": 3,
       "to_energy": [
-        10,
-        15
+        30,
+        45
       ],
       "to_vitality": [
         5,
         10
       ],
       "all_resistances": [
-        10,
+        25,
         30
       ],
       "magic_find": [
         20,
         30
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        4,
+        8
       ]
     },
     "setId": "the_holy_one"
@@ -3137,10 +3173,6 @@
         3
       ],
       "all_resistances": 15,
-      "life_replenish": [
-        10,
-        15
-      ],
       "life_based_on_level": 75
     },
     "sockets": 1,
@@ -3153,24 +3185,31 @@
     "slot": "armor",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 57,
-    "defenseMin": 130,
-    "defenseMax": 160,
+    "requiresLevel": 87,
+    "defenseMin": 430,
+    "defenseMax": 460,
     "implicit": {
       "enhanced_defense": [
-        160,
-        200
+        260,
+        300
       ],
-      "all_skills": 1,
+      "all_skills": [
+        3,
+        5
+      ],
       "physical_damage_reduction": [
         5,
         10
       ],
-      "all_resistances": 10,
+      "all_resistances": 30,
       "arcane_resistance": 45,
       "magic_find": [
-        10,
-        20
+        15,
+        30
+      ],
+      "flat_magic_skill_damage": [
+        30,
+        60
       ]
     },
     "setId": "guardian_s_of_the_sands"
@@ -3263,7 +3302,8 @@
       "max_arcane_resistance": [
         1,
         5
-      ]
+      ],
+      "damage_mitigation": 20
     },
     "sockets": 4,
     "maxSockets": 4,
@@ -3321,10 +3361,6 @@
       "deadly_blow": 15,
       "to_vitality": 40,
       "damage_mitigation": [
-        10,
-        15
-      ],
-      "all_damage_taken_reduced_pct": [
         10,
         15
       ],
@@ -3454,7 +3490,8 @@
       ],
       "arcane_resistance": 40,
       "cold_resistance": 40,
-      "lightning_resistance": 40
+      "lightning_resistance": 40,
+      "ignore_arcane_res": 15
     },
     "setId": "thor_s_thunder_hammer"
   },
@@ -3543,21 +3580,24 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 40,
-    "defenseMin": 60,
+    "defenseMin": 70,
     "defenseMax": 90,
     "implicit": {
       "enhanced_defense": [
-        160,
-        180
+        150,
+        300
       ],
-      "all_skills": 1,
+      "all_skills": [
+        1,
+        3
+      ],
       "movement_speed": [
         20,
         30
       ],
       "to_dexterity": 10,
-      "all_attributes": 5,
-      "faster_hit_recovery": 25,
+      "all_attributes": 20,
+      "faster_hit_recovery": 150,
       "all_resistances": 25
     },
     "setId": "traveler",
@@ -3584,8 +3624,8 @@
         2
       ],
       "lightning_skill_damage": [
-        25,
-        40
+        20,
+        30
       ],
       "faster_hit_recovery": 100,
       "lightning_resistance": [
@@ -3694,7 +3734,6 @@
         20,
         30
       ],
-      "life_replenish": 10,
       "vitality_based_on_level": 25
     },
     "sockets": 1,
@@ -3746,15 +3785,20 @@
         350
       ],
       "ignore_lightning_res": [
-        7,
-        15
+        15,
+        20
       ],
       "physical_damage_reduction": [
         2,
         8
       ],
       "lightning_resistance": 40,
-      "max_lightning_resistance": 5
+      "max_lightning_resistance": 5,
+      "flat_lightning_skill_damage": [
+        12,
+        24
+      ],
+      "increased_attack_speed": 20
     },
     "setId": "valkyrie_s_battle_gear"
   },
@@ -3787,7 +3831,6 @@
         10,
         20
       ],
-      "mana_replenish": 25,
       "max_arcane_resistance": 5
     },
     "setId": "venom_s_frame",
@@ -3970,14 +4013,14 @@
         40,
         125
       ],
-      "all_damage_taken_reduced_pct": -15,
       "all_resistances": [
         25,
         50
       ],
       "max_all_resistances": -10,
       "mana_based_on_level": 3500,
-      "energy_based_on_level": 300
+      "energy_based_on_level": 300,
+      "damage_mitigation": -15
     },
     "sockets": 6,
     "maxSockets": 6,
@@ -4071,7 +4114,7 @@
       "projectile_speed": 15,
       "to_strength": 50,
       "increased_dexterity": 6,
-      "enhanced_damage_based_on_level": 165
+      "enhanced_damage_based_on_level": 275
     },
     "procs": [
       {

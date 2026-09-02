@@ -86,10 +86,6 @@
       "all_attributes": [
         20,
         30
-      ],
-      "open_wound_chance": [
-        15,
-        25
       ]
     },
     "skillBonuses": {
@@ -116,10 +112,6 @@
       "magic_skill_damage": [
         30,
         45
-      ],
-      "cooldown_recovery": [
-        15,
-        25
       ]
     },
     "procs": [
@@ -142,7 +134,7 @@
     "implicit": {
       "all_skills": [
         3,
-        5
+        6
       ],
       "to_energy": [
         10,
@@ -152,8 +144,14 @@
         10,
         15
       ],
-      "all_attributes": 15,
-      "all_resistances": 30
+      "all_attributes": 20,
+      "all_resistances": 40,
+      "suppress_spell_hits": [
+        15,
+        20
+      ],
+      "magic_damage_reduction": 15,
+      "physical_damage_reduction": 15
     }
   },
   {
@@ -184,15 +182,11 @@
     "slot": "amulet",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "implicit": {
       "all_skills": [
         2,
         4
-      ],
-      "increased_attack_speed": [
-        5,
-        10
       ],
       "to_strength": [
         25,
@@ -201,6 +195,10 @@
       "increased_strength": [
         8,
         15
+      ],
+      "increased_attack_speed_more": [
+        5,
+        10
       ]
     },
     "sockets": 1,
@@ -213,7 +211,7 @@
     "slot": "amulet",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "implicit": {
       "fire_skills": [
         3,
@@ -223,15 +221,15 @@
         35,
         45
       ],
-      "extra_damage_burning": [
-        25,
-        35
-      ],
       "extra_fire_dmg_to_burning": [
         25,
         35
       ],
       "intelligence_converted_to_magic_skill_dmg": [
+        1,
+        5
+      ],
+      "intelligence_converted_to_fire_skill_dmg": [
         1,
         5
       ]
@@ -281,7 +279,7 @@
     "slot": "amulet",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 92,
     "implicit": {
       "enhanced_damage": [
         50,
@@ -385,7 +383,7 @@
     "slot": "amulet",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "implicit": {
       "all_skills": [
         2,
@@ -442,10 +440,7 @@
     "grade": "B",
     "requiresLevel": 38,
     "implicit": {
-      "faster_cast_rate": [
-        2,
-        4
-      ],
+      "faster_cast_rate": 20,
       "extra_damage_shadow_burning": [
         25,
         35
@@ -453,6 +448,10 @@
       "flat_arcane_skill_damage": [
         15,
         25
+      ],
+      "faster_cast_rate_more": [
+        2,
+        4
       ]
     }
   },
@@ -465,18 +464,25 @@
     "grade": "S",
     "requiresLevel": 81,
     "implicit": {
-      "to_vitality": 15,
+      "to_vitality": [
+        5,
+        30
+      ],
       "life_replenish_pct": [
-        8,
-        15
+        50,
+        75
       ],
       "life": [
-        35,
-        50
+        350,
+        500
       ],
       "increased_life": [
-        1,
-        4
+        2,
+        5
+      ],
+      "increased_vitality": [
+        4,
+        8
       ]
     },
     "setId": "anubi_s_eternal_life"
@@ -499,11 +505,7 @@
         5,
         15
       ],
-      "mana_replenish_pct": [
-        25,
-        40
-      ],
-      "mana_replenish": 100,
+      "mana_replenish_pct": 100,
       "increased_experience_gain_below_100": [
         25,
         50
@@ -520,16 +522,20 @@
     "grade": "A",
     "requiresLevel": 61,
     "implicit": {
-      "faster_cast_rate": 10,
-      "mana_steal": 4,
-      "to_energy": 15,
-      "magic_skill_damage": [
-        8,
-        15
-      ],
-      "mana": [
-        20,
+      "faster_cast_rate": [
+        15,
         30
+      ],
+      "mana_steal": 4,
+      "to_energy": 20,
+      "magic_skill_damage": 20,
+      "mana": [
+        250,
+        300
+      ],
+      "increased_energy": [
+        4,
+        8
       ]
     }
   },
@@ -563,10 +569,7 @@
     "grade": "S",
     "requiresLevel": 79,
     "implicit": {
-      "ignore_poison_res": [
-        5,
-        15
-      ],
+      "ignore_poison_res": 15,
       "poison_resistance": [
         40,
         60
@@ -602,10 +605,18 @@
         225
       ],
       "damage_return": [
-        75,
-        100
+        15,
+        30
       ],
-      "physical_damage_reduction": 5
+      "physical_damage_reduction": 5,
+      "increased_armor": [
+        10,
+        15
+      ],
+      "to_armor": [
+        10,
+        30
+      ]
     }
   },
   {
@@ -617,7 +628,10 @@
     "grade": "S",
     "requiresLevel": 90,
     "implicit": {
-      "to_energy": 10,
+      "to_energy": [
+        10,
+        30
+      ],
       "flat_arcane_skill_damage": [
         18,
         38
@@ -629,6 +643,10 @@
       "arcane_resistance": [
         40,
         50
+      ],
+      "energy_converted_to_magic_skill_dmg": [
+        5,
+        10
       ]
     },
     "setId": "bone_conjurer_s_regalia",
@@ -650,19 +668,20 @@
     "implicit": {
       "to_vitality": [
         15,
-        20
+        30
       ],
       "life_replenish_pct": [
         8,
         20
       ],
       "damage_return": [
-        40,
-        60
+        25,
+        40
       ],
-      "all_resistances": [
-        10,
-        30
+      "all_resistances": 20,
+      "vitality_converted_to_magic_skill_dmg": [
+        6,
+        10
       ]
     },
     "setId": "champion_s_valor"
@@ -682,10 +701,7 @@
         20,
         30
       ],
-      "increased_attack_speed": [
-        20,
-        35
-      ],
+      "increased_attack_speed": 20,
       "to_dexterity": 25,
       "increased_dexterity": [
         4,
@@ -706,23 +722,24 @@
     "grade": "S",
     "requiresLevel": 85,
     "implicit": {
-      "all_attributes": [
-        2,
-        4
-      ],
+      "all_attributes": 25,
       "arcane_skill_damage": [
-        4,
-        8
+        15,
+        25
       ],
       "life": [
         25,
         35
       ],
       "mana_per_kill": [
-        6,
-        12
+        8,
+        15
       ],
       "arcane_resistance": [
+        30,
+        50
+      ],
+      "increased_shadow_burning_damage": [
         30,
         50
       ]
@@ -812,6 +829,22 @@
       "additive_cold_damage": [
         370,
         410
+      ],
+      "flat_cold_skill_damage": [
+        26,
+        48
+      ],
+      "increased_frost_bite_damage": [
+        15,
+        25
+      ],
+      "cold_skills": [
+        2,
+        3
+      ],
+      "all_skills": [
+        1,
+        2
       ]
     }
   },
@@ -901,10 +934,7 @@
     "grade": "S",
     "requiresLevel": 81,
     "implicit": {
-      "ignore_arcane_res": [
-        5,
-        15
-      ],
+      "ignore_arcane_res": 15,
       "mana_replenish_pct": [
         10,
         15
@@ -936,10 +966,13 @@
       "crit_chance": 7,
       "attack_rating": 50,
       "additive_physical_damage": [
-        5,
-        12
+        15,
+        25
       ],
-      "to_armor": 8
+      "to_armor": [
+        10,
+        30
+      ]
     }
   },
   {
@@ -960,8 +993,8 @@
         6
       ],
       "damage_return": [
-        75,
-        125
+        35,
+        45
       ],
       "physical_damage_reduction": [
         5,
@@ -989,7 +1022,17 @@
         10
       ],
       "all_attributes": 15,
-      "all_resistances": 20
+      "all_resistances": 20,
+      "life": [
+        1,
+        1000
+      ],
+      "to_vitality": [
+        10,
+        20
+      ],
+      "increased_vitality": 5,
+      "vitality_converted_to_magic_skill_dmg": 5
     }
   },
   {
@@ -1016,6 +1059,15 @@
       "damage_reduced": [
         8,
         15
+      ],
+      "sentry_attack_speed": [
+        10,
+        20
+      ],
+      "sentry_duration": 15,
+      "sentry_damage": [
+        15,
+        25
       ]
     },
     "setId": "engineer_s_combat_gear"
@@ -1046,7 +1098,20 @@
       "increased_mana": [
         2,
         4
-      ]
+      ],
+      "sentry_attack_speed": [
+        5,
+        20
+      ],
+      "sentry_skills": [
+        2,
+        3
+      ],
+      "sentry_damage": [
+        10,
+        30
+      ],
+      "all_skills": 1
     }
   },
   {
@@ -1068,7 +1133,11 @@
       ],
       "life": [
         1,
-        350
+        500
+      ],
+      "to_vitality": [
+        1,
+        50
       ]
     }
   },
@@ -1081,7 +1150,10 @@
     "grade": "S",
     "requiresLevel": 82,
     "implicit": {
-      "physical_skills": 1,
+      "physical_skills": [
+        2,
+        3
+      ],
       "crushing_blow_chance": 15,
       "additive_physical_damage": [
         18,
@@ -1093,6 +1165,14 @@
       ],
       "damage_reduced": [
         5,
+        10
+      ],
+      "to_vitality": [
+        5,
+        40
+      ],
+      "vitality_converted_to_attack_dmg": [
+        6,
         10
       ]
     },
@@ -1112,7 +1192,7 @@
         2
       ],
       "life_steal": [
-        3,
+        4,
         7
       ],
       "additive_cold_damage": [
@@ -1135,10 +1215,7 @@
     "grade": "C",
     "requiresLevel": 27,
     "implicit": {
-      "increased_attack_speed": [
-        10,
-        20
-      ],
+      "increased_attack_speed": 20,
       "life_per_kill": 15,
       "increased_burning_damage": [
         10,
@@ -1172,8 +1249,8 @@
         8
       ],
       "additive_physical_damage": [
-        18,
-        38
+        22,
+        44
       ],
       "attack_damage": [
         4,
@@ -1210,6 +1287,18 @@
       "physical_damage_reduction": [
         5,
         10
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        6,
+        10
+      ],
+      "to_vitality": [
+        10,
+        30
+      ],
+      "damage_mitigation": [
+        4,
+        8
       ]
     },
     "setId": "juggernaut_s_rampart"
@@ -1221,7 +1310,7 @@
     "slot": "amulet",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 91,
+    "requiresLevel": 78,
     "implicit": {
       "all_skills": 1,
       "increased_attack_speed": 18,
@@ -1267,24 +1356,28 @@
     "requiresLevel": 100,
     "implicit": {
       "all_skills": [
-        1,
-        3
+        2,
+        4
       ],
       "increased_attack_speed": [
         20,
-        40
+        30
       ],
       "mana_steal": [
         6,
         15
       ],
       "defense_ignored": [
-        5,
+        15,
         25
       ],
       "to_dexterity": [
         25,
         40
+      ],
+      "increased_dexterity": [
+        10,
+        15
       ]
     }
   },
@@ -1379,12 +1472,20 @@
         38
       ],
       "cold_skill_damage": [
-        8,
-        15
+        15,
+        25
       ],
       "cold_resistance": [
         30,
         50
+      ],
+      "increased_energy": [
+        5,
+        10
+      ],
+      "extra_dmg_to_deep_frozen": [
+        15,
+        25
       ]
     },
     "setId": "plunderer_s_ensemble"
@@ -1396,7 +1497,7 @@
     "slot": "amulet",
     "rarity": "satanic_set",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 85,
     "implicit": {
       "all_attributes": 25,
       "all_resistances": 15,
@@ -1436,7 +1537,10 @@
     "requiresLevel": 9,
     "implicit": {
       "faster_cast_rate": 10,
-      "increased_attack_speed": 10,
+      "increased_attack_speed": [
+        12,
+        20
+      ],
       "to_vitality": [
         7,
         15
@@ -1444,6 +1548,12 @@
       "experience_gain": [
         1,
         3
+      ],
+      "all_skills": 1,
+      "crushing_blow_chance": 15,
+      "all_attributes": [
+        10,
+        15
       ]
     }
   },
@@ -1494,6 +1604,22 @@
       "mana_per_kill": [
         10,
         15
+      ],
+      "ailment_damage_all": [
+        30,
+        50
+      ],
+      "increased_ailment_frequency": [
+        15,
+        30
+      ],
+      "extra_damage_ailments": [
+        10,
+        20
+      ],
+      "all_skills": [
+        1,
+        2
       ]
     }
   },
@@ -1528,7 +1654,7 @@
     "slot": "amulet",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 78,
+    "requiresLevel": 83,
     "implicit": {
       "to_energy": 15,
       "mana_replenish_pct": [
@@ -1540,7 +1666,6 @@
         24
       ],
       "all_skills": 2,
-      "cooldown_recovery": 30,
       "flat_magic_skill_damage": [
         18,
         46
@@ -1548,7 +1673,8 @@
       "ignore_arcane_res": [
         10,
         30
-      ]
+      ],
+      "skill_haste": 30
     },
     "setId": "the_holy_one"
   },
@@ -1577,7 +1703,16 @@
       "fire_resistance": [
         20,
         50
-      ]
+      ],
+      "flat_fire_skill_damage": [
+        22,
+        33
+      ],
+      "ignore_fire_res": [
+        10,
+        20
+      ],
+      "intelligence_converted_to_fire_skill_dmg": 8
     },
     "setId": "satan_s_curse"
   },
@@ -1590,14 +1725,21 @@
     "grade": "A",
     "requiresLevel": 60,
     "implicit": {
-      "movement_speed": 20,
-      "attack_rating_pct": [
+      "movement_speed": [
+        20,
+        30
+      ],
+      "attack_rating_pct": 15,
+      "to_strength": 15,
+      "to_dexterity": [
+        15,
+        30
+      ],
+      "all_attributes": 4,
+      "increased_dexterity": [
         4,
         8
-      ],
-      "to_strength": 15,
-      "to_dexterity": 10,
-      "all_attributes": 4
+      ]
     }
   },
   {
@@ -1670,6 +1812,10 @@
       "attack_damage": [
         25,
         40
+      ],
+      "increased_all_attributes": [
+        1,
+        3
       ]
     },
     "setId": "skinwalker_s_bloodlust"
@@ -1685,14 +1831,17 @@
     "implicit": {
       "to_energy": 15,
       "to_vitality": 20,
-      "life_replenish_pct": [
-        15,
-        30
+      "life_replenish_pct": 200,
+      "mana_replenish_pct": 200,
+      "increased_vitality": [
+        1,
+        8
       ],
-      "mana_replenish_pct": [
-        20,
-        35
-      ]
+      "increased_energy": [
+        1,
+        8
+      ],
+      "all_resistances": 25
     }
   },
   {
@@ -1716,6 +1865,11 @@
       "all_resistances": [
         20,
         30
+      ],
+      "sentry_max_amount": 1,
+      "sentry_damage": [
+        15,
+        25
       ]
     },
     "setId": "god_of_the_elements"
@@ -1731,7 +1885,7 @@
     "implicit": {
       "all_attributes": [
         50,
-        100
+        80
       ],
       "physical_damage_reduction": [
         8,
@@ -1741,7 +1895,11 @@
         8,
         16
       ],
-      "all_resistances": 15
+      "all_resistances": 15,
+      "increased_all_attributes": [
+        3,
+        5
+      ]
     },
     "setId": "stickman_steve_s_destruction"
   },
@@ -1754,17 +1912,14 @@
     "grade": "B",
     "requiresLevel": 34,
     "implicit": {
-      "movement_speed": [
-        10,
-        20
-      ],
+      "movement_speed": 20,
       "gold_find": [
-        8,
+        10,
         15
       ],
       "magic_find": [
-        10,
-        15
+        15,
+        40
       ]
     },
     "skillBonuses": {
@@ -1810,18 +1965,18 @@
     "grade": "S",
     "requiresLevel": 93,
     "implicit": {
-      "all_attributes": 8,
+      "all_attributes": 15,
       "gold_find": [
         20,
         30
       ],
       "magic_find": [
-        20,
-        30
+        25,
+        40
       ],
       "experience_gain": [
-        1,
-        3
+        2,
+        5
       ]
     },
     "setId": "tal_s_reaping"
@@ -1890,18 +2045,21 @@
     "grade": "A",
     "requiresLevel": 66,
     "implicit": {
-      "movement_speed": 10,
-      "gold_find": [
-        15,
-        20
-      ],
-      "magic_find": [
+      "movement_speed": [
         10,
         30
       ],
+      "gold_find": [
+        12,
+        20
+      ],
+      "magic_find": [
+        25,
+        50
+      ],
       "experience_gain": [
         1,
-        3
+        4
       ]
     }
   },
@@ -1920,12 +2078,26 @@
       ],
       "all_attributes": 15,
       "magic_skill_damage": [
-        17,
-        30
+        15,
+        20
       ],
       "increased_intelligence": [
         2,
         5
+      ],
+      "all_skills": 2,
+      "increased_attack_speed": [
+        18,
+        28
+      ],
+      "enhanced_damage_based_on_level": 37.5,
+      "all_resistances": [
+        12,
+        18
+      ],
+      "additive_lightning_damage": [
+        135,
+        160
       ]
     }
   },
@@ -1939,7 +2111,7 @@
     "requiresLevel": 90,
     "implicit": {
       "increased_poisoned_damage": [
-        18,
+        15,
         25
       ],
       "flat_poison_skill_damage": [
@@ -1964,11 +2136,11 @@
         3
       ],
       "faster_cast_rate": 20,
-      "mana_cost_reduction": [
+      "mana_replenish_pct": 75,
+      "mana_costs_decreased": [
         5,
         10
-      ],
-      "mana_replenish_pct": 75
+      ]
     }
   },
   {
@@ -2007,16 +2179,20 @@
     "requiresLevel": 100,
     "implicit": {
       "magic_skill_damage": [
-        15,
+        45,
         60
       ],
       "all_resistances": [
-        15,
+        20,
         25
       ],
       "explosion_aoe": [
         50,
         75
+      ],
+      "explosion_damage": [
+        20,
+        30
       ]
     },
     "procs": [
@@ -2070,7 +2246,6 @@
         25,
         35
       ],
-      "enemy_arcane_resist": 15,
       "magic_skill_damage": [
         20,
         35
@@ -2080,7 +2255,8 @@
         50,
         75
       ],
-      "increased_life": -15
+      "increased_life": -15,
+      "ignore_arcane_res": 15
     },
     "sockets": 1,
     "maxSockets": 1

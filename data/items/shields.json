@@ -15,10 +15,13 @@
         280,
         340
       ],
-      "all_skills": 3,
+      "all_skills": [
+        4,
+        5
+      ],
       "skill_haste": [
-        5,
-        10
+        25,
+        40
       ],
       "to_vitality": 50,
       "faster_hit_recovery": 66,
@@ -38,11 +41,7 @@
         10,
         15
       ],
-      "all_resistances": 50,
-      "cooldown_recovery": [
-        25,
-        40
-      ]
+      "all_resistances": 50
     },
     "sockets": 3,
     "maxSockets": 3,
@@ -78,7 +77,10 @@
       ],
       "damage_reduced": 25,
       "faster_hit_recovery": 100,
-      "damage_return": 750,
+      "damage_return": [
+        38,
+        52
+      ],
       "all_resistances": 75
     },
     "sockets": 4,
@@ -143,8 +145,8 @@
     "slot": "offhand",
     "rarity": "common",
     "grade": "B",
-    "defenseMin": 22,
-    "defenseMax": 40,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "blockChance": 38,
     "sockets": 0,
     "maxSockets": 5
@@ -155,8 +157,8 @@
     "baseType": "Shield",
     "slot": "offhand",
     "rarity": "common",
-    "defenseMin": 22,
-    "defenseMax": 40,
+    "defenseMin": 52,
+    "defenseMax": 70,
     "blockChance": 42,
     "sockets": 0,
     "maxSockets": 5
@@ -251,7 +253,7 @@
         15,
         35
       ],
-      "faster_hit_recovery": 50,
+      "faster_hit_recovery": 75,
       "all_resistances": [
         40,
         60
@@ -281,7 +283,7 @@
     "slot": "offhand",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 95,
+    "requiresLevel": 96,
     "defenseMin": 130,
     "defenseMax": 150,
     "implicit": {
@@ -291,17 +293,17 @@
         360
       ],
       "arcane_skill_damage": [
-        30,
+        40,
         50
       ],
       "ignore_arcane_res": [
-        50,
+        40,
         60
       ],
       "faster_hit_recovery": 40,
       "all_resistances": [
-        20,
-        40
+        15,
+        30
       ],
       "arcane_resistance": 75,
       "max_arcane_resistance": 10
@@ -365,8 +367,8 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 92,
-    "defenseMin": 380,
-    "defenseMax": 400,
+    "defenseMin": 80,
+    "defenseMax": 100,
     "implicit": {
       "block_chance": 75,
       "enhanced_defense": [
@@ -374,27 +376,25 @@
         365
       ],
       "physical_skills": [
-        2,
+        3,
         5
       ],
       "increased_attack_speed": [
-        10,
-        20
+        25,
+        35
       ],
-      "to_vitality": [
-        30,
-        40
-      ],
+      "to_vitality": 25,
       "attack_damage": [
         10,
         30
       ],
       "faster_hit_recovery": 100,
-      "all_resistances": [
-        20,
-        40
-      ],
-      "life_based_on_level": 300
+      "all_resistances": 15,
+      "life_based_on_level": 300,
+      "melee_skills": [
+        4,
+        8
+      ]
     },
     "skillBonuses": {
       "Shield Slam": [
@@ -413,17 +413,17 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 96,
-    "defenseMin": 120,
-    "defenseMax": 140,
+    "defenseMin": 140,
+    "defenseMax": 160,
     "implicit": {
       "block_chance": 60,
       "enhanced_defense": [
-        240,
-        300
+        540,
+        600
       ],
       "cold_skills": [
-        3,
-        5
+        2,
+        4
       ],
       "flat_cold_skill_damage": [
         22,
@@ -434,10 +434,10 @@
         40
       ],
       "ignore_cold_res": [
-        8,
-        20
+        15,
+        25
       ],
-      "faster_hit_recovery": 60,
+      "faster_hit_recovery": 125,
       "cold_resistance": 75,
       "all_skills": [
         2,
@@ -529,8 +529,8 @@
       ],
       "faster_hit_recovery": 80,
       "damage_return": [
-        1200,
-        1650
+        42,
+        66
       ],
       "all_resistances": [
         25,
@@ -573,16 +573,16 @@
       ],
       "life": 666,
       "faster_hit_recovery": [
-        50,
-        80
+        120,
+        160
       ],
       "increased_life": [
         4,
         10
       ],
       "damage_return": [
-        125,
-        175
+        50,
+        75
       ],
       "damage_recouped_as_mana": 15,
       "physical_damage_reduction": [
@@ -590,7 +590,7 @@
         15
       ],
       "all_resistances": [
-        5,
+        15,
         30
       ]
     },
@@ -726,10 +726,7 @@
         20,
         35
       ],
-      "all_skills": [
-        0,
-        2
-      ],
+      "all_skills": 2,
       "enhanced_defense": [
         50,
         60
@@ -766,11 +763,7 @@
         4,
         8
       ],
-      "all_resistances": 10,
-      "all_damage_taken_reduced_pct": [
-        4,
-        8
-      ]
+      "all_resistances": 10
     },
     "procs": [
       {
@@ -907,15 +900,19 @@
       ],
       "to_vitality": 15,
       "damage_return": [
-        150,
-        300
+        40,
+        55
       ],
       "magic_damage_reduction": 15,
       "magic_find": [
         20,
         35
       ],
-      "defense_vs_missiles": 75
+      "defense_vs_missiles": 75,
+      "all_skills": [
+        1,
+        2
+      ]
     },
     "sockets": 1,
     "maxSockets": 1
@@ -927,27 +924,39 @@
     "slot": "offhand",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 60,
-    "defenseMin": 52,
-    "defenseMax": 70,
+    "requiresLevel": 100,
+    "defenseMin": 152,
+    "defenseMax": 170,
     "implicit": {
       "block_chance": 40,
       "enhanced_defense": [
-        90,
-        130
+        490,
+        530
       ],
-      "faster_cast_rate": [
-        10,
-        20
-      ],
+      "faster_cast_rate": 35,
       "flat_fire_skill_damage": [
-        12,
-        26
+        28,
+        58
       ],
-      "fire_skill_damage": 5,
+      "fire_skill_damage": [
+        25,
+        35
+      ],
       "mana_replenish_pct": 10,
       "mana": 25,
-      "fire_resistance": 50
+      "fire_resistance": [
+        40,
+        65
+      ],
+      "intelligence_converted_to_fire_skill_dmg": [
+        2,
+        5
+      ],
+      "max_fire_resistance": 5,
+      "damage_mitigation": [
+        5,
+        20
+      ]
     },
     "setId": "flames_of_divinity"
   },
@@ -1122,7 +1131,8 @@
         15
       ],
       "magic_damage_reduction": 10,
-      "lightning_resistance": 50
+      "lightning_resistance": 50,
+      "mana_per_kill": 10
     },
     "sockets": 1,
     "maxSockets": 1,
@@ -1135,7 +1145,7 @@
     "slot": "offhand",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 83,
+    "requiresLevel": 85,
     "defenseMin": 80,
     "defenseMax": 100,
     "implicit": {
@@ -1143,7 +1153,10 @@
         70,
         85
       ],
-      "enhanced_defense": 5,
+      "enhanced_defense": [
+        240,
+        300
+      ],
       "all_attributes": [
         15,
         25
@@ -1178,12 +1191,12 @@
         30
       ],
       "enhanced_defense": [
-        3,
-        5
+        90,
+        130
       ],
       "damage_return": [
-        400,
-        500
+        20,
+        35
       ],
       "physical_damage_reduction": [
         10,
@@ -1229,7 +1242,7 @@
         20,
         40
       ],
-      "magic_find_based_on_level": 35
+      "magic_find_based_on_level": 40
     },
     "sockets": 3,
     "maxSockets": 3
@@ -1355,7 +1368,7 @@
         40,
         75
       ],
-      "poison_length_reduced": 25
+      "poison_length_reduced": 50
     },
     "sockets": 0,
     "maxSockets": 4,
@@ -1394,8 +1407,8 @@
         400
       ],
       "life_steal": [
-        8,
-        12
+        6,
+        10
       ],
       "open_wounds": 25,
       "extra_damage_bleeding": [
@@ -1430,18 +1443,21 @@
         15
       ],
       "deadly_blow": [
-        15,
-        25
+        6,
+        15
       ],
       "crushing_blow_chance": [
-        15,
-        25
+        6,
+        15
       ],
       "attack_rating": [
         250,
         300
       ],
-      "extra_damage_bleeding": 20
+      "extra_damage_bleeding": [
+        5,
+        10
+      ]
     }
   },
   {
@@ -1463,7 +1479,7 @@
       "all_skills": 1,
       "arcane_skills": [
         2,
-        4
+        3
       ],
       "faster_cast_rate": [
         20,
@@ -1471,7 +1487,7 @@
       ],
       "to_energy": [
         25,
-        40
+        30
       ],
       "to_vitality": 20,
       "arcane_skill_damage": [
@@ -1483,8 +1499,8 @@
         70
       ],
       "mana": [
-        750,
-        1250
+        250,
+        500
       ]
     },
     "sockets": 1,
@@ -1512,8 +1528,8 @@
         5
       ],
       "damage_return": [
-        50,
-        100
+        30,
+        45
       ]
     },
     "procs": [
@@ -1556,13 +1572,8 @@
         50
       ],
       "life": [
-        750,
-        1
-      ],
-      "increased_attack_rating": 10,
-      "life_replenish": [
-        30,
-        50
+        420,
+        700
       ],
       "life_based_on_level": 650
     },
@@ -1680,7 +1691,11 @@
         3,
         8
       ],
-      "magic_skill_damage": 5
+      "magic_skill_damage": 5,
+      "ignore_fire_res": [
+        4,
+        7
+      ]
     }
   },
   {
@@ -1807,8 +1822,8 @@
     "implicit": {
       "block_chance": 50,
       "enhanced_defense": [
-        3,
-        5
+        90,
+        130
       ],
       "all_skills": 2,
       "movement_speed": 20,
@@ -1817,8 +1832,8 @@
         25
       ],
       "life": [
-        500,
-        750
+        380,
+        550
       ],
       "faster_hit_recovery": [
         45,
@@ -2084,8 +2099,8 @@
         2
       ],
       "life_steal": [
-        15,
-        25
+        8,
+        15
       ],
       "life": [
         100,

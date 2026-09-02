@@ -66,6 +66,10 @@
       "magic_find": [
         40,
         65
+      ],
+      "enemy_all_resist": [
+        15,
+        25
       ]
     }
   },
@@ -238,7 +242,7 @@
         35,
         50
       ],
-      "attack_rating_based_on_level": 300
+      "attack_rating_based_on_level": 500
     }
   },
   {
@@ -319,7 +323,8 @@
       "ignore_cold_res": 15,
       "ignore_lightning_res": 15,
       "ignore_poison_res": 15,
-      "ignore_arcane_res": 15
+      "ignore_arcane_res": 15,
+      "enemy_all_resist": 15
     }
   },
   {
@@ -381,10 +386,6 @@
     "requiresLevel": 54,
     "implicit": {
       "all_skills": 2,
-      "mana_cost_reduction": [
-        7,
-        15
-      ],
       "magic_skill_damage": [
         35,
         65
@@ -405,7 +406,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 75,
+    "requiresLevel": 100,
     "implicit": {
       "all_attributes": [
         25,
@@ -476,7 +477,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 75,
+    "requiresLevel": 100,
     "implicit": {
       "arcane_skills": [
         3,
@@ -503,7 +504,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "implicit": {
       "enhanced_damage": [
         40,
@@ -532,7 +533,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "implicit": {
       "all_attributes": 35,
       "magic_find": [
@@ -554,7 +555,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 92,
     "implicit": {
       "all_skills": 2,
       "crit_chance": [
@@ -592,7 +593,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 75,
+    "requiresLevel": 100,
     "implicit": {
       "fire_skills": [
         3,
@@ -619,7 +620,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "implicit": {}
   },
   {
@@ -629,7 +630,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 75,
+    "requiresLevel": 100,
     "implicit": {
       "poison_skills": [
         3,
@@ -656,7 +657,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 75,
+    "requiresLevel": 100,
     "implicit": {
       "cold_skills": [
         3,
@@ -779,7 +780,7 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 75,
+    "requiresLevel": 100,
     "implicit": {
       "lightning_skills": [
         3,
@@ -873,6 +874,10 @@
       "faster_hit_recovery": [
         10,
         20
+      ],
+      "projectile_skills": [
+        1,
+        2
       ]
     }
   },
@@ -963,7 +968,28 @@
       "effectiveness_of_non_buff_proc_relics": [
         100,
         250
-      ]
+      ],
+      "flat_poison_skill_damage": 33,
+      "increased_ailment_frequency": 15,
+      "faster_cast_rate_more": 10,
+      "increased_attack_speed_more": 10,
+      "extra_damage_ailments": 15,
+      "magic_skill_damage": 20,
+      "projectile_speed": 2,
+      "damage_mitigation": 8,
+      "damage_return": 50,
+      "all_resistances": 20,
+      "skill_haste": 15,
+      "intelligence_converted_to_magic_skill_dmg": 8,
+      "vitality_converted_to_magic_skill_dmg": 8,
+      "energy_converted_to_magic_skill_dmg": 8,
+      "vitality_converted_to_attack_dmg": 8,
+      "ailment_damage_all": 15,
+      "explosion_damage": 25,
+      "sentry_damage": 25,
+      "sentry_attack_speed": 15,
+      "guardian_damage": 25,
+      "guardian_attack_speed": 15
     }
   },
   {
@@ -1078,8 +1104,8 @@
     "requiresLevel": 100,
     "implicit": {
       "skill_relic_damage": [
-        75,
-        125
+        40,
+        50
       ],
       "skill_relic_projectile_size": [
         100,
@@ -1096,10 +1122,7 @@
     "grade": "S",
     "requiresLevel": 88,
     "implicit": {
-      "faster_cast_rate": [
-        20,
-        30
-      ],
+      "faster_cast_rate": 20,
       "to_energy": [
         25,
         35
@@ -1127,7 +1150,10 @@
     "grade": "S",
     "requiresLevel": 88,
     "implicit": {
-      "all_skills": 2,
+      "all_skills": [
+        1,
+        2
+      ],
       "movement_speed": [
         20,
         40
@@ -1197,10 +1223,6 @@
     "grade": "B",
     "requiresLevel": 38,
     "implicit": {
-      "mana_cost_reduction": [
-        8,
-        15
-      ],
       "to_intelligence": [
         15,
         25
@@ -1208,6 +1230,10 @@
       "mana": [
         75,
         125
+      ],
+      "mana_costs_decreased": [
+        8,
+        15
       ]
     }
   },
@@ -1229,7 +1255,9 @@
       "ailment_damage_all": [
         10,
         20
-      ]
+      ],
+      "intelligence_based_on_level": 50,
+      "energy_based_on_level": 40
     }
   },
   {
@@ -1253,7 +1281,11 @@
         3,
         5
       ],
-      "fire_resistance": 35
+      "fire_resistance": 35,
+      "fire_skills": [
+        1,
+        2
+      ]
     }
   },
   {
@@ -1274,8 +1306,8 @@
         40
       ],
       "damage_return": [
-        45,
-        70
+        22,
+        30
       ]
     }
   },
@@ -1353,17 +1385,42 @@
     "slot": "ring_1",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 37,
+    "requiresLevel": 97,
     "implicit": {
       "to_vitality": [
         15,
         25
       ],
-      "fire_resistance": 35,
+      "fire_resistance": [
+        30,
+        50
+      ],
       "magic_find": [
         25,
         35
-      ]
+      ],
+      "all_attributes": [
+        20,
+        30
+      ],
+      "life": 250,
+      "cold_resistance": [
+        30,
+        50
+      ],
+      "poison_resistance": [
+        30,
+        50
+      ],
+      "lightning_resistance": [
+        30,
+        50
+      ],
+      "arcane_resistance": [
+        30,
+        50
+      ],
+      "enemy_all_resist": 15
     }
   },
   {
@@ -1429,10 +1486,6 @@
         225,
         300
       ],
-      "life_replenish": [
-        25,
-        35
-      ],
       "vitality_converted_to_magic_skill_dmg": [
         10,
         15
@@ -1449,11 +1502,11 @@
     "requiresLevel": 33,
     "implicit": {
       "all_attributes": [
-        7,
-        15
+        10,
+        20
       ],
       "all_resistances": [
-        10,
+        20,
         30
       ],
       "ailment_damage_all": [
@@ -1504,9 +1557,8 @@
         30,
         45
       ],
-      "increased_attack_speed": 5,
       "increased_attack_speed_more": 5,
-      "extra_dmg_to_monsters_afflicted_with_ailments": 10
+      "extra_damage_ailments": 10
     },
     "setId": "skinwalker_s_bloodlust"
   },
@@ -1519,19 +1571,23 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "fire_skills": 1,
+      "fire_skills": [
+        1,
+        2
+      ],
       "increased_burning_damage": [
         12,
         20
       ],
       "fire_skill_damage": [
-        5,
+        8,
         15
       ],
       "increased_mana": [
         2,
         4
-      ]
+      ],
+      "all_resistances": 15
     },
     "setId": "guardian_of_the_sun_temple"
   },
@@ -1606,8 +1662,8 @@
     "requiresLevel": 54,
     "implicit": {
       "damage_return": [
-        50,
-        75
+        22,
+        30
       ],
       "physical_damage_reduction": 5
     },
