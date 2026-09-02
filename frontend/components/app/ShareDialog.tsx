@@ -7,6 +7,7 @@ import {
   uploadBuildToGist,
 } from "../../utils/build/gistShare";
 import { isWebShareConfigured, WebShareError } from "../../utils/build/webShare";
+import type { ShareDegradation } from "../../utils/build/shareBuild";
 
 export type ShareMethod = "code" | "gist" | "web";
 
@@ -30,6 +31,15 @@ const METHOD_HINT: Record<ShareMethod, string> = {
   web: "Publishes a read-only build page at hsplanner.app and copies the link.",
 };
 
+const DEGRADATION_NOTE: Record<ShareDegradation, string> = {
+  "loadouts-dropped":
+    "Too large for the extra loadout slots — this code carries the active loadouts only.",
+  "notes-truncated":
+    "Too large with the full notes — this code carries a shortened copy.",
+  oversize:
+    "Still over the size limit — this code may not import. Trim the build or its notes.",
+};
+
 const BTN_PRIMARY_CLASS =
   "rounded-[3px] border border-accent-deep px-3.5 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4] disabled:cursor-not-allowed disabled:opacity-50";
 const BTN_BG = { background: "linear-gradient(180deg, #3a2f1a, #2a2418)" };
@@ -42,8 +52,8 @@ export interface ShareDialogProps {
   meta?: { className?: string; level?: number };
   createWebShare: () => Promise<{ url: string }>;
   onClose: () => void;
-  /** The build was too large to carry its parked loadouts. */
-  loadoutsDropped?: boolean;
+  /** Parts the build was too large to carry. */
+  degraded?: readonly ShareDegradation[];
 }
 
 export function ShareDialog({
@@ -51,7 +61,7 @@ export function ShareDialog({
   meta,
   createWebShare,
   onClose,
-  loadoutsDropped,
+  degraded,
 }: ShareDialogProps) {
   const [method, setMethod] = useState<ShareMethod>("code");
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
@@ -189,15 +199,17 @@ export function ShareDialog({
           {METHOD_HINT[method]}
         </p>
 
-        {loadoutsDropped && (
+        {degraded?.map((what) => (
           <p
+            key={what}
             role="status"
-            className="font-mono text-[10px] uppercase tracking-[0.14em] text-stat-orange"
+            className={`font-mono text-[10px] uppercase tracking-[0.14em] ${
+              what === "oversize" ? "text-stat-red" : "text-stat-orange"
+            }`}
           >
-            Too large for the extra loadout slots — this code carries the active
-            loadouts only.
+            {DEGRADATION_NOTE[what]}
           </p>
-        )}
+        ))}
       </div>
 
       <footer className="flex items-center justify-between gap-3 border-t border-border bg-black/30 px-4 py-3">

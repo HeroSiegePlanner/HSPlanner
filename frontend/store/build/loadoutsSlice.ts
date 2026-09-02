@@ -16,6 +16,7 @@ import {
   type LoadoutSlotsMap,
   type LoadoutTab,
 } from '../../utils/build/loadouts'
+import { clampLoadoutToLevel } from './loadoutBudget'
 import type { BuildState, BuildStore } from './types'
 
 type LoadoutsSlice = Pick<
@@ -61,7 +62,9 @@ export const createLoadoutsSlice: StateCreator<
     // An empty target slot means "this tab starts blank here", not "keep what
     // the previous slot had".
     set({
-      ...toStatePatch(result.data ?? emptyLoadout(tab)),
+      ...toStatePatch(
+        result.data ? clampLoadoutToLevel(result.data, s.level) : emptyLoadout(tab),
+      ),
       loadoutSlots: setTabSlots(s.loadoutSlots, tab, result.slots),
       activeLoadouts: { ...s.activeLoadouts, [tab]: to },
     })
@@ -124,7 +127,7 @@ export const createLoadoutsSlice: StateCreator<
     // active slot means overwriting live state instead of the slot, which is
     // what keeps the `data === null` invariant true.
     if (to === active) {
-      set({ ...toStatePatch(payload) })
+      set({ ...toStatePatch(clampLoadoutToLevel(payload, s.level)) })
       return true
     }
     set({

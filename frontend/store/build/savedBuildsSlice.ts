@@ -41,6 +41,10 @@ import {
   defaultEnemyResistances,
   encodeBuildToShare,
 } from '../../utils/build/shareBuild'
+import {
+  emptyLoadoutSlots,
+  initialLoadoutIndexes,
+} from '../../utils/build/loadouts'
 import { bumpSavedBuilds, emptyAllocation, snapshotPatch } from './helpers'
 import type { BuildStore } from './types'
 
@@ -217,6 +221,10 @@ export const createSavedBuildsSlice: StateCreator<
       mercSkillRanks: {},
       mercInventory: {},
       mercDisabledAuras: {},
+      // Both are in exportBuildSnapshot, so leaving them here let a brand new
+      // build inherit the previous one's parked slots and active indexes.
+      loadoutSlots: emptyLoadoutSlots(),
+      activeLoadouts: initialLoadoutIndexes(),
       activeBuildId: null,
       activeProfileId: null,
       notes: '',

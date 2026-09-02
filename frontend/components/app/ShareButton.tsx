@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useBuild } from "../../store/build";
 import { activeSeasonId, getClass } from "@data";
-import { encodeBuildToShare } from "../../utils/build/shareBuild";
+import {
+  encodeBuildToShare,
+  type ShareDegradation,
+} from "../../utils/build/shareBuild";
 import { getSavedBuild, type SavedBuild } from "../../utils/build/savedBuilds";
 import { buildSharePayload, postWebShare } from "../../utils/build/webShare";
 import { ShareDialog, type ShareDialogProps } from "./ShareDialog";
@@ -19,11 +22,9 @@ export default function ShareButton() {
     }
     const { notes, activeBuildId } = useBuild.getState();
     const snap = exportSnapshot();
-    let loadoutsDropped = false;
+    const degraded = new Set<ShareDegradation>();
     const code = encodeBuildToShare(snap, notes, activeSeasonId, {
-      onLoadoutsDropped: () => {
-        loadoutsDropped = true;
-      },
+      onDegraded: (what) => degraded.add(what),
     });
     const saved = activeBuildId ? getSavedBuild(activeBuildId) : null;
     const now = new Date().toISOString();
@@ -45,7 +46,7 @@ export default function ShareButton() {
     };
     setShare({
       code,
-      loadoutsDropped,
+      degraded: [...degraded],
       meta: { className: snap.classId ?? undefined, level: snap.level },
       createWebShare: async () => postWebShare(await buildSharePayload(liveBuild)),
     });

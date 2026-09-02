@@ -39,6 +39,9 @@ const REAL_ITEM_B = items[1]!.id
 
 function reset() {
   useBuild.setState({
+    // High enough to pay for the ranks these tests allocate; the budget clamp
+    // gets its own describe block below.
+    level: 30,
     loadoutSlots: emptyLoadoutSlots(),
     activeLoadouts: initialLoadoutIndexes(),
     allocatedTreeNodes: new Set<number>(),
@@ -354,5 +357,71 @@ describe('loadouts slice — full round trip through the store', () => {
     expect(useBuild.getState().switchLoadout('tree', 0)).toBe(true)
     expect([...useBuild.getState().allocatedTreeNodes]).toEqual([5])
     expect([...useBuild.getState().loadoutSlots.tree[1]!.data!.allocatedTreeNodes!]).toEqual([6])
+  })
+})
+
+describe('loadouts slice — level budget', () => {
+  beforeEach(reset)
+
+  it('clamps a parked loadout to what the current level can pay for', () => {
+    useBuild.setState({ skillRanks: { fireball: 20 } })
+    useBuild.getState().switchLoadout('skills', 1)
+    // Level is not part of a loadout, so it can drop while a slot keeps ranks.
+    useBuild.setState({ level: 5 })
+
+    useBuild.getState().switchLoadout('skills', 0)
+
+    // skillPointsFor(5) is 5, so the views never show negative points available.
+    expect(useBuild.getState().skillRanks).toEqual({ fireball: 5 })
+  })
+
+  it('clamps subskill ranks per parent skill', () => {
+    const key = 'fireball:multicast'
+    useBuild.setState({ subskillRanks: { [key]: 5 } })
+    useBuild.getState().switchLoadout('skills', 1)
+    // subskillPointsFor(10) is 2.
+    useBuild.setState({ level: 10 })
+
+    useBuild.getState().switchLoadout('skills', 0)
+
+    expect(useBuild.getState().subskillRanks[key]).toBe(2)
+  })
+
+  it('clamps a duplicate landing on the active slot', () => {
+    useBuild.setState({ skillRanks: { fireball: 20 } })
+    useBuild.getState().switchLoadout('skills', 1)
+    useBuild.setState({ level: 3 })
+
+    expect(useBuild.getState().duplicateLoadout('skills', 0, 1)).toBe(true)
+
+    expect(useBuild.getState().skillRanks).toEqual({ fireball: 3 })
+  })
+
+  it('leaves tree nodes alone — hero level derives from the node count', () => {
+    useBuild.setState({ allocatedTreeNodes: new Set([1, 2, 3, 4, 5]) })
+    useBuild.getState().switchLoadout('tree', 1)
+    useBuild.setState({ level: 1 })
+
+    useBuild.getState().switchLoadout('tree', 0)
+
+    expect(useBuild.getState().allocatedTreeNodes.size).toBe(5)
+  })
+})
+
+describe('resetBuild', () => {
+  beforeEach(reset)
+
+  it('clears the parked loadouts and the active indexes', () => {
+    useBuild.setState({ allocatedTreeNodes: new Set([1]) })
+    useBuild.getState().switchLoadout('tree', 4)
+    expect(useBuild.getState().loadoutSlots.tree[0]?.data).not.toBeNull()
+
+    useBuild.getState().resetBuild()
+
+    // Both are in exportBuildSnapshot, so a new build must not inherit them:
+    // handleCreateNew resets and saves in one go.
+    const s = useBuild.getState()
+    expect(s.activeLoadouts).toEqual(initialLoadoutIndexes())
+    expect(s.loadoutSlots).toEqual(emptyLoadoutSlots())
   })
 })

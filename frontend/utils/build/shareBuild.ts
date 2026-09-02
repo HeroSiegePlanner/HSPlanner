@@ -203,9 +203,14 @@ export type LoadoutsWire = {
   a?: Partial<Record<LoadoutTab, number>>
 }
 
+// Empty sets and records are truthy, so every field tests its content instead —
+// an empty one only costs bytes. wireToPayload rebuilds the tab's full field set
+// on the way back, so a slot parked while blank still decodes as a used slot.
 function payloadToWire(data: LoadoutData): LoadoutWirePayload {
   const out: LoadoutWirePayload = {}
-  if (data.allocatedTreeNodes) out.t = [...data.allocatedTreeNodes].sort((x, y) => x - y)
+  if (data.allocatedTreeNodes?.size) {
+    out.t = [...data.allocatedTreeNodes].sort((x, y) => x - y)
+  }
   if (data.treeSocketed) {
     const ts: Record<string, TreeSocketContent | null> = {}
     for (const [id, content] of Object.entries(data.treeSocketed)) {
@@ -213,10 +218,18 @@ function payloadToWire(data: LoadoutData): LoadoutWirePayload {
     }
     if (Object.keys(ts).length > 0) out.ts = ts
   }
-  if (data.allocatedEtherNodes) out.et = [...data.allocatedEtherNodes].sort((x, y) => x - y)
-  if (data.skillRanks) out.s = data.skillRanks
-  if (data.subskillRanks) out.ss = data.subskillRanks
-  if (data.inventory) out.i = data.inventory
+  if (data.allocatedEtherNodes?.size) {
+    out.et = [...data.allocatedEtherNodes].sort((x, y) => x - y)
+  }
+  if (data.skillRanks && Object.keys(data.skillRanks).length > 0) {
+    out.s = data.skillRanks
+  }
+  if (data.subskillRanks && Object.keys(data.subskillRanks).length > 0) {
+    out.ss = data.subskillRanks
+  }
+  if (data.inventory && Object.keys(data.inventory).length > 0) {
+    out.i = data.inventory
+  }
   return out
 }
 
@@ -637,12 +650,12 @@ function normalizeInventory(inv: Inventory | undefined): Inventory {
   return out
 }
 
+/** What an oversized payload had to give up. `oversize` means nothing was left to cut. */
+export type ShareDegradation = 'loadouts-dropped' | 'notes-truncated' | 'oversize'
+
 export interface EncodeShareOptions {
-  /**
-   * Called when the payload was too large and the parked loadouts had to be
-   * left out. The shared build itself is always complete.
-   */
-  onLoadoutsDropped?: () => void
+  /** Called once per part left out. The active build itself always survives. */
+  onDegraded?: (what: ShareDegradation) => void
 }
 
 export function encodeBuildToShare(
@@ -653,21 +666,29 @@ export function encodeBuildToShare(
 ): string {
   const payload = serialize(snapshot, notes, seasonId)
   let json = JSON.stringify(payload)
-  // `decodeShareToBuild` rejects anything whose decompressed JSON exceeds
-  // MAX_SHARE_INPUT_LENGTH, so a code over that limit would be unreadable.
-  // Eight full gear loadouts plus long notes can get there. The parked
-  // loadouts are the only droppable part — the active build must survive
-  // intact — and the active indexes are kept so the receiver lands on the
-  // same slot.
-  if (json.length > MAX_SHARE_INPUT_LENGTH && payload.ld) {
-    const activeIndexes = payload.ld.a
-    const trimmed: ShareableBuild = {
-      ...payload,
-      ld: activeIndexes ? { a: activeIndexes } : undefined,
-    }
+  if (json.length <= MAX_SHARE_INPUT_LENGTH) return compressToEncodedURIComponent(json)
+
+  // `decodeShareToBuild` rejects decompressed JSON over MAX_SHARE_INPUT_LENGTH,
+  // so an oversized code is unreadable rather than merely large. Shed the parts
+  // the build can lose, cheapest first, and re-measure after each cut — notes
+  // alone reach the limit, so dropping the loadouts is not guaranteed to help.
+  let trimmed: ShareableBuild = payload
+  if (trimmed.ld) {
+    const activeIndexes = trimmed.ld.a
+    // The active indexes stay, so the receiver still lands on the same slot.
+    trimmed = { ...trimmed, ld: activeIndexes ? { a: activeIndexes } : undefined }
     json = JSON.stringify(trimmed)
-    options?.onLoadoutsDropped?.()
+    options?.onDegraded?.('loadouts-dropped')
   }
+  if (json.length > MAX_SHARE_INPUT_LENGTH && trimmed.n) {
+    // Dropping n characters of notes drops at least n from the JSON, so this
+    // one cut is enough; escaping can only make the saving larger.
+    const keep = trimmed.n.length - (json.length - MAX_SHARE_INPUT_LENGTH)
+    trimmed = { ...trimmed, n: keep > 0 ? trimmed.n.slice(0, keep) : undefined }
+    json = JSON.stringify(trimmed)
+    options?.onDegraded?.('notes-truncated')
+  }
+  if (json.length > MAX_SHARE_INPUT_LENGTH) options?.onDegraded?.('oversize')
   return compressToEncodedURIComponent(json)
 }
 

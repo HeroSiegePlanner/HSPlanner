@@ -491,7 +491,7 @@ export default function EtherView() {
           </button>
         </div>
 
-        <LoadoutBar tab="ether" scopeLabel="Ether nodes" dataTour="ether-loadouts" />
+        <LoadoutBar tab="ether" scopeLabel="Ether nodes" />
         {summaryOpen && <EtherSummaryPanel allocated={allocated} />}
       </div>
 

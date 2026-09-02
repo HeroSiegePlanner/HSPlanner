@@ -1,10 +1,22 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
+  StorageCapacityError,
   StorageWriteError,
+  addProfile,
+  createBuild,
+  commitProfileSnapshot,
   deleteBuild,
   getSavedBuild,
   listSavedBuilds,
 } from './savedBuilds'
+import { makeSnapshot } from './buildSnapshot.fixture'
+import {
+  emptyLoadoutSlots,
+  initialLoadoutIndexes,
+  writeSlot,
+  LOADOUT_SLOT_COUNT,
+} from './loadouts'
+import type { EquippedItem } from '../../types'
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -95,5 +107,72 @@ describe('savedBuilds — stash sanitization', () => {
     )
 
     expect(getSavedBuild('b1')?.stash).toEqual([])
+  })
+})
+
+describe('savedBuilds — an oversized build is refused, never silently trimmed', () => {
+  function bigItem(seed: number): EquippedItem {
+    return {
+      baseId: `base_${seed}`,
+      affixes: Array.from({ length: 6 }, (_, k) => ({
+        affixId: `affix_${seed}_${k}_${'x'.repeat(150)}`,
+        tier: 5,
+        roll: 0.5,
+      })),
+      socketCount: 6,
+      socketed: Array.from({ length: 6 }, (_, k) => `socket_${seed}_${k}`),
+      socketTypes: Array.from({ length: 6 }, () => 'normal' as const),
+      stars: 5,
+      forgedMods: [],
+    }
+  }
+
+  const fatInventory = () =>
+    Object.fromEntries(Array.from({ length: 30 }, (_, i) => [`slot_${i}`, bigItem(i)]))
+
+  function oversizedSnapshot() {
+    let slots = emptyLoadoutSlots()
+    for (let i = 1; i < LOADOUT_SLOT_COUNT; i++) {
+      slots = { ...slots, gear: writeSlot(slots.gear, i, { inventory: fatInventory() }) }
+    }
+    // serialize needs both halves; slots alone are skipped entirely.
+    return makeSnapshot({
+      inventory: fatInventory(),
+      loadoutSlots: slots,
+      activeLoadouts: initialLoadoutIndexes(),
+    })
+  }
+
+  afterEach(() => {
+    localStorage.clear()
+  })
+
+  it('createBuild refuses rather than storing a code that lost its slots', () => {
+    // encodeBuildToShare would drop the parked loadouts to stay decodable, and
+    // the user would only find out when the slots came back empty on reload.
+    expect(() => createBuild('Too big', oversizedSnapshot())).toThrow(
+      StorageCapacityError,
+    )
+    expect(listSavedBuilds()).toHaveLength(0)
+  })
+
+  it('commitProfileSnapshot and addProfile refuse on the same grounds', () => {
+    const build = createBuild('Fine', makeSnapshot({}))
+    const profileId = build.activeProfileId!
+
+    expect(() =>
+      commitProfileSnapshot(build.id, profileId, oversizedSnapshot()),
+    ).toThrow(StorageCapacityError)
+    expect(() => addProfile(build.id, 'Variant', oversizedSnapshot())).toThrow(
+      StorageCapacityError,
+    )
+
+    // The stored build is untouched.
+    expect(getSavedBuild(build.id)?.profiles).toHaveLength(1)
+  })
+
+  it('a build that fits still saves', () => {
+    const build = createBuild('Normal', makeSnapshot({}))
+    expect(getSavedBuild(build.id)?.profiles[0]?.code).toBeTruthy()
   })
 })

@@ -51,6 +51,12 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     body: 'Set a point budget between 1 to 200 and let the engine propose valuable incarnation nodes. Suggestions preview on the tree before you apply them.',
   },
   {
+    section: 'tree',
+    target: 'tree-loadouts',
+    title: 'Loadouts',
+    body: 'The profile row from the game: eight slots holding variants of this tab alone. Clicking a slot parks what you have and loads that slot. Ether, Skills and Gear each keep their own row and their own active slot.',
+  },
+  {
     section: 'ether',
     target: 'view',
     title: 'Ether Realm',

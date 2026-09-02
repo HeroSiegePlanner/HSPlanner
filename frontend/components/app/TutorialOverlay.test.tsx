@@ -7,6 +7,7 @@ import {
   TUTORIAL_STEPS,
   placeCard,
 } from './tutorialModel'
+import modelSource from './tutorialModel.ts?raw'
 
 const vp = { width: 1280, height: 800 }
 
@@ -83,6 +84,33 @@ describe('TUTORIAL_STEPS', () => {
     for (const step of TUTORIAL_STEPS) {
       if (step.act) expect(step.undo).toBeDefined()
     }
+  })
+
+  test('no data-tour attribute is left inert', () => {
+    // A data-tour with no step behind it is dead markup: the attribute reads as
+    // wired up while the tour never stops there.
+    const sources = import.meta.glob('../../**/*.tsx', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }) as Record<string, string>
+
+    const used = new Set<string>()
+    for (const [path, source] of Object.entries(sources)) {
+      if (path.includes('.test.')) continue
+      for (const m of source.matchAll(/(?:data-tour|dataTour)=(?:"|\{")([a-z0-9-]+)"/g)) {
+        used.add(m[1]!)
+      }
+    }
+
+    // Read the model as source rather than TUTORIAL_STEPS: some steps sit behind
+    // a condition (the season switcher only appears once a second season ships).
+    const consumed = new Set<string>()
+    for (const m of modelSource.matchAll(/target: '([a-z0-9-]+)'/g)) consumed.add(m[1]!)
+    // act and undo reach their element by selector instead of by target.
+    for (const m of modelSource.matchAll(/data-tour="([a-z0-9-]+)"/g)) consumed.add(m[1]!)
+
+    expect([...used].filter((tour) => !consumed.has(tour))).toEqual([])
   })
 })
 

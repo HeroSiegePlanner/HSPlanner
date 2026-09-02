@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { compressToEncodedURIComponent } from 'lz-string'
+import {
+  compressToEncodedURIComponent,
+  decompressFromEncodedURIComponent,
+} from 'lz-string'
 import {
   decodeShareToBuild,
   encodeBuildToShare,
@@ -274,8 +277,8 @@ describe('share v3 — size guard', () => {
 
     let dropped = false
     const code = encodeBuildToShare(snap, undefined, 's10', {
-      onLoadoutsDropped: () => {
-        dropped = true
+      onDegraded: (what) => {
+        dropped = what === 'loadouts-dropped'
       },
     })
     expect(dropped).toBe(true)
@@ -299,11 +302,70 @@ describe('share v3 — size guard', () => {
       undefined,
       's10',
       {
-        onLoadoutsDropped: () => {
+        onDegraded: () => {
           dropped = true
         },
       },
     )
     expect(dropped).toBe(false)
+  })
+})
+
+describe('share v3 — empty loadout fields', () => {
+  it('does not put empty records or sets on the wire', () => {
+    // {} and Set(0) are truthy; before the guard every one of them shipped.
+    const code = encodeBuildToShare(
+      withLoadouts((s) => ({
+        ...s,
+        skills: writeSlot(s.skills, 1, { skillRanks: {}, subskillRanks: {} }),
+        gear: writeSlot(s.gear, 1, { inventory: {} }),
+        ether: writeSlot(s.ether, 1, { allocatedEtherNodes: new Set<number>() }),
+      })),
+    )
+    const wire = JSON.parse(decompressFromEncodedURIComponent(code)!) as {
+      ld: Record<string, Record<string, { d?: Record<string, unknown> }>>
+    }
+    expect(wire.ld.skills?.['1']?.d).toEqual({})
+    expect(wire.ld.gear?.['1']?.d).toEqual({})
+    expect(wire.ld.ether?.['1']?.d).toEqual({})
+
+    // The slot still reads as used; wireToPayload rebuilds the cleared fields.
+    const decoded = decodeShareToBuild(code)
+    expect(decoded!.snapshot.loadoutSlots?.gear[1]?.data?.inventory).toEqual({})
+  })
+})
+
+describe('share v3 — degradation is re-checked', () => {
+  const hugeNotes = 'x'.repeat(210_000)
+
+  it('truncates notes when dropping the loadouts is not enough', () => {
+    const degraded: string[] = []
+    const code = encodeBuildToShare(
+      withLoadouts((s) => ({
+        ...s,
+        gear: writeSlot(s.gear, 1, { inventory: { weapon: item('sword') } }),
+      })),
+      hugeNotes,
+      's10',
+      { onDegraded: (what) => degraded.push(what) },
+    )
+
+    expect(degraded).toContain('loadouts-dropped')
+    expect(degraded).toContain('notes-truncated')
+    expect(degraded).not.toContain('oversize')
+    // The point of re-checking: the code still decodes.
+    const decoded = decodeShareToBuild(code)
+    expect(decoded).not.toBeNull()
+    expect(decoded!.notes.length).toBeLessThan(hugeNotes.length)
+  })
+
+  it('truncates notes even with no loadouts to drop', () => {
+    const degraded: string[] = []
+    const code = encodeBuildToShare(makeSnapshot({}), hugeNotes, 's10', {
+      onDegraded: (what) => degraded.push(what),
+    })
+
+    expect(degraded).toEqual(['notes-truncated'])
+    expect(decodeShareToBuild(code)).not.toBeNull()
   })
 })

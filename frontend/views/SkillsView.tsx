@@ -173,11 +173,7 @@ export default function SkillsView() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <LoadoutBar
-            tab="skills"
-            scopeLabel="Skill & subskill points"
-            dataTour="skills-loadouts"
-          />
+          <LoadoutBar tab="skills" scopeLabel="Skill & subskill points" />
           <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
             <span className="text-faint">Points</span>
             <span

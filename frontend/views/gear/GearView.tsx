@@ -75,7 +75,7 @@ export default function GearView() {
             Gear
           </h2>
           <div className="flex items-center gap-3">
-            <LoadoutSelect tab="gear" title="Progression" dataTour="gear-loadouts" />
+            <LoadoutSelect tab="gear" title="Progression" />
             <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-faint">
               <span>
                 <span className="text-text">{items.length}</span> items

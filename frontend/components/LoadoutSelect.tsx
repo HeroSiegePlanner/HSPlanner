@@ -14,7 +14,6 @@ interface LoadoutSelectProps {
   /** Eyebrow label, e.g. "Progression". */
   title: string
   className?: string
-  dataTour?: string
 }
 
 /**
@@ -27,7 +26,6 @@ export default function LoadoutSelect({
   tab,
   title,
   className,
-  dataTour,
 }: LoadoutSelectProps) {
   const slots = useBuild((s) => s.loadoutSlots[tab])
   const activeIndex = useBuild((s) => s.activeLoadouts[tab])
@@ -110,7 +108,6 @@ export default function LoadoutSelect({
 
   return (
     <div
-      data-tour={dataTour}
       className={`inline-flex items-center gap-2 rounded-[3px] border border-border px-2.5 py-1 ${className ?? ''}`}
       style={{
         background: 'linear-gradient(180deg, rgba(13,14,18,0.92), rgba(28,29,36,0.92))',

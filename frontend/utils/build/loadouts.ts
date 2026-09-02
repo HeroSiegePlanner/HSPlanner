@@ -1,18 +1,12 @@
 import type { Inventory, TreeSocketContent } from '../../types'
 
 /**
- * Per-tab loadout slots, mirroring the in-game profile row (slots 1..8 at the
- * top-right of each panel). Distinct from `SavedProfile` in ./savedBuilds,
- * which is a variant of the *whole* build; a loadout only covers the slice of
- * state its own tab owns.
+ * Per-tab loadout slots — the in-game profile row (1..8) scoped to one tab.
+ * `SavedProfile` in ./savedBuilds is the whole-build equivalent.
  *
- * Core invariant: the live store is the single source of truth for the active
- * slot, so `slots[activeIndex].data` is always `null`. There is exactly one
- * copy of every loadout, which makes divergence between the live state and a
- * stored copy impossible. The invariant holds on the wire and in storage too —
- * the active slot's content is already carried by the snapshot's own fields, so
- * duplicating it into the slot would only cost bytes. `dematerializeSlots`
- * restores the invariant on anything decoded from outside.
+ * Invariant: `slots[activeIndex].data` is always `null`, on the wire and in
+ * storage too. The live store holds the active loadout, so only one copy of it
+ * exists anywhere and live/stored divergence is impossible by construction.
  */
 
 export const LOADOUT_SLOT_COUNT = 8
@@ -23,14 +17,10 @@ export type LoadoutTab = (typeof LOADOUT_TABS)[number]
 export const MAX_LOADOUT_NAME_LENGTH = 40
 
 /**
- * The union of every build-state field a loadout can carry. Kept as one
- * optional-field type rather than four per-tab types so the slots, the store
- * slice and the wire format are all generic over a single payload — no casts
- * anywhere. Which fields actually belong to which tab is declared once, in
- * `LOADOUT_FIELDS`.
- *
- * These field names and types must stay assignable to the matching `BuildState`
- * fields; `loadoutsSlice` asserts that at compile time.
+ * Every field a loadout can carry, as one optional-field type so slots, slice
+ * and wire format stay generic over a single payload. `LOADOUT_FIELDS` maps
+ * fields to tabs; `loadoutsSlice.toStatePatch` asserts at compile time that
+ * these stay assignable to `BuildState`.
  */
 export interface LoadoutData {
   allocatedTreeNodes?: Set<number>
@@ -90,7 +80,7 @@ function assignField<K extends LoadoutField>(
 export interface LoadoutSlot<T> {
   /** User label; `null` falls back to the slot number in the UI. */
   name: string | null
-  /** `null` means empty — or the active slot, which lives in the store. */
+  /** `null` until the slot is used, and on the active slot — its payload is live state. */
   data: T | null
 }
 
@@ -124,11 +114,8 @@ export function isValidSlotIndex(index: number): boolean {
 }
 
 /**
- * A slot is in use when it holds data, carries a deliberate label, or is the
- * active one — the active slot reads as occupied even though its `data` is
- * `null`, because its content is the live store state. Counting a label alone
- * is what lets the gear tab create a named-but-still-empty stage ("Early") and
- * have it show up as a real entry.
+ * Holds data, carries a label, or is the active slot. A label alone counts, so
+ * the gear tab can create a named-but-empty stage.
  */
 export function isSlotOccupied<T>(
   slots: LoadoutSlots<T>,
@@ -200,17 +187,14 @@ export function renameSlot<T>(
   })
 }
 
-/**
- * Switches the active slot: the live payload is parked in `from` and the
- * payload stored at `to` is handed back for the store to apply. `data` is
- * `null` when the target slot is empty, meaning the caller should apply that
- * tab's cleared state.
- */
+/** `data` is `null` for a never-used target slot: apply the tab's cleared state. */
 export interface SwitchResult<T> {
   slots: LoadoutSlots<T>
   data: T | null
 }
 
+// Parking a blank tab stores its cleared payload, not `null`: the slot the user
+// was sitting in stays a real entry (a gear stage they had not filled yet).
 export function switchSlot<T>(
   slots: LoadoutSlots<T>,
   from: number,
@@ -222,12 +206,7 @@ export function switchSlot<T>(
   return { slots: clearSlotData(parked, to), data: parked[to]?.data ?? null }
 }
 
-/**
- * Restores the `null` invariant on decoded slots, handing back whatever payload
- * the active slot carried so the caller can decide what to do with it. Codes
- * written by this app leave the active slot empty — its content travels in the
- * snapshot's own fields — but a hand-edited one may not.
- */
+/** Restores the `null` invariant on decoded slots; a hand-edited code may break it. */
 export function dematerializeSlots<T>(
   slots: LoadoutSlots<T>,
   activeIndex: number,
@@ -240,9 +219,8 @@ export function dematerializeSlots<T>(
 }
 
 /**
- * Transforms every stored payload, leaving labels and the active slot's `null`
- * alone. Migrations (season change, pruning ids the game dropped) must run
- * through this, or stale content survives in the inactive slots.
+ * Maps stored payloads, leaving labels and the active slot's `null` alone.
+ * Migrations must run through this or stale content survives in parked slots.
  */
 export function mapSlotData<T>(
   slots: LoadoutSlots<T>,
@@ -265,11 +243,7 @@ export function mapAllSlotData(
   }
 }
 
-/**
- * Sparse wire form: only non-empty slots travel, keyed by slot index so a
- * loadout parked in slot 5 comes back in slot 5 rather than being compacted
- * into slot 2.
- */
+/** Sparse wire form keyed by slot index, so a loadout parked in slot 5 returns in slot 5. */
 export type SparseSlots<T> = Record<string, { n?: string; d?: T }>
 
 export function toSparse<T>(slots: LoadoutSlots<T>): SparseSlots<T> {
