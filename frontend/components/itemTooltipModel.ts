@@ -141,6 +141,7 @@ const RECOGNIZED_EFFECTS = new Set([
   'double jump',
   'herobound',
   'all skills class',
+  'mirrors your other ring',
 ])
 
 const NOT_SUPPORTED_FOOTNOTE = 'These mods are not yet calculated by the planner.'

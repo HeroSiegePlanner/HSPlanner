@@ -765,3 +765,46 @@ fn charm_stars_scale() {
         "five stars should scale the charm above its base roll (base={base_value:?}, scaled={scaled:?})"
     );
 }
+
+#[test]
+fn rakhuls_ritual_band_mirrors_the_other_ring() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "ring_1".into(),
+        EquippedItem {
+            base_id: "ring_heroic_rakhul_s_ritual_band".into(),
+            ..Default::default()
+        },
+    );
+    inv.insert(
+        "ring_2".into(),
+        EquippedItem {
+            base_id: "ring_heroic_signet_of_corruption".into(),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let poison = stats.get("poison_skills").expect("mirrored implicit lands");
+    assert_eq!(poison.len(), 2, "counted once per ring");
+    assert!(poison.iter().any(|c| c.label.ends_with("(mirrored)")));
+}
+
+#[test]
+fn two_ritual_bands_mirror_nothing() {
+    let mut inv: Inventory = HashMap::new();
+    for slot in ["ring_1", "ring_2"] {
+        inv.insert(
+            slot.into(),
+            EquippedItem {
+                base_id: "ring_heroic_rakhul_s_ritual_band".into(),
+                ..Default::default()
+            },
+        );
+    }
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(stats.is_empty() && attrs.is_empty());
+}

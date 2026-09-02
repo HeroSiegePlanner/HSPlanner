@@ -621,7 +621,10 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
-    "implicit": {}
+    "implicit": {},
+    "uniqueEffects": [
+      "Mirrors your other ring"
+    ]
   },
   {
     "id": "ring_heroic_signet_of_corruption",

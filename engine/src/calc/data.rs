@@ -9,8 +9,9 @@ use once_cell::sync::Lazy;
 
 use super::season;
 use super::types::{
-    Affix, AffixTag, AngelicAugment, CharacterClass, DifficultyDef, GameConfig, Gem, ItemBase,
-    ItemGrantedSkill, ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange, TreeNodeInfo,
+    Affix, AffixTag, AngelicAugment, CharacterClass, DifficultyDef, EquippedItem, GameConfig, Gem,
+    Inventory, ItemBase, ItemGrantedSkill, ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange,
+    TreeNodeInfo,
 };
 
 #[allow(dead_code)]
@@ -43,6 +44,31 @@ pub fn is_charm_slot(slot: &str) -> bool {
 
 pub fn can_star_forge(slot: &str) -> bool {
     is_gear_slot(slot) || is_charm_slot(slot)
+}
+
+/// Rakhul's Ritual Band carries no stats of its own — it mirrors the other ring.
+const MIRROR_RING_ID: &str = "ring_heroic_rakhul_s_ritual_band";
+
+/// Inventory as the stat pipeline should see it: every equipped slot, plus a
+/// second pass over the ring that Rakhul's Ritual Band mirrors. Entries are
+/// `(slot, item, is_mirror)`; two bands mirror nothing.
+pub fn inventory_entries(inventory: &Inventory) -> Vec<(&str, &EquippedItem, bool)> {
+    let mut entries: Vec<(&str, &EquippedItem, bool)> = inventory
+        .iter()
+        .map(|(slot, item)| (slot.as_str(), item, false))
+        .collect();
+    for (band_slot, other_slot) in [("ring_1", "ring_2"), ("ring_2", "ring_1")] {
+        let has_band = inventory
+            .get(band_slot)
+            .is_some_and(|item| item.base_id == MIRROR_RING_ID);
+        let source = inventory
+            .get(other_slot)
+            .filter(|item| item.base_id != MIRROR_RING_ID);
+        if let (true, Some(source)) = (has_band, source) {
+            entries.push((band_slot, source, true));
+        }
+    }
+    entries
 }
 
 const SATANIC_CRYSTAL_RARITIES: &[&str] = &[

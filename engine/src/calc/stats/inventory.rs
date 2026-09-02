@@ -31,11 +31,15 @@ pub fn apply_inventory(
 ) -> bool {
     let mut weapon_has_attack_speed = false;
 
-    for (slot_key, item) in inventory.iter() {
+    for (slot_key, item, is_mirror) in data::inventory_entries(inventory) {
         let Some(base) = data::get_item(&item.base_id) else {
             continue;
         };
-        let item_name = base.name.clone();
+        let item_name = if is_mirror {
+            format!("{} (mirrored)", base.name)
+        } else {
+            base.name.clone()
+        };
 
         // Runeword suppresses per-socket gem contributions and implicit scaling.
         let socketed_refs: Vec<Option<&str>> =

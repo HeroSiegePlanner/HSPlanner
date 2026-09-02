@@ -69,7 +69,7 @@ pub fn aggregate_item_skill_bonuses(
     items: &HashMap<String, ItemBase>,
 ) -> HashMap<String, Ranged> {
     let mut out: HashMap<String, Ranged> = HashMap::new();
-    for (slot_key, item) in inventory {
+    for (slot_key, item, _) in super::data::inventory_entries(inventory) {
         let Some(base) = items.get(&item.base_id) else {
             continue;
         };
