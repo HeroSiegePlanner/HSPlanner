@@ -2839,7 +2839,6 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 95,
-    "twoHanded": true,
     "damageMin": 72,
     "damageMax": 78,
     "attackSpeed": 1.7,
