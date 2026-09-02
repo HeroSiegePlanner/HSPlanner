@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import UpdateModal from './UpdateModal'
+import type { UpdateInfo } from '../../utils/version'
 import { useUpdate, type CheckState } from './useUpdateCheck'
 
 /**
@@ -75,23 +76,7 @@ function UpdateBadge({
   }
 
   if (state.kind === 'available') {
-    const label = `v${state.info.latest} available`
-    return (
-      <button
-        type="button"
-        onClick={onOpenModal}
-        title={state.info.releaseName ?? label}
-        className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
-        style={{ background: 'linear-gradient(180deg, #3a2f1a, #2a2418)' }}
-      >
-        <span
-          aria-hidden
-          className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
-          style={{ boxShadow: '0 0 6px rgba(224,184,100,0.65)' }}
-        />
-        {label}
-      </button>
-    )
+    return <UpdateAvailableButton info={state.info} onClick={onOpenModal} />
   }
 
   if (state.kind === 'error') {
@@ -117,6 +102,35 @@ function UpdateBadge({
       className="rounded-[3px] border border-border-2 bg-panel-2 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
     >
       Check
+    </button>
+  )
+}
+
+/** The one "vN available" affordance — the badge and Settings both render this. */
+export function UpdateAvailableButton({
+  info,
+  onClick,
+  padding = 'px-2 py-0.5',
+}: {
+  info: UpdateInfo
+  onClick: () => void
+  padding?: string
+}) {
+  const label = `v${info.latest} available`
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={info.releaseName ?? label}
+      className={`inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep ${padding} font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]`}
+      style={{ background: 'linear-gradient(180deg, #3a2f1a, #2a2418)' }}
+    >
+      <span
+        aria-hidden
+        className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
+        style={{ boxShadow: '0 0 6px rgba(224,184,100,0.65)' }}
+      />
+      {label}
     </button>
   )
 }

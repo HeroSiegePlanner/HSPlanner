@@ -3,11 +3,7 @@ import { readStorage, removeStorage, writeStorage } from './storage'
 const AUTO_CHECK_KEY = 'hsplanner.update.auto_check'
 const LAST_CHECK_KEY = 'hsplanner.update.last_check'
 
-/**
- * Keys written by controls that no longer exist: auto-install on quit and
- * Skip This Version. Nothing reads them, so they are swept once at boot rather
- * than left to sit in every existing install forever.
- */
+/** Written by controls that no longer exist; nothing reads them, so boot sweeps them once. */
 const RETIRED_KEYS = [
   'hsplanner.update.auto_install',
   'hsplanner.update.skipped_version',
@@ -17,11 +13,7 @@ export function pruneRetiredUpdateKeys(): void {
   for (const key of RETIRED_KEYS) removeStorage(key)
 }
 
-/**
- * Floor between two automatic checks. A planner session is long-lived and the
- * GitHub API rate-limits unauthenticated calls per IP, so the boot check is
- * not something to fire on every window open. A manual check ignores this.
- */
+/** Floor between automatic checks — GitHub rate-limits per IP. A manual check ignores it. */
 export const AUTO_CHECK_COOLDOWN_MS = 6 * 60 * 60 * 1000
 
 /** Boot is already loading data + engine; let it settle before hitting the network. */

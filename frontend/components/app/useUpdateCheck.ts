@@ -26,19 +26,11 @@ export interface UpdateCheck {
   check: CheckState
   hasRepo: boolean
   onCheck: () => void
-  /**
-   * When a check last completed, in memory. Not the same as the persisted
-   * cooldown: a check that finds a pending update deliberately leaves the
-   * cooldown alone, and reporting that as "never checked" would be a lie.
-   */
+  /** When a check last completed, in memory — a pending update leaves the persisted cooldown alone. */
   lastCheckedAt: number | null
 }
 
-/**
- * Owns the automatic check at boot and the manual one behind the buttons.
- * Mounted once at the root so the planner's bottom bar, the library footer and
- * the settings modal all read the same state and share a single check.
- */
+/** Mounted once at the root: every surface reads this state and shares one check. */
 export function useUpdateCheck(): UpdateCheck {
   const [check, setCheck] = useState<CheckState>({ kind: 'idle' })
   const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(null)
@@ -123,6 +115,8 @@ export function useUpdateCheck(): UpdateCheck {
     if (!hasRepo || !shouldAutoCheck()) return
     const timer = window.setTimeout(() => {
       if (checkRef.current.kind !== 'idle') return
+      // re-read the pref: Settings can turn the check off inside this delay
+      if (!shouldAutoCheck()) return
       void runCheck(true)
     }, BOOT_CHECK_DELAY_MS)
     return () => window.clearTimeout(timer)

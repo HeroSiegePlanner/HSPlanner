@@ -15,6 +15,7 @@ import {
   setAutoCheckEnabled,
 } from '../../utils/updatePrefs'
 import UpdateModal from './UpdateModal'
+import { UpdateAvailableButton } from './UpdateStatus'
 import { useUpdate, type CheckState } from './useUpdateCheck'
 import { UI_ZOOM_STEPS } from '../../utils/uiZoom'
 import { APP_VERSION, GITHUB_REPO } from '../../utils/version'
@@ -282,19 +283,7 @@ function CheckOutcome({
 }) {
   if (check.kind === 'available') {
     return (
-      <button
-        type="button"
-        onClick={onOpen}
-        className="inline-flex items-center gap-1.5 rounded-[3px] border border-accent-deep px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-colors hover:border-accent-hot hover:text-[#fff0c4]"
-        style={{ background: 'linear-gradient(180deg, #3a2f1a, #2a2418)' }}
-      >
-        <span
-          aria-hidden
-          className="inline-block h-1 w-1 rotate-45 bg-accent-hot"
-          style={{ boxShadow: '0 0 6px rgba(224,184,100,0.65)' }}
-        />
-        v{check.info.latest} available
-      </button>
+      <UpdateAvailableButton info={check.info} onClick={onOpen} padding="px-2 py-1" />
     )
   }
   if (check.kind === 'ok') {

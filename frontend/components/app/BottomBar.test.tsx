@@ -113,4 +113,19 @@ describe('<BottomBar> automatic update check', () => {
     expect(checkMock).not.toHaveBeenCalled()
   })
 
+  it('honours the pref being turned off inside the boot delay', async () => {
+    checkMock.mockResolvedValue(updateInfo('9.9.9'))
+    renderBar()
+
+    // Settings is reachable before the delay elapses, and the timer was already
+    // scheduled with the pref on.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(BOOT_CHECK_DELAY_MS - 1)
+    })
+    setAutoCheckEnabled(false)
+    await bootAndSettle()
+
+    expect(checkMock).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: /^check$/i })).toBeInTheDocument()
+  })
 })
