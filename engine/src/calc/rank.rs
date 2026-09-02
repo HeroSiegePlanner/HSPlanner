@@ -77,7 +77,7 @@ pub fn aggregate_item_skill_bonuses(
             continue;
         };
         // Charm stars scale skill ranks too, matching implicit scaling and the UI.
-        let stars = if can_star_forge(slot_key) {
+        let stars = if can_star_forge(slot_key, &base.rarity) {
             item.stars
         } else {
             None

@@ -362,7 +362,7 @@ async function computeItemDisplay(
   equipped: EquippedItem,
   scaleImplicit: boolean,
 ): Promise<TooltipModelDeps['display']> {
-  const stars = effectiveStars(base.slot, equipped.stars)
+  const stars = effectiveStars(base.slot, equipped.stars, base.rarity)
   const toPair = (v: RangedValue): [number, number] => [rangedMin(v), rangedMax(v)]
   const implicitEntries = scaleImplicit && base.implicit ? Object.entries(base.implicit) : []
   const skillEntries = base.skillBonuses ? Object.entries(base.skillBonuses) : []

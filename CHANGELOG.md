@@ -11,6 +11,7 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- Star levels were offered on every charm; only common charms (Small, Large, Grand) can be star leveled
 - Item database audited against the game's own item definitions
 - 57 missing or wrong item sprites added (S10 uniques, base rings, relics and more)
 - Weakening Precision (Frost Sunder) did nothing

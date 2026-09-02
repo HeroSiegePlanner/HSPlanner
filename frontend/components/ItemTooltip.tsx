@@ -83,7 +83,7 @@ function useItemDisplayValues(
 ): TooltipDisplayValues | null {
   return useCalcResult<TooltipDisplayValues | null>(
     () => {
-      const stars = effectiveStars(base.slot, equipped?.stars)
+      const stars = effectiveStars(base.slot, equipped?.stars, base.rarity)
       const toPair = (v: RangedValue): [number, number] => [
         rangedMin(v),
         rangedMax(v),

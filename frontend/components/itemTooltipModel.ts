@@ -2,7 +2,6 @@ import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import { describeAffixValue } from '../views/gear/lib/affixGroups'
 import { formatAffixValue } from '../views/gear/lib/rollMath'
 import {
-  canStarForge,
   classes,
   detectRuneword,
   effectiveStars,
@@ -15,6 +14,7 @@ import {
   getItem,
   getItemGrantedSkillByName,
   getItemSet,
+  isForgeSlot,
   skills,
 } from '@data'
 import { BONUS_SOCKET_MOD_ID } from '../store/itemRules'
@@ -214,9 +214,7 @@ export function buildItemTooltipModel(
   const socketGroups = equipped ? collectSocketGroups(equipped, base) : []
   const displayName = buildDisplayName(base, equipped, runeword)
   const equippedForgedMods = equipped?.forgedMods ?? []
-  const forgeKind = canStarForge(base.slot)
-    ? forgeKindFor(base.rarity)
-    : null
+  const forgeKind = isForgeSlot(base.slot) ? forgeKindFor(base.rarity) : null
 
   const sections: TooltipSectionModel[] = []
 
@@ -447,7 +445,7 @@ function buildTypeLine(
   equipped: EquippedItem | undefined,
   runeword: ReturnType<typeof detectRuneword>,
 ): string {
-  const stars = effectiveStars(base.slot, equipped?.stars) ?? 0
+  const stars = effectiveStars(base.slot, equipped?.stars, base.rarity) ?? 0
   const starSuffix = stars > 0 ? ` · ${'★'.repeat(stars)}` : ''
   const handSuffix =
     base.slot === 'weapon' ? (base.twoHanded ? ' · 2-Handed' : ' · 1-Handed') : ''

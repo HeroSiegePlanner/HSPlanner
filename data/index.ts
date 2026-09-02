@@ -275,15 +275,23 @@ export function isCharmSlot(slot: string): boolean {
   return slot.startsWith('charm_')
 }
 
-export function canStarForge(slot: string): boolean {
+// Satanic crystals forge into gear and charms alike — the rarity picks the kind.
+export function isForgeSlot(slot: string): boolean {
   return isGearSlot(slot) || isCharmSlot(slot)
+}
+
+// Only common charms (Small/Large/Grand) take stars; unique charms never do.
+export function canStarForge(slot: string, rarity: string | undefined): boolean {
+  if (isCharmSlot(slot)) return rarity === 'common'
+  return isGearSlot(slot)
 }
 
 export function effectiveStars(
   slot: string,
   stars: number | null | undefined,
+  rarity: string | undefined,
 ): number | null {
-  return canStarForge(slot) ? (stars ?? null) : null
+  return canStarForge(slot, rarity) ? (stars ?? null) : null
 }
 
 const starScaling = patched(

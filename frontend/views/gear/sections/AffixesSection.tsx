@@ -186,7 +186,7 @@ export function AffixesSection({
   )
   const tierRanges = useAffixDisplayRanges(
     tierItems,
-    effectiveStars(base?.slot ?? '', equipped.stars),
+    effectiveStars(base?.slot ?? '', equipped.stars, base?.rarity),
   )
   const rangesByAffix = useMemo(() => {
     const out: (AffixValueOutput | null)[][] = []

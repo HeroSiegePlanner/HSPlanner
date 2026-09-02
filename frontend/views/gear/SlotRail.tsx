@@ -50,7 +50,7 @@ export function SlotRow({
       badges.push(
         `${equipped.socketed.filter(Boolean).length}/${equipped.socketCount}◇`,
       )
-    const stars = effectiveStars(slot.key, equipped.stars) ?? 0
+    const stars = effectiveStars(slot.key, equipped.stars, base.rarity) ?? 0
     if (stars > 0) badges.push(`${'★'.repeat(stars)}`)
     if (base.requiresLevel) badges.push(`L${base.requiresLevel}`)
   }

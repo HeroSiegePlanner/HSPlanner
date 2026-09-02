@@ -46,7 +46,7 @@ pub fn apply_inventory(
             item.socketed.iter().map(|s| s.as_deref()).collect();
         let runeword = data::detect_runeword(base, &socketed_refs);
         let scale_implicit = runeword.is_none();
-        let can_sf = data::can_star_forge(slot_key);
+        let can_sf = data::can_star_forge(slot_key, &base.rarity);
         let effective_stars: Option<u32> = if can_sf { item.stars } else { None };
 
         let aps_in_implicit = base

@@ -42,8 +42,12 @@ pub fn is_charm_slot(slot: &str) -> bool {
     slot.starts_with("charm_")
 }
 
-pub fn can_star_forge(slot: &str) -> bool {
-    is_gear_slot(slot) || is_charm_slot(slot)
+/// Only common charms (Small/Large/Grand) take stars; unique charms never do.
+pub fn can_star_forge(slot: &str, rarity: &str) -> bool {
+    if is_charm_slot(slot) {
+        return rarity == "common";
+    }
+    is_gear_slot(slot)
 }
 
 /// Rakhul's Ritual Band carries no stats of its own — it mirrors the other ring.
@@ -664,10 +668,11 @@ mod tests {
 
     #[test]
     fn can_star_forge_covers_gear_and_charms_only() {
-        assert!(super::can_star_forge("weapon"));
-        assert!(super::can_star_forge("charm_1"));
-        assert!(super::can_star_forge("charm_30"));
-        assert!(!super::can_star_forge("relic"));
+        assert!(super::can_star_forge("weapon", "heroic"));
+        assert!(super::can_star_forge("charm_1", "common"));
+        assert!(!super::can_star_forge("charm_1", "heroic"));
+        assert!(!super::can_star_forge("charm_30", "satanic"));
+        assert!(!super::can_star_forge("relic", "common"));
         assert!(super::is_charm_slot("charm_1"));
         assert!(!super::is_charm_slot("weapon"));
     }

@@ -110,9 +110,9 @@ export function RollsSection({
     [base],
   )
   const isRuneword = !!detectRuneword(base, equipped.socketed)
-  const stars = isRuneword ? null : effectiveStars(base.slot, equipped.stars)
+  const stars = isRuneword ? null : effectiveStars(base.slot, equipped.stars, base.rarity)
   // Skill ranks star-scale regardless of runewords (mirrors calc/rank.rs).
-  const skillStars = effectiveStars(base.slot, equipped.stars)
+  const skillStars = effectiveStars(base.slot, equipped.stars, base.rarity)
   const bounds = useCalcResult<[number, number][] | null>(
     () =>
       entries.length === 0 && skillEntries.length === 0

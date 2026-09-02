@@ -44,7 +44,7 @@ function SlotCell({
   const bg = base ? RARITY_BG[base.rarity] : locked ? 'bg-panel-2/40' : 'bg-[#120c08]'
 
   const stars = equipped
-    ? (effectiveStars(slotKey, equipped.stars) ?? 0)
+    ? (effectiveStars(slotKey, equipped.stars, base?.rarity) ?? 0)
     : 0
   const socketsFilled = equipped ? equipped.socketed.filter(Boolean).length : 0
 

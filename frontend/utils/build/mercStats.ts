@@ -76,7 +76,7 @@ export function mercGrantedAuras(mercInventory: Inventory): MercGrantedAura[] {
     if (!equipped) continue
     const base = getItem(equipped.baseId)
     if (!base?.skillBonuses) continue
-    const stars = effectiveStars(slot, equipped.stars)
+    const stars = effectiveStars(slot, equipped.stars, base.rarity)
     const starBonus = itemGrantedRankStarBonus(stars)
     for (const [name, level] of Object.entries(base.skillBonuses)) {
       if (!getItemGrantedSkillByName(name)?.aura) continue

@@ -717,52 +717,42 @@ fn random_skill_element_is_inert_until_an_element_is_picked() {
 
 // ---- charm star scaling ----
 
-// A charm's percent-star-scaling implicit must star-scale like gear does.
+// Only common charms (Small/Large/Grand) take stars — unique charms never do.
 #[test]
-fn charm_stars_scale() {
-    const CHARM_ID: &str = "charm_angelic_air_melon";
-    const STAT_KEY: &str = "lightning_skill_damage";
+fn stars_scale_common_charms_only() {
+    const AFFIX_ID: &str = "15_30_to_life_t1_bear";
+    const UNIQUE_CHARM: &str = "charm_angelic_air_melon";
 
-    // Skip gracefully if the data fixture ever drops this charm/stat.
-    let Some(base) = data::get_item(CHARM_ID) else {
-        eprintln!("{CHARM_ID} missing from data; skipping");
-        return;
+    let charm = |base_id: &str, stars: u32| {
+        let mut inv: Inventory = HashMap::new();
+        inv.insert(
+            "charm_1".to_string(),
+            EquippedItem {
+                base_id: base_id.to_string(),
+                stars: Some(stars),
+                affixes: vec![EquippedAffix {
+                    affix_id: AFFIX_ID.to_string(),
+                    roll: 1.0,
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+        );
+        let mut attrs: SourceMap = HashMap::new();
+        let mut stats: SourceMap = HashMap::new();
+        apply_inventory(&inv, &mut attrs, &mut stats);
+        sum_ranged_from_map(&stats, "life")
     };
-    assert_eq!(base.slot, "charm_1", "charm must sit in a charm slot");
+
+    let plain = charm("charms_normal_small_charm", 0);
     assert!(
-        base.implicit
-            .as_ref()
-            .is_some_and(|m| m.contains_key(STAT_KEY)),
-        "{CHARM_ID} must keep its {STAT_KEY} implicit"
+        charm("charms_normal_small_charm", 5).0 > plain.0,
+        "a common charm's affix scales with stars"
     );
-
-    let mut inv: Inventory = HashMap::new();
-    inv.insert(
-        "charm_1".to_string(),
-        EquippedItem {
-            base_id: CHARM_ID.to_string(),
-            stars: Some(5),
-            ..Default::default()
-        },
-    );
-
-    let mut attrs: SourceMap = HashMap::new();
-    let mut stats: SourceMap = HashMap::new();
-    apply_inventory(&inv, &mut attrs, &mut stats);
-    let scaled = sum_ranged_from_map(&stats, STAT_KEY);
-
-    let base_value = base
-        .implicit
-        .as_ref()
-        .unwrap()
-        .get(STAT_KEY)
-        .copied()
-        .unwrap()
-        .as_ranged();
-    // Assert `>` rather than exact values so the test survives perStar tuning.
-    assert!(
-        scaled.0 > base_value.0 && scaled.1 > base_value.1,
-        "five stars should scale the charm above its base roll (base={base_value:?}, scaled={scaled:?})"
+    assert_eq!(
+        charm(UNIQUE_CHARM, 5),
+        charm(UNIQUE_CHARM, 0),
+        "a unique charm ignores stars entirely"
     );
 }
 
