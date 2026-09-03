@@ -11,7 +11,6 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
-- Sub-skill notes that fire a fan or arc (Boulder Barrage, Superhero Landing, Coldflash Volley, Splitfire, Scorching Bolts, Searing Fork, Hydra's Breeze, Trail of Volcanoes, Bouncing Comets) counted every projectile as a hit on one target; they now count what an arc can land on a single enemy
 - Gelid Riptide's extra waves repeat the whole icicle volley instead of adding one icicle
 - Avalanche casts once per its 3 s cooldown and scales with skill haste instead of casting every second
 - "One massive summon" notes (Scorching Kraken, Pitfighting Colossus, Summon Archmage, Sacrificial Offering, Alpha) field a single entity whose damage scales with the maximum amount, instead of a full pack plus a negligible flat bonus
