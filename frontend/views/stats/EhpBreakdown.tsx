@@ -1,9 +1,10 @@
-import { computeEhp, formatEhp, type DamageType } from '../../utils/build/ehp'
+import { EMPTY_EHP, formatEhp, type DamageType, type EhpResult } from '../../utils/build/ehp'
 import { rangedMax } from '../../utils/item/stats'
 import type { RangedValue } from '../../types'
 import { BDLine, BDSection } from './statPrimitives'
 
 interface EhpBreakdownProps {
+  ehp: EhpResult | undefined
   stats: Record<string, RangedValue>
   statsCombined: Record<string, RangedValue>
 }
@@ -21,9 +22,8 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-export function EhpBreakdown({ stats, statsCombined }: EhpBreakdownProps) {
-  const merged = { ...stats, ...statsCombined }
-  const { entries, worst } = computeEhp(merged)
+export function EhpBreakdown({ ehp = EMPTY_EHP, stats, statsCombined }: EhpBreakdownProps) {
+  const { entries, worst } = ehp
 
   if (entries.length === 0) {
     return (
@@ -33,7 +33,7 @@ export function EhpBreakdown({ stats, statsCombined }: EhpBreakdownProps) {
     )
   }
 
-  const life = Math.round(rangedMax(merged['life'] ?? 0))
+  const life = Math.round(rangedMax(statsCombined['life'] ?? stats['life'] ?? 0))
 
   return (
     <>
@@ -45,7 +45,7 @@ export function EhpBreakdown({ stats, statsCombined }: EhpBreakdownProps) {
       />
       <div className="mt-1 md:columns-2" style={{ columnGap: '2rem' }}>
         {entries.map((entry) => {
-          const weakest = worst?.type === entry.type
+          const weakest = worst === entry.type
           return (
             <div
               key={entry.type}

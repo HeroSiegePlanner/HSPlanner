@@ -235,6 +235,7 @@ pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
         granted_skill_ranks: Some(&input.granted_skill_ranks),
         main_skill_id: input.main_skill_id.as_deref(),
         difficulty: input.difficulty.as_deref(),
+        entity_rates: &input.entity_rates,
     };
     compute_build_stats(&stats_input)
 }
@@ -280,6 +281,7 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         granted_skill_ranks: Some(&input.deps.granted_skill_ranks),
         main_skill_id: input.deps.main_skill_id.as_deref(),
         difficulty: input.deps.difficulty.as_deref(),
+        entity_rates: &input.deps.entity_rates,
     };
     let computed = compute_build_stats(&stats_input);
     let sources = match input.kind {

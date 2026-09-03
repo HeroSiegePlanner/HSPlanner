@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 import type { LootFilter, SavedLootFilter } from '../../types'
 import { useCopyFeedback } from '../../hooks/useCopyFeedback'
@@ -24,15 +24,38 @@ interface FilterEditorProps {
 }
 
 export function FilterEditor({ saved, onBack }: FilterEditorProps) {
-  const [filter, setFilter] = useState<LootFilter>(
-    () => decodeLootFilter(saved.code) ?? createDefaultLootFilter(),
-  )
+  const [filter, setFilter] = useState<LootFilter | null>(null)
   const [name, setName] = useState(saved.name)
   const [typeId, setTypeId] = useState(ITEM_TYPES[0]!.id)
   const [copied, copyToClipboard] = useCopyFeedback()
   const [showCode, setShowCode] = useState(false)
+  const [code, setCode] = useState(saved.code)
 
-  const code = useMemo(() => encodeLootFilter(filter), [filter])
+  useEffect(() => {
+    let cancelled = false
+    void decodeLootFilter(saved.code).then((decoded) => {
+      if (!cancelled) setFilter(decoded ?? createDefaultLootFilter())
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [saved.code])
+
+  useEffect(() => {
+    if (!filter) return
+    let cancelled = false
+    void encodeLootFilter(filter).then((next) => {
+      if (!cancelled) setCode(next)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [filter])
+
+  const apply: ApplyFilter = (update) =>
+    setFilter((prev) =>
+      prev === null ? prev : typeof update === 'function' ? update(prev) : update,
+    )
 
   const codeRef = useRef(code)
   const lastSavedRef = useRef(saved.code)
@@ -65,6 +88,14 @@ export function FilterEditor({ saved, onBack }: FilterEditorProps) {
 
   const copyCode = async () => {
     if (!(await copyToClipboard(code))) setShowCode(true)
+  }
+
+  if (!filter) {
+    return (
+      <div className="py-8 text-center font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
+        Loading filter…
+      </div>
+    )
   }
 
   return (
@@ -128,8 +159,9 @@ export function FilterEditor({ saved, onBack }: FilterEditorProps) {
           <TypeRail filter={filter} activeId={typeId} onSelect={setTypeId} />
         </div>
         <div className="min-w-0 space-y-4">
-          <TypePanel filter={filter} typeId={typeId} apply={setFilter} />
-          <AffixPanel key={typeId} filter={filter} typeId={typeId} apply={setFilter} />
+          <TypePanel filter={filter} typeId={typeId} apply={apply} />
+          <AffixPanel key={typeId} filter={filter} typeId={typeId} apply={apply} />
+
         </div>
       </div>
     </div>

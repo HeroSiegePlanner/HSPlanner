@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { SavedLootFilter } from '../../types'
 import { CornerMarks } from '../../components/ui/CornerMarks'
 import { IconAction } from '../../components/ui/IconAction'
@@ -363,9 +363,15 @@ function FilterRow({
   const [renaming, setRenaming] = useState(false)
   const [draft, setDraft] = useState(filter.name)
 
-  const meta = useMemo(() => {
-    const decoded = decodeLootFilter(filter.code)
-    return decoded ? filterSummary(decoded) : null
+  const [meta, setMeta] = useState<FilterSummary | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    void decodeLootFilter(filter.code).then((decoded) => {
+      if (!cancelled) setMeta(decoded ? filterSummary(decoded) : null)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [filter.code])
 
   const startRename = () => {
@@ -501,10 +507,10 @@ function NewFilterModal({
 
   const hasCode = code.trim().length > 0
 
-  const submit = () => {
+  const submit = async () => {
     const filterName = name.trim() || 'New filter'
     const record = hasCode
-      ? importFilter(buildId, filterName, code)
+      ? await importFilter(buildId, filterName, code)
       : createFilter(buildId, filterName)
     if (!record) {
       setError('Invalid filter string — paste the exact export from the game.')
@@ -531,7 +537,7 @@ function NewFilterModal({
             autoFocus
             onFocus={(e) => e.target.select()}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') submit()
+              if (e.key === 'Enter') void submit()
             }}
             className="rounded-[3px] border border-border-2 bg-panel-2 px-2 py-1.5 text-[12px] text-text outline-none transition-colors focus:border-accent-deep"
           />
@@ -555,7 +561,7 @@ function NewFilterModal({
         {error && <span className="text-[11px] text-stat-red">{error}</span>}
       </div>
       <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-3">
-        <button type="button" onClick={submit} className={MODAL_BTN_PRIMARY_CLASS}>
+        <button type="button" onClick={() => void submit()} className={MODAL_BTN_PRIMARY_CLASS}>
           {hasCode ? 'Import from game' : 'Create'}
         </button>
       </div>

@@ -16,6 +16,8 @@ use super::skills::Ranged;
 use super::tree::parse::{
     DisableTarget, ParsedConversion, ParsedMeta, parse_tree_node_meta, parse_tree_node_mod,
 };
+use super::defense::{self, DefenseInsight, EhpResult};
+use super::skill_cost::{self, SkillCost, SkillCostInput};
 use super::types::{CustomStat, Inventory, SkillKind, SocketType, StatDef, TreeSocketContent};
 
 pub const RAINBOW_MULTIPLIER: f64 = 1.5;
@@ -105,6 +107,10 @@ pub struct ComputedStats {
     /// Per skill id: keys where that skill's view differs from `stats`; spread over
     /// `stats` to get the map a side skill should be calculated with.
     pub skill_stat_overrides: HashMap<String, HashMap<String, Ranged>>,
+    pub ehp: EhpResult,
+    pub defense_insights: Vec<DefenseInsight>,
+    /// Mana / cast rate / sustain per class skill id, on that skill's own stats.
+    pub skill_costs: HashMap<String, SkillCost>,
 }
 
 /// One skill's subtree aggregate, split by where each key is allowed to go.
@@ -159,6 +165,8 @@ pub struct BuildStatsInput<'a> {
     /// shared stat map.
     pub main_skill_id: Option<&'a str>,
     pub difficulty: Option<&'a str>,
+    /// Config base swing rate per entity kind (sentry / summon / guardian).
+    pub entity_rates: &'a HashMap<String, f64>,
 }
 
 // A few bases carry their own long type names; tree gates say "Throwing"/"Gun".
@@ -454,6 +462,13 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .map(|(id, agg)| (id, agg.scoped))
         .collect();
 
+    // 24. Defensive summary and per-skill costs, so views only format.
+    let mut merged: HashMap<String, Ranged> = stats.clone();
+    merged.extend(stats_combined.iter().map(|(k, v)| (k.clone(), *v)));
+    let ehp = defense::compute_ehp(&merged);
+    let defense_insights = defense::derive_defense_insights(&merged);
+    let skill_costs = skill_costs_for(input, &merged, &skill_stat_overrides, &rank_bonuses);
+
     ComputedStats {
         attributes,
         stats,
@@ -466,7 +481,53 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         rank_bonuses,
         skill_scoped,
         skill_stat_overrides,
+        ehp,
+        defense_insights,
+        skill_costs,
     }
+}
+
+fn skill_costs_for(
+    input: &BuildStatsInput,
+    merged: &HashMap<String, Ranged>,
+    overrides: &HashMap<String, HashMap<String, Ranged>>,
+    rank_bonuses: &HashMap<String, Ranged>,
+) -> HashMap<String, SkillCost> {
+    let Some(class_id) = input.class_id else {
+        return HashMap::new();
+    };
+    data::get_skills_by_class(class_id)
+        .iter()
+        .map(|s| {
+            let allocated = input.skill_ranks.get(&s.id).copied().unwrap_or(0) as f64;
+            let bonus = rank_bonuses
+                .get(&normalize_skill_name(&s.name))
+                .copied()
+                .unwrap_or((0.0, 0.0));
+            let tags = crate::calc::subskill::effective_skill_tags(
+                &s.id,
+                s.tags.as_deref().unwrap_or(&[]),
+                input.subskill_ranks,
+            );
+            let per_skill: std::borrow::Cow<HashMap<String, Ranged>> =
+                match overrides.get(&s.id).filter(|o| !o.is_empty()) {
+                    Some(o) => {
+                        let mut m = merged.clone();
+                        m.extend(o.iter().map(|(k, v)| (k.clone(), *v)));
+                        std::borrow::Cow::Owned(m)
+                    }
+                    None => std::borrow::Cow::Borrowed(merged),
+                };
+            let cost = skill_cost::compute_skill_cost(&SkillCostInput {
+                skill: s,
+                eff_rank: (allocated + bonus.0, allocated + bonus.1),
+                stats: &per_skill,
+                tags: &tags,
+                entity_rates: input.entity_rates,
+            });
+            (s.id.clone(), cost)
+        })
+        .collect()
 }
 
 // Re-runs the pipeline with `crit_chance_below_40` flipped on when the

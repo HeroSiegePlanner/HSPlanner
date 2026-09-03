@@ -1,12 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Inventory, SavedLootFilter } from '../../types'
 import { Modal, MODAL_BTN_PRIMARY_CLASS } from '../../components/ui/Modal'
-import { encodeLootFilter } from '../../utils/lootfilter/codec'
 import { FILTER_STAT_BY_ID } from '../../utils/lootfilter/constants'
 import {
-  buildFilterForStats,
-  collectBuildStats,
-  filterStatIdsFor,
+  buildFilterStats,
+  lootFilterCodeForStats,
+  type BuildFilterStats,
 } from '../../utils/lootfilter/buildFilter'
 import { createFilter } from '../../utils/lootfilter/savedFilters'
 
@@ -25,8 +24,29 @@ export function GenerateFromBuildModal({
   onClose,
   onDone,
 }: GenerateFromBuildModalProps) {
-  const stats = useMemo(() => collectBuildStats(inventory), [inventory])
-  const statIds = useMemo(() => filterStatIdsFor(stats), [stats])
+  const [scan, setScan] = useState<BuildFilterStats | null>(null)
+  const [selected, setSelected] = useState<ReadonlySet<number>>(() => new Set())
+  const [hideRest, setHideRest] = useState(false)
+  const [name, setName] = useState(`${buildName ?? 'Build'} · auto`)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    buildFilterStats(inventory)
+      .then((result) => {
+        if (cancelled) return
+        setScan(result)
+        setSelected(new Set(result.statIds))
+      })
+      .catch(() => {
+        if (!cancelled) setError('Could not scan the gear for affixes.')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [inventory])
+
+  const statIds = useMemo(() => scan?.statIds ?? [], [scan])
   const affixes = useMemo(
     () =>
       statIds
@@ -36,9 +56,6 @@ export function GenerateFromBuildModal({
     [statIds],
   )
 
-  const [selected, setSelected] = useState<ReadonlySet<number>>(
-    () => new Set(statIds),
-  )
   const toggle = (id: number) =>
     setSelected((prev) => {
       const next = new Set(prev)
@@ -46,19 +63,13 @@ export function GenerateFromBuildModal({
       return next
     })
 
-  const [hideRest, setHideRest] = useState(false)
-  const [name, setName] = useState(`${buildName ?? 'Build'} · auto`)
-  const [error, setError] = useState<string | null>(null)
+  const unmatched = scan?.unmatched ?? 0
 
-  const unmatched = stats.length - statIds.length
-
-  const submit = () => {
+  const submit = async () => {
     if (selected.size === 0) return
     try {
-      const filter = buildFilterForStats([...selected], { hideRest })
-      onDone(
-        createFilter(buildId, name.trim() || 'Build filter', encodeLootFilter(filter)),
-      )
+      const code = await lootFilterCodeForStats([...selected], hideRest)
+      onDone(createFilter(buildId, name.trim() || 'Build filter', code))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not create the filter.')
     }
@@ -72,7 +83,9 @@ export function GenerateFromBuildModal({
       title="Generate from build"
     >
       <div className="flex flex-col gap-3 px-6 py-4">
-        {statIds.length === 0 ? (
+        {scan === null ? (
+          <p className="text-[12px] leading-relaxed text-muted">Scanning gear…</p>
+        ) : statIds.length === 0 ? (
           <p className="text-[12px] leading-relaxed text-muted">
             This build has no affixes on its gear yet, so there is nothing to
             highlight. Equip a few items in the Gear tab first.
@@ -89,7 +102,7 @@ export function GenerateFromBuildModal({
                 autoFocus
                 onFocus={(e) => e.target.select()}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') submit()
+                  if (e.key === 'Enter') void submit()
                 }}
                 className="rounded-[3px] border border-border-2 bg-panel-2 px-2 py-1.5 text-[12px] text-text outline-none transition-colors focus:border-accent-deep"
               />
@@ -169,7 +182,7 @@ export function GenerateFromBuildModal({
       <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-3">
         <button
           type="button"
-          onClick={submit}
+          onClick={() => void submit()}
           disabled={selected.size === 0}
           className={`${MODAL_BTN_PRIMARY_CLASS} disabled:cursor-not-allowed disabled:opacity-40`}
         >

@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { EhpSummary } from './EhpSummary'
+import type { DefenseInsight } from '../utils/build/ehp'
 
-function renderWith(statsCombined: Record<string, number>) {
-  return render(<EhpSummary stats={{}} statsCombined={statsCombined} />)
+function renderWith(statsCombined: Record<string, number>, insights: DefenseInsight[] = []) {
+  return render(<EhpSummary stats={{}} statsCombined={statsCombined} insights={insights} />)
 }
 
 describe('<EhpSummary>', () => {
-  it('shows a dash for avoidance without life', () => {
+  it('shows a dash for avoidance without any avoidance stats', () => {
     renderWith({})
     expect(screen.getByText(/Avoidance/)).toBeInTheDocument()
     expect(screen.getAllByText('—').length).toBeGreaterThan(0)
@@ -25,34 +26,17 @@ describe('<EhpSummary>', () => {
     expect(screen.getByText(/block 24\.6%/)).toBeInTheDocument()
   })
 
-  it('shows a dash when all avoidance is zero', () => {
-    renderWith({ life: 1000 })
-    expect(screen.getByText(/Avoidance/)).toBeInTheDocument()
-    expect(screen.getAllByText(/—/).length).toBeGreaterThan(0)
-  })
-
-  it('renders insights for uncapped resistances', () => {
-    renderWith({
-      life: 1000,
-      fire_resistance: 10,
-      cold_resistance: 20,
-      lightning_resistance: 75,
-      poison_resistance: 75,
-      arcane_resistance: 75,
-    })
+  it('renders the engine insights verbatim', () => {
+    renderWith({ life: 1000 }, [
+      { text: 'Cap fire res (10→75): +260% EHP vs fire', gainPct: 260 },
+      { text: 'Cap cold res (20→75): immunity vs cold', gainPct: null },
+    ])
     expect(screen.getByText(/Cap fire res \(10→75\)/)).toBeInTheDocument()
     expect(screen.getByText(/Cap cold res \(20→75\)/)).toBeInTheDocument()
   })
 
-  it('renders no insight block when everything is capped', () => {
-    renderWith({
-      life: 1000,
-      fire_resistance: 75,
-      cold_resistance: 75,
-      lightning_resistance: 75,
-      poison_resistance: 75,
-      arcane_resistance: 75,
-    })
+  it('renders no insight block when the engine has none', () => {
+    renderWith({ life: 1000 })
     expect(screen.queryByText(/Cap /)).not.toBeInTheDocument()
   })
 })

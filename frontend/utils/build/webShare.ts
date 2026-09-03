@@ -1,10 +1,3 @@
-import {
-  entityAttackRate,
-  entityAttackRateFixedKey,
-  entityAttackSpeedKey,
-  entityKindOfTag,
-  entityRatesFrom,
-} from './entityRates'
 import { effectiveSkillTags, entityTagOf } from '../skills/skillTags'
 import {
   detectRuneword,
@@ -20,7 +13,6 @@ import {
 import { getSeason } from '@data/seasons/registry'
 import { groupGearSlots } from '../../views/gear/lib/slotGroups'
 import { compactRange } from '../compactNumber'
-import { manaCostAtRank } from './manaCost'
 import { computeBuildPerformanceAsync, displayValuesNative } from '../calc/bridge'
 import type { AffixValueOutput } from '../calc/bridge'
 import {
@@ -45,7 +37,7 @@ import { buildGearTooltip } from './gearTooltip'
 import type { TooltipModelDeps } from '../../components/itemTooltipModel'
 import { buildIncarnation } from './incarnationSummary'
 import { bonusSourceSynergy } from '../skill/synergyText'
-import { computeSustainStats } from './sustainStats'
+import type { SkillCost } from './skillCost'
 import type { BuildPerformance, PerSkillDps } from './buildPerformance'
 import {
   ATTRIBUTE_ORDER,
@@ -106,14 +98,12 @@ function buildOffenseSection(
   return { title: 'Offense', rows }
 }
 
-function buildDefenseSection(
-  stats: Record<string, RangedValue>,
-  statsCombined: Record<string, RangedValue>,
-): StatSection {
+function buildDefenseSection(performance: BuildPerformance): StatSection {
+  const { stats, statsCombined } = performance
   const rows = DEFENSE_KEYS.map((key) =>
     statRow(statDef(key)?.name ?? key, key, stats, statsCombined, defenseRowTone(key)),
   ).filter((r): r is StatRow => r !== null)
-  const ehpRows = groupEhpRows({ ...stats, ...statsCombined }).map((r) => ({
+  const ehpRows = groupEhpRows(performance.ehp).map((r) => ({
     label: r.label,
     value: formatEhp(r.ehp),
     tone: 'gold' as const,
@@ -150,38 +140,28 @@ function formatNumRange(min: number, max: number): string {
   return `${fmt(min)}–${fmt(max)}`
 }
 
-async function buildSustainSection(
+function buildSustainSection(
   snapshot: BuildSnapshot,
   performance: BuildPerformance,
-): Promise<StatSection | undefined> {
+): StatSection | undefined {
   const primarySkillId = snapshot.activeSkillIds[0]
   if (!primarySkillId) return undefined
   const skill = getSkillsByClass(snapshot.classId).find((s) => s.kind === 'active' && s.id === primarySkillId)
-  if (!skill) return undefined
-
-  const activeRank = snapshot.skillRanks[skill.id] ?? 0
-  const [rankBonusMin, rankBonusMax] = performance.rankBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
-  const sustain = await computeSustainStats({
-    skill,
-    activeRank,
-    rankBonusMin,
-    rankBonusMax,
-    stats: performance.stats,
-    statsCombined: performance.statsCombined,
-  })
+  const sustain = performance.skillCosts[primarySkillId]
+  if (!skill || !sustain) return undefined
 
   const rows: StatRow[] = []
 
   rows.push(
-    sustain.effManaMin === undefined || sustain.effManaMax === undefined
+    sustain.manaMin === null || sustain.manaMax === null
       ? { label: 'Mana / cast', value: '—', tone: 'muted' }
-      : { label: 'Mana / cast', value: formatNumRange(sustain.effManaMin, sustain.effManaMax), tone: 'blue' },
+      : { label: 'Mana / cast', value: formatNumRange(sustain.manaMin, sustain.manaMax), tone: 'blue' },
   )
 
-  if (sustain.lifePerCastMax !== undefined && sustain.lifePerCastMax > 0) {
+  if (sustain.lifeMax !== null && sustain.lifeMax > 0) {
     rows.push({
       label: 'Life / cast',
-      value: formatNumRange(sustain.lifePerCastMin ?? 0, sustain.lifePerCastMax),
+      value: formatNumRange(sustain.lifeMin ?? 0, sustain.lifeMax),
       tone: 'red',
     })
   }
@@ -189,33 +169,22 @@ async function buildSustainSection(
   // For an entity skill the player's cast rate only spawns them; the entity's
   // own swing rate is a separate row.
   const entityTag = entityTagOf(effectiveSkillTags(skill, snapshot.subskillRanks))
-  const entityKind = entityTag ? entityKindOfTag(entityTag) : undefined
-  const rateLabel = entityKind ? 'Spawn rate' : 'Cast rate'
+  const rateLabel = entityTag ? 'Spawn rate' : 'Cast rate'
   rows.push(
-    sustain.effCastMin === undefined || sustain.effCastMax === undefined
+    sustain.castRateMin === null || sustain.castRateMax === null
       ? { label: rateLabel, value: '—', tone: 'muted' }
-      : { label: rateLabel, value: `${formatNumRange(sustain.effCastMin, sustain.effCastMax)}/s` },
+      : { label: rateLabel, value: `${formatNumRange(sustain.castRateMin, sustain.castRateMax)}/s` },
   )
 
-  if (entityKind && entityTag) {
-    const speedKey = entityAttackSpeedKey(entityKind)
-    const swing = entityAttackRate(
-      entityKind,
-      entityRatesFrom(snapshot.entityRates, snapshot.entityAttacksPerSecond),
-      [
-        rangedMin(performance.stats[speedKey] ?? 0),
-        rangedMax(performance.stats[speedKey] ?? 0),
-      ],
-      rangedMax(performance.stats[entityAttackRateFixedKey(entityKind)] ?? 0),
-    )
+  if (entityTag && sustain.entityRate) {
     rows.push({
       label: `${entityTag} attack rate`,
-      value: `${formatNumRange(swing.min, swing.max)}/s`,
+      value: `${formatNumRange(sustain.entityRate.min, sustain.entityRate.max)}/s`,
     })
   }
 
   rows.push(
-    sustain.manaPerSecMin === undefined || sustain.manaPerSecMax === undefined
+    sustain.manaPerSecMin === null || sustain.manaPerSecMax === null
       ? { label: 'Mana / sec', value: '—', tone: 'muted' }
       : {
           label: 'Mana / sec',
@@ -230,7 +199,7 @@ async function buildSustainSection(
     tone: 'blue',
   })
 
-  if (sustain.netMin !== undefined && sustain.netMax !== undefined) {
+  if (sustain.netMin !== null && sustain.netMax !== null) {
     rows.push({
       label: 'Net mana / sec',
       value: `${sustain.netMin >= 0 ? '+' : ''}${formatNumRange(sustain.netMin, sustain.netMax)}`,
@@ -238,7 +207,7 @@ async function buildSustainSection(
     })
   }
 
-  if (sustain.uptimeMin !== undefined && sustain.uptimeMax !== undefined) {
+  if (sustain.uptimeMin !== null && sustain.uptimeMax !== null) {
     rows.push({
       label: 'Uptime',
       value: `${formatNumRange(Math.round(sustain.uptimeMin), Math.round(sustain.uptimeMax))}%`,
@@ -262,8 +231,7 @@ function buildSkillRows(
   skill: Skill,
   perSkill: PerSkillDps | undefined,
   isMain: boolean,
-  effRankMin: number,
-  effRankMax: number,
+  cost: SkillCost | undefined,
 ): StatRow[] {
   const rows: StatRow[] = []
   if (perSkill?.hitDpsMin !== undefined && perSkill?.hitDpsMax !== undefined) {
@@ -274,9 +242,9 @@ function buildSkillRows(
       ...(isMain ? { glow: true } : {}),
     })
   }
-  const manaMin = manaCostAtRank(skill, Math.max(1, effRankMin))
-  const manaMax = manaCostAtRank(skill, Math.max(1, effRankMax))
-  if (manaMin !== undefined && manaMax !== undefined) {
+  const manaMin = cost?.baseManaMin ?? null
+  const manaMax = cost?.baseManaMax ?? null
+  if (manaMin !== null && manaMax !== null) {
     rows.push({
       label: 'Mana / cast',
       value: manaMin === manaMax ? String(manaMax) : `${manaMin}–${manaMax}`,
@@ -309,8 +277,7 @@ function buildSkillItem(
     skill,
     performance.perSkill?.find((p) => p.id === skill.id),
     isMain,
-    rank + bonusMin,
-    rank + bonusMax,
+    performance.skillCosts[skill.id],
   )
   const synergies = (skill.bonusSources ?? []).map(bonusSourceSynergy)
   return {
@@ -461,10 +428,10 @@ export async function buildSharePayload(build: SavedBuild): Promise<SharePayload
       : '0'
 
   const offense = buildOffenseSection(performance.stats, performance.statsCombined)
-  const defense = buildDefenseSection(performance.stats, performance.statsCombined)
+  const defense = buildDefenseSection(performance)
   const resistances = buildResistancesSection(performance.stats)
   const attributes = buildAttributesSection(performance.attributes)
-  const sustain = await buildSustainSection(snapshot, performance)
+  const sustain = buildSustainSection(snapshot, performance)
 
   const skillGroups = buildSkillGroups(snapshot, performance)
   const skillPointsSpent = Object.values(snapshot.skillRanks).reduce((a, b) => a + b, 0)

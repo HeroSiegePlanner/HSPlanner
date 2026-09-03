@@ -48,7 +48,8 @@ export default function ImportScreenshotModal({
       })
       try {
         const lines = await ocr(blob)
-        setResult(parseTooltipLines(lines))
+        setResult(await parseTooltipLines(lines))
+
       } catch (err: unknown) {
         setError(
           err instanceof Error

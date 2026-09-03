@@ -445,7 +445,11 @@ export default function CharacterView() {
               </span>
             }
           />
-          <EhpSummary stats={stats} statsCombined={statsCombined} />
+          <EhpSummary
+            stats={stats}
+            statsCombined={statsCombined}
+            insights={performance?.defenseInsights}
+          />
           <div className="space-y-2">
             {RESISTANCES.map((r) => {
               const v = stat(r.key)
@@ -511,7 +515,8 @@ export default function CharacterView() {
               statKey="mana"
               accent="text-stat-blue"
             />
-            <EhpRows stats={stats} statsCombined={statsCombined} />
+            <EhpRows ehp={performance?.ehp} />
+
             <DefRow
               label="Block chance"
               value={stat('block_chance')}

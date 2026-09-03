@@ -3,6 +3,9 @@ import { render, screen } from '@testing-library/react'
 import { BuildPreview } from './BuildPreview'
 import type { SavedBuild } from '../../utils/build/savedBuilds'
 import type { PreviewStats } from './usePreviewStats'
+import type { DamageType } from '../../utils/build/ehp'
+
+const TYPES: DamageType[] = ['physical', 'fire', 'cold', 'lightning', 'poison', 'arcane']
 
 const previewMock = vi.fn<() => PreviewStats>()
 vi.mock('./usePreviewStats', () => ({
@@ -53,6 +56,15 @@ describe('<BuildPreview> effective HP', () => {
       performance: {
         stats: {},
         statsCombined: { life: 1000, physical_damage_reduction: 50 },
+        ehp: {
+          entries: TYPES.map((type) => ({
+            type,
+            ehp: type === 'physical' ? 2000 : 1000,
+            multiplier: 1,
+            layers: [],
+          })),
+          worst: 'fire',
+        },
       } as unknown as PreviewStats['performance'],
       snapshot: null,
       loading: false,

@@ -338,10 +338,7 @@ export default function StatsView() {
     () => skillsForClass.find((s) => s.id === mainSkillId) ?? null,
     [skillsForClass, mainSkillId],
   )
-  const mainSkillStats = useMemo(
-    () => (mainSkill ? statsForSkill(mainSkill.id) : stats),
-    [mainSkill, statsForSkill, stats],
-  )
+
   // The engine is the only place that folds in the skill-scoped subtree, conversions
   // and per-element break. Per-skill cards below still use compute_skill_damage.
   const mainSkillDeps = useMemo(
@@ -502,9 +499,7 @@ export default function StatsView() {
           rankBonuses={rankBonuses}
           skillBreakdown={mainPerformance?.damage ?? null}
           attackDamage={mainPerformance?.attackDamage ?? null}
-          stats={mainSkillStats}
-          mcrRange={mainSkillStats.mana_cost_reduction ?? 0}
-          paidInLifeRange={mainSkillStats.mana_cost_paid_in_life ?? 0}
+          cost={mainSkill ? computed?.skillCosts[mainSkill.id] : undefined}
           weaponDamage={weaponDamage}
         />
       )}
@@ -532,7 +527,7 @@ export default function StatsView() {
                     <SkillCard
                       key={skill.id}
                       skill={skill}
-                      mcrRange={skillStats.mana_cost_reduction ?? 0}
+                      cost={computed?.skillCosts[skill.id]}
                       attributes={attributes}
                       stats={skillStats}
                       skillRanksByName={skillRanksByName}
@@ -557,7 +552,7 @@ export default function StatsView() {
 
       {showEhp && (
         <Panel title="Effective HP">
-          <EhpBreakdown stats={stats} statsCombined={statsCombined} />
+          <EhpBreakdown ehp={computed?.ehp} stats={stats} statsCombined={statsCombined} />
         </Panel>
       )}
 

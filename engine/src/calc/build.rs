@@ -3,7 +3,9 @@ use std::collections::{HashMap, HashSet};
 use serde::Serialize;
 
 use super::data;
+use super::defense::{DefenseInsight, EhpResult};
 use super::rank::normalize_skill_name;
+use super::skill_cost::SkillCost;
 use super::skills::{
     AttackKind, AttackSkillDamageBreakdown, AttackSkillInput, AttackSkillScaling, BonusSource,
     DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput, StatMap,
@@ -81,6 +83,9 @@ pub struct BuildPerformance {
     /// How many times one cast hits the same target. Already folded into the DPS;
     /// exported so views can show it. `None` when the skill hits once.
     pub hits_per_cast: Option<Ranged>,
+    pub ehp: EhpResult,
+    pub defense_insights: Vec<DefenseInsight>,
+    pub skill_costs: HashMap<String, SkillCost>,
 }
 
 fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
@@ -288,6 +293,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         granted_skill_ranks: deps.granted_skill_ranks,
         main_skill_id: deps.main_skill_id,
         difficulty: deps.difficulty,
+        entity_rates: deps.entity_rates,
     };
     let computed = compute_build_stats(&stats_input);
 
@@ -442,55 +448,42 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     let entity_kind = super::affix_tags::entity_tag_for(entity_tags);
     let is_entity = entity_kind.is_some();
     // Explosive Kunai is thrown at weapon attack speed; FCR never touches it.
-    let (base_rate, rate_bonus) = if let Some(kind) = entity_kind {
-        // The entity swings on its own cadence: config base rate scaled by its
-        // own attack-speed stats. Player FCR / attack speed stay out of it.
-        let kind_key = kind.to_lowercase();
-        // A subskill can pin the entity to a literal rate (C.Y.C.L.O.P.S. lasers
-        // tick 4/s); pinned means pinned, so knob and speed bonuses drop out.
-        let fixed = r_max(stat(&format!("{kind_key}_attack_rate_fixed")));
-        if fixed > 0.0 {
-            (Some(fixed), (0.0, 0.0))
-        } else {
-            let bonus = super::affix_tags::sum_for(
-                super::types::AffixEffect::AttackSpeed,
-                entity_tags,
-                &computed.stats,
-            );
-            let rate = deps
-                .entity_rates
-                .get(&kind_key)
-                .copied()
-                .unwrap_or(DEFAULT_ENTITY_RATE);
-            (Some(rate), bonus)
-        }
-    } else if active_skill.is_some_and(|s| s.uses_attack_speed) {
-        (
-            Some(r_max(stat("attacks_per_second"))),
-            combine_additive_and_more(
-                stat("increased_attack_speed"),
-                stat("increased_attack_speed_more"),
-            ),
-        )
-    } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
-        // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
-        (
-            active_skill.and_then(|s| {
-                s.base_cooldown
-                    .filter(|cd| *cd > 0.0)
-                    .map(|cd| 1.0 / cd)
-                    .or(s.base_cast_rate)
-            }),
-            stat("skill_haste"),
-        )
+    let (eff_cast_min, eff_cast_max) = if let Some(kind) = entity_kind {
+        // The entity swings on its own cadence; player FCR / attack speed stay out of it.
+        let swing =
+            super::skill_cost::entity_rate(kind, entity_tags, &computed.stats, deps.entity_rates);
+        (Some(swing.min), Some(swing.max))
     } else {
+        let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
+            (
+                Some(r_max(stat("attacks_per_second"))),
+                combine_additive_and_more(
+                    stat("increased_attack_speed"),
+                    stat("increased_attack_speed_more"),
+                ),
+            )
+        } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
+            // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
+            (
+                active_skill.and_then(|s| {
+                    s.base_cooldown
+                        .filter(|cd| *cd > 0.0)
+                        .map(|cd| 1.0 / cd)
+                        .or(s.base_cast_rate)
+                }),
+                stat("skill_haste"),
+            )
+        } else {
+            (
+                active_skill.and_then(|s| s.base_cast_rate),
+                combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
+            )
+        };
         (
-            active_skill.and_then(|s| s.base_cast_rate),
-            combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
+            base_rate.map(|r| r * (1.0 + rate_bonus.0 / 100.0)),
+            base_rate.map(|r| r * (1.0 + rate_bonus.1 / 100.0)),
         )
     };
-    let eff_cast_min = base_rate.map(|r| r * (1.0 + rate_bonus.0 / 100.0));
-    let eff_cast_max = base_rate.map(|r| r * (1.0 + rate_bonus.1 / 100.0));
 
     // Sentries, summons and guardians are counted apart: each entity the skill
     // fields is a full extra DPS source.
@@ -788,6 +781,9 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         rank_bonuses: computed.rank_bonuses,
         entity_count: is_entity.then_some((count_min, count_max)),
         hits_per_cast: (hits_max > 1.0).then_some((hits_min, hits_max)),
+        ehp: computed.ehp,
+        defense_insights: computed.defense_insights,
+        skill_costs: computed.skill_costs,
     }
 }
 

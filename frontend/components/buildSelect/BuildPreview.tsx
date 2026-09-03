@@ -163,9 +163,8 @@ export function BuildPreview({
   const skillCount = preview.snapshot
     ? String(Object.keys(preview.snapshot.skillRanks).length)
     : '—'
-  const ehpTiles = perf
-    ? groupEhpRows({ ...perf.stats, ...perf.statsCombined })
-    : []
+  const ehpTiles = perf ? groupEhpRows(perf.ehp) : []
+
 
   const notesHtml = sanitizeHtml(build.notes)
   const hasNotes = stripHtml(notesHtml).length > 0

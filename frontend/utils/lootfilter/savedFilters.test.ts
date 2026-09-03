@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, test } from 'vitest'
-import { decodeLootFilter, encodeLootFilter, createDefaultLootFilter } from './codec'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { DEFAULT_LOOT_FILTER_CODE } from './codec'
+import type * as CodecModule from './codec'
 import {
   createFilter,
   deleteFilter,
@@ -11,9 +12,15 @@ import {
   setFilterFavorite,
   updateFilterCode,
 } from './savedFilters'
-import { HELL_FILTER_S9 } from './hellFilter.fixture'
+
+// The codec lives in the engine; the library only needs "valid or not".
+vi.mock('./codec', async (importOriginal) => ({
+  ...(await importOriginal<typeof CodecModule>()),
+  decodeLootFilter: vi.fn(async (code: string) => (code.startsWith('eyJ') ? {} : null)),
+}))
 
 const BUILD = 'b_test'
+const GAME_EXPORT = ' eyJ2ZXJzaW9uIjoyfQ== '
 
 beforeEach(() => {
   window.localStorage.clear()
@@ -24,7 +31,7 @@ describe('savedFilters', () => {
     const record = createFilter(BUILD, 'Mój filtr')
     expect(record.name).toBe('Mój filtr')
     expect(record.buildId).toBe(BUILD)
-    expect(decodeLootFilter(record.code)).not.toBeNull()
+    expect(record.code).toBe(DEFAULT_LOOT_FILTER_CODE)
     const listed = listSavedFilters(BUILD)
     expect(listed).toHaveLength(1)
     expect(listed[0]!.id).toBe(record.id)
@@ -44,9 +51,7 @@ describe('savedFilters', () => {
 
   test('updateFilterCode zapisuje nowy kod i podbija updatedAt', () => {
     const record = createFilter(BUILD, 'F')
-    const filter = createDefaultLootFilter()
-    filter.wtc = 123
-    const code = encodeLootFilter(filter)
+    const code = 'eyJ2ZXJzaW9uIjoyLCJ3dGMiOjEyM30='
     const updated = updateFilterCode(record.id, code)
     expect(updated?.code).toBe(code)
     expect(getSavedFilter(record.id)?.code).toBe(code)
@@ -75,11 +80,11 @@ describe('savedFilters', () => {
     expect(getSavedFilter(a.id)?.favorite).toBe(true)
   })
 
-  test('importFilter przyjmuje prawdziwy eksport z gry, odrzuca śmieci', () => {
-    expect(importFilter(BUILD, 'Hell', 'nie base64!!!')).toBeNull()
-    const record = importFilter(BUILD, 'Hell', HELL_FILTER_S9)
+  test('importFilter przyjmuje kod, który silnik dekoduje, odrzuca śmieci', async () => {
+    expect(await importFilter(BUILD, 'Hell', 'nie base64!!!')).toBeNull()
+    const record = await importFilter(BUILD, 'Hell', GAME_EXPORT)
     expect(record).not.toBeNull()
-    expect(getSavedFilter(record!.id)?.code).toBe(HELL_FILTER_S9.trim())
+    expect(getSavedFilter(record!.id)?.code).toBe(GAME_EXPORT.trim())
   })
 
   test('uszkodzony storage nie wywala listy', () => {

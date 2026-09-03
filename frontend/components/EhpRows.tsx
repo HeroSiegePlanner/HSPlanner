@@ -1,13 +1,11 @@
-import { groupEhpRows, formatEhp } from '../utils/build/ehp'
-import type { RangedValue } from '../types'
+import { EMPTY_EHP, formatEhp, groupEhpRows, type EhpResult } from '../utils/build/ehp'
 
 interface EhpRowsProps {
-  stats: Record<string, RangedValue>
-  statsCombined: Record<string, RangedValue>
+  ehp: EhpResult | undefined
 }
 
-export function EhpRows({ stats, statsCombined }: EhpRowsProps) {
-  const rows = groupEhpRows({ ...stats, ...statsCombined })
+export function EhpRows({ ehp }: EhpRowsProps) {
+  const rows = groupEhpRows(ehp ?? EMPTY_EHP)
   if (rows.length === 0) return null
   return (
     <>

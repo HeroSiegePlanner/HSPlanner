@@ -72,7 +72,7 @@ describe('<SkillCard> attack skills', () => {
       <ul>
         <SkillCard
           skill={heavyBall}
-          mcrRange={0}
+
           attributes={{} as never}
           stats={{}}
           skillRanksByName={{}}

@@ -1,5 +1,7 @@
 import { gameConfig } from '@data'
 import type { ForgeKind } from '@data'
+import type { DefenseInsight, EhpResult } from '../build/ehp'
+import type { SkillCost } from '../build/skillCost'
 import type {
   AttributeKey,
   RangedStatMap,
@@ -51,7 +53,11 @@ export interface ComputedStats {
   rankBonuses: Record<string, [number, number]>
   skillScoped: Record<string, Record<string, RangedValue>>
   skillStatOverrides: Record<string, Record<string, RangedValue>>
+  ehp: EhpResult
+  defenseInsights: DefenseInsight[]
+  skillCosts: Record<string, SkillCost>
 }
+
 
 const MINOR_WORDS = new Set(['of', 'to', 'per', 'and', 'low'])
 

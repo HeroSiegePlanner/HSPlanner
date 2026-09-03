@@ -42,7 +42,7 @@ pub enum AffixSign {
     Minus,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum AffixFormat {
     #[default]

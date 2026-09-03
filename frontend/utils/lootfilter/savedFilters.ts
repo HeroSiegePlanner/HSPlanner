@@ -7,7 +7,7 @@ import {
   writeStorage,
 } from '../storage'
 import { nextDuplicateName } from '../build/savedBuilds'
-import { createDefaultLootFilter, decodeLootFilter, encodeLootFilter } from './codec'
+import { DEFAULT_LOOT_FILTER_CODE, decodeLootFilter } from './codec'
 
 const STORAGE_KEY = 'hsplanner.lootFilters.v1'
 
@@ -95,7 +95,7 @@ export function getSavedFilter(id: string): SavedLootFilter | null {
 export function createFilter(
   buildId: string,
   name: string,
-  code: string = encodeLootFilter(createDefaultLootFilter()),
+  code: string = DEFAULT_LOOT_FILTER_CODE,
 ): SavedLootFilter {
   return appendFilter(readFilterLibrary(), buildId, name, code)
 }
@@ -125,15 +125,16 @@ function appendFilter(
   return record
 }
 
-export function importFilter(
+export async function importFilter(
   buildId: string,
   name: string,
   code: string,
-): SavedLootFilter | null {
+): Promise<SavedLootFilter | null> {
   const trimmed = code.trim()
-  if (!decodeLootFilter(trimmed)) return null
+  if (!(await decodeLootFilter(trimmed))) return null
   return createFilter(buildId, name, trimmed)
 }
+
 
 function updateFilter(
   id: string,

@@ -1,6 +1,5 @@
 import { DAMAGE_COLORS, skillHeroBg } from '../../utils/damageColors'
-import { effectiveSkillCost } from './effectiveSkillCost'
-import { skillSpeedKey } from '../../utils/build/skillRate'
+import type { SkillCost } from '../../utils/build/skillCost'
 import { visibleEffectiveSkillTags } from '../../utils/skills/skillTags'
 import { useBuild } from '../../store/build'
 import type {
@@ -8,12 +7,7 @@ import type {
   SkillDamageBreakdown,
   WeaponDamageBreakdown,
 } from '../../utils/item/stats'
-import type {
-  AttributeKey,
-  RangedStatMap,
-  RangedValue,
-  Skill,
-} from '../../types'
+import type { AttributeKey, RangedValue, Skill } from '../../types'
 import { formatDecimal, formatRange, useFormatRangeInt } from './statFormat'
 import { BDLine, BDSection, HeroStat, Panel } from './statPrimitives'
 import { DamageBreakdown } from './DamageBreakdown'
@@ -27,9 +21,7 @@ export function MainSkillSection({
   skillsByNormalizedName,
   rankBonuses,
   skillBreakdown,
-  stats,
-  mcrRange,
-  paidInLifeRange,
+  cost,
   weaponDamage,
   attackDamage,
 }: {
@@ -42,9 +34,7 @@ export function MainSkillSection({
   // Recomputing this locally would lose the skill-scoped subtree values, the
   // conversions and the element break that only the engine assembles.
   skillBreakdown: SkillDamageBreakdown | null
-  stats: RangedStatMap
-  mcrRange: RangedValue
-  paidInLifeRange: RangedValue
+  cost: SkillCost | undefined
   weaponDamage: WeaponDamageBreakdown | null
   attackDamage: AttackSkillDamageBreakdown | null
 }) {
@@ -76,9 +66,7 @@ export function MainSkillSection({
         <SkillDamageHero
           skill={mainSkill}
           breakdown={skillBreakdown}
-          stats={stats}
-          mcrRange={mcrRange}
-          paidInLifeRange={paidInLifeRange}
+          cost={cost}
         />
         <DamageBreakdown
           skill={mainSkill}
@@ -216,33 +204,21 @@ function AttackSkillHero({
 function SkillDamageHero({
   skill,
   breakdown,
-  stats,
-  mcrRange,
-  paidInLifeRange,
+  cost,
 }: {
   skill: Skill
   breakdown: SkillDamageBreakdown
-  stats: RangedStatMap
-  mcrRange: RangedValue
-  paidInLifeRange: RangedValue
+  cost: SkillCost | undefined
 }) {
   const formatRangeInt = useFormatRangeInt()
   const hasCrit = breakdown.critChance > 0
-  const {
-    effectiveManaMin,
-    effectiveManaMax,
-    lifeCostMin,
-    lifeCostMax,
-    effectiveCastRateMin,
-    effectiveCastRateMax,
-  } = effectiveSkillCost(
-    skill,
-    mcrRange,
-    stats[skillSpeedKey(skill)] ?? 0,
-    paidInLifeRange,
-    Math.max(1, breakdown.effectiveRankMin),
-    Math.max(1, breakdown.effectiveRankMax),
-  )
+  const effectiveManaMin = cost?.manaMin ?? undefined
+  const effectiveManaMax = cost?.manaMax ?? undefined
+  const lifeCostMin = cost?.lifeMin ?? undefined
+  const lifeCostMax = cost?.lifeMax ?? undefined
+  const effectiveCastRateMin = cost?.castRateMin ?? undefined
+  const effectiveCastRateMax = cost?.castRateMax ?? undefined
+
   const accentBg = skill.damageType
     ? skillHeroBg(skill.damageType)
     : 'linear-gradient(135deg, rgba(224,184,100,0.06), transparent 60%)'

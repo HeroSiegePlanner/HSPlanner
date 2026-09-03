@@ -13,8 +13,6 @@ import {
   formatValue,
   isZero,
   normalizeSkillName,
-  rangedMax,
-  rangedMin,
   statDef,
 } from "../../utils/item/stats";
 import { computeBuildPerformanceAsync } from "../../utils/calc/bridge";
@@ -34,17 +32,12 @@ import {
   RESISTANCES,
   effectiveStatValue,
 } from "../../utils/build/statSectionDefs";
-import { computeSustainStats } from "../../utils/build/sustainStats";
+
 import {
   effectiveSkillTags,
   entityTagOf,
 } from "../../utils/skills/skillTags";
-import {
-  entityAttackRate,
-  entityAttackRateFixedKey,
-  entityAttackSpeedKey,
-  entityKindOfTag,
-} from "../../utils/build/entityRates";
+import { entityKindOfTag } from "../../utils/build/entityRates";
 
 export default function LeftStatsPanel() {
   const classId = useBuild((s) => s.classId);
@@ -102,57 +95,33 @@ export default function LeftStatsPanel() {
     ? entityTagOf(effectiveSkillTags(activeSkill, subskillRanks))
     : undefined;
   const entityKind = entityLabel ? entityKindOfTag(entityLabel) : undefined;
-  const entityRates = useBuild((s) => s.entityRates);
-  const entitySwing = entityKind
-    ? entityAttackRate(
-        entityKind,
-        entityRates,
-        [
-          rangedMin(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-          rangedMax(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-        ],
-        rangedMax(stats[entityAttackRateFixedKey(entityKind)] ?? 0),
-      )
-    : undefined;
+
 
   const rankBonus: [number, number] = activeSkill
     ? (performance?.rankBonuses[normalizeSkillName(activeSkill.name)] ?? [0, 0])
     : [0, 0];
   const rankBonusMin = rankBonus[0];
   const rankBonusMax = rankBonus[1];
-  const sustain = useCalcResult(
-    () =>
-      activeSkill
-        ? computeSustainStats({
-            skill: activeSkill,
-            activeRank,
-            rankBonusMin,
-            rankBonusMax,
-            stats,
-            statsCombined,
-          })
-        : null,
-    [activeSkill, activeRank, rankBonusMin, rankBonusMax, stats, statsCombined],
-    null,
-  );
+  const sustain = activeSkill ? performance?.skillCosts[activeSkill.id] : undefined;
+  const entitySwing = sustain?.entityRate ?? undefined;
   const effRankMin = sustain?.effRankMin ?? activeRank + rankBonusMin;
   const effRankMax = sustain?.effRankMax ?? activeRank + rankBonusMax;
-  const effManaMin = sustain?.effManaMin;
-  const effManaMax = sustain?.effManaMax;
-  const lifePerCastMin = sustain?.lifePerCastMin;
-  const lifePerCastMax = sustain?.lifePerCastMax;
-  const effCastMin = sustain?.effCastMin;
-  const effCastMax = sustain?.effCastMax;
-  const manaPerSecMin = sustain?.manaPerSecMin;
-  const manaPerSecMax = sustain?.manaPerSecMax;
+  const effManaMin = sustain?.manaMin ?? undefined;
+  const effManaMax = sustain?.manaMax ?? undefined;
+  const lifePerCastMin = sustain?.lifeMin ?? undefined;
+  const lifePerCastMax = sustain?.lifeMax ?? undefined;
+  const effCastMin = sustain?.castRateMin ?? undefined;
+  const effCastMax = sustain?.castRateMax ?? undefined;
+  const manaPerSecMin = sustain?.manaPerSecMin ?? undefined;
+  const manaPerSecMax = sustain?.manaPerSecMax ?? undefined;
   const manaRegenMin = sustain?.manaRegenMin ?? 0;
   const manaRegenMax = sustain?.manaRegenMax ?? 0;
   const sustainable = sustain?.sustainable ?? false;
   const unsustainable = sustain?.unsustainable ?? false;
-  const netMin = sustain?.netMin;
-  const netMax = sustain?.netMax;
-  const uptimeMin = sustain?.uptimeMin;
-  const uptimeMax = sustain?.uptimeMax;
+  const netMin = sustain?.netMin ?? undefined;
+  const netMax = sustain?.netMax ?? undefined;
+  const uptimeMin = sustain?.uptimeMin ?? undefined;
+  const uptimeMax = sustain?.uptimeMax ?? undefined;
 
   return (
     <aside
@@ -552,7 +521,7 @@ export default function LeftStatsPanel() {
               }
             />
             {key === "mana_replenish" && (
-              <EhpRows stats={stats} statsCombined={statsCombined} />
+              <EhpRows ehp={performance?.ehp} />
             )}
           </Fragment>
         ))}

@@ -1,5 +1,6 @@
 pub mod calc;
 pub mod ocr;
+pub mod tooltip_parse;
 mod suggest_engine;
 
 #[cfg(any(windows, target_os = "linux"))]
@@ -55,6 +56,11 @@ pub fn run() {
       calc::commands::parse_custom_stats,
       suggest_engine::command::suggest_tree_nodes,
       ocr::ocr_tooltip_lines,
+      tooltip_parse::parse_tooltip_lines,
+      calc::lootfilter::lootfilter_decode,
+      calc::lootfilter::lootfilter_encode,
+      calc::lootfilter::lootfilter_build_stats,
+      calc::lootfilter::lootfilter_code_for_stats,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

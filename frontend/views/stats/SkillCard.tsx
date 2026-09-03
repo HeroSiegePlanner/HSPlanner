@@ -1,20 +1,9 @@
 import { type CSSProperties, useMemo } from 'react'
 import { useAttackSkillDamage, useSkillDamage } from '../../hooks/useSkillDamage'
 import { DAMAGE_COLORS } from '../../utils/damageColors'
-import { normalizeSkillName, rangedMax, rangedMin } from '../../utils/item/stats'
-import { effectiveSkillCost } from './effectiveSkillCost'
-import { skillSpeedKey } from '../../utils/build/skillRate'
-import {
-  effectiveSkillTags,
-  entityTagOf,
-  visibleEffectiveSkillTags,
-} from '../../utils/skills/skillTags'
-import {
-  entityAttackRate,
-  entityAttackRateFixedKey,
-  entityAttackSpeedKey,
-  entityKindOfTag,
-} from '../../utils/build/entityRates'
+import { normalizeSkillName, rangedMax } from '../../utils/item/stats'
+import { visibleEffectiveSkillTags } from '../../utils/skills/skillTags'
+import type { SkillCost } from '../../utils/build/skillCost'
 import { useBuild } from '../../store/build'
 import type { AttributeKey, RangedStatMap, RangedValue, Skill } from '../../types'
 import type {
@@ -28,7 +17,7 @@ import { AttackDamageBreakdown } from './AttackDamageBreakdown'
 
 export function SkillCard({
   skill,
-  mcrRange,
+  cost,
   attributes,
   stats,
   skillRanksByName,
@@ -44,7 +33,7 @@ export function SkillCard({
   weapon,
 }: {
   skill: Skill
-  mcrRange: RangedValue
+  cost?: SkillCost
   attributes: Record<AttributeKey, RangedValue>
   stats: RangedStatMap
   skillRanksByName: Record<string, number>
@@ -61,48 +50,25 @@ export function SkillCard({
 }) {
   const formatRangeInt = useFormatRangeInt()
   const subskillRanks = useBuild((s) => s.subskillRanks)
-  const entityRates = useBuild((s) => s.entityRates)
   const tagView = visibleEffectiveSkillTags(skill, subskillRanks)
-  const entityTag = entityTagOf(effectiveSkillTags(skill, subskillRanks))
-  const entityKind = entityTag ? entityKindOfTag(entityTag) : undefined
   // Entities swing on their own cadence; the cast rate only spawns them.
-  const entitySwing = entityKind
-    ? entityAttackRate(
-        entityKind,
-        entityRates,
-        [
-          rangedMin(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-          rangedMax(stats[entityAttackSpeedKey(entityKind)] ?? 0),
-        ],
-        rangedMax(stats[entityAttackRateFixedKey(entityKind)] ?? 0),
-      )
-    : undefined
-  // Item "+X to <tag> Skills" ranks count toward the rank the game reports,
-  // so mana cost and the header rank both use the effective total.
+  const entitySwing = cost?.entityRate ?? undefined
+  // Item "+X to <tag> Skills" ranks count toward the rank the game reports.
   const [rankBonusMin, rankBonusMax] =
     rankBonuses[normalizeSkillName(skill.name)] ?? [0, 0]
   const effRankMin = currentRank > 0 ? currentRank + rankBonusMin : 0
   const effRankMax = currentRank > 0 ? currentRank + rankBonusMax : 0
-  const {
-    baseManaMin,
-    baseManaMax,
-    mcrMax,
-    baseRate,
-    speedMax,
-    effectiveManaMin,
-    effectiveManaMax,
-    lifeCostMin,
-    lifeCostMax,
-    effectiveCastRateMin,
-    effectiveCastRateMax,
-  } = effectiveSkillCost(
-    skill,
-    mcrRange,
-    stats[skillSpeedKey(skill)] ?? 0,
-    stats.mana_cost_paid_in_life ?? 0,
-    Math.max(1, effRankMin),
-    Math.max(1, effRankMax),
-  )
+  const baseManaMin = cost?.baseManaMin ?? undefined
+  const baseManaMax = cost?.baseManaMax ?? undefined
+  const mcrMax = cost?.mcrMax ?? 0
+  const baseRate = cost?.baseRate ?? undefined
+  const speedMax = cost?.speedMax ?? 0
+  const effectiveManaMin = cost?.manaMin ?? undefined
+  const effectiveManaMax = cost?.manaMax ?? undefined
+  const lifeCostMin = cost?.lifeMin ?? undefined
+  const lifeCostMax = cost?.lifeMax ?? undefined
+  const effectiveCastRateMin = cost?.castRateMin ?? undefined
+  const effectiveCastRateMax = cost?.castRateMax ?? undefined
 
   const isAttack = skill.attackKind === 'attack'
   const hasSpellDamage =
@@ -360,8 +326,9 @@ export function SkillCard({
                 <span className="font-mono font-medium text-text">
                   {formatRange(effectiveCastRateMin, effectiveCastRateMax)}
                 </span>{' '}
-                {entityKind
+                {entitySwing
                   ? 'spawns/s'
+
                   : skill.usesAttackSpeed
                     ? 'throws/s'
                     : 'casts/s'}
