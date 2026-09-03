@@ -143,6 +143,17 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
     }
 }
 
+/// Hits one target takes from a volley. A fan or arc lands only a couple of
+/// its projectiles on a single enemy (`single_target_hit_cap`), and a wave
+/// proc repeats the whole volley (`extra_volleys_pct`, already chance-weighted).
+fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> u32 {
+    let boosted = base + subtree_stat("projectile_count") as u32;
+    let cap = subtree_stat("single_target_hit_cap") as u32;
+    let capped = if cap > 0 { boosted.min(cap) } else { boosted };
+    // ponytail: whole hits; go f64 if a 1-projectile skill ever takes a wave node
+    (capped as f64 * (1.0 + subtree_stat("extra_volleys_pct") / 100.0)).round() as u32
+}
+
 /// Hits one target takes per cast. The damage object clears its hit list every
 /// `tickFrequency`, so it lands `floor(lifetime / tick) + 1` hits on a target that
 /// stays in range. Objects the game kills by animation or alarm have no extracted
@@ -262,12 +273,13 @@ fn proc_target_damage(
         enemy_conditions: ctx.enemy_conditions,
         enemy_resistances: ctx.enemy_resistances,
         skills_by_name: ctx.skills_by_name,
-        projectile_count: ctx
-            .skill_projectiles
-            .get(&target_spec.id)
-            .copied()
-            .unwrap_or(1)
-            + subtree_stat("projectile_count") as u32,
+        projectile_count: effective_projectile_count(
+            ctx.skill_projectiles
+                .get(&target_spec.id)
+                .copied()
+                .unwrap_or(1),
+            &subtree_stat,
+        ),
         of_total_damage: subtree_stat("of_total_damage"),
         scoped,
         conversion_flat: 0.0,
@@ -336,7 +348,6 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .and_then(|id| computed.skill_scoped.get(id))
         .unwrap_or(&empty_scoped);
     let subtree_stat = |key: &str| -> f64 { r_max(rg(main_scoped, key)).max(0.0) };
-    let active_projectile_boost: u32 = subtree_stat("projectile_count") as u32;
     let active_of_total_damage: f64 = subtree_stat("of_total_damage");
     let effective_projectiles: Option<u32> = active_skill.map(|s| {
         let base = deps
@@ -344,7 +355,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
             .get(&s.id)
             .copied()
             .unwrap_or_else(|| s.base_projectiles.unwrap_or(1));
-        base + active_projectile_boost
+        effective_projectile_count(base, &subtree_stat)
     });
 
     let active_calc_skill: Option<&CalcSkill> =
@@ -484,7 +495,10 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
 
     // Sentries, summons and guardians are counted apart: each entity the skill
     // fields is a full extra DPS source.
-    let (count_min, count_max) = if is_entity {
+    // A "one massive X scaling with the maximum amount" note fields a single
+    // entity; the count feeds its damage through conversion_summon_count instead.
+    let is_single_entity = subtree_stat("conversion_summon_count") > 0.0;
+    let (count_min, count_max) = if is_entity && !is_single_entity {
         let extra = super::affix_tags::sum_for(
             super::types::AffixEffect::MaxAmount,
             entity_tags,

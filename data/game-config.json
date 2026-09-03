@@ -3699,6 +3699,22 @@
       "skillScoped": true
     },
     {
+      "key": "single_target_hit_cap",
+      "name": "Hits per Target Cap",
+      "category": "offense",
+      "format": "flat",
+      "description": "At most this many projectiles of a fan or arc reach one target.",
+      "skillScoped": true
+    },
+    {
+      "key": "extra_volleys_pct",
+      "name": "Extra Volleys",
+      "category": "offense",
+      "format": "percent",
+      "description": "Expected extra repeats of the whole volley (waves), on top of the first.",
+      "skillScoped": true
+    },
+    {
       "key": "skill_range",
       "name": "Skill Range",
       "category": "offense",

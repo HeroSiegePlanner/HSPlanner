@@ -199,6 +199,8 @@ describe('damage coverage', () => {
     'deadly_blow_effectiveness',
     'hit_chance',
     'execute_below',
+    'single_target_hit_cap',
+    'extra_volleys_pct',
     'enemy_damage_taken_increased',
     'increased_burning_damage',
     'increased_bleeding_damage',

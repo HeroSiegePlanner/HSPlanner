@@ -11,6 +11,12 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- Sub-skill notes that fire a fan or arc (Boulder Barrage, Superhero Landing, Coldflash Volley, Splitfire, Scorching Bolts, Searing Fork, Hydra's Breeze, Trail of Volcanoes, Bouncing Comets) counted every projectile as a hit on one target; they now count what an arc can land on a single enemy
+- Gelid Riptide's extra waves repeat the whole icicle volley instead of adding one icicle
+- Avalanche casts once per its 3 s cooldown and scales with skill haste instead of casting every second
+- "One massive summon" notes (Scorching Kraken, Pitfighting Colossus, Summon Archmage, Sacrificial Offering, Alpha) field a single entity whose damage scales with the maximum amount, instead of a full pack plus a negligible flat bonus
+- Lava Trail and Burn Them All inflict burning for a portion of the damage instead of adding direct damage
+- Frost Sunder Onslaught counts as an Explosion skill
 - "to Magic Skill Damage per points in Light Radius" tree notes (Elemental Light Radius, Light in the Darkness) did nothing. The flat and % wordings now feed flat and increased Magic Skill Damage separately, and Elemental Light Radius grants +1 (was +6)
 - "+X% to Light Radius" (Rays of Magic) added flat points instead of scaling the Light Radius total
 - Light In The Dark ("+40% of your Light Radius Added as Increased All Attributes") did nothing

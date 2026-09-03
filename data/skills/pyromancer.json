@@ -619,8 +619,8 @@
         "description": "Inferno slash sends multiple smaller waves that split on the first hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 35, "projectile_count": 1 }
+          "base": { "fire_skill_damage": 0, "projectile_count": 0, "single_target_hit_cap": 2 },
+          "perRank": { "fire_skill_damage": 35, "projectile_count": 1, "single_target_hit_cap": 0 }
         }
       },
       {
@@ -967,8 +967,8 @@
         "description": "Unleash additional breaths in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 35, "projectile_count": 1 }
+          "base": { "fire_skill_damage": 0, "projectile_count": 0, "single_target_hit_cap": 2 },
+          "perRank": { "fire_skill_damage": 35, "projectile_count": 1, "single_target_hit_cap": 0 }
         }
       },
       {
@@ -1174,8 +1174,8 @@
         "description": "Fireball now splits to multiple smaller fireballs on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
-          "perRank": { "projectile_count": 3, "fire_skill_damage": 40 }
+          "base": { "projectile_count": 0, "fire_skill_damage": 0, "single_target_hit_cap": 1 },
+          "perRank": { "projectile_count": 3, "fire_skill_damage": 40, "single_target_hit_cap": 0 }
         }
       },
       {
@@ -1375,14 +1375,8 @@
         "description": "Inflicts burning for a portion of scorching auras damage on hit.",
         "maxRank": 5,
         "effects": {
-          "base": {
-            "conversion_skill_damage": 0,
-            "increased_burning_damage": 0
-          },
-          "perRank": {
-            "conversion_skill_damage": 10,
-            "increased_burning_damage": 10
-          }
+          "base": { "increased_burning_damage": 0 },
+          "perRank": { "increased_burning_damage": 10 }
         },
         "proc": {
           "trigger": "on_hit",
@@ -1804,8 +1798,15 @@
         "description": "Volcano now sends out trails of molten lava inflicting a portion of its damage as burning.",
         "maxRank": 3,
         "effects": {
-          "base": { "trail_count": 0, "conversion_skill_damage": 0 },
-          "perRank": { "trail_count": 3, "conversion_skill_damage": 80 }
+          "base": { "trail_count": 0, "increased_burning_damage": 0 },
+          "perRank": { "trail_count": 3, "increased_burning_damage": 80 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": { "base": 100, "perRank": 0 },
+          "appliesStates": [
+            { "state": "burning", "amount": { "base": 0, "perRank": 80 } }
+          ]
         }
       },
       {
@@ -1826,8 +1827,8 @@
         "description": "Spawn multiple volcanoes trailing into a random direction.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 55, "projectile_count": 4 }
+          "base": { "fire_skill_damage": 0, "projectile_count": 0, "single_target_hit_cap": 2 },
+          "perRank": { "fire_skill_damage": 55, "projectile_count": 4, "single_target_hit_cap": 0 }
         }
       }
     ]
@@ -2021,12 +2022,14 @@
           "base": {
             "fire_skill_damage": 0,
             "projectile_speed": 0,
-            "projectile_count": 0
+            "projectile_count": 0,
+            "single_target_hit_cap": 2
           },
           "perRank": {
             "fire_skill_damage": 15,
             "projectile_speed": 25,
-            "projectile_count": 5
+            "projectile_count": 5,
+            "single_target_hit_cap": 0
           }
         }
       },
@@ -2261,8 +2264,8 @@
         "description": "Drop multiple small comets bouncing forwards when landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
-          "perRank": { "projectile_count": 2, "fire_skill_damage": 60 }
+          "base": { "projectile_count": 0, "fire_skill_damage": 0, "single_target_hit_cap": 2 },
+          "perRank": { "projectile_count": 2, "fire_skill_damage": 60, "single_target_hit_cap": 0 }
         }
       },
       {

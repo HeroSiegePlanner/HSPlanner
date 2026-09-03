@@ -1405,3 +1405,113 @@ fn item_proc_casts_a_class_skill_and_its_subtree_counts() {
         "points spent in Breath of Ice's subtree lift the skill the item casts"
     );
 }
+
+#[test]
+fn effective_projectile_count_caps_then_repeats_volleys() {
+    let stats = |cap: f64, volleys: f64| {
+        move |k: &str| match k {
+            "projectile_count" => 6.0,
+            "single_target_hit_cap" => cap,
+            "extra_volleys_pct" => volleys,
+            _ => 0.0,
+        }
+    };
+    assert_eq!(effective_projectile_count(4, &stats(0.0, 0.0)), 10);
+    assert_eq!(effective_projectile_count(4, &stats(2.0, 0.0)), 2);
+    // 10 projectiles, 45% chance of 3 extra waves: 10 * 2.35 = 23.5 -> 24.
+    assert_eq!(effective_projectile_count(4, &stats(0.0, 135.0)), 24);
+    assert_eq!(effective_projectile_count(4, &stats(2.0, 135.0)), 5);
+}
+
+// jotunn:frozen_boulder "Boulder Barrage": 5 boulders in an arc, but only 2
+// reach one target (single_target_hit_cap), on top of +105% cold damage.
+#[test]
+fn arc_hit_cap_limits_projectiles_on_one_target() {
+    let base = perf("jotunn", "frozen_boulder", 10, &[], &[]);
+    let barrage = perf(
+        "jotunn",
+        "frozen_boulder",
+        10,
+        &[("boulder_barrage", 3)],
+        &[],
+    );
+    let (Some(one), Some(arc)) = (base.damage, barrage.damage) else {
+        panic!("expected a breakdown for frozen_boulder");
+    };
+    assert_eq!(one.projectile_count, 1);
+    assert_eq!(
+        arc.projectile_count, 2,
+        "5 boulders in an arc, 2 reach one target"
+    );
+    assert!(
+        arc.avg_max > 2 * one.avg_max,
+        "+105% cold damage rides on top of the 2 hits"
+    );
+}
+
+// jotunn:frost_sunder "Gelid Riptide": 45% chance of 3 extra waves repeats the
+// whole 10-icicle volley, so hits go x2.35 (rounded to 24 of 10), not +1.
+#[test]
+fn wave_proc_repeats_the_whole_volley() {
+    let volley = perf("jotunn", "frost_sunder", 10, &[("frost_shrapnel", 3)], &[]);
+    let waves = perf(
+        "jotunn",
+        "frost_sunder",
+        10,
+        &[("frost_shrapnel", 3), ("gelid_riptide", 3)],
+        &[],
+    );
+    let (Some(one), Some(rip)) = (volley.attack_damage, waves.attack_damage) else {
+        panic!("expected an attack breakdown for frost_sunder");
+    };
+    assert_eq!(one.projectile_count, 10);
+    assert_eq!(rip.projectile_count, 24, "10 icicles x 2.35 waves, rounded");
+}
+
+// pyromancer:hydra "Scorching Kraken": one massive hydra instead of a pack,
+// +45% damage per hydra the build could have fielded.
+#[test]
+fn single_entity_note_pins_the_count_and_scales_with_max_amount() {
+    let pack = perf(
+        "pyromancer",
+        "hydra",
+        10,
+        &[("more_heads_more_fire", 5)],
+        &[],
+    );
+    assert_eq!(pack.entity_count, Some((11.0, 11.0)));
+
+    let kraken = perf("pyromancer", "hydra", 10, &[("scorching_kraken", 3)], &[]);
+    let big_kraken = perf(
+        "pyromancer",
+        "hydra",
+        10,
+        &[("more_heads_more_fire", 5), ("scorching_kraken", 3)],
+        &[],
+    );
+    assert_eq!(kraken.entity_count, Some((1.0, 1.0)));
+    assert_eq!(big_kraken.entity_count, Some((1.0, 1.0)));
+    let (Some(one), Some(eleven)) = (kraken.avg_hit_dps_max, big_kraken.avg_hit_dps_max) else {
+        panic!("expected dps for hydra");
+    };
+    assert!(
+        eleven > one,
+        "max hydra amount must feed the kraken's damage"
+    );
+}
+
+// jotunn:avalanche has a 3 s cooldown; skill haste (Ephemeral Flurry +35%)
+// must scale its cast rate, which only the cooldown-gated path does.
+#[test]
+fn avalanche_is_cooldown_gated_and_scales_with_skill_haste() {
+    let base = perf("jotunn", "avalanche", 10, &[], &[]);
+    let hasted = perf("jotunn", "avalanche", 10, &[("ephemeral_flurry", 5)], &[]);
+    let (Some(slow), Some(fast)) = (base.avg_hit_dps_max, hasted.avg_hit_dps_max) else {
+        panic!("expected dps for avalanche");
+    };
+    assert!(
+        (fast / slow - 1.35).abs() < 1e-9,
+        "+35% haste expected, got x{}",
+        fast / slow
+    );
+}
