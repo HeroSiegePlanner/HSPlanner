@@ -321,6 +321,10 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
+    // 8b. Light radius folded into increased all attributes %, before the
+    // attribute passes read that key.
+    apply_light_radius_to_attributes(&mut stat_sources);
+
     // 9. Increased all attributes % (applies to each attribute's flat sum)
     apply_increased_all_attributes(&mut attr_sources, &stat_sources);
 
@@ -390,11 +394,15 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 20b. "per N Mana" lines read the finalized mana total.
     let touched_mana = apply_per_mana_stats(&stats, &mut stat_sources);
 
+    // 20c. "per point in Light Radius" lines read the finalized light radius.
+    let touched_light = apply_per_light_radius_stats(&stats, &mut stat_sources);
+
     // 21. Re-sum touched stat keys after conversions injected new sources.
     for k in touched_item
         .iter()
         .chain(touched_tree.iter())
         .chain(touched_mana.iter())
+        .chain(touched_light.iter())
     {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));

@@ -16,8 +16,12 @@ pub(crate) fn stat_name(key: &str) -> String {
 pub(crate) fn compute_final_attributes(attr_sources: &SourceMap) -> HashMap<String, Ranged> {
     let mut attributes = HashMap::new();
     for attr in data::game_config().attributes.iter() {
-        let sum =
-            sum_contributions(attr_sources.get(&attr.key).map(|v| v.as_slice()).unwrap_or(&[]));
+        let sum = sum_contributions(
+            attr_sources
+                .get(&attr.key)
+                .map(|v| v.as_slice())
+                .unwrap_or(&[]),
+        );
         attributes.insert(attr.key.clone(), sum);
     }
     attributes
@@ -33,8 +37,20 @@ pub(crate) fn compute_final_stats(stat_sources: &SourceMap) -> HashMap<String, R
 
 // life/mana × increased × more; replenishes opt out of floor.
 pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
-    apply_multiplier(stats, "life", Some("increased_life"), Some("increased_life_more"), true);
-    apply_multiplier(stats, "mana", Some("increased_mana"), Some("increased_mana_more"), true);
+    apply_multiplier(
+        stats,
+        "life",
+        Some("increased_life"),
+        Some("increased_life_more"),
+        true,
+    );
+    apply_multiplier(
+        stats,
+        "mana",
+        Some("increased_mana"),
+        Some("increased_mana_more"),
+        true,
+    );
     apply_multiplier(
         stats,
         "mana_replenish",
@@ -49,6 +65,8 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
         Some("life_replenish_more"),
         false,
     );
+    // Light radius is counted in whole points by the "per point" nodes.
+    apply_multiplier(stats, "light_radius", Some("light_radius_pct"), None, true);
     // Ailment durations: (base + flat seconds) × increased%. No floor — the
     // fraction is visible progress toward the next once-per-second tick.
     for a in AILMENT_DURATION_PREFIXES {
@@ -74,35 +92,78 @@ pub(crate) const AILMENT_DURATION_PREFIXES: &[&str] = &[
     "stasis",
 ];
 
-// "+X% <stat> per N Mana" tree lines. Mana is only final after the multiplier
-// pass, so this runs late and returns touched keys for re-sum.
+// "+X <stat> per N <source>" tree lines. The source total is only final after
+// the multiplier pass, so these run late and return touched keys for re-sum.
 const PER_MANA_STATS: &[(&str, &str, f64)] = &[
-    ("magic_skill_damage_per_750_mana", "magic_skill_damage", 750.0),
-    ("ranged_physical_per_500_mana", "ranged_projectile_damage", 500.0),
+    (
+        "magic_skill_damage_per_750_mana",
+        "magic_skill_damage",
+        750.0,
+    ),
+    (
+        "ranged_physical_per_500_mana",
+        "ranged_projectile_damage",
+        500.0,
+    ),
     ("additive_physical_per_500_mana", "enhanced_damage", 500.0),
+];
+
+const PER_LIGHT_RADIUS_STATS: &[(&str, &str, f64)] = &[
+    (
+        "magic_skill_damage_per_light_radius",
+        "magic_skill_damage",
+        1.0,
+    ),
+    (
+        "flat_magic_skill_damage_per_light_radius",
+        "flat_magic_skill_damage",
+        1.0,
+    ),
 ];
 
 pub fn apply_per_mana_stats(
     stats: &HashMap<String, Ranged>,
     stat_sources: &mut SourceMap,
 ) -> HashSet<String> {
+    apply_per_source_stats(stats, stat_sources, "mana", PER_MANA_STATS)
+}
+
+pub fn apply_per_light_radius_stats(
+    stats: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+) -> HashSet<String> {
+    apply_per_source_stats(stats, stat_sources, "light_radius", PER_LIGHT_RADIUS_STATS)
+}
+
+fn apply_per_source_stats(
+    stats: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+    source_key: &str,
+    table: &[(&str, &str, f64)],
+) -> HashSet<String> {
     let mut touched: HashSet<String> = HashSet::new();
-    let mana = stats.get("mana").copied().unwrap_or((0.0, 0.0));
-    for (source_key, target_key, per) in PER_MANA_STATS.iter() {
-        let rate = stats.get(*source_key).copied().unwrap_or((0.0, 0.0));
+    let source = stats.get(source_key).copied().unwrap_or((0.0, 0.0));
+    for (rate_key, target_key, per) in table.iter() {
+        let rate = stats.get(*rate_key).copied().unwrap_or((0.0, 0.0));
         if rate == (0.0, 0.0) {
             continue;
         }
         // Only full steps pay out; a partial 749 mana is worth nothing.
         let value = (
-            rate.0 * (mana.0 / per).floor(),
-            rate.1 * (mana.1 / per).floor(),
+            rate.0 * (source.0 / per).floor(),
+            rate.1 * (source.1 / per).floor(),
         );
+        let source_name = stat_name(source_key);
+        let per_label = if *per == 1.0 {
+            format!("per {source_name}")
+        } else {
+            format!("per {per} {source_name}")
+        };
         push_source(
             stat_sources,
             target_key,
             SourceContribution {
-                label: format!("{} (per {per} Mana)", stat_name(target_key)),
+                label: format!("{} ({per_label})", stat_name(target_key)),
                 source_type: SourceType::Tree,
                 value,
                 forge: None,
@@ -127,7 +188,11 @@ pub fn apply_item_granted_conversions(
         };
         // Conditional blessings only convert while their config toggle is on.
         if let Some(cond) = granted.condition.as_ref() {
-            if !player_conditions.get(cond.as_str()).copied().unwrap_or(false) {
+            if !player_conditions
+                .get(cond.as_str())
+                .copied()
+                .unwrap_or(false)
+            {
                 continue;
             }
         }
@@ -263,4 +328,3 @@ pub fn apply_tree_disables(disables: &HashSet<DisableTarget>, stats: &mut HashMa
         stats.insert("life_replenish_pct".to_string(), (0.0, 0.0));
     }
 }
-

@@ -401,6 +401,97 @@ fn incarnation_nodes_contribute_to_build_stats() {
 // Node 2083 ("+20 Physical Damage while wielding a Dagger") must feed additive
 // physical damage only while a Dagger occupies the weapon slot.
 #[test]
+fn light_radius_nodes_feed_magic_skill_damage() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+    let baseline = compute_build_stats(&base_input);
+
+    // 1695/1696/1697: "+1 to Light Radius". 1687: "+1 to Magic Skill Damage
+    // per points in Light Radius". 1694: the "+4%" wording of the same note.
+    let alloc_nodes: HashSet<u32> = [1695, 1696, 1697, 1687, 1694].into_iter().collect();
+    let input = BuildStatsInput {
+        allocated_tree_nodes: &alloc_nodes,
+        ..base_input
+    };
+    let with_nodes = compute_build_stats(&input);
+
+    let get = |c: &ComputedStats, k: &str| {
+        c.stats.get(k).copied().unwrap_or((0.0, 0.0)).0
+    };
+    assert_eq!(get(&with_nodes, "light_radius"), 3.0);
+    assert_eq!(
+        get(&with_nodes, "magic_skill_damage") - get(&baseline, "magic_skill_damage"),
+        12.0,
+    );
+    assert_eq!(
+        get(&with_nodes, "flat_magic_skill_damage") - get(&baseline, "flat_magic_skill_damage"),
+        3.0,
+    );
+}
+
+#[test]
+fn light_in_the_dark_turns_light_radius_into_attributes() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+
+    // 1545/1546/1549/1550/1551: "+1 to Light Radius". 1552 "Light In The Dark":
+    // "+3 to Light Radius" and "+40% of your Light Radius Added as Increased
+    // All Attributes" — 8 points, so +3.2% increased all attributes.
+    let alloc_nodes: HashSet<u32> = [1545, 1546, 1549, 1550, 1551, 1552].into_iter().collect();
+    let input = BuildStatsInput {
+        allocated_tree_nodes: &alloc_nodes,
+        ..base_input
+    };
+    let with_nodes = compute_build_stats(&input);
+
+    let get = |k: &str| with_nodes.stats.get(k).copied().unwrap_or((0.0, 0.0)).0;
+    assert_eq!(get("light_radius"), 8.0);
+    assert!((get("increased_all_attributes") - 3.2).abs() < 1e-9);
+}
+
+#[test]
 fn dagger_conditional_lines_require_dagger_weapon() {
     // Node 2083 istnieje w danych S10 (patch sezonu podmienia drzewo).
     let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));

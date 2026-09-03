@@ -11,6 +11,9 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- "to Magic Skill Damage per points in Light Radius" tree notes (Elemental Light Radius, Light in the Darkness) did nothing. The flat and % wordings now feed flat and increased Magic Skill Damage separately, and Elemental Light Radius grants +1 (was +6)
+- "+X% to Light Radius" (Rays of Magic) added flat points instead of scaling the Light Radius total
+- Light In The Dark ("+40% of your Light Radius Added as Increased All Attributes") did nothing
 - Star levels were offered on every charm; only common charms (Small, Large, Grand) can be star leveled
 - Item database audited against the game's own item definitions
 - 57 missing or wrong item sprites added (S10 uniques, base rings, relics and more)

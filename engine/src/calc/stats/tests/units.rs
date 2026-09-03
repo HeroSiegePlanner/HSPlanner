@@ -284,6 +284,103 @@ fn multipliers_pass_scales_ailment_durations() {
     assert_eq!(stats.get("stasis_duration"), Some(&(5.0, 5.0)));
 }
 
+#[test]
+fn multipliers_pass_scales_light_radius_to_whole_points() {
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert("light_radius".to_string(), (12.0, 12.0));
+    stats.insert("light_radius_pct".to_string(), (8.0, 8.0));
+    apply_multipliers_pass(&mut stats);
+    // 12 * 1.08 = 12.96 — floored to whole points
+    assert_eq!(stats.get("light_radius"), Some(&(12.0, 12.0)));
+}
+
+// ---- light radius → increased all attributes ----
+
+#[test]
+fn light_radius_to_attributes_folds_whole_points() {
+    let mut sources: SourceMap = HashMap::new();
+    for (key, value) in [
+        ("light_radius", (10.0, 10.0)),
+        ("light_radius_pct", (8.0, 8.0)),
+        ("light_radius_to_attributes", (40.0, 40.0)),
+    ] {
+        push_source(
+            &mut sources,
+            key,
+            SourceContribution {
+                label: key.to_string(),
+                source_type: SourceType::Tree,
+                value,
+                forge: None,
+            },
+        );
+    }
+    apply_light_radius_to_attributes(&mut sources);
+    // floor(10 * 1.08) = 10 points, 40% of that = +4% increased all attributes
+    assert_eq!(
+        sum_contributions(sources.get("increased_all_attributes").unwrap()),
+        (4.0, 4.0)
+    );
+}
+
+#[test]
+fn light_radius_without_the_note_adds_no_attributes() {
+    let mut sources: SourceMap = HashMap::new();
+    push_source(
+        &mut sources,
+        "light_radius",
+        SourceContribution {
+            label: "light_radius".to_string(),
+            source_type: SourceType::Tree,
+            value: (10.0, 10.0),
+            forge: None,
+        },
+    );
+    apply_light_radius_to_attributes(&mut sources);
+    assert!(sources.get("increased_all_attributes").is_none());
+}
+
+// ---- per-source scaling ----
+
+#[test]
+fn per_light_radius_stats_scale_magic_skill_damage() {
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert("light_radius".to_string(), (7.0, 7.0));
+    stats.insert(
+        "magic_skill_damage_per_light_radius".to_string(),
+        (4.0, 4.0),
+    );
+    stats.insert(
+        "flat_magic_skill_damage_per_light_radius".to_string(),
+        (1.0, 2.0),
+    );
+    let mut sources: SourceMap = HashMap::new();
+    let touched = apply_per_light_radius_stats(&stats, &mut sources);
+
+    assert!(touched.contains("magic_skill_damage"));
+    assert!(touched.contains("flat_magic_skill_damage"));
+    assert_eq!(
+        sum_contributions(sources.get("magic_skill_damage").unwrap()),
+        (28.0, 28.0)
+    );
+    assert_eq!(
+        sum_contributions(sources.get("flat_magic_skill_damage").unwrap()),
+        (7.0, 14.0)
+    );
+}
+
+#[test]
+fn per_light_radius_stats_without_light_radius_add_nothing() {
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert(
+        "magic_skill_damage_per_light_radius".to_string(),
+        (4.0, 4.0),
+    );
+    let mut sources: SourceMap = HashMap::new();
+    apply_per_light_radius_stats(&stats, &mut sources);
+    assert!(sources.get("magic_skill_damage").is_none());
+}
+
 // ---- STAT_FAN_OUTS ----
 
 #[test]
@@ -386,8 +483,8 @@ fn apply_contribution_normal_key_routes_to_stats() {
 
 // ---- apply_inventory ----
 
-use crate::calc::types::EquippedItem;
 use crate::calc::data;
+use crate::calc::types::EquippedItem;
 
 #[test]
 fn apply_inventory_empty_is_noop() {
@@ -497,11 +594,14 @@ fn apply_inventory_weapon_slot_with_weapon_item_flags_attack_speed() {
     );
 }
 
-
 // ---- diminishing returns ----
 
 fn dr(threshold: f64, power: f64, cap: Option<f64>) -> crate::calc::types::DiminishDef {
-    crate::calc::types::DiminishDef { threshold, power, cap }
+    crate::calc::types::DiminishDef {
+        threshold,
+        power,
+        cap,
+    }
 }
 
 // User-verified: 564 raw skill haste lands exactly on the 200 hard cap.
@@ -509,7 +609,10 @@ fn dr(threshold: f64, power: f64, cap: Option<f64>) -> crate::calc::types::Dimin
 fn diminished_value_matches_game_example() {
     let def = dr(100.0, 0.75, Some(200.0));
     let eff = diminished_value(564.0, &def);
-    assert!((eff - 200.0).abs() < 0.05, "564 raw skill haste -> {eff}, expected ~200");
+    assert!(
+        (eff - 200.0).abs() < 0.05,
+        "564 raw skill haste -> {eff}, expected ~200"
+    );
 }
 
 #[test]
@@ -536,7 +639,11 @@ fn apply_diminishing_returns_folds_more_twin_and_zeroes_it() {
     let raw = apply_diminishing_returns(&mut stats, &defs);
     // combined raw = (1+3)*(1+0.5)-1 = 500% -> 350 + 150^0.8 ~= 405.06
     let eff = stats["faster_cast_rate"];
-    assert!((eff.1 - 405.06).abs() < 0.05, "500% raw FCR -> {}, expected ~405.06", eff.1);
+    assert!(
+        (eff.1 - 405.06).abs() < 0.05,
+        "500% raw FCR -> {}, expected ~405.06",
+        eff.1
+    );
     assert_eq!(stats["faster_cast_rate_more"], (0.0, 0.0));
     // pre-diminish total exposed for the UI's "eff (raw)" display
     assert_eq!(raw["faster_cast_rate"], (500.0, 500.0));
@@ -556,7 +663,11 @@ fn apply_diminishing_returns_skips_unconfigured_and_absent_keys() {
 // S10 config carries the four original curves plus FCR, deadly blow and skill haste.
 #[test]
 fn diminishing_returns_config_has_s10_curves() {
-    let s10 = crate::calc::data::data_for("s10").game_config.diminishing_returns.as_ref().unwrap();
+    let s10 = crate::calc::data::data_for("s10")
+        .game_config
+        .diminishing_returns
+        .as_ref()
+        .unwrap();
     assert_eq!(s10.len(), 7);
     let db = &s10["deadly_blow"];
     assert_eq!((db.threshold, db.power, db.cap), (50.0, 0.75, Some(100.0)));

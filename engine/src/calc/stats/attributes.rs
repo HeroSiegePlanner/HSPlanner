@@ -159,6 +159,32 @@ pub fn apply_class_baseline(
 
 // ---------- attribute pipelines ----------
 
+// "+X% of your Light Radius Added as Increased All Attributes". Runs before
+// the attribute passes, so it mirrors the multiplier pass by hand instead of
+// waiting for the finalized light radius total.
+pub fn apply_light_radius_to_attributes(stat_sources: &mut SourceMap) {
+    let rate = sum_ranged_from_map(stat_sources, "light_radius_to_attributes");
+    if is_zero(rate) {
+        return;
+    }
+    let flat = sum_ranged_from_map(stat_sources, "light_radius");
+    let pct = sum_ranged_from_map(stat_sources, "light_radius_pct");
+    let points = (
+        (flat.0 * (1.0 + pct.0 / 100.0)).floor(),
+        (flat.1 * (1.0 + pct.1 / 100.0)).floor(),
+    );
+    push_source(
+        stat_sources,
+        "increased_all_attributes",
+        SourceContribution {
+            label: "Increased All Attributes (per Light Radius)".to_string(),
+            source_type: SourceType::Tree,
+            value: (points.0 * rate.0 / 100.0, points.1 * rate.1 / 100.0),
+            forge: None,
+        },
+    );
+}
+
 pub fn apply_increased_all_attributes(attr_sources: &mut SourceMap, stat_sources: &SourceMap) {
     let pct_sources = match stat_sources.get("increased_all_attributes") {
         Some(list) if !list.is_empty() => list.clone(),

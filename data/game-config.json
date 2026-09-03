@@ -180,6 +180,24 @@
       "format": "flat"
     },
     {
+      "key": "light_radius_pct",
+      "name": "Increased Light Radius",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "magic_skill_damage_per_light_radius",
+      "name": "Magic Skill Damage per point in Light Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "flat_magic_skill_damage_per_light_radius",
+      "name": "Flat Magic Skill Damage per point in Light Radius",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
       "key": "experience_gain",
       "name": "Increased Experience Gain",
       "category": "base",
