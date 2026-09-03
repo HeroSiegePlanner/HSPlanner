@@ -253,7 +253,10 @@ fn entity_rate_config_scales_dps_and_player_fcr_does_not() {
     let (Some(b), Some(f)) = (base.avg_hit_dps_max, faster.avg_hit_dps_max) else {
         panic!("expected dps");
     };
-    assert!((f / b - 2.0).abs() < 1e-9, "sentry AS +100% should double dps");
+    assert!(
+        (f / b - 2.0).abs() < 1e-9,
+        "sentry AS +100% should double dps"
+    );
 
     deps.custom_stats = &[];
     let doubled = entity_rates(2.0);
@@ -262,7 +265,10 @@ fn entity_rate_config_scales_dps_and_player_fcr_does_not() {
     let Some(t) = two_per_sec.avg_hit_dps_max else {
         panic!("expected dps");
     };
-    assert!((t / b - 2.0).abs() < 1e-9, "2/s base rate should double dps");
+    assert!(
+        (t / b - 2.0).abs() < 1e-9,
+        "2/s base rate should double dps"
+    );
 
     // Config rate is the flat base; "increased sentry attack speed" multiplies
     // it rather than adding to it: 2/s at +100% swings four times as often.
@@ -310,7 +316,10 @@ fn pinned_entity_rate_ignores_config_knob_and_sentry_speed() {
         "a 4/s pin should quadruple 1/s dps, got x{}",
         p / base
     );
-    assert!((knob - p).abs() < 1e-9, "config knob must not move a pinned rate");
+    assert!(
+        (knob - p).abs() < 1e-9,
+        "config knob must not move a pinned rate"
+    );
     assert!(
         (hasted - p).abs() < 1e-9,
         "sentry attack speed must not move a pinned rate"
@@ -415,7 +424,11 @@ fn multicast_skips_entity_skills() {
         1.0,
     );
     assert_eq!(
-        spell.damage.as_ref().expect("fireball damage").multicast_chance_pct,
+        spell
+            .damage
+            .as_ref()
+            .expect("fireball damage")
+            .multicast_chance_pct,
         50.0,
         "a plain Spell still multicasts"
     );
@@ -614,7 +627,14 @@ fn subskill_tag_change_enables_archetype_damage() {
         "without Nanodrones the drone is not an Explosion skill"
     );
 
-    let node = perf_with_stats("marksman", "gunner_drone", 10, &[("nanodrones", 1)], &[], 1.0);
+    let node = perf_with_stats(
+        "marksman",
+        "gunner_drone",
+        10,
+        &[("nanodrones", 1)],
+        &[],
+        1.0,
+    );
     let node_stat = perf_with_stats(
         "marksman",
         "gunner_drone",
@@ -646,8 +666,22 @@ fn subskill_tag_change_switches_skill_to_entity_rate() {
         "without Ancient Device the entity rate must not matter"
     );
 
-    let node_1 = perf_with_stats("amazon", "death_from_above", 10, &[("ancient_device", 1)], &[], 1.0);
-    let node_3 = perf_with_stats("amazon", "death_from_above", 10, &[("ancient_device", 1)], &[], 3.0);
+    let node_1 = perf_with_stats(
+        "amazon",
+        "death_from_above",
+        10,
+        &[("ancient_device", 1)],
+        &[],
+        1.0,
+    );
+    let node_3 = perf_with_stats(
+        "amazon",
+        "death_from_above",
+        10,
+        &[("ancient_device", 1)],
+        &[],
+        3.0,
+    );
     let (Some(b), Some(f)) = (node_1.avg_hit_dps_max, node_3.avg_hit_dps_max) else {
         panic!("expected dps");
     };
@@ -677,7 +711,13 @@ fn rapidfire_scales_the_drone_rate() {
 // demonspawn:spinal_tap#11 "Blood and Gore" grants execute_below 2.5/rank.
 #[test]
 fn execute_below_from_the_subtree_raises_combined_dps() {
-    let with_exec = perf("demonspawn", "spinal_tap", 10, &[("blood_and_gore", 4)], &[]);
+    let with_exec = perf(
+        "demonspawn",
+        "spinal_tap",
+        10,
+        &[("blood_and_gore", 4)],
+        &[],
+    );
     let on_boss = perf(
         "demonspawn",
         "spinal_tap",
@@ -685,8 +725,7 @@ fn execute_below_from_the_subtree_raises_combined_dps() {
         &[("blood_and_gore", 4)],
         &[("is_boss", true)],
     );
-    let (Some(normal), Some(boss)) = (with_exec.combined_dps_max, on_boss.combined_dps_max)
-    else {
+    let (Some(normal), Some(boss)) = (with_exec.combined_dps_max, on_boss.combined_dps_max) else {
         panic!("expected combined dps for spinal_tap");
     };
     // rank 4 -> execute_below 10% -> 1 / (1 - 0.10)
@@ -777,7 +816,13 @@ fn verify_spell_subtree_multicast_counted_once_on_fireball() {
 // weakening_charge 30/rank -> 150% at rank 5, only when the enemy toggle is on.
 #[test]
 fn verify_subtree_lightning_break_reaches_build_hit() {
-    let off = perf("stormweaver", "charged_bolts", 10, &[("weakening_charge", 5)], &[]);
+    let off = perf(
+        "stormweaver",
+        "charged_bolts",
+        10,
+        &[("weakening_charge", 5)],
+        &[],
+    );
     let on = perf(
         "stormweaver",
         "charged_bolts",
@@ -805,8 +850,14 @@ fn verify_conversion_feeds_attack_skill_without_elemental_formula() {
         &[("gutting_frenzy", 3)],
         &[],
     );
-    let a = plain.attack_damage.expect("attack breakdown").combined_avg_max;
-    let b = conv.attack_damage.expect("attack breakdown").combined_avg_max;
+    let a = plain
+        .attack_damage
+        .expect("attack breakdown")
+        .combined_avg_max;
+    let b = conv
+        .attack_damage
+        .expect("attack breakdown")
+        .combined_avg_max;
     assert!(
         b > a,
         "conversion_strength (30% proc x 45% of strength) must raise the swing: {a} vs {b}"
@@ -855,17 +906,20 @@ fn empty_build_produces_no_damage_no_proc() {
 
 #[test]
 fn class_with_active_skill_produces_damage() {
-    let pick = data::data().skills_by_class.iter().find_map(|(cid, skills)| {
-        skills.iter().find_map(|s| {
-            if s.kind != SkillKind::Active {
-                return None;
-            }
-            if s.damage_formula.is_none() && s.damage_per_rank.is_none() {
-                return None;
-            }
-            Some((cid.clone(), s.id.clone()))
-        })
-    });
+    let pick = data::data()
+        .skills_by_class
+        .iter()
+        .find_map(|(cid, skills)| {
+            skills.iter().find_map(|s| {
+                if s.kind != SkillKind::Active {
+                    return None;
+                }
+                if s.damage_formula.is_none() && s.damage_per_rank.is_none() {
+                    return None;
+                }
+                Some((cid.clone(), s.id.clone()))
+            })
+        });
     let Some((class_id, skill_id)) = pick else {
         eprintln!("no active skill with damage formula/table; skipping");
         return;
@@ -915,17 +969,20 @@ fn class_with_active_skill_produces_damage() {
 
 #[test]
 fn active_skill_without_rank_yields_no_damage() {
-    let pick = data::data().skills_by_class.iter().find_map(|(cid, skills)| {
-        skills.iter().find_map(|s| {
-            if s.kind != SkillKind::Active {
-                return None;
-            }
-            if s.damage_formula.is_none() && s.damage_per_rank.is_none() {
-                return None;
-            }
-            Some((cid.clone(), s.id.clone()))
-        })
-    });
+    let pick = data::data()
+        .skills_by_class
+        .iter()
+        .find_map(|(cid, skills)| {
+            skills.iter().find_map(|s| {
+                if s.kind != SkillKind::Active {
+                    return None;
+                }
+                if s.damage_formula.is_none() && s.damage_per_rank.is_none() {
+                    return None;
+                }
+                Some((cid.clone(), s.id.clone()))
+            })
+        });
     let Some((class_id, skill_id)) = pick else {
         eprintln!("no active skill; skipping");
         return;
@@ -1176,7 +1233,9 @@ fn axe_damage_node_is_independent_of_flat_physical() {
         deps.class_id = Some("butcher");
         deps.level = 50;
         deps.main_skill_id = Some("furious_strike");
-        compute_build_performance(&deps).combined_dps_max.unwrap_or(0.0)
+        compute_build_performance(&deps)
+            .combined_dps_max
+            .unwrap_or(0.0)
     };
 
     let node: HashSet<u32> = [683].into_iter().collect();
@@ -1202,7 +1261,10 @@ fn axe_damage_node_is_independent_of_flat_physical() {
 #[test]
 fn frost_sunder_starts_at_four_projectiles() {
     let p = perf("jotunn", "frost_sunder", 20, &[], &[]);
-    let attack = p.attack_damage.as_ref().expect("frost sunder attack breakdown");
+    let attack = p
+        .attack_damage
+        .as_ref()
+        .expect("frost sunder attack breakdown");
     assert_eq!(attack.projectile_count, 4);
     // Frost Shrapnel adds 2 per rank on top of the base.
     let boosted = perf("jotunn", "frost_sunder", 20, &[("frost_shrapnel", 3)], &[]);
@@ -1238,9 +1300,19 @@ fn frost_sunder_onslaught_lands_on_top_of_the_cold_pool() {
         let enemy_resistances = HashMap::new();
         let proc_toggles = HashMap::new();
         let mut deps = empty_deps(
-            &allocated, &inventory, &skill_ranks, &subskill_ranks, &active_buffs,
-            &custom_stats, &alloc_tree, &tree_socketed, &enemy_conditions,
-            &player_conditions, &skill_projectiles, &enemy_resistances, &proc_toggles,
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &subskill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &enemy_conditions,
+            &player_conditions,
+            &skill_projectiles,
+            &enemy_resistances,
+            &proc_toggles,
         );
         deps.class_id = Some("jotunn");
         deps.level = 50;

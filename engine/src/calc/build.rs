@@ -7,12 +7,14 @@ use super::defense::{DefenseInsight, EhpResult};
 use super::rank::normalize_skill_name;
 use super::skill_cost::SkillCost;
 use super::skills::{
+    ailment, compute_attack_skill_damage, compute_skill_damage, conversion, r_max, r_min, rg,
     AttackKind, AttackSkillDamageBreakdown, AttackSkillInput, AttackSkillScaling, BonusSource,
-    DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput, StatMap,
-    Weapon, ailment, compute_attack_skill_damage, compute_skill_damage, conversion, r_max, r_min,
-    rg,
+    DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput,
+    StatMap, Weapon,
 };
-use super::stats::{BuildStatsInput, ComputedStats, combine_additive_and_more, compute_build_stats};
+use super::stats::{
+    combine_additive_and_more, compute_build_stats, BuildStatsInput, ComputedStats,
+};
 use super::subskill::subskill_key;
 use super::types::{CustomStat, Inventory, SkillKind, SkillSpec, TreeSocketContent};
 
@@ -345,26 +347,21 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         base + active_projectile_boost
     });
 
-    let active_calc_skill: Option<&CalcSkill> = active_skill
-        .and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
+    let active_calc_skill: Option<&CalcSkill> =
+        active_skill.and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
     // Subskill transmutations rewrite the main skill's tags (e.g. Ancient
     // Device turns Death from Above into a Sentry).
     let effective_skill: Option<CalcSkill> = match (active_skill, active_calc_skill) {
         (Some(spec), Some(calc_skill)) => {
             let mut skill = calc_skill.clone();
-            skill.tags = super::subskill::effective_skill_tags(
-                &spec.id,
-                &skill.tags,
-                deps.subskill_ranks,
-            );
+            skill.tags =
+                super::subskill::effective_skill_tags(&spec.id, &skill.tags, deps.subskill_ranks);
             Some(skill)
         }
         _ => None,
     };
     let active_calc_skill: Option<&CalcSkill> = effective_skill.as_ref();
-    let is_attack_skill = active_calc_skill
-        .and_then(|s| s.attack_kind)
-        == Some(AttackKind::Attack);
+    let is_attack_skill = active_calc_skill.and_then(|s| s.attack_kind) == Some(AttackKind::Attack);
 
     let weapon_for_attack: Option<Weapon> = is_attack_skill
         .then(|| {
@@ -509,31 +506,30 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         ),
     );
 
-    let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max) = if let Some(ad) =
-        attack_damage.as_ref()
-    {
-        (
-            Some(ad.combined_hit_min as f64 * ad.attacks_per_second_min),
-            Some(ad.combined_hit_max as f64 * ad.attacks_per_second_max),
-            Some(ad.combined_avg_min as f64 * ad.attacks_per_second_min),
-            Some(ad.combined_avg_max as f64 * ad.attacks_per_second_max),
-        )
-    } else {
-        (
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_min.map(|c| d.final_min as f64 * c)),
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_max.map(|c| d.final_max as f64 * c)),
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_min.map(|c| d.avg_min as f64 * c)),
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c)),
-        )
-    };
+    let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max) =
+        if let Some(ad) = attack_damage.as_ref() {
+            (
+                Some(ad.combined_hit_min as f64 * ad.attacks_per_second_min),
+                Some(ad.combined_hit_max as f64 * ad.attacks_per_second_max),
+                Some(ad.combined_avg_min as f64 * ad.attacks_per_second_min),
+                Some(ad.combined_avg_max as f64 * ad.attacks_per_second_max),
+            )
+        } else {
+            (
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_min.map(|c| d.final_min as f64 * c)),
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_max.map(|c| d.final_max as f64 * c)),
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_min.map(|c| d.avg_min as f64 * c)),
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c)),
+            )
+        };
     let hit_dps_min = hit_dps_min.map(|v| v * count_min * hits_min);
     let hit_dps_max = hit_dps_max.map(|v| v * count_max * hits_max);
     let avg_hit_dps_min = avg_hit_dps_min.map(|v| v * count_min * hits_min);
@@ -597,12 +593,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 continue;
             };
             let toggle_key = subskill_key(&owner_skill.id, &sub.id);
-            if !deps
-                .proc_toggles
-                .get(&toggle_key)
-                .copied()
-                .unwrap_or(false)
-            {
+            if !deps.proc_toggles.get(&toggle_key).copied().unwrap_or(false) {
                 continue;
             }
             let sub_rank = deps.subskill_ranks.get(&toggle_key).copied().unwrap_or(0);
@@ -712,7 +703,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         (None, Some(d)) => (d.avg_min as f64, d.avg_max as f64),
         _ => (0.0, 0.0),
     };
-    let apply_chances = subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
+    let apply_chances =
+        subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
     // A per-hit apply chance only becomes uptime once you know how often the
     // build lands a hit: every entity swinging on its own counts.
     let (rate_min, rate_max) = match attack_damage.as_ref() {
@@ -739,7 +731,11 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     // Execution shortens the kill by the bottom `t%` of the life bar, so the
     // effective DPS rises by 1/(1 - t). Bosses cannot be executed.
     let execute_below = subtree_stat("execute_below").clamp(0.0, EXECUTE_MAX_PCT);
-    let is_boss = deps.enemy_conditions.get("is_boss").copied().unwrap_or(false);
+    let is_boss = deps
+        .enemy_conditions
+        .get("is_boss")
+        .copied()
+        .unwrap_or(false);
     let execute_mult = if is_boss || execute_below == 0.0 {
         1.0
     } else {

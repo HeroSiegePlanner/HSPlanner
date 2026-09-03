@@ -1,4 +1,4 @@
-use super::{AttrMap, StatMap, r_max, rg};
+use super::{r_max, rg, AttrMap, StatMap};
 
 /// Where a `conversion_*` subtree note takes its value from.
 pub enum Source {
@@ -79,11 +79,7 @@ pub const CONVERSIONS: &[(&str, Source, Mode)] = &[
         Source::Stat("damage_return"),
         Mode::Flat,
     ),
-    (
-        "conversion_summon_count",
-        Source::EntityCount,
-        Mode::Flat,
-    ),
+    ("conversion_summon_count", Source::EntityCount, Mode::Flat),
     ("conversion_summon_life", Source::Unresolved, Mode::Flat),
     ("conversion_skill_damage", Source::OwnDamage, Mode::Flat),
 ];
@@ -214,7 +210,10 @@ mod tests {
     #[test]
     fn per500_and_flat_life_conversions_do_not_share_a_key() {
         let out = resolve(
-            &map(&[("conversion_max_life", 10.0), ("conversion_max_life_per500", 6.0)]),
+            &map(&[
+                ("conversion_max_life", 10.0),
+                ("conversion_max_life_per500", 6.0),
+            ]),
             &AttrMap::new(),
             &map(&[("life", 1000.0)]),
         );
@@ -299,7 +298,10 @@ mod tests {
         let scoped = map(&[("conversion_summon_count", 10.0)]);
         let stats = map(&[("sentry_max_amount", 16.0), ("summon_max_amount", 4.0)]);
         let sentry = super::resolve(&scoped, &AttrMap::new(), &stats, &["Sentry".into()]);
-        assert_eq!(sentry.flat, 1.6, "a Sentry skill counts sentries, not summons");
+        assert_eq!(
+            sentry.flat, 1.6,
+            "a Sentry skill counts sentries, not summons"
+        );
         let summon = super::resolve(&scoped, &AttrMap::new(), &stats, &["Summon".into()]);
         assert_eq!(summon.flat, 0.4);
         let neither = super::resolve(&scoped, &AttrMap::new(), &stats, &[]);

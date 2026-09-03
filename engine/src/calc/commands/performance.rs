@@ -91,10 +91,8 @@ where
     F: Fn(Option<&str>) -> BuildPerformance,
 {
     if active_skill_ids.len() > 1 {
-        let runs: Vec<BuildPerformance> = active_skill_ids
-            .iter()
-            .map(|sid| run(Some(sid)))
-            .collect();
+        let runs: Vec<BuildPerformance> =
+            active_skill_ids.iter().map(|sid| run(Some(sid))).collect();
         let exec_sum = |pick: fn(&BuildPerformance) -> Option<f64>| -> f64 {
             runs.iter()
                 .filter_map(|r| pick(r).map(|v| v * r.execute_mult))
@@ -284,6 +282,7 @@ pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
         entity_rates: &input.deps.entity_rates,
     };
     let computed = compute_build_stats(&stats_input);
+
     let sources = match input.kind {
         StatBreakdownKind::Stat => &computed.stat_sources,
         StatBreakdownKind::Attribute => &computed.attribute_sources,
