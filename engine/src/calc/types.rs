@@ -372,6 +372,9 @@ pub struct ItemGrantedSkill {
     pub proc_damage: Option<Vec<ProcDamageSpec>>,
     #[serde(default)]
     pub proc_cooldown: Option<f64>,
+    // GetDisabledUpgradeStats: a few granted skills never gain rank from stars.
+    #[serde(default)]
+    pub star_rank_locked: bool,
 }
 
 // ---------- character class ----------

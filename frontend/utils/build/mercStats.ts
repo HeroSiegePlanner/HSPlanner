@@ -3,6 +3,7 @@ import {
   gameConfig,
   getItem,
   getItemGrantedSkillByName,
+  grantedSkillStars,
   itemGrantedRankStarBonus,
 } from '@data'
 import type { Inventory } from '../../types'
@@ -77,15 +78,15 @@ export function mercGrantedAuras(mercInventory: Inventory): MercGrantedAura[] {
     const base = getItem(equipped.baseId)
     if (!base?.skillBonuses) continue
     const stars = effectiveStars(slot, equipped.stars, base.rarity)
-    const starBonus = itemGrantedRankStarBonus(stars)
     for (const [name, level] of Object.entries(base.skillBonuses)) {
       if (!getItemGrantedSkillByName(name)?.aura) continue
+      const bonus = itemGrantedRankStarBonus(grantedSkillStars(name, stars))
       out.push({
         name,
         itemName: base.name,
         baseId: base.id,
-        levelMin: Math.round(rangedMin(level)) + starBonus,
-        levelMax: Math.round(rangedMax(level)) + starBonus,
+        levelMin: Math.round(rangedMin(level)) + bonus,
+        levelMax: Math.round(rangedMax(level)) + bonus,
       })
     }
   }

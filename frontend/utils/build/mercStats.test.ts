@@ -30,7 +30,7 @@ function equip(baseId: string, stars = 0): EquippedItem {
 }
 
 describe('itemGrantedRankStarBonus', () => {
-  it('mirrors the Rust itemSpecificStaircase', () => {
+  it('mirrors the Rust flat 0.6/star granted-rank scaling', () => {
     expect(itemGrantedRankStarBonus(0)).toBe(0)
     expect(itemGrantedRankStarBonus(null)).toBe(0)
     expect(itemGrantedRankStarBonus(1)).toBe(0)
@@ -38,7 +38,10 @@ describe('itemGrantedRankStarBonus', () => {
     expect(itemGrantedRankStarBonus(3)).toBe(1)
     expect(itemGrantedRankStarBonus(4)).toBe(2)
     expect(itemGrantedRankStarBonus(5)).toBe(3)
-    expect(itemGrantedRankStarBonus(42)).toBe(0)
+  })
+
+  it('clamps past the game star cap instead of falling off a table', () => {
+    expect(itemGrantedRankStarBonus(42)).toBe(itemGrantedRankStarBonus(5))
   })
 })
 

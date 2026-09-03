@@ -6,6 +6,7 @@ import {
   getAffix,
   getItem,
   getItemImage,
+  grantedSkillStars,
 } from '@data'
 import { useBuild } from '../store/build'
 import type { EquippedItem, ItemBase, RangedValue } from '../types'
@@ -110,10 +111,10 @@ function useItemDisplayValues(
               : k,
           stars,
         })),
-        ...skillEntries.map(([, v]) => ({
+        ...skillEntries.map(([name, v]) => ({
           value: toPair(v),
           statKey: 'item_granted_skill_rank',
-          stars,
+          stars: grantedSkillStars(name, stars),
         })),
       ]
       if (affixReqs.length === 0 && scaled.length === 0) {

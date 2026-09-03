@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { gameConfig, gems, getItem, getItemGrantedSkillByName, getItemSet, items } from './index'
+import {
+  gameConfig,
+  gems,
+  getItem,
+  getItemGrantedSkillByName,
+  getItemSet,
+  grantedSkillStars,
+  items,
+} from './index'
 import setsJson from './sets.json'
 
 type Rec = Record<string, unknown>
@@ -773,5 +781,29 @@ describe('S10 item stat changes (second batch)', () => {
     expect(gameConfig.stats.some((s) => s.key === 'cold_resistance_converted_to_cold_damage')).toBe(true)
     const impl = item('boots_unholy_peg_leg').implicit as Rec
     expect(impl.cold_resistance_converted_to_cold_damage).toBe(20)
+  })
+})
+
+describe('grantedSkillStars', () => {
+  const locked = [
+    'Wings of Hatred',
+    'Celestial Might',
+    "Reaper's Culling",
+    'Roll the Dice',
+    'Liquid Containers',
+    "Fallen God's Bloodlust",
+    'Programmer´s Delirium',
+  ]
+
+  it('drops stars for the skills the game blocks from gaining rank', () => {
+    for (const name of locked) {
+      expect(grantedSkill(name).starRankLocked, name).toBe(true)
+      expect(grantedSkillStars(name, 5), name).toBeNull()
+    }
+  })
+
+  it('passes stars through for every other granted skill', () => {
+    expect(grantedSkillStars('Holy Aura', 5)).toBe(5)
+    expect(grantedSkillStars('Holy Aura', null)).toBeNull()
   })
 })

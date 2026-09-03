@@ -9,6 +9,7 @@ import {
   getItem,
   getRune,
   getSkillsByClass,
+  grantedSkillStars,
 } from '@data'
 import { getSeason } from '@data/seasons/registry'
 import { groupGearSlots } from '../../views/gear/lib/slotGroups'
@@ -350,7 +351,11 @@ async function computeItemDisplay(
           : k,
       stars,
     })),
-    ...skillEntries.map(([, v]) => ({ value: toPair(v), statKey: 'item_granted_skill_rank', stars })),
+    ...skillEntries.map(([name, v]) => ({
+      value: toPair(v),
+      statKey: 'item_granted_skill_rank',
+      stars: grantedSkillStars(name, stars),
+    })),
   ]
   if (affixReqs.length === 0 && scaled.length === 0) return EMPTY_ITEM_DISPLAY
 

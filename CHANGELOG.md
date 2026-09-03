@@ -11,6 +11,9 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- Star leveling rebuilt on the game's own scaling table
+- Star scaling rounds like the game: values that started whole are floored, fractional rolls keep their decimals
+- Star levels above 5 no longer scaled past the game's cap
 - Gelid Riptide's extra waves repeat the whole icicle volley instead of adding one icicle
 - Avalanche casts once per its 3 s cooldown and scales with skill haste instead of casting every second
 - "One massive summon" notes (Scorching Kraken, Pitfighting Colossus, Summon Archmage, Sacrificial Offering, Alpha) field a single entity whose damage scales with the maximum amount, instead of a full pack plus a negligible flat bonus
