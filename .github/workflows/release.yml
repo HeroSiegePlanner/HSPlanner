@@ -44,7 +44,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Setup Rust
@@ -73,6 +73,8 @@ jobs:
             echo 'body=Auto-built release.' >> "$GITHUB_OUTPUT"
           fi
 
+      # Draft so nothing goes public until fix-appimage and build-arch finish;
+      # the publish job flips the draft off at the end.
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v1
         env:
@@ -87,49 +89,8 @@ jobs:
           tagName: ${{ inputs.tag }}
           releaseName: ${{ inputs.tag }}
           releaseBody: ${{ steps.changelog.outputs.body }}
-          releaseDraft: false
+          releaseDraft: true
           prerelease: ${{ inputs.prerelease }}
-
-      - name: Rename installers (remove version from filename)
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: bash
-        run: |
-          cd dist/
-          # Rename Windows setup exe (remove version)
-          if ls HSPlanner-*_x64-setup.exe 1> /dev/null 2>&1; then
-            mv HSPlanner-*_x64-setup.exe HSPlanner-x64-setup.exe
-          fi
-          # Rename macOS dmg (remove version)
-          if ls HSPlanner-*_arch64.dmg 1> /dev/null 2>&1; then
-            mv HSPlanner-*_arch64.dmg HSPlanner-x64.dmg
-          fi
-          # Rename Linux deb (remove version)
-          if ls HSPlanner-*_amd64.deb 1> /dev/null 2>&1; then
-            mv HSPlanner-*_amd64.deb HSPlanner-amd64.deb
-          fi
-          # Rename Linux rpm (remove version)
-          if ls HSPlanner-*-1-x86_64.rpm 1> /dev/null 2>&1; then
-            mv HSPlanner-*-1-x86_64.rpm HSPlanner-x86_64.rpm
-          fi
-          # Rename Linux AppImage (remove version)
-          if ls HSPlanner-*_amd64.AppImage 1> /dev/null 2>&1; then
-            mv HSPlanner-*_amd64.AppImage HSPlanner-amd64.AppImage
-          fi
-
-      - name: Upload renamed installers to release
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          cd dist/
-          gh release upload ${{ inputs.tag }} \
-            HSPlanner-x64-setup.exe \
-            HSPlanner-x64.dmg \
-            HSPlanner-amd64.deb \
-            HSPlanner-x86_64.rpm \
-            HSPlanner-amd64.AppImage \
-            --clobber 2>/dev/null || true
 
   # ubuntu-22.04 libs bundled into the AppImage (libwayland, glib, systemd...) shadow
   # newer host libs and break EGL on Mesa 25+ distros -> white screen (tauri#15665).
@@ -151,9 +112,10 @@ jobs:
           rm -f squashfs-root/usr/lib/{libwayland-*,libglib-*,libgio-*,libgobject-*,libgmodule-*,libgst*,libmount*,libblkid*,libselinux*,libpcre2-*,libsystemd*,libudev*,libgudev*,liblzma*,liblz4*,libzstd*,libcap*,libgcrypt*,libdbus-1*,libseccomp*,libdw*,libelf*,libffi*,libbsd*,libmd*}
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
-          ARCH=x86_64 ./appimagetool-x86_64.AppImage --appimage-extract-and-run --comp zstd squashfs-root "$APPIMAGE"
+          # this appimagetool build only supports gzip/xz; --comp zstd exits 1
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage --appimage-extract-and-run squashfs-root "$APPIMAGE"
 
-      - name: Re-sign and update release assets
+      - name: Re-sign and fix latest.json
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -163,12 +125,15 @@ jobs:
           npx --yes @tauri-apps/cli@2.11.2 signer sign "$APPIMAGE"
           gh release upload ${{ inputs.tag }} "$APPIMAGE" "$APPIMAGE.sig" --clobber -R ${{ github.repository }}
           gh release download ${{ inputs.tag }} -R ${{ github.repository }} -p latest.json
-          ASSET_URL=$(gh api repos/${{ github.repository }}/releases/tags/${{ inputs.tag }} --jq ".assets[] | select(.name==\"$APPIMAGE\") | .url")
           SIG=$(cat "$APPIMAGE.sig")
-          jq --arg sig "$SIG" --arg url "$ASSET_URL" \
-            '.platforms["linux-x86_64"] |= (.signature=$sig | .url=$url)
-             | .platforms["linux-x86_64-appimage"] |= (.signature=$sig | .url=$url)' \
-            latest.json > latest.json.tmp && mv latest.json.tmp latest.json
+          # draft assets carry untagged-... urls; rewrite every platform url to the
+          # final tag url and refresh the linux signature for the repacked AppImage
+          jq --arg sig "$SIG" \
+             --arg base "https://github.com/${{ github.repository }}/releases/download/${{ inputs.tag }}" '
+            .platforms |= with_entries(
+              .value.url = $base + "/" + (.value.url | split("/") | last)
+              | if .key | startswith("linux") then .value.signature = $sig else . end
+            )' latest.json > latest.json.tmp && mv latest.json.tmp latest.json
           gh release upload ${{ inputs.tag }} latest.json --clobber -R ${{ github.repository }}
 
   # Tauri has no pacman bundler, so repack the deb payload into a pacman package.
@@ -221,3 +186,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ inputs.tag }} *.pkg.tar.zst --clobber -R ${{ github.repository }}
+
+  publish:
+    needs: [fix-appimage, build-arch]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit ${{ inputs.tag }} --draft=false -R ${{ github.repository }}

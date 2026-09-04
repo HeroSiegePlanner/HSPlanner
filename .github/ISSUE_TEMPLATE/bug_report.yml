@@ -1,0 +1,67 @@
+name: Bug report
+description: Create a report to help us improve
+title: "[BUG] "
+labels: []
+assignees:
+  - zium1337
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out the sections below to help everyone identify and fix the bug
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe your issue
+      placeholder: When I click here this happens
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Which OS do you use?
+      options:
+        - Windows 10
+        - Windows 11
+        - Ubuntu/Debian
+        - Fedora/Bazzite
+        - Arch/CachyOS
+        - Other, i will describe it below
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Add any other context about the problem here.
+    validations:
+      required: false
