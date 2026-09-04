@@ -971,28 +971,7 @@
       "effectiveness_of_non_buff_proc_relics": [
         100,
         250
-      ],
-      "flat_poison_skill_damage": 33,
-      "increased_ailment_frequency": 15,
-      "faster_cast_rate_more": 10,
-      "increased_attack_speed_more": 10,
-      "extra_damage_ailments": 15,
-      "magic_skill_damage": 20,
-      "projectile_speed": 2,
-      "damage_mitigation": 8,
-      "damage_return": 50,
-      "all_resistances": 20,
-      "skill_haste": 15,
-      "intelligence_converted_to_magic_skill_dmg": 8,
-      "vitality_converted_to_magic_skill_dmg": 8,
-      "energy_converted_to_magic_skill_dmg": 8,
-      "vitality_converted_to_attack_dmg": 8,
-      "ailment_damage_all": 15,
-      "explosion_damage": 25,
-      "sentry_damage": 25,
-      "sentry_attack_speed": 15,
-      "guardian_damage": 25,
-      "guardian_attack_speed": 15
+      ]
     }
   },
   {
