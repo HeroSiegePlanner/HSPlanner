@@ -5,6 +5,7 @@ import {
   type BuildPerformanceDeps,
 } from '../utils/build/buildPerformance'
 import { mercGrantedSkillRanks } from '../utils/build/mercStats'
+import { boostedSubskillRanks } from '../utils/build/subskillBoost'
 
 export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const classId = useBuild((s) => s.classId)
@@ -26,13 +27,20 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
   const enemyResistances = useBuild((s) => s.enemyResistances)
   const procToggles = useBuild((s) => s.procToggles)
   const killsPerSec = useBuild((s) => s.killsPerSec)
+  const difficulty = useBuild((s) => s.difficulty)
   const entityRates = useBuild((s) => s.entityRates)
+  const stackCounts = useBuild((s) => s.stackCounts)
   const mercInventory = useBuild((s) => s.mercInventory)
   const mercDisabledAuras = useBuild((s) => s.mercDisabledAuras)
 
   const inventoryForCalc = useMemo(
     () => applyDisabledPotions(inventory, disabledPotions),
     [inventory, disabledPotions],
+  )
+
+  const effectiveSubskillRanks = useMemo(
+    () => boostedSubskillRanks(inventoryForCalc, subskillRanks),
+    [inventoryForCalc, subskillRanks],
   )
 
   const grantedSkillRanks = useMemo(
@@ -47,7 +55,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       allocatedAttrs,
       inventory: inventoryForCalc,
       skillRanks,
-      subskillRanks,
+      subskillRanks: effectiveSubskillRanks,
       activeAuraId,
       activeBuffs,
       customStats,
@@ -61,6 +69,8 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       procToggles,
       killsPerSec,
       entityRates,
+      stackCounts,
+      difficulty,
       grantedSkillRanks,
     }),
     [
@@ -69,7 +79,7 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       allocatedAttrs,
       inventoryForCalc,
       skillRanks,
-      subskillRanks,
+      effectiveSubskillRanks,
       activeAuraId,
       activeBuffs,
       customStats,
@@ -83,6 +93,8 @@ export function useBuildPerformanceDeps(): BuildPerformanceDeps {
       procToggles,
       killsPerSec,
       entityRates,
+      stackCounts,
+      difficulty,
       grantedSkillRanks,
     ],
   )

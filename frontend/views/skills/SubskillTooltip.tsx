@@ -71,6 +71,7 @@ export default function SubskillTooltip({
   skill,
   sub,
   rank,
+  boost = 0,
   x,
   y,
   isKeystone,
@@ -80,6 +81,7 @@ export default function SubskillTooltip({
   skill: Skill
   sub: SubskillNode
   rank: number
+  boost?: number
   x: number
   y: number
   isKeystone: boolean
@@ -88,6 +90,9 @@ export default function SubskillTooltip({
 }) {
   const nextRank = Math.min(rank + 1, sub.maxRank)
   const hasNext = nextRank > rank
+  // The item bonus only lifts ranks the build actually paid for.
+  const shownRank = rank > 0 ? rank + boost : 0
+  const shownNextRank = nextRank > 0 ? nextRank + boost : 0
 
   const dpsDiffs = previewPerformance
     ? diffPerformanceDps(currentPerformance, previewPerformance)
@@ -97,21 +102,23 @@ export default function SubskillTooltip({
     : []
   const netChangeVisible = !isKeystone && (dpsDiffs.length > 0 || statDiffs.length > 0)
 
-  const statRows = effectRows(sub.effects, rank, nextRank)
+  const statRows = effectRows(sub.effects, shownRank, shownNextRank)
   const tagChange = subskillTags[skill.id]?.[sub.id]
 
   const proc = sub.proc
   const procChanceCurrent = atRank(
     proc?.chance.base,
     proc?.chance.perRank,
-    rank,
+    shownRank,
   )
   const procChanceNext = atRank(
     proc?.chance.base,
     proc?.chance.perRank,
-    nextRank,
+    shownNextRank,
   )
-  const procStatRows = proc ? effectRows(proc.effects, rank, nextRank) : []
+  const procStatRows = proc
+    ? effectRows(proc.effects, shownRank, shownNextRank)
+    : []
 
   const ref = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null)
@@ -164,8 +171,14 @@ export default function SubskillTooltip({
         subtitle={
           isKeystone ? undefined : (
             <>
-              Rank <span className="tabular-nums text-accent-hot">{rank}</span>
+              Rank <span className="tabular-nums text-accent-hot">{shownRank}</span>
               <span className="text-faint"> / {sub.maxRank}</span>
+              {shownRank > rank && (
+                <span className="text-faint">
+                  {' '}
+                  ({rank}+{boost})
+                </span>
+              )}
             </>
           )
         }

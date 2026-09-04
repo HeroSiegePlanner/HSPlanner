@@ -265,6 +265,52 @@ fn class_labelled_set_bonus_only_pays_out_for_that_class() {
 }
 
 #[test]
+fn hell_difficulty_drops_every_elemental_resistance() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+    let baseline = compute_build_stats(&base_input);
+    let hell = compute_build_stats(&BuildStatsInput {
+        difficulty: Some("hell"),
+        ..base_input
+    });
+
+    for key in [
+        "fire_resistance",
+        "cold_resistance",
+        "lightning_resistance",
+        "poison_resistance",
+        "arcane_resistance",
+    ] {
+        let before = baseline.stats.get(key).copied().unwrap_or((0.0, 0.0)).1;
+        let after = hell.stats.get(key).copied().unwrap_or((0.0, 0.0)).1;
+        assert!(
+            (before - after - 45.0).abs() < 1e-6,
+            "{key} should drop by 45 on Hell (before {before}, after {after})"
+        );
+    }
+}
+
+#[test]
 fn incarnation_nodes_contribute_to_build_stats() {
     // S10: patch sezonu podmienia całe drzewo — nody liczą się przez to
     // samo allocated_tree_nodes.
@@ -354,6 +400,97 @@ fn incarnation_nodes_contribute_to_build_stats() {
 
 // Node 2083 ("+20 Physical Damage while wielding a Dagger") must feed additive
 // physical damage only while a Dagger occupies the weapon slot.
+#[test]
+fn light_radius_nodes_feed_magic_skill_damage() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+    let baseline = compute_build_stats(&base_input);
+
+    // 1695/1696/1697: "+1 to Light Radius". 1687: "+1 to Magic Skill Damage
+    // per points in Light Radius". 1694: the "+4%" wording of the same note.
+    let alloc_nodes: HashSet<u32> = [1695, 1696, 1697, 1687, 1694].into_iter().collect();
+    let input = BuildStatsInput {
+        allocated_tree_nodes: &alloc_nodes,
+        ..base_input
+    };
+    let with_nodes = compute_build_stats(&input);
+
+    let get = |c: &ComputedStats, k: &str| {
+        c.stats.get(k).copied().unwrap_or((0.0, 0.0)).0
+    };
+    assert_eq!(get(&with_nodes, "light_radius"), 3.0);
+    assert_eq!(
+        get(&with_nodes, "magic_skill_damage") - get(&baseline, "magic_skill_damage"),
+        12.0,
+    );
+    assert_eq!(
+        get(&with_nodes, "flat_magic_skill_damage") - get(&baseline, "flat_magic_skill_damage"),
+        3.0,
+    );
+}
+
+#[test]
+fn light_in_the_dark_turns_light_radius_into_attributes() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+
+    // 1545/1546/1549/1550/1551: "+1 to Light Radius". 1552 "Light In The Dark":
+    // "+3 to Light Radius" and "+40% of your Light Radius Added as Increased
+    // All Attributes" — 8 points, so +3.2% increased all attributes.
+    let alloc_nodes: HashSet<u32> = [1545, 1546, 1549, 1550, 1551, 1552].into_iter().collect();
+    let input = BuildStatsInput {
+        allocated_tree_nodes: &alloc_nodes,
+        ..base_input
+    };
+    let with_nodes = compute_build_stats(&input);
+
+    let get = |k: &str| with_nodes.stats.get(k).copied().unwrap_or((0.0, 0.0)).0;
+    assert_eq!(get("light_radius"), 8.0);
+    assert!((get("increased_all_attributes") - 3.2).abs() < 1e-9);
+}
+
 #[test]
 fn dagger_conditional_lines_require_dagger_weapon() {
     // Node 2083 istnieje w danych S10 (patch sezonu podmienia drzewo).
@@ -688,4 +825,185 @@ fn compute_build_stats_custom_stat_appears_in_output() {
         .get("fire_skill_damage")
         .expect("custom fire_skill_damage source should land in stats");
     assert_eq!(*fire_skill, (60.0, 60.0));
+}
+
+// Node 683 "Accurate Cleaver": both lines are axe-gated and fold into different
+// targets. "Increased Damage" goes to attack_damage, which multiplies the whole
+// hit -- enhanced_damage would only scale the weapon roll.
+#[test]
+fn accurate_cleaver_folds_both_lines_only_with_an_axe() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let node_683: HashSet<u32> = [683].into_iter().collect();
+    let no_nodes: HashSet<u32> = HashSet::new();
+
+    let stat = |inventory: &Inventory, nodes: &HashSet<u32>, key: &str| -> f64 {
+        let base_input = empty_input(
+            &allocated,
+            inventory,
+            &skill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &player_conditions,
+            &subskill_ranks,
+            &enemy_conditions,
+        );
+        let input = BuildStatsInput {
+            allocated_tree_nodes: nodes,
+            ..base_input
+        };
+        compute_build_stats(&input)
+            .stats
+            .get(key)
+            .copied()
+            .unwrap_or((0.0, 0.0))
+            .0
+    };
+
+    assert!(
+        data::get_item("base_melee_hand_axe").is_some_and(|b| b.base_type == "Axe"),
+        "test expects an Axe base in item data"
+    );
+    let bare: Inventory = HashMap::new();
+    let mut with_axe: Inventory = HashMap::new();
+    with_axe.insert(
+        "weapon".to_string(),
+        EquippedItem {
+            base_id: "base_melee_hand_axe".to_string(),
+            ..Default::default()
+        },
+    );
+
+    for (key, expected) in [("attack_damage", 30.0), ("attack_rating_pct", 20.0)] {
+        let bare_delta = stat(&bare, &node_683, key) - stat(&bare, &no_nodes, key);
+        assert!(
+            bare_delta.abs() < 1e-6,
+            "{key} must stay inert without an Axe (delta {bare_delta})"
+        );
+        let axe_delta = stat(&with_axe, &node_683, key) - stat(&with_axe, &no_nodes, key);
+        assert!(
+            (axe_delta - expected).abs() < 1e-6,
+            "node 683 must add +{expected} {key} with an Axe (delta {axe_delta})"
+        );
+    }
+}
+
+// Node 773 "Soulburn Essence": +1% Increased Magic Skills Damage per 750 points
+// in Mana. Reads the finalized mana total, so it runs after the multiplier pass.
+#[test]
+fn soulburn_essence_scales_magic_skill_damage_with_mana() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = vec![CustomStat {
+        stat_key: "mana".to_string(),
+        value: "3000".to_string(),
+    }];
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let player_conditions = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let base_input = empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &player_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    );
+    let nodes: HashSet<u32> = [773].into_iter().collect();
+    let out = compute_build_stats(&BuildStatsInput {
+        allocated_tree_nodes: &nodes,
+        ..base_input
+    });
+
+    let mana = out.stats.get("mana").copied().unwrap_or((0.0, 0.0)).1;
+    let expected = (mana / 750.0).floor();
+    assert!(expected >= 1.0, "test needs enough mana to clear one step, got {mana}");
+    assert_eq!(
+        out.stats.get("magic_skill_damage").copied().unwrap_or((0.0, 0.0)).1,
+        expected,
+        "node 773 should grant 1% per full 750 mana ({mana} mana)"
+    );
+}
+
+#[test]
+fn set_sail_blessing_adds_cold_skill_damage_when_toggled() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    inventory.insert(
+        "armor".to_string(),
+        crate::calc::types::EquippedItem {
+            base_id: "body_armor_heroic_tundra_hunter_s_long_coat".to_string(),
+            ..Default::default()
+        },
+    );
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+
+    let off_conditions = HashMap::new();
+    let off = compute_build_stats(&empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &off_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    ));
+    assert_eq!(
+        off.stats.get("cold_skill_damage").copied(),
+        Some((25.0, 40.0)),
+        "untoggled the coat only pays its own implicit"
+    );
+
+    let mut on_conditions = HashMap::new();
+    on_conditions.insert("set_sail_buff".to_string(), true);
+    let on = compute_build_stats(&empty_input(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &active_buffs,
+        &custom_stats,
+        &alloc_tree,
+        &tree_socketed,
+        &on_conditions,
+        &subskill_ranks,
+        &enemy_conditions,
+    ));
+    assert_eq!(
+        on.stats.get("cold_skill_damage").copied(),
+        Some((75.0, 115.0)),
+        "Set Sail level 20-30 adds 2.5% per level on top"
+    );
+    assert_eq!(
+        on.stats.get("mana_replenish_pct").copied(),
+        Some((45.0, 65.0)),
+    );
 }

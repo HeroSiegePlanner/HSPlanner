@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { gameConfig, gems, getItem, getItemGrantedSkillByName, getItemSet, items } from './index'
+import {
+  gameConfig,
+  gems,
+  getItem,
+  getItemGrantedSkillByName,
+  getItemSet,
+  grantedSkillStars,
+  items,
+} from './index'
 import setsJson from './sets.json'
 
 type Rec = Record<string, unknown>
@@ -34,9 +42,9 @@ describe('S10 item changes', () => {
     expect(procs[0]).toMatchObject({ trigger: 'on_kill', chance: 4 })
   })
 
-  it('Amulet of Colosseum implicit is % increased attack speed, not flat APS', () => {
+  it('Amulet of Colosseum implicit is total (more) attack speed, not flat APS', () => {
     const impl = item('amulet_heroic_amulet_of_colosseum').implicit as Rec
-    expect(impl.increased_attack_speed).toEqual([5, 10])
+    expect(impl.increased_attack_speed_more).toEqual([5, 10])
     expect(impl.attacks_per_second).toBeUndefined()
     expect(impl.all_skills).toEqual([2, 4])
   })
@@ -112,7 +120,7 @@ describe('S10 item changes', () => {
     })
   })
 
-  it('Jar of Parasites charm: "Reduced by -25%" in game is a real 25% reduction', () => {
+  it('Jar of Parasites charm: "Reduced by -25%" is stored raw as a -25 drawback', () => {
     const jar = item('s10_jar_of_parasites')
     expect(jar.grade).toBe('SS')
     expect(jar.requiresLevel).toBe(100)
@@ -120,8 +128,8 @@ describe('S10 item changes', () => {
     expect(jar.implicit).toEqual({
       all_skills: [2, 3],
       skill_haste: [10, 100],
-      physical_damage_reduction: 25,
-      magic_damage_reduction: 25,
+      physical_damage_reduction: -25,
+      magic_damage_reduction: -25,
     })
   })
 
@@ -205,7 +213,7 @@ describe('S10 item changes', () => {
     expect(pendant.implicit).toEqual({
       all_skills: [2, 3],
       increased_attack_speed: [25, 35],
-      enemy_arcane_resist: 15,
+      ignore_arcane_res: 15,
       magic_skill_damage: [20, 35],
       guardian_additional_attack: 15,
       guardian_attack_range: [50, 75],
@@ -274,7 +282,7 @@ describe('S10 item changes', () => {
       projectile_speed: 15,
       to_strength: 50,
       increased_dexterity: 6,
-      enhanced_damage_based_on_level: 165,
+      enhanced_damage_based_on_level: 275,
     })
   })
 
@@ -470,7 +478,7 @@ describe('S10 item changes', () => {
       all_skills: 2,
       physical_skills: [3, 5],
       crit_chance: 35,
-      increased_attack_rating: 10,
+      attack_rating_pct: 10,
       attack_rating: 1250,
       crit_damage: [90, 125],
       to_strength: [50, 75],
@@ -489,7 +497,9 @@ describe('S10 item changes', () => {
       all_skills: [2, 3],
       cold_skills: [2, 5],
       cold_resistance_converted_to_cold_damage: 15,
-      faster_cast_rate: 50,
+      faster_cast_rate_more: -50,
+      follower_relic_damage: [200, 300],
+      follower_relic_attack_speed: [10, 20],
       extra_dmg_to_deep_frozen: [25, 40],
       flat_cold_skill_damage: [35, 55],
       cold_skill_damage: [55, 75],
@@ -539,7 +549,7 @@ describe('S10 item changes', () => {
       all_skills: [4, 6],
       melee_range: 40,
       increased_attack_speed: [15, 30],
-      less_dmg_with_cd_skills: 80,
+      less_dmg_with_cd_skills: -80,
       crit_chance: 25,
       life_steal: 10,
       crit_damage: 66,
@@ -592,6 +602,47 @@ describe('S10 item changes', () => {
     const ps = df.passiveStats as Rec
     expect(ps.base).toEqual({ attack_damage: 18, increased_attack_speed: 6 })
     expect(ps.perRank).toEqual({ attack_damage: 6, increased_attack_speed: 2 })
+  })
+
+  it('Torch of Shadow rolls its All Skills on one class', () => {
+    const torch = item('charm_heroic_torch_of_shadow')
+    const implicit = torch.implicit as Rec
+    // the roll is class-scoped, so it must not sit in the global all_skills
+    expect(implicit.all_skills).toBeUndefined()
+    expect(implicit.all_skills_class).toEqual([1, 3])
+    expect(torch.uniqueEffects).toBeUndefined()
+  })
+
+  it('Torch of Shadow procs Shadowflames on hit', () => {
+    const torch = item('charm_heroic_torch_of_shadow')
+    expect(torch.skillBonuses).toEqual({ Shadowflames: [1, 3] })
+    expect(torch.procs).toEqual([
+      {
+        trigger: 'on_hit',
+        chance: 5,
+        description: 'cast Shadowflames Level [1-3]',
+        details: 'Erupting shadowflames deal arcane damage to nearby monsters.',
+      },
+    ])
+    const flames = grantedSkill('Shadowflames')
+    expect(flames.procDamage).toEqual([
+      { type: 'arcane', base: 500, perRank: 1250 },
+    ])
+  })
+
+  it("Tundra Hunter's Long Coat grants the Set Sail proc buff", () => {
+    const coat = item('body_armor_heroic_tundra_hunter_s_long_coat')
+    expect(coat.skillBonuses).toEqual({ 'Set Sail': [20, 30] })
+    // the granted-skill section carries it now, so no duplicate proc line
+    expect(coat.procs).toBeUndefined()
+  })
+
+  it('Set Sail buff scales 0%+2.5%/lvl cold skill damage, 5%+2%/lvl mana replenish', () => {
+    const sail = grantedSkill('Set Sail')
+    expect(sail.condition).toBe('set_sail_buff')
+    const ps = sail.passiveStats as Rec
+    expect(ps.base).toEqual({ cold_skill_damage: 0, mana_replenish_pct: 5 })
+    expect(ps.perRank).toEqual({ cold_skill_damage: 2.5, mana_replenish_pct: 2 })
   })
 
   it("Fallen God's Bloodlust nerfs attack-speed-to-FCR conversion 10% -> 7%", () => {
@@ -730,5 +781,29 @@ describe('S10 item stat changes (second batch)', () => {
     expect(gameConfig.stats.some((s) => s.key === 'cold_resistance_converted_to_cold_damage')).toBe(true)
     const impl = item('boots_unholy_peg_leg').implicit as Rec
     expect(impl.cold_resistance_converted_to_cold_damage).toBe(20)
+  })
+})
+
+describe('grantedSkillStars', () => {
+  const locked = [
+    'Wings of Hatred',
+    'Celestial Might',
+    "Reaper's Culling",
+    'Roll the Dice',
+    'Liquid Containers',
+    "Fallen God's Bloodlust",
+    'Programmer´s Delirium',
+  ]
+
+  it('drops stars for the skills the game blocks from gaining rank', () => {
+    for (const name of locked) {
+      expect(grantedSkill(name).starRankLocked, name).toBe(true)
+      expect(grantedSkillStars(name, 5), name).toBeNull()
+    }
+  })
+
+  it('passes stars through for every other granted skill', () => {
+    expect(grantedSkillStars('Holy Aura', 5)).toBe(5)
+    expect(grantedSkillStars('Holy Aura', null)).toBeNull()
   })
 })

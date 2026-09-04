@@ -33,6 +33,34 @@ fn s10_trade_off_lines_keep_negative_sign() {
     }
 }
 
+// The two "per points in Light Radius" notes differ only by the percent
+// sign, and feed different halves of the damage formula.
+#[test]
+fn light_radius_lines_split_flat_and_percent_keys() {
+    for (line, key, value) in [
+        (
+            "+1 to Magic Skill Damage per points in Light Radius",
+            "flat_magic_skill_damage_per_light_radius",
+            1.0,
+        ),
+        (
+            "+4% to Magic Skill Damage per points in Light Radius",
+            "magic_skill_damage_per_light_radius",
+            4.0,
+        ),
+        ("+3 to Light Radius", "light_radius", 3.0),
+        ("+8% to Light Radius", "light_radius_pct", 8.0),
+    ] {
+        match classify_tree_node_line(line) {
+            TreeLineClass::Stat(m) => {
+                assert_eq!(m.key, key, "line: {line}");
+                assert_eq!(m.value, value, "line: {line}");
+            }
+            _ => panic!("expected Stat for {line}"),
+        }
+    }
+}
+
 #[test]
 fn classify_null_rule_line_is_recognized_no_stat() {
     assert!(matches!(
@@ -77,12 +105,15 @@ fn rule_seconds_unit_and_crushing_blow_alternative() {
         ("+0.1 s Cooldown Recovered", "cooldown_recovered_flat", 0.1),
         ("+2 s Stun Duration", "stun_duration", 2.0),
         ("+2 s Evasion Duration", "evasion_duration", 2.0),
-        ("+3% Chance for a Crushing Blow", "crushing_blow_chance", 3.0),
+        (
+            "+3% Chance for a Crushing Blow",
+            "crushing_blow_chance",
+            3.0,
+        ),
         ("+2 Stun Duration", "stun_duration", 2.0),
     ];
     for (line, key, value) in cases {
-        let parsed = parse_tree_node_mod(line)
-            .unwrap_or_else(|| panic!("line must parse: {line}"));
+        let parsed = parse_tree_node_mod(line).unwrap_or_else(|| panic!("line must parse: {line}"));
         assert_eq!(parsed.key, key, "line: {line}");
         assert_eq!(parsed.value, value, "line: {line}");
     }
@@ -166,9 +197,8 @@ fn strip_self_condition_life_below_40() {
     assert_eq!(b1, "+20% Movement Speed");
     assert_eq!(c1, Some(SelfConditionKey::LifeBelow40));
 
-    let (b2, c2) = strip_self_condition(
-        "+10 to Strength when current life is below 40% of maximum life",
-    );
+    let (b2, c2) =
+        strip_self_condition("+10 to Strength when current life is below 40% of maximum life");
     assert_eq!(b2, "+10 to Strength");
     assert_eq!(c2, Some(SelfConditionKey::LifeBelow40));
 }
@@ -184,7 +214,10 @@ fn strip_self_condition_no_match_returns_unchanged() {
 
 #[test]
 fn self_condition_key_string_and_label() {
-    assert_eq!(SelfConditionKey::CritChanceBelow40.as_str(), "crit_chance_below_40");
+    assert_eq!(
+        SelfConditionKey::CritChanceBelow40.as_str(),
+        "crit_chance_below_40"
+    );
     assert_eq!(SelfConditionKey::LifeBelow40.as_str(), "life_below_40");
     assert_eq!(
         SelfConditionKey::CritChanceBelow40.label(),
@@ -226,9 +259,17 @@ fn rule_life_and_mana() {
     assert_mod("+10 to Maximum Life", "life", 10.0);
     assert_mod("+250 to Maximum Mana", "mana", 250.0);
     assert_mod("5% Increased Maximum Life", "increased_life", 5.0);
-    assert_mod("5% Increased Total Maximum Life", "increased_life_more", 5.0);
+    assert_mod(
+        "5% Increased Total Maximum Life",
+        "increased_life_more",
+        5.0,
+    );
     assert_mod("8% Increased Maximum Mana", "increased_mana", 8.0);
-    assert_mod("5% Increased Total Maximum Mana", "increased_mana_more", 5.0);
+    assert_mod(
+        "5% Increased Total Maximum Mana",
+        "increased_mana_more",
+        5.0,
+    );
     assert_mod("12% Increased Mana", "increased_mana", 12.0);
 }
 
@@ -247,11 +288,23 @@ fn rule_attributes_flat() {
 
 #[test]
 fn rule_attributes_increased() {
-    assert_mod("5% Increased All Attributes", "increased_all_attributes", 5.0);
+    assert_mod(
+        "5% Increased All Attributes",
+        "increased_all_attributes",
+        5.0,
+    );
     assert_mod("10% Increased Strength", "increased_strength", 10.0);
-    assert_mod("10% Increased Total Strength", "increased_strength_more", 10.0);
+    assert_mod(
+        "10% Increased Total Strength",
+        "increased_strength_more",
+        10.0,
+    );
     assert_mod("5% Increased Dexterity", "increased_dexterity", 5.0);
-    assert_mod("5% Increased Total Dexterity", "increased_dexterity_more", 5.0);
+    assert_mod(
+        "5% Increased Total Dexterity",
+        "increased_dexterity_more",
+        5.0,
+    );
     assert_mod("3% Increased Intelligence", "increased_intelligence", 3.0);
     assert_mod("4% Increased Energy", "increased_energy", 4.0);
     assert_mod("6% Increased Vitality", "increased_vitality", 6.0);
@@ -262,7 +315,11 @@ fn rule_attributes_increased() {
 fn rule_defense_and_speed() {
     assert_mod("+50 to Defense", "defense", 50.0);
     assert_mod("10% Increased Movement Speed", "movement_speed", 10.0);
-    assert_mod("10% Increased Total Movement Speed", "movement_speed_more", 10.0);
+    assert_mod(
+        "10% Increased Total Movement Speed",
+        "movement_speed_more",
+        10.0,
+    );
     assert_mod("15% Increased Attack Speed", "increased_attack_speed", 15.0);
     assert_mod(
         "15% Increased Total Attack Speed",
@@ -354,8 +411,15 @@ fn rule_weapon_conditional_lines_use_dedicated_keys() {
     );
     assert_mod(
         "+50% to Enhanced Damage when using Axe",
-        "damage_with_axe",
+        "enhanced_damage_with_axe",
         50.0,
+    );
+    // Same weapon, different wording, different bucket: this one multiplies the
+    // whole hit, the line above only the weapon roll.
+    assert_mod(
+        "+30% Increased Damage when wielding an Axe",
+        "damage_with_axe",
+        30.0,
     );
     assert_mod(
         "5% Increased Total Spell Projectile Damage",
@@ -442,7 +506,9 @@ fn conversion_target_stats_has_expected_keys() {
         Some("magic_skill_damage")
     );
     assert_eq!(
-        CONVERSION_TARGET_STATS.get("ranged physical damage").copied(),
+        CONVERSION_TARGET_STATS
+            .get("ranged physical damage")
+            .copied(),
         Some("ranged_physical_per_500_mana")
     );
     assert_eq!(CONVERSION_TARGET_STATS.get("unknown stat"), None);
@@ -469,7 +535,11 @@ fn rule_element_skill_damage() {
         "fire_skill_damage_more",
         30.0,
     );
-    assert_mod("25% Increased Lightning Skill Damage", "lightning_skill_damage", 25.0);
+    assert_mod(
+        "25% Increased Lightning Skill Damage",
+        "lightning_skill_damage",
+        25.0,
+    );
     assert_mod("+5 to Fire Skill Damage", "flat_fire_skill_damage", 5.0);
     assert_mod("+3 to Cold Skill Damage", "flat_cold_skill_damage", 3.0);
     assert_mod("+4 to Magic Skill Damage", "flat_magic_skill_damage", 4.0);
@@ -488,7 +558,11 @@ fn rule_all_resistances_variants() {
     assert_mod("+15% to All Resistances", "all_resistances", 15.0);
     assert_mod("+20 to All Resistances", "all_resistances", 20.0);
     assert_mod("+20 to Total All Resistances", "all_resistances_more", 20.0);
-    assert_mod("+20% to Total All Resistances", "all_resistances_more", 20.0);
+    assert_mod(
+        "+20% to Total All Resistances",
+        "all_resistances_more",
+        20.0,
+    );
     assert_mod("+5% to Maximum All Resistances", "max_all_resistances", 5.0);
 }
 
@@ -506,7 +580,10 @@ fn null_rule_path_to_black_hole_and_resistances_to_life() {
     assert_eq!(parse_tree_node_mod("+0 Path to any Black Hole"), None);
     // Resistances → Life appears in BOTH RULES (null) and CONVERSION_RULES (meta).
     // parse_tree_node_mod aborts due to null rule. parse_tree_node_meta succeeds.
-    assert_eq!(parse_tree_node_mod("50% of Resistances converted to Life"), None);
+    assert_eq!(
+        parse_tree_node_mod("50% of Resistances converted to Life"),
+        None
+    );
     let meta = parse_tree_node_meta("50% of Resistances converted to Life");
     assert!(matches!(meta, Some(ParsedMeta::Convert(_))));
 }
@@ -616,7 +693,7 @@ fn meta_weapon_specific_enhanced_damage() {
     // conversion; folded into enhanced_damage when the weapon matches.
     assert_mod(
         "40% to Enhanced Damage when using Axe",
-        "damage_with_axe",
+        "enhanced_damage_with_axe",
         40.0,
     );
     assert_eq!(
@@ -647,6 +724,9 @@ fn meta_disable_life_replenish() {
 
 #[test]
 fn meta_unmatched_returns_none() {
-    assert_eq!(parse_tree_node_meta("Random text that matches no meta rule"), None);
+    assert_eq!(
+        parse_tree_node_meta("Random text that matches no meta rule"),
+        None
+    );
     assert_eq!(parse_tree_node_meta(""), None);
 }

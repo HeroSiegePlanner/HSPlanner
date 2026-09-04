@@ -14,6 +14,7 @@ pub(super) struct ElementKeys {
     pub skill_damage_more: &'static str,
     pub flat_skill_damage: &'static str,
     pub ignore_res: &'static str,
+    pub enemy_res: &'static str,
 }
 
 const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
@@ -25,6 +26,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "fire_skill_damage_more",
             flat_skill_damage: "flat_fire_skill_damage",
             ignore_res: "ignore_fire_res",
+            enemy_res: "enemy_fire_resist",
         },
     ),
     (
@@ -35,6 +37,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "cold_skill_damage_more",
             flat_skill_damage: "flat_cold_skill_damage",
             ignore_res: "ignore_cold_res",
+            enemy_res: "enemy_cold_resist",
         },
     ),
     (
@@ -45,6 +48,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "lightning_skill_damage_more",
             flat_skill_damage: "flat_lightning_skill_damage",
             ignore_res: "ignore_lightning_res",
+            enemy_res: "enemy_lightning_resist",
         },
     ),
     (
@@ -55,6 +59,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "poison_skill_damage_more",
             flat_skill_damage: "flat_poison_skill_damage",
             ignore_res: "ignore_poison_res",
+            enemy_res: "enemy_poison_resist",
         },
     ),
     (
@@ -65,6 +70,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "arcane_skill_damage_more",
             flat_skill_damage: "flat_arcane_skill_damage",
             ignore_res: "ignore_arcane_res",
+            enemy_res: "enemy_arcane_resist",
         },
     ),
     (
@@ -75,6 +81,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "physical_skill_damage_more",
             flat_skill_damage: "flat_physical_skill_damage",
             ignore_res: "ignore_physical_res",
+            enemy_res: "enemy_physical_resist",
         },
     ),
     (
@@ -85,6 +92,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "magic_skill_damage_more",
             flat_skill_damage: "flat_magic_skill_damage",
             ignore_res: "ignore_magic_res",
+            enemy_res: "enemy_magic_resist",
         },
     ),
     (
@@ -95,6 +103,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "explosion_skill_damage_more",
             flat_skill_damage: "flat_explosion_skill_damage",
             ignore_res: "ignore_explosion_res",
+            enemy_res: "enemy_explosion_resist",
         },
     ),
 ];
@@ -346,15 +355,41 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let extra_pct = (extra_mult - 1.0) * 100.0;
 
     let is_spell = s.tags.iter().any(|t| t == "Spell");
-    let crit = crit_factors(input.stats, is_spell);
+    // Crit belongs to the weapon swing the attack path computes; an attack's
+    // elemental member only crits on the share a subskill converts.
+    let crit_portion = if s.attack_kind == Some(super::AttackKind::Attack) {
+        (r_max(rg(input.scoped, "crit_damage_portion"))
+            + r_max(rg(input.stats, "crit_damage_portion")))
+        .clamp(0.0, 100.0)
+            / 100.0
+    } else {
+        1.0
+    };
+    let crit = {
+        let base = crit_factors(input.stats, is_spell);
+        super::CritFactors {
+            chance: if crit_portion > 0.0 { base.chance } else { 0.0 },
+            damage_pct: if crit_portion > 0.0 { base.damage_pct } else { 0.0 },
+            on_crit_mult: 1.0 - crit_portion + crit_portion * base.on_crit_mult,
+            avg_mult: 1.0 - crit_portion + crit_portion * base.avg_mult,
+        }
+    };
 
     let enemy_res_pct = s
         .damage_type
         .as_deref()
         .and_then(|dt| input.enemy_resistances.get(dt).copied())
         .unwrap_or(0.0);
+    // Item implicits spell pierce as enemy_<element>_resist / enemy_all_resist.
     let raw_ignore = keys
-        .map(|k| r_max(rg(input.stats, k.ignore_res)))
+        .map(|k| {
+            let implicit = if is_elemental {
+                r_max(rg(input.stats, k.enemy_res)) + r_max(rg(input.stats, "enemy_all_resist"))
+            } else {
+                0.0
+            };
+            r_max(rg(input.stats, k.ignore_res)) + implicit
+        })
         .unwrap_or(0.0);
     let ignore_res_pct = raw_ignore.clamp(0.0, 100.0);
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
@@ -531,6 +566,7 @@ mod tests {
     struct Case {
         damage_type: &'static str,
         tags: Vec<String>,
+        attack_kind: Option<super::super::AttackKind>,
         stats: StatMap,
         scoped: StatMap,
         conditions: ConditionMap,
@@ -543,6 +579,7 @@ mod tests {
             Case {
                 damage_type: "lightning",
                 tags: tags(&["Spell"]),
+                attack_kind: None,
                 stats: StatMap::new(),
                 scoped: StatMap::new(),
                 conditions: ConditionMap::new(),
@@ -556,6 +593,7 @@ mod tests {
         let mut skill = plain_skill();
         skill.damage_type = Some(case.damage_type.to_string());
         skill.tags = case.tags.clone();
+        skill.attack_kind = case.attack_kind;
         let empty_attrs = AttrMap::new();
         let ranks = SkillRanks::new();
         let bonuses = ItemSkillBonuses::new();
@@ -707,6 +745,43 @@ mod tests {
         );
     }
 
+    // Weakening Precision converts 75% of Frost Sunder's cold hit into damage
+    // that can crit; without it an attack's elemental member never crits.
+    #[test]
+    fn crit_damage_portion_lets_an_attacks_elemental_member_crit() {
+        let crit = stats(&[("crit_chance", 100.0), ("crit_damage", 100.0)]);
+        let case = |scoped: StatMap| Case {
+            damage_type: "cold",
+            tags: tags(&["Attack", "Melee"]),
+            attack_kind: Some(super::super::AttackKind::Attack),
+            stats: crit.clone(),
+            scoped,
+            ..Default::default()
+        };
+        let none = breakdown(&case(StatMap::new()));
+        assert_eq!(none.crit_multiplier_avg, 1.0, "no portion, no crit");
+        assert_eq!(none.crit_chance, 0.0);
+
+        let converted = breakdown(&case(stats(&[("crit_damage_portion", 75.0)])));
+        // crit chance caps at 95%, so the doubling averages 1.95 on 75% of the hit.
+        assert!(
+            (converted.crit_multiplier_avg - 1.7125).abs() < 1e-9,
+            "got {}",
+            converted.crit_multiplier_avg
+        );
+        assert_eq!(converted.crit_chance, 100.0);
+    }
+
+    #[test]
+    fn archetype_spell_damage_needs_the_spell_tag() {
+        let s = stats(&[("spell_damage", 10.0), ("spell_damage_more", 25.0)]);
+        assert_eq!(archetype_skill_damage(&s, &tags(&["Spell"])), ((10.0, 10.0), (1.25, 1.25)));
+        assert_eq!(
+            archetype_skill_damage(&s, &tags(&["Attack", "Melee"])),
+            ((0.0, 0.0), (1.0, 1.0)),
+        );
+    }
+
     #[test]
     fn archetype_sentry_applies_additive_and_more() {
         let s = stats(&[("sentry_damage", 30.0), ("sentry_damage_more", 50.0)]);
@@ -788,6 +863,77 @@ mod tests {
         assert_eq!(tag_skills_bonus(&s, &skill), (0.0, 0.0));
     }
 
+    // Magic Skill Damage keys off the damage type, not the tags: an attack
+    // skill's elemental member counts like any other elemental hit.
+    #[test]
+    fn magic_skill_damage_follows_the_damage_type_not_the_tags() {
+        for key in [
+            "magic_skill_damage",
+            "magic_skill_damage_more",
+            "flat_magic_skill_damage",
+        ] {
+            let attack_tags = tags(&["Attack", "Melee"]);
+            let cold_baseline = breakdown(&Case {
+                damage_type: "cold",
+                tags: attack_tags.clone(),
+                ..Default::default()
+            });
+            let cold = breakdown(&Case {
+                damage_type: "cold",
+                tags: attack_tags.clone(),
+                stats: stats(&[(key, 100.0)]),
+                ..Default::default()
+            });
+            assert!(
+                cold.hit_max > cold_baseline.hit_max,
+                "{key} must reach an attack skill's elemental member"
+            );
+
+            let phys_baseline = breakdown(&Case {
+                damage_type: "physical",
+                tags: attack_tags.clone(),
+                ..Default::default()
+            });
+            let phys = breakdown(&Case {
+                damage_type: "physical",
+                tags: attack_tags,
+                stats: stats(&[(key, 100.0)]),
+                ..Default::default()
+            });
+            assert_eq!(
+                phys.hit_max, phys_baseline.hit_max,
+                "{key} must stay off a physical hit"
+            );
+        }
+    }
+
+    // Crit belongs to the weapon swing; the elemental member an attack skill
+    // adds on top of it never crits.
+    #[test]
+    fn attack_skills_do_not_crit_on_their_elemental_member() {
+        let spell = breakdown(&Case {
+            damage_type: "fire",
+            stats: stats(&[("spell_crit_chance", 50.0), ("spell_crit_damage", 100.0)]),
+            ..Default::default()
+        });
+        assert!(
+            spell.crit_multiplier_avg > 1.0,
+            "a plain spell must still crit, got {}",
+            spell.crit_multiplier_avg
+        );
+
+        let attack = breakdown(&Case {
+            damage_type: "fire",
+            tags: tags(&["Attack", "Melee"]),
+            attack_kind: Some(super::super::AttackKind::Attack),
+            stats: stats(&[("crit_chance", 50.0), ("crit_damage", 100.0)]),
+            ..Default::default()
+        });
+        assert_eq!(attack.crit_multiplier_avg, 1.0, "elemental member must not crit");
+        assert_eq!(attack.crit_chance, 0.0);
+        assert_eq!(attack.avg_max, attack.hit_max);
+    }
+
     #[test]
     fn flat_magic_skill_damage_is_a_flat_for_every_element_but_physical() {
         let fire = breakdown(&Case {
@@ -842,5 +988,25 @@ mod tests {
         });
         assert_eq!(physical.skill_damage_max_pct, 0.0);
         assert_eq!(physical.hit_max, 100);
+    }
+
+    #[test]
+    fn item_implicit_enemy_resist_keys_count_as_pierce() {
+        let cold = breakdown(&Case {
+            damage_type: "cold",
+            stats: stats(&[
+                ("ignore_cold_res", 20.0),
+                ("enemy_cold_resist", 30.0),
+                ("enemy_all_resist", 10.0),
+            ]),
+            ..Default::default()
+        });
+        assert_eq!(cold.resistance_ignored_pct, 60.0);
+        let physical = breakdown(&Case {
+            damage_type: "physical",
+            stats: stats(&[("enemy_all_resist", 10.0)]),
+            ..Default::default()
+        });
+        assert_eq!(physical.resistance_ignored_pct, 0.0);
     }
 }

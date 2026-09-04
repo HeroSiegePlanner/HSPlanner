@@ -264,11 +264,14 @@ function App() {
   if (screen === "library") {
     return (
       <HoverProvider>
-        <BuildSelect
-          onOpenBuild={openBuild}
-          onClose={() => enterPlanner()}
-          canClose={activeBuildId != null}
-        />
+        <div className="flex h-screen w-screen flex-col bg-bg text-text">
+          <BuildSelect
+            onOpenBuild={openBuild}
+            onClose={() => enterPlanner()}
+            canClose={activeBuildId != null}
+          />
+          <BottomBar />
+        </div>
         {overlays}
       </HoverProvider>
     );

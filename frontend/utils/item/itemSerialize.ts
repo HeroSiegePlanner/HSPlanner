@@ -8,6 +8,7 @@ import {
 } from '@data'
 import type { EquippedItem, ItemBase } from '../../types'
 import {
+  affixDisplayValue,
   formatAffixRangeFromValues,
   formatValue,
   isZero,
@@ -178,7 +179,7 @@ export async function serializeEquippedItem(
     const descNoValue = descriptionWithoutValue(affix.description)
     if (eq.customValue !== undefined) {
       lines.push(
-        `${prefix}${formatCustomValue(affix.format, eq.customValue)} ${descNoValue} [T${eq.tier}, custom]`,
+        `${prefix}${formatCustomValue(affix.format, affixDisplayValue(affix, eq.customValue))} ${descNoValue} [T${eq.tier}, custom]`,
       )
     } else {
       const range = formatAffixRangeFromValues(

@@ -52,7 +52,10 @@ pub(super) fn rules() -> Vec<ParseRule> {
             },
         },
         mod_rule!(r"(?i)^([+\-\d.]+)%\s+Branch\s+Damage$", "branch_damage"),
-        mod_rule!(r"(?i)^([+\-\d.]+)%\s+to\s+Light\s+Radius$", "light_radius"),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+to\s+Light\s+Radius$",
+            "light_radius_pct"
+        ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Cap\s+on\s+All\s+Resistances$",
             "max_all_resistances"
@@ -74,8 +77,12 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "charging_damage_per_vitality"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%?\s+to\s+Magic\s+Skill\s+Damage\s+per\s+points?\s+in\s+Light\s+Radius$",
+            r"(?i)^([+\-\d.]+)%\s+to\s+Magic\s+Skill\s+Damage\s+per\s+points?\s+in\s+Light\s+Radius$",
             "magic_skill_damage_per_light_radius"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+to\s+Magic\s+Skill\s+Damage\s+per\s+points?\s+in\s+Light\s+Radius$",
+            "flat_magic_skill_damage_per_light_radius"
         ),
         // S10 cosmetic stats: aggregated and displayed, no damage-formula
         // consumer yet.

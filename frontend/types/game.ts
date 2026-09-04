@@ -36,6 +36,20 @@ export interface SlotDef {
   group: 'weapon' | 'armor' | 'jewelry' | 'special'
 }
 
+export interface StackTypeDef {
+  key: string
+  name: string
+  maxStat: string
+  perStack?: Record<string, number>
+  perStackStats?: Record<string, string>
+}
+
+export interface DifficultyDef {
+  id: string
+  name: string
+  resistPenalty: number
+}
+
 export interface GameConfig {
   version: string
   attributes: AttributeDef[]
@@ -51,4 +65,6 @@ export interface GameConfig {
   defaultBaseAttributes?: Record<AttributeKey, number>
   defaultStatsPerAttribute?: Record<AttributeKey, StatMap>
   attributeDividedStats?: Record<AttributeKey, Record<string, number>>
+  stackTypes?: StackTypeDef[]
+  difficulties?: DifficultyDef[]
 }

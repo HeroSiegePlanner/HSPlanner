@@ -17,14 +17,17 @@
         850
       ],
       "all_skills": [
-        3,
-        5
+        5,
+        8
       ],
       "fire_skills": [
         3,
         6
       ],
-      "movement_speed": 30,
+      "movement_speed": [
+        25,
+        40
+      ],
       "life_steal": [
         8,
         15
@@ -43,13 +46,12 @@
       ],
       "increased_attack_speed": [
         25,
-        40
+        45
       ],
       "crit_chance": [
         15,
         25
       ],
-      "increased_attack_rating": 25,
       "attack_rating": 1555,
       "crit_damage": [
         35,
@@ -60,7 +62,8 @@
       "lightning_skill_damage": [
         35,
         60
-      ]
+      ],
+      "attack_rating_pct": 25
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -106,7 +109,6 @@
         40,
         60
       ],
-      "damage_taken_reduced": 10,
       "all_resistances": [
         20,
         30
@@ -120,8 +122,8 @@
         25,
         35
       ],
-      "all_damage_taken_reduced_pct": 10,
-      "enemy_all_resist": 25
+      "enemy_all_resist": 25,
+      "damage_mitigation": 10
     },
     "sockets": 4,
     "maxSockets": 5,
@@ -248,7 +250,7 @@
     "slot": "weapon",
     "rarity": "angelic",
     "grade": "SS",
-    "requiresLevel": 97,
+    "requiresLevel": 93,
     "damageMin": 82,
     "damageMax": 94,
     "attackSpeed": 1.65,
@@ -379,7 +381,6 @@
         40
       ],
       "mana_replenish": 10,
-      "extra_damage_burning": 30,
       "to_intelligence": [
         40,
         60
@@ -443,7 +444,6 @@
         25,
         50
       ],
-      "increased_attack_rating": 30,
       "dexterity_based_on_level": 125
     },
     "sockets": 3,
@@ -529,7 +529,6 @@
         45,
         65
       ],
-      "increased_attack_rating": 30,
       "melee_range": [
         50,
         100
@@ -582,10 +581,6 @@
       ],
       "to_vitality": 55,
       "to_armor": 55,
-      "increased_attack_rating": [
-        25,
-        35
-      ],
       "damage_return": [
         1000,
         1250
@@ -616,7 +611,7 @@
     "slot": "weapon",
     "rarity": "angelic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 72,
     "damageMin": 56,
     "damageMax": 64,
     "attackSpeed": 1.75,
@@ -692,7 +687,6 @@
         5,
         8
       ],
-      "increased_attack_speed": -35,
       "deadly_blow": 15,
       "mana_steal": [
         7,
@@ -809,8 +803,8 @@
     "baseType": "Flask",
     "slot": "weapon",
     "rarity": "common",
-    "damageMin": 9,
-    "damageMax": 13,
+    "damageMin": 5,
+    "damageMax": 7,
     "sockets": 0,
     "maxSockets": 6,
     "attackSpeed": 1.5
@@ -1022,8 +1016,8 @@
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
-    "damageMin": 40,
-    "damageMax": 46,
+    "damageMin": 8,
+    "damageMax": 12,
     "description": "Two-Handed",
     "sockets": 0,
     "maxSockets": 6,
@@ -1050,8 +1044,8 @@
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
-    "damageMin": 31,
-    "damageMax": 35,
+    "damageMin": 4,
+    "damageMax": 8,
     "description": "One-Handed",
     "sockets": 0,
     "maxSockets": 6
@@ -1494,11 +1488,11 @@
     "baseType": "Mace",
     "slot": "weapon",
     "rarity": "common",
-    "attackSpeed": 1.6,
+    "attackSpeed": 1.65,
     "sockets": 0,
     "maxSockets": 6,
-    "damageMin": 5,
-    "damageMax": 7
+    "damageMin": 12,
+    "damageMax": 16
   },
   {
     "id": "base_mace_spiked_club",
@@ -1560,8 +1554,8 @@
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.1,
-    "damageMin": 75,
-    "damageMax": 90,
+    "damageMin": 58,
+    "damageMax": 74,
     "description": "Two-Handed",
     "sockets": 0,
     "maxSockets": 6,
@@ -1680,8 +1674,8 @@
     "slot": "weapon",
     "rarity": "common",
     "attackSpeed": 1.5,
-    "damageMin": 36,
-    "damageMax": 42,
+    "damageMin": 26,
+    "damageMax": 70,
     "description": "Two-Handed",
     "sockets": 0,
     "maxSockets": 6,
@@ -1859,7 +1853,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 94,
     "damageMin": 58,
     "damageMax": 64,
     "attackSpeed": 1.65,
@@ -2108,10 +2102,7 @@
         2,
         3
       ],
-      "movement_speed": [
-        50,
-        100
-      ],
+      "movement_speed": 69,
       "increased_attack_speed": [
         50,
         100
@@ -2201,7 +2192,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 93,
+    "requiresLevel": 100,
     "damageMin": 62,
     "damageMax": 74,
     "attackSpeed": 1.85,
@@ -2337,7 +2328,6 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
-    "twoHanded": true,
     "damageMin": 78,
     "damageMax": 86,
     "attackSpeed": 1.75,
@@ -2408,10 +2398,6 @@
       "magic_skill_damage": [
         25,
         60
-      ],
-      "extra_dmg_to_monsters_afflicted_with_ailments": [
-        25,
-        45
       ],
       "enemy_all_resist": 35
     },
@@ -2548,9 +2534,8 @@
       "mana_replenish_pct": 150,
       "ailment_damage_all": [
         35,
-        50
+        60
       ],
-      "mana_replenish": 150,
       "random_skill_element": 12,
       "enemy_all_resist": [
         25,
@@ -2580,7 +2565,7 @@
     "attackSpeed": 1.75,
     "implicit": {
       "all_skills": [
-        2,
+        3,
         4
       ],
       "faster_cast_rate": [
@@ -2597,7 +2582,6 @@
         20,
         30
       ],
-      "mana_replenish": 50,
       "enemy_all_resist": [
         10,
         25
@@ -2642,8 +2626,7 @@
         50
       ],
       "defense_ignored": 35,
-      "to_strength": 35,
-      "increased_attack_rating": 5
+      "to_strength": 35
     },
     "sockets": 3,
     "maxSockets": 5,
@@ -2665,15 +2648,18 @@
     "grade": "SS",
     "requiresLevel": 95,
     "twoHanded": true,
-    "damageMin": 110,
-    "damageMax": 125,
+    "damageMin": 135,
+    "damageMax": 155,
     "attackSpeed": 1.8,
     "implicit": {
       "enhanced_damage": [
         875,
         950
       ],
-      "increased_attack_speed": 50,
+      "increased_attack_speed": [
+        30,
+        70
+      ],
       "flat_poison_skill_damage": [
         44,
         64
@@ -2786,7 +2772,6 @@
         6
       ],
       "attack_damage": 40,
-      "increased_attack_speed": -40,
       "crit_chance": 25,
       "deadly_blow": 50,
       "additive_physical_damage": [
@@ -2834,12 +2819,12 @@
         1150
       ],
       "all_skills": 3,
-      "increased_attack_speed": -35,
       "additive_physical_damage": [
         40,
         60
       ],
-      "defense_ignored": 75
+      "defense_ignored": 75,
+      "increased_attack_speed_more": -35
     },
     "uniqueEffects": [],
     "sockets": 1,
@@ -2852,8 +2837,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
-    "twoHanded": true,
+    "requiresLevel": 95,
     "damageMin": 72,
     "damageMax": 78,
     "attackSpeed": 1.7,
@@ -3025,7 +3009,11 @@
         40
       ],
       "crit_chance": 15,
-      "crit_damage": 35
+      "crit_damage": 35,
+      "mana_per_kill": [
+        25,
+        40
+      ]
     },
     "uniqueEffects": [
       "Unholy",
@@ -3050,7 +3038,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 96,
+    "requiresLevel": 97,
     "damageMin": 74,
     "damageMax": 82,
     "attackSpeed": 1.1,
@@ -3224,7 +3212,7 @@
   },
   {
     "id": "axe_heroic_headsman_s_bloodthrister",
-    "name": "Headsman's Bloodthrister",
+    "name": "Headsman's Bloodthirster",
     "baseType": "Axe",
     "slot": "weapon",
     "rarity": "heroic",
@@ -3345,7 +3333,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 98,
     "damageMin": 105,
     "damageMax": 114,
     "attackSpeed": 1,
@@ -3371,8 +3359,7 @@
       "to_strength": [
         40,
         55
-      ],
-      "open_wound_chance": 50
+      ]
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -3403,22 +3390,10 @@
         3,
         4
       ],
-      "cold_skills": [
-        0,
-        6
-      ],
-      "fire_skills": [
-        0,
-        6
-      ],
-      "poison_skills": [
-        0,
-        6
-      ],
-      "arcane_skills": [
-        0,
-        6
-      ],
+      "cold_skills": 6,
+      "fire_skills": 6,
+      "poison_skills": 6,
+      "arcane_skills": 6,
       "faster_cast_rate": 70,
       "to_energy": [
         30,
@@ -3428,10 +3403,7 @@
         30,
         40
       ],
-      "lightning_skills": [
-        0,
-        6
-      ]
+      "lightning_skills": 6
     },
     "sockets": 1,
     "maxSockets": 3,
@@ -3675,7 +3647,6 @@
         3,
         5
       ],
-      "increased_attack_speed": -75,
       "crushing_blow_chance": 30,
       "defense_ignored": 75,
       "extra_damage_stunned": [
@@ -3837,11 +3808,7 @@
         23,
         40
       ],
-      "ignore_lightning_res": 25,
-      "increased_attack_rating": [
-        15,
-        25
-      ]
+      "ignore_lightning_res": 25
     },
     "sockets": 2,
     "maxSockets": 4,
@@ -3887,7 +3854,10 @@
         25
       ],
       "attack_rating_pct": 8,
-      "life_steal": 6,
+      "life_steal": [
+        5,
+        8
+      ],
       "crit_damage": [
         30,
         60
@@ -3896,9 +3866,7 @@
       "crushing_blow_chance": [
         10,
         20
-      ],
-      "increased_attack_rating": 8,
-      "open_wound_chance": 100
+      ]
     },
     "sockets": 1,
     "maxSockets": 1,
@@ -3955,7 +3923,8 @@
       "increased_attack_speed": [
         30,
         45
-      ]
+      ],
+      "poison_resistance_converted_to_poison_damage": 15
     },
     "sockets": 3,
     "maxSockets": 5,
@@ -3998,7 +3967,6 @@
         2375
       ],
       "life_per_kill": 12,
-      "open_wound_chance": 25,
       "enemy_all_resist": 15
     },
     "skillBonuses": {
@@ -4086,7 +4054,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 92,
     "damageMin": 85,
     "damageMax": 100,
     "attackSpeed": 1.15,
@@ -4180,7 +4148,6 @@
         20,
         30
       ],
-      "increased_attack_rating": 30,
       "reduced_movement_diminish": 25
     },
     "sockets": 2,
@@ -4342,8 +4309,7 @@
       "ailment_damage_all": [
         20,
         30
-      ],
-      "increased_attack_rating": 15
+      ]
     },
     "sockets": 5,
     "maxSockets": 5,
@@ -4400,14 +4366,6 @@
       "all_skills": [
         5,
         10
-      ],
-      "cooldown_recovery": [
-        20,
-        45
-      ],
-      "mana_replenish": [
-        25,
-        35
       ]
     },
     "skillBonuses": {
@@ -4493,7 +4451,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "damageMin": 142,
     "damageMax": 156,
     "attackSpeed": 1,
@@ -4502,7 +4460,6 @@
         825,
         975
       ],
-      "increased_attack_speed": -50,
       "deadly_blow": 50,
       "crit_damage": [
         75,
@@ -4518,7 +4475,7 @@
         25,
         40
       ],
-      "less_dmg_with_cd_skills": 80
+      "less_dmg_with_cd_skills": -80
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -4593,7 +4550,7 @@
     "slot": "weapon",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 97,
+    "requiresLevel": 100,
     "damageMin": 66,
     "damageMax": 80,
     "attackSpeed": 1.75,
@@ -4623,11 +4580,6 @@
         7,
         12
       ],
-      "extra_damage_frozen": [
-        20,
-        40
-      ],
-      "increased_attack_rating": 15,
       "extra_dmg_to_deep_frozen": [
         20,
         40
@@ -4648,6 +4600,8 @@
       {
         "trigger": "on_hit",
         "chance": 18,
+        "target": "Breath of Ice",
+        "castLevel": 60,
         "description": "cast Breath of Ice Level 60",
         "details": "Breathe glacial air freezing and dealing cold damage to monsters."
       }
@@ -4684,7 +4638,6 @@
         22,
         35
       ],
-      "open_wound_chance": 33,
       "grant_aura_holder_only": [
         20,
         40
@@ -4758,15 +4711,15 @@
     "requiresLevel": 98,
     "implicit": {
       "enhanced_damage": [
-        660,
-        740
+        780,
+        920
       ],
       "physical_skills": [
         5,
         10
       ],
       "increased_attack_speed": [
-        10,
+        35,
         100
       ],
       "open_wounds": 25,
@@ -4776,8 +4729,7 @@
       "melee_range": [
         25,
         40
-      ],
-      "open_wound_chance": 25
+      ]
     },
     "uniqueEffects": [
       "Unholy",
@@ -4812,7 +4764,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "C",
-    "requiresLevel": 26,
+    "requiresLevel": 44,
     "implicit": {
       "to_energy": 8,
       "to_vitality": 5,
@@ -4828,8 +4780,7 @@
       "mana_per_kill": [
         10,
         15
-      ],
-      "mana_replenish": 25
+      ]
     },
     "damageMin": 15,
     "damageMax": 20,
@@ -4852,10 +4803,8 @@
         25,
         40
       ],
-      "ignore_lightning_res": 15,
       "mana_replenish_pct": 50,
       "ignore_fire_res": 15,
-      "mana_replenish": 50,
       "energy_based_on_level": 35,
       "intelligence_based_on_level": 75
     },
@@ -4896,7 +4845,10 @@
       "to_dexterity": 25,
       "life_per_kill": 8,
       "mana_per_kill": 5,
-      "increased_attack_rating": 3
+      "additive_arcane_damage": [
+        825,
+        880
+      ]
     },
     "setId": "gabriel_s_devotion",
     "damageMin": 44,
@@ -4918,8 +4870,7 @@
         40
       ],
       "mana_replenish_pct": 30,
-      "fire_resistance": 50,
-      "mana_replenish": 30
+      "fire_resistance": 50
     },
     "twoHanded": true,
     "skillBonuses": {
@@ -4957,10 +4908,6 @@
       "arcane_skill_damage": [
         20,
         40
-      ],
-      "cooldown_recovery": [
-        20,
-        30
       ]
     },
     "twoHanded": true,
@@ -4997,29 +4944,25 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 37,
+    "requiresLevel": 36,
     "implicit": {
       "enhanced_damage": [
         290,
         340
       ],
-      "attack_rating_pct": [
-        45,
-        50
-      ],
+      "attack_rating_pct": 15,
       "additive_fire_damage": [
         345,
         355
       ],
       "life": [
-        40,
-        50
+        340,
+        450
       ],
       "fire_resistance": [
         25,
         40
       ],
-      "increased_attack_rating": 15,
       "flat_fire_skill_damage": [
         22,
         42
@@ -5090,7 +5033,10 @@
     "grade": "B",
     "requiresLevel": 36,
     "implicit": {
-      "faster_cast_rate": 50,
+      "faster_cast_rate": [
+        25,
+        40
+      ],
       "life_replenish": [
         4,
         6
@@ -5099,7 +5045,7 @@
         4,
         6
       ],
-      "magic_skill_damage": 8,
+      "magic_skill_damage": 15,
       "mana": [
         50,
         100
@@ -5136,10 +5082,7 @@
     "grade": "D",
     "requiresLevel": 16,
     "implicit": {
-      "faster_cast_rate": [
-        10,
-        20
-      ],
+      "faster_cast_rate": 30,
       "mana_replenish": [
         2,
         5
@@ -5151,7 +5094,11 @@
       ],
       "life": 25,
       "mana": 25,
-      "mana_per_kill": 5
+      "mana_per_kill": 15,
+      "to_intelligence": [
+        15,
+        20
+      ]
     },
     "sockets": 2,
     "maxSockets": 4,
@@ -5180,7 +5127,7 @@
         360,
         400
       ],
-      "attack_rating_pct": 10,
+      "attack_rating_pct": 15,
       "attack_rating": 375,
       "defense_ignored": [
         30,
@@ -5192,7 +5139,6 @@
         1,
         2
       ],
-      "increased_attack_rating": 15,
       "additive_physical_damage": [
         20,
         40
@@ -5336,7 +5282,7 @@
       ],
       "movement_speed": 30,
       "to_vitality": 15,
-      "to_armor": 30,
+      "to_armor": 35,
       "ignore_arcane_res": [
         15,
         30
@@ -5346,8 +5292,8 @@
         75
       ],
       "damage_return": [
-        75,
-        125
+        35,
+        50
       ],
       "defense_vs_missiles": 125,
       "life_based_on_level": 300
@@ -5409,19 +5355,16 @@
     "grade": "C",
     "requiresLevel": 23,
     "implicit": {
-      "mana_replenish": [
-        2,
-        6
-      ],
+      "mana_replenish": 5,
       "flat_poison_skill_damage": [
-        5,
-        12
+        12,
+        20
       ],
-      "poison_skill_damage": 20,
-      "ignore_poison_res": [
-        4,
-        10
+      "poison_skill_damage": [
+        20,
+        30
       ],
+      "ignore_poison_res": 15,
       "poison_resistance": [
         40,
         60
@@ -5444,7 +5387,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 62,
+    "requiresLevel": 76,
     "implicit": {
       "all_skills": [
         1,
@@ -5464,8 +5407,7 @@
         10,
         15
       ],
-      "mana_replenish_pct": 35,
-      "mana_replenish": 35
+      "mana_replenish_pct": 35
     },
     "damageMin": 34,
     "damageMax": 41,
@@ -5502,10 +5444,6 @@
         20,
         30
       ],
-      "life_replenish": [
-        10,
-        15
-      ],
       "life_based_on_level": 25,
       "damage_based_on_level": 50
     },
@@ -5531,14 +5469,17 @@
     "grade": "C",
     "requiresLevel": 24,
     "implicit": {
-      "all_skills": 1,
+      "all_skills": [
+        1,
+        2
+      ],
       "mana_replenish": [
-        4,
-        8
+        2,
+        4
       ],
       "mana_replenish_pct": [
-        8,
-        15
+        25,
+        40
       ],
       "life_per_kill": [
         8,
@@ -5654,11 +5595,7 @@
       ],
       "life_steal": 5,
       "to_strength": 10,
-      "life_per_kill": 10,
-      "increased_attack_rating": [
-        3,
-        6
-      ]
+      "life_per_kill": 10
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -5679,18 +5616,15 @@
     "requiresLevel": 12,
     "implicit": {
       "mana_replenish": [
-        3,
-        6
+        5,
+        8
       ],
       "flat_arcane_skill_damage": [
         3,
         7
       ],
       "arcane_skill_damage": 15,
-      "ignore_arcane_res": [
-        5,
-        15
-      ],
+      "ignore_arcane_res": 15,
       "arcane_resistance": [
         30,
         50
@@ -5718,17 +5652,17 @@
     "requiresLevel": 97,
     "implicit": {
       "enhanced_damage": [
-        775,
-        850
+        815,
+        945
       ],
       "physical_skills": [
-        1,
+        2,
         4
       ],
       "attack_rating_pct": 30,
       "life_steal": [
-        10,
-        25
+        6,
+        10
       ],
       "crit_damage": [
         25,
@@ -5749,9 +5683,8 @@
       ],
       "increased_bleeding_damage": [
         25,
-        45
-      ],
-      "increased_attack_rating": 30
+        40
+      ]
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -5772,13 +5705,13 @@
     "grade": "S",
     "requiresLevel": 60,
     "implicit": {
-      "all_skills": 1,
-      "faster_cast_rate": 30,
-      "mana_replenish": [
-        8,
-        15
+      "all_skills": [
+        2,
+        3
       ],
-      "all_attributes": 5,
+      "faster_cast_rate": 30,
+      "mana_replenish": 15,
+      "all_attributes": 10,
       "mana_per_kill": 8,
       "damage_recouped_as_mana": 10,
       "all_resistances": [
@@ -5824,8 +5757,7 @@
       "attack_damage": [
         20,
         30
-      ],
-      "open_wound_chance": 25
+      ]
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -5925,7 +5857,7 @@
       "to_vitality": 25,
       "additive_cold_damage": [
         2275,
-        3
+        3000
       ]
     },
     "setId": "death_s_toll",
@@ -5965,8 +5897,7 @@
       "defense_ignored": 35,
       "to_dexterity": 25,
       "life_per_kill": 8,
-      "mana_per_kill": 5,
-      "increased_attack_rating": 3
+      "mana_per_kill": 5
     },
     "setId": "gabriel_s_devotion",
     "damageMin": 44,
@@ -5980,7 +5911,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 44,
+    "requiresLevel": 62,
     "implicit": {
       "all_skills": [
         1,
@@ -5992,8 +5923,7 @@
         150,
         200
       ],
-      "mana_per_kill": 15,
-      "mana_replenish": 25
+      "mana_per_kill": 15
     },
     "damageMin": 26,
     "damageMax": 33,
@@ -6104,7 +6034,6 @@
         5,
         15
       ],
-      "ignore_lightning_res": 30,
       "ignore_fire_res": 30
     },
     "uniqueEffects": [
@@ -6176,7 +6105,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 56,
+    "requiresLevel": 33,
     "implicit": {
       "enhanced_damage": [
         180,
@@ -6224,7 +6153,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 76,
+    "requiresLevel": 86,
     "implicit": {
       "enhanced_damage": [
         220,
@@ -6240,8 +6169,8 @@
       ],
       "mana_replenish": 4,
       "magic_skill_damage": [
-        5,
-        10
+        15,
+        25
       ],
       "increased_mana": [
         10,
@@ -6309,7 +6238,7 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 49,
+    "requiresLevel": 57,
     "implicit": {
       "arcane_skills": [
         2,
@@ -6321,8 +6250,7 @@
       ],
       "mana_replenish_pct": 25,
       "mana": 560,
-      "all_resistances": 25,
-      "mana_replenish": 25
+      "all_resistances": 25
     },
     "setId": "earth_shaper_s_pride",
     "procs": [
@@ -6351,12 +6279,12 @@
         380
       ],
       "increased_attack_speed": [
-        10,
+        15,
         30
       ],
       "attack_rating": [
-        180,
-        250
+        300,
+        350
       ],
       "to_dexterity": 30,
       "additive_lightning_damage": [
@@ -6364,13 +6292,10 @@
         665
       ],
       "lightning_skill_damage": [
-        4,
-        15
+        10,
+        20
       ],
-      "ignore_lightning_res": [
-        4,
-        10
-      ],
+      "ignore_lightning_res": 15,
       "lightning_resistance": 50,
       "max_lightning_resistance": 5,
       "flat_lightning_skill_damage": [
@@ -6400,11 +6325,11 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "D",
-    "requiresLevel": 8,
+    "requiresLevel": 24,
     "implicit": {
       "enhanced_damage": [
         110,
-        140
+        200
       ],
       "additive_arcane_damage": [
         6,
@@ -6445,8 +6370,8 @@
     "requiresLevel": 85,
     "implicit": {
       "enhanced_damage": [
-        425,
-        460
+        525,
+        560
       ],
       "increased_attack_speed": [
         20,
@@ -6535,10 +6460,7 @@
     "grade": "A",
     "requiresLevel": 62,
     "implicit": {
-      "all_skills": [
-        2,
-        3
-      ],
+      "all_skills": 2,
       "fire_skills": [
         2,
         3
@@ -6554,10 +6476,6 @@
       "fire_skill_damage": [
         17,
         30
-      ],
-      "ignore_lightning_res": [
-        8,
-        15
       ],
       "mana_per_kill": [
         8,
@@ -6608,8 +6526,10 @@
         1150,
         1350
       ],
-      "fire_skill_damage": 15,
-      "ignore_lightning_res": 25,
+      "fire_skill_damage": [
+        15,
+        25
+      ],
       "to_strength": 30,
       "flat_fire_skill_damage": [
         22,
@@ -6654,7 +6574,6 @@
         600
       ],
       "fire_skill_damage": 50,
-      "ignore_lightning_res": 35,
       "ignore_fire_res": 35
     },
     "sockets": 2,
@@ -6720,21 +6639,21 @@
         250
       ],
       "attack_rating": [
-        90,
-        150
+        150,
+        250
       ],
       "life_steal": [
-        3,
-        6
+        5,
+        8
       ],
-      "to_strength": 10,
+      "to_strength": 20,
       "additive_cold_damage": [
-        335,
-        460
+        400,
+        550
       ],
       "mana_per_kill": [
-        4,
-        8
+        8,
+        15
       ],
       "cold_resistance": 50
     },
@@ -6762,7 +6681,7 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "SS",
-    "requiresLevel": 66,
+    "requiresLevel": 100,
     "implicit": {
       "enhanced_damage": [
         650,
@@ -6782,8 +6701,7 @@
         15,
         40
       ],
-      "to_vitality": 40,
-      "increased_attack_rating": 25
+      "to_vitality": 40
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -6812,29 +6730,21 @@
     "requiresLevel": 49,
     "implicit": {
       "enhanced_damage": [
-        310,
-        370
+        415,
+        475
       ],
       "all_skills": 3,
       "attack_rating_pct": [
-        4,
-        8
-      ],
-      "additive_physical_damage": [
-        12,
-        26
-      ],
-      "to_strength": 20,
-      "to_vitality": 15,
-      "life_replenish_pct": [
-        10,
-        15
-      ],
-      "increased_attack_rating": [
         5,
         10
       ],
-      "life_replenish": [
+      "additive_physical_damage": [
+        14,
+        30
+      ],
+      "to_strength": 25,
+      "to_vitality": 15,
+      "life_replenish_pct": [
         35,
         50
       ]
@@ -6861,21 +6771,21 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 62,
+    "requiresLevel": 100,
     "implicit": {
       "enhanced_damage": [
-        240,
-        280
+        840,
+        980
       ],
-      "movement_speed": 25,
+      "movement_speed": 30,
       "increased_attack_speed": [
         30,
         40
       ],
-      "deadly_blow": 50,
+      "deadly_blow": 60,
       "additive_physical_damage": [
-        18,
-        38
+        26,
+        68
       ],
       "all_attributes": 15
     },
@@ -6905,9 +6815,12 @@
         210,
         340
       ],
-      "movement_speed": 15,
-      "attack_rating_pct": 2,
-      "to_dexterity": 15,
+      "movement_speed": 20,
+      "attack_rating_pct": 10,
+      "to_dexterity": [
+        15,
+        20
+      ],
       "additive_cold_damage": [
         220,
         550
@@ -6922,10 +6835,13 @@
         20,
         40
       ],
-      "increased_attack_rating": 10,
       "additive_physical_damage": [
         10,
         15
+      ],
+      "mana_steal": [
+        2,
+        4
       ]
     },
     "uniqueEffects": [
@@ -6955,19 +6871,22 @@
     "grade": "B",
     "requiresLevel": 41,
     "implicit": {
-      "magic_skill_damage": 10,
+      "magic_skill_damage": [
+        15,
+        25
+      ],
       "faster_hit_recovery": 20,
       "physical_damage_reduction": 15,
       "all_skills": [
         1,
         2
       ],
-      "cooldown_recovery": [
-        20,
-        30
-      ],
       "flat_magic_skill_damage": [
         17,
+        30
+      ],
+      "skill_haste": [
+        20,
         30
       ]
     },
@@ -6992,7 +6911,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 65,
+    "requiresLevel": 50,
     "implicit": {
       "enhanced_damage": [
         375,
@@ -7016,7 +6935,6 @@
         40,
         50
       ],
-      "increased_attack_rating": 20,
       "enhanced_damage_based_on_level": 200
     },
     "uniqueEffects": [
@@ -7058,10 +6976,6 @@
         8,
         12
       ],
-      "life_replenish": [
-        10,
-        15
-      ],
       "defense_vs_missiles": 15,
       "life_based_on_level": 20
     },
@@ -7087,15 +7001,18 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 52,
+    "requiresLevel": 78,
     "implicit": {
       "enhanced_damage": [
-        420,
-        475
+        820,
+        975
       ],
       "crushing_blow_chance": 50,
       "to_strength": 35,
-      "to_vitality": 25,
+      "to_vitality": [
+        50,
+        200
+      ],
       "all_resistances": [
         25,
         35
@@ -7171,7 +7088,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "SS",
-    "requiresLevel": 94,
+    "requiresLevel": 98,
     "implicit": {
       "enhanced_damage": [
         620,
@@ -7213,7 +7130,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 34,
+    "requiresLevel": 37,
     "implicit": {
       "enhanced_damage": [
         350,
@@ -7314,7 +7231,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 57,
+    "requiresLevel": 86,
     "implicit": {
       "enhanced_damage": [
         280,
@@ -7325,7 +7242,10 @@
       "to_strength": 15,
       "to_dexterity": 15,
       "life_per_kill": 14,
-      "damage_return": 125
+      "damage_return": [
+        35,
+        50
+      ]
     },
     "sockets": 0,
     "maxSockets": 2,
@@ -7370,10 +7290,6 @@
       "to_strength": [
         10,
         15
-      ],
-      "increased_attack_rating": [
-        5,
-        10
       ]
     },
     "uniqueEffects": [
@@ -7529,7 +7445,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 84,
+    "requiresLevel": 68,
     "implicit": {
       "enhanced_damage": 250,
       "additive_fire_damage": [
@@ -7647,8 +7563,8 @@
         25
       ],
       "damage_return": [
-        70,
-        90
+        25,
+        40
       ],
       "physical_damage_reduction": [
         5,
@@ -7700,8 +7616,7 @@
       "attack_damage": [
         25,
         40
-      ],
-      "open_wound_chance": 20
+      ]
     },
     "setId": "wall_of_god",
     "twoHanded": true,
@@ -7792,8 +7707,7 @@
       "mana_per_kill": [
         6,
         10
-      ],
-      "increased_attack_rating": 10
+      ]
     },
     "sockets": 0,
     "maxSockets": 4,
@@ -7816,13 +7730,13 @@
       ],
       "movement_speed": 20,
       "increased_attack_speed": [
-        10,
-        20
+        15,
+        30
       ],
       "crit_chance": 20,
       "additive_physical_damage": [
-        18,
-        38
+        22,
+        46
       ],
       "crit_damage": [
         25,
@@ -7885,7 +7799,7 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "SS",
-    "requiresLevel": 80,
+    "requiresLevel": 83,
     "implicit": {
       "extra_damage_stasis": [
         20,
@@ -7945,7 +7859,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "SS",
-    "requiresLevel": 86,
+    "requiresLevel": 94,
     "implicit": {
       "enhanced_damage": [
         650,
@@ -7971,7 +7885,6 @@
         25,
         35
       ],
-      "ignore_lightning_res": 20,
       "ignore_fire_res": 20
     },
     "sockets": 3,
@@ -7995,17 +7908,17 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 86,
+    "requiresLevel": 98,
     "implicit": {
       "enhanced_damage": [
-        380,
-        420
+        420,
+        500
       ],
       "movement_speed": 35,
       "attack_rating": 600,
-      "mana_steal": 5,
+      "mana_steal": 8,
       "to_energy": 30,
-      "additive_fire_damage": 5,
+      "additive_fire_damage": 5000,
       "fire_skill_damage": [
         20,
         25
@@ -8029,7 +7942,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 39,
+    "requiresLevel": 38,
     "implicit": {
       "enhanced_damage": [
         300,
@@ -8070,8 +7983,8 @@
     "requiresLevel": 83,
     "implicit": {
       "enhanced_damage": [
-        430,
-        480
+        530,
+        580
       ],
       "crushing_blow_chance": 20,
       "attack_rating_pct": 15,
@@ -8079,8 +7992,7 @@
       "attack_damage": [
         15,
         25
-      ],
-      "increased_attack_rating": 15
+      ]
     },
     "setId": "masamura",
     "sockets": 3,
@@ -8157,7 +8069,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 40,
+    "requiresLevel": 65,
     "implicit": {
       "enhanced_damage": [
         400,
@@ -8175,7 +8087,10 @@
         10,
         15
       ],
-      "enemy_all_resist": 10
+      "enemy_all_resist": [
+        10,
+        15
+      ]
     },
     "sockets": 2,
     "maxSockets": 2,
@@ -8190,7 +8105,7 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 54,
+    "requiresLevel": 100,
     "implicit": {
       "enhanced_damage": [
         340,
@@ -8200,19 +8115,22 @@
         40,
         60
       ],
-      "mana_replenish": 3,
+      "mana_replenish": 15,
       "projectile_speed": [
-        1,
-        2
+        2,
+        3
       ],
       "flat_arcane_skill_damage": [
-        18,
-        38
+        24,
+        68
       ],
-      "ignore_arcane_res": 20,
+      "ignore_arcane_res": [
+        25,
+        40
+      ],
       "mana_per_kill": [
         8,
-        15
+        30
       ]
     },
     "uniqueEffects": [
@@ -8250,8 +8168,7 @@
       "attack_damage": [
         15,
         30
-      ],
-      "increased_attack_rating": 25
+      ]
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -8270,7 +8187,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 82,
+    "requiresLevel": 65,
     "implicit": {
       "enhanced_damage": [
         275,
@@ -8358,13 +8275,13 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 78,
+    "requiresLevel": 82,
     "implicit": {
       "enhanced_damage": [
         510,
         570
       ],
-      "deadly_blow": 15,
+      "deadly_blow": 10,
       "open_wounds": [
         10,
         20
@@ -8374,13 +8291,8 @@
         1,
         3
       ],
-      "life_replenish": 8,
       "strength_based_on_level": 150,
-      "vitality_based_on_level": 75,
-      "open_wound_chance": [
-        10,
-        20
-      ]
+      "vitality_based_on_level": 75
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -8406,7 +8318,7 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "SS",
-    "requiresLevel": 83,
+    "requiresLevel": 82,
     "implicit": {
       "enhanced_damage": [
         630,
@@ -8480,18 +8392,18 @@
         380
       ],
       "attack_rating": [
-        130,
-        145
+        150,
+        175
       ],
-      "to_strength": 7,
-      "to_dexterity": 7,
+      "to_strength": 15,
+      "to_dexterity": 15,
       "additive_poison_damage": [
         160,
         180
       ],
       "poison_skill_damage": [
-        5,
-        15
+        10,
+        20
       ],
       "poison_resistance": 50,
       "extra_damage_poisoned": [
@@ -8614,16 +8526,19 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "SS",
-    "requiresLevel": 94,
+    "requiresLevel": 100,
     "implicit": {
       "enhanced_damage": [
         830,
         980
       ],
-      "all_skills": 3,
+      "all_skills": [
+        2,
+        3
+      ],
       "increased_attack_speed": [
-        20,
-        40
+        40,
+        60
       ],
       "attack_rating_pct": [
         6,
@@ -8638,15 +8553,11 @@
         40
       ],
       "ignore_lightning_res": [
-        15,
-        25
+        20,
+        30
       ],
       "lightning_absorption": 15,
-      "lightning_resistance": 60,
-      "increased_attack_rating": [
-        6,
-        15
-      ]
+      "lightning_resistance": 60
     },
     "skillBonuses": {
       "Lightning Fury": [
@@ -8675,7 +8586,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 66,
+    "requiresLevel": 42,
     "implicit": {
       "enhanced_damage": [
         320,
@@ -8710,7 +8621,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 84,
+    "requiresLevel": 70,
     "implicit": {
       "enhanced_damage": [
         500,
@@ -8792,7 +8703,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 65,
+    "requiresLevel": 97,
     "implicit": {
       "enhanced_damage": [
         280,
@@ -8805,14 +8716,14 @@
         785
       ],
       "ignore_lightning_res": 25,
-      "all_resistances": 10,
+      "all_resistances": 15,
       "gold_find": [
         5,
         10
       ],
       "magic_find": [
-        20,
-        35
+        25,
+        40
       ]
     },
     "sockets": 0,
@@ -8828,7 +8739,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 42,
+    "requiresLevel": 34,
     "implicit": {
       "enhanced_damage": [
         180,
@@ -8885,8 +8796,7 @@
       "life_per_kill": [
         8,
         15
-      ],
-      "open_wound_chance": 20
+      ]
     },
     "sockets": 0,
     "maxSockets": 2,
@@ -8904,13 +8814,12 @@
     "requiresLevel": 61,
     "implicit": {
       "all_skills": 2,
-      "faster_cast_rate": 20,
+      "faster_cast_rate": 30,
       "to_energy": 8,
       "arcane_skill_damage": [
         5,
         10
       ],
-      "cooldown_recovery": 25,
       "guardian_damage": [
         25,
         35
@@ -8918,7 +8827,8 @@
       "guardian_attack_range": [
         15,
         25
-      ]
+      ],
+      "skill_haste": 25
     },
     "sockets": 3,
     "maxSockets": 4,
@@ -8975,7 +8885,7 @@
         20,
         30
       ],
-      "mana_replenish_pct": 25,
+      "mana_replenish_pct": 100,
       "increased_life": -10,
       "physical_damage_reduction": 10,
       "all_resistances": -50,
@@ -8983,8 +8893,7 @@
         15,
         25
       ],
-      "mana_replenish": 100,
-      "enemy_all_resist": -10
+      "enemy_all_resist": 10
     },
     "sockets": 2,
     "maxSockets": 4,
@@ -9031,7 +8940,6 @@
     },
     "sockets": 1,
     "maxSockets": 1,
-    "twoHanded": true,
     "procs": [
       {
         "trigger": "on_hit",
@@ -9051,7 +8959,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 36,
+    "requiresLevel": 39,
     "implicit": {
       "enhanced_damage": [
         300,
@@ -9095,12 +9003,7 @@
         15,
         25
       ],
-      "mana_replenish_pct": 100,
-      "cooldown_recovery": [
-        15,
-        20
-      ],
-      "mana_replenish": 100
+      "mana_replenish_pct": 100
     },
     "setId": "guardian_of_the_sun_temple",
     "sockets": 2,
@@ -9162,7 +9065,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "D",
-    "requiresLevel": 10,
+    "requiresLevel": 26,
     "implicit": {
       "mana_steal": 8,
       "to_energy": [
@@ -9178,7 +9081,6 @@
         20,
         30
       ],
-      "mana_replenish": 15,
       "mana_based_on_level": 50
     },
     "damageMin": 8,
@@ -9192,7 +9094,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 37,
+    "requiresLevel": 49,
     "implicit": {
       "enhanced_damage": [
         180,
@@ -9205,8 +9107,7 @@
         25
       ],
       "mana_replenish_pct": 10,
-      "mana": 35,
-      "mana_replenish": 10
+      "mana": 35
     },
     "damageMin": 24,
     "damageMax": 28,
@@ -9219,21 +9120,21 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "S",
-    "requiresLevel": 82,
+    "requiresLevel": 76,
     "implicit": {
       "enhanced_damage": [
-        225,
-        260
+        255,
+        320
       ],
       "all_skills": [
-        1,
-        2
+        2,
+        3
       ],
       "increased_attack_speed": [
         25,
         50
       ],
-      "crit_chance": 10,
+      "crit_chance": 15,
       "deadly_blow": 25,
       "crushing_blow_chance": 15,
       "mana_steal": [
@@ -9373,7 +9274,7 @@
       ],
       "attack_rating": [
         800,
-        1
+        1000
       ],
       "additive_physical_damage": [
         18,
@@ -9429,14 +9330,17 @@
         440,
         580
       ],
-      "all_skills": 2,
-      "attack_rating_pct": 4,
+      "all_skills": [
+        2,
+        3
+      ],
+      "attack_rating_pct": 20,
       "attack_rating": [
         280,
         460
       ],
       "mana_steal": 6,
-      "slow_target": 20,
+      "slow_target": 75,
       "all_attributes": 10,
       "additive_lightning_damage": [
         550,
@@ -9451,7 +9355,6 @@
         575
       ],
       "crushing_blow_chance": 25,
-      "increased_attack_rating": 20,
       "additive_physical_damage": [
         22,
         46
@@ -9487,8 +9390,8 @@
     "requiresLevel": 88,
     "implicit": {
       "all_skills": [
-        2,
-        4
+        3,
+        6
       ],
       "to_energy": [
         20,
@@ -9532,7 +9435,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 38,
+    "requiresLevel": 42,
     "implicit": {
       "enhanced_damage": [
         310,
@@ -9547,8 +9450,8 @@
         6
       ],
       "to_strength": [
-        5,
-        10
+        10,
+        15
       ],
       "additive_lightning_damage": [
         345,
@@ -9581,7 +9484,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "C",
-    "requiresLevel": 24,
+    "requiresLevel": 37,
     "implicit": {
       "enhanced_damage": [
         140,
@@ -9603,10 +9506,6 @@
       "mana": [
         125,
         130
-      ],
-      "mana_replenish": [
-        15,
-        25
       ]
     },
     "damageMin": 16,
@@ -9744,8 +9643,8 @@
     "requiresLevel": 56,
     "implicit": {
       "enhanced_damage": [
-        220,
-        280
+        420,
+        580
       ],
       "arcane_skills": [
         2,
@@ -9762,8 +9661,7 @@
         12,
         20
       ],
-      "arcane_resistance": 75,
-      "mana_replenish": 30
+      "arcane_resistance": 75
     },
     "setId": "thor_s_thunder_hammer",
     "sockets": 3,
@@ -9797,7 +9695,10 @@
         8,
         15
       ],
-      "increased_mana": 10,
+      "increased_mana": [
+        8,
+        15
+      ],
       "ailment_damage_all": [
         15,
         25
@@ -9937,8 +9838,8 @@
         125
       ],
       "increased_life": -15,
-      "increased_mana": -25,
-      "all_resistances": -50,
+      "increased_mana": -15,
+      "all_resistances": -15,
       "explosion_aoe": [
         25,
         40
@@ -9966,7 +9867,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 48,
+    "requiresLevel": 40,
     "implicit": {
       "enhanced_damage": [
         370,
@@ -9981,8 +9882,8 @@
         15
       ],
       "arcane_skill_damage": [
-        15,
-        25
+        12,
+        20
       ],
       "ignore_arcane_res": 20,
       "life": [
@@ -10034,7 +9935,6 @@
         15,
         30
       ],
-      "open_wound_chance": 15,
       "vitality_converted_to_attack_dmg": [
         2,
         5
@@ -10095,11 +9995,11 @@
     "slot": "weapon",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 75,
+    "requiresLevel": 61,
     "implicit": {
       "enhanced_damage": [
-        285,
-        340
+        320,
+        380
       ],
       "movement_speed": 15,
       "increased_attack_speed": 20,
@@ -10176,21 +10076,21 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 63,
+    "requiresLevel": 94,
     "implicit": {
       "enhanced_damage": [
-        255,
-        290
+        720,
+        830
       ],
       "increased_attack_speed": [
-        20,
-        30
+        35,
+        50
       ],
       "life_steal": [
-        3,
-        6
+        10,
+        15
       ],
-      "to_strength": 15,
+      "to_strength": 50,
       "to_dexterity": 15,
       "additive_fire_damage": [
         825,
@@ -10211,7 +10111,6 @@
         45
       ]
     },
-    "twoHanded": true,
     "sockets": 4,
     "maxSockets": 5,
     "procs": [
@@ -10327,8 +10226,7 @@
       "additive_lightning_damage": [
         530,
         645
-      ],
-      "open_wound_chance": 20
+      ]
     },
     "procs": [
       {
@@ -10363,8 +10261,8 @@
         4,
         7
       ],
-      "to_strength": 40,
-      "to_dexterity": 40,
+      "to_strength": 50,
+      "to_dexterity": 50,
       "damage_based_on_level": 125
     },
     "sockets": 3,
@@ -10421,7 +10319,7 @@
     "slot": "weapon",
     "rarity": "satanic",
     "grade": "A",
-    "requiresLevel": 63,
+    "requiresLevel": 56,
     "implicit": {
       "poison_skills": [
         1,
@@ -10498,8 +10396,7 @@
       "life_steal": 6,
       "to_strength": 45,
       "to_dexterity": 45,
-      "faster_hit_recovery": 75,
-      "increased_attack_rating": 35
+      "faster_hit_recovery": 75
     },
     "sockets": 2,
     "maxSockets": 2,
@@ -10523,24 +10420,19 @@
     "requiresLevel": 62,
     "implicit": {
       "skill_haste": [
-        5,
-        10
-      ],
-      "arcane_skill_damage": [
-        10,
-        15
-      ],
-      "mana_replenish_pct": 15,
-      "mana": 35,
-      "cooldown_recovery": [
         10,
         20
       ],
+      "arcane_skill_damage": [
+        45,
+        55
+      ],
+      "mana_replenish_pct": 100,
+      "mana": 500,
       "flat_arcane_skill_damage": [
         24,
         64
-      ],
-      "mana_replenish": 100
+      ]
     },
     "setId": "zealot_s_prophecy",
     "skillBonuses": {
@@ -10595,7 +10487,6 @@
         50,
         65
       ],
-      "increased_attack_rating": 25,
       "reduced_movement_diminish": [
         50,
         75
@@ -10636,10 +10527,6 @@
         50,
         75
       ],
-      "extra_damage_burning": [
-        35,
-        50
-      ],
       "all_attributes": [
         20,
         30
@@ -10648,7 +10535,11 @@
         28,
         60
       ],
-      "fire_skill_damage": 35
+      "fire_skill_damage": 35,
+      "extra_fire_dmg_to_burning": [
+        35,
+        50
+      ]
     },
     "sockets": 4,
     "maxSockets": 4,
@@ -10668,7 +10559,7 @@
     "slot": "weapon",
     "rarity": "unholy",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 80,
     "damageMin": 102,
     "damageMax": 112,
     "attackSpeed": 1.75,
@@ -10685,7 +10576,7 @@
       "deadly_blow": 30,
       "defense_ignored": 35,
       "extra_damage_bleeding": [
-        30,
+        33,
         40
       ],
       "flat_fire_skill_damage": [
@@ -10734,7 +10625,7 @@
         15,
         30
       ],
-      "less_dmg_with_cd_skills": 80,
+      "less_dmg_with_cd_skills": -80,
       "crit_chance": 25,
       "life_steal": 10,
       "crit_damage": 66,
@@ -10817,7 +10708,6 @@
         5
       ],
       "cold_resistance_converted_to_cold_damage": 15,
-      "faster_cast_rate": 50,
       "extra_dmg_to_deep_frozen": [
         25,
         40
@@ -10833,6 +10723,15 @@
       "enemy_cold_resist": [
         30,
         45
+      ],
+      "faster_cast_rate_more": -50,
+      "follower_relic_damage": [
+        200,
+        300
+      ],
+      "follower_relic_attack_speed": [
+        10,
+        20
       ]
     },
     "skillBonuses": {
@@ -10867,7 +10766,6 @@
         5
       ],
       "crit_chance": 35,
-      "increased_attack_rating": 10,
       "attack_rating": 1250,
       "crit_damage": [
         90,
@@ -10876,7 +10774,8 @@
       "to_strength": [
         50,
         75
-      ]
+      ],
+      "attack_rating_pct": 10
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"

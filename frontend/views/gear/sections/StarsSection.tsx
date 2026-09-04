@@ -9,7 +9,6 @@ export function StarsSection({
   stars: number
   onChange: (n: number) => void
 }) {
-  const bonusPct = stars * 8
   return (
     <SectionCard
       label="Stars"
@@ -20,7 +19,7 @@ export function StarsSection({
         stars > 0 ? (
           <>
             <span className="font-mono text-[10px] tabular-nums tracking-[0.04em] text-accent-hot">
-              {'★'.repeat(stars)} +{bonusPct}% affixes
+              {'★'.repeat(stars)}
             </span>
             <button
               type="button"
@@ -72,8 +71,8 @@ export function StarsSection({
         )}
       </div>
       <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.14em] leading-snug text-faint">
-        +8% per star to user-added affixes — runeword & "+X to all skills" mods
-        excluded.
+        Each star scales a stat by the game's own step for that stat. Many stats
+        never scale, runeword items never do.
       </p>
     </SectionCard>
   )

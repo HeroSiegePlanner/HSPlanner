@@ -35,7 +35,7 @@ function StashRow({ entry }: { entry: StashEntry }) {
   const sprite = getItemImage(base.id)
   const rarityText = runeword ? 'text-accent-hot' : RARITY_TEXT[base.rarity]
 
-  const stars = effectiveStars(base.slot, entry.item.stars) ?? 0
+  const stars = effectiveStars(base.slot, entry.item.stars, base.rarity) ?? 0
   const badges: string[] = []
   if (stars > 0) badges.push('★'.repeat(Math.min(stars, 5)))
   if (entry.item.socketCount > 0)

@@ -37,6 +37,12 @@ describe('encode/decode round-trip', () => {
     expect(decoded!.snapshot.activeSkillIds).toEqual(['fireball'])
   })
 
+  it('round-trips difficulty through share', () => {
+    const snap = makeSnapshot({ difficulty: 'hell' })
+    const decoded = decodeShareToBuild(encodeBuildToShare(snap))
+    expect(decoded!.snapshot.difficulty).toBe('hell')
+  })
+
   it('round-trips disabledPotions through share', () => {
     const snap = makeSnapshot({ disabledPotions: { potion_1: true } })
     const decoded = decodeShareToBuild(encodeBuildToShare(snap))

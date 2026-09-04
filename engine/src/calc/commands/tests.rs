@@ -197,3 +197,64 @@ mod projectile_dto_tests {
         assert_eq!(input.projectile_count.map(|p| p.max(0.0) as u32), Some(2));
     }
 }
+
+mod combined_dps_mid_tests {
+    use crate::calc::build::BuildPerformance;
+    use crate::calc::commands::performance::combined_dps_mid;
+
+    fn perf(avg: f64, exec: f64, proc_dps: f64, ailment: Option<f64>) -> BuildPerformance {
+        BuildPerformance {
+            avg_hit_dps_min: Some(avg),
+            avg_hit_dps_max: Some(avg),
+            execute_mult: exec,
+            proc_dps_min: proc_dps,
+            proc_dps_max: proc_dps,
+            ailment_dps_min: ailment,
+            ailment_dps_max: ailment,
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn multi_skill_sums_executed_avg_and_counts_proc_once() {
+        let ids = vec!["a".to_string(), "b".to_string()];
+        // a: 100 avg x2.0 exec + proc 10 x2.0; b: 50 avg x1.0 + ailment 5 x1.0
+        let dps = combined_dps_mid(&ids, |main| match main {
+            Some("a") => perf(100.0, 2.0, 10.0, None),
+            Some("b") => perf(50.0, 1.0, 999.0, Some(5.0)),
+            _ => panic!("unexpected main {main:?}"),
+        });
+        // 100*2 + 50*1 + 10*2 (primary proc only) + 5*1 = 275
+        assert!((dps - 275.0).abs() < 1e-9, "got {dps}");
+    }
+
+    #[test]
+    fn single_skill_uses_combined_dps_midpoint() {
+        let ids = vec!["a".to_string()];
+        let dps = combined_dps_mid(&ids, |main| {
+            assert_eq!(main, Some("a"));
+            BuildPerformance {
+                combined_dps_min: Some(100.0),
+                combined_dps_max: Some(200.0),
+                ..Default::default()
+            }
+        });
+        assert!((dps - 150.0).abs() < 1e-9, "got {dps}");
+    }
+
+    #[test]
+    fn single_skill_falls_back_to_hit_dps_then_zero() {
+        let ids = vec!["a".to_string()];
+        let hit_only = combined_dps_mid(&ids, |_| BuildPerformance {
+            hit_dps_min: Some(10.0),
+            hit_dps_max: Some(30.0),
+            ..Default::default()
+        });
+        assert!((hit_only - 20.0).abs() < 1e-9, "got {hit_only}");
+        let empty = combined_dps_mid(&[], |main| {
+            assert_eq!(main, None);
+            BuildPerformance::default()
+        });
+        assert_eq!(empty, 0.0);
+    }
+}

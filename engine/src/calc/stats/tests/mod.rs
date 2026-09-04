@@ -1,5 +1,8 @@
 use super::*;
 
+static NO_STACKS: LazyLock<HashMap<String, u32>> = LazyLock::new(HashMap::new);
+static NO_RATES: LazyLock<HashMap<String, f64>> = LazyLock::new(HashMap::new);
+
 fn contrib(value: Ranged) -> SourceContribution {
     SourceContribution {
         label: "test".to_string(),
@@ -36,8 +39,11 @@ fn empty_input<'a>(
         player_conditions,
         subskill_ranks,
         enemy_conditions,
+        stack_counts: &NO_STACKS,
+        entity_rates: &NO_RATES,
         granted_skill_ranks: None,
         main_skill_id: None,
+        difficulty: None,
     }
 }
 

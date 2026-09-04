@@ -17,7 +17,8 @@ import type {
   ItemBase,
   SocketType,
 } from '../../types'
-import { isZero, shouldScaleImplicit, statName } from './stats'
+import { isJewelAffix } from './jewelAffixes'
+import { affixDisplayValue, isZero, shouldScaleImplicit, statName } from './stats'
 import {
   RARITY_LABELS,
   descriptionWithoutValue,
@@ -88,7 +89,8 @@ function parseAffixLine(
   }
 
   const content = work.slice(0, tierMatch.index).trim()
-  const pool: Affix[] = source === 'affix' ? affixes : crystalMods
+  const pool: Affix[] =
+    source === 'affix' ? affixes.filter((a) => !isJewelAffix(a)) : crystalMods
 
   const candidates = pool.filter(
     (a) =>
@@ -139,7 +141,8 @@ function parseAffixLine(
   let customValue: number | undefined = undefined
   let customCheck: AffixLineResult['customCheck']
   if (matched.statKey) {
-    const userValue = parseValuePrefix(content)
+    const typed = parseValuePrefix(content)
+    const userValue = typed === null ? null : affixDisplayValue(matched, typed)
     if (explicitCustom) {
       if (userValue === null) {
         errors.push({

@@ -92,6 +92,7 @@ export interface Skill {
   movementDuringUse?: number
   range?: number
   baseCastRate?: number
+  baseProjectiles?: number
   usesAttackSpeed?: boolean
   usesSkillHaste?: boolean
   baseCooldown?: number
@@ -168,4 +169,6 @@ export interface ItemGrantedSkill {
   // Flat typed damage fired on an internal cooldown (item procs, e.g. The Eye).
   procDamage?: Array<{ type: string; base: number; perRank: number }>
   procCooldown?: number
+  // GetDisabledUpgradeStats: a few granted skills never gain rank from stars.
+  starRankLocked?: boolean
 }

@@ -1,8 +1,5 @@
 use super::skills::Ranged;
-use super::star_scaling::{
-    is_stat_star_immune, item_granted_skill_rank_flat_bonus, stat_star_flat_bonus,
-    stat_star_percent_multiplier,
-};
+use super::star_scaling::{is_stat_star_immune, stat_star_flat_bonus, stat_star_percent_multiplier};
 pub use super::types::{Affix, AffixFormat, AffixSign};
 
 pub fn rolled_affix_value(affix: &Affix, roll: f64) -> f64 {
@@ -46,6 +43,16 @@ pub fn affix_star_multiplier(stat_key: Option<&str>, stars: Option<u32>) -> f64 
     stat_star_percent_multiplier(stat_key, stars)
 }
 
+// GetStatUpgrades rounding: a star-scaled value is floored only if it started whole.
+fn star_scaled(base: f64, mult: f64, flat: f64) -> f64 {
+    let scaled = base * mult + flat;
+    if base.fract() == 0.0 {
+        scaled.floor()
+    } else {
+        scaled
+    }
+}
+
 pub fn rolled_affix_value_with_stars(affix: &Affix, roll: f64, stars: Option<u32>) -> f64 {
     let base = rolled_affix_value(affix, roll);
     let stat_key = affix.stat_key.as_deref();
@@ -58,15 +65,14 @@ pub fn rolled_affix_value_with_stars(affix: &Affix, roll: f64, stars: Option<u32
         AffixSign::Minus => -1.0,
         AffixSign::Plus => 1.0,
     };
-    let scaled = base * mult + flat * direction;
     let stars_active = stars.unwrap_or(0) > 0 && (mult != 1.0 || flat != 0.0);
     if stars_active {
-        scaled.floor()
-    } else {
-        match affix.format {
-            AffixFormat::Flat => scaled.round(),
-            AffixFormat::Percent => scaled,
-        }
+        return star_scaled(base, mult, flat * direction);
+    }
+    let scaled = base * mult + flat * direction;
+    match affix.format {
+        AffixFormat::Flat => scaled.round(),
+        AffixFormat::Percent => scaled,
     }
 }
 
@@ -75,17 +81,13 @@ pub fn apply_stars_to_ranged_value(value: Ranged, stat_key: &str, stars: Option<
     if s == 0 {
         return value;
     }
-    let flat = if stat_key == "item_granted_skill_rank" {
-        item_granted_skill_rank_flat_bonus(Some(s))
-    } else {
-        stat_star_flat_bonus(Some(stat_key), Some(s))
-    };
+    let flat = stat_star_flat_bonus(Some(stat_key), Some(s));
     let mult = stat_star_percent_multiplier(Some(stat_key), Some(s));
     if mult == 1.0 && flat == 0.0 {
         return value;
     }
     let (min, max) = value;
-    ((min * mult + flat).floor(), (max * mult + flat).floor())
+    (star_scaled(min, mult, flat), star_scaled(max, mult, flat))
 }
 
 #[cfg(test)]

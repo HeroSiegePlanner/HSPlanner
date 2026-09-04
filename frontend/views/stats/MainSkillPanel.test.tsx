@@ -70,9 +70,8 @@ function renderSection(attackDamage: AttackSkillDamageBreakdown | null) {
       skillsByNormalizedName={{}}
       rankBonuses={{}}
       skillBreakdown={null}
-      stats={{}}
-      mcrRange={0}
-      paidInLifeRange={0}
+      cost={undefined}
+
       weaponDamage={null}
       attackDamage={attackDamage}
     />,

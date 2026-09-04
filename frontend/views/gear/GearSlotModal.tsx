@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import ItemTextEditorModal from './ItemTextEditorModal'
 import type { PickerRow } from './PickerModal'
-import { canStarForge, detectRuneword, forgeKindFor, getAffix, getItem, getItemSet } from '@data'
+import {
+  canStarForge,
+  detectRuneword,
+  forgeKindFor,
+  getAffix,
+  getItem,
+  getItemSet,
+  isForgeSlot,
+} from '@data'
 import { maxSocketsFor, useBuild } from '../../store/build'
 import { useBuildPerformanceDeps } from '../../hooks/useBuildPerformanceDeps'
 import type { EquippedItem, Inventory, ItemBase, SlotKey } from '../../types'
@@ -24,6 +32,10 @@ import { SocketsSection } from './sections/SocketsSection'
 import { StarsSection } from './sections/StarsSection'
 import { RandomElementSection } from './sections/RandomElementSection'
 import { RandomSkillSection } from './sections/RandomSkillSection'
+import { SubskillBoostSection } from './sections/SubskillBoostSection'
+import { AllSkillsClassSection } from './sections/AllSkillsClassSection'
+import { SUBSKILL_BOOST_KEY } from '../../utils/build/subskillBoost'
+import { ALL_SKILLS_CLASS_KEY } from '../../components/itemTooltipModel'
 import { RollsSection } from './sections/RollsSection'
 import { RARITY_LABEL, RARITY_TEXT } from './lib/rarity'
 import { useGearDraft } from './lib/useGearDraft'
@@ -122,6 +134,15 @@ export function GearSlotModal({
     (draft?.affixes ?? []).some(
       (eq) => getAffix(eq.affixId)?.statKey === 'random_skill_element',
     )
+  const hasAllSkillsClass =
+    base?.implicit?.[ALL_SKILLS_CLASS_KEY] !== undefined ||
+    draft?.implicitOverrides?.[ALL_SKILLS_CLASS_KEY] !== undefined ||
+    (draft?.affixes ?? []).some(
+      (eq) => getAffix(eq.affixId)?.statKey === ALL_SKILLS_CLASS_KEY,
+    )
+  const grantsSubskills =
+    base?.implicit?.[SUBSKILL_BOOST_KEY] !== undefined ||
+    draft?.implicitOverrides?.[SUBSKILL_BOOST_KEY] !== undefined
   const maxSockets = draft ? maxSocketsFor(draft.baseId, draft.forgedMods) : 0
   const set = base?.setId ? getItemSet(base.setId) : undefined
   const setEquippedCount = base?.setId
@@ -138,7 +159,7 @@ export function GearSlotModal({
       return item ? [item.baseId] : []
     }),
   )
-  const forgeKind = base && canStarForge(slot) ? forgeKindFor(base.rarity) : null
+  const forgeKind = base && isForgeSlot(base.slot) ? forgeKindFor(base.rarity) : null
 
   const fullDeps = useBuildPerformanceDeps()
   const compareDeps = useMemo<BuildSummaryDeps>(() => {
@@ -291,7 +312,7 @@ export function GearSlotModal({
                     dpsPreviewEnabled={dpsPreviewEnabled}
                   />
 
-                  {canStarForge(slot) && (
+                  {canStarForge(slot, base.rarity) && (
                     <StarsSection stars={draft.stars ?? 0} onChange={d.setStars} />
                   )}
 
@@ -305,6 +326,20 @@ export function GearSlotModal({
 
                   {hasRandomElement && (
                     <RandomElementSection equipped={draft} onChange={d.setRandomElement} />
+                  )}
+
+                  {grantsSubskills && (
+                    <SubskillBoostSection
+                      equipped={draft}
+                      onChange={d.setSubskillBoost}
+                    />
+                  )}
+
+                  {hasAllSkillsClass && (
+                    <AllSkillsClassSection
+                      equipped={draft}
+                      onChange={d.setAllSkillsClass}
+                    />
                   )}
 
                   {(base.rarity === 'common' || base.randomAffixGroupId) && (

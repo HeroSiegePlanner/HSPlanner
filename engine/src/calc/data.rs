@@ -5,12 +5,13 @@ use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Mutex;
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 use super::season;
 use super::types::{
-    Affix, AffixTag, AngelicAugment, CharacterClass, GameConfig, Gem, ItemBase, ItemGrantedSkill,
-    ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange, TreeNodeInfo,
+    Affix, AffixTag, AngelicAugment, CharacterClass, DifficultyDef, EquippedItem, GameConfig, Gem,
+    Inventory, ItemBase, ItemGrantedSkill, ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange,
+    TreeNodeInfo,
 };
 
 #[allow(dead_code)]
@@ -41,8 +42,37 @@ pub fn is_charm_slot(slot: &str) -> bool {
     slot.starts_with("charm_")
 }
 
-pub fn can_star_forge(slot: &str) -> bool {
-    is_gear_slot(slot) || is_charm_slot(slot)
+/// Only common charms (Small/Large/Grand) take stars; unique charms never do.
+pub fn can_star_forge(slot: &str, rarity: &str) -> bool {
+    if is_charm_slot(slot) {
+        return rarity == "common";
+    }
+    is_gear_slot(slot)
+}
+
+/// Rakhul's Ritual Band carries no stats of its own — it mirrors the other ring.
+const MIRROR_RING_ID: &str = "ring_heroic_rakhul_s_ritual_band";
+
+/// Inventory as the stat pipeline should see it: every equipped slot, plus a
+/// second pass over the ring that Rakhul's Ritual Band mirrors. Entries are
+/// `(slot, item, is_mirror)`; two bands mirror nothing.
+pub fn inventory_entries(inventory: &Inventory) -> Vec<(&str, &EquippedItem, bool)> {
+    let mut entries: Vec<(&str, &EquippedItem, bool)> = inventory
+        .iter()
+        .map(|(slot, item)| (slot.as_str(), item, false))
+        .collect();
+    for (band_slot, other_slot) in [("ring_1", "ring_2"), ("ring_2", "ring_1")] {
+        let has_band = inventory
+            .get(band_slot)
+            .is_some_and(|item| item.base_id == MIRROR_RING_ID);
+        let source = inventory
+            .get(other_slot)
+            .filter(|item| item.base_id != MIRROR_RING_ID);
+        if let (true, Some(source)) = (has_band, source) {
+            entries.push((band_slot, source, true));
+        }
+    }
+    entries
 }
 
 const SATANIC_CRYSTAL_RARITIES: &[&str] = &[
@@ -88,8 +118,8 @@ pub struct GameData {
     pub tree_jewelry_ids: HashSet<u32>,
 }
 
-static GAME_DATA_BY_SEASON: Lazy<Mutex<HashMap<String, &'static GameData>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+static GAME_DATA_BY_SEASON: LazyLock<Mutex<HashMap<String, &'static GameData>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 fn index_by_id<T, F: Fn(&T) -> String>(list: Vec<T>, key: F) -> HashMap<String, T> {
     let mut out: HashMap<String, T> = HashMap::with_capacity(list.len());
@@ -385,6 +415,15 @@ pub fn runewords() -> &'static [Runeword] {
     &data().runewords
 }
 
+pub fn get_difficulty(id: Option<&str>) -> Option<&'static DifficultyDef> {
+    let id = id?;
+    game_config().difficulties.iter().find(|d| d.id == id)
+}
+
+pub fn difficulty_resist_penalty(id: Option<&str>) -> f64 {
+    get_difficulty(id).map_or(0.0, |d| d.resist_penalty)
+}
+
 pub fn tree_nodes() -> &'static HashMap<String, TreeNodeInfo> {
     &data().tree_nodes
 }
@@ -629,10 +668,11 @@ mod tests {
 
     #[test]
     fn can_star_forge_covers_gear_and_charms_only() {
-        assert!(super::can_star_forge("weapon"));
-        assert!(super::can_star_forge("charm_1"));
-        assert!(super::can_star_forge("charm_30"));
-        assert!(!super::can_star_forge("relic"));
+        assert!(super::can_star_forge("weapon", "heroic"));
+        assert!(super::can_star_forge("charm_1", "common"));
+        assert!(!super::can_star_forge("charm_1", "heroic"));
+        assert!(!super::can_star_forge("charm_30", "satanic"));
+        assert!(!super::can_star_forge("relic", "common"));
         assert!(super::is_charm_slot("charm_1"));
         assert!(!super::is_charm_slot("weapon"));
     }

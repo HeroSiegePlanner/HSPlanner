@@ -2,7 +2,7 @@ import { RARITY_LABEL } from '../views/gear/lib/rarity'
 import { describeAffixValue } from '../views/gear/lib/affixGroups'
 import { formatAffixValue } from '../views/gear/lib/rollMath'
 import {
-  canStarForge,
+  classes,
   detectRuneword,
   effectiveStars,
   FORGE_KIND_LABEL,
@@ -14,6 +14,7 @@ import {
   getItem,
   getItemGrantedSkillByName,
   getItemSet,
+  isForgeSlot,
   skills,
 } from '@data'
 import { BONUS_SOCKET_MOD_ID } from '../store/itemRules'
@@ -34,6 +35,7 @@ import {
 } from '../utils/item/stats'
 import { descriptionWithoutValue } from '../utils/item/itemTextShared'
 import { collectSocketGroups } from '../utils/item/socketStats'
+import { SUBSKILL_BOOST_KEY } from '../utils/build/subskillBoost'
 import type { AffixValueOutput } from '../utils/calc/bridge'
 import type { TooltipTone } from './tooltipTones'
 
@@ -139,6 +141,7 @@ const RECOGNIZED_EFFECTS = new Set([
   'double jump',
   'herobound',
   'all skills class',
+  'mirrors your other ring',
 ])
 
 const NOT_SUPPORTED_FOOTNOTE = 'These mods are not yet calculated by the planner.'
@@ -211,9 +214,7 @@ export function buildItemTooltipModel(
   const socketGroups = equipped ? collectSocketGroups(equipped, base) : []
   const displayName = buildDisplayName(base, equipped, runeword)
   const equippedForgedMods = equipped?.forgedMods ?? []
-  const forgeKind = canStarForge(base.slot)
-    ? forgeKindFor(base.rarity)
-    : null
+  const forgeKind = isForgeSlot(base.slot) ? forgeKindFor(base.rarity) : null
 
   const sections: TooltipSectionModel[] = []
 
@@ -225,7 +226,11 @@ export function buildItemTooltipModel(
       textLine(
         key === RANDOM_ELEMENT_KEY
           ? `${formatValue(value, '')} ${randomElementLabel(equipped?.randomSkillElement)}`
-          : `${formatValue(value, key)} ${statName(key)}`,
+          : key === ALL_SKILLS_CLASS_KEY
+            ? `${formatValue(value, '')} ${allSkillsClassLabel(equipped?.allSkillsClassId)}`
+          : key === SUBSKILL_BOOST_KEY
+            ? `${formatValue(value, '')} ${subskillBoostLabel(equipped?.subskillBoostSkillId)}`
+            : `${formatValue(value, key)} ${statName(key)}`,
         'implicit',
         isCustom ? { badge: 'custom' } : undefined,
       ),
@@ -440,7 +445,7 @@ function buildTypeLine(
   equipped: EquippedItem | undefined,
   runeword: ReturnType<typeof detectRuneword>,
 ): string {
-  const stars = effectiveStars(base.slot, equipped?.stars) ?? 0
+  const stars = effectiveStars(base.slot, equipped?.stars, base.rarity) ?? 0
   const starSuffix = stars > 0 ? ` · ${'★'.repeat(stars)}` : ''
   const handSuffix =
     base.slot === 'weapon' ? (base.twoHanded ? ' · 2-Handed' : ' · 1-Handed') : ''
@@ -524,6 +529,21 @@ function randomSkillLabel(skillId: string | undefined): string {
 
 // Same idea for "+X to Random Skill Element": the element is the user's pick.
 const RANDOM_ELEMENT_KEY = 'random_skill_element'
+
+// "+[1-3] to All Skills (Class) (Any)": which class it rolled is the user's pick.
+export const ALL_SKILLS_CLASS_KEY = 'all_skills_class'
+
+function allSkillsClassLabel(classId: string | undefined): string {
+  if (!classId) return 'to All Skills (Class) (not rolled)'
+  const name = classes.find((c) => c.id === classId)?.name
+  return name ? `to All Skills (${name})` : 'to All Skills (Class)'
+}
+
+function subskillBoostLabel(skillId: string | undefined): string {
+  if (!skillId) return 'to Random Skill Sub Skills (not rolled)'
+  const name = skills.find((s) => s.id === skillId)?.name
+  return name ? `to ${name} Sub Skills` : 'to Random Skill Sub Skills'
+}
 
 function randomElementLabel(element: string | undefined): string {
   if (!element) return 'to Random Element Skills (not rolled)'

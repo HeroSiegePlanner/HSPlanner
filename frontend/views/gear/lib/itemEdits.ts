@@ -88,6 +88,34 @@ export function withRandomElement(
   return { ...item, randomSkillElement: element }
 }
 
+export function withSubskillBoost(
+  item: EquippedItem,
+  skillId: string | null,
+): EquippedItem {
+  if (skillId === null) {
+    if (!item.subskillBoostSkillId) return item
+    const { subskillBoostSkillId: _drop, ...rest } = item
+    void _drop
+    return rest
+  }
+  if (item.subskillBoostSkillId === skillId) return item
+  return { ...item, subskillBoostSkillId: skillId }
+}
+
+export function withAllSkillsClass(
+  item: EquippedItem,
+  classId: string | null,
+): EquippedItem {
+  if (classId === null) {
+    if (!item.allSkillsClassId) return item
+    const { allSkillsClassId: _drop, ...rest } = item
+    void _drop
+    return rest
+  }
+  if (item.allSkillsClassId === classId) return item
+  return { ...item, allSkillsClassId: classId }
+}
+
 export function withAffixAdded(
   item: EquippedItem,
   affixId: string,

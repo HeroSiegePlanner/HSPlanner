@@ -15,6 +15,7 @@ dist
 dist-ssr
 *.local
 engine/target/
+engine/models/
 /target/
 /crates/
 

@@ -1,23 +1,23 @@
 import { useMemo } from 'react'
-import { deriveDefenseInsights } from '../utils/build/ehp'
+import type { DefenseInsight } from '../utils/build/ehp'
 import { rangedMax } from '../utils/item/stats'
 import type { RangedValue } from '../types'
 
 interface EhpSummaryProps {
   stats: Record<string, RangedValue>
   statsCombined: Record<string, RangedValue>
+  insights: DefenseInsight[] | undefined
 }
 
 function fmtPct(value: number): number {
   return Math.round(value * 10) / 10
 }
 
-export function EhpSummary({ stats, statsCombined }: EhpSummaryProps) {
+export function EhpSummary({ stats, statsCombined, insights = [] }: EhpSummaryProps) {
   const merged = useMemo(
     () => ({ ...stats, ...statsCombined }),
     [stats, statsCombined],
   )
-  const insights = useMemo(() => deriveDefenseInsights(merged), [merged])
 
   const avoidance: string[] = []
   const block = rangedMax(merged['block_chance'] ?? 0)

@@ -46,5 +46,8 @@
   "two_handed_spell_projectile_damage": { "tags": ["Spell", "Projectile"], "effect": "none" },
 
   "ranged_projectile_damage": { "tags": ["Ranged", "Projectile"], "effect": "damage" },
-  "ranged_projectile_damage_more": { "tags": ["Ranged", "Projectile"], "effect": "damage_more" }
+  "ranged_projectile_damage_more": { "tags": ["Ranged", "Projectile"], "effect": "damage_more" },
+
+  "spell_damage": { "tags": ["Spell"], "effect": "damage" },
+  "spell_damage_more": { "tags": ["Spell"], "effect": "damage_more" }
 }

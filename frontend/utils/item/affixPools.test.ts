@@ -70,6 +70,8 @@ describe('affix-pools.json', () => {
       base('weapon', 'Sword'), base('weapon', 'Bow'), base('weapon', 'Wand'),
       base('potion_1', 'Potion'),
     ].map((b) => affixPoolTypeFor(b)!)
+    // Socketable = uncut jewels crafted for tree sockets, not a gear slot.
+    slots.push('Socketable')
     const unreachable = Object.entries(affixPools)
       .filter(([, types]) => types.length > 0 && !types.some((t) => slots.includes(t)))
       .map(([g]) => g)

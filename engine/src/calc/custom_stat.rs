@@ -1,10 +1,10 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use regex::Regex;
 
 use super::skills::Ranged;
 
-static RANGE_RE: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"^([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)$").unwrap());
+static RANGE_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^([+-]?\d+(?:\.\d+)?)\s*-\s*([+-]?\d+(?:\.\d+)?)$").unwrap());
 
 pub fn parse_custom_stat_value(raw: &str) -> Option<Ranged> {
     let stripped: String = raw

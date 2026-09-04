@@ -7,6 +7,8 @@ import type {
   BuildPerformanceDeps,
   PerSkillDps,
 } from '../../utils/build/buildPerformance'
+import type { DefenseInsight, EhpResult } from '../../utils/build/ehp'
+import type { SkillCost } from '../../utils/build/skillCost'
 import type {
   ComputedStats,
   SourceContribution,
@@ -54,7 +56,9 @@ export interface BuildPerformanceInput {
   procToggles?: Record<string, boolean>
   killsPerSec?: number
   entityRates?: Record<string, number>
+  stackCounts?: Record<string, number>
   season?: string
+  difficulty?: string
   grantedSkillRanks?: Record<string, [number, number]>
 }
 
@@ -83,6 +87,9 @@ export interface BuildPerformanceOutput {
   rankBonuses: Record<string, RustRanged>
   entityCount: RustRanged | null
   hitsPerCast: RustRanged | null
+  ehp: EhpResult
+  defenseInsights: DefenseInsight[]
+  skillCosts: Record<string, SkillCost>
 }
 
 async function computeBuildPerformanceNative(
@@ -109,7 +116,7 @@ function filterTreeSocketed(
   return out
 }
 
-function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
+export function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
   return {
     classId: deps.classId,
     level: deps.level,
@@ -130,6 +137,8 @@ function depsToInput(deps: BuildPerformanceDeps): BuildPerformanceInput {
     procToggles: deps.procToggles,
     killsPerSec: deps.killsPerSec,
     entityRates: deps.entityRates,
+    stackCounts: deps.stackCounts,
+    difficulty: deps.difficulty,
     season: deps.season ?? activeSeasonId,
     grantedSkillRanks: deps.grantedSkillRanks,
   }
@@ -169,6 +178,9 @@ function toLegacyBuildPerformance(
     rankBonuses: raw.rankBonuses,
     entityCount: raw.entityCount ?? undefined,
     hitsPerCast: raw.hitsPerCast ?? undefined,
+    ehp: raw.ehp,
+    defenseInsights: raw.defenseInsights,
+    skillCosts: raw.skillCosts,
   }
 }
 
@@ -302,6 +314,9 @@ interface BuildStatsRustOutput {
   skillScoped: Record<string, Record<string, RustRanged>>
   skillStatOverrides: Record<string, Record<string, RustRanged>>
   diminishedRaw: Record<string, RustRanged>
+  ehp: EhpResult
+  defenseInsights: DefenseInsight[]
+  skillCosts: Record<string, SkillCost>
 }
 
 function convertContribution(raw: RustSourceContribution): SourceContribution {
@@ -346,8 +361,12 @@ function toLegacyBuildStats(raw: BuildStatsRustOutput): ComputedStats {
     rankBonuses: raw.rankBonuses,
     skillScoped: toPerSkillRangedMap(raw.skillScoped),
     skillStatOverrides: toPerSkillRangedMap(raw.skillStatOverrides),
+    ehp: raw.ehp,
+    defenseInsights: raw.defenseInsights,
+    skillCosts: raw.skillCosts,
   }
 }
+
 
 export async function computeBuildStatsAsync(
   deps: BuildPerformanceDeps,

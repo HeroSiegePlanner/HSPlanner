@@ -6,6 +6,12 @@
   "talentPointsPerLevel": 1,
   "skillPointsPerLevel": 1,
   "levelsPerSubskillPoint": 5,
+  "difficulties": [
+    { "id": "normal", "name": "Normal", "resistPenalty": 0 },
+    { "id": "nightmare", "name": "Nightmare", "resistPenalty": -10 },
+    { "id": "hell", "name": "Hell", "resistPenalty": -45 },
+    { "id": "inferno", "name": "Inferno", "resistPenalty": -85 }
+  ],
   "diminishingReturns": {
     "gold_find": { "threshold": 200, "power": 0.75 },
     "movement_speed": { "threshold": 200, "power": 0.86, "cap": 600 },
@@ -61,6 +67,18 @@
     "energy": { "mana_replenish": 6 },
     "vitality": { "life_replenish": 8 }
   },
+  "stackTypes": [
+    {
+      "key": "rage",
+      "name": "Rage",
+      "maxStat": "max_rage_stacks",
+      "perStack": { "increased_attack_speed": 5 },
+      "perStackStats": {
+        "damage_per_rage_stack": "enhanced_damage",
+        "ranged_damage_per_rage_stack": "ranged_projectile_damage"
+      }
+    }
+  ],
   "attributes": [
     { "key": "strength", "name": "Strength" },
     { "key": "dexterity", "name": "Dexterity" },
@@ -159,6 +177,24 @@
       "key": "light_radius",
       "name": "Light Radius",
       "category": "base",
+      "format": "flat"
+    },
+    {
+      "key": "light_radius_pct",
+      "name": "Increased Light Radius",
+      "category": "base",
+      "format": "percent"
+    },
+    {
+      "key": "magic_skill_damage_per_light_radius",
+      "name": "Magic Skill Damage per point in Light Radius",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "flat_magic_skill_damage_per_light_radius",
+      "name": "Flat Magic Skill Damage per point in Light Radius",
+      "category": "offense",
       "format": "flat"
     },
     {
@@ -3663,6 +3699,22 @@
       "skillScoped": true
     },
     {
+      "key": "single_target_hit_cap",
+      "name": "Hits per Target Cap",
+      "category": "offense",
+      "format": "flat",
+      "description": "At most this many projectiles of a fan or arc reach one target.",
+      "skillScoped": true
+    },
+    {
+      "key": "extra_volleys_pct",
+      "name": "Extra Volleys",
+      "category": "offense",
+      "format": "percent",
+      "description": "Expected extra repeats of the whole volley (waves), on top of the first.",
+      "skillScoped": true
+    },
+    {
       "key": "skill_range",
       "name": "Skill Range",
       "category": "offense",
@@ -3990,6 +4042,12 @@
       "key": "sentry_attack_rate_fixed",
       "name": "Sentry Attack Rate",
       "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "all_skills_class",
+      "name": "All Skills (Class)",
+      "category": "base",
       "format": "flat"
     },
     {

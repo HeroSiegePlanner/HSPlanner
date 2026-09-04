@@ -10,6 +10,7 @@ import ItemBlessingsPanel from './config/ItemBlessingsPanel'
 import ResistancesPanel from './config/ResistancesPanel'
 import SkillProjectilesPanel from './config/SkillProjectilesPanel'
 import EntityRatePanel from './config/EntityRatePanel'
+import StacksPanel from './config/StacksPanel'
 import CustomStatsPanel from './config/CustomStatsPanel'
 
 export default function ConfigView() {
@@ -53,6 +54,7 @@ export default function ConfigView() {
             <ActiveAuraPanel />
             <ProcsPanel />
             <ItemBlessingsPanel />
+            <StacksPanel />
             <EntityRatePanel />
           </div>
           <div className="space-y-4">

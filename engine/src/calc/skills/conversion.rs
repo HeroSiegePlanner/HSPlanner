@@ -1,4 +1,4 @@
-use super::{AttrMap, StatMap, r_max, rg};
+use super::{r_max, rg, AttrMap, StatMap};
 
 /// Where a `conversion_*` subtree note takes its value from.
 pub enum Source {
@@ -22,6 +22,8 @@ pub enum Mode {
     Flat,
     /// `pct%` per full 500 points of the source becomes additive skill damage.
     Per500,
+    /// `pct%` per unit of the source becomes additive skill damage.
+    PctPerUnit,
 }
 
 /// Resolved once from `mapping.json` -> `conversionSources`. A key carries one
@@ -79,10 +81,12 @@ pub const CONVERSIONS: &[(&str, Source, Mode)] = &[
         Source::Stat("damage_return"),
         Mode::Flat,
     ),
+    // "One massive hydra scaling with the maximum amount": +pct% per entity the
+    // build could field; build.rs pins such a skill to a single entity.
     (
         "conversion_summon_count",
         Source::EntityCount,
-        Mode::Flat,
+        Mode::PctPerUnit,
     ),
     ("conversion_summon_life", Source::Unresolved, Mode::Flat),
     ("conversion_skill_damage", Source::OwnDamage, Mode::Flat),
@@ -105,14 +109,18 @@ fn source_value(
     match source {
         Source::Attribute(key) => Some(r_max(rg(attributes, key))),
         Source::Stat(key) => Some(r_max(rg(stats, key))),
-        Source::EntityCount => Some(
-            crate::calc::affix_tags::sum_for(
-                crate::calc::types::AffixEffect::MaxAmount,
-                tags,
-                stats,
+        Source::EntityCount => {
+            crate::calc::affix_tags::entity_tag_for(tags)?;
+            Some(
+                1.0 + crate::calc::affix_tags::sum_for(
+                    crate::calc::types::AffixEffect::MaxAmount,
+                    tags,
+                    stats,
+                )
+                .1
+                .max(0.0),
             )
-            .1,
-        ),
+        }
         Source::EffectiveAttackSpeed => Some(
             r_max(rg(stats, "attacks_per_second"))
                 * (1.0 + r_max(rg(stats, "increased_attack_speed")) / 100.0)
@@ -146,6 +154,7 @@ pub fn resolve(
         match mode {
             Mode::Flat => out.flat += pct / 100.0 * value,
             Mode::Per500 => out.skill_damage_pct += pct * (value / 500.0).floor(),
+            Mode::PctPerUnit => out.skill_damage_pct += pct * value,
         }
     }
     out
@@ -214,7 +223,10 @@ mod tests {
     #[test]
     fn per500_and_flat_life_conversions_do_not_share_a_key() {
         let out = resolve(
-            &map(&[("conversion_max_life", 10.0), ("conversion_max_life_per500", 6.0)]),
+            &map(&[
+                ("conversion_max_life", 10.0),
+                ("conversion_max_life_per500", 6.0),
+            ]),
             &AttrMap::new(),
             &map(&[("life", 1000.0)]),
         );
@@ -298,11 +310,16 @@ mod tests {
     fn summon_count_conversion_reads_the_skill_s_own_entity() {
         let scoped = map(&[("conversion_summon_count", 10.0)]);
         let stats = map(&[("sentry_max_amount", 16.0), ("summon_max_amount", 4.0)]);
+        // +10% per entity the build could field, the base one included.
         let sentry = super::resolve(&scoped, &AttrMap::new(), &stats, &["Sentry".into()]);
-        assert_eq!(sentry.flat, 1.6, "a Sentry skill counts sentries, not summons");
+        assert_eq!(
+            sentry.skill_damage_pct, 170.0,
+            "a Sentry skill counts sentries, not summons"
+        );
+        assert_eq!(sentry.flat, 0.0);
         let summon = super::resolve(&scoped, &AttrMap::new(), &stats, &["Summon".into()]);
-        assert_eq!(summon.flat, 0.4);
+        assert_eq!(summon.skill_damage_pct, 50.0);
         let neither = super::resolve(&scoped, &AttrMap::new(), &stats, &[]);
-        assert_eq!(neither.flat, 0.0);
+        assert_eq!(neither, Conversions::default());
     }
 }

@@ -2,13 +2,22 @@ use super::*;
 use std::borrow::Cow;
 
 const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
+const ALL_SKILLS_CLASS_KEY: &str = "all_skills_class";
 
-// "+X to Random Skill Element" only lands once the user picks the element.
-fn resolved_stat_key<'a>(stat_key: &'a str, element: Option<&str>) -> Option<Cow<'a, str>> {
-    if stat_key != RANDOM_ELEMENT_KEY {
-        return Some(Cow::Borrowed(stat_key));
+// Rolled keys stay inert until the user says what the item landed on.
+// The resolved all_skills_{class} only pays out for a build of that class.
+fn resolved_stat_key<'a>(
+    stat_key: &'a str,
+    element: Option<&str>,
+    all_skills_class: Option<&str>,
+) -> Option<Cow<'a, str>> {
+    match stat_key {
+        RANDOM_ELEMENT_KEY => element.map(|e| Cow::Owned(format!("{e}_skills"))),
+        ALL_SKILLS_CLASS_KEY => {
+            all_skills_class.map(|c| Cow::Owned(format!("all_skills_{c}")))
+        }
+        _ => Some(Cow::Borrowed(stat_key)),
     }
-    element.map(|e| Cow::Owned(format!("{e}_skills")))
 }
 
 // ---------- inventory loop ----------
@@ -22,18 +31,22 @@ pub fn apply_inventory(
 ) -> bool {
     let mut weapon_has_attack_speed = false;
 
-    for (slot_key, item) in inventory.iter() {
+    for (slot_key, item, is_mirror) in data::inventory_entries(inventory) {
         let Some(base) = data::get_item(&item.base_id) else {
             continue;
         };
-        let item_name = base.name.clone();
+        let item_name = if is_mirror {
+            format!("{} (mirrored)", base.name)
+        } else {
+            base.name.clone()
+        };
 
         // Runeword suppresses per-socket gem contributions and implicit scaling.
         let socketed_refs: Vec<Option<&str>> =
             item.socketed.iter().map(|s| s.as_deref()).collect();
         let runeword = data::detect_runeword(base, &socketed_refs);
         let scale_implicit = runeword.is_none();
-        let can_sf = data::can_star_forge(slot_key);
+        let can_sf = data::can_star_forge(slot_key, &base.rarity);
         let effective_stars: Option<u32> = if can_sf { item.stars } else { None };
 
         let aps_in_implicit = base
@@ -84,7 +97,11 @@ pub fn apply_inventory(
                 // random_skill_element resolves to {element}_skills below.
                 let raw_key = stat_key.as_str();
                 let Some(stat_key) =
-                    resolved_stat_key(stat_key, item.random_skill_element.as_deref())
+                    resolved_stat_key(
+                    stat_key,
+                    item.random_skill_element.as_deref(),
+                    item.all_skills_class_id.as_deref(),
+                )
                 else {
                     continue;
                 };
@@ -157,7 +174,11 @@ pub fn apply_inventory(
             let Some(stat_key) = affix.stat_key.as_deref() else {
                 continue;
             };
-            let Some(stat_key) = resolved_stat_key(stat_key, item.random_skill_element.as_deref())
+            let Some(stat_key) = resolved_stat_key(
+                stat_key,
+                item.random_skill_element.as_deref(),
+                item.all_skills_class_id.as_deref(),
+            )
             else {
                 continue;
             };

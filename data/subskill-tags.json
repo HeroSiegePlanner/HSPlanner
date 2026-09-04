@@ -1873,5 +1873,12 @@
         "Projectile"
       ]
     }
+  },
+  "frost_sunder": {
+    "frost_sunder_onslaught": {
+      "add": [
+        "Explosion"
+      ]
+    }
   }
 }

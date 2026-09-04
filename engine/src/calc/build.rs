@@ -3,14 +3,18 @@ use std::collections::{HashMap, HashSet};
 use serde::Serialize;
 
 use super::data;
+use super::defense::{DefenseInsight, EhpResult};
 use super::rank::normalize_skill_name;
+use super::skill_cost::SkillCost;
 use super::skills::{
+    ailment, compute_attack_skill_damage, compute_skill_damage, conversion, r_max, r_min, rg,
     AttackKind, AttackSkillDamageBreakdown, AttackSkillInput, AttackSkillScaling, BonusSource,
-    DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput, StatMap,
-    Weapon, ailment, compute_attack_skill_damage, compute_skill_damage, conversion, r_max, r_min,
-    rg,
+    DamageFormula, DamageRow, Ranged, Skill as CalcSkill, SkillDamageBreakdown, SkillInput,
+    StatMap, Weapon,
 };
-use super::stats::{BuildStatsInput, ComputedStats, combine_additive_and_more, compute_build_stats};
+use super::stats::{
+    combine_additive_and_more, compute_build_stats, BuildStatsInput, ComputedStats,
+};
 use super::subskill::subskill_key;
 use super::types::{CustomStat, Inventory, SkillKind, SkillSpec, TreeSocketContent};
 
@@ -45,10 +49,12 @@ pub struct BuildPerformanceDeps<'a> {
     /// values, so they are Config knobs - one per kind, they are not the same
     /// thing.
     pub entity_rates: &'a HashMap<String, f64>,
+    pub stack_counts: &'a HashMap<String, u32>,
     pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
+    pub difficulty: Option<&'a str>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BuildPerformance {
     pub attributes: HashMap<String, Ranged>,
@@ -79,6 +85,9 @@ pub struct BuildPerformance {
     /// How many times one cast hits the same target. Already folded into the DPS;
     /// exported so views can show it. `None` when the skill hits once.
     pub hits_per_cast: Option<Ranged>,
+    pub ehp: EhpResult,
+    pub defense_insights: Vec<DefenseInsight>,
+    pub skill_costs: HashMap<String, SkillCost>,
 }
 
 fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
@@ -134,6 +143,17 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
     }
 }
 
+/// Hits one target takes from a volley. A fan or arc lands only a couple of
+/// its projectiles on a single enemy (`single_target_hit_cap`), and a wave
+/// proc repeats the whole volley (`extra_volleys_pct`, already chance-weighted).
+fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> u32 {
+    let boosted = base + subtree_stat("projectile_count") as u32;
+    let cap = subtree_stat("single_target_hit_cap") as u32;
+    let capped = if cap > 0 { boosted.min(cap) } else { boosted };
+    // ponytail: whole hits; go f64 if a 1-projectile skill ever takes a wave node
+    (capped as f64 * (1.0 + subtree_stat("extra_volleys_pct") / 100.0)).round() as u32
+}
+
 /// Hits one target takes per cast. The damage object clears its hit list every
 /// `tickFrequency`, so it lands `floor(lifetime / tick) + 1` hits on a target that
 /// stays in range. Objects the game kills by animation or alarm have no extracted
@@ -184,39 +204,84 @@ struct ProcContext<'a> {
     skill_ranks: &'a HashMap<String, u32>,
     all_class_skills: &'a [SkillSpec],
     empty_scoped: &'a StatMap,
+    subskill_ranks: &'a HashMap<String, u32>,
+    main_skill_id: Option<&'a str>,
+}
+
+/// Mirrored in frontend/views/config/itemProcRows.ts — both sides must agree.
+pub fn item_cast_toggle_key(base_id: &str, target_name_norm: &str) -> String {
+    format!("cast:{base_id}:{target_name_norm}")
 }
 
 fn proc_target_damage(
     ctx: &ProcContext<'_>,
     target_name_norm: &str,
+    rank_override: Option<f64>,
 ) -> Option<SkillDamageBreakdown> {
     let target_calc = ctx.skills_by_name.get(target_name_norm)?;
     let target_spec = ctx
         .all_class_skills
         .iter()
         .find(|s| normalize_skill_name(&s.name) == target_name_norm)?;
-    let target_rank = ctx.skill_ranks.get(&target_spec.id).copied().unwrap_or(0);
-    if target_rank == 0 {
-        return None;
-    }
+    let rank = match rank_override {
+        Some(r) => r,
+        None => match ctx.skill_ranks.get(&target_spec.id).copied().unwrap_or(0) {
+            0 => return None,
+            r => r as f64,
+        },
+    };
+    // Points spent in the target's own subtree count. Only the main skill hands
+    // its shared subtree stats to the global pool, so any other target gets the
+    // whole aggregation folded into its own stats instead of double counting.
+    let is_main = ctx.main_skill_id == Some(target_spec.id.as_str());
+    let subtree: StatMap = if is_main {
+        ctx.computed
+            .skill_scoped
+            .get(&target_spec.id)
+            .cloned()
+            .unwrap_or_default()
+    } else {
+        let owner = super::stats::skill_spec_to_subskill_owner(target_spec);
+        super::subskill::aggregate_subskill_stats(
+            &owner,
+            ctx.subskill_ranks,
+            Some(ctx.enemy_conditions),
+        )
+        .stats
+        .into_iter()
+        .map(|(k, v)| (k, (v, v)))
+        .collect()
+    };
+    let merged_stats: Option<StatMap> = (!is_main && !subtree.is_empty()).then(|| {
+        let mut merged = ctx.computed.stats.clone();
+        for (k, v) in subtree.iter() {
+            let cur = merged.get(k).copied().unwrap_or((0.0, 0.0));
+            merged.insert(k.clone(), (cur.0 + v.0, cur.1 + v.1));
+        }
+        merged
+    });
+    let stats: &StatMap = merged_stats.as_ref().unwrap_or(&ctx.computed.stats);
+    let scoped: &StatMap = if is_main { &subtree } else { ctx.empty_scoped };
+    let subtree_stat = |key: &str| -> f64 { r_max(rg(&subtree, key)).max(0.0) };
     let input = SkillInput {
         skill: target_calc,
-        allocated_rank: target_rank as f64,
+        allocated_rank: rank,
         attributes: &ctx.computed.attributes,
-        stats: &ctx.computed.stats,
+        stats,
         skill_ranks_by_name: ctx.skill_ranks_by_name,
         item_skill_bonuses: ctx.item_skill_bonuses,
         enemy_conditions: ctx.enemy_conditions,
         enemy_resistances: ctx.enemy_resistances,
         skills_by_name: ctx.skills_by_name,
-        projectile_count: ctx
-            .skill_projectiles
-            .get(&target_spec.id)
-            .copied()
-            .unwrap_or(1),
-        // Proc targets are not the active skill, so no subtree of their own.
-        of_total_damage: 0.0,
-        scoped: ctx.empty_scoped,
+        projectile_count: effective_projectile_count(
+            ctx.skill_projectiles
+                .get(&target_spec.id)
+                .copied()
+                .unwrap_or(1),
+            &subtree_stat,
+        ),
+        of_total_damage: subtree_stat("of_total_damage"),
+        scoped,
         conversion_flat: 0.0,
         conversion_skill_damage_pct: 0.0,
     };
@@ -238,8 +303,11 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         player_conditions: deps.player_conditions,
         subskill_ranks: deps.subskill_ranks,
         enemy_conditions: deps.enemy_conditions,
+        stack_counts: deps.stack_counts,
         granted_skill_ranks: deps.granted_skill_ranks,
         main_skill_id: deps.main_skill_id,
+        difficulty: deps.difficulty,
+        entity_rates: deps.entity_rates,
     };
     let computed = compute_build_stats(&stats_input);
 
@@ -280,33 +348,31 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .and_then(|id| computed.skill_scoped.get(id))
         .unwrap_or(&empty_scoped);
     let subtree_stat = |key: &str| -> f64 { r_max(rg(main_scoped, key)).max(0.0) };
-    let active_projectile_boost: u32 = subtree_stat("projectile_count") as u32;
     let active_of_total_damage: f64 = subtree_stat("of_total_damage");
     let effective_projectiles: Option<u32> = active_skill.map(|s| {
-        let base = deps.skill_projectiles.get(&s.id).copied().unwrap_or(1);
-        base + active_projectile_boost
+        let base = deps
+            .skill_projectiles
+            .get(&s.id)
+            .copied()
+            .unwrap_or_else(|| s.base_projectiles.unwrap_or(1));
+        effective_projectile_count(base, &subtree_stat)
     });
 
-    let active_calc_skill: Option<&CalcSkill> = active_skill
-        .and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
+    let active_calc_skill: Option<&CalcSkill> =
+        active_skill.and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
     // Subskill transmutations rewrite the main skill's tags (e.g. Ancient
     // Device turns Death from Above into a Sentry).
     let effective_skill: Option<CalcSkill> = match (active_skill, active_calc_skill) {
         (Some(spec), Some(calc_skill)) => {
             let mut skill = calc_skill.clone();
-            skill.tags = super::subskill::effective_skill_tags(
-                &spec.id,
-                &skill.tags,
-                deps.subskill_ranks,
-            );
+            skill.tags =
+                super::subskill::effective_skill_tags(&spec.id, &skill.tags, deps.subskill_ranks);
             Some(skill)
         }
         _ => None,
     };
     let active_calc_skill: Option<&CalcSkill> = effective_skill.as_ref();
-    let is_attack_skill = active_calc_skill
-        .and_then(|s| s.attack_kind)
-        == Some(AttackKind::Attack);
+    let is_attack_skill = active_calc_skill.and_then(|s| s.attack_kind) == Some(AttackKind::Attack);
 
     let weapon_for_attack: Option<Weapon> = is_attack_skill
         .then(|| {
@@ -390,59 +456,49 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     let entity_kind = super::affix_tags::entity_tag_for(entity_tags);
     let is_entity = entity_kind.is_some();
     // Explosive Kunai is thrown at weapon attack speed; FCR never touches it.
-    let (base_rate, rate_bonus) = if let Some(kind) = entity_kind {
-        // The entity swings on its own cadence: config base rate scaled by its
-        // own attack-speed stats. Player FCR / attack speed stay out of it.
-        let kind_key = kind.to_lowercase();
-        // A subskill can pin the entity to a literal rate (C.Y.C.L.O.P.S. lasers
-        // tick 4/s); pinned means pinned, so knob and speed bonuses drop out.
-        let fixed = r_max(stat(&format!("{kind_key}_attack_rate_fixed")));
-        if fixed > 0.0 {
-            (Some(fixed), (0.0, 0.0))
-        } else {
-            let bonus = super::affix_tags::sum_for(
-                super::types::AffixEffect::AttackSpeed,
-                entity_tags,
-                &computed.stats,
-            );
-            let rate = deps
-                .entity_rates
-                .get(&kind_key)
-                .copied()
-                .unwrap_or(DEFAULT_ENTITY_RATE);
-            (Some(rate), bonus)
-        }
-    } else if active_skill.is_some_and(|s| s.uses_attack_speed) {
-        (
-            Some(r_max(stat("attacks_per_second"))),
-            combine_additive_and_more(
-                stat("increased_attack_speed"),
-                stat("increased_attack_speed_more"),
-            ),
-        )
-    } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
-        // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
-        (
-            active_skill.and_then(|s| {
-                s.base_cooldown
-                    .filter(|cd| *cd > 0.0)
-                    .map(|cd| 1.0 / cd)
-                    .or(s.base_cast_rate)
-            }),
-            stat("skill_haste"),
-        )
+    let (eff_cast_min, eff_cast_max) = if let Some(kind) = entity_kind {
+        // The entity swings on its own cadence; player FCR / attack speed stay out of it.
+        let swing =
+            super::skill_cost::entity_rate(kind, entity_tags, &computed.stats, deps.entity_rates);
+        (Some(swing.min), Some(swing.max))
     } else {
+        let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
+            (
+                Some(r_max(stat("attacks_per_second"))),
+                combine_additive_and_more(
+                    stat("increased_attack_speed"),
+                    stat("increased_attack_speed_more"),
+                ),
+            )
+        } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
+            // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
+            (
+                active_skill.and_then(|s| {
+                    s.base_cooldown
+                        .filter(|cd| *cd > 0.0)
+                        .map(|cd| 1.0 / cd)
+                        .or(s.base_cast_rate)
+                }),
+                stat("skill_haste"),
+            )
+        } else {
+            (
+                active_skill.and_then(|s| s.base_cast_rate),
+                combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
+            )
+        };
         (
-            active_skill.and_then(|s| s.base_cast_rate),
-            combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
+            base_rate.map(|r| r * (1.0 + rate_bonus.0 / 100.0)),
+            base_rate.map(|r| r * (1.0 + rate_bonus.1 / 100.0)),
         )
     };
-    let eff_cast_min = base_rate.map(|r| r * (1.0 + rate_bonus.0 / 100.0));
-    let eff_cast_max = base_rate.map(|r| r * (1.0 + rate_bonus.1 / 100.0));
 
     // Sentries, summons and guardians are counted apart: each entity the skill
     // fields is a full extra DPS source.
-    let (count_min, count_max) = if is_entity {
+    // A "one massive X scaling with the maximum amount" note fields a single
+    // entity; the count feeds its damage through conversion_summon_count instead.
+    let is_single_entity = subtree_stat("conversion_summon_count") > 0.0;
+    let (count_min, count_max) = if is_entity && !is_single_entity {
         let extra = super::affix_tags::sum_for(
             super::types::AffixEffect::MaxAmount,
             entity_tags,
@@ -464,31 +520,30 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         ),
     );
 
-    let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max) = if let Some(ad) =
-        attack_damage.as_ref()
-    {
-        (
-            Some(ad.combined_hit_min as f64 * ad.attacks_per_second_min),
-            Some(ad.combined_hit_max as f64 * ad.attacks_per_second_max),
-            Some(ad.combined_avg_min as f64 * ad.attacks_per_second_min),
-            Some(ad.combined_avg_max as f64 * ad.attacks_per_second_max),
-        )
-    } else {
-        (
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_min.map(|c| d.final_min as f64 * c)),
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_max.map(|c| d.final_max as f64 * c)),
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_min.map(|c| d.avg_min as f64 * c)),
-            damage
-                .as_ref()
-                .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c)),
-        )
-    };
+    let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max) =
+        if let Some(ad) = attack_damage.as_ref() {
+            (
+                Some(ad.combined_hit_min as f64 * ad.attacks_per_second_min),
+                Some(ad.combined_hit_max as f64 * ad.attacks_per_second_max),
+                Some(ad.combined_avg_min as f64 * ad.attacks_per_second_min),
+                Some(ad.combined_avg_max as f64 * ad.attacks_per_second_max),
+            )
+        } else {
+            (
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_min.map(|c| d.final_min as f64 * c)),
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_max.map(|c| d.final_max as f64 * c)),
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_min.map(|c| d.avg_min as f64 * c)),
+                damage
+                    .as_ref()
+                    .and_then(|d| eff_cast_max.map(|c| d.avg_max as f64 * c)),
+            )
+        };
     let hit_dps_min = hit_dps_min.map(|v| v * count_min * hits_min);
     let hit_dps_max = hit_dps_max.map(|v| v * count_max * hits_max);
     let avg_hit_dps_min = avg_hit_dps_min.map(|v| v * count_min * hits_min);
@@ -505,6 +560,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         skill_ranks: deps.skill_ranks,
         all_class_skills,
         empty_scoped: &empty_scoped,
+        subskill_ranks: deps.subskill_ranks,
+        main_skill_id: deps.main_skill_id,
     };
     let mut proc_dps_min: f64 = 0.0;
     let mut proc_dps_max: f64 = 0.0;
@@ -525,7 +582,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
             continue;
         }
         let target_name = normalize_skill_name(&proc.target);
-        let Some(target_dmg) = proc_target_damage(&ctx, &target_name) else {
+        let Some(target_dmg) = proc_target_damage(&ctx, &target_name, None) else {
             continue;
         };
         let rate = if proc.trigger == "on_kill" {
@@ -550,12 +607,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 continue;
             };
             let toggle_key = subskill_key(&owner_skill.id, &sub.id);
-            if !deps
-                .proc_toggles
-                .get(&toggle_key)
-                .copied()
-                .unwrap_or(false)
-            {
+            if !deps.proc_toggles.get(&toggle_key).copied().unwrap_or(false) {
                 continue;
             }
             let sub_rank = deps.subskill_ranks.get(&toggle_key).copied().unwrap_or(0);
@@ -563,7 +615,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 continue;
             }
             let target_name = normalize_skill_name(sub_target);
-            let Some(target_dmg) = proc_target_damage(&ctx, &target_name) else {
+            let Some(target_dmg) = proc_target_damage(&ctx, &target_name, None) else {
                 continue;
             };
             let chance = sub_proc.chance.base.unwrap_or(0.0)
@@ -581,6 +633,37 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
 
     // Item procs fire on this ICD even when their listed cooldown is shorter.
     const ITEM_PROC_ICD_SECS: f64 = 1.5;
+
+    // "18% Chance on Hit to cast Breath of Ice Level 60": the item casts a class
+    // skill at its own level, independent of the rank the build put into it.
+    for eq in deps.inventory.values() {
+        let Some(base) = data::get_item(&eq.base_id) else {
+            continue;
+        };
+        for proc in base.procs.as_deref().unwrap_or(&[]) {
+            let (Some(target), Some(level)) = (proc.target.as_ref(), proc.cast_level) else {
+                continue;
+            };
+            let target_name = normalize_skill_name(target);
+            let toggle_key = item_cast_toggle_key(&eq.base_id, &target_name);
+            if !deps.proc_toggles.get(&toggle_key).copied().unwrap_or(false) {
+                continue;
+            }
+            let Some(target_dmg) = proc_target_damage(&ctx, &target_name, Some(level as f64))
+            else {
+                continue;
+            };
+            let rate = if proc.trigger == "on_kill" {
+                deps.kills_per_sec
+            } else {
+                1.0
+            };
+            let factor = (rate * (proc.chance / 100.0)).min(1.0 / ITEM_PROC_ICD_SECS);
+            proc_dps_min += factor * target_dmg.avg_min as f64;
+            proc_dps_max += factor * target_dmg.avg_max as f64;
+        }
+    }
+
     {
         // ponytail: no ignore_res / crit parity with class skills — add when a proc build cares.
         let granted_ranks = &computed.item_granted_ranks;
@@ -634,7 +717,8 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         (None, Some(d)) => (d.avg_min as f64, d.avg_max as f64),
         _ => (0.0, 0.0),
     };
-    let apply_chances = subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
+    let apply_chances =
+        subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
     // A per-hit apply chance only becomes uptime once you know how often the
     // build lands a hit: every entity swinging on its own counts.
     let (rate_min, rate_max) = match attack_damage.as_ref() {
@@ -661,7 +745,11 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
     // Execution shortens the kill by the bottom `t%` of the life bar, so the
     // effective DPS rises by 1/(1 - t). Bosses cannot be executed.
     let execute_below = subtree_stat("execute_below").clamp(0.0, EXECUTE_MAX_PCT);
-    let is_boss = deps.enemy_conditions.get("is_boss").copied().unwrap_or(false);
+    let is_boss = deps
+        .enemy_conditions
+        .get("is_boss")
+        .copied()
+        .unwrap_or(false);
     let execute_mult = if is_boss || execute_below == 0.0 {
         1.0
     } else {
@@ -703,6 +791,9 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         rank_bonuses: computed.rank_bonuses,
         entity_count: is_entity.then_some((count_min, count_max)),
         hits_per_cast: (hits_max > 1.0).then_some((hits_min, hits_max)),
+        ehp: computed.ehp,
+        defense_insights: computed.defense_insights,
+        skill_costs: computed.skill_costs,
     }
 }
 

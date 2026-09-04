@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import type * as BridgeModule from '../calc/bridge'
 import type { BuildPerformance } from './buildPerformance'
-import type { SustainStats } from './sustainStats'
+import type { SkillCost } from './skillCost'
 import type { Skill } from '../../types'
 
 const FAKE_PERFORMANCE: BuildPerformance = {
@@ -22,17 +22,26 @@ const FAKE_PERFORMANCE: BuildPerformance = {
   itemSkillBonuses: {},
   rankBonuses: {},
   perSkill: [],
+  ehp: { entries: [], worst: null },
+  defenseInsights: [],
+  skillCosts: {},
 }
 
-const FAKE_SUSTAIN: SustainStats = {
+const FAKE_COST: SkillCost = {
   effRankMin: 3,
   effRankMax: 3,
-  effManaMin: 20,
-  effManaMax: 20,
-  lifePerCastMin: 0,
-  lifePerCastMax: 0,
-  effCastMin: 1.2,
-  effCastMax: 1.2,
+  baseManaMin: 20,
+  baseManaMax: 20,
+  mcrMax: 0,
+  baseRate: 1.2,
+  speedMax: 0,
+  manaMin: 20,
+  manaMax: 20,
+  lifeMin: 0,
+  lifeMax: 0,
+  castRateMin: 1.2,
+  castRateMax: 1.2,
+  entityRate: null,
   manaPerSecMin: 24,
   manaPerSecMax: 24,
   manaRegenMin: 30,
@@ -57,12 +66,7 @@ vi.mock('../calc/bridge', async (importOriginal) => {
   }
 })
 
-vi.mock('./sustainStats', () => ({
-  computeSustainStats: vi.fn(async () => FAKE_SUSTAIN),
-}))
-
 import { buildSharePayload } from './webShare'
-import { manaCostAtRank } from './manaCost'
 import { sharePayloadSchema, MAX_TITLE_LENGTH, type SharePayload, type SkillItem } from './sharePayload'
 import { createBuild } from './savedBuilds'
 import { encodeBuildToShare, type BuildSnapshot } from './shareBuild'
@@ -135,6 +139,10 @@ const treeOf = (s: Skill): string => s.tree ?? 'General'
 describe('buildSharePayload', () => {
   it('produces a schema-valid payload with the library title, tags and one profile', async () => {
     const snapshot = minimalSnapshot(CLASS_ID!)
+    perf.mockResolvedValueOnce({
+      ...FAKE_PERFORMANCE,
+      skillCosts: { [snapshot.activeSkillIds[0]!]: FAKE_COST },
+    })
     const code = encodeBuildToShare(snapshot, 'Test notes')
     const saved = createBuild('My Test Build', snapshot, undefined, 'Test notes', null)
     saved.tags = ['HC']
@@ -347,6 +355,7 @@ describe('buildSharePayload', () => {
         { id: manaActive.id, name: manaActive.name, hitDpsMin: 1e9, hitDpsMax: 1e9 },
         { id: otherActive.id, name: otherActive.name, hitDpsMin: 2e9, hitDpsMax: 2e9 },
       ],
+      skillCosts: { [manaActive.id]: { ...FAKE_COST, baseManaMin: 12, baseManaMax: 12 } },
     })
 
     const payload = await buildSharePayload(saved)
@@ -358,7 +367,7 @@ describe('buildSharePayload', () => {
     expect(mainDps?.tone).toBe('gold')
     expect(mainDps?.glow).toBe(true)
     expect(rowByLabel(manaActive.name, 'Mana / cast')).toMatchObject({
-      value: String(manaCostAtRank(manaActive, 8)),
+      value: '12',
       tone: 'blue',
     })
 

@@ -1,25 +1,15 @@
-import { affixes } from '@data'
+import { affixPools, affixes } from '@data'
 import type { Affix } from '../../types'
 
-const SKILL_MULTIPLIER_KEYS = new Set([
-  'all_skills',
-  'arcane_skills',
-  'cold_skills',
-  'explosion_skills',
-  'fire_skills',
-  'lightning_skills',
-  'physical_skills',
-  'poison_skills',
-  'summon_skills',
-])
-
-function isJewelEligibleAffix(a: Affix): boolean {
-  if (!a.statKey) return false
-  if (SKILL_MULTIPLIER_KEYS.has(a.statKey)) return false
-  return true
+// Uncut jewels roll the game's "Socketable" pool: the same affix families as
+// gear, but with their own far lower ranges (data/affix-pools.json).
+export function isJewelAffix(a: Affix): boolean {
+  return affixPools[a.groupId]?.includes('Socketable') ?? false
 }
 
-export const JEWEL_AFFIX_POOL: Affix[] = affixes.filter(isJewelEligibleAffix)
+export const JEWEL_AFFIX_POOL: Affix[] = affixes.filter(
+  (a) => isJewelAffix(a) && !!a.statKey,
+)
 
 export const JEWEL_AFFIX_POOL_BY_GROUP: Map<string, Affix[]> = (() => {
   const m = new Map<string, Affix[]>()

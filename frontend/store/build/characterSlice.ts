@@ -1,15 +1,17 @@
 import type { StateCreator } from 'zustand'
 import { classes, gameConfig } from '@data'
-import { attrPointsFor, emptyAllocation } from './helpers'
+import { attrPointsFor, DEFAULT_DIFFICULTY, emptyAllocation } from './helpers'
 import type { BuildStore } from './types'
 
 type CharacterSlice = Pick<
   BuildStore,
   | 'classId'
   | 'level'
+  | 'difficulty'
   | 'allocated'
   | 'setClass'
   | 'setLevel'
+  | 'setDifficulty'
   | 'incAttr'
   | 'decAttr'
   | 'resetAttrs'
@@ -23,6 +25,7 @@ export const createCharacterSlice: StateCreator<
 > = (set, get) => ({
   classId: classes[0]?.id ?? null,
   level: 1,
+  difficulty: DEFAULT_DIFFICULTY,
   allocated: emptyAllocation(),
 
   // class-bound state resets, but the saved-build binding (and its notes) must survive
@@ -47,6 +50,8 @@ export const createCharacterSlice: StateCreator<
     const clamped = Math.max(1, Math.min(gameConfig.maxCharacterLevel, lvl))
     set({ level: clamped })
   },
+
+  setDifficulty: (id) => set({ difficulty: id }),
 
   incAttr: (key, amount = 1) => {
     const { allocated, level } = get()

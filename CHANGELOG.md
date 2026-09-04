@@ -1,2 +1,47 @@
-## Feature
-- Bug report button: if you want report any feedback please use this
+## Features
+- Bottom bar replaces the build library's own footer
+- Import items from the game: paste a tooltip screenshot (Gear → Import screenshot) and the built-in OCR reads the name, implicit rolls, augment, sockets and granted skills into an editable item
+- Tree node suggester rebuilt on the real calc engine
+- Difficulty preset (Normal / Nightmare / Hell / Inferno) under Config → Character
+- Torch of Shadow: pick which class its "+[1-3] to All Skills (Class)" rolled it only pays out on a build of that class
+- Item procs that cast a class skill now add proc DPS, toggled under Config → Procs
+- Proc-cast skills now count the points spent in their own subtree
+- Tundra Hunter's Long Coat: its Set Sail proc buff now grants cold skill damage and mana replenish, toggled under Item Blessings
+- Overloaded Dice: pick which skill its "+1 to Random Skill Sub Skills" rolled
+- Rage stacks now working and each stack gives 5% Attack Speed
+- Rakhul's Ritual Band now mirrors the stats of your other equipped ring
+
+## Fixes
+- Unholy "-X% to Enemy … Resistance" affixes showed a plus after picking them and the item text editor could not take a minus value; the value now keeps the game's minus everywhere while the engine still gets the positive pierce (#166)
+- Gear affixes "-[x]% to Enemy Cold/Fire/Poison/Lightning/Arcane Resistance" (Coldpenetrating, Firebreaking, Lightningpiercing, ...) lowered your own resistance instead of piercing the enemy's; they now feed the same enemy pierce as the Unholy ones. Custom negative values typed on those lines earlier read as 0% pierce until re-entered
+- Item implicits "-X% to Enemy Cold/Arcane/All Resist" (Conjured Tentacle, Leviathan's Spine, Cane of Creation, Crow's Whisper, Blood Maggot Pendant and 12 more) were display-only; they now pierce enemy resistance in the damage calc like the affix pierce
+- Uncut Jewel crafting offered gear affix ranges (Enhanced Damage 25–150%); it now uses the game's jewel pool with jewel ranges (Enhanced Damage 4–35%, 34 families from the decompiled Socketable table) (#166)
+- Scan for upgrades no longer recommends a relic or flask that is already worn in another slot, nor the same base for two slots (#168)
+- Asphyxiating Touch (Incarnation tree) updated to the patch-notes nerf: +25% Increased Ailment Damage (was 35%) and +140% of Skills Damage added to the Ailments damage (was 225%)
+- Ether tree follows the patch notes: Treasure Chests 3% (was 1%), Overworld Presence of Evil 8% (was 1%), Infernal Ascendancy 40% (was 15%), Infernal Bodyguards +2 pack size (was 1), and the new Chaos Pillar node Whispering Prophet (0.5% chance per pillar tier to contain a Prophet's Wisdom)
+- App script shrunk from 13 MB to 5 MB: item and skill sprites ship as files instead of being inlined into it, so startup parses less
+- Star leveling rebuilt on the game's own scaling table
+- Star scaling rounds like the game: values that started whole are floored, fractional rolls keep their decimals
+- Star levels above 5 no longer scaled past the game's cap
+- Gelid Riptide's extra waves repeat the whole icicle volley instead of adding one icicle
+- Avalanche casts once per its 3 s cooldown and scales with skill haste instead of casting every second
+- "One massive summon" notes (Scorching Kraken, Pitfighting Colossus, Summon Archmage, Sacrificial Offering, Alpha) field a single entity whose damage scales with the maximum amount, instead of a full pack plus a negligible flat bonus
+- Lava Trail and Burn Them All inflict burning for a portion of the damage instead of adding direct damage
+- Frost Sunder Onslaught counts as an Explosion skill
+- "to Magic Skill Damage per points in Light Radius" tree notes (Elemental Light Radius, Light in the Darkness) did nothing. The flat and % wordings now feed flat and increased Magic Skill Damage separately, and Elemental Light Radius grants +1 (was +6)
+- "+X% to Light Radius" (Rays of Magic) added flat points instead of scaling the Light Radius total
+- Light In The Dark ("+40% of your Light Radius Added as Increased All Attributes") did nothing
+- Effective HP, per-skill mana / cast rate / sustain, tooltip screenshot parsing and the loot-filter codec now come from the Rust engine instead of a TypeScript copy of the formulas
+- Star levels were offered on every charm; only common charms (Small, Large, Grand) can be star leveled
+- Item database audited against the game's own item definitions
+- 57 missing or wrong item sprites added (S10 uniques, base rings, relics and more)
+- Weakening Precision (Frost Sunder) did nothing
+- Tree-node suggester ignored stack payouts, so it scored every Rage node (max stacks, damage/attack speed per stack) as worth nothing
+- Manahunger, Elemental Break and other Spell-branch tree notes no longer boost skills without the Spell tag
+- "+X% Increased Spell Damage" tree notes did nothing
+- Frost Sunder Onslaught works as intended
+- Frost Sunder throws 4 icicles instead 1
+- "Increased Magic Skills Damage per 750 points in Mana" (Soulburn Essence) did nothing
+- Attack skills crit twice over
+- Tree notes worded "Increased Damage" when wielding an Axe / Dual Wielding / using a Two Handed Weapon only scaled the weapon's own damage roll, so they decayed to nothing once flat physical
+- Bard skill tree

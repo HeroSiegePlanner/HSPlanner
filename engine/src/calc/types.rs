@@ -42,7 +42,7 @@ pub enum AffixSign {
     Minus,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum AffixFormat {
     #[default]
@@ -195,6 +195,8 @@ pub struct ItemBase {
     #[serde(default)]
     pub skill_bonuses: Option<HashMap<String, RangedValue>>,
     #[serde(default)]
+    pub procs: Option<Vec<ItemProcSpec>>,
+    #[serde(default)]
     pub unique_effects: Option<Vec<String>>,
     #[serde(default)]
     pub width: Option<u32>,
@@ -310,6 +312,21 @@ pub struct ProcDamageSpec {
     pub per_rank: f64,
 }
 
+/// An item proc. Only the "cast a class skill" kind reaches the calc: `target`
+/// names the skill and `cast_level` is the rank the item casts it at.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct ItemProcSpec {
+    #[serde(default)]
+    pub trigger: String,
+    #[serde(default)]
+    pub chance: f64,
+    #[serde(default)]
+    pub target: Option<String>,
+    #[serde(default)]
+    pub cast_level: Option<u32>,
+}
+
 /// What the calc does with a tag-scoped stat; `None` = known scope, not modelled.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -355,6 +372,9 @@ pub struct ItemGrantedSkill {
     pub proc_damage: Option<Vec<ProcDamageSpec>>,
     #[serde(default)]
     pub proc_cooldown: Option<f64>,
+    // GetDisabledUpgradeStats: a few granted skills never gain rank from stars.
+    #[serde(default)]
+    pub star_rank_locked: bool,
 }
 
 // ---------- character class ----------
@@ -589,6 +609,8 @@ pub struct SkillSpec {
     #[serde(default)]
     pub base_cast_rate: Option<f64>,
     #[serde(default)]
+    pub base_projectiles: Option<u32>,
+    #[serde(default)]
     pub uses_attack_speed: bool,
     #[serde(default)]
     pub uses_skill_haste: bool,
@@ -671,6 +693,21 @@ pub struct DiminishDef {
     pub cap: Option<f64>,
 }
 
+/// A resource that stacks in combat; the count is a Config knob and each stack
+/// re-applies `per_stack` plus every `per_stack_stats` rate.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct StackTypeDef {
+    pub key: String,
+    pub name: String,
+    pub max_stat: String,
+    #[serde(default)]
+    pub per_stack: HashMap<String, f64>,
+    /// Source stat already expressed "per stack" -> the stat it feeds.
+    #[serde(default)]
+    pub per_stack_stats: HashMap<String, String>,
+}
+
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct GameConfig {
@@ -705,6 +742,19 @@ pub struct GameConfig {
     pub attribute_divided_stats: Option<HashMap<String, HashMap<String, f64>>>,
     #[serde(default)]
     pub diminishing_returns: Option<HashMap<String, DiminishDef>>,
+    #[serde(default)]
+    pub stack_types: Vec<StackTypeDef>,
+    #[serde(default)]
+    pub difficulties: Vec<DifficultyDef>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DifficultyDef {
+    pub id: String,
+    pub name: String,
+    #[serde(default)]
+    pub resist_penalty: f64,
 }
 
 // ---------- build state ----------
@@ -770,6 +820,9 @@ pub struct EquippedItem {
     /// Which element the item's "Random Skill Element" roll landed on.
     #[serde(default)]
     pub random_skill_element: Option<String>,
+    /// Which class the item's "All Skills (Class) (Any)" roll landed on.
+    #[serde(default)]
+    pub all_skills_class_id: Option<String>,
 }
 
 pub type Inventory = HashMap<SlotKey, EquippedItem>;

@@ -69,7 +69,7 @@ pub fn aggregate_item_skill_bonuses(
     items: &HashMap<String, ItemBase>,
 ) -> HashMap<String, Ranged> {
     let mut out: HashMap<String, Ranged> = HashMap::new();
-    for (slot_key, item) in inventory {
+    for (slot_key, item, _) in super::data::inventory_entries(inventory) {
         let Some(base) = items.get(&item.base_id) else {
             continue;
         };
@@ -77,7 +77,7 @@ pub fn aggregate_item_skill_bonuses(
             continue;
         };
         // Charm stars scale skill ranks too, matching implicit scaling and the UI.
-        let stars = if can_star_forge(slot_key) {
+        let stars = if can_star_forge(slot_key, &base.rarity) {
             item.stars
         } else {
             None
@@ -105,10 +105,12 @@ pub fn aggregate_item_skill_bonuses(
                 let pinned = ov.round();
                 (pinned, pinned)
             } else {
+                let locked = super::data::get_item_granted_skill_by_name(skill_name)
+                    .is_some_and(|g| g.star_rank_locked);
                 let scaled = apply_stars_to_ranged_value(
                     val.as_ranged(),
                     "item_granted_skill_rank",
-                    stars,
+                    if locked { None } else { stars },
                 );
                 // No-op on the hot starred path (already floored); rounds away
                 // fractional item-data fallback values.
@@ -366,9 +368,8 @@ mod tests {
     }
 
     #[test]
-    fn aggregate_gear_slot_with_stars_applies_staircase() {
-        // item_granted_skill_rank uses ITEM_SPECIFIC_STAIRCASE: 4 stars → +2 flat.
-        // (1,1) + flat=2 → (3,3); .round() keeps 3.
+    fn aggregate_gear_slot_with_stars_applies_flat_step() {
+        // item_granted_skill_rank is flat 0.6/star: 4 stars → floor(1 + 2.4) = 3.
         let mut db: HashMap<String, ItemBase> = HashMap::new();
         db.insert(
             "amulet_4s".into(),
@@ -378,6 +379,20 @@ mod tests {
         inv.insert("amulet".into(), equipped("amulet_4s", Some(4)));
         let out = aggregate_item_skill_bonuses(&inv, &db);
         assert_eq!(out.get("fireball"), Some(&(3.0, 3.0)));
+    }
+
+    #[test]
+    fn star_rank_locked_granted_skills_ignore_stars() {
+        // GetDisabledUpgradeStats: Wings of Hatred never gains rank from stars.
+        let mut db: HashMap<String, ItemBase> = HashMap::new();
+        db.insert(
+            "amulet_wings".into(),
+            item_base("amulet_wings", "amulet", &[("Wings of Hatred", (1.0, 1.0))]),
+        );
+        let mut inv: Inventory = HashMap::new();
+        inv.insert("amulet".into(), equipped("amulet_wings", Some(5)));
+        let out = aggregate_item_skill_bonuses(&inv, &db);
+        assert_eq!(out.get("wings of hatred"), Some(&(1.0, 1.0)));
     }
 
     #[test]

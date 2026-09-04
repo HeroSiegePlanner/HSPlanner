@@ -491,3 +491,32 @@ Stars: 0`
     expect(result.equipped!.skillBonusOverrides).toBeUndefined()
   })
 })
+
+describe('itemTextFormat — unholy affixes the game prints with a minus', () => {
+  const base = items.find((it) => it.id === 'boots_unholy_marcher_s_of_hatred')!
+  const pierce = affixes.find((a) => a.id === 'random_unholy_ignore_arcane_res')!
+  const equipped: EquippedItem = {
+    baseId: base.id,
+    affixes: [{ affixId: pierce.id, tier: 1, roll: 1 }],
+    socketCount: 0,
+    socketed: [],
+    socketTypes: [],
+  }
+
+  it('serializes the range with the minus the game prints', async () => {
+    const text = await serializeEquippedItem(equipped, base, stubMath)
+    expect(text).toContain('[Unholy] -[15-25]% to Enemy Arcane Resistance [T1, roll 1.00]')
+  })
+
+  it('reads a typed minus value back as the positive stat magnitude', async () => {
+    const text = (await serializeEquippedItem(equipped, base, stubMath)).replace(
+      '-[15-25]%',
+      '-20%',
+    )
+    const result = await parseItemText(text, base.id, stubMath)
+    expect(result.errors.filter((e) => e.severity === 'error')).toEqual([])
+    expect(result.equipped?.affixes[0]).toMatchObject({ affixId: pierce.id, customValue: 20 })
+    const back = await serializeEquippedItem(result.equipped!, base, stubMath)
+    expect(back).toContain('[Unholy] -20% to Enemy Arcane Resistance [T1, custom]')
+  })
+})

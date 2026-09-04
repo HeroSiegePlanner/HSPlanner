@@ -25,36 +25,4 @@ export function entityRatesFrom(
   return { sentry: legacy, summon: legacy, guardian: legacy }
 }
 
-export interface EntityRate {
-  base: number
-  min: number
-  max: number
-}
 
-// The entity's own cadence: the flat Config rate multiplied by "increased
-// <kind> attack speed". Player cast/attack speed drives how fast they are
-// spawned, never how fast they swing. Mirrors the entity branch in calc/build.rs.
-export function entityAttackRate(
-  kind: EntityKind,
-  rates: EntityRates,
-  increasedPct: [number, number],
-  fixed = 0,
-): EntityRate {
-  // A subskill can pin the entity to a literal rate (C.Y.C.L.O.P.S. lasers tick
-  // 4/s); pinned means pinned, so knob and speed bonuses drop out.
-  if (fixed > 0) return { base: fixed, min: fixed, max: fixed }
-  const base = rates[kind] ?? DEFAULT_ENTITY_RATE
-  return {
-    base,
-    min: base * (1 + increasedPct[0] / 100),
-    max: base * (1 + increasedPct[1] / 100),
-  }
-}
-
-export function entityAttackSpeedKey(kind: EntityKind): string {
-  return `${kind}_attack_speed`
-}
-
-export function entityAttackRateFixedKey(kind: EntityKind): string {
-  return `${kind}_attack_rate_fixed`
-}

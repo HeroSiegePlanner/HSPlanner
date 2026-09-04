@@ -22,12 +22,12 @@ export default function SkillProjectilesPanel() {
         (!!s.damageFormula ||
           (!!s.damagePerRank && s.damagePerRank.length > 0)) &&
         (effectiveSkillTags(s, subskillRanks).includes('Projectile') ||
-          (skillProjectiles[s.id] ?? 1) > 1),
+          skillProjectiles[s.id] !== undefined),
     )
   }, [classId, subskillRanks, skillProjectiles])
 
-  const skillProjectileCount = Object.values(skillProjectiles).filter(
-    (n) => n > 1,
+  const skillProjectileCount = damageSkills.filter(
+    (s) => skillProjectiles[s.id] !== undefined,
   ).length
 
   if (damageSkills.length === 0) return null
@@ -35,7 +35,7 @@ export default function SkillProjectilesPanel() {
   return (
     <Panel
       title="Skill Projectile Counts"
-      subtitle="Manual override of how many projectiles a skill fires per cast (e.g. Multi Shot = 5, Fan of Knives = 7). Multiplies that skill's per-cast damage and DPS. Leave empty / set to 1 for skills that fire a single projectile."
+      subtitle="How many projectiles a skill fires per cast. Multiplies that skill's per-cast damage and DPS. Skills start at the count the game gives them; clear the field to go back to it."
       trailing={
         <CountBadge
           value={skillProjectileCount}
@@ -46,13 +46,15 @@ export default function SkillProjectilesPanel() {
       <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {damageSkills.map((s) => {
           const rank = skillRanks[s.id] ?? 0
-          const value = skillProjectiles[s.id] ?? 1
+          const base = s.baseProjectiles ?? 1
+          const value = skillProjectiles[s.id] ?? base
+          const overridden = value !== base
           const learned = rank > 0
           return (
             <li key={s.id}>
               <label
                 className={`flex items-center justify-between gap-2 rounded-[3px] border px-2.5 py-2 text-sm transition-colors ${
-                  value > 1
+                  overridden
                     ? 'border-accent-deep'
                     : learned
                       ? 'border-border-2 hover:border-accent-deep'
@@ -60,7 +62,7 @@ export default function SkillProjectilesPanel() {
                 }`}
                 style={{
                   background:
-                    value > 1
+                    overridden
                       ? 'linear-gradient(180deg, rgba(58,46,24,0.5), rgba(28,29,36,0.5))'
                       : 'linear-gradient(180deg, var(--color-panel-2), color-mix(in srgb, var(--color-bg) 70%, transparent))',
                   boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.4)',
@@ -74,7 +76,7 @@ export default function SkillProjectilesPanel() {
                   />
                   <span className="min-w-0">
                     <div
-                      className={`truncate text-sm font-medium ${value > 1 ? 'text-accent-hot' : 'text-text'}`}
+                      className={`truncate text-sm font-medium ${overridden ? 'text-accent-hot' : 'text-text'}`}
                     >
                       {s.name}
                     </div>

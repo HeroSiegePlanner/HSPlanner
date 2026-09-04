@@ -3,18 +3,21 @@
 
 use std::collections::{HashMap, HashSet};
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use serde::Serialize;
 
 use super::affix::{
-    apply_stars_to_ranged_value, rolled_affix_range, rolled_affix_value, rolled_affix_value_with_stars,
+    apply_stars_to_ranged_value, rolled_affix_range, rolled_affix_value,
+    rolled_affix_value_with_stars,
 };
 use super::custom_stat::parse_custom_stat_value;
 use super::data::{self, ForgeKind};
+use super::defense::{self, DefenseInsight, EhpResult};
 use super::rank::{aggregate_item_skill_bonuses, normalize_skill_name, rank_bonus_for};
+use super::skill_cost::{self, SkillCost, SkillCostInput};
 use super::skills::Ranged;
 use super::tree::parse::{
-    DisableTarget, ParsedConversion, ParsedMeta, parse_tree_node_meta, parse_tree_node_mod,
+    parse_tree_node_meta, parse_tree_node_mod, DisableTarget, ParsedConversion, ParsedMeta,
 };
 use super::types::{CustomStat, Inventory, SkillKind, SocketType, StatDef, TreeSocketContent};
 
@@ -105,6 +108,10 @@ pub struct ComputedStats {
     /// Per skill id: keys where that skill's view differs from `stats`; spread over
     /// `stats` to get the map a side skill should be calculated with.
     pub skill_stat_overrides: HashMap<String, HashMap<String, Ranged>>,
+    pub ehp: EhpResult,
+    pub defense_insights: Vec<DefenseInsight>,
+    /// Mana / cast rate / sustain per class skill id, on that skill's own stats.
+    pub skill_costs: HashMap<String, SkillCost>,
 }
 
 /// One skill's subtree aggregate, split by where each key is allowed to go.
@@ -114,7 +121,6 @@ pub struct SubtreeAgg {
     pub scoped: HashMap<String, Ranged>,
 }
 
-
 mod attributes;
 mod breakdown;
 mod finalize;
@@ -122,6 +128,7 @@ mod helpers;
 mod inventory;
 mod sets;
 mod skills;
+mod stacks;
 mod tree;
 
 pub use attributes::*;
@@ -131,6 +138,7 @@ pub use helpers::*;
 pub use inventory::*;
 pub use sets::*;
 pub use skills::*;
+pub use stacks::*;
 pub use tree::*;
 
 // ---------- orchestrator ----------
@@ -150,10 +158,15 @@ pub struct BuildStatsInput<'a> {
     pub player_conditions: &'a HashMap<String, bool>,
     pub subskill_ranks: &'a HashMap<String, u32>,
     pub enemy_conditions: &'a HashMap<String, bool>,
+    /// Active in-combat stacks per stack type; absent means "at cap".
+    pub stack_counts: &'a HashMap<String, u32>,
     pub granted_skill_ranks: Option<&'a HashMap<String, Ranged>>,
     /// Scopes subskill aggregation: only this skill's subtree feeds the
     /// shared stat map.
     pub main_skill_id: Option<&'a str>,
+    pub difficulty: Option<&'a str>,
+    /// Config base swing rate per entity kind (sentry / summon / guardian).
+    pub entity_rates: &'a HashMap<String, f64>,
 }
 
 // A few bases carry their own long type names; tree gates say "Throwing"/"Gun".
@@ -175,8 +188,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     apply_base_attributes(input.class_id, input.allocated_attrs, &mut attr_sources);
 
     // 2. Inventory loop (implicits + affixes + sockets + runeword + augment)
-    let weapon_has_aps =
-        apply_inventory(input.inventory, &mut attr_sources, &mut stat_sources);
+    let weapon_has_aps = apply_inventory(input.inventory, &mut attr_sources, &mut stat_sources);
 
     // 3. Tree contributions (returns deferred conversions + disables);
     //    the incarnation tree's node set is season-patched data.
@@ -199,10 +211,18 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     apply_set_bonuses(input.inventory, &mut attr_sources, &mut stat_sources);
 
     // 6. Default/class base stats + per-level
-    apply_class_baseline(input.class_id, input.level, weapon_has_aps, &mut stat_sources);
+    apply_class_baseline(
+        input.class_id,
+        input.level,
+        weapon_has_aps,
+        &mut stat_sources,
+    );
 
     // 6b. Item mana/life "Based on Level" scaled by character level.
     apply_stats_based_on_level(input.level, &mut attr_sources, &mut stat_sources);
+
+    // 6c. Difficulty resistance penalty
+    apply_difficulty_penalty(input.difficulty, &mut stat_sources);
 
     // 7. Custom user-defined stats
     apply_custom_stats(input.custom_stats, &mut attr_sources, &mut stat_sources);
@@ -226,32 +246,168 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .and_then(|item| data::get_item(&item.base_id))
         .is_some_and(|base| base.base_type == "Shield");
     let weapon_folds = [
-        (kind == "Dagger", "physical_damage_with_dagger", "additive_physical_damage", "While wielding a Dagger"),
-        (kind == "Dagger", "enhanced_damage_with_dagger", "enhanced_damage", "While wielding a Dagger"),
-        (kind == "Wand", "faster_cast_rate_with_wand", "faster_cast_rate", "While wielding a Wand"),
-        (kind == "Wand", "faster_cast_rate_more_with_wand", "faster_cast_rate_more", "While wielding a Wand"),
-        (kind == "Wand", "magic_skill_damage_with_wand", "magic_skill_damage", "While wielding a Wand"),
-        (kind == "Axe", "damage_with_axe", "enhanced_damage", "While wielding an Axe"),
-        (kind == "Axe", "attack_rating_with_axe_pct", "attack_rating_pct", "While wielding an Axe"),
-        (kind == "Staff" || kind == "Cane", "two_handed_spell_projectile_damage", "spell_projectile_damage", "While wielding a Staff or Cane"),
-        (has_shield, "attack_damage_with_shield", "attack_damage", "While using a Shield"),
-        (has_shield, "vitality_with_shield_flat", "to_vitality", "While using a Shield"),
-        (has_shield, "vitality_with_shield", "increased_vitality", "While using a Shield"),
-        (has_shield, "melee_range_with_shield", "melee_range", "While using a Shield"),
-        (has_shield, "damage_mitigation_with_shield", "damage_mitigation", "While using a Shield"),
-        (has_shield, "crit_damage_more_with_shield", "crit_damage_more", "While using a Shield"),
-        (has_shield, "damage_return_with_shield", "damage_return", "While using a Shield"),
-        (two_handed, "damage_with_two_handed", "enhanced_damage", "While using a Two Handed Weapon"),
-        (two_handed, "ailment_damage_all_with_two_handed", "ailment_damage_all", "While using a Two Handed Weapon"),
-        (two_handed, "ailment_damage_all_more_with_two_handed", "ailment_damage_all_more", "While using a Two Handed Weapon"),
-        (two_handed, "increased_ailment_frequency_with_two_handed", "increased_ailment_frequency", "While using a Two Handed Weapon"),
-        (two_handed_melee, "damage_with_two_handed_melee", "enhanced_damage", "While using a Two Handed Melee Weapon"),
-        (kind == "Bow", "damage_with_bow", "ranged_projectile_damage", "While using a Bow"),
-        (kind == "Bow", "enhanced_damage_with_bow", "enhanced_damage", "While using a Bow"),
-        (kind == "Gun", "damage_with_gun", "ranged_projectile_damage", "While using a Gun"),
-        (kind == "Gun", "enhanced_damage_with_gun", "enhanced_damage", "While using a Gun"),
-        (kind == "Throwing", "damage_with_throwing", "ranged_projectile_damage", "While using a Throwing Weapon"),
-        (kind == "Throwing", "enhanced_damage_with_throwing", "enhanced_damage", "While using a Throwing Weapon"),
+        (
+            kind == "Dagger",
+            "physical_damage_with_dagger",
+            "additive_physical_damage",
+            "While wielding a Dagger",
+        ),
+        (
+            kind == "Dagger",
+            "enhanced_damage_with_dagger",
+            "enhanced_damage",
+            "While wielding a Dagger",
+        ),
+        (
+            kind == "Wand",
+            "faster_cast_rate_with_wand",
+            "faster_cast_rate",
+            "While wielding a Wand",
+        ),
+        (
+            kind == "Wand",
+            "faster_cast_rate_more_with_wand",
+            "faster_cast_rate_more",
+            "While wielding a Wand",
+        ),
+        (
+            kind == "Wand",
+            "magic_skill_damage_with_wand",
+            "magic_skill_damage",
+            "While wielding a Wand",
+        ),
+        (
+            kind == "Axe",
+            "damage_with_axe",
+            "attack_damage",
+            "While wielding an Axe",
+        ),
+        (
+            kind == "Axe",
+            "enhanced_damage_with_axe",
+            "enhanced_damage",
+            "While wielding an Axe",
+        ),
+        (
+            kind == "Axe",
+            "attack_rating_with_axe_pct",
+            "attack_rating_pct",
+            "While wielding an Axe",
+        ),
+        (
+            kind == "Staff" || kind == "Cane",
+            "two_handed_spell_projectile_damage",
+            "spell_projectile_damage",
+            "While wielding a Staff or Cane",
+        ),
+        (
+            has_shield,
+            "attack_damage_with_shield",
+            "attack_damage",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "vitality_with_shield_flat",
+            "to_vitality",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "vitality_with_shield",
+            "increased_vitality",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "melee_range_with_shield",
+            "melee_range",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "damage_mitigation_with_shield",
+            "damage_mitigation",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "crit_damage_more_with_shield",
+            "crit_damage_more",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "damage_return_with_shield",
+            "damage_return",
+            "While using a Shield",
+        ),
+        (
+            two_handed,
+            "damage_with_two_handed",
+            "attack_damage",
+            "While using a Two Handed Weapon",
+        ),
+        (
+            two_handed,
+            "ailment_damage_all_with_two_handed",
+            "ailment_damage_all",
+            "While using a Two Handed Weapon",
+        ),
+        (
+            two_handed,
+            "ailment_damage_all_more_with_two_handed",
+            "ailment_damage_all_more",
+            "While using a Two Handed Weapon",
+        ),
+        (
+            two_handed,
+            "increased_ailment_frequency_with_two_handed",
+            "increased_ailment_frequency",
+            "While using a Two Handed Weapon",
+        ),
+        (
+            two_handed_melee,
+            "damage_with_two_handed_melee",
+            "attack_damage",
+            "While using a Two Handed Melee Weapon",
+        ),
+        (
+            kind == "Bow",
+            "damage_with_bow",
+            "ranged_projectile_damage",
+            "While using a Bow",
+        ),
+        (
+            kind == "Bow",
+            "enhanced_damage_with_bow",
+            "enhanced_damage",
+            "While using a Bow",
+        ),
+        (
+            kind == "Gun",
+            "damage_with_gun",
+            "ranged_projectile_damage",
+            "While using a Gun",
+        ),
+        (
+            kind == "Gun",
+            "enhanced_damage_with_gun",
+            "enhanced_damage",
+            "While using a Gun",
+        ),
+        (
+            kind == "Throwing",
+            "damage_with_throwing",
+            "ranged_projectile_damage",
+            "While using a Throwing Weapon",
+        ),
+        (
+            kind == "Throwing",
+            "enhanced_damage_with_throwing",
+            "enhanced_damage",
+            "While using a Throwing Weapon",
+        ),
     ];
     for (enabled, cond_key, target_key, label) in weapon_folds {
         if !enabled {
@@ -280,8 +436,8 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .is_some_and(|base| base.slot == "weapon");
     if is_dual_wielding {
         for (cond_key, target_key) in [
-            ("damage_dual_wield", "enhanced_damage"),
-            ("damage_dual_wield_more", "enhanced_damage_more"),
+            ("damage_dual_wield", "attack_damage"),
+            ("damage_dual_wield_more", "attack_damage_more"),
         ] {
             let sum = sum_ranged_from_map(&stat_sources, cond_key);
             if sum != (0.0, 0.0) {
@@ -298,6 +454,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         }
     }
 
+    // 7d. In-combat stacks (Rage): count × per-stack effects.
+    apply_stack_effects(input.stack_counts, &mut attr_sources, &mut stat_sources);
+
     // 8. Skill ranks → passive stats
     apply_skill_ranks(
         input.class_id,
@@ -308,6 +467,10 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut attr_sources,
         &mut stat_sources,
     );
+
+    // 8b. Light radius folded into increased all attributes %, before the
+    // attribute passes read that key.
+    apply_light_radius_to_attributes(&mut stat_sources);
 
     // 9. Increased all attributes % (applies to each attribute's flat sum)
     apply_increased_all_attributes(&mut attr_sources, &stat_sources);
@@ -375,8 +538,19 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
+    // 20b. "per N Mana" lines read the finalized mana total.
+    let touched_mana = apply_per_mana_stats(&stats, &mut stat_sources);
+
+    // 20c. "per point in Light Radius" lines read the finalized light radius.
+    let touched_light = apply_per_light_radius_stats(&stats, &mut stat_sources);
+
     // 21. Re-sum touched stat keys after conversions injected new sources.
-    for k in touched_item.iter().chain(touched_tree.iter()) {
+    for k in touched_item
+        .iter()
+        .chain(touched_tree.iter())
+        .chain(touched_mana.iter())
+        .chain(touched_light.iter())
+    {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }
@@ -427,6 +601,13 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .map(|(id, agg)| (id, agg.scoped))
         .collect();
 
+    // 24. Defensive summary and per-skill costs, so views only format.
+    let mut merged: HashMap<String, Ranged> = stats.clone();
+    merged.extend(stats_combined.iter().map(|(k, v)| (k.clone(), *v)));
+    let ehp = defense::compute_ehp(&merged);
+    let defense_insights = defense::derive_defense_insights(&merged);
+    let skill_costs = skill_costs_for(input, &merged, &skill_stat_overrides, &rank_bonuses);
+
     ComputedStats {
         attributes,
         stats,
@@ -439,7 +620,54 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         rank_bonuses,
         skill_scoped,
         skill_stat_overrides,
+        ehp,
+        defense_insights,
+        skill_costs,
     }
+}
+
+fn skill_costs_for(
+    input: &BuildStatsInput,
+    merged: &HashMap<String, Ranged>,
+    overrides: &HashMap<String, HashMap<String, Ranged>>,
+    rank_bonuses: &HashMap<String, Ranged>,
+) -> HashMap<String, SkillCost> {
+    let Some(class_id) = input.class_id else {
+        return HashMap::new();
+    };
+    data::get_skills_by_class(class_id)
+        .iter()
+        .map(|s| {
+            let allocated = input.skill_ranks.get(&s.id).copied().unwrap_or(0) as f64;
+
+            let bonus = rank_bonuses
+                .get(&normalize_skill_name(&s.name))
+                .copied()
+                .unwrap_or((0.0, 0.0));
+            let tags = crate::calc::subskill::effective_skill_tags(
+                &s.id,
+                s.tags.as_deref().unwrap_or(&[]),
+                input.subskill_ranks,
+            );
+            let per_skill: std::borrow::Cow<HashMap<String, Ranged>> =
+                match overrides.get(&s.id).filter(|o| !o.is_empty()) {
+                    Some(o) => {
+                        let mut m = merged.clone();
+                        m.extend(o.iter().map(|(k, v)| (k.clone(), *v)));
+                        std::borrow::Cow::Owned(m)
+                    }
+                    None => std::borrow::Cow::Borrowed(merged),
+                };
+            let cost = skill_cost::compute_skill_cost(&SkillCostInput {
+                skill: s,
+                eff_rank: (allocated + bonus.0, allocated + bonus.1),
+                stats: &per_skill,
+                tags: &tags,
+                entity_rates: input.entity_rates,
+            });
+            (s.id.clone(), cost)
+        })
+        .collect()
 }
 
 // Re-runs the pipeline with `crit_chance_below_40` flipped on when the
@@ -469,7 +697,6 @@ pub fn compute_build_stats(input: &BuildStatsInput) -> ComputedStats {
     }
     baseline
 }
-
 
 #[cfg(test)]
 mod tests;

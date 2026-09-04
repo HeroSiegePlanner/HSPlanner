@@ -50,6 +50,7 @@ pub(crate) fn multiplier_keys_for(stat_key: &str) -> (Option<&'static str>, Opti
         "mana" => (Some("increased_mana"), Some("increased_mana_more")),
         "mana_replenish" => (None, Some("mana_replenish_more")),
         "life_replenish" => (None, Some("life_replenish_more")),
+        "light_radius" => (Some("light_radius_pct"), None),
         "bleed_duration" => (Some("bleed_duration_pct"), None),
         "burning_duration" => (Some("burning_duration_pct"), None),
         "frostbite_duration" => (Some("frostbite_duration_pct"), None),
@@ -80,9 +81,7 @@ pub(crate) fn resolved_stat_name(stat_key: &str) -> String {
 pub(crate) fn group_by_source_type(sources: &[SourceContribution]) -> Vec<StatTypeSubtotal> {
     let mut map: HashMap<SourceType, (Ranged, u32)> = HashMap::new();
     for s in sources.iter() {
-        let entry = map
-            .entry(s.source_type)
-            .or_insert(((0.0, 0.0), 0));
+        let entry = map.entry(s.source_type).or_insert(((0.0, 0.0), 0));
         entry.0 .0 += s.value.0;
         entry.0 .1 += s.value.1;
         entry.1 += 1;
@@ -114,10 +113,8 @@ pub fn compute_stat_breakdown(
     stat_key: &str,
     final_value: Option<Ranged>,
 ) -> StatBreakdown {
-    let additive_sources: Vec<SourceContribution> = stat_sources
-        .get(stat_key)
-        .cloned()
-        .unwrap_or_default();
+    let additive_sources: Vec<SourceContribution> =
+        stat_sources.get(stat_key).cloned().unwrap_or_default();
 
     let (inc_key_opt, more) = multiplier_keys_for(stat_key);
     let more_key_owned = more.map(|s| s.to_string());
@@ -127,10 +124,8 @@ pub fn compute_stat_breakdown(
         .and_then(|k| stat_sources.get(k))
         .cloned()
         .unwrap_or_default();
-    let more_sources: Vec<SourceContribution> = stat_sources
-        .get(&more_key)
-        .cloned()
-        .unwrap_or_default();
+    let more_sources: Vec<SourceContribution> =
+        stat_sources.get(&more_key).cloned().unwrap_or_default();
 
     let additive_sum = sum_contributions(&additive_sources);
     let increased_sum = sum_contributions(&increased_sources);
@@ -143,12 +138,8 @@ pub fn compute_stat_breakdown(
     let combined_raw: Ranged = if let Some(fv) = final_value {
         fv
     } else if inc_key_opt.is_some() || matches!(stat_key, "mana_replenish" | "life_replenish") {
-        let min = additive_sum.0
-            * (1.0 + increased_sum.0 / 100.0)
-            * (1.0 + more_sum.0 / 100.0);
-        let max = additive_sum.1
-            * (1.0 + increased_sum.1 / 100.0)
-            * (1.0 + more_sum.1 / 100.0);
+        let min = additive_sum.0 * (1.0 + increased_sum.0 / 100.0) * (1.0 + more_sum.0 / 100.0);
+        let max = additive_sum.1 * (1.0 + increased_sum.1 / 100.0) * (1.0 + more_sum.1 / 100.0);
         (min, max)
     } else if has_more {
         combine_additive_and_more(additive_sum, more_sum)
@@ -170,9 +161,7 @@ pub fn compute_stat_breakdown(
         .as_ref()
         .and_then(|defs| defs.get(stat_key))
         .map(|_| combine_additive_and_more(additive_sum, more_sum))
-        .filter(|raw| {
-            (raw.0 - combined.0).abs() > 1e-6 || (raw.1 - combined.1).abs() > 1e-6
-        });
+        .filter(|raw| (raw.0 - combined.0).abs() > 1e-6 || (raw.1 - combined.1).abs() > 1e-6);
 
     let additive_by_type = group_by_source_type(&additive_sources);
     let increased_by_type = group_by_source_type(&increased_sources);
@@ -202,4 +191,3 @@ pub fn compute_stat_breakdown(
         pre_diminish,
     }
 }
-

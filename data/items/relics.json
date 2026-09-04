@@ -33,7 +33,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "all_skills": [
+        1,
+        2
+      ]
+    },
     "skillBonuses": {
       "Healing Touch": [
         1,
@@ -90,7 +95,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "to_vitality": [
+        3,
+        30
+      ]
+    },
     "skillBonuses": {
       "Apple Blast": [
         2,
@@ -107,7 +117,11 @@
     "requiresLevel": 1,
     "implicit": {
       "arcane_skills": 5,
-      "arcane_skill_damage": 20
+      "arcane_skill_damage": 20,
+      "poison_skills": [
+        1,
+        5
+      ]
     }
   },
   {
@@ -170,7 +184,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "magic_damage_reduction": [
+        1,
+        10
+      ]
+    },
     "skillBonuses": {
       "Blazing Trail": [
         2,
@@ -274,7 +293,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "attack_damage": [
+        10,
+        100
+      ]
+    },
     "procs": [
       {
         "trigger": "on_hit",
@@ -301,7 +325,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "all_attributes": [
+        2,
+        20
+      ]
+    },
     "procs": [
       {
         "trigger": "on_cast",
@@ -317,7 +346,11 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "increased_life": 20
+      "increased_life": 20,
+      "to_dexterity": [
+        5,
+        30
+      ]
     }
   },
   {
@@ -326,7 +359,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "magic_find": [
+        3,
+        30
+      ]
+    },
     "skillBonuses": {
       "Candy Basket": [
         1,
@@ -495,7 +533,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "magic_find": [
+        3,
+        30
+      ]
+    },
     "skillBonuses": {
       "So Good": [
         2,
@@ -620,7 +663,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "to_armor": [
+        5,
+        32
+      ]
+    },
     "procs": [
       {
         "trigger": "when_struck",
@@ -696,7 +744,11 @@
     "requiresLevel": 1,
     "implicit": {
       "fire_skills": 5,
-      "fire_skill_damage": 20
+      "fire_skill_damage": 20,
+      "lightning_skills": [
+        1,
+        5
+      ]
     }
   },
   {
@@ -815,7 +867,11 @@
     "rarity": "relic",
     "implicit": {
       "increased_attack_speed": 20,
-      "deadly_blow": 30
+      "deadly_blow": 30,
+      "crit_chance": [
+        1,
+        10
+      ]
     }
   },
   {
@@ -876,7 +932,11 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "energy_converted_to_magic_skill_dmg": 10
+      "energy_converted_to_magic_skill_dmg": 10,
+      "movement_speed": [
+        3,
+        30
+      ]
     }
   },
   {
@@ -885,11 +945,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "additive_physical_damage": [
+        3,
+        30
+      ]
+    },
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
+        "target": "Breath of Ice",
+        "castLevel": 50,
         "description": "cast Breath of Ice Level 50",
         "details": "Breathe glacial air freezing and dealing cold damage to monsters."
       }
@@ -904,7 +971,11 @@
     "requiresLevel": 1,
     "implicit": {
       "cold_skills": 5,
-      "cold_skill_damage": 20
+      "cold_skill_damage": 20,
+      "fire_skills": [
+        1,
+        5
+      ]
     }
   },
   {
@@ -1033,7 +1104,11 @@
     "requiresLevel": 1,
     "implicit": {
       "lightning_skills": 5,
-      "lightning_skill_damage": 20
+      "lightning_skill_damage": 20,
+      "increased_attack_speed": [
+        1,
+        10
+      ]
     }
   },
   {
@@ -1069,7 +1144,11 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "all_attributes": 30
+      "all_attributes": 30,
+      "mana_costs_decreased": [
+        3,
+        30
+      ]
     }
   },
   {
@@ -1163,7 +1242,11 @@
     "rarity": "relic",
     "implicit": {
       "attack_damage": 50,
-      "movement_speed": 30
+      "movement_speed": 30,
+      "all_attributes": [
+        1,
+        10
+      ]
     }
   },
   {
@@ -1188,7 +1271,11 @@
     "rarity": "relic",
     "implicit": {
       "magic_find": 30,
-      "movement_speed": 30
+      "movement_speed": 30,
+      "to_energy": [
+        5,
+        50
+      ]
     }
   },
   {
@@ -1332,7 +1419,11 @@
     "requiresLevel": 1,
     "implicit": {
       "poison_skills": 5,
-      "poison_skill_damage": 20
+      "poison_skill_damage": 20,
+      "cold_skills": [
+        1,
+        5
+      ]
     }
   },
   {
@@ -1395,7 +1486,11 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "increased_bleeding_damage": 30
+      "increased_bleeding_damage": 30,
+      "additive_physical_damage": [
+        4,
+        40
+      ]
     },
     "procs": [
       {
@@ -1429,7 +1524,11 @@
     "rarity": "relic",
     "implicit": {
       "movement_speed": 30,
-      "all_attributes": 20
+      "all_attributes": 20,
+      "magic_find": [
+        4,
+        40
+      ]
     }
   },
   {
@@ -1466,7 +1565,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "increased_attack_speed": [
+        2,
+        20
+      ]
+    },
     "skillBonuses": {
       "Duck Throw": [
         2,
@@ -1524,7 +1628,11 @@
     "rarity": "relic",
     "implicit": {
       "increased_life": 15,
-      "increased_mana": 15
+      "increased_mana": 15,
+      "movement_speed": [
+        3,
+        30
+      ]
     }
   },
   {
@@ -1655,7 +1763,11 @@
     "rarity": "relic",
     "implicit": {
       "to_strength": 30,
-      "to_vitality": 30
+      "to_vitality": 30,
+      "increased_life": [
+        1.5,
+        15
+      ]
     }
   },
   {
@@ -1679,7 +1791,11 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "decreased_merchant_prices": 10
+      "decreased_merchant_prices": 10,
+      "arcane_skills": [
+        1,
+        5
+      ]
     }
   },
   {
@@ -1765,7 +1881,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "increased_attack_speed": [
+        2,
+        20
+      ]
+    },
     "skillBonuses": {
       "Templar Shield": [
         1,
@@ -1779,7 +1900,12 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "implicit": {
+      "life": [
+        10,
+        600
+      ]
+    },
     "skillBonuses": {
       "Drunken Arson": [
         2,
@@ -1885,7 +2011,11 @@
     "slot": "relic_1",
     "rarity": "relic",
     "implicit": {
-      "magic_find": 50
+      "magic_find": 50,
+      "life_replenish_pct": [
+        5,
+        50
+      ]
     }
   },
   {
@@ -1896,7 +2026,11 @@
     "rarity": "relic",
     "implicit": {
       "all_attributes": 20,
-      "all_resistances": 10
+      "all_resistances": 10,
+      "life": [
+        100,
+        1000
+      ]
     }
   },
   {

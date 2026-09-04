@@ -1,26 +1,37 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { EhpRows } from './EhpRows'
+import type { DamageType, EhpResult } from '../utils/build/ehp'
 
-function renderWith(stats: Record<string, number>) {
-  return render(<EhpRows stats={{}} statsCombined={stats} />)
+const TYPES: DamageType[] = ['physical', 'fire', 'cold', 'lightning', 'poison', 'arcane']
+
+function ehpOf(values: Partial<Record<DamageType, number>>): EhpResult {
+  return {
+    entries: TYPES.map((type) => ({ type, ehp: values[type] ?? 1000, multiplier: 1, layers: [] })),
+    worst: 'physical',
+  }
 }
 
 describe('<EhpRows>', () => {
-  it('renders nothing when the build has no life', () => {
-    const { container } = renderWith({})
+  it('renders nothing when the engine has no entries', () => {
+    const { container } = render(<EhpRows ehp={{ entries: [], worst: null }} />)
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('renders nothing while the engine result is missing', () => {
+    const { container } = render(<EhpRows ehp={undefined} />)
     expect(container).toBeEmptyDOMElement()
   })
 
   it('collapses to a single "eHP" row when every type is equal', () => {
-    renderWith({ life: 1000 })
+    render(<EhpRows ehp={ehpOf({})} />)
     expect(screen.getByText('eHP')).toBeInTheDocument()
     expect(screen.getByText('1,000')).toBeInTheDocument()
     expect(screen.queryByText('Fire eHP')).not.toBeInTheDocument()
   })
 
   it('shows "Physical eHP" + "Elemental eHP" when only physical differs', () => {
-    renderWith({ life: 1000, physical_damage_reduction: 50 })
+    render(<EhpRows ehp={ehpOf({ physical: 2000 })} />)
     expect(screen.getByText('Physical eHP')).toBeInTheDocument()
     expect(screen.getByText('2,000')).toBeInTheDocument()
     expect(screen.getByText('Elemental eHP')).toBeInTheDocument()
@@ -28,7 +39,7 @@ describe('<EhpRows>', () => {
   })
 
   it('lists every type when the elements differ', () => {
-    renderWith({ life: 1000, fire_resistance: 50 })
+    render(<EhpRows ehp={ehpOf({ fire: 2000 })} />)
     for (const label of [
       'Physical eHP',
       'Fire eHP',

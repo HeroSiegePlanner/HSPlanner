@@ -612,6 +612,45 @@ fn random_skill_element_lands_on_the_picked_element_skills() {
 }
 
 #[test]
+fn all_skills_class_lands_on_the_picked_class() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "charm_1".into(),
+        EquippedItem {
+            base_id: "charm_heroic_torch_of_shadow".into(),
+            all_skills_class_id: Some("jotunn".into()),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    let picked = stats
+        .get("all_skills_jotunn")
+        .expect("the roll lands on the picked class");
+    assert!(picked.iter().any(|c| c.value == (1.0, 3.0)));
+    assert!(!stats.contains_key("all_skills"));
+    assert!(!stats.contains_key("all_skills_class"));
+}
+
+#[test]
+fn all_skills_class_is_inert_until_a_class_is_picked() {
+    let mut inv: Inventory = HashMap::new();
+    inv.insert(
+        "charm_1".into(),
+        EquippedItem {
+            base_id: "charm_heroic_torch_of_shadow".into(),
+            ..Default::default()
+        },
+    );
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(!stats.contains_key("all_skills"));
+    assert!(!stats.contains_key("all_skills_class"));
+}
+
+#[test]
 fn a_rolled_random_element_affix_lands_on_the_picked_element_skills() {
     let mut inv: Inventory = HashMap::new();
     inv.insert(
@@ -678,51 +717,84 @@ fn random_skill_element_is_inert_until_an_element_is_picked() {
 
 // ---- charm star scaling ----
 
-// A charm's percent-star-scaling implicit must star-scale like gear does.
+// Only common charms (Small/Large/Grand) take stars — unique charms never do.
 #[test]
-fn charm_stars_scale() {
-    const CHARM_ID: &str = "charm_angelic_air_melon";
-    const STAT_KEY: &str = "lightning_skill_damage";
+fn stars_scale_common_charms_only() {
+    const AFFIX_ID: &str = "15_30_to_life_t1_bear";
+    const UNIQUE_CHARM: &str = "charm_angelic_air_melon";
 
-    // Skip gracefully if the data fixture ever drops this charm/stat.
-    let Some(base) = data::get_item(CHARM_ID) else {
-        eprintln!("{CHARM_ID} missing from data; skipping");
-        return;
+    let charm = |base_id: &str, stars: u32| {
+        let mut inv: Inventory = HashMap::new();
+        inv.insert(
+            "charm_1".to_string(),
+            EquippedItem {
+                base_id: base_id.to_string(),
+                stars: Some(stars),
+                affixes: vec![EquippedAffix {
+                    affix_id: AFFIX_ID.to_string(),
+                    roll: 1.0,
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+        );
+        let mut attrs: SourceMap = HashMap::new();
+        let mut stats: SourceMap = HashMap::new();
+        apply_inventory(&inv, &mut attrs, &mut stats);
+        sum_ranged_from_map(&stats, "life")
     };
-    assert_eq!(base.slot, "charm_1", "charm must sit in a charm slot");
-    assert!(
-        base.implicit
-            .as_ref()
-            .is_some_and(|m| m.contains_key(STAT_KEY)),
-        "{CHARM_ID} must keep its {STAT_KEY} implicit"
-    );
 
+    let plain = charm("charms_normal_small_charm", 0);
+    assert!(
+        charm("charms_normal_small_charm", 5).0 > plain.0,
+        "a common charm's affix scales with stars"
+    );
+    assert_eq!(
+        charm(UNIQUE_CHARM, 5),
+        charm(UNIQUE_CHARM, 0),
+        "a unique charm ignores stars entirely"
+    );
+}
+
+#[test]
+fn rakhuls_ritual_band_mirrors_the_other_ring() {
     let mut inv: Inventory = HashMap::new();
     inv.insert(
-        "charm_1".to_string(),
+        "ring_1".into(),
         EquippedItem {
-            base_id: CHARM_ID.to_string(),
-            stars: Some(5),
+            base_id: "ring_heroic_rakhul_s_ritual_band".into(),
             ..Default::default()
         },
     );
-
+    inv.insert(
+        "ring_2".into(),
+        EquippedItem {
+            base_id: "ring_heroic_signet_of_corruption".into(),
+            ..Default::default()
+        },
+    );
     let mut attrs: SourceMap = HashMap::new();
     let mut stats: SourceMap = HashMap::new();
     apply_inventory(&inv, &mut attrs, &mut stats);
-    let scaled = sum_ranged_from_map(&stats, STAT_KEY);
+    let poison = stats.get("poison_skills").expect("mirrored implicit lands");
+    assert_eq!(poison.len(), 2, "counted once per ring");
+    assert!(poison.iter().any(|c| c.label.ends_with("(mirrored)")));
+}
 
-    let base_value = base
-        .implicit
-        .as_ref()
-        .unwrap()
-        .get(STAT_KEY)
-        .copied()
-        .unwrap()
-        .as_ranged();
-    // Assert `>` rather than exact values so the test survives perStar tuning.
-    assert!(
-        scaled.0 > base_value.0 && scaled.1 > base_value.1,
-        "five stars should scale the charm above its base roll (base={base_value:?}, scaled={scaled:?})"
-    );
+#[test]
+fn two_ritual_bands_mirror_nothing() {
+    let mut inv: Inventory = HashMap::new();
+    for slot in ["ring_1", "ring_2"] {
+        inv.insert(
+            slot.into(),
+            EquippedItem {
+                base_id: "ring_heroic_rakhul_s_ritual_band".into(),
+                ..Default::default()
+            },
+        );
+    }
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_inventory(&inv, &mut attrs, &mut stats);
+    assert!(stats.is_empty() && attrs.is_empty());
 }

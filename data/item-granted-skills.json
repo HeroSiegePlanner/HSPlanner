@@ -1,6 +1,7 @@
 [
   {
     "id": "fallen_gods_bloodlust",
+    "starRankLocked": true,
     "name": "Fallen God's Bloodlust",
     "description": "Converts a portion of your Attack Speed into Faster Cast Rate.",
     "passiveConverts": {
@@ -15,6 +16,7 @@
   },
   {
     "id": "wings_of_hatred",
+    "starRankLocked": true,
     "name": "Wings of Hatred",
     "description": "Reduces landing diminish (capped at rank 1)."
   },
@@ -32,6 +34,7 @@
   },
   {
     "id": "roll_the_dice",
+    "starRankLocked": true,
     "name": "Roll the Dice",
     "description": "The die has been rolled.. if the crowns combined stats surpass 777 gain lady luck's blessing as bonus stats.",
     "condition": "roll_the_dice_blessing",
@@ -278,6 +281,7 @@
   },
   {
     "id": "celestial_might",
+    "starRankLocked": true,
     "name": "Celestial Might",
     "description": "All Elemental Skill damage increases are converted to Arcane.",
     "passiveConverts": {
@@ -824,6 +828,7 @@
   },
   {
     "id": "liquid_containers",
+    "starRankLocked": true,
     "name": "Liquid Containers",
     "description": "Your left foremost potions are now permanently active with a portion of the power. You can no longer use potions."
   },
@@ -1026,6 +1031,7 @@
   },
   {
     "id": "programmer_s_delirium",
+    "starRankLocked": true,
     "name": "Programmer´s Delirium",
     "description": "Increases the power of stats on your ring slots."
   },
@@ -1067,6 +1073,7 @@
   },
   {
     "id": "reaper_s_culling",
+    "starRankLocked": true,
     "name": "Reaper's Culling",
     "description": "You can no longer critically hit or miss the target and now deal increased physical damage. Culling is always 100% and no longer scales with star or skill levels."
   },
@@ -2137,6 +2144,34 @@
       "perRank": {
         "attack_damage": 6,
         "increased_attack_speed": 2
+      }
+    }
+  },
+  {
+    "id": "shadowflames",
+    "name": "Shadowflames",
+    "description": "Erupting shadowflames deal arcane damage to nearby monsters.",
+    "procDamage": [
+      {
+        "type": "arcane",
+        "base": 500,
+        "perRank": 1250
+      }
+    ]
+  },
+  {
+    "id": "set_sail",
+    "name": "Set Sail",
+    "description": "Temporarily increases your cold skill damage and mana replenish.",
+    "condition": "set_sail_buff",
+    "passiveStats": {
+      "base": {
+        "cold_skill_damage": 0,
+        "mana_replenish_pct": 5
+      },
+      "perRank": {
+        "cold_skill_damage": 2.5,
+        "mana_replenish_pct": 2
       }
     }
   }

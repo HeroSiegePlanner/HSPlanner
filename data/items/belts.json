@@ -11,7 +11,7 @@
     "defenseMax": 68,
     "implicit": {
       "enhanced_defense": [
-        55,
+        50,
         80
       ],
       "all_skills": 1,
@@ -197,7 +197,7 @@
         1,
         5
       ],
-      "magic_find_based_on_level": 25
+      "magic_find_based_on_level": 50
     }
   },
   {
@@ -229,14 +229,15 @@
         10
       ],
       "extra_damage_bleeding": [
-        5,
-        15
+        10,
+        20
       ],
       "attack_damage": [
         25,
         40
       ],
-      "faster_hit_recovery": 150
+      "faster_hit_recovery": 150,
+      "magic_skill_damage": -666
     },
     "skillBonuses": {
       "Burst of Speed": [
@@ -333,7 +334,11 @@
         10,
         15
       ],
-      "increased_poisoned_frequency": 15
+      "increased_poisoned_frequency": 15,
+      "extra_poison_dmg_to_poisoned": [
+        15,
+        30
+      ]
     },
     "procs": [
       {
@@ -360,17 +365,17 @@
         140
       ],
       "lightning_skills": [
-        2,
-        4
+        3,
+        6
       ],
       "increased_stasis_damage": [
-        20,
-        30
+        25,
+        35
       ],
       "to_vitality": 30,
       "lightning_skill_damage": [
-        15,
-        25
+        25,
+        35
       ],
       "mana_replenish_pct": [
         25,
@@ -388,10 +393,6 @@
       "stasis_damage": [
         25,
         35
-      ],
-      "mana_replenish": [
-        25,
-        40
       ]
     },
     "procs": [
@@ -426,10 +427,6 @@
         17,
         25
       ],
-      "extra_damage_burning": [
-        15,
-        25
-      ],
       "to_intelligence": 30,
       "fire_skill_damage": [
         15,
@@ -442,6 +439,10 @@
       "fire_absorption": [
         10,
         15
+      ],
+      "extra_fire_dmg_to_burning": [
+        15,
+        25
       ]
     },
     "procs": [
@@ -500,7 +501,7 @@
     "slot": "belt",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "defenseMin": 52,
     "defenseMax": 68,
     "implicit": {
@@ -531,7 +532,7 @@
     "slot": "belt",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 100,
     "defenseMin": 52,
     "defenseMax": 68,
     "implicit": {
@@ -553,7 +554,6 @@
         14
       ],
       "random_skill_element": 2,
-      "life_replenish": 15,
       "life_based_on_level": 520
     },
     "procs": [
@@ -578,7 +578,7 @@
     "slot": "belt",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 98,
     "defenseMin": 52,
     "defenseMax": 68,
     "implicit": {
@@ -602,7 +602,7 @@
     "slot": "belt",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 64,
     "defenseMin": 52,
     "defenseMax": 68,
     "implicit": {
@@ -715,7 +715,7 @@
     "defenseMax": 5,
     "implicit": {
       "enhanced_damage": [
-        25,
+        20,
         35
       ],
       "enhanced_defense": [
@@ -724,10 +724,13 @@
       ],
       "attack_rating": 50,
       "life_steal": [
-        10,
-        15
+        7,
+        12
       ],
-      "all_attributes": 3
+      "all_attributes": [
+        3,
+        5
+      ]
     }
   },
   {
@@ -755,7 +758,10 @@
         125
       ],
       "light_radius": 1,
-      "all_resistances": 5
+      "all_resistances": [
+        5,
+        10
+      ]
     }
   },
   {
@@ -1031,21 +1037,18 @@
     "rarity": "satanic_set",
     "grade": "S",
     "requiresLevel": 90,
-    "defenseMin": 52,
-    "defenseMax": 68,
+    "defenseMin": 152,
+    "defenseMax": 168,
     "implicit": {
       "enhanced_defense": [
-        45,
-        75
+        445,
+        575
       ],
       "fire_skill_damage": [
-        3,
-        8
+        15,
+        25
       ],
-      "fire_resistance": [
-        20,
-        40
-      ],
+      "fire_resistance": 45,
       "magic_find": [
         10,
         25
@@ -1152,7 +1155,7 @@
         8,
         15
       ],
-      "life": 30,
+      "life": 150,
       "faster_hit_recovery": [
         25,
         40
@@ -1180,6 +1183,10 @@
         15
       ],
       "ignore_poison_res": [
+        15,
+        20
+      ],
+      "poison_resistance": [
         15,
         20
       ]
@@ -1272,7 +1279,10 @@
         40,
         50
       ],
-      "cold_skills": 2,
+      "cold_skills": [
+        1,
+        2
+      ],
       "damage_drained_from_mana": [
         8,
         15
@@ -1313,7 +1323,11 @@
         2,
         3
       ],
-      "mana_per_kill": 12
+      "mana_per_kill": 12,
+      "increased_attack_speed": [
+        15,
+        25
+      ]
     },
     "setId": "justiciar_s_thunder_raiment",
     "skillBonuses": {
@@ -1443,7 +1457,11 @@
         75
       ],
       "cold_resistance": 75,
-      "fire_resistance": 75
+      "fire_resistance": 75,
+      "skill_haste": [
+        10,
+        20
+      ]
     }
   },
   {
@@ -1478,7 +1496,7 @@
     "slot": "belt",
     "rarity": "satanic_set",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 82,
     "defenseMin": 52,
     "defenseMax": 68,
     "implicit": {
@@ -1515,8 +1533,8 @@
       ],
       "all_attributes": 20,
       "ignore_arcane_res": [
-        8,
-        18
+        10,
+        20
       ],
       "physical_damage_reduction": [
         8,
@@ -1630,7 +1648,7 @@
     "slot": "belt",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 38,
+    "requiresLevel": 92,
     "defenseMin": 20,
     "defenseMax": 32,
     "implicit": {
@@ -1676,7 +1694,10 @@
         15,
         20
       ],
-      "ignore_lightning_res": 5,
+      "ignore_lightning_res": [
+        5,
+        10
+      ],
       "mana": [
         50,
         75
@@ -1709,7 +1730,6 @@
         10,
         15
       ],
-      "life_replenish": 50,
       "life_based_on_level": 300
     }
   },
@@ -1733,8 +1753,8 @@
         20
       ],
       "poison_skill_damage": [
-        12,
-        20
+        15,
+        25
       ],
       "ignore_poison_res": [
         10,
@@ -1827,11 +1847,14 @@
         50,
         75
       ],
-      "increased_attack_speed": 20,
+      "increased_attack_speed": [
+        10,
+        15
+      ],
       "deadly_blow": 15,
       "attack_rating": [
-        75,
-        100
+        175,
+        200
       ],
       "all_resistances": 10
     }
@@ -1938,7 +1961,8 @@
       ],
       "to_energy": 10,
       "mana_replenish_pct": 15,
-      "all_resistances": 15
+      "all_resistances": 15,
+      "all_skills": 1
     }
   },
   {

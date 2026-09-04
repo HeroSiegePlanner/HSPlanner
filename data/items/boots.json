@@ -8,7 +8,13 @@
     "defenseMin": 2,
     "defenseMax": 6,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        5,
+        15
+      ]
+    }
   },
   {
     "id": "boots_normal_heavy_boots",
@@ -19,7 +25,13 @@
     "defenseMin": 2,
     "defenseMax": 6,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        5,
+        15
+      ]
+    }
   },
   {
     "id": "boots_normal_chain_boots",
@@ -30,7 +42,13 @@
     "defenseMin": 2,
     "defenseMax": 6,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        5,
+        15
+      ]
+    }
   },
   {
     "id": "boots_normal_light_plated_boots",
@@ -41,7 +59,13 @@
     "defenseMin": 8,
     "defenseMax": 16,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        8,
+        20
+      ]
+    }
   },
   {
     "id": "boots_normal_greaves",
@@ -52,7 +76,13 @@
     "defenseMin": 8,
     "defenseMax": 16,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        8,
+        20
+      ]
+    }
   },
   {
     "id": "boots_normal_devilhide_boots",
@@ -63,7 +93,13 @@
     "defenseMin": 8,
     "defenseMax": 16,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        8,
+        20
+      ]
+    }
   },
   {
     "id": "boots_normal_battle_boots",
@@ -74,7 +110,13 @@
     "defenseMin": 18,
     "defenseMax": 26,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "boots_normal_mesh_boots",
@@ -85,7 +127,13 @@
     "defenseMin": 18,
     "defenseMax": 26,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "boots_normal_viperskin_boots",
@@ -96,7 +144,13 @@
     "defenseMin": 18,
     "defenseMax": 26,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "boots_normal_war_boots",
@@ -107,7 +161,13 @@
     "defenseMin": 34,
     "defenseMax": 48,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "boots_normal_wyrmhide_boots",
@@ -118,7 +178,13 @@
     "defenseMin": 34,
     "defenseMax": 48,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "boots_normal_crusader_marchers",
@@ -129,7 +195,13 @@
     "defenseMin": 34,
     "defenseMax": 48,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        10,
+        25
+      ]
+    }
   },
   {
     "id": "boots_normal_boneweave_boots",
@@ -140,7 +212,13 @@
     "defenseMin": 52,
     "defenseMax": 64,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        15,
+        30
+      ]
+    }
   },
   {
     "id": "boots_normal_scarabshell_boots",
@@ -151,7 +229,13 @@
     "defenseMin": 52,
     "defenseMax": 64,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        8,
+        35
+      ]
+    }
   },
   {
     "id": "boots_normal_demonplate_boots",
@@ -162,7 +246,13 @@
     "defenseMin": 52,
     "defenseMax": 64,
     "sockets": 0,
-    "maxSockets": 4
+    "maxSockets": 4,
+    "implicit": {
+      "movement_speed": [
+        20,
+        25
+      ]
+    }
   },
   {
     "id": "boots_heroic_deserts_storm",
@@ -481,11 +571,11 @@
         8
       ],
       "faster_hit_recovery": 75,
-      "all_damage_taken_reduced_pct": [
+      "all_resistances": 25,
+      "damage_mitigation": [
         8,
         16
-      ],
-      "all_resistances": 25
+      ]
     },
     "sockets": 4,
     "maxSockets": 4
@@ -649,10 +739,6 @@
         40
       ],
       "faster_hit_recovery": 100,
-      "cooldown_recovery": [
-        15,
-        25
-      ],
       "sentry_skills": [
         2,
         3
@@ -738,15 +824,15 @@
         32,
         60
       ],
-      "extra_damage_burning": [
-        15,
-        25
-      ],
       "fire_skill_damage": [
         22,
         30
       ],
-      "faster_hit_recovery": 75
+      "faster_hit_recovery": 75,
+      "extra_fire_dmg_to_burning": [
+        15,
+        25
+      ]
     },
     "sockets": 2,
     "maxSockets": 2
@@ -770,7 +856,8 @@
         1,
         2
       ],
-      "faster_hit_recovery": 50
+      "faster_hit_recovery": 50,
+      "movement_speed": 40
     },
     "maxAffixes": 3,
     "randomAffixGroupId": "random_unholy"
@@ -782,7 +869,7 @@
     "slot": "boots",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 98,
     "defenseMin": 100,
     "defenseMax": 110,
     "implicit": {
@@ -870,7 +957,11 @@
         22,
         30
       ],
-      "faster_hit_recovery": 75
+      "faster_hit_recovery": 75,
+      "extra_lightning_dmg_stasis": [
+        15,
+        25
+      ]
     },
     "sockets": 2,
     "maxSockets": 2
@@ -911,7 +1002,11 @@
         22,
         30
       ],
-      "faster_hit_recovery": 75
+      "faster_hit_recovery": 75,
+      "extra_poison_dmg_to_poisoned": [
+        15,
+        25
+      ]
     },
     "sockets": 2,
     "maxSockets": 2
@@ -932,7 +1027,7 @@
         30
       ],
       "movement_speed": [
-        10,
+        15,
         25
       ],
       "lightning_skill_damage": [
@@ -1052,7 +1147,7 @@
     "slot": "boots",
     "rarity": "satanic_set",
     "grade": "S",
-    "requiresLevel": 75,
+    "requiresLevel": 76,
     "defenseMin": 52,
     "defenseMax": 64,
     "implicit": {
@@ -1135,7 +1230,6 @@
         20
       ],
       "mana_replenish_pct": 20,
-      "mana_replenish": 20,
       "mana_based_on_level": 75
     },
     "setId": "bone_conjurer_s_regalia"
@@ -1201,7 +1295,7 @@
     "slot": "boots",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 60,
+    "requiresLevel": 90,
     "defenseMin": 34,
     "defenseMax": 48,
     "implicit": {
@@ -1209,14 +1303,23 @@
         50,
         80
       ],
-      "movement_speed": 30,
+      "movement_speed": 45,
       "skill_haste": [
-        10,
+        15,
         20
       ],
       "all_resistances": [
         10,
         15
+      ],
+      "to_intelligence": 45,
+      "flat_arcane_skill_damage": [
+        18,
+        40
+      ],
+      "intelligence_converted_to_magic_skill_dmg": [
+        2,
+        5
       ]
     },
     "setId": "temporal_mastery"
@@ -1453,7 +1556,7 @@
     "slot": "boots",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 52,
+    "requiresLevel": 92,
     "defenseMin": 34,
     "defenseMax": 48,
     "implicit": {
@@ -1462,12 +1565,12 @@
         80
       ],
       "movement_speed": [
-        20,
-        30
+        35,
+        50
       ],
       "extra_damage_burning": [
-        8,
-        20
+        25,
+        40
       ],
       "mana_per_kill": 12,
       "increased_burning_damage": [
@@ -1536,8 +1639,8 @@
         80
       ],
       "movement_speed": [
-        20,
-        30
+        30,
+        40
       ],
       "jumping_power": 30,
       "to_intelligence": [
@@ -1614,16 +1717,16 @@
       ],
       "movement_speed": 70,
       "jumping_power": [
-        35,
-        50
+        50,
+        75
       ],
       "all_attributes": [
-        18,
-        25
+        10,
+        20
       ],
       "all_resistances": [
-        30,
-        40
+        20,
+        25
       ],
       "defense_vs_missiles": [
         50,
@@ -1714,10 +1817,6 @@
       "fire_skill_damage": [
         15,
         30
-      ],
-      "ignore_lightning_res": [
-        7,
-        15
       ],
       "fire_resistance": 50,
       "ignore_fire_res": [
@@ -1840,10 +1939,6 @@
         10,
         20
       ],
-      "mana_cost_reduction": [
-        5,
-        10
-      ],
       "to_energy": [
         30,
         40
@@ -1893,8 +1988,8 @@
     "rarity": "satanic_set",
     "grade": "A",
     "requiresLevel": 57,
-    "defenseMin": 50,
-    "defenseMax": 80,
+    "defenseMin": 34,
+    "defenseMax": 48,
     "implicit": {
       "enhanced_defense": [
         50,
@@ -2023,7 +2118,10 @@
         5,
         30
       ],
-      "all_resistances": -9,
+      "all_resistances": [
+        -10,
+        -5
+      ],
       "magic_find": [
         10,
         20
@@ -2069,17 +2167,17 @@
     "slot": "boots",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 54,
-    "defenseMin": 34,
-    "defenseMax": 48,
+    "requiresLevel": 94,
+    "defenseMin": 74,
+    "defenseMax": 88,
     "implicit": {
       "enhanced_defense": [
-        50,
-        80
+        350,
+        480
       ],
       "movement_speed": [
-        20,
-        30
+        40,
+        50
       ],
       "increased_attack_speed": [
         10,
@@ -2089,7 +2187,16 @@
         10,
         15
       ],
-      "to_dexterity": 25
+      "to_dexterity": 25,
+      "flat_fire_skill_damage": [
+        28,
+        62
+      ],
+      "fire_skill_damage": [
+        20,
+        35
+      ],
+      "all_resistances": 25
     },
     "sockets": 1,
     "maxSockets": 1,
@@ -2179,6 +2286,11 @@
       "magic_damage_reduction": [
         5,
         10
+      ],
+      "all_attributes": 15,
+      "fire_skill_damage": [
+        15,
+        25
       ]
     },
     "setId": "redneck_s_work_gear"
@@ -2247,7 +2359,7 @@
     "slot": "boots",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 52,
+    "requiresLevel": 92,
     "defenseMin": 34,
     "defenseMax": 48,
     "implicit": {
@@ -2256,14 +2368,14 @@
         80
       ],
       "movement_speed": [
-        20,
-        30
+        40,
+        50
       ],
-      "mana_per_kill": [
-        10,
-        15
+      "mana_per_kill": 20,
+      "increased_mana": [
+        5,
+        20
       ],
-      "increased_mana": 5,
       "arcane_resistance": 40,
       "vitality_converted_to_magic_skill_dmg": [
         3,
@@ -2324,7 +2436,7 @@
     "slot": "boots",
     "rarity": "satanic_set",
     "grade": "A",
-    "requiresLevel": 58,
+    "requiresLevel": 56,
     "defenseMin": 34,
     "defenseMax": 48,
     "implicit": {
@@ -2375,10 +2487,6 @@
       "damage_return": [
         35,
         60
-      ],
-      "life_replenish": [
-        15,
-        20
       ]
     },
     "procs": [
@@ -2405,10 +2513,7 @@
         25,
         40
       ],
-      "all_skills": [
-        0,
-        1
-      ],
+      "all_skills": 1,
       "movement_speed": [
         10,
         20
@@ -2462,7 +2567,7 @@
     "slot": "boots",
     "rarity": "satanic",
     "grade": "B",
-    "requiresLevel": 40,
+    "requiresLevel": 69,
     "defenseMin": 18,
     "defenseMax": 26,
     "implicit": {
@@ -2472,7 +2577,7 @@
       ],
       "movement_speed": [
         30,
-        40
+        70
       ],
       "all_attributes": [
         40,
@@ -2482,8 +2587,14 @@
         10,
         100
       ],
-      "physical_damage_reduction": -28,
-      "all_resistances": -57
+      "physical_damage_reduction": [
+        -30,
+        -20
+      ],
+      "all_resistances": [
+        -75,
+        -50
+      ]
     }
   },
   {
@@ -2704,7 +2815,8 @@
       "poison_resistance": [
         15,
         20
-      ]
+      ],
+      "movement_speed": 30
     }
   },
   {
@@ -2765,25 +2877,20 @@
         70,
         100
       ],
-      "all_skills": 1,
-      "movement_speed": 30,
+      "all_skills": [
+        1,
+        2
+      ],
+      "movement_speed": 40,
       "skill_haste": [
         12,
         25
       ],
-      "attack_rating_pct": [
-        10,
-        20
-      ],
+      "attack_rating_pct": 15,
       "all_attributes": [
         7,
         10
       ],
-      "cooldown_recovery": [
-        12,
-        25
-      ],
-      "increased_attack_rating": 15,
       "damage_based_on_level": 50,
       "strength_based_on_level": 25
     }
@@ -2886,11 +2993,11 @@
         225
       ],
       "all_skills": [
-        2,
-        3
+        3,
+        4
       ],
       "movement_speed": [
-        30,
+        75,
         100
       ],
       "faster_cast_rate": [

@@ -1,4 +1,6 @@
 import type { EntityRates } from './entityRates'
+import type { DefenseInsight, EhpResult } from './ehp'
+import type { SkillCost } from './skillCost'
 import { gameConfig } from '@data'
 import { rangedMax, rangedMin, statDef, statName } from '../item/stats'
 import type { AttackSkillDamageBreakdown, SkillDamageBreakdown } from '../item/stats'
@@ -42,7 +44,11 @@ export interface BuildPerformance {
   entityCount?: [number, number]
   hitsPerCast?: [number, number]
   perSkill?: PerSkillDps[]
+  ehp: EhpResult
+  defenseInsights: DefenseInsight[]
+  skillCosts: Record<string, SkillCost>
 }
+
 
 export interface BuildPerformanceDeps {
   classId: string | null
@@ -64,7 +70,9 @@ export interface BuildPerformanceDeps {
   procToggles: Record<string, boolean>
   killsPerSec: number
   entityRates?: EntityRates
+  stackCounts?: Record<string, number>
   season?: string
+  difficulty?: string
   grantedSkillRanks?: Record<string, [number, number]>
 }
 
