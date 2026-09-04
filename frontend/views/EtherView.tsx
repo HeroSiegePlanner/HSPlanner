@@ -29,6 +29,7 @@ import {
 import { EtherNodeTooltip } from './ether/EtherNodeTooltip'
 import { EtherSummaryPanel } from './ether/EtherSummaryPanel'
 import { zoomAtPoint } from '../utils/tree/viewTransform'
+import LoadoutBar from '../components/LoadoutBar'
 import ProgressionSlider from '../components/ProgressionSlider'
 import { useProgressionPreview } from '../hooks/useProgressionPreview'
 
@@ -489,6 +490,8 @@ export default function EtherView() {
             Reset
           </button>
         </div>
+
+        <LoadoutBar tab="ether" scopeLabel="Ether nodes" />
         {summaryOpen && <EtherSummaryPanel allocated={allocated} />}
       </div>
 

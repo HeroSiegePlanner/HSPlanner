@@ -2,6 +2,7 @@ import {
   type BuildSnapshot,
   decodeShareToBuild,
   encodeBuildToShare,
+  type ShareDegradation,
 } from './shareBuild'
 import {
   newId,
@@ -35,6 +36,25 @@ const MAX_NOTES_LENGTH = 200_000
 const MAX_CODE_LENGTH = 200_000
 const MAX_TAGS = 24
 const MAX_TAG_LENGTH = 40
+
+/**
+ * Degrading an oversized payload is right for a shared link but not for storage,
+ * where the dropped slots would just be gone on the next reload. Refuse instead.
+ */
+function encodeForStorage(snapshot: BuildSnapshot): string {
+  let degradation: ShareDegradation | null = null
+  const code = encodeBuildToShare(snapshot, undefined, activeSeasonId, {
+    onDegraded: (what) => {
+      degradation ??= what
+    },
+  })
+  if (degradation !== null) {
+    throw new StorageCapacityError(
+      'This build is too large to save with all of its loadout slots. Clear a slot and try again.',
+    )
+  }
+  return code
+}
 
 export interface SavedProfile {
   id: string
@@ -416,7 +436,7 @@ export function createBuild(
   }
   const now = new Date().toISOString()
   const profileId = newId('p')
-  const code = encodeBuildToShare(snapshot)
+  const code = encodeForStorage(snapshot)
   const validFolderId =
     folderId !== null && library.folders.some((f) => f.id === folderId)
       ? folderId
@@ -557,7 +577,7 @@ export function commitProfileSnapshot(
   const profile = build.profiles.find((p) => p.id === profileId)
   if (!profile) return null
   const now = new Date().toISOString()
-  profile.code = encodeBuildToShare(snapshot)
+  profile.code = encodeForStorage(snapshot)
   profile.updatedAt = now
   build.classId = snapshot.classId
   build.updatedAt = now
@@ -616,7 +636,7 @@ export function addProfile(
   const profile: SavedProfile = {
     id: newId('p'),
     name,
-    code: encodeBuildToShare(snapshot),
+    code: encodeForStorage(snapshot),
     updatedAt: now,
   }
   build.profiles.push(profile)

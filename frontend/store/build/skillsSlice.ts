@@ -1,21 +1,12 @@
 import type { StateCreator } from 'zustand'
-import { skills as ALL_SKILLS } from '@data'
 import {
   skillPointsFor,
   subskillKey,
   subskillPointsFor,
   subskillSpentFor,
 } from './helpers'
+import { DEPENDENT_SKILL_IDS, SKILL_BY_ID } from './skillGraph'
 import type { BuildStore } from './types'
-
-const SKILL_BY_ID = new Map(ALL_SKILLS.map((s) => [s.id, s]))
-const DEPENDENT_SKILL_IDS = new Map<string, string[]>()
-for (const s of ALL_SKILLS) {
-  if (!s.requiresSkill) continue
-  const list = DEPENDENT_SKILL_IDS.get(s.requiresSkill) ?? []
-  list.push(s.id)
-  DEPENDENT_SKILL_IDS.set(s.requiresSkill, list)
-}
 
 type SkillsSlice = Pick<
   BuildStore,

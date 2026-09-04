@@ -25,6 +25,7 @@ import type { NodeLineClassification } from '../utils/calc/bridge'
 import { useBuildPerformanceDeps } from '../hooks/useBuildPerformanceDeps'
 import { useCalcResult } from '../hooks/useCalcResult'
 import JewelSocketModal from './tree/JewelSocketModal'
+import LoadoutBar from '../components/LoadoutBar'
 import ProgressionSlider from '../components/ProgressionSlider'
 import SuggestNodesModal from './tree/SuggestNodesModal'
 import { useProgressionPreview } from '../hooks/useProgressionPreview'
@@ -585,69 +586,77 @@ export default function TreeView() {
         }}
       />
 
-      <div className="pointer-events-none absolute right-3.5 top-3 z-10 flex items-start gap-1.5">
-        <div className="pointer-events-auto relative">
-          <svg
-            aria-hidden
-            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
+      <div className="pointer-events-none absolute right-3.5 top-3 z-10 flex flex-col items-end gap-2">
+        <div className="flex items-start gap-1.5">
+          <div className="pointer-events-auto relative">
+            <svg
+              aria-hidden
+              className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-faint"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search nodes or #id…"
+              data-search-input
+              data-tour="tree-search"
+              className="w-64 rounded-[3px] border border-border-2 px-3 py-1.5 pl-9 pr-14 font-mono text-[11px] text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
+              style={{
+                background:
+                  'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
+                boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
+                backdropFilter: 'blur(4px)',
+              }}
+            />
+            {searchQuery && (
+              <>
+                <span className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot">
+                  {searchMatches?.size ?? 0}
+                </span>
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-[2px] px-1 font-mono text-[12px] text-faint transition-colors hover:text-accent-hot"
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              </>
+            )}
+          </div>
+          <button
+            onClick={() => setSuggestOpen(true)}
+            data-tour="tree-suggest"
+            className="pointer-events-auto rounded-[3px] border border-accent-deep bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot hover:shadow-[0_0_12px_rgba(224,184,100,0.25)]"
+            style={{ background: 'linear-gradient(180deg, #2a2418, #1a1410)' }}
           >
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" />
-          </svg>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search nodes or #id…"
-            data-search-input
-            data-tour="tree-search"
-            className="w-64 rounded-[3px] border border-border-2 px-3 py-1.5 pl-9 pr-14 font-mono text-[11px] text-text placeholder:text-faint transition-colors focus:border-accent-deep focus:outline-none focus:ring-2 focus:ring-accent-hot/15"
-            style={{
-              background:
-                'linear-gradient(180deg, #0d0e12, var(--color-panel-2))',
-              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(4px)',
-            }}
-          />
-          {searchQuery && (
-            <>
-              <span className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot">
-                {searchMatches?.size ?? 0}
-              </span>
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-[2px] px-1 font-mono text-[12px] text-faint transition-colors hover:text-accent-hot"
-                aria-label="Clear search"
-              >
-                ×
-              </button>
-            </>
-          )}
+            Suggest
+          </button>
+          <button
+            onClick={fitView}
+            className="pointer-events-auto rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
+          >
+            Fit
+          </button>
+          <button
+            onClick={resetTree}
+            className="pointer-events-auto rounded-[3px] border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red"
+          >
+            Reset
+          </button>
         </div>
-        <button
-          onClick={() => setSuggestOpen(true)}
-          data-tour="tree-suggest"
-          className="pointer-events-auto rounded-[3px] border border-accent-deep bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-hot transition-all hover:border-accent-hot hover:shadow-[0_0_12px_rgba(224,184,100,0.25)]"
-          style={{ background: 'linear-gradient(180deg, #2a2418, #1a1410)' }}
-        >
-          Suggest
-        </button>
-        <button
-          onClick={fitView}
-          className="pointer-events-auto rounded-[3px] border border-border-2 bg-panel-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-accent-deep hover:text-accent-hot"
-        >
-          Fit
-        </button>
-        <button
-          onClick={resetTree}
-          className="pointer-events-auto rounded-[3px] border border-border-2 bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red"
-        >
-          Reset
-        </button>
+
+        <LoadoutBar
+          tab="tree"
+          scopeLabel="Tree nodes & jewels"
+          dataTour="tree-loadouts"
+        />
       </div>
 
       <div

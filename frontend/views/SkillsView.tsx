@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import FlashOnChange from '../components/ui/FlashOnChange'
+import LoadoutBar from '../components/LoadoutBar'
 import ProgressionSlider from '../components/ProgressionSlider'
 import SubtreeOverlay from './skills/SubtreeOverlay'
 import { classes, getClass, skills } from '@data'
@@ -171,32 +172,35 @@ export default function SkillsView() {
             {cls?.name}
           </span>
         </div>
-        <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
-          <span className="text-faint">Points</span>
-          <span
-            className={`tabular-nums ${remaining > 0 ? 'text-accent-hot' : 'text-muted'}`}
-            style={
-              remaining > 0
-                ? { textShadow: '0 0 8px rgba(224,184,100,0.25)' }
-                : undefined
-            }
-          >
-            <FlashOnChange value={spent}>{spent}</FlashOnChange>
-          </span>
-          <span className="text-faint">/ {totalPoints}</span>
-          <span aria-hidden className="h-3 w-px bg-border" />
-          <span className={remaining > 0 ? 'text-accent-hot' : 'text-faint'}>
-            {remaining} available
-          </span>
-          <span aria-hidden className="h-3 w-px bg-border" />
-          <span className="text-faint">Shift ×5 · Ctrl/Cmd+Shift all</span>
-          <button
-            onClick={resetSkillRanks}
-            disabled={spent === 0}
-            className="rounded-[3px] border border-border-2 bg-transparent px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Reset
-          </button>
+        <div className="flex items-center gap-3">
+          <LoadoutBar tab="skills" scopeLabel="Skill & subskill points" />
+          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em]">
+            <span className="text-faint">Points</span>
+            <span
+              className={`tabular-nums ${remaining > 0 ? 'text-accent-hot' : 'text-muted'}`}
+              style={
+                remaining > 0
+                  ? { textShadow: '0 0 8px rgba(224,184,100,0.25)' }
+                  : undefined
+              }
+            >
+              <FlashOnChange value={spent}>{spent}</FlashOnChange>
+            </span>
+            <span className="text-faint">/ {totalPoints}</span>
+            <span aria-hidden className="h-3 w-px bg-border" />
+            <span className={remaining > 0 ? 'text-accent-hot' : 'text-faint'}>
+              {remaining} available
+            </span>
+            <span aria-hidden className="h-3 w-px bg-border" />
+            <span className="text-faint">Shift ×5 · Ctrl/Cmd+Shift all</span>
+            <button
+              onClick={resetSkillRanks}
+              disabled={spent === 0}
+              className="rounded-[3px] border border-border-2 bg-transparent px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted transition-colors hover:border-stat-red hover:text-stat-red disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </header>
 

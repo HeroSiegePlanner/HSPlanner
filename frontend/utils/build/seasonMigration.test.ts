@@ -3,6 +3,12 @@ import { gems, items, skills } from '@data'
 import type { EquippedItem } from '../../types'
 import { makeSnapshot } from './buildSnapshot.fixture'
 import {
+  emptyLoadoutSlots,
+  initialLoadoutIndexes,
+  renameSlot,
+  writeSlot,
+} from './loadouts'
+import {
   clearSeasonBoundAllocations,
   pruneUnknownIds,
 } from './seasonMigration'
@@ -106,5 +112,83 @@ describe('pruneUnknownIds', () => {
 
     expect(snap.inventory.weapon?.baseId).toBe('item_from_another_season')
     expect(snap.skillRanks.ghost_skill).toBe(9)
+  })
+})
+
+describe('migrations reach into parked loadouts', () => {
+  it('clears season-bound node ids in every slot, not just the live tree', () => {
+    const snap = makeSnapshot({
+      allocatedTreeNodes: new Set([1, 2]),
+      loadoutSlots: {
+        ...emptyLoadoutSlots(),
+        tree: writeSlot(emptyLoadoutSlots().tree, 3, {
+          allocatedTreeNodes: new Set([90, 91]),
+          treeSocketed: { 5: { kind: 'item', id: realGemId } },
+        }),
+        ether: writeSlot(emptyLoadoutSlots().ether, 2, {
+          allocatedEtherNodes: new Set([7]),
+        }),
+      },
+      activeLoadouts: initialLoadoutIndexes(),
+    })
+
+    const out = clearSeasonBoundAllocations(snap)
+
+    expect(out.allocatedTreeNodes.size).toBe(0)
+    expect(out.loadoutSlots?.tree[3]?.data?.allocatedTreeNodes?.size).toBe(0)
+    expect(out.loadoutSlots?.tree[3]?.data?.treeSocketed).toEqual({})
+    expect(out.loadoutSlots?.ether[2]?.data?.allocatedEtherNodes?.size).toBe(0)
+  })
+
+  it('keeps slot labels while clearing their season-bound content', () => {
+    const slots = emptyLoadoutSlots()
+    const snap = makeSnapshot({
+      loadoutSlots: {
+        ...slots,
+        tree: renameSlot(writeSlot(slots.tree, 1, { allocatedTreeNodes: new Set([4]) }), 1, 'Boss'),
+      },
+      activeLoadouts: initialLoadoutIndexes(),
+    })
+
+    const out = clearSeasonBoundAllocations(snap)
+
+    expect(out.loadoutSlots?.tree[1]?.name).toBe('Boss')
+  })
+
+  it('prunes ids the game dropped out of parked gear and skill slots', () => {
+    const slots = emptyLoadoutSlots()
+    const snap = makeSnapshot({
+      loadoutSlots: {
+        ...slots,
+        gear: writeSlot(slots.gear, 2, {
+          inventory: {
+            weapon: equipped(realItemId),
+            offhand: equipped('item_from_another_season'),
+          },
+        }),
+        skills: writeSlot(slots.skills, 1, {
+          skillRanks: { [realSkillId]: 5, ghost_skill: 9 },
+          subskillRanks: { [realSubskillKey]: 2, 'ghost:sub': 3 },
+        }),
+      },
+      activeLoadouts: initialLoadoutIndexes(),
+    })
+
+    const out = pruneUnknownIds(snap)
+    const gear = out.loadoutSlots?.gear[2]?.data?.inventory
+    const parkedSkills = out.loadoutSlots?.skills[1]?.data
+
+    expect(gear?.weapon?.baseId).toBe(realItemId)
+    expect(gear?.offhand).toBeUndefined()
+    expect(parkedSkills?.skillRanks?.[realSkillId]).toBe(5)
+    expect(parkedSkills?.skillRanks?.ghost_skill).toBeUndefined()
+    expect(parkedSkills?.subskillRanks?.[realSubskillKey]).toBe(2)
+    expect(parkedSkills?.subskillRanks?.['ghost:sub']).toBeUndefined()
+  })
+
+  it('leaves snapshots without loadouts alone', () => {
+    const snap = makeSnapshot({ allocatedTreeNodes: new Set([1]) })
+    expect(clearSeasonBoundAllocations(snap).loadoutSlots).toBeUndefined()
+    expect(pruneUnknownIds(snap).loadoutSlots).toBeUndefined()
   })
 })

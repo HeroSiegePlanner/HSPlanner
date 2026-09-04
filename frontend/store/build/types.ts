@@ -9,6 +9,11 @@ import type {
   StashEntry,
   TreeSocketContent,
 } from '../../types'
+import type {
+  LoadoutIndexMap,
+  LoadoutSlotsMap,
+  LoadoutTab,
+} from '../../utils/build/loadouts'
 import type { Folder, SavedBuild } from '../../utils/build/savedBuilds'
 import type { BuildSnapshot } from '../../utils/build/shareBuild'
 
@@ -46,6 +51,12 @@ export interface BuildState {
   notes: string
   customStats: CustomStat[]
   stash: StashEntry[]
+  /**
+   * Per-tab loadout slots (the in-game profile row). The active slot's payload
+   * always lives in the fields above, never here — see utils/build/loadouts.
+   */
+  loadoutSlots: LoadoutSlotsMap
+  activeLoadouts: LoadoutIndexMap
 }
 
 export interface BuildActions {
@@ -163,6 +174,10 @@ export interface BuildActions {
   renameSavedFolder: (folderId: string, name: string) => boolean
   deleteSavedFolder: (folderId: string, cascade: boolean) => boolean
   dismissStorageError: () => void
+  switchLoadout: (tab: LoadoutTab, index: number) => boolean
+  clearLoadout: (tab: LoadoutTab, index: number) => boolean
+  renameLoadout: (tab: LoadoutTab, index: number, name: string | null) => boolean
+  duplicateLoadout: (tab: LoadoutTab, from: number, to: number) => boolean
 }
 
 export type BuildStore = BuildState & BuildActions
