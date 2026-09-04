@@ -105,7 +105,7 @@ mod tests {
 
     #[test]
     fn zero_count_contributes_nothing() {
-        assert!(run(&[("rage", 0)]).get("increased_attack_speed").is_none());
+        assert!(!run(&[("rage", 0)]).contains_key("increased_attack_speed"));
     }
 
     #[test]

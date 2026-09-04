@@ -232,14 +232,16 @@ fn extract_trailing_range(line: &str) -> (Vec<(f64, f64)>, String) {
         candidates.push((lo, hi));
     };
     push(raw_a, raw_b);
-    if raw_a.starts_with('1') {
-        push(&raw_a[1..], raw_b);
+    let a_stripped = raw_a.strip_prefix('1');
+    let b_stripped = raw_b.strip_suffix('1');
+    if let Some(a) = a_stripped {
+        push(a, raw_b);
     }
-    if raw_b.ends_with('1') {
-        push(raw_a, &raw_b[..raw_b.len() - 1]);
+    if let Some(b) = b_stripped {
+        push(raw_a, b);
     }
-    if raw_a.starts_with('1') && raw_b.ends_with('1') {
-        push(&raw_a[1..], &raw_b[..raw_b.len() - 1]);
+    if let (Some(a), Some(b)) = (a_stripped, b_stripped) {
+        push(a, b);
     }
     (candidates, rest)
 }

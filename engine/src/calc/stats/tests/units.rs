@@ -337,7 +337,7 @@ fn light_radius_without_the_note_adds_no_attributes() {
         },
     );
     apply_light_radius_to_attributes(&mut sources);
-    assert!(sources.get("increased_all_attributes").is_none());
+    assert!(!sources.contains_key("increased_all_attributes"));
 }
 
 // ---- per-source scaling ----
@@ -378,7 +378,7 @@ fn per_light_radius_stats_without_light_radius_add_nothing() {
     );
     let mut sources: SourceMap = HashMap::new();
     apply_per_light_radius_stats(&stats, &mut sources);
-    assert!(sources.get("magic_skill_damage").is_none());
+    assert!(!sources.contains_key("magic_skill_damage"));
 }
 
 // ---- STAT_FAN_OUTS ----
