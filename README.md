@@ -5,6 +5,7 @@ A desktop build planner for **Hero Siege** - a calculator for the talent tree, g
 
 [![Release](https://img.shields.io/github/v/release/zium1337/HSPlanner)](https://github.com/zium1337/HSPlanner/releases/latest)
 [![Download](https://img.shields.io/github/v/release/zium1337/HSPlanner?label=Download)](https://github.com/zium1337/HSPlanner/releases/latest)
+![DL](https://badgen.net/github/assets-dl/HeroSiegePlanner/HSPlanner)
 
 ---
 
