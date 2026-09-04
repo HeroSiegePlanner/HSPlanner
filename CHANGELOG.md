@@ -1,4 +1,5 @@
 ## Features
+- Bottom bar (version, updates, bug report, Ko-fi) replaces the build library's own footer; the auto-open toggle moved into the Local Library box
 - Import items from the game: paste a tooltip screenshot (Gear → Import screenshot) and the built-in OCR reads the name, implicit rolls, augment, sockets and granted skills into an editable item
 - Tree node suggester rebuilt on the real calc engine
 - Difficulty preset (Normal / Nightmare / Hell / Inferno) under Config → Character

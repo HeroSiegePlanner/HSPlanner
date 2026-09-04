@@ -21,7 +21,6 @@ import { BuildTable, type SortCol, type SortDir } from './BuildTable'
 import { BuildPreview } from './BuildPreview'
 import { type ContextMenuItem } from './ContextMenu'
 import { BuildSelectToolbar } from './BuildSelectToolbar'
-import { BuildSelectFooter } from './BuildSelectFooter'
 import { BuildSelectOverlays } from './OverlayHost'
 import {
   RECENT_LIMIT,
@@ -486,7 +485,7 @@ export default function BuildSelect({
 
   return (
     <motion.div
-      className="grid h-screen w-screen grid-rows-[auto_38px_1fr_28px] overflow-hidden text-text"
+      className="grid min-h-0 w-full flex-1 grid-rows-[auto_38px_1fr] overflow-hidden text-text"
       style={{ background: 'var(--color-panel)' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -516,6 +515,11 @@ export default function BuildSelect({
           <span className="text-accent-hot">{breadcrumb}</span>
         </div>
         <div className="ml-auto flex items-center gap-2.5">
+          {notice && (
+            <span className="font-mono text-[11px] tracking-[0.06em] text-accent-hot">
+              {notice}
+            </span>
+          )}
           {canClose && (
             <button type="button" onClick={onClose} className={HEADER_BTN_CLASS}>
               <span aria-hidden>←</span>
@@ -560,6 +564,17 @@ export default function BuildSelect({
               <span className="text-muted">
                 {approxKB({ builds: lib.builds, folders: lib.folders })}
               </span>
+              <label className="mt-1.5 flex cursor-pointer select-none items-center gap-1.5 text-muted">
+                <input
+                  type="checkbox"
+                  checked={autoOpen}
+                  onChange={(e) => {
+                    setAutoOpen(e.target.checked)
+                    writeStorage(AUTO_OPEN_KEY, e.target.checked ? '1' : '0')
+                  }}
+                />
+                <span>Auto-open last build</span>
+              </label>
             </>
           }
         />
@@ -617,17 +632,6 @@ export default function BuildSelect({
           }
         />
       </main>
-
-      <BuildSelectFooter
-        buildCount={lib.builds.length}
-        folderCount={lib.folders.length}
-        notice={notice}
-        autoOpen={autoOpen}
-        onToggleAutoOpen={(checked) => {
-          setAutoOpen(checked)
-          writeStorage(AUTO_OPEN_KEY, checked ? '1' : '0')
-        }}
-      />
 
       <BuildSelectOverlays
         ctx={ctx}
