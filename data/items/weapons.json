@@ -2328,7 +2328,6 @@
     "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 100,
-    "twoHanded": true,
     "damageMin": 78,
     "damageMax": 86,
     "attackSpeed": 1.75,
@@ -8941,7 +8940,6 @@
     },
     "sockets": 1,
     "maxSockets": 1,
-    "twoHanded": true,
     "procs": [
       {
         "trigger": "on_hit",
@@ -10113,7 +10111,6 @@
         45
       ]
     },
-    "twoHanded": true,
     "sockets": 4,
     "maxSockets": 5,
     "procs": [
