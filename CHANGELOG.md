@@ -12,6 +12,8 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- Gear affixes "-[x]% to Enemy Cold/Fire/Poison/Lightning/Arcane Resistance" (Coldpenetrating, Firebreaking, Lightningpiercing, ...) lowered your own resistance instead of piercing the enemy's; they now feed the same enemy pierce as the Unholy ones. Custom negative values typed on those lines earlier read as 0% pierce until re-entered
+- Item implicits "-X% to Enemy Cold/Arcane/All Resist" (Conjured Tentacle, Leviathan's Spine, Cane of Creation, Crow's Whisper, Blood Maggot Pendant and 12 more) were display-only; they now pierce enemy resistance in the damage calc like the affix pierce
 - App script shrunk from 13 MB to 5 MB: item and skill sprites ship as files instead of being inlined into it, so startup parses less
 - Star leveling rebuilt on the game's own scaling table
 - Star scaling rounds like the game: values that started whole are floored, fractional rolls keep their decimals

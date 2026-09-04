@@ -14,6 +14,7 @@ pub(super) struct ElementKeys {
     pub skill_damage_more: &'static str,
     pub flat_skill_damage: &'static str,
     pub ignore_res: &'static str,
+    pub enemy_res: &'static str,
 }
 
 const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
@@ -25,6 +26,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "fire_skill_damage_more",
             flat_skill_damage: "flat_fire_skill_damage",
             ignore_res: "ignore_fire_res",
+            enemy_res: "enemy_fire_resist",
         },
     ),
     (
@@ -35,6 +37,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "cold_skill_damage_more",
             flat_skill_damage: "flat_cold_skill_damage",
             ignore_res: "ignore_cold_res",
+            enemy_res: "enemy_cold_resist",
         },
     ),
     (
@@ -45,6 +48,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "lightning_skill_damage_more",
             flat_skill_damage: "flat_lightning_skill_damage",
             ignore_res: "ignore_lightning_res",
+            enemy_res: "enemy_lightning_resist",
         },
     ),
     (
@@ -55,6 +59,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "poison_skill_damage_more",
             flat_skill_damage: "flat_poison_skill_damage",
             ignore_res: "ignore_poison_res",
+            enemy_res: "enemy_poison_resist",
         },
     ),
     (
@@ -65,6 +70,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "arcane_skill_damage_more",
             flat_skill_damage: "flat_arcane_skill_damage",
             ignore_res: "ignore_arcane_res",
+            enemy_res: "enemy_arcane_resist",
         },
     ),
     (
@@ -75,6 +81,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "physical_skill_damage_more",
             flat_skill_damage: "flat_physical_skill_damage",
             ignore_res: "ignore_physical_res",
+            enemy_res: "enemy_physical_resist",
         },
     ),
     (
@@ -85,6 +92,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "magic_skill_damage_more",
             flat_skill_damage: "flat_magic_skill_damage",
             ignore_res: "ignore_magic_res",
+            enemy_res: "enemy_magic_resist",
         },
     ),
     (
@@ -95,6 +103,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "explosion_skill_damage_more",
             flat_skill_damage: "flat_explosion_skill_damage",
             ignore_res: "ignore_explosion_res",
+            enemy_res: "enemy_explosion_resist",
         },
     ),
 ];
@@ -371,8 +380,16 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         .as_deref()
         .and_then(|dt| input.enemy_resistances.get(dt).copied())
         .unwrap_or(0.0);
+    // Item implicits spell pierce as enemy_<element>_resist / enemy_all_resist.
     let raw_ignore = keys
-        .map(|k| r_max(rg(input.stats, k.ignore_res)))
+        .map(|k| {
+            let implicit = if is_elemental {
+                r_max(rg(input.stats, k.enemy_res)) + r_max(rg(input.stats, "enemy_all_resist"))
+            } else {
+                0.0
+            };
+            r_max(rg(input.stats, k.ignore_res)) + implicit
+        })
         .unwrap_or(0.0);
     let ignore_res_pct = raw_ignore.clamp(0.0, 100.0);
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
@@ -971,5 +988,25 @@ mod tests {
         });
         assert_eq!(physical.skill_damage_max_pct, 0.0);
         assert_eq!(physical.hit_max, 100);
+    }
+
+    #[test]
+    fn item_implicit_enemy_resist_keys_count_as_pierce() {
+        let cold = breakdown(&Case {
+            damage_type: "cold",
+            stats: stats(&[
+                ("ignore_cold_res", 20.0),
+                ("enemy_cold_resist", 30.0),
+                ("enemy_all_resist", 10.0),
+            ]),
+            ..Default::default()
+        });
+        assert_eq!(cold.resistance_ignored_pct, 60.0);
+        let physical = breakdown(&Case {
+            damage_type: "physical",
+            stats: stats(&[("enemy_all_resist", 10.0)]),
+            ..Default::default()
+        });
+        assert_eq!(physical.resistance_ignored_pct, 0.0);
     }
 }
