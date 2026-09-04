@@ -90,7 +90,7 @@ Across every tab:
 - [x] **Seasons** — Season 10 is the base data; later seasons are applied as patch layers on top
 - [x] **Builds menu** — multiple saved builds, each with multiple profiles
 - [x] **Share** — export the entire build to a compressed URL (lz-string), optionally via the web share service
-- [x] **Update check** — opt-in update check via GitHub Releases
+- [x] **Updates** — checks GitHub Releases on launch (toggleable), plus a manual check in Settings
 
 <img width="1710" height="1044" alt="image" src="https://github.com/user-attachments/assets/bcbcfce1-b70e-4c8c-bca3-e3f991fe6317" />
 
