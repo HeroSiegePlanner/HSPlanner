@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) static CONVERSION_RULES: Lazy<Vec<ConversionRule>> = Lazy::new(|| {
+pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::new(|| {
     vec![
         ConversionRule {
             test: Regex::new(
@@ -309,7 +309,7 @@ pub(crate) static CONVERSION_RULES: Lazy<Vec<ConversionRule>> = Lazy::new(|| {
     ]
 });
 
-pub(crate) static DISABLE_RULES: Lazy<Vec<DisableRule>> = Lazy::new(|| {
+pub(crate) static DISABLE_RULES: LazyLock<Vec<DisableRule>> = LazyLock::new(|| {
     vec![DisableRule {
         test: Regex::new(
             r"(?i)^You\s+cannot\s+regenerate\s+life\s+from\s+life\s+replenish\s+anymore$",

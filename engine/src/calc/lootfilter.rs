@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use base64::engine::general_purpose::GeneralPurpose;
 use base64::engine::{DecodePaddingMode, GeneralPurposeConfig};
 use base64::Engine as _;
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -22,7 +22,7 @@ pub const DEFAULT_WTC: i64 = 0b111111111111111111;
 pub const FILTER_TYPE_IDS: [u32; 12] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 15, 18];
 
 // atob() tolerates missing padding; the game always pads, players' pastes may not.
-static BASE64: Lazy<GeneralPurpose> = Lazy::new(|| {
+static BASE64: LazyLock<GeneralPurpose> = LazyLock::new(|| {
     GeneralPurpose::new(
         &base64::alphabet::STANDARD,
         GeneralPurposeConfig::new().with_decode_padding_mode(DecodePaddingMode::Indifferent),
@@ -36,7 +36,7 @@ pub struct FilterStat {
     pub col: u32,
 }
 
-pub static FILTER_STATS: Lazy<Vec<FilterStat>> = Lazy::new(|| {
+pub static FILTER_STATS: LazyLock<Vec<FilterStat>> = LazyLock::new(|| {
     serde_json::from_str(include_str!("../../../data/lootfilter-stats.json"))
         .expect("data/lootfilter-stats.json")
 });
@@ -310,7 +310,7 @@ const STAT_ALIASES: &[(&str, &str, &str)] = &[
 
 macro_rules! re {
     ($name:ident, $pat:expr) => {
-        static $name: Lazy<Regex> = Lazy::new(|| Regex::new($pat).expect(stringify!($name)));
+        static $name: LazyLock<Regex> = LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
     };
 }
 re!(NORM_PREFIX, r"^(to|increased|extra)\s+");
@@ -333,7 +333,7 @@ fn normalize(name: &str) -> String {
     NORM_JUNK.replace_all(&s, " ").trim().to_string()
 }
 
-static FILTER_ID_BY_NAME: Lazy<BTreeMap<String, i64>> = Lazy::new(|| {
+static FILTER_ID_BY_NAME: LazyLock<BTreeMap<String, i64>> = LazyLock::new(|| {
     let mut map = BTreeMap::new();
     for stat in FILTER_STATS.iter() {
         map.entry(normalize(&stat.name)).or_insert(stat.id);

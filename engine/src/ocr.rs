@@ -1,14 +1,14 @@
 use base64::Engine as _;
 use image::RgbImage;
 use ocrs::{ImageSource, OcrEngine, OcrEngineParams};
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use rten::Model;
 
 mod models {
     include!(concat!(env!("OUT_DIR"), "/ocr_includes.rs"));
 }
 
-static ENGINE: Lazy<Result<OcrEngine, String>> = Lazy::new(|| {
+static ENGINE: LazyLock<Result<OcrEngine, String>> = LazyLock::new(|| {
     let detection = Model::load_static_slice(models::TEXT_DETECTION)
         .map_err(|e| format!("load detection model: {e}"))?;
     let recognition = Model::load_static_slice(models::TEXT_RECOGNITION)

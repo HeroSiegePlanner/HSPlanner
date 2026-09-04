@@ -11,6 +11,7 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- App script shrunk from 13 MB to 5 MB: item and skill sprites ship as files instead of being inlined into it, so startup parses less
 - Star leveling rebuilt on the game's own scaling table
 - Star scaling rounds like the game: values that started whole are floored, fractional rolls keep their decimals
 - Star levels above 5 no longer scaled past the game's cap

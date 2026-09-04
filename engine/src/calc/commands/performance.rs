@@ -171,7 +171,7 @@ pub(crate) struct WarmupProgress {
     total: u32,
 }
 
-/// Warms the data Lazy and parser caches so the first real calc isn't stuck
+/// Warms the data LazyLock and parser caches so the first real calc isn't stuck
 /// compiling ~300 regexes on the UI thread. IO-free so tests can drive it.
 pub fn run_warmup<F: FnMut(u32, u32)>(mut on_progress: F) -> bool {
     let d = crate::calc::data::data();

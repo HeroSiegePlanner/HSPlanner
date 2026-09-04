@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use regex::{Captures, Regex};
 
 #[macro_use]
@@ -102,8 +102,8 @@ pub(crate) struct DisableRule {
     pub target: DisableTarget,
 }
 
-pub(crate) static CONVERSION_TARGET_STATS: Lazy<HashMap<&'static str, &'static str>> =
-    Lazy::new(|| {
+pub(crate) static CONVERSION_TARGET_STATS: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| {
         [
             ("magic skill damage", "magic_skill_damage"),
             ("ranged projectile damage", "ranged_projectile_damage"),
@@ -123,7 +123,7 @@ pub(crate) static CONVERSION_TARGET_STATS: Lazy<HashMap<&'static str, &'static s
 
 // ---------- regex helpers (lazily compiled once) ----------
 
-static SELF_CONDITION_SUFFIXES: Lazy<Vec<(Regex, SelfConditionKey)>> = Lazy::new(|| {
+static SELF_CONDITION_SUFFIXES: LazyLock<Vec<(Regex, SelfConditionKey)>> = LazyLock::new(|| {
     vec![
         (
             Regex::new(r"(?i)\s+when\s+critical\s+strike\s+chance\s+is\s+below\s+40%$").unwrap(),
@@ -139,7 +139,7 @@ static SELF_CONDITION_SUFFIXES: Lazy<Vec<(Regex, SelfConditionKey)>> = Lazy::new
     ]
 });
 
-static WEAPON_CONTEXT_SUFFIX: Lazy<Regex> = Lazy::new(|| {
+static WEAPON_CONTEXT_SUFFIX: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
         r"(?i)\s+(?:when|while)\s+(?:using|wielding|dual\s+wielding)\s+(?:a\s+|an\s+)?(?:two\s+handed\s+)?(?:melee\s+)?(?:axe[s]?|sword[s]?|bow[s]?|gun[s]?|wand[s]?|staff(?:\s+or\s+a\s+cane)?|cane|shield[s]?|throwing\s+weapon[s]?|two\s+handed\s+weapon|two\s+handed\s+melee\s+weapon)$",
     )
@@ -170,16 +170,16 @@ pub(crate) fn num(s: &str) -> f64 {
 
 // ---------- caches ----------
 
-static MOD_CACHE: Lazy<Mutex<HashMap<String, Option<ParsedMod>>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+static MOD_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMod>>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
-static META_CACHE: Lazy<Mutex<HashMap<String, Option<ParsedMeta>>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+static META_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMeta>>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 // The optimizer re-classifies the same node lines for every candidate it scores,
 // so an uncached classify would rerun every rule regex millions of times per run.
-static CLASS_CACHE: Lazy<Mutex<HashMap<String, TreeLineClass>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+static CLASS_CACHE: LazyLock<Mutex<HashMap<String, TreeLineClass>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 // ---------- dispatchers ----------
 

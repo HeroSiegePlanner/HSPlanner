@@ -9,7 +9,7 @@ pub fn is_zero(v: Ranged) -> bool {
 
 // ---------- stat-def lookup with `_more` suffix fallback ----------
 
-pub(crate) static STAT_DEFS_MAP: Lazy<HashMap<&'static str, &'static StatDef>> = Lazy::new(|| {
+pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef>> = LazyLock::new(|| {
     let mut m: HashMap<&'static str, &'static StatDef> = HashMap::new();
     for stat in data::game_config().stats.iter() {
         m.insert(stat.key.as_str(), stat);

@@ -2,7 +2,7 @@
 //! import is one round-trip and the fuzzy matching runs on engine data.
 use std::collections::{BTreeMap, HashMap};
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use regex::Regex;
 use serde::Serialize;
 
@@ -19,7 +19,7 @@ const MINOR_WORDS: [&str; 5] = ["of", "to", "per", "and", "low"];
 
 macro_rules! re {
     ($name:ident, $pat:expr) => {
-        static $name: Lazy<Regex> = Lazy::new(|| Regex::new($pat).expect(stringify!($name)));
+        static $name: LazyLock<Regex> = LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
     };
 }
 
@@ -44,7 +44,7 @@ re!(
 re!(SOCKETS_LINE, r"(?i)^sockets?\s*\(?(\d+)\)?");
 re!(HAS_SIGN, r"^[+-]");
 
-static IGNORED_PREFIXES: Lazy<Vec<Regex>> = Lazy::new(|| {
+static IGNORED_PREFIXES: LazyLock<Vec<Regex>> = LazyLock::new(|| {
     [
         r"(?i)^defen",
         r"(?i)^damage\s*[:.]",

@@ -43,11 +43,11 @@ fn empty_deps<'a>(
     }
 }
 
-static NO_STACKS: once_cell::sync::Lazy<HashMap<String, u32>> =
-    once_cell::sync::Lazy::new(HashMap::new);
+static NO_STACKS: std::sync::LazyLock<HashMap<String, u32>> =
+    std::sync::LazyLock::new(HashMap::new);
 
-static DEFAULT_RATES: once_cell::sync::Lazy<HashMap<String, f64>> =
-    once_cell::sync::Lazy::new(|| entity_rates(1.0));
+static DEFAULT_RATES: std::sync::LazyLock<HashMap<String, f64>> =
+    std::sync::LazyLock::new(|| entity_rates(1.0));
 
 fn entity_rates(rate: f64) -> HashMap<String, f64> {
     ["sentry", "summon", "guardian"]

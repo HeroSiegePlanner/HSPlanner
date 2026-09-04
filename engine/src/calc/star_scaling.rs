@@ -1,4 +1,4 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use serde::Deserialize;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -56,8 +56,8 @@ struct StarScaling {
     map: HashMap<String, StarScaleConfig>,
 }
 
-static STAR_SCALING_BY_SEASON: Lazy<Mutex<HashMap<String, &'static StarScaling>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+static STAR_SCALING_BY_SEASON: LazyLock<Mutex<HashMap<String, &'static StarScaling>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 // On patch error, log and fall back to base; same season normalization as data::data_for.
 fn load_for(season_id: &str) -> StarScaling {

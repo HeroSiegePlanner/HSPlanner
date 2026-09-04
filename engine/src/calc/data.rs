@@ -5,7 +5,7 @@ use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::Mutex;
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 use super::season;
 use super::types::{
@@ -118,8 +118,8 @@ pub struct GameData {
     pub tree_jewelry_ids: HashSet<u32>,
 }
 
-static GAME_DATA_BY_SEASON: Lazy<Mutex<HashMap<String, &'static GameData>>> =
-    Lazy::new(|| Mutex::new(HashMap::new()));
+static GAME_DATA_BY_SEASON: LazyLock<Mutex<HashMap<String, &'static GameData>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 fn index_by_id<T, F: Fn(&T) -> String>(list: Vec<T>, key: F) -> HashMap<String, T> {
     let mut out: HashMap<String, T> = HashMap::with_capacity(list.len());

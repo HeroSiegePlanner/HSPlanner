@@ -1,7 +1,7 @@
 use super::*;
 
-static NO_STACKS: Lazy<HashMap<String, u32>> = Lazy::new(HashMap::new);
-static NO_RATES: Lazy<HashMap<String, f64>> = Lazy::new(HashMap::new);
+static NO_STACKS: LazyLock<HashMap<String, u32>> = LazyLock::new(HashMap::new);
+static NO_RATES: LazyLock<HashMap<String, f64>> = LazyLock::new(HashMap::new);
 
 fn contrib(value: Ranged) -> SourceContribution {
     SourceContribution {

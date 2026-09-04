@@ -3,7 +3,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 use serde::Serialize;
 
 use super::affix::{
