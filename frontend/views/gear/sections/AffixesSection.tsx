@@ -4,6 +4,7 @@ import { useCalcResult } from '../../../hooks/useCalcResult'
 import PickerModal, { type PickerRow } from '../PickerModal'
 import { affixes, effectiveStars, getAffix } from '@data'
 import {
+  affixDisplayValue,
   formatAffixRangeFromValues,
   formatValue,
 } from '../../../utils/item/stats'
@@ -29,6 +30,7 @@ import {
   affixPoolLabel,
   affixPoolTypeFor,
 } from '../../../utils/item/affixPools'
+import { isJewelAffix } from '../../../utils/item/jewelAffixes'
 import { displayValuesNative } from '../../../utils/calc/bridge'
 import type { AffixValueOutput } from '../../../utils/calc/bridge'
 import type { Affix, EquippedItem, ItemBase } from '../../../types'
@@ -214,7 +216,7 @@ export function AffixesSection({
         )
         .map((a) => affixToPickerRow(a, { useDescriptionAsName: isUnholy }))
     }
-    const rollable = affixes.filter((a) => !isRandomPoolAffix(a))
+    const rollable = affixes.filter((a) => !isRandomPoolAffix(a) && !isJewelAffix(a))
     const source =
       showAllAffixes || !poolType
         ? rollable
@@ -301,7 +303,7 @@ export function AffixesSection({
                   <span className="font-mono font-semibold tabular-nums text-accent-hot">
                     {eq.customValue !== undefined
                       ? affix.statKey
-                        ? formatValue(eq.customValue, affix.statKey)
+                        ? formatValue(affixDisplayValue(affix, eq.customValue), affix.statKey)
                         : formatAffixValue(affix, eq.customValue)
                       : sliderRange
                         ? formatAffixValue(affix, rolled)

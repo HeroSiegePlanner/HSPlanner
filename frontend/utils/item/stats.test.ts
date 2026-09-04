@@ -3,6 +3,8 @@ import { gameConfig } from '@data'
 import type { StatDef } from '../../types'
 import type { RangedStatMap } from '../../types'
 import {
+  affixDisplaySign,
+  affixDisplayValue,
   dedupeStatDefsByKey,
   effectiveCap,
   fmtStats,
@@ -250,5 +252,39 @@ describe('dedupeStatDefsByKey', () => {
     const keys = dedupeStatDefsByKey(visible).map((d) => d.key)
     expect(new Set(keys).size).toBe(keys.length)
     expect(keys.filter((k) => k === 'damage_per_rage_stack')).toHaveLength(1)
+  })
+})
+
+describe('affix display sign', () => {
+  // ignore_arcane_res is a positive magnitude, yet the game prints it as a minus.
+  const pierce = {
+    sign: '+' as const,
+    format: 'percent' as const,
+    valueMin: 15,
+    valueMax: 25,
+    description: '-[15-25]% to Enemy Arcane Resistance',
+  }
+  const plain = {
+    sign: '+' as const,
+    format: 'flat' as const,
+    valueMin: 20,
+    valueMax: 40,
+    description: '+[20-40] to Strength',
+  }
+
+  it('follows the prose when it prints a minus for a positive stat', () => {
+    expect(affixDisplaySign(pierce)).toBe('-')
+    expect(affixDisplayValue(pierce, 25)).toBe(-25)
+    expect(affixDisplayValue(pierce, -20)).toBe(20)
+  })
+
+  it('leaves ordinary affixes alone', () => {
+    expect(affixDisplaySign(plain)).toBe('+')
+    expect(affixDisplayValue(plain, 40)).toBe(40)
+  })
+
+  it('prints the prose sign on ranges', () => {
+    expect(formatAffixRangeFromValues(pierce, { rangeMin: 15, rangeMax: 25 })).toBe('-[15-25]%')
+    expect(formatAffixRangeFromValues(plain, { rangeMin: 20, rangeMax: 40 })).toBe('+[20-40]')
   })
 })

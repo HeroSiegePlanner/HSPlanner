@@ -23,6 +23,8 @@ vi.mock('@data', () => ({
       { key: 'ring', name: 'Ring', group: 'jewelry' },
       { key: 'amulet', name: 'Amulet', group: 'jewelry' },
       { key: 'charm_1', name: 'Charm 1', group: 'charms' },
+      { key: 'relic_1', name: 'Relic 1', group: 'special' },
+      { key: 'relic_2', name: 'Relic 2', group: 'special' },
     ],
   },
   getItem: vi.fn(),
@@ -89,6 +91,8 @@ describe('scanForUpgrades', () => {
       'belt',
       'ring',
       'amulet',
+      'relic_1',
+      'relic_2',
     ])
   })
 
@@ -103,6 +107,8 @@ describe('scanForUpgrades', () => {
         belt: { baseId: 'base_a' },
         ring: { baseId: 'base_a' },
         amulet: { baseId: 'base_a' },
+        relic_1: { baseId: 'base_a' },
+        relic_2: { baseId: 'base_a' },
       } as BuildPerformanceDeps['inventory'],
     })
     const out = await scanForUpgrades(deps)
@@ -137,6 +143,8 @@ describe('scanForUpgrades', () => {
         belt: { baseId: 'base_a' },
         ring: { baseId: 'base_a' },
         amulet: { baseId: 'base_a' },
+        relic_1: { baseId: 'base_a' },
+        relic_2: { baseId: 'base_a' },
       } as BuildPerformanceDeps['inventory'],
     })
     const out = await scanForUpgrades(deps)
@@ -178,7 +186,7 @@ describe('scanForUpgrades', () => {
   it('surfaces every empty slot uncapped, with no numeric upgrades', async () => {
     mockRank.mockResolvedValue({ base_a: 100, base_b: 120 })
     const out = await scanForUpgrades(makeDeps())
-    expect(out.emptySlots).toHaveLength(8)
+    expect(out.emptySlots).toHaveLength(10)
     expect(out.upgrades).toHaveLength(0)
   })
 
@@ -186,16 +194,9 @@ describe('scanForUpgrades', () => {
     mockRank.mockResolvedValue({ base_a: 100, base_b: 120 })
     const seen: Array<[number, number]> = []
     await scanForUpgrades(makeDeps(), (done, total) => seen.push([done, total]))
-    expect(seen).toEqual([
-      [1, 8],
-      [2, 8],
-      [3, 8],
-      [4, 8],
-      [5, 8],
-      [6, 8],
-      [7, 8],
-      [8, 8],
-    ])
+    expect(seen).toEqual(
+      Array.from({ length: 10 }, (_, i) => [i + 1, 10]),
+    )
   })
 
   it('includes the current base in the ranked id list exactly once', async () => {
@@ -228,6 +229,8 @@ describe('scanForUpgrades', () => {
         belt: { baseId: 'base_b' },
         ring: { baseId: 'base_b' },
         amulet: { baseId: 'base_b' },
+        relic_1: { baseId: 'base_b' },
+        relic_2: { baseId: 'base_b' },
       } as BuildPerformanceDeps['inventory'],
     })
     const out = await scanForUpgrades(deps)
@@ -249,6 +252,52 @@ describe('scanForUpgrades', () => {
     await scanForUpgrades(deps)
     const scannedSlots = mockRank.mock.calls.map((c) => c[1])
     expect(scannedSlots).not.toContain('offhand')
+  })
+
+  it('never suggests a relic already equipped in a sibling relic slot', async () => {
+    mockRank.mockResolvedValue({ base_a: 100, base_b: 150 })
+    const deps = makeDeps({
+      inventory: {
+        relic_1: { baseId: 'base_a' },
+        relic_2: { baseId: 'base_b' },
+      } as BuildPerformanceDeps['inventory'],
+    })
+    const out = await scanForUpgrades(deps)
+    expect(out.upgrades.find((s) => s.slot === 'relic_1')).toBeUndefined()
+    const relic1Call = mockRank.mock.calls.find((c) => c[1] === 'relic_1')
+    expect(relic1Call?.[2]).not.toContain('base_b')
+  })
+
+  it('suggests each relic base at most once across the relic slots', async () => {
+    mockPicker.mockReturnValue([
+      { id: 'base_a', name: 'Base A' },
+      { id: 'base_b', name: 'Base B' },
+      { id: 'base_c', name: 'Base C' },
+    ])
+    mockRank.mockResolvedValue({ base_a: 100, base_b: 150, base_c: 120 })
+    const deps = makeDeps({
+      inventory: {
+        relic_1: { baseId: 'base_a' },
+        relic_2: { baseId: 'base_a' },
+      } as BuildPerformanceDeps['inventory'],
+    })
+    const out = await scanForUpgrades(deps)
+    expect(out.upgrades.map((s) => [s.slot, s.bestBaseId])).toEqual([
+      ['relic_1', 'base_b'],
+      ['relic_2', 'base_c'],
+    ])
+  })
+
+  it('still lets the other ring slot hold the same base', async () => {
+    mockRank.mockResolvedValue({ base_a: 100, base_b: 150 })
+    const deps = makeDeps({
+      inventory: {
+        ring: { baseId: 'base_a' },
+        amulet: { baseId: 'base_b' },
+      } as BuildPerformanceDeps['inventory'],
+    })
+    const out = await scanForUpgrades(deps)
+    expect(out.upgrades.find((s) => s.slot === 'ring')?.bestBaseId).toBe('base_b')
   })
 
   it('scans the offhand slot when the equipped weapon is one-handed', async () => {

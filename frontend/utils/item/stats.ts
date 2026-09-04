@@ -308,17 +308,34 @@ export interface WeaponDamageBreakdown {
   dpsMax: number
 }
 
+// "-[15-25]% to Enemy Fire Resistance" prints a minus, yet its stat (ignore_fire_res)
+// is a positive magnitude: values shown or typed follow the prose, the engine keeps the stat's sign.
+export function affixDisplaySign(affix: {
+  sign: '+' | '-'
+  description?: string
+}): '+' | '-' {
+  return affix.description?.trimStart().startsWith('-') ? '-' : affix.sign
+}
+
+export function affixDisplayValue(
+  affix: { sign: '+' | '-'; description?: string },
+  value: number,
+): number {
+  return affixDisplaySign(affix) === affix.sign ? value : -value
+}
+
 export function formatAffixRangeFromValues(
   affix: {
     sign: '+' | '-'
     format: 'flat' | 'percent'
     valueMin: number | null
     valueMax: number | null
+    description?: string
   },
   range: { rangeMin: number; rangeMax: number } | null,
 ): string {
   if (!range || affix.valueMin === null || affix.valueMax === null) {
-    return affix.sign
+    return affixDisplaySign(affix)
   }
   const fmtAbs = (v: number) => {
     const abs = Math.abs(v)
@@ -327,7 +344,9 @@ export function formatAffixRangeFromValues(
   const lo = fmtAbs(range.rangeMin)
   const hi = fmtAbs(range.rangeMax)
   const sign =
-    affix.sign === '-' || range.rangeMin < 0 || range.rangeMax < 0 ? '-' : '+'
+    affixDisplaySign(affix) === '-' || range.rangeMin < 0 || range.rangeMax < 0
+      ? '-'
+      : '+'
   const suffix = affix.format === 'percent' ? '%' : ''
   if (lo === hi) return `${sign}${hi}${suffix}`
   return `${sign}[${lo}-${hi}]${suffix}`

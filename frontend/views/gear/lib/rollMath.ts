@@ -1,3 +1,5 @@
+import { affixDisplaySign } from '../../../utils/item/stats'
+
 export function sliderStep(a: number, b: number): number {
   return Number.isInteger(a) && Number.isInteger(b) ? 1 : 0.1
 }
@@ -27,12 +29,12 @@ export function valueFromRoll(
 }
 
 export function formatAffixValue(
-  affix: { sign: '+' | '-'; format: 'flat' | 'percent' },
+  affix: { sign: '+' | '-'; format: 'flat' | 'percent'; description?: string },
   value: number,
 ): string {
   const abs = Math.abs(value)
   const n = Number.isInteger(abs) ? abs : Math.round(abs * 100) / 100
-  const sign = value < 0 || affix.sign === '-' ? '-' : '+'
+  const sign = value < 0 || affixDisplaySign(affix) === '-' ? '-' : '+'
   return `${sign}${n}${affix.format === 'percent' ? '%' : ''}`
 }
 
