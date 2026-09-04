@@ -5139,6 +5139,15 @@
       "t": "big",
       "icon": "Ether_Prime_Evil_Big_07_spr_0",
       "key": "etherPeBig07"
+    },
+    {
+      "id": 571,
+      "x": 740,
+      "y": 345,
+      "r": 7,
+      "t": "small",
+      "icon": "Ether_Chaos_Pillar_Small_07_spr_0",
+      "key": "etherCpSmall09"
     }
   ],
   "edges": [
@@ -7549,6 +7558,10 @@
     [
       569,
       570
+    ],
+    [
+      43,
+      571
     ]
   ],
   "stats": {
@@ -7829,7 +7842,7 @@
     },
     "etherOwSmall01": {
       "label": "Presence of Evil",
-      "value": "1%",
+      "value": "8%",
       "desc": "Increases the chance of chests in Overworld zones containing a Mimic."
     },
     "etherOwSmall02": {
@@ -7849,7 +7862,7 @@
     },
     "etherOwBig01": {
       "label": "Treasure Chests",
-      "value": "1%",
+      "value": "3%",
       "desc": "Ancient monsters in Overworld zones have a chance to drop a Chest when killed."
     },
     "etherOwBig02": {
@@ -8132,6 +8145,11 @@
       "value": "50%",
       "desc": "Increased Chaos Pillar discovery range."
     },
+    "etherCpSmall09": {
+      "label": "Whispering Prophet",
+      "value": "0.5%",
+      "desc": "Chance per pillar tier to contain a Prophet’s Wisdom."
+    },
     "etherCtBig03": {
       "label": "Amplified Magic Find",
       "value": "10%",
@@ -8334,7 +8352,7 @@
     },
     "etherPeBig06": {
       "label": "Infernal Ascendancy",
-      "value": "15%",
+      "value": "40%",
       "desc": "Chance for monsters to spawn as higher rarity within Boss Dungeons."
     },
     "etherPeBig07": {
@@ -8344,7 +8362,7 @@
     },
     "etherPeSmall05": {
       "label": "Infernal Bodyguards",
-      "value": "1",
+      "value": "2",
       "desc": "to Monster Pack Size within of Boss Dungeons."
     },
     "etherPeSmall06": {

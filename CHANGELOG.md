@@ -17,6 +17,8 @@
 - Item implicits "-X% to Enemy Cold/Arcane/All Resist" (Conjured Tentacle, Leviathan's Spine, Cane of Creation, Crow's Whisper, Blood Maggot Pendant and 12 more) were display-only; they now pierce enemy resistance in the damage calc like the affix pierce
 - Uncut Jewel crafting offered gear affix ranges (Enhanced Damage 25–150%); it now uses the game's jewel pool with jewel ranges (Enhanced Damage 4–35%, 34 families from the decompiled Socketable table) (#166)
 - Scan for upgrades no longer recommends a relic or flask that is already worn in another slot, nor the same base for two slots (#168)
+- Asphyxiating Touch (Incarnation tree) updated to the patch-notes nerf: +25% Increased Ailment Damage (was 35%) and +140% of Skills Damage added to the Ailments damage (was 225%)
+- Ether tree follows the patch notes: Treasure Chests 3% (was 1%), Overworld Presence of Evil 8% (was 1%), Infernal Ascendancy 40% (was 15%), Infernal Bodyguards +2 pack size (was 1), and the new Chaos Pillar node Whispering Prophet (0.5% chance per pillar tier to contain a Prophet's Wisdom)
 - App script shrunk from 13 MB to 5 MB: item and skill sprites ship as files instead of being inlined into it, so startup parses less
 - Star leveling rebuilt on the game's own scaling table
 - Star scaling rounds like the game: values that started whole are floored, fractional rolls keep their decimals
