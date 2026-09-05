@@ -19,7 +19,8 @@
         "minHeight": 600,
         "resizable": true,
         "zoomHotkeysEnabled": true,
-        "maximized": true
+        "maximized": true,
+        "backgroundColor": "#0d0e12"
       }
     ],
     "security": {
