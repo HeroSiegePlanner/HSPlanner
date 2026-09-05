@@ -115,7 +115,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const MIN_DISPLAY_MS = 500;
+    const MIN_DISPLAY_MS = 1500;
     let cancelled = false;
     const bootStart = performance.now();
 
