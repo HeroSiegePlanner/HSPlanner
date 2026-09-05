@@ -45,3 +45,4 @@
 - Attack skills crit twice over
 - Tree notes worded "Increased Damage" when wielding an Axe / Dual Wielding / using a Two Handed Weapon only scaled the weapon's own damage roll, so they decayed to nothing once flat physical
 - Bard skill tree
+- Loading screen: the progress bar now reflects both engine warm-up and sprite loading (no more 99% stall with a stale label), the intro animation finishes before the fade, the wordmark no longer flashes a fallback font, the window opens dark, and screen readers hear the loading phase
