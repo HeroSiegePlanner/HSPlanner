@@ -3,9 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HSPlanner</title>
     <style>
+      @font-face{
+        font-family:"JetBrains Mono";font-style:normal;font-weight:400;font-display:block;
+        src:url(/fonts/jetbrains-mono-latin-400-normal.woff2) format("woff2");
+      }
+      @font-face{
+        font-family:"JetBrains Mono";font-style:normal;font-weight:600;font-display:block;
+        src:url(/fonts/jetbrains-mono-latin-600-normal.woff2) format("woff2");
+      }
       html, body { margin: 0; padding: 0; background: #0d0e12; overflow: hidden; }
       .boot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 
