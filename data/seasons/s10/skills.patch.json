@@ -1,0 +1,8 @@
+{
+  "change": {
+    "scorching_whip": {
+      "attackKind": "spell",
+      "usesAttackSpeed": true
+    }
+  }
+}

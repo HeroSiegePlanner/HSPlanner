@@ -330,7 +330,7 @@ export function SkillCard({
                   ? 'spawns/s'
 
                   : skill.usesAttackSpeed
-                    ? 'throws/s'
+                    ? 'attacks/s'
                     : 'casts/s'}
                 {speedMax > 0 && baseRate !== undefined && (
                   <span className="text-faint">

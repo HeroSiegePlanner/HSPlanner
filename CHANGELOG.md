@@ -12,6 +12,7 @@
 - Rakhul's Ritual Band now mirrors the stats of your other equipped ring
 
 ## Fixes
+- Scorching Whip shows damage at learned ranks and uses weapon attack speed for DPS and mana consumption. Faster Cast Rate does not affect its use rate.
 - Season 10 equipment refreshed from Hero Siege Helper, including missing items, stat ranges and socket limits. Non-Common items without socket information cannot receive sockets, including through forging. Common item records stay unchanged.
 - Unholy "-X% to Enemy … Resistance" affixes showed a plus after picking them and the item text editor could not take a minus value; the value now keeps the game's minus everywhere while the engine still gets the positive pierce (#166)
 - Gear affixes "-[x]% to Enemy Cold/Fire/Poison/Lightning/Arcane Resistance" (Coldpenetrating, Firebreaking, Lightningpiercing, ...) lowered your own resistance instead of piercing the enemy's; they now feed the same enemy pierce as the Unholy ones. Custom negative values typed on those lines earlier read as 0% pierce until re-entered
