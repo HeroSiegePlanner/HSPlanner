@@ -28,7 +28,7 @@ import { initShiftScroll } from "./utils/shiftScroll";
 import { createDeepLinkDispatcher, getInitialDeepLinkUrls } from "./utils/build/deepLink";
 import { listSavedBuilds } from "./utils/build/savedBuilds";
 import { decodeShareToBuild, type DecodedShare } from "./utils/build/shareBuild";
-import { spriteBootProgress, warmupBootProgress } from "./utils/bootProgress";
+import { bootProgress, type PhaseCount } from "./utils/bootProgress";
 import { preloadSprites } from "./utils/preloadAssets";
 import { readStorage, readStorageWithLegacy, removeStorage, writeStorage } from "./utils/storage";
 // ponytail: static imports — every view ships in the main bundle, which the boot
@@ -116,29 +116,28 @@ function App() {
 
   useEffect(() => {
     const MIN_DISPLAY_MS = 500;
-    const FINALIZE_RESERVE = 1;
     let cancelled = false;
     const bootStart = performance.now();
 
+    let warmup: PhaseCount = { done: 0, total: 0 };
+    let sprites: PhaseCount = { done: 0, total: 0 };
     let lastPct = 0;
-    const report = (pct: number, status?: string) => {
+    const report = () => {
+      if (cancelled) return;
+      const { pct, status } = bootProgress(warmup, sprites);
       lastPct = Math.max(lastPct, pct);
       window.__bootProgress?.(lastPct, status);
     };
 
     (async () => {
-      report(0, "Loading game data");
+      report();
       const warmupTask = (async () => {
         try {
           const unlisten = await listen<{ current: number; total: number }>(
             "warmup-progress",
             (e) => {
-              if (cancelled) return;
-              const { pct } = warmupBootProgress(
-                e.payload.current,
-                e.payload.total,
-              );
-              report(pct);
+              warmup = { done: e.payload.current, total: e.payload.total };
+              report();
             },
           );
           try {
@@ -147,13 +146,18 @@ function App() {
             unlisten();
           }
         } catch (err) {
+          // ponytail: no engine outside Tauri (vite preview); the warm-up is a cache prime, so skip its slice
           void err;
         }
+        warmup = { done: 1, total: 1 };
+        report();
       })();
       const spritesTask = preloadSprites((loaded, total) => {
-        if (cancelled) return;
-        const { pct, status } = spriteBootProgress(loaded, total);
-        report(Math.min(pct, 100 - FINALIZE_RESERVE), status);
+        sprites = { done: loaded, total };
+        report();
+      }).then(() => {
+        sprites = { done: 1, total: 1 };
+        report();
       });
       await Promise.all([warmupTask, spritesTask]);
       if (cancelled) return;
@@ -163,7 +167,6 @@ function App() {
         await new Promise((r) => window.setTimeout(r, remaining));
       }
       if (cancelled) return;
-      report(100, "Ready");
       window.__bootFinish?.();
 
       const pendingBuild = readStorage(PENDING_BUILD_KEY);

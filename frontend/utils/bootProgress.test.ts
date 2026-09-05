@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import {
-  SPRITES_WEIGHT,
-  WARMUP_WEIGHT,
-  spriteBootProgress,
-  warmupBootProgress,
-} from './bootProgress'
+import { SPRITES_WEIGHT, WARMUP_WEIGHT, bootProgress } from './bootProgress'
+
+const done = { done: 1, total: 1 }
+const idle = { done: 0, total: 0 }
 
 describe('boot progress weights', () => {
   it('weights warmup and sprites to a full bar', () => {
@@ -16,64 +14,47 @@ describe('boot progress weights', () => {
   })
 })
 
-describe('warmupBootProgress', () => {
-  it('starts the warmup phase at zero', () => {
-    const { pct, status } = warmupBootProgress(0, 100)
-
-    expect(pct).toBeCloseTo(0)
-    expect(status).toBe('Loading game data')
+describe('bootProgress', () => {
+  it('starts at zero before either phase reports', () => {
+    expect(bootProgress(idle, idle).pct).toBeCloseTo(0)
   })
 
-  it('scales the bar across the warmup weight at the halfway mark', () => {
-    const { pct } = warmupBootProgress(50, 100)
-
-    expect(pct).toBeCloseTo(WARMUP_WEIGHT * 0.5 * 100)
+  it('treats a phase with no total as not started, not complete', () => {
+    expect(bootProgress(idle, done).pct).toBeCloseTo(SPRITES_WEIGHT * 100)
   })
 
-  it('reaches the warmup ceiling when complete', () => {
-    const { pct } = warmupBootProgress(100, 100)
+  it('sums both phases by weight', () => {
+    const { pct } = bootProgress({ done: 50, total: 100 }, { done: 335, total: 670 })
 
-    expect(pct).toBeCloseTo(WARMUP_WEIGHT * 100)
+    expect(pct).toBeCloseTo((WARMUP_WEIGHT * 0.5 + SPRITES_WEIGHT * 0.5) * 100)
   })
 
-  it('treats an empty node set as complete', () => {
-    const { pct } = warmupBootProgress(0, 0)
-
-    expect(pct).toBeCloseTo(WARMUP_WEIGHT * 100)
+  it('reaches 100 only when both phases are complete', () => {
+    expect(bootProgress(done, { done: 670, total: 670 }).pct).toBeCloseTo(100)
+    expect(bootProgress({ done: 99, total: 100 }, done).pct).toBeLessThan(100)
   })
 
-  it('hands off continuously to the sprite phase', () => {
-    expect(warmupBootProgress(100, 100).pct).toBeCloseTo(
-      spriteBootProgress(0, 670).pct,
-    )
-  })
-})
-
-describe('spriteBootProgress', () => {
-  it('starts the sprite phase at the warmup ceiling', () => {
-    const { pct, status } = spriteBootProgress(0, 670)
-
-    expect(pct).toBeCloseTo(WARMUP_WEIGHT * 100)
-    expect(status).toBe('Loading sprites · 0/670')
+  it('never overshoots when done exceeds total', () => {
+    expect(bootProgress({ done: 5, total: 3 }, done).pct).toBeCloseTo(100)
   })
 
-  it('reaches 100% with a full count when all sprites load', () => {
-    const { pct, status } = spriteBootProgress(670, 670)
-
-    expect(pct).toBeCloseTo(100)
-    expect(status).toBe('Loading sprites · 670/670')
+  it('labels the sprite phase with its count while sprites load', () => {
+    expect(bootProgress(idle, { done: 12, total: 670 }).status).toBe('Loading sprites · 12/670')
   })
 
-  it('scales the bar across the sprite weight at the halfway mark', () => {
-    const { pct } = spriteBootProgress(335, 670)
-
-    expect(pct).toBeCloseTo((WARMUP_WEIGHT + SPRITES_WEIGHT * 0.5) * 100)
+  it('labels the sprite phase without a count before the first sprite reports', () => {
+    expect(bootProgress(idle, idle).status).toBe('Loading sprites')
   })
 
-  it('treats an empty sprite set as complete without a count', () => {
-    const { pct, status } = spriteBootProgress(0, 0)
+  it('falls back to the game-data label once sprites are done', () => {
+    expect(bootProgress({ done: 30, total: 340 }, done).status).toBe('Loading game data · 30/340')
+  })
 
-    expect(pct).toBeCloseTo(100)
-    expect(status).toBe('Loading sprites')
+  it('labels game data without a count before the engine reports', () => {
+    expect(bootProgress(idle, done).status).toBe('Loading game data')
+  })
+
+  it('reports Ready when both phases are complete', () => {
+    expect(bootProgress(done, done).status).toBe('Ready')
   })
 })
