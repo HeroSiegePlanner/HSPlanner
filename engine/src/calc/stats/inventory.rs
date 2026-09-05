@@ -250,7 +250,7 @@ pub fn apply_inventory(
                     None,
                 );
             }
-        } else {
+        } else if base.rarity == "common" || base.max_sockets != Some(0) {
             for (i, slot_id_opt) in item.socketed.iter().enumerate() {
                 let Some(id) = slot_id_opt.as_deref() else {
                     continue;

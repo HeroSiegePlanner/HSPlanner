@@ -2,6 +2,44 @@ use super::super::*;
 use crate::calc::types::{EquippedAffix, EquippedItem};
 
 #[test]
+fn source_socket_prohibition_ignores_legacy_gems_but_keeps_common_sockets() {
+    let gem = data::data()
+        .gems
+        .values()
+        .find(|gem| !gem.stats.is_empty())
+        .unwrap();
+    let common = data::get_item("helmet_normal_cap").unwrap();
+    let forbidden = data::get_item("helmet_heroic_the_colossal_avenger").unwrap();
+    assert_eq!(forbidden.max_sockets, Some(0));
+    for (base, expected_socket_source) in [(forbidden, false), (common, true)] {
+        let inventory = Inventory::from([(
+            "helmet".to_string(),
+            EquippedItem {
+                base_id: base.id.clone(),
+                socket_count: 1,
+                socketed: vec![Some(gem.id.clone())],
+                forged_mods: vec![EquippedAffix {
+                    affix_id: "crystal_add_socket".into(),
+                    tier: 1,
+                    roll: 1.0,
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+        )]);
+        let mut attrs = SourceMap::new();
+        let mut stats = SourceMap::new();
+        apply_inventory(&inventory, &mut attrs, &mut stats);
+        let has_socket = attrs
+            .values()
+            .chain(stats.values())
+            .flatten()
+            .any(|source| matches!(source.source_type, SourceType::Socket));
+        assert_eq!(has_socket, expected_socket_source, "{}", base.id);
+    }
+}
+
+#[test]
 fn apply_increased_all_attributes_applies_to_each() {
     let cfg = data::game_config();
     // Seed an attribute with a known flat value.
@@ -607,7 +645,7 @@ fn random_skill_element_lands_on_the_picked_element_skills() {
     let mut stats: SourceMap = HashMap::new();
     apply_inventory(&inv, &mut attrs, &mut stats);
     let cold = stats.get("cold_skills").expect("picked element gets the ranks");
-    assert!(cold.iter().any(|c| c.value == (4.0, 5.0)));
+    assert!(cold.iter().any(|c| c.value == (3.0, 5.0)));
     assert!(!stats.contains_key("random_skill_element"));
 }
 

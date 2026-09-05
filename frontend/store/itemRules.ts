@@ -17,6 +17,7 @@ export function maxSocketsFor(
 ): number {
   const base = getItem(baseId)
   if (!base) return 0
+  if (base.rarity !== 'common' && base.maxSockets === 0) return 0
   let cap = base.maxSockets ?? base.sockets ?? 0
   if (hasBonusSocketMod(forgedMods)) cap += 1
   return Math.min(cap, HARD_SOCKET_CAP)

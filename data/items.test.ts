@@ -133,10 +133,12 @@ describe('S10 item changes', () => {
     })
   })
 
-  it('"Damage Taken Reduced by -10%" on Unholy Bible and Belt of Infinite Wealth is a real reduction', () => {
+  it('Unholy Bible uses the current magic package and Belt of Infinite Wealth retains its reduction', () => {
     const bible = item('book_satanic_satan_s_unholy_bible').implicit as Rec
-    expect(bible.physical_damage_reduction).toBe(10)
-    expect(bible.all_resistances).toBe(-50)
+    expect(bible.physical_damage_reduction).toBeUndefined()
+    expect(bible.all_resistances).toBeUndefined()
+    expect(bible.faster_cast_rate).toBe(40)
+    expect(bible.enemy_all_resist).toBe(10)
     const belt = item('belt_heroic_belt_of_infinite_wealth').implicit as Rec
     expect(belt.physical_damage_reduction).toBe(10)
     expect(belt.gold_find).toEqual([25, 40])
@@ -152,13 +154,13 @@ describe('S10 item changes', () => {
     expect(skull.uniqueEffects).toBeUndefined()
   })
 
-  it("Captain's Anchor charm rolls a random element for its +5 skills", () => {
+  it("Captain's Anchor charm rolls +3–6 skills of a random element", () => {
     const anchor = item('s10_captains_anchor')
     expect(anchor.grade).toBe('SS')
     expect(anchor.requiresLevel).toBe(100)
     expect([anchor.width, anchor.height]).toEqual([2, 2])
     expect(anchor.implicit).toEqual({
-      random_skill_element: 5,
+      random_skill_element: [3, 6],
       phys_dmg_taken_as_cold: [10, 20],
       enemy_all_resist: 20,
       light_radius: [4, 8],
@@ -260,14 +262,14 @@ describe('S10 item changes', () => {
     expect(ribcage.grade).toBe('SS')
     expect(ribcage.requiresLevel).toBe(100)
     expect([ribcage.defenseMin, ribcage.defenseMax]).toEqual([230, 310])
-    expect([ribcage.sockets, ribcage.maxSockets]).toEqual([4, 4])
+    expect([ribcage.sockets, ribcage.maxSockets]).toEqual([2, 4])
     expect(ribcage.procs).toEqual([
       {
         trigger: 'on_hit',
-        chance: 4,
-        description: "cast Warrior's Path Level 13",
+        chance: 3,
+        description: 'cast Warrior´s Path Level [12-20]',
         details:
-          'Increases your attack damage and magic skill damage for a short period. Magic Skill Damage 39%, Attack Damage 58.50%',
+          'Chance: 3-6%. Increases your attack damage and magic skill damage for a short period.',
       },
     ])
     expect(ribcage.implicit).toEqual({
@@ -292,7 +294,7 @@ describe('S10 item changes', () => {
     expect(attire.grade).toBe('SS')
     expect(attire.requiresLevel).toBe(100)
     expect([attire.defenseMin, attire.defenseMax]).toEqual([110, 140])
-    expect([attire.sockets, attire.maxSockets]).toEqual([5, 6])
+    expect([attire.sockets, attire.maxSockets]).toEqual([1, 6])
     expect(attire.skillBonuses).toEqual({ 'Oasis Aura': [25, 35] })
     expect(attire.implicit).toEqual({
       enhanced_defense: [270, 400],
@@ -317,7 +319,7 @@ describe('S10 item changes', () => {
     expect(boots.implicit).toEqual({
       enhanced_defense: [180, 225],
       all_skills: [2, 4],
-      random_skill_element: [4, 5],
+      random_skill_element: [3, 5],
       movement_speed: [75, 100],
       faster_cast_rate: 25,
       increased_attack_speed: 25,
@@ -349,7 +351,7 @@ describe('S10 item changes', () => {
     expect(crown.grade).toBe('SS')
     expect(crown.requiresLevel).toBe(100)
     expect([crown.defenseMin, crown.defenseMax]).toEqual([90, 140])
-    expect([crown.sockets, crown.maxSockets]).toEqual([3, 4])
+    expect([crown.sockets, crown.maxSockets]).toEqual([2, 4])
     expect(crown.implicit).toEqual({
       enhanced_defense: [140, 240],
       all_skills: 3,
@@ -395,6 +397,7 @@ describe('S10 item changes', () => {
     ])
     expect(shield.implicit).toEqual({
       enhanced_defense: [540, 640],
+      block_chance: 80,
       life: [350, 550],
       faster_hit_recovery: 150,
       physical_damage_reduction: 15,
@@ -416,9 +419,9 @@ describe('S10 item changes', () => {
       {
         trigger: 'on_cast',
         chance: 40,
-        description: "cast Odin's Fury Level 99",
+        description: "cast Odin's Fury Level [80-100]",
         details:
-          'Powerful warcry which deals arcane damage and stuns monsters around you. Arcane Damage 98320',
+          'Powerful warcry which deals arcane damage and stuns monsters around you.',
       },
     ])
     expect(spine.implicit).toEqual({
@@ -465,7 +468,7 @@ describe('S10 item changes', () => {
     expect(sword.grade).toBe('SS')
     expect(sword.requiresLevel).toBe(100)
     expect([sword.damageMin, sword.damageMax, sword.attackSpeed]).toEqual([125, 150, 1.2])
-    expect([sword.sockets, sword.maxSockets]).toEqual([5, 5])
+    expect([sword.sockets, sword.maxSockets]).toEqual([3, 5])
     expect(sword.uniqueEffects).toEqual(['Attacks can hit multiple enemies'])
     const slice =
       "Summon Phantom Leviathan's essence to strike monsters dealing area of effect damage. Damage 100%"
@@ -497,13 +500,11 @@ describe('S10 item changes', () => {
       all_skills: [2, 3],
       cold_skills: [2, 5],
       cold_resistance_converted_to_cold_damage: 15,
-      faster_cast_rate_more: -50,
-      follower_relic_damage: [200, 300],
-      follower_relic_attack_speed: [10, 20],
+      faster_cast_rate: 50,
       extra_dmg_to_deep_frozen: [25, 40],
       flat_cold_skill_damage: [35, 55],
       cold_skill_damage: [55, 75],
-      enemy_cold_resist: [30, 45],
+      ignore_cold_res: [30, 45],
     })
   })
 
@@ -541,7 +542,7 @@ describe('S10 item changes', () => {
     expect(gun.grade).toBe('SS')
     expect(gun.requiresLevel).toBe(100)
     expect([gun.damageMin, gun.damageMax, gun.attackSpeed]).toEqual([160, 175, 1])
-    expect([gun.sockets, gun.maxSockets]).toEqual([6, 6])
+    expect([gun.sockets, gun.maxSockets]).toEqual([4, 6])
     expect(gun.skillBonuses).toEqual({ 'Spectral Scatter': [1, 3] })
     expect(gun.uniqueEffects).toEqual(['Piercing Attack'])
     expect(gun.implicit).toEqual({

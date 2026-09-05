@@ -1,0 +1,12 @@
+{
+  "stats": {
+    "add": [
+      {
+        "key": "all_skills_bard",
+        "name": "to All Skills (Bard)",
+        "category": "base",
+        "format": "flat"
+      }
+    ]
+  }
+}

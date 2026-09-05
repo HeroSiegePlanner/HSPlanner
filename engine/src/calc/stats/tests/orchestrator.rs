@@ -241,15 +241,15 @@ fn class_labelled_set_bonus_only_pays_out_for_that_class() {
         &enemy_conditions,
     );
 
-    // 4-set "+5 to All Skills (Marksman)" + the charm's +[1-2] + the vest's
-    // unlabelled +1 implicit, which stays global because the item data says so.
+    // +5 from the set, +[1-2] from the charm, +[2-3] from the pendant;
+    // the vest's unlabelled +1 stays global.
     let marksman = compute_build_stats(&BuildStatsInput {
         class_id: Some("marksman"),
         ..base_input
     });
     assert_eq!(
         marksman.stats.get("all_skills").copied(),
-        Some((7.0, 8.0)),
+        Some((9.0, 11.0)),
         "the 4-set bonus and the charm both reach a marksman"
     );
 

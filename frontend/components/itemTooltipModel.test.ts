@@ -82,13 +82,13 @@ describe('buildItemTooltipModel', () => {
     const base = getItem('s10_phantoms_step')
     if (!base) throw new Error('fixture item missing from game data')
     const unrolled = JSON.stringify(buildItemTooltipModel(base, eq(base.id), deps()).sections)
-    expect(unrolled).toContain('+[4-5] to Random Element Skills (not rolled)')
+    expect(unrolled).toContain('+[3-5] to Random Element Skills (not rolled)')
 
     const rolled = JSON.stringify(
       buildItemTooltipModel(base, eq(base.id, { randomSkillElement: 'cold' }), deps())
         .sections,
     )
-    expect(rolled).toContain('+[4-5] to Cold Skills (random element)')
+    expect(rolled).toContain('+[3-5] to Cold Skills (random element)')
     expect(rolled).not.toContain('Random Element')
   })
 

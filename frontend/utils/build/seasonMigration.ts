@@ -1,4 +1,4 @@
-import { gems, items, runes, skills } from '@data'
+import { gems, getItem, items, runes, skills } from '@data'
 import type { EquippedItem, Inventory, SlotKey } from '../../types'
 import type { BuildSnapshot } from './shareBuild'
 
@@ -23,6 +23,10 @@ const knownSocketableIds = new Set([
 
 function pruneItem(item: EquippedItem): EquippedItem | null {
   if (!knownItemIds.has(item.baseId)) return null
+  const base = getItem(item.baseId)
+  if (base?.rarity !== 'common' && base?.maxSockets === 0) {
+    return { ...item, socketCount: 0, socketed: [], socketTypes: [] }
+  }
   const socketed = item.socketed.map((id) =>
     id && knownSocketableIds.has(id) ? id : null,
   )

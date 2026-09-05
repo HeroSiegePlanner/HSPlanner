@@ -68,7 +68,10 @@ export const createInventorySlice: StateCreator<
       }
       const base = getItem(item.baseId)
       if (!base) return s
-      const next = { ...s.inventory, [slot]: item }
+      const validItem = base.rarity === 'common'
+        ? item
+        : itemEdits.withSocketCount(item, item.socketCount)
+      const next = { ...s.inventory, [slot]: validItem }
       return { inventory: withValidOffhand(next, s.allocatedTreeNodes) }
     })
   },

@@ -7,7 +7,7 @@ import {
   pruneUnknownIds,
 } from './seasonMigration'
 
-const realItemId = items[0].id
+const realItemId = items.find((item) => item.rarity === 'common' && (item.maxSockets ?? 0) >= 3)!.id
 const realSkillId = skills[0].id
 const realGemId = gems[0].id
 const skillWithSubtree = skills.find((s) => (s.subskills ?? []).length > 0)!
@@ -52,6 +52,18 @@ describe('clearSeasonBoundAllocations', () => {
 })
 
 describe('pruneUnknownIds', () => {
+  it('clears legacy sockets on equipment that now cannot have sockets', () => {
+    const base = items.find((item) => item.name === 'The Colossal Avenger')!
+    const oldItem = equipped(base.id, [realGemId])
+    oldItem.socketTypes = ['rainbow']
+    const snap = makeSnapshot({ inventory: { helmet: oldItem }, mercInventory: { helmet: oldItem } })
+    const out = pruneUnknownIds(snap)
+    for (const inv of [out.inventory, out.mercInventory]) {
+      expect(inv.helmet).toMatchObject({ socketCount: 0, socketed: [], socketTypes: [] })
+    }
+    expect(oldItem.socketed).toEqual([realGemId])
+  })
+
   it('drops gear whose base does not exist in the active season', () => {
     const snap = makeSnapshot({
       inventory: {
