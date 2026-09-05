@@ -7,6 +7,7 @@
     <title>HSPlanner</title>
     <style>
       html, body { margin: 0; padding: 0; background: #0d0e12; overflow: hidden; }
+      .boot-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 
       /* ---------- Boot splash ---------- */
       #boot{
@@ -226,13 +227,14 @@
     </style>
   </head>
   <body>
-    <div id="boot" aria-hidden="true">
-      <svg class="boot-rings" viewBox="0 0 560 560">
+    <div id="boot">
+      <span id="boot-live" class="boot-sr" role="status"></span>
+      <svg class="boot-rings" aria-hidden="true" viewBox="0 0 560 560">
         <circle class="r1" cx="280" cy="280" r="240"></circle>
         <circle class="r2" cx="280" cy="280" r="180"></circle>
         <circle class="r3" cx="280" cy="280" r="120"></circle>
       </svg>
-      <svg class="boot-ticks" viewBox="0 0 340 340">
+      <svg class="boot-ticks" aria-hidden="true" viewBox="0 0 340 340">
         <g>
           <line x1="170" y1="6"  x2="170" y2="22"></line>
           <line x1="170" y1="318" x2="170" y2="334"></line>
@@ -245,7 +247,7 @@
         </g>
       </svg>
 
-      <div class="boot-logo">
+      <div class="boot-logo" aria-hidden="true">
         <span class="boot-spark"></span>
         <span class="boot-spark"></span>
         <span class="boot-spark"></span>
@@ -274,9 +276,9 @@
         </svg>
       </div>
 
-      <div class="boot-mark"><span>H</span><span>S</span><span>P</span><span>L</span><span>A</span><span>N</span><span>N</span><span>E</span><span>R</span></div>
+      <div class="boot-mark" aria-hidden="true"><span>H</span><span>S</span><span>P</span><span>L</span><span>A</span><span>N</span><span>N</span><span>E</span><span>R</span></div>
 
-      <div class="boot-status">
+      <div class="boot-status" aria-hidden="true">
         <div class="lbl">
           <span class="l">Initializing</span>
           <span class="r">0%</span>
@@ -286,24 +288,31 @@
           <span>00</span><span>25</span><span>50</span><span>75</span><span>FF</span>
         </div>
       </div>
-      <div class="boot-ver">v__APP_VERSION__ &middot; STABLE</div>
+      <div class="boot-ver" aria-hidden="true">v__APP_VERSION__ &middot; STABLE</div>
     </div>
     <script>
       (function(){
-        var bar = null, lbl = null, pctEl = null;
+        var bar = null, lbl = null, pctEl = null, live = null, lastPhase = '';
         function refs(){
           if (!bar)   bar   = document.querySelector('#boot .boot-bar > i');
           if (!lbl)   lbl   = document.querySelector('#boot .boot-status .lbl .l');
           if (!pctEl) pctEl = document.querySelector('#boot .boot-status .lbl .r');
+          if (!live)  live  = document.getElementById('boot-live');
         }
         window.__bootProgress = function(pct, status){
           refs();
           var p = Math.max(0, Math.min(100, pct || 0));
           if (bar)   bar.style.width = p + '%';
           if (pctEl) pctEl.textContent = Math.round(p) + '%';
-          if (status && lbl) lbl.textContent = String(status);
+          if (!status) return;
+          if (lbl) lbl.textContent = String(status);
+          // announce the phase only when it changes, never the per-sprite count
+          var phase = String(status).split(' · ')[0];
+          if (live && phase !== lastPhase) { lastPhase = phase; live.textContent = phase; }
         };
+        var fallback = setTimeout(function(){ window.__bootFinish(); }, 60000);
         window.__bootFinish = function(){
+          clearTimeout(fallback);
           var b = document.getElementById('boot');
           if (!b) return;
           document.body.classList.add('boot-done');
@@ -312,13 +321,6 @@
             if (b && b.parentNode) b.parentNode.removeChild(b);
           }, 750);
         };
-
-        var fallback = setTimeout(function(){
-          if (document.getElementById('boot') && !document.body.classList.contains('boot-done')) {
-            window.__bootFinish();
-          }
-        }, 60000);
-        window.__bootReady = function(){ clearTimeout(fallback); };
       })();
     </script>
     <div id="root"></div>
