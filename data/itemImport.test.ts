@@ -3,20 +3,18 @@ import { getItem, items, seasonDataErrors } from './index'
 import type { ItemBase } from '../frontend/types'
 import { BONUS_SOCKET_MOD_ID, maxSocketsFor } from '../frontend/store/itemRules'
 import { makeEquippedItem, withForgedModAdded, withSocketCount } from '../frontend/views/gear/lib/itemEdits'
-import patch from './seasons/s10/items.patch.json'
 
 const modules = import.meta.glob<{ default: ItemBase[] }>('./items/*.json', { eager: true })
-const originals = Object.values(modules).flatMap((m) => m.default)
+const baseItems = Object.values(modules).flatMap((m) => m.default)
 
 describe('Hero Siege Helper equipment import', () => {
-  it('leaves every Common record unchanged and keeps all existing IDs', () => {
-    const common = originals.filter((item) => item.rarity === 'common')
+  it('loads equipment directly from the item files and keeps IDs unique', () => {
+    const common = baseItems.filter((item) => item.rarity === 'common')
     expect(common).toHaveLength(156)
-    for (const item of originals) expect(getItem(item.id), item.id).toBeDefined()
-    for (const item of common) {
+    for (const item of baseItems) {
       expect(getItem(item.id), item.id).toEqual(item)
-      expect(patch.change).not.toHaveProperty(item.id)
     }
+    expect(items).toHaveLength(baseItems.length)
     expect(seasonDataErrors).toEqual([])
     expect(new Set(items.map((item) => item.id)).size).toBe(items.length)
   })

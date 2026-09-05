@@ -269,29 +269,21 @@
         130,
         160
       ],
-      "all_skills": [
+      "all_skills_illusionist": [
         2,
         3
-      ],
-      "movement_speed": [
-        65,
-        85
       ],
       "increased_attack_speed": [
         20,
         30
       ],
+      "movement_speed": [
+        65,
+        85
+      ],
       "magic_skill_damage": [
         20,
         35
-      ],
-      "extra_guardian_chance": [
-        10,
-        15
-      ],
-      "summon_attack_radius": [
-        50,
-        75
       ],
       "guardian_additional_attack": [
         10,
@@ -361,7 +353,9 @@
         6,
         12
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_heroic_pearlescent_dream",
@@ -409,7 +403,9 @@
         20,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_heroic_steampowered_flamewalkers",
@@ -456,15 +452,17 @@
     },
     "procs": [
       {
-        "trigger": "on_hit",
-        "chance": 7,
-        "description": "cast Blazing Trail Level 49",
-        "details": "Leave behind a trail of fire dealing fire damage to monsters."
+        "trigger": "on_attack",
+        "chance": 6,
+        "description": "cast Blazing Trail Level [30-50]",
+        "details": "Chance: 6-8%. Leave behind a trail of fire dealing fire damage to monsters."
       }
     ],
     "uniqueEffects": [
       "Movement Phasing"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_heroic_wind_walker_s_step",
@@ -503,7 +501,9 @@
     "uniqueEffects": [
       "Movement Phasing",
       "Double Jump"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_heroic_chaoswalkers",
@@ -860,7 +860,14 @@
       "movement_speed": 40
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "boots_heroic_stranded_boot",
@@ -906,7 +913,7 @@
       {
         "trigger": "on_cast",
         "chance": 8,
-        "description": "cast Anchor Swing",
+        "description": "cast Anchor Swing Level [60-80]",
         "details": "Unleash a massive anchor swinging around you dealing cold damage."
       }
     ],
@@ -919,7 +926,9 @@
     },
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_heroic_thunder_roamers",
@@ -937,25 +946,21 @@
         225
       ],
       "all_skills": 3,
-      "lightning_skills": [
-        3,
-        5
-      ],
       "movement_speed": [
         50,
         65
       ],
-      "flat_lightning_skill_damage": [
-        32,
-        60
-      ],
-      "extra_damage_stasis": [
-        15,
-        25
+      "lightning_skills": [
+        3,
+        5
       ],
       "lightning_skill_damage": [
         22,
         30
+      ],
+      "flat_lightning_skill_damage": [
+        32,
+        60
       ],
       "faster_hit_recovery": 75,
       "extra_lightning_dmg_stasis": [
@@ -990,17 +995,13 @@
         50,
         65
       ],
-      "flat_poison_skill_damage": [
-        32,
-        60
-      ],
-      "extra_damage_poisoned": [
-        15,
-        25
-      ],
       "poison_skill_damage": [
         22,
         30
+      ],
+      "flat_poison_skill_damage": [
+        32,
+        60
       ],
       "faster_hit_recovery": 75,
       "extra_poison_dmg_to_poisoned": [
@@ -1045,7 +1046,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 3
   },
   {
     "id": "boots_satanic_arc_s_walkers",
@@ -1075,7 +1076,9 @@
       ],
       "defense_based_on_level": 50
     },
-    "setId": "arc_s_blessed_faith"
+    "setId": "arc_s_blessed_faith",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_arch_wizard_s_silk_boots",
@@ -1103,7 +1106,9 @@
       ],
       "to_intelligence": 10,
       "all_resistances": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_arena_master_s_marchers",
@@ -1138,7 +1143,9 @@
         38
       ],
       "to_dexterity": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_battle_worn_boots",
@@ -1170,7 +1177,9 @@
       ],
       "to_vitality": 25
     },
-    "setId": "battle_worn"
+    "setId": "battle_worn",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_blood_letter_s_plated_boots",
@@ -1204,7 +1213,9 @@
         8
       ]
     },
-    "setId": "blood_letter_s_armament"
+    "setId": "blood_letter_s_armament",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_bone_conjurer_s_marchers",
@@ -1232,7 +1243,9 @@
       "mana_replenish_pct": 20,
       "mana_based_on_level": 75
     },
-    "setId": "bone_conjurer_s_regalia"
+    "setId": "bone_conjurer_s_regalia",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_boots_of_blood",
@@ -1261,7 +1274,9 @@
         30
       ],
       "faster_hit_recovery": 40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_boots_of_wild",
@@ -1286,7 +1301,9 @@
         50
       ]
     },
-    "setId": "god_of_the_elements"
+    "setId": "god_of_the_elements",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_chronomancer_s_omnipotence",
@@ -1294,7 +1311,7 @@
     "baseType": "Boots",
     "slot": "boots",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 90,
     "defenseMin": 34,
     "defenseMax": 48,
@@ -1304,15 +1321,11 @@
         80
       ],
       "movement_speed": 45,
+      "to_intelligence": 45,
       "skill_haste": [
         15,
         20
       ],
-      "all_resistances": [
-        10,
-        15
-      ],
-      "to_intelligence": 45,
       "flat_arcane_skill_damage": [
         18,
         40
@@ -1322,7 +1335,9 @@
         5
       ]
     },
-    "setId": "temporal_mastery"
+    "setId": "temporal_mastery",
+    "sockets": 3,
+    "maxSockets": 3
   },
   {
     "id": "boots_satanic_dante_s_boots",
@@ -1350,7 +1365,9 @@
       ],
       "to_dexterity": 20
     },
-    "setId": "dante_s_nightmare"
+    "setId": "dante_s_nightmare",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_darkhide_boots",
@@ -1378,7 +1395,9 @@
       ],
       "to_dexterity": 15,
       "faster_hit_recovery": 75
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_death_lord_s_marchers",
@@ -1406,10 +1425,6 @@
       "damage_recouped_as_mana": [
         6,
         12
-      ],
-      "damage_drained_from_mana": [
-        6,
-        12
       ]
     },
     "setId": "death_lord_s_legacy",
@@ -1418,7 +1433,9 @@
         1,
         3
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_deep_chilled_marchers",
@@ -1457,7 +1474,9 @@
         3,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_earth_shaper_s_boots",
@@ -1488,7 +1507,9 @@
       ],
       "all_resistances": 20
     },
-    "setId": "earth_shaper_s_pride"
+    "setId": "earth_shaper_s_pride",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_einar_s_icy_stride",
@@ -1520,7 +1541,9 @@
         40
       ]
     },
-    "setId": "einar_s_rage"
+    "setId": "einar_s_rage",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_enigma_s_riftwalkers",
@@ -1547,7 +1570,9 @@
         15
       ],
       "magic_damage_reduction": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_flaming_marchers",
@@ -1555,7 +1580,7 @@
     "baseType": "Boots",
     "slot": "boots",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 92,
     "defenseMin": 34,
     "defenseMax": 48,
@@ -1568,20 +1593,19 @@
         35,
         50
       ],
-      "extra_damage_burning": [
-        25,
-        40
-      ],
-      "mana_per_kill": 12,
-      "increased_burning_damage": [
-        25,
-        40
-      ],
       "fire_resistance": [
         35,
         50
       ],
-      "max_fire_resistance": 5
+      "max_fire_resistance": 5,
+      "increased_burning_damage": [
+        25,
+        40
+      ],
+      "extra_damage_burning": [
+        25,
+        40
+      ]
     },
     "setId": "flames_of_the_apocalypse",
     "sockets": 3,
@@ -1621,7 +1645,9 @@
     },
     "uniqueEffects": [
       "Half Freeze Duration"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_gladiator_s_battle_sandals",
@@ -1638,33 +1664,31 @@
         50,
         80
       ],
-      "movement_speed": [
-        30,
-        40
-      ],
-      "jumping_power": 30,
-      "to_intelligence": [
-        15,
-        20
-      ],
       "increased_attack_speed": [
         15,
         20
       ],
+      "movement_speed": [
+        30,
+        40
+      ],
       "to_strength": [
         15,
         20
-      ]
+      ],
+      "jumping_power": 30
     },
     "setId": "gladiator_s_glory",
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 15,
-        "description": "cast Force Overwhelming Level 20",
+        "description": "cast Force Overwhelming Level [20-30]",
         "details": "Temporarily increase your attack damage, attack rating and attack speed."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_grand_wizard_s_silk_shoes",
@@ -1698,7 +1722,9 @@
         40,
         60
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_hermes_boots",
@@ -1732,7 +1758,9 @@
         50,
         75
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_juggernaut_s_victory_marchers",
@@ -1763,7 +1791,9 @@
         15
       ]
     },
-    "setId": "juggernaut_s_rampart"
+    "setId": "juggernaut_s_rampart",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_justiciar_s_thunder_boots",
@@ -1794,7 +1824,9 @@
         10
       ]
     },
-    "setId": "justiciar_s_thunder_raiment"
+    "setId": "justiciar_s_thunder_raiment",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_lava_treaders",
@@ -1827,7 +1859,9 @@
         3,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_lost_master_s_marchers",
@@ -1855,7 +1889,9 @@
         50
       ]
     },
-    "setId": "master_s_legacy"
+    "setId": "master_s_legacy",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_lumberjack_s_forestry_boots",
@@ -1883,7 +1919,9 @@
       ],
       "to_dexterity": 25
     },
-    "setId": "lumberjack_s_forestry_gear"
+    "setId": "lumberjack_s_forestry_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_lunar_prophet_s_walkers",
@@ -1914,7 +1952,9 @@
     "setId": "the_lunar_eclipse",
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_mana_woven_walkers",
@@ -1949,7 +1989,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_metal_vocalist_s_war_boots",
@@ -1978,7 +2020,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 4
   },
   {
     "id": "boots_satanic_mevius_mighty_marchers",
@@ -2010,7 +2052,9 @@
       ],
       "damage_mitigation": -3
     },
-    "setId": "mevius_eye_of_chaos"
+    "setId": "mevius_eye_of_chaos",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_molten_boots",
@@ -2042,7 +2086,9 @@
         40,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_mos_arathim_marchers",
@@ -2064,7 +2110,9 @@
       "to_strength": 10,
       "to_dexterity": 5,
       "faster_hit_recovery": 60
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_mos_arathim_s_kicks",
@@ -2097,7 +2145,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 2
   },
   {
     "id": "boots_satanic_mystic_soles",
@@ -2130,7 +2178,9 @@
         3,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_onslaught_stompers",
@@ -2158,7 +2208,9 @@
       ],
       "all_attributes": 3,
       "faster_hit_recovery": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_pirate_captain_s_boots",
@@ -2166,7 +2218,7 @@
     "baseType": "Boots",
     "slot": "boots",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 94,
     "defenseMin": 74,
     "defenseMax": 88,
@@ -2175,19 +2227,14 @@
         350,
         480
       ],
+      "all_skills_pirate": [
+        1,
+        2
+      ],
       "movement_speed": [
         40,
         50
       ],
-      "increased_attack_speed": [
-        10,
-        20
-      ],
-      "attack_rating_pct": [
-        10,
-        15
-      ],
-      "to_dexterity": 25,
       "flat_fire_skill_damage": [
         28,
         62
@@ -2198,8 +2245,8 @@
       ],
       "all_resistances": 25
     },
-    "sockets": 1,
-    "maxSockets": 1,
+    "sockets": 3,
+    "maxSockets": 4,
     "setId": "black_beard_s_remains"
   },
   {
@@ -2226,7 +2273,9 @@
         1,
         20
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "boots_satanic_plunderer_s_deck_marchers",
@@ -2256,7 +2305,9 @@
     "setId": "plunderer_s_ensemble",
     "uniqueEffects": [
       "Half Freeze Duration"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_redneck_s_working_boots",
@@ -2274,26 +2325,23 @@
         80
       ],
       "movement_speed": 30,
-      "to_dexterity": 15,
-      "attack_damage": [
-        12,
-        20
+      "fire_skill_damage": [
+        15,
+        25
       ],
       "physical_damage_reduction": [
         5,
         10
       ],
+      "all_attributes": 15,
       "magic_damage_reduction": [
         5,
         10
-      ],
-      "all_attributes": 15,
-      "fire_skill_damage": [
-        15,
-        25
       ]
     },
-    "setId": "redneck_s_work_gear"
+    "setId": "redneck_s_work_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_rocket_boots",
@@ -2321,7 +2369,9 @@
         1,
         3
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_runescribe_s_striders",
@@ -2350,7 +2400,7 @@
       "mana": 75
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 2
   },
   {
     "id": "boots_satanic_sacred_marchers",
@@ -2358,7 +2408,7 @@
     "baseType": "Boots",
     "slot": "boots",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 92,
     "defenseMin": 34,
     "defenseMax": 48,
@@ -2376,7 +2426,6 @@
         5,
         20
       ],
-      "arcane_resistance": 40,
       "vitality_converted_to_magic_skill_dmg": [
         3,
         8
@@ -2384,15 +2433,13 @@
     },
     "setId": "the_holy_one",
     "skillBonuses": {
-      "Divine Healing": [
-        5,
-        8
-      ],
       "Random Skill": [
         5,
         8
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_satan_s_molten_steps",
@@ -2427,7 +2474,9 @@
         35
       ]
     },
-    "setId": "satan_s_curse"
+    "setId": "satan_s_curse",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_shield_bearer_s_greaves",
@@ -2458,7 +2507,9 @@
       ],
       "to_vitality": 15
     },
-    "setId": "shield_bearer_s_sanctuary"
+    "setId": "shield_bearer_s_sanctuary",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_spiked_greaves",
@@ -2493,9 +2544,14 @@
       {
         "trigger": "when_struck",
         "chance": 1,
-        "description": "cast Dissipating Tornado Level 15",
+        "description": "cast Dissipating Tornado Level [15-24]",
         "details": "Summon a dissipating tornado around you that pulls nearby monsters and causes you to dodge all attacks and unleash sand at monsters when they strike you dealing arcane damage."
       }
+    ],
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "+25% increased Damage Returned to the Attacker"
     ]
   },
   {
@@ -2513,21 +2569,26 @@
         25,
         40
       ],
-      "all_skills": 1,
+      "all_skills": [
+        0,
+        1
+      ],
       "movement_speed": [
         10,
         20
       ],
-      "mana_replenish_pct": 25,
       "life": [
         50,
         75
       ],
+      "mana_replenish_pct": 25,
       "mana": [
         50,
         75
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_steadfast_marchers",
@@ -2558,7 +2619,9 @@
         7,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_tarek_s_tradeoff",
@@ -2566,7 +2629,7 @@
     "baseType": "Boots",
     "slot": "boots",
     "rarity": "satanic",
-    "grade": "B",
+    "grade": "S",
     "requiresLevel": 69,
     "defenseMin": 18,
     "defenseMax": 26,
@@ -2595,7 +2658,9 @@
         -75,
         -50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_thunder_caller_s_treads",
@@ -2627,11 +2692,13 @@
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 8,
-        "description": "cast Storm Cloud Level 16",
-        "details": "Conjure a storm cloud at target location striking monsters with surges of lightning dealing lightning damage."
+        "chance": 5,
+        "description": "cast Storm Cloud Level [15-20]",
+        "details": "Chance: 5-8%. Conjure a storm cloud at target location striking monsters with surges of lightning dealing lightning damage."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_treasure_hunter_s_boots",
@@ -2666,7 +2733,9 @@
     },
     "uniqueEffects": [
       "Half Freeze Duration"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_tribal_boots",
@@ -2695,7 +2764,9 @@
       ],
       "faster_hit_recovery": 25,
       "all_resistances": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_tundra_marchers",
@@ -2729,10 +2800,12 @@
       {
         "trigger": "when_struck",
         "chance": 8,
-        "description": "cast Avalanche Level 14",
+        "description": "cast Avalanche Level [12-22]",
         "details": "Release a bellowing shout dealing cold damage to all monsters around you and freezing them."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_vagabond_s_marchers",
@@ -2760,7 +2833,9 @@
         25
       ]
     },
-    "setId": "vagabond_s_rags"
+    "setId": "vagabond_s_rags",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_viking_s_sacred_boots",
@@ -2785,7 +2860,9 @@
       "to_strength": 25,
       "to_dexterity": 15
     },
-    "setId": "viking_s_demise"
+    "setId": "viking_s_demise",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_vipermagi_s_sprinters",
@@ -2817,7 +2894,9 @@
         20
       ],
       "movement_speed": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_voodoo_stompers",
@@ -2860,7 +2939,9 @@
         20,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_whisper_walker_s_feiyue",
@@ -2893,7 +2974,9 @@
       ],
       "damage_based_on_level": 50,
       "strength_based_on_level": 25
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_wizard_boots",
@@ -2917,7 +3000,9 @@
         5,
         8
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_ymir_s_freezing_boots",
@@ -2939,7 +3024,9 @@
       "mana_replenish_pct": 30,
       "increased_mana": 5
     },
-    "setId": "ymir_s_wisdom"
+    "setId": "ymir_s_wisdom",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_satanic_zeus_battle_boots",
@@ -2975,7 +3062,9 @@
         60
       ]
     },
-    "setId": "thunder_god_s_wrath"
+    "setId": "thunder_god_s_wrath",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "boots_unholy_marcher_s_of_hatred",
@@ -3000,32 +3089,29 @@
         75,
         100
       ],
-      "faster_cast_rate": [
-        12,
-        20
-      ],
-      "increased_attack_speed": [
-        12,
-        20
-      ],
       "crushing_blow_chance": [
         25,
         35
       ],
       "faster_hit_recovery": 120,
-      "reduced_movement_diminish": 50,
       "deadly_blow_effectiveness": [
         60,
         110
-      ]
+      ],
+      "reduced_movement_diminish": 50
     },
     "uniqueEffects": [
+      "Killing Spree: gain stacks of Movement Speed and Attack Speed after each kill, up to 100 stacks",
       "Unholy",
-      "Unholy",
-      "Killing Spree: gain stacks of Movement Speed and Attack Speed after each kill, up to 100 stacks"
+      "Unholy"
     ],
     "randomAffixGroupId": "random_unholy",
-    "maxAffixes": 2
+    "maxAffixes": 2,
+    "sockets": 0,
+    "maxSockets": 0,
+    "skillBonuses": {
+      "Killing Spree": 1
+    }
   },
   {
     "id": "boots_unholy_peg_leg",
@@ -3080,7 +3166,9 @@
         24,
         30
       ]
-    }
+    },
+    "defenseMin": 1,
+    "defenseMax": 1
   },
   {
     "id": "s10_ghostplunderers_marchers",
@@ -3138,17 +3226,17 @@
         2,
         4
       ],
-      "random_skill_element": [
-        4,
-        5
-      ],
+      "increased_attack_speed": 25,
       "movement_speed": [
         75,
         100
       ],
       "faster_cast_rate": 25,
-      "increased_attack_speed": 25,
-      "faster_hit_recovery": 120
+      "faster_hit_recovery": 120,
+      "random_skill_element": [
+        3,
+        5
+      ]
     },
     "skillBonuses": {
       "Phantom Momentum": 1

@@ -11,7 +11,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_a_wizard_s_hat",
@@ -25,7 +27,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_aaron_s_staff",
@@ -44,7 +48,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_amazon_s_spears",
@@ -59,7 +65,9 @@
         "chance": 8,
         "description": "cast Poisonous Hit Level 10"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_ancient_rock",
@@ -73,7 +81,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_angel_staff_of_apocalypse",
@@ -87,7 +97,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_apple",
@@ -106,7 +118,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_arcane_globe",
@@ -122,7 +136,9 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_assassin_s_shuriken",
@@ -137,7 +153,9 @@
         "chance": 8,
         "description": "cast Shruken Strike Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_balalayka",
@@ -151,7 +169,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_barbed_shield",
@@ -161,7 +181,9 @@
     "rarity": "relic",
     "implicit": {
       "damage_return": 100
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_basilisk_s_tooth",
@@ -176,7 +198,9 @@
         "chance": 6,
         "description": "cast Stoned Level 1"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_blazing_boots",
@@ -195,7 +219,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_bomb",
@@ -211,7 +237,9 @@
         1,
         1
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_bonsai_tree",
@@ -221,7 +249,9 @@
     "rarity": "relic",
     "implicit": {
       "skill_haste": 40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_book_of_belial",
@@ -235,7 +265,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_book_of_command",
@@ -246,7 +278,9 @@
     "implicit": {},
     "skillBonuses": {
       "Commanding Power": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_boomerang",
@@ -260,7 +294,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_bouncy",
@@ -274,7 +310,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_bracer_of_life",
@@ -285,7 +323,9 @@
     "implicit": {
       "life_replenish_pct": 50,
       "increased_life": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_butcher_s_knife",
@@ -306,7 +346,9 @@
         "description": "cast Meat Bomb Level 50",
         "details": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_butterfly_knife",
@@ -317,7 +359,9 @@
     "implicit": {
       "increased_attack_speed": 10,
       "crit_damage": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_cactus",
@@ -337,7 +381,9 @@
         "chance": 12,
         "description": "cast Spiky Plant Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_cake",
@@ -351,7 +397,9 @@
         5,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_candy_basket",
@@ -370,7 +418,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_candy_crusher",
@@ -384,7 +434,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_casino_die",
@@ -398,7 +450,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_charmed_blood",
@@ -414,7 +468,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_cheese_burger",
@@ -425,7 +481,9 @@
     "implicit": {
       "life": 1000,
       "life_replenish_pct": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_chicken_mask",
@@ -436,7 +494,9 @@
     "implicit": {},
     "skillBonuses": {
       "All Them Chickens": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_commander_s_sword",
@@ -447,7 +507,9 @@
     "implicit": {
       "attack_damage": 100,
       "movement_speed": -20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_cookies_milk",
@@ -458,7 +520,9 @@
     "implicit": {
       "physical_damage_reduction": 10,
       "magic_damage_reduction": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_cursed_book",
@@ -469,7 +533,9 @@
     "implicit": {},
     "skillBonuses": {
       "Dare to Read?": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_damned_buckler",
@@ -480,7 +546,9 @@
     "implicit": {
       "to_armor": 50,
       "faster_hit_recovery": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_daplayer_s_dislocated_head",
@@ -495,7 +563,9 @@
         "chance": 12,
         "description": "cast Rotting Carcas Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_darts",
@@ -509,7 +579,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_death_s_scythe",
@@ -525,7 +597,9 @@
         "description": "cast Agility Level 30",
         "details": "Temporarily increases your movement speed and attack speed."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_delicious_pie",
@@ -544,7 +618,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_demon_sheep",
@@ -558,7 +634,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_devil_horn",
@@ -573,7 +651,9 @@
         "description": "cast Satanic Replenishment",
         "details": "Gain increased Life Replenish for a short period!"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_devil_skull",
@@ -588,7 +668,9 @@
         "chance": 8,
         "description": "cast Burst of Rage Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_dirge",
@@ -599,7 +681,9 @@
     "implicit": {
       "additive_physical_damage": 40,
       "defense_ignored": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_dislocated_eye",
@@ -613,7 +697,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_doggo",
@@ -627,7 +713,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_doom_flute",
@@ -641,7 +729,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_double_scythe",
@@ -655,7 +745,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_dragon_shield",
@@ -676,7 +768,9 @@
         "description": "cast Breath of Fire Level 50",
         "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_dragon_s_head",
@@ -690,7 +784,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_es_energy",
@@ -704,7 +800,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_f_e_t_u_s",
@@ -718,7 +816,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_fire_ice",
@@ -733,7 +833,9 @@
         "chance": 5,
         "description": "cast Frostburn Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_fire_globe",
@@ -749,7 +851,9 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_fish_net",
@@ -760,7 +864,9 @@
     "implicit": {},
     "skillBonuses": {
       "Trap the Fish": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_flail",
@@ -771,7 +877,9 @@
     "implicit": {},
     "skillBonuses": {
       "Flailstrike": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_fly_swatter",
@@ -785,7 +893,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_fortune_card",
@@ -796,7 +906,9 @@
     "implicit": {
       "gold_find": 30,
       "magic_find": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_frozen_orb",
@@ -812,7 +924,9 @@
         "description": "cast Chilling Strike Level 50",
         "details": "Perform a chilling AOE strike dealing extra damage and freezing enemies."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_gamma_pulser",
@@ -823,7 +937,9 @@
     "implicit": {},
     "skillBonuses": {
       "Gamma Pulse": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_guardian_angel",
@@ -837,7 +953,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_half_eaten_mochi",
@@ -847,7 +965,9 @@
     "rarity": "relic",
     "implicit": {
       "vitality_converted_to_magic_skill_dmg": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_hand_of_midas",
@@ -857,7 +977,9 @@
     "rarity": "relic",
     "implicit": {
       "gold_find": 40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_hand_scythe",
@@ -872,7 +994,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_head_extractor",
@@ -883,7 +1007,9 @@
     "implicit": {},
     "skillBonuses": {
       "Extract Heads": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_hellscream_axe",
@@ -894,7 +1020,9 @@
     "implicit": {
       "crushing_blow_chance": 30,
       "additive_physical_damage": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_helm_of_chaos",
@@ -909,7 +1037,9 @@
         "chance": 5,
         "description": "cast Odin's Fury Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_honey_bee",
@@ -923,7 +1053,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_horned_mask",
@@ -937,7 +1069,9 @@
         3,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_hungering_blade_of_frost",
@@ -960,7 +1094,9 @@
         "description": "cast Breath of Ice Level 50",
         "details": "Breathe glacial air freezing and dealing cold damage to monsters."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_ice_globe",
@@ -976,7 +1112,9 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_jar_of_flies",
@@ -990,7 +1128,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_jefre_s_subscription",
@@ -1001,7 +1141,9 @@
     "implicit": {
       "light_radius": 10,
       "magic_find": 40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_jungle_vial",
@@ -1017,7 +1159,9 @@
         "description": "cast Envenom Level 50",
         "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_karp_head",
@@ -1031,7 +1175,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_keygen_exe",
@@ -1045,7 +1191,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_king_s_crown",
@@ -1055,7 +1203,9 @@
     "rarity": "relic",
     "implicit": {
       "gold_find": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_large_beer",
@@ -1069,7 +1219,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_light_cola",
@@ -1083,7 +1235,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_light_katana",
@@ -1093,7 +1247,9 @@
     "rarity": "relic",
     "implicit": {
       "increased_attack_speed": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_lightning_globe",
@@ -1109,7 +1265,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_lost_wand",
@@ -1120,7 +1278,9 @@
     "implicit": {
       "to_energy": 50,
       "faster_cast_rate": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_lottery_ticket",
@@ -1135,7 +1295,9 @@
         "chance": 2,
         "description": "cast Lucky Numbers Level 10"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_magic_mushroom",
@@ -1149,7 +1311,9 @@
         3,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_mana_dice",
@@ -1165,7 +1329,9 @@
         "description": "cast Mana Recovery Level 20",
         "details": "Chance on cast to replenish a portion of your maximum mana."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_maryo_s_pipe",
@@ -1179,7 +1345,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_mayo_s_old_sock",
@@ -1190,7 +1358,9 @@
     "implicit": {
       "life": 100,
       "to_vitality": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_meat_hook",
@@ -1204,7 +1374,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_metal_detector",
@@ -1218,7 +1390,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_minisect",
@@ -1232,7 +1406,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_monkey_king_bar",
@@ -1247,7 +1423,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_necromancer_s_finger",
@@ -1261,7 +1439,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_newt_tail",
@@ -1276,7 +1456,9 @@
         5,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_ninja_hook",
@@ -1290,7 +1472,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_nunchucks",
@@ -1301,7 +1485,9 @@
     "implicit": {
       "increased_attack_speed": 20,
       "crit_damage": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_odd_book_of_spells",
@@ -1311,7 +1497,9 @@
     "rarity": "relic",
     "implicit": {
       "magic_skill_damage": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_odin_s_sword",
@@ -1327,7 +1515,9 @@
         "description": "cast Divine Scorch Level 10",
         "details": "Perform a fiery attack setting enemies on fire."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_ogre_club",
@@ -1344,7 +1534,9 @@
         "chance": 20,
         "description": "cast Me Smash Level 10"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_orb_of_chaos",
@@ -1354,7 +1546,9 @@
     "rarity": "relic",
     "implicit": {
       "ignore_arcane_res": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_orb_of_fire",
@@ -1364,7 +1558,9 @@
     "rarity": "relic",
     "implicit": {
       "ignore_fire_res": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_orb_of_ice",
@@ -1374,7 +1570,9 @@
     "rarity": "relic",
     "implicit": {
       "ignore_cold_res": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_orb_of_lightning",
@@ -1384,7 +1582,9 @@
     "rarity": "relic",
     "implicit": {
       "ignore_lightning_res": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_orb_of_poison",
@@ -1394,7 +1594,9 @@
     "rarity": "relic",
     "implicit": {
       "ignore_poison_res": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_pickled_brain",
@@ -1408,7 +1610,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_poison_globe",
@@ -1424,7 +1628,9 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_rainbow_gate",
@@ -1438,7 +1644,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_razer_blade",
@@ -1448,7 +1656,9 @@
     "rarity": "relic",
     "implicit": {
       "crit_damage": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_razer_headset",
@@ -1462,7 +1672,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_razor_leaf",
@@ -1477,7 +1689,9 @@
         "chance": 8,
         "description": "cast Razor Leaves Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_razorwire",
@@ -1499,7 +1713,9 @@
         "description": "cast Rupture Level 20",
         "details": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_rice_chopsticks",
@@ -1514,7 +1730,9 @@
         "chance": 8,
         "description": "cast Disarming Strike Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_rock_belt",
@@ -1529,7 +1747,9 @@
         4,
         40
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_rocket_barrage",
@@ -1543,7 +1763,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_rotten_apple",
@@ -1557,7 +1779,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_rubber_duck",
@@ -1576,7 +1800,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_satan_s_eye",
@@ -1590,7 +1816,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_satan_s_horn",
@@ -1604,7 +1832,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_satan_s_tooth",
@@ -1618,7 +1848,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_sausage",
@@ -1633,7 +1865,9 @@
         3,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_shade_of_death",
@@ -1643,7 +1877,9 @@
     "rarity": "relic",
     "implicit": {
       "reduced_movement_diminish": 100
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_shattered_katana",
@@ -1657,7 +1893,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_shiv",
@@ -1673,7 +1911,9 @@
         "description": "cast Live by the Sword Level 30",
         "details": "Temporarily increases your attack speed and movement speed."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_shocker_3000",
@@ -1684,7 +1924,9 @@
     "implicit": {},
     "skillBonuses": {
       "Shocker 9000": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_shredder",
@@ -1698,7 +1940,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_shrunken_head",
@@ -1718,7 +1962,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_skull_axe",
@@ -1739,7 +1985,9 @@
         1,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_skullbat",
@@ -1753,7 +2001,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_spirit_skull",
@@ -1768,7 +2018,9 @@
         1.5,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_squishy_the_suicidal_pig",
@@ -1782,7 +2034,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_steam_sale",
@@ -1796,7 +2050,9 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_steve_s_dirty_head",
@@ -1810,7 +2066,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_stickman_steve",
@@ -1824,7 +2082,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_stigmata",
@@ -1835,7 +2095,9 @@
     "implicit": {
       "mana_cost_reduction": 30,
       "mana_replenish_pct": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_storm_dagger",
@@ -1851,7 +2113,9 @@
         "description": "cast Lightning Strike Level 50",
         "details": "Perform a charged attack striking enemies with thunder bolts."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_sucker_5000",
@@ -1862,7 +2126,9 @@
     "implicit": {},
     "skillBonuses": {
       "Sucking Power": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_sucker_5000_b",
@@ -1873,7 +2139,9 @@
     "implicit": {},
     "skillBonuses": {
       "Empowered Sucking Power": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_templar_shield",
@@ -1892,7 +2160,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_tequila",
@@ -1911,7 +2181,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_allmighty_fedora",
@@ -1925,7 +2197,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_amputation_kit",
@@ -1935,7 +2209,9 @@
     "rarity": "relic",
     "implicit": {
       "movement_speed": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_eye",
@@ -1949,7 +2225,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_holy_bible",
@@ -1960,7 +2238,9 @@
     "implicit": {
       "all_attributes": 10,
       "all_skills": 2
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_holy_grail",
@@ -1977,7 +2257,9 @@
         "chance": 8,
         "description": "cast Heaven’s Light Level 10"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_mighty_sushi",
@@ -1991,7 +2273,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_the_spoon",
@@ -2002,7 +2286,9 @@
     "implicit": {
       "mana": 50,
       "mana_replenish_pct": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_token_of_luck",
@@ -2016,7 +2302,9 @@
         5,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_triforce",
@@ -2031,7 +2319,9 @@
         100,
         1000
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_twin_blade",
@@ -2042,7 +2332,9 @@
     "implicit": {
       "crit_chance": 10,
       "crit_damage": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_vadjra",
@@ -2056,7 +2348,9 @@
         2,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_war_zeppelin",
@@ -2070,7 +2364,9 @@
         1,
         85
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_whip",
@@ -2081,7 +2377,9 @@
     "implicit": {
       "additive_physical_damage": 23,
       "increased_attack_speed": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_winner_s_drug",
@@ -2097,7 +2395,9 @@
         "description": "cast Dopium! Level 10",
         "details": "Chance on cast to increase your magic skill damage and faster cast rate for a short duration."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_witch_claw",
@@ -2112,7 +2412,9 @@
         "chance": 3,
         "description": "cast Hexing Strike Level 10"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "relic_relic_zombie_s_face",
@@ -2127,6 +2429,8 @@
         "chance": 10,
         "description": "cast Disease Level 50"
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   }
 ]

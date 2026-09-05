@@ -4211,6 +4211,12 @@
       "name": "of Poison Resistance is Converted to Poison Skill Damage",
       "category": "offense",
       "format": "percent"
+    },
+    {
+      "key": "all_skills_bard",
+      "name": "to All Skills (Bard)",
+      "category": "base",
+      "format": "flat"
     }
   ],
   "slots": [
