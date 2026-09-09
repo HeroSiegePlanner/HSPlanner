@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use super::{
-    CRUSHING_BLOW_DEFAULT, ConditionMap, ELEMENTS, ExtraSource, StatMap, Weapon,
-    WeaponDamageBreakdown, collect_extra_damage, deadly_blow_mult, r_max, r_min, rg,
+    collect_extra_damage, deadly_blow_mult, r_max, r_min, rg, ConditionMap, ExtraSource, StatMap,
+    Weapon, WeaponDamageBreakdown, CRUSHING_BLOW_DEFAULT, ELEMENTS,
 };
 
 const OPEN_WOUNDS_FRACTION: f64 = 0.2;
@@ -23,6 +23,7 @@ fn additive_elemental_breakdown(stats: &StatMap) -> (f64, f64, Vec<ExtraSource>)
         min_sum += lo;
         max_sum += hi;
         sources.push(ExtraSource {
+            stat_key: None,
             label: elem,
             pct: (lo + hi) * 0.5,
         });
@@ -97,8 +98,10 @@ pub fn compute_weapon_damage(
 
     let deadly_blow_chance =
         (r_max(rg(stats, "deadly_blow_chance")) + r_max(rg(stats, "deadly_blow"))).min(100.0);
-    let deadly_mult =
-        deadly_blow_mult(deadly_blow_chance, r_max(rg(stats, "deadly_blow_effectiveness")));
+    let deadly_mult = deadly_blow_mult(
+        deadly_blow_chance,
+        r_max(rg(stats, "deadly_blow_effectiveness")),
+    );
 
     let phys_eff_min = phys_crit_min * crush_armor_mult * deadly_mult;
     let phys_eff_max = phys_crit_max * crush_armor_mult * deadly_mult;
@@ -287,10 +290,7 @@ mod tests {
         // res = 50, ignore = 50 → eff_res = 25 → res_mult = 0.75
         // base = 100, hit = 150, APS = 1, ow = 45 → dps = (150 + 45) * 0.75 = 146.25
         let w = weapon(100.0, 100.0);
-        let s = stats(&[
-            ("attacks_per_second", 1.0),
-            ("ignore_physical_res", 50.0),
-        ]);
+        let s = stats(&[("attacks_per_second", 1.0), ("ignore_physical_res", 50.0)]);
         let mut res = HashMap::new();
         res.insert("physical".into(), 50.0);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &res, None);

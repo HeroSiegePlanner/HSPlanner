@@ -1,3 +1,6 @@
+use super::skills::calculation::{
+    number, range, scalar, scoped_inputs, stat_inputs, CalculationStep,
+};
 use std::collections::{HashMap, HashSet};
 
 use serde::Serialize;
@@ -57,6 +60,10 @@ pub struct BuildPerformanceDeps<'a> {
 #[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BuildPerformance {
+    #[serde(skip)]
+    pub(crate) calculation: Vec<CalculationStep>,
+    #[serde(skip)]
+    pub(crate) calculation_sources: super::stats::SourceMap,
     pub attributes: HashMap<String, Ranged>,
     pub stats: HashMap<String, Ranged>,
     pub damage: Option<SkillDamageBreakdown>,
@@ -208,7 +215,7 @@ struct ProcContext<'a> {
     main_skill_id: Option<&'a str>,
 }
 
-/// Mirrored in frontend/views/config/itemProcRows.ts — both sides must agree.
+/// Item proc rows shown in the Config view.
 pub fn item_cast_toggle_key(base_id: &str, target_name_norm: &str) -> String {
     format!("cast:{base_id}:{target_name_norm}")
 }
@@ -310,7 +317,15 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         entity_rates: deps.entity_rates,
     };
     let computed = compute_build_stats(&stats_input);
+    performance_from_stats(deps, computed)
+}
 
+/// Native callers retain the primary stat result for its source breakdown.
+/// The legacy entry point follows this same calculation path.
+pub(crate) fn performance_from_stats(
+    deps: &BuildPerformanceDeps<'_>,
+    computed: ComputedStats,
+) -> BuildPerformance {
     let all_class_skills: &[SkillSpec] = match deps.class_id {
         Some(cid) => data::get_skills_by_class(cid),
         None => &[],
@@ -349,13 +364,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         .unwrap_or(&empty_scoped);
     let subtree_stat = |key: &str| -> f64 { r_max(rg(main_scoped, key)).max(0.0) };
     let active_of_total_damage: f64 = subtree_stat("of_total_damage");
+    let mut calculation = Vec::new();
+    scoped_inputs(&mut calculation, main_scoped);
     let effective_projectiles: Option<u32> = active_skill.map(|s| {
         let base = deps
             .skill_projectiles
             .get(&s.id)
             .copied()
             .unwrap_or_else(|| s.base_projectiles.unwrap_or(1));
-        effective_projectile_count(base, &subtree_stat)
+        let count = effective_projectile_count(base, &subtree_stat);
+        calculation.push(CalculationStep::new("Effective projectiles", format!("round(({} base + {} subtree, capped at {} when nonzero) × (1 + {}% extra volleys / 100)); damage uses at least 1", base, number(subtree_stat("projectile_count")), number(subtree_stat("single_target_hit_cap")), number(subtree_stat("extra_volleys_pct"))), scalar(count.max(1) as f64)));
+        count
     });
 
     let active_calc_skill: Option<&CalcSkill> =
@@ -390,12 +409,14 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         })
         .flatten();
 
-    let conversions = conversion::resolve(
+    let (conversions, conversion_steps) = conversion::resolve_with_calculation(
         main_scoped,
         &computed.attributes,
         &computed.stats,
         active_calc_skill.map(|s| s.tags.as_slice()).unwrap_or(&[]),
     );
+
+    calculation.extend(conversion_steps);
 
     let damage: Option<SkillDamageBreakdown> = match (active_calc_skill, active_rank > 0) {
         (Some(calc_skill), true) => {
@@ -460,6 +481,17 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         // The entity swings on its own cadence; player FCR / attack speed stay out of it.
         let swing =
             super::skill_cost::entity_rate(kind, entity_tags, &computed.stats, deps.entity_rates);
+        stat_inputs(
+            &mut calculation,
+            &computed.stats,
+            super::affix_tags::keys_for(super::types::AffixEffect::AttackSpeed, entity_tags),
+        );
+        stat_inputs(
+            &mut calculation,
+            &computed.stats,
+            [format!("{}_attack_rate_fixed", kind.to_lowercase())],
+        );
+        calculation.push(CalculationStep::new("Entity actions per second", format!("{} configured/default base × (1 + {}% entity attack speed / 100); a fixed-rate subtree overrides this", number(swing.base), range(super::affix_tags::sum_for(super::types::AffixEffect::AttackSpeed, entity_tags, &computed.stats))), (swing.min, swing.max)));
         (Some(swing.min), Some(swing.max))
     } else {
         let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
@@ -487,6 +519,23 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
             )
         };
+        if attack_damage.is_none() {
+            let rate_keys = if active_skill.is_some_and(|s| s.uses_attack_speed) {
+                vec![
+                    "attacks_per_second",
+                    "increased_attack_speed",
+                    "increased_attack_speed_more",
+                ]
+            } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
+                vec!["skill_haste"]
+            } else {
+                vec!["faster_cast_rate", "faster_cast_rate_more"]
+            };
+            stat_inputs(&mut calculation, &computed.stats, rate_keys);
+            if let Some(base) = base_rate {
+                calculation.push(CalculationStep::new("Actions per second", format!("{} base rate × (1 + {}% effective speed / 100); cooldown skills use 1 / base cooldown", number(base), range(rate_bonus)), (base * (1.0 + rate_bonus.0 / 100.0), base * (1.0 + rate_bonus.1 / 100.0))));
+            }
+        }
         (
             base_rate.map(|r| r * (1.0 + rate_bonus.0 / 100.0)),
             base_rate.map(|r| r * (1.0 + rate_bonus.1 / 100.0)),
@@ -591,6 +640,26 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
             1.0
         };
         let factor = rate * (proc.chance / 100.0);
+        for step in target_dmg.calculation() {
+            calculation.push(CalculationStep::new(
+                format!("Proc {} · {}", proc_skill.name, step.label()),
+                step.expression(),
+                step.value(),
+            ));
+        }
+        calculation.push(CalculationStep::new(
+            format!("Proc · {}", proc_skill.name),
+            format!(
+                "{} triggers/s × {}% chance / 100 × {} target average damage",
+                number(rate),
+                number(proc.chance),
+                range((target_dmg.avg_min as f64, target_dmg.avg_max as f64))
+            ),
+            (
+                factor * target_dmg.avg_min as f64,
+                factor * target_dmg.avg_max as f64,
+            ),
+        ));
         proc_dps_min += factor * target_dmg.avg_min as f64;
         proc_dps_max += factor * target_dmg.avg_max as f64;
     }
@@ -626,6 +695,26 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 1.0
             };
             let factor = rate * (chance / 100.0);
+            for step in target_dmg.calculation() {
+                calculation.push(CalculationStep::new(
+                    format!("Proc {} / {} · {}", owner_skill.name, sub.id, step.label()),
+                    step.expression(),
+                    step.value(),
+                ));
+            }
+            calculation.push(CalculationStep::new(
+                format!("Proc · {} / {}", owner_skill.name, sub.id),
+                format!(
+                    "{} triggers/s × {}% chance / 100 × {} target average damage",
+                    number(rate),
+                    number(chance),
+                    range((target_dmg.avg_min as f64, target_dmg.avg_max as f64))
+                ),
+                (
+                    factor * target_dmg.avg_min as f64,
+                    factor * target_dmg.avg_max as f64,
+                ),
+            ));
             proc_dps_min += factor * target_dmg.avg_min as f64;
             proc_dps_max += factor * target_dmg.avg_max as f64;
         }
@@ -659,6 +748,14 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                 1.0
             };
             let factor = (rate * (proc.chance / 100.0)).min(1.0 / ITEM_PROC_ICD_SECS);
+            for step in target_dmg.calculation() {
+                calculation.push(CalculationStep::new(
+                    format!("Item proc {} / {} · {}", base.name, target, step.label()),
+                    step.expression(),
+                    step.value(),
+                ));
+            }
+            calculation.push(CalculationStep::new(format!("Item proc · {} / {}", base.name, target), format!("min({} triggers/s × {}% / 100, 1 / {}s cooldown) × {} target average damage at rank {}", number(rate), number(proc.chance), number(ITEM_PROC_ICD_SECS), range((target_dmg.avg_min as f64, target_dmg.avg_max as f64)), level), (factor * target_dmg.avg_min as f64, factor * target_dmg.avg_max as f64)));
             proc_dps_min += factor * target_dmg.avg_min as f64;
             proc_dps_max += factor * target_dmg.avg_max as f64;
         }
@@ -706,6 +803,7 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
                     * (1.0 + r_max(add) / 100.0)
                     * (1.0 + r_max(more) / 100.0)
                     * res_mult;
+                calculation.push(CalculationStep::new(format!("Granted proc · {} / {}", granted.name, p.damage_type), format!("({} base + {} per rank × {} rank) × (1 + {}% increased / 100) × (1 + {}% more / 100) × {} resistance / {}s interval", number(p.base), number(p.per_rank), range((rank_min, rank_max)), range(add), range(more), number(res_mult), number(interval)), (dmg_min / interval, dmg_max / interval)));
                 proc_dps_min += dmg_min / interval;
                 proc_dps_max += dmg_max / interval;
             }
@@ -725,14 +823,14 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         Some(ad) => (ad.attacks_per_second_min, ad.attacks_per_second_max),
         None => (eff_cast_min.unwrap_or(0.0), eff_cast_max.unwrap_or(0.0)),
     };
-    let ailment_min = ailment::ailment_dps(
+    let (ailment_min, ailment_min_steps) = ailment::ailment_calculation(
         hit_avg_min,
         rate_min * count_min * hits_min,
         &computed.stats,
         main_scoped,
         &apply_chances,
     );
-    let ailment_max = ailment::ailment_dps(
+    let (ailment_max, ailment_max_steps) = ailment::ailment_calculation(
         hit_avg_max,
         rate_max * count_max * hits_max,
         &computed.stats,
@@ -768,7 +866,95 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
         None
     };
 
+    stat_inputs(&mut calculation, &computed.stats, ["skill_duration"]);
+    stat_inputs(
+        &mut calculation,
+        &computed.stats,
+        super::affix_tags::keys_for(super::types::AffixEffect::MaxAmount, entity_tags),
+    );
+    calculation.push(CalculationStep::new(
+        "Entity count",
+        if is_single_entity {
+            "One massive entity: maximum count scales conversion damage instead"
+        } else {
+            "1 + matching maximum entity amount; ordinary skills use 1"
+        },
+        (count_min, count_max),
+    ));
+    calculation.push(CalculationStep::new("Hits per cast", active_skill.and_then(|skill| skill.hit_model.as_ref()).and_then(|model| model.lifetime.zip(model.tick_frequency)).filter(|(lifetime, tick)| *lifetime > 0.0 && *tick > 0.0).map(|(lifetime, tick)| format!("max(1, floor({} lifetime × (1 + ({} global + {} subtree)% duration / 100) / {} tick interval) + 1)", number(lifetime), range(duration_global), range(duration_scoped), number(tick))).unwrap_or_else(|| "No positive lifetime/tick interval in skill hit model: one hit per cast".into()), (hits_min, hits_max)));
+    if let Some(dps) = avg_hit_dps_min.zip(avg_hit_dps_max) {
+        calculation.push(CalculationStep::new(
+            "Average hit DPS",
+            format!(
+                "{} average damage × {} actions/s × {} entities × {} hits per cast",
+                range((hit_avg_min, hit_avg_max)),
+                range((rate_min, rate_max)),
+                range((count_min, count_max)),
+                range((hits_min, hits_max))
+            ),
+            dps,
+        ));
+    } else {
+        calculation.push(CalculationStep::new(
+            "Average hit DPS unavailable",
+            "No active damage or no configured base action rate; no hit DPS is added",
+            scalar(0.0),
+        ));
+    }
+    for (bound, steps) in [
+        ("Minimum", ailment_min_steps),
+        ("Maximum", ailment_max_steps),
+    ] {
+        for step in steps {
+            calculation.push(CalculationStep::new(
+                format!("{bound} · {}", step.label()),
+                step.expression(),
+                step.value(),
+            ));
+        }
+    }
+    calculation.push(CalculationStep::new(
+        "Proc DPS",
+        "Sum of the enabled proc contributions above",
+        (proc_dps_min, proc_dps_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Ailment DPS",
+        "Sum of the applicable damage-over-time contributions above",
+        (ailment_min, ailment_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Execute multiplier",
+        if is_boss {
+            "Boss target: execution disabled (×1)".into()
+        } else {
+            format!(
+                "1 / (1 − {}% execute threshold / 100); threshold clamped to 0–90%",
+                number(execute_below)
+            )
+        },
+        scalar(execute_mult),
+    ));
+    if let Some(dps) = combined_dps_min.zip(combined_dps_max) {
+        calculation.push(CalculationStep::new(
+            "Combined DPS",
+            format!(
+                "({} average hit DPS + {} proc DPS + {} ailment DPS) × {} execute",
+                range((
+                    avg_hit_dps_min.unwrap_or(0.0),
+                    avg_hit_dps_max.unwrap_or(0.0)
+                )),
+                range((proc_dps_min, proc_dps_max)),
+                range((ailment_min, ailment_max)),
+                number(execute_mult)
+            ),
+            dps,
+        ));
+    }
+
     BuildPerformance {
+        calculation,
+        calculation_sources: computed.stat_sources,
         attributes: computed.attributes,
         stats: computed.stats,
         damage,
@@ -800,3 +986,12 @@ pub fn compute_build_performance(deps: &BuildPerformanceDeps<'_>) -> BuildPerfor
 #[cfg(test)]
 #[path = "build_tests.rs"]
 mod tests;
+
+impl BuildPerformance {
+    pub fn calculation(&self) -> &[CalculationStep] {
+        &self.calculation
+    }
+    pub fn calculation_sources(&self) -> &super::stats::SourceMap {
+        &self.calculation_sources
+    }
+}

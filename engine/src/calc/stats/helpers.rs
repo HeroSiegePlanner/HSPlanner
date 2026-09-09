@@ -9,13 +9,14 @@ pub fn is_zero(v: Ranged) -> bool {
 
 // ---------- stat-def lookup with `_more` suffix fallback ----------
 
-pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef>> = LazyLock::new(|| {
-    let mut m: HashMap<&'static str, &'static StatDef> = HashMap::new();
-    for stat in data::game_config().stats.iter() {
-        m.insert(stat.key.as_str(), stat);
-    }
-    m
-});
+pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef>> =
+    LazyLock::new(|| {
+        let mut m: HashMap<&'static str, &'static StatDef> = HashMap::new();
+        for stat in data::game_config().stats.iter() {
+            m.insert(stat.key.as_str(), stat);
+        }
+        m
+    });
 
 // `_more` keys fall back to base key (UI formatting overlay stays in TS).
 pub fn stat_def(key: &str) -> Option<&'static StatDef> {
@@ -160,10 +161,7 @@ pub fn apply_diminishing_returns(
         if base.is_none() && more.is_none() {
             continue;
         }
-        let raw = combine_additive_and_more(
-            base.unwrap_or((0.0, 0.0)),
-            more.unwrap_or((0.0, 0.0)),
-        );
+        let raw = combine_additive_and_more(base.unwrap_or((0.0, 0.0)), more.unwrap_or((0.0, 0.0)));
         let eff = (diminished_value(raw.0, def), diminished_value(raw.1, def));
         if (eff.0 - raw.0).abs() > 1e-9 || (eff.1 - raw.1).abs() > 1e-9 {
             raw_out.insert(key.clone(), raw);
@@ -222,4 +220,3 @@ pub fn apply_multiplier(
     };
     stats.insert(flat_key.to_string(), (min, max));
 }
-

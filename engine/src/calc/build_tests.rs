@@ -795,7 +795,7 @@ fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
 
 #[test]
 fn scorching_whip_uses_equipped_weapon_speed_and_its_subtree_bonus() {
-    use crate::calc::commands::{BuildPerformanceInput, calc_build_performance};
+    use crate::calc::commands::{calc_build_performance, BuildPerformanceInput};
 
     for (weapon, base_rate) in [
         ("base_spell_gnarled_staff", 1.25),
@@ -1599,4 +1599,43 @@ fn avalanche_is_cooldown_gated_and_scales_with_skill_haste() {
         "+35% haste expected, got x{}",
         fast / slow
     );
+}
+
+#[test]
+fn native_calculation_steps_reconcile_real_spell_attack_and_entity_dps() {
+    for (class, skill) in [
+        ("stormweaver", "charged_bolts"),
+        ("jotunn", "frost_sunder"),
+        ("marksman", "gunner_drone"),
+    ] {
+        let result = perf(class, skill, 20, &[], &[]);
+        let combined = result
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Combined DPS")
+            .expect(skill);
+        assert_eq!(
+            combined.value(),
+            (
+                result.combined_dps_min.unwrap(),
+                result.combined_dps_max.unwrap()
+            )
+        );
+        let hit = result
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Average hit DPS")
+            .unwrap();
+        assert_eq!(
+            hit.value(),
+            (
+                result.avg_hit_dps_min.unwrap(),
+                result.avg_hit_dps_max.unwrap()
+            )
+        );
+        assert!(!result.calculation_sources().is_empty());
+        let json = serde_json::to_value(result).unwrap();
+        assert!(json.get("calculation").is_none());
+        assert!(json.get("calculationSources").is_none());
+    }
 }

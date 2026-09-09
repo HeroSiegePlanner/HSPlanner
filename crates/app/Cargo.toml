@@ -1,0 +1,28 @@
+[package]
+name = "hsplanner"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "hsplanner"
+path = "src/main.rs"
+
+[dependencies]
+hsplanner-planner.workspace = true
+
+
+hsplanner-build.workspace = true
+hsplanner-engine.workspace = true
+hsplanner-ui.workspace = true
+hsplanner-library.workspace = true
+gpui-kit.workspace = true
+log.workspace = true
+hsplanner-notes.workspace = true
+anyhow = "1"
+futures = "0.3"
+semver = "1"
+serde.workspace = true
+serde_json.workspace = true
+sha2 = "0.10"
+reqwest_client = { package = "gpui-pre-reqwest-client", version = "=0.3.3" }

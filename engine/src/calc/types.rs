@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use super::skills::Ranged;
 
@@ -135,6 +135,8 @@ pub struct Runeword {
     pub requires_item_level: Option<u32>,
     #[serde(default)]
     pub description: Option<String>,
+    #[serde(default)]
+    pub skill_bonuses: Option<HashMap<String, RangedValue>>,
 }
 
 // ---------- item base ----------
@@ -194,6 +196,9 @@ pub struct ItemBase {
     pub source: Option<String>,
     #[serde(default)]
     pub skill_bonuses: Option<HashMap<String, RangedValue>>,
+    /// Presentation metadata for choosing the item's rolled class skill.
+    #[serde(default)]
+    pub random_skill_pool: Option<RandomSkillPool>,
     #[serde(default)]
     pub procs: Option<Vec<ItemProcSpec>>,
     #[serde(default)]
@@ -208,6 +213,13 @@ pub struct ItemBase {
     pub socket_transforms: Option<HashMap<String, StatMap>>,
     #[serde(default)]
     pub random_affix_group_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RandomSkillPool {
+    pub class_id: String,
+    pub tree: String,
 }
 
 // ---------- item set ----------
@@ -325,6 +337,10 @@ pub struct ItemProcSpec {
     pub target: Option<String>,
     #[serde(default)]
     pub cast_level: Option<u32>,
+    #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub details: Option<String>,
 }
 
 /// What the calc does with a tag-scoped stat; `None` = known scope, not modelled.
@@ -357,6 +373,8 @@ pub struct SubskillTagChange {
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ItemGrantedSkill {
+    #[serde(default)]
+    pub aura: bool,
     pub id: String,
     #[serde(default)]
     pub name: String,
@@ -730,6 +748,8 @@ pub struct GameConfig {
     #[serde(default)]
     pub skill_points_per_level: u32,
     #[serde(default)]
+    pub levels_per_subskill_point: u32,
+    #[serde(default)]
     pub default_base_stats: Option<StatMap>,
     /// Per-second share of the triggering hit that each ailment deals.
     #[serde(default)]
@@ -759,7 +779,7 @@ pub struct DifficultyDef {
 
 // ---------- build state ----------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum SocketType {
     #[default]
@@ -767,7 +787,7 @@ pub enum SocketType {
     Rainbow,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EquippedAffix {
     #[serde(default)]
@@ -781,15 +801,17 @@ pub struct EquippedAffix {
     pub custom_value: Option<f64>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct AugmentRef {
     pub id: String,
     pub level: u32,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct EquippedItem {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub subskill_boost_skill_id: Option<String>,
     pub base_id: String,
     #[serde(default)]
     pub stars: Option<u32>,
@@ -830,7 +852,7 @@ pub type Inventory = HashMap<SlotKey, EquippedItem>;
 // ---------- custom stats ----------
 
 /// User-defined override; `value` is free text parsed by `parse_custom_stat_value`.
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomStat {
     #[serde(default)]
@@ -841,9 +863,11 @@ pub struct CustomStat {
 
 // ---------- talent tree ----------
 
-#[derive(Debug, Clone, Deserialize, Default)]
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct TreeNodeInfo {
+    #[serde(default)]
+    pub note: Option<String>,
     #[serde(rename = "t", default)]
     pub title: String,
     #[serde(rename = "n", default)]
@@ -854,7 +878,7 @@ pub struct TreeNodeInfo {
     pub groups: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "lowercase")]
 pub enum TreeSocketContent {
     Item {
@@ -864,4 +888,39 @@ pub enum TreeSocketContent {
         #[serde(default)]
         affixes: Vec<EquippedAffix>,
     },
+}
+
+#[cfg(test)]
+mod item_presentation_metadata_tests {
+    use super::*;
+
+    #[test]
+    fn real_item_json_preserves_random_skill_pool_and_proc_prose() {
+        let charms: Vec<ItemBase> =
+            serde_json::from_str(include_str!("../../../data/items/charms.json")).unwrap();
+        let pool = charms
+            .iter()
+            .find_map(|base| base.random_skill_pool.as_ref())
+            .unwrap();
+        assert_eq!(pool.class_id, "marksman");
+        assert_eq!(pool.tree, "Engineer");
+        let weapons: Vec<ItemBase> =
+            serde_json::from_str(include_str!("../../../data/items/weapons.json")).unwrap();
+        let proc = &weapons
+            .iter()
+            .find(|base| base.id == "sword_angelic_st_mika_s_zweih_nder")
+            .unwrap()
+            .procs
+            .as_ref()
+            .unwrap()[0];
+        assert_eq!(
+            proc.description.as_deref(),
+            Some("cast Divine Storm Level [75-90]")
+        );
+        assert!(proc
+            .details
+            .as_deref()
+            .unwrap()
+            .contains("area of effect lightning damage"));
+    }
 }

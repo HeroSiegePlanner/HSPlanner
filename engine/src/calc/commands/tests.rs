@@ -75,8 +75,7 @@ fn subskill_aggregation_unknown_skill_returns_empty() {
 // Proves the item-ranking batch returns one finite score per base id.
 #[test]
 fn rank_slot_items_scores_every_base() {
-    let perf: BuildPerformanceInput =
-        serde_json::from_str("{}").expect("all fields default");
+    let perf: BuildPerformanceInput = serde_json::from_str("{}").expect("all fields default");
     let base_ids: Vec<String> = crate::calc::data::data()
         .items
         .keys()
@@ -138,8 +137,7 @@ fn s10_incarnation_node_lines_parse_coverage() {
 
     let map = classify_tree_nodes_impl();
     let mut parsed = 0usize;
-    let mut unsupported: std::collections::BTreeSet<String> =
-        std::collections::BTreeSet::new();
+    let mut unsupported: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
     for c in map.values() {
         parsed += c.parsed.len();
         for line in &c.unsupported {

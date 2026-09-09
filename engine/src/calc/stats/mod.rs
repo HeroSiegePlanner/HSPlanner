@@ -3,8 +3,8 @@
 
 use std::collections::{HashMap, HashSet};
 
-use std::sync::LazyLock;
 use serde::Serialize;
+use std::sync::LazyLock;
 
 use super::affix::{
     apply_stars_to_ranged_value, rolled_affix_range, rolled_affix_value,

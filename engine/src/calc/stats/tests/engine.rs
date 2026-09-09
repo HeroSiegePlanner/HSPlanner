@@ -156,25 +156,28 @@ fn apply_tree_disables_zeros_life_replenish() {
 #[test]
 fn apply_skill_ranks_passive_pushes_when_allocated() {
     // Find any class+skill combo with passive_stats.base set.
-    let pick = data::data().skills_by_class.iter().find_map(|(class_id, skills)| {
-        for s in skills.iter() {
-            let has_passive = s
-                .passive_stats
-                .as_ref()
-                .is_some_and(|p| p.base.as_ref().is_some_and(|b| !b.is_empty()));
-            if has_passive
-                && s.kind != SkillKind::Aura
-                && s.kind != SkillKind::Buff
-                && !s
-                    .tags
+    let pick = data::data()
+        .skills_by_class
+        .iter()
+        .find_map(|(class_id, skills)| {
+            for s in skills.iter() {
+                let has_passive = s
+                    .passive_stats
                     .as_ref()
-                    .is_some_and(|t| t.iter().any(|x| x == "Buff"))
-            {
-                return Some((class_id.clone(), s.clone()));
+                    .is_some_and(|p| p.base.as_ref().is_some_and(|b| !b.is_empty()));
+                if has_passive
+                    && s.kind != SkillKind::Aura
+                    && s.kind != SkillKind::Buff
+                    && !s
+                        .tags
+                        .as_ref()
+                        .is_some_and(|t| t.iter().any(|x| x == "Buff"))
+                {
+                    return Some((class_id.clone(), s.clone()));
+                }
             }
-        }
-        None
-    });
+            None
+        });
     let Some((class_id, skill)) = pick else {
         eprintln!("no class/skill with passive_stats.base in data; skipping");
         return;
@@ -205,18 +208,21 @@ fn apply_skill_ranks_passive_pushes_when_allocated() {
 #[test]
 fn buffing_aura_effectiveness_scales_active_aura_passive() {
     // Pick a real aura skill that contributes passive stats.
-    let pick = data::data().skills_by_class.iter().find_map(|(class_id, skills)| {
-        skills
-            .iter()
-            .find(|s| {
-                s.kind == SkillKind::Aura
-                    && s.passive_stats.as_ref().is_some_and(|p| {
-                        p.base.as_ref().is_some_and(|b| !b.is_empty())
-                            || p.per_rank.as_ref().is_some_and(|m| !m.is_empty())
-                    })
-            })
-            .map(|s| (class_id.clone(), s.clone()))
-    });
+    let pick = data::data()
+        .skills_by_class
+        .iter()
+        .find_map(|(class_id, skills)| {
+            skills
+                .iter()
+                .find(|s| {
+                    s.kind == SkillKind::Aura
+                        && s.passive_stats.as_ref().is_some_and(|p| {
+                            p.base.as_ref().is_some_and(|b| !b.is_empty())
+                                || p.per_rank.as_ref().is_some_and(|m| !m.is_empty())
+                        })
+                })
+                .map(|s| (class_id.clone(), s.clone()))
+        });
     let Some((class_id, aura)) = pick else {
         eprintln!("no aura with passive_stats in data; skipping");
         return;
@@ -331,12 +337,9 @@ fn stats_based_on_level_scale_with_character_level() {
     assert!((sum_contributions(at100.get("mana").unwrap()).0 - 525.0).abs() < 1e-9);
     assert!((sum_contributions(at100.get("life").unwrap()).0 - 475.0).abs() < 1e-9);
     assert!(
-        (sum_contributions(at100.get("additive_physical_damage").unwrap()).0 - 100.0).abs()
-            < 1e-9
+        (sum_contributions(at100.get("additive_physical_damage").unwrap()).0 - 100.0).abs() < 1e-9
     );
-    assert!(
-        (sum_contributions(at100.get("enhanced_damage").unwrap()).0 - 75.0).abs() < 1e-9
-    );
+    assert!((sum_contributions(at100.get("enhanced_damage").unwrap()).0 - 75.0).abs() < 1e-9);
     assert!(
         (sum_contributions(attr100.get("strength").unwrap()).0 - 40.0).abs() < 1e-9,
         "strength attr routed"
@@ -355,9 +358,7 @@ fn stats_based_on_level_scale_with_character_level() {
     assert!(
         (sum_contributions(at92.get("additive_physical_damage").unwrap()).0 - 92.0).abs() < 1e-9
     );
-    assert!(
-        (sum_contributions(at92.get("enhanced_damage").unwrap()).0 - 69.0).abs() < 1e-9
-    );
+    assert!((sum_contributions(at92.get("enhanced_damage").unwrap()).0 - 69.0).abs() < 1e-9);
 }
 
 #[test]
@@ -393,13 +394,7 @@ fn item_granted_conditional_blessing_gated_by_toggle() {
     on_cond.insert(cond, true);
     let mut on_attr: SourceMap = HashMap::new();
     let mut on_stat: SourceMap = HashMap::new();
-    apply_item_granted_passive_stats(
-        &inv,
-        Some(&extra),
-        &on_cond,
-        &mut on_attr,
-        &mut on_stat,
-    );
+    apply_item_granted_passive_stats(&inv, Some(&extra), &on_cond, &mut on_attr, &mut on_stat);
     let on = on_attr.values().map(|v| v.len()).sum::<usize>()
         + on_stat.values().map(|v| v.len()).sum::<usize>();
     assert!(on > 0, "blessing must apply while toggle is on");
@@ -416,8 +411,7 @@ fn radiant_power_converts_mana_with_base_pct() {
 
     // Toggle OFF → the buff converts nothing.
     let mut off: SourceMap = HashMap::new();
-    let touched_off =
-        apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut off);
+    let touched_off = apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut off);
     assert!(touched_off.is_empty(), "buff must be gated by its toggle");
 
     // Toggle ON → (0.7 + 0.05 × rank)% of mana.
@@ -548,7 +542,10 @@ fn replaces_conversion_never_drives_its_source_negative() {
         "the multiplier is what gets cancelled, got {more:?}"
     );
     let arcane = sum_contributions(sources.get("arcane_skill_damage").expect("arcane missing"));
-    assert!((arcane.0 - 8.0).abs() < 1e-9, "arcane still gains it: {arcane:?}");
+    assert!(
+        (arcane.0 - 8.0).abs() < 1e-9,
+        "arcane still gains it: {arcane:?}"
+    );
 }
 
 #[test]
@@ -614,7 +611,10 @@ fn apply_inventory_implicit_overrides_replace_base_implicits() {
     let in_attrs = if let Some(def) = stat_def(&override_key) {
         if let Some(target) = def.modifies_attribute.as_deref() {
             let key = if target == "all" {
-                data::game_config().attributes.first().map(|a| a.key.clone())
+                data::game_config()
+                    .attributes
+                    .first()
+                    .map(|a| a.key.clone())
             } else {
                 Some(target.to_string())
             };
@@ -644,7 +644,9 @@ fn random_skill_element_lands_on_the_picked_element_skills() {
     let mut attrs: SourceMap = HashMap::new();
     let mut stats: SourceMap = HashMap::new();
     apply_inventory(&inv, &mut attrs, &mut stats);
-    let cold = stats.get("cold_skills").expect("picked element gets the ranks");
+    let cold = stats
+        .get("cold_skills")
+        .expect("picked element gets the ranks");
     assert!(cold.iter().any(|c| c.value == (3.0, 5.0)));
     assert!(!stats.contains_key("random_skill_element"));
 }
@@ -708,7 +710,9 @@ fn a_rolled_random_element_affix_lands_on_the_picked_element_skills() {
     let mut attrs: SourceMap = HashMap::new();
     let mut stats: SourceMap = HashMap::new();
     apply_inventory(&inv, &mut attrs, &mut stats);
-    let fire = stats.get("fire_skills").expect("picked element gets the ranks");
+    let fire = stats
+        .get("fire_skills")
+        .expect("picked element gets the ranks");
     assert!(fire.iter().any(|c| c.value == (5.0, 5.0)));
     assert!(!stats.contains_key("random_skill_element"));
 }

@@ -95,7 +95,9 @@ fn spell_branch_node_gates_magic_skill_damage_to_spells() {
 fn difficulty_penalty_cuts_all_resistances() {
     let mut stats: SourceMap = HashMap::new();
     apply_difficulty_penalty(Some("hell"), &mut stats);
-    let pushed = stats.get("all_resistances").expect("hell must cut resistances");
+    let pushed = stats
+        .get("all_resistances")
+        .expect("hell must cut resistances");
     assert_eq!(pushed[0].value, (-45.0, -45.0));
 
     let mut none: SourceMap = HashMap::new();
@@ -156,7 +158,10 @@ fn apply_base_attributes_includes_default_base_when_present() {
     let allocated: HashMap<String, u32> = HashMap::new();
     apply_base_attributes(None, &allocated, &mut attrs);
     // At least one attribute should have a "Base character" source.
-    let has_default = attrs.values().flatten().any(|c| c.label == "Base character");
+    let has_default = attrs
+        .values()
+        .flatten()
+        .any(|c| c.label == "Base character");
     assert!(has_default, "expected 'Base character' source");
 }
 
@@ -260,7 +265,10 @@ fn apply_class_baseline_seeds_defaults_only_without_class() {
     let mut stats: SourceMap = HashMap::new();
     apply_class_baseline(None, 1, false, &mut stats);
     // game-config has at least crit_chance / crit_damage / etc. defaults.
-    let has_default = stats.values().flatten().any(|c| c.label == "Base character");
+    let has_default = stats
+        .values()
+        .flatten()
+        .any(|c| c.label == "Base character");
     assert!(has_default, "expected default base-stat sources");
 }
 
@@ -288,24 +296,18 @@ fn apply_class_baseline_per_level_multiplies() {
         eprintln!("no class with stats_per_level; skipping");
         return;
     };
-    let (stat_key, &per_level) = cls
-        .stats_per_level
-        .iter()
-        .find(|(_, &v)| v != 0.0)
-        .unwrap();
+    let (stat_key, &per_level) = cls.stats_per_level.iter().find(|(_, &v)| v != 0.0).unwrap();
 
     let mut stats: SourceMap = HashMap::new();
     apply_class_baseline(Some(&cls.id), 10, false, &mut stats);
     let expected = per_level * 10.0;
-    let level_source = stats
-        .get(stat_key)
-        .and_then(|list| {
-            list.iter().find(|c| {
-                c.source_type == SourceType::Level
-                    && (c.value.0 - expected).abs() < 1e-9
-                    && (c.value.1 - expected).abs() < 1e-9
-            })
-        });
+    let level_source = stats.get(stat_key).and_then(|list| {
+        list.iter().find(|c| {
+            c.source_type == SourceType::Level
+                && (c.value.0 - expected).abs() < 1e-9
+                && (c.value.1 - expected).abs() < 1e-9
+        })
+    });
     assert!(
         level_source.is_some(),
         "expected per-level source on '{stat_key}' for class '{}'",
@@ -386,4 +388,3 @@ fn apply_skill_ranks_with_unknown_class_is_noop() {
     assert!(attrs.is_empty());
     assert!(stats.is_empty());
 }
-

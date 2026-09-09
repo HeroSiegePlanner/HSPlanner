@@ -1470,8 +1470,21 @@
   },
   {
     "id": "angels_vibrance",
-    "name": "Angels Vibrance",
-    "description": ""
+    "name": "Angel’s Vibrance Aura",
+    "description": "",
+    "aura": true,
+    "passiveStats": {
+      "base": {
+        "all_resistances": 5,
+        "life_replenish": 45,
+        "mana_replenish": 45
+      },
+      "perRank": {
+        "all_resistances": 2,
+        "life_replenish": 8,
+        "mana_replenish": 8
+      }
+    }
   },
   {
     "id": "berserker_s_rage",

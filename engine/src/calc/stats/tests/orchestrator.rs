@@ -2,7 +2,6 @@ use super::super::*;
 use super::empty_input;
 use crate::calc::types::EquippedItem;
 
-
 #[test]
 fn compute_build_stats_with_empty_input_does_not_panic() {
     let allocated = HashMap::new();
@@ -30,9 +29,15 @@ fn compute_build_stats_with_empty_input_does_not_panic() {
     let result = compute_build_stats(&input);
     // Even with no class, default base stats from game-config populate
     // some entries.
-    assert!(!result.stats.is_empty(), "default base stats should be present");
+    assert!(
+        !result.stats.is_empty(),
+        "default base stats should be present"
+    );
     // Base attributes from game-config seed the attribute map.
-    assert!(!result.attributes.is_empty(), "attributes should be seeded from defaults");
+    assert!(
+        !result.attributes.is_empty(),
+        "attributes should be seeded from defaults"
+    );
 }
 
 #[test]
@@ -77,8 +82,7 @@ fn subskill_stats_reach_only_their_own_skill() {
 #[test]
 fn skill_scoped_subskill_stats_bypass_the_shared_map() {
     // charged_bolts/world_ender: of_total_damage 50 per rank, rank 3 → 150.
-    let ranks: HashMap<String, u32> =
-        HashMap::from([("charged_bolts:world_ender".to_string(), 3)]);
+    let ranks: HashMap<String, u32> = HashMap::from([("charged_bolts:world_ender".to_string(), 3)]);
     let enemy = HashMap::new();
     let mut attrs = HashMap::new();
     let mut stats = HashMap::new();
@@ -195,7 +199,11 @@ fn class_scoped_all_skills_only_pays_out_for_that_class() {
         ..base_input
     });
     assert_eq!(
-        amazon.stats.get("all_skills").copied().unwrap_or((0.0, 0.0)),
+        amazon
+            .stats
+            .get("all_skills")
+            .copied()
+            .unwrap_or((0.0, 0.0)),
         (0.0, 0.0),
         "another class gets nothing from it"
     );
@@ -436,9 +444,7 @@ fn light_radius_nodes_feed_magic_skill_damage() {
     };
     let with_nodes = compute_build_stats(&input);
 
-    let get = |c: &ComputedStats, k: &str| {
-        c.stats.get(k).copied().unwrap_or((0.0, 0.0)).0
-    };
+    let get = |c: &ComputedStats, k: &str| c.stats.get(k).copied().unwrap_or((0.0, 0.0)).0;
     assert_eq!(get(&with_nodes, "light_radius"), 3.0);
     assert_eq!(
         get(&with_nodes, "magic_skill_damage") - get(&baseline, "magic_skill_damage"),
@@ -546,8 +552,7 @@ fn dagger_conditional_lines_require_dagger_weapon() {
         },
     );
 
-    let delta_no_weapon =
-        additive_phys(&bare, &node_2083) - additive_phys(&bare, &no_nodes);
+    let delta_no_weapon = additive_phys(&bare, &node_2083) - additive_phys(&bare, &no_nodes);
     assert!(
         delta_no_weapon.abs() < 1e-6,
         "dagger line must stay inert without a Dagger (delta {delta_no_weapon})"
@@ -617,14 +622,22 @@ fn weapon_conditional_nodes_require_matching_weapon() {
     // Node 1265: +8% to Faster Cast Rate while wielding a wand.
     assert_eq!(delta(None, 1265, "faster_cast_rate"), 0.0);
     assert_eq!(
-        delta(Some(("weapon", "base_spell_wand")), 1265, "faster_cast_rate"),
+        delta(
+            Some(("weapon", "base_spell_wand")),
+            1265,
+            "faster_cast_rate"
+        ),
         8.0
     );
     // Node 1270: +5% Increased Total Faster Cast Rate while wielding a wand.
     // The diminishing-returns pass folds _more into the base key, so read it there.
     assert_eq!(delta(None, 1270, "faster_cast_rate"), 0.0);
     assert_eq!(
-        delta(Some(("weapon", "base_spell_wand")), 1270, "faster_cast_rate"),
+        delta(
+            Some(("weapon", "base_spell_wand")),
+            1270,
+            "faster_cast_rate"
+        ),
         5.0
     );
     // Node 622: +15% Damage Mitigation when using a Shield.
@@ -642,7 +655,11 @@ fn weapon_conditional_nodes_require_matching_weapon() {
     assert_eq!(delta(None, 349, "ailment_damage_all_more"), 0.0);
     assert_eq!(delta(None, 349, "increased_ailment_frequency"), 0.0);
     assert_eq!(
-        delta(Some(("weapon", "base_mace_ogre_maul")), 349, "ailment_damage_all_more"),
+        delta(
+            Some(("weapon", "base_mace_ogre_maul")),
+            349,
+            "ailment_damage_all_more"
+        ),
         20.0
     );
     assert_eq!(
@@ -936,9 +953,16 @@ fn soulburn_essence_scales_magic_skill_damage_with_mana() {
 
     let mana = out.stats.get("mana").copied().unwrap_or((0.0, 0.0)).1;
     let expected = (mana / 750.0).floor();
-    assert!(expected >= 1.0, "test needs enough mana to clear one step, got {mana}");
+    assert!(
+        expected >= 1.0,
+        "test needs enough mana to clear one step, got {mana}"
+    );
     assert_eq!(
-        out.stats.get("magic_skill_damage").copied().unwrap_or((0.0, 0.0)).1,
+        out.stats
+            .get("magic_skill_damage")
+            .copied()
+            .unwrap_or((0.0, 0.0))
+            .1,
         expected,
         "node 773 should grant 1% per full 750 mana ({mana} mana)"
     );

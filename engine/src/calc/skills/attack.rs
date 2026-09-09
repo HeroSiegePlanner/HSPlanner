@@ -1,10 +1,11 @@
+use super::calculation::{number, range, scalar, stat_inputs, CalculationStep};
 use std::collections::HashMap;
 
 use super::{
-    AttackSkillDamageBreakdown, AttrMap, CRUSHING_BLOW_DEFAULT, ConditionMap, DamageFormula,
-    ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap, Weapon,
     collect_extra_damage, crit_factors, damage::bonus_source_synergy_pct, damage::element_keys,
-    deadly_blow_mult, r_max, r_min, rg,
+    deadly_blow_mult, r_max, r_min, rg, AttackSkillDamageBreakdown, AttrMap, ConditionMap,
+    DamageFormula, ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap, Weapon,
+    CRUSHING_BLOW_DEFAULT,
 };
 
 pub struct AttackSkillInput<'a> {
@@ -82,7 +83,7 @@ pub fn compute_attack_skill_damage(
     let atk_more = rg(input.stats, "attack_damage_more");
     // Synergies like Flail Mastery grant attack_damage% per source rank; they
     // stack additively with the gear/strength attack-damage stat.
-    let (synergy_min, synergy_max) = bonus_source_synergy_pct(
+    let ((synergy_min, synergy_max), synergy_steps) = bonus_source_synergy_pct(
         s,
         input.attributes,
         input.stats,
@@ -97,25 +98,19 @@ pub fn compute_attack_skill_damage(
 
     let crit = crit_factors(input.stats, false);
 
-    let base_min = w_min
-        * (1.0 + r_min(ed) / 100.0)
-        * (1.0 + r_min(ed_more) / 100.0)
+    let base_min = w_min * (1.0 + r_min(ed) / 100.0) * (1.0 + r_min(ed_more) / 100.0)
         + r_min(add_phys)
         + skill_flat_min
         + input.conversion_flat;
-    let base_max = w_max
-        * (1.0 + r_max(ed) / 100.0)
-        * (1.0 + r_max(ed_more) / 100.0)
+    let base_max = w_max * (1.0 + r_max(ed) / 100.0) * (1.0 + r_max(ed_more) / 100.0)
         + r_max(add_phys)
         + skill_flat_max
         + input.conversion_flat;
 
     // S8: the skill's own attack damage % is a standalone multiplier on top of
     // the gear/strength attack-damage modifier, not additive with it.
-    let atk_mult_min =
-        (1.0 + (r_min(atk) + synergy_min) / 100.0) * (1.0 + r_min(atk_more) / 100.0);
-    let atk_mult_max =
-        (1.0 + (r_max(atk) + synergy_max) / 100.0) * (1.0 + r_max(atk_more) / 100.0);
+    let atk_mult_min = (1.0 + (r_min(atk) + synergy_min) / 100.0) * (1.0 + r_min(atk_more) / 100.0);
+    let atk_mult_max = (1.0 + (r_max(atk) + synergy_max) / 100.0) * (1.0 + r_max(atk_more) / 100.0);
     let has_wdp = scaling.weapon_damage_pct.is_some();
     let skill_mult_min = if has_wdp { skill_wdp_min / 100.0 } else { 1.0 };
     let skill_mult_max = if has_wdp { skill_wdp_max / 100.0 } else { 1.0 };
@@ -138,12 +133,10 @@ pub fn compute_attack_skill_damage(
         total_pct(input, "deadly_blow_effectiveness"),
     );
 
-    let phys_hit_min = base_min * atk_mult_min * skill_mult_min * crush_armor_mult
-        * deadly_mult
-        * extra_mult;
-    let phys_hit_max = base_max * atk_mult_max * skill_mult_max * crush_armor_mult
-        * deadly_mult
-        * extra_mult;
+    let phys_hit_min =
+        base_min * atk_mult_min * skill_mult_min * crush_armor_mult * deadly_mult * extra_mult;
+    let phys_hit_max =
+        base_max * atk_mult_max * skill_mult_max * crush_armor_mult * deadly_mult * extra_mult;
     // Mirrors the spell path: hit stays per-projectile, the average folds the
     // projectile fan-in. The poison breakdown already multiplied its own avg.
     let projectiles = input.projectile_count.max(1);
@@ -174,7 +167,228 @@ pub fn compute_attack_skill_damage(
     let dps_min = (combined_avg_min as f64) * aps_min;
     let dps_max = (combined_avg_max as f64) * aps_max;
 
+    let mut calculation = Vec::new();
+    stat_inputs(&mut calculation, input.stats, ["all_skills"]);
+    if let Some(keys) = s.damage_type.as_deref().and_then(element_keys) {
+        stat_inputs(&mut calculation, input.stats, [keys.skills]);
+    }
+    calculation.push(CalculationStep::new(
+        "Effective attack rank",
+        format!(
+            "{} allocated + {} all skills + {} element + {} item ranks",
+            number(input.allocated_rank),
+            range(all_skills),
+            range(elem_bonus),
+            range(item)
+        ),
+        (eff_min, eff_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Weapon damage",
+        input
+            .weapon
+            .map(|w| w.name.clone())
+            .unwrap_or_else(|| "Unarmed baseline".into()),
+        (w_min, w_max),
+    ));
+    for (label, formula, result) in [
+        (
+            "Skill weapon damage %",
+            scaling.weapon_damage_pct.as_ref(),
+            (skill_wdp_min, skill_wdp_max),
+        ),
+        (
+            "Skill flat physical minimum",
+            scaling.flat_physical_min.as_ref(),
+            scalar(skill_flat_min),
+        ),
+        (
+            "Skill flat physical maximum",
+            scaling.flat_physical_max.as_ref(),
+            scalar(skill_flat_max),
+        ),
+    ] {
+        if let Some(formula) = formula {
+            calculation.push(CalculationStep::new(
+                label,
+                format!(
+                    "max(0, {} + {} × effective rank)",
+                    number(formula.base),
+                    number(formula.per_level)
+                ),
+                result,
+            ));
+        }
+    }
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        [
+            "enhanced_damage",
+            "enhanced_damage_more",
+            "additive_physical_damage",
+            "attack_damage",
+            "attack_damage_more",
+            "crushing_blow_modifier",
+            "armor_break",
+            "deadly_blow_chance",
+            "deadly_blow",
+            "deadly_blow_effectiveness",
+            "crit_chance",
+            "crit_damage",
+            "crit_damage_more",
+            "attacks_per_second",
+            "increased_attack_speed",
+            "increased_attack_speed_more",
+        ],
+    );
+    calculation.push(CalculationStep::new(
+        "Converted flat physical damage",
+        "Conversion applies to physical only when no elemental member consumes it",
+        scalar(input.conversion_flat),
+    ));
+    calculation.push(CalculationStep::new("Physical base", format!("{} weapon × (1 + {}% enhanced / 100) × (1 + {}% more / 100) + {} additive + {} skill flat + {} converted", range((w_min, w_max)), range(ed), range(ed_more), range(add_phys), range((skill_flat_min, skill_flat_max)), number(input.conversion_flat)), (base_min, base_max)));
+    calculation.extend(synergy_steps);
+    calculation.push(CalculationStep::new(
+        "Attack damage multiplier",
+        format!(
+            "(1 + ({} attack + {} synergy)% / 100) × (1 + {}% more / 100)",
+            range(atk),
+            range((synergy_min, synergy_max)),
+            range(atk_more)
+        ),
+        (atk_mult_min, atk_mult_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Skill weapon multiplier",
+        if has_wdp {
+            format!(
+                "{}% weapon damage / 100",
+                range((skill_wdp_min, skill_wdp_max))
+            )
+        } else {
+            "No weapon scaling formula: ×1".into()
+        },
+        (skill_mult_min, skill_mult_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Crushing blow + armor break",
+        format!(
+            "{} crushing (default {}) + {}% armor break / 100",
+            number(crushing_blow_modifier),
+            number(CRUSHING_BLOW_DEFAULT),
+            number(armor_break_pct)
+        ),
+        scalar(crush_armor_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Deadly blow multiplier",
+        format!(
+            "1 + clamp({}%, 0, 100) / 100 × (1.35 × (1 + {}% effectiveness / 100) − 1)",
+            number(deadly_blow_chance),
+            number(total_pct(input, "deadly_blow_effectiveness"))
+        ),
+        scalar(deadly_mult),
+    ));
+    for source in &extra_sources {
+        stat_inputs(&mut calculation, input.stats, source.stat_key);
+        calculation.push(CalculationStep::new(
+            format!("Extra damage · {}", source.label),
+            "Applied bonus %; ranged build bonuses use the mean of their endpoints",
+            scalar(source.pct),
+        ));
+    }
+    calculation.push(CalculationStep::new(
+        "Extra damage multiplier",
+        "1 + sum of applicable extra damage % / 100",
+        scalar(extra_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Physical hit before rounding",
+        format!(
+            "{} base × {} attack × {} skill × {} crush/armor × {} deadly × {} extra",
+            range((base_min, base_max)),
+            range((atk_mult_min, atk_mult_max)),
+            range((skill_mult_min, skill_mult_max)),
+            number(crush_armor_mult),
+            number(deadly_mult),
+            number(extra_mult)
+        ),
+        (phys_hit_min, phys_hit_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Physical hit",
+        "Floor physical hit before rounding; one projectile",
+        (phys_hit_min.floor(), phys_hit_max.floor()),
+    ));
+    calculation.push(CalculationStep::new(
+        "Critical damage multiplier",
+        format!(
+            "(1 + {}% critical damage / 100) × (1 + {}% more / 100)",
+            number(crit.damage_pct),
+            number(r_max(rg(input.stats, "crit_damage_more")))
+        ),
+        scalar(crit.on_crit_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Average critical multiplier",
+        format!(
+            "1 + clamp({}%, 0, 95) / 100 × ({} critical multiplier − 1)",
+            number(crit.chance),
+            number(crit.on_crit_mult)
+        ),
+        scalar(crit.avg_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Average physical damage",
+        format!(
+            "floor({} unrounded physical hit × {} average crit × {} projectiles)",
+            range((phys_hit_min, phys_hit_max)),
+            number(crit.avg_mult),
+            projectiles
+        ),
+        (phys_avg_min.floor(), phys_avg_max.floor()),
+    ));
+    calculation.push(CalculationStep::new(
+        "Combined hit damage",
+        format!(
+            "{} physical + {} elemental (see elemental calculation)",
+            range((phys_hit_min_i as f64, phys_hit_max_i as f64)),
+            range((poison_hit_min as f64, poison_hit_max as f64))
+        ),
+        (combined_hit_min as f64, combined_hit_max as f64),
+    ));
+    calculation.push(CalculationStep::new(
+        "Average damage per swing",
+        format!(
+            "{} average physical + {} average elemental",
+            range((phys_avg_min_i as f64, phys_avg_max_i as f64)),
+            range((poison_avg_min as f64, poison_avg_max as f64))
+        ),
+        (combined_avg_min as f64, combined_avg_max as f64),
+    ));
+    calculation.push(CalculationStep::new(
+        "Attacks per second",
+        format!(
+            "{} base × (1 + {}% increased / 100) × (1 + {}% more / 100)",
+            number(base_aps),
+            range(ias),
+            range(ias_more)
+        ),
+        (aps_min, aps_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Attack DPS before entities / repeated hits",
+        format!(
+            "{} average per swing × {} attacks per second",
+            range((combined_avg_min as f64, combined_avg_max as f64)),
+            range((aps_min, aps_max))
+        ),
+        (dps_min, dps_max),
+    ));
+
     Some(AttackSkillDamageBreakdown {
+        calculation,
         effective_rank_min: eff_min,
         effective_rank_max: eff_max,
         weapon_damage_pct_min: skill_wdp_min,
@@ -313,7 +527,10 @@ mod tests {
     #[test]
     fn armor_break_raises_attack_skill_damage() {
         // crush_armor_mult = 1.5 + 100/100 = 2.5
-        assert_eq!(hit_max(&stats(&[("armor_break", 100.0)]), &StatMap::new()), 250);
+        assert_eq!(
+            hit_max(&stats(&[("armor_break", 100.0)]), &StatMap::new()),
+            250
+        );
     }
 
     #[test]
@@ -357,8 +574,22 @@ mod tests {
 
     #[test]
     fn projectiles_multiply_the_average_but_not_the_hit() {
-        let plain = breakdown_for(&skill(), &StatMap::new(), &StatMap::new(), &SkillRanks::new(), 1, 0.0);
-        let fanned = breakdown_for(&skill(), &StatMap::new(), &StatMap::new(), &SkillRanks::new(), 3, 0.0);
+        let plain = breakdown_for(
+            &skill(),
+            &StatMap::new(),
+            &StatMap::new(),
+            &SkillRanks::new(),
+            1,
+            0.0,
+        );
+        let fanned = breakdown_for(
+            &skill(),
+            &StatMap::new(),
+            &StatMap::new(),
+            &SkillRanks::new(),
+            3,
+            0.0,
+        );
         assert_eq!(fanned.combined_hit_max, plain.combined_hit_max);
         assert_eq!(fanned.combined_avg_max, plain.combined_avg_max * 3);
         assert!((fanned.dps_max - plain.dps_max * 3.0).abs() < 1e-6);
@@ -396,5 +627,41 @@ mod tests {
         let shared = stats(&[("attack_damage", 200.0)]);
         let out = breakdown_for(&s2, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
         assert_eq!(out.combined_hit_max, 1350);
+    }
+    #[test]
+    fn explanation_includes_weapon_more_deadly_and_projectile_averaging() {
+        let d = breakdown_for(
+            &skill(),
+            &stats(&[
+                ("enhanced_damage_more", 100.0),
+                ("attack_damage_more", 50.0),
+                ("deadly_blow_chance", 100.0),
+                ("deadly_blow_effectiveness", 50.0),
+                ("crit_chance", 50.0),
+                ("crit_damage", 100.0),
+                ("attacks_per_second", 2.0),
+            ]),
+            &StatMap::new(),
+            &SkillRanks::new(),
+            3,
+            40.0,
+        );
+        let step = |label| {
+            d.calculation()
+                .iter()
+                .find(|step| step.label() == label)
+                .unwrap()
+        };
+        assert_eq!(step("Physical base").value(), (240.0, 240.0));
+        assert_eq!(step("Attack damage multiplier").value(), (1.5, 1.5));
+        assert!((step("Deadly blow multiplier").value().0 - 2.025).abs() < 1e-12);
+        assert_eq!(
+            step("Average damage per swing").value(),
+            (d.combined_avg_min as f64, d.combined_avg_max as f64)
+        );
+        assert_eq!(
+            step("Attack DPS before entities / repeated hits").value(),
+            (d.dps_min, d.dps_max)
+        );
     }
 }

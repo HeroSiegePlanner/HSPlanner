@@ -125,67 +125,38 @@ The app is self-contained — end users do not need Node or Rust installed.
 
 ---
 
-## Development requirements
+## Development
 
-| Tool | Minimum version | Purpose |
-|---|---|---|
-| **Node.js** | 22.x LTS (CI builds on 22) | Frontend (Vite + React 19) |
-| **npm** | 11.x | Package manager |
-| **Rust toolchain** | `rustup` with `stable` (≥ 1.82) | Tauri engine |
-| **Tauri prerequisites** | see below per OS | Linker, system libraries |
-
-### Build
+The native GPUI app is the default development target. Use stable Rust and the
+platform dependencies listed in `.github/workflows/native.yml`. Native targets
+are macOS 15+ Apple Silicon, Windows 10/11 x64 and Linux x64 with native Wayland.
 
 ```bash
-git clone https://github.com/zium1337/HSPlanner.git
-cd HSPlanner
-npm install
-npm run tauri:dev
+cargo run -p hsplanner
+cargo build --release -p hsplanner
 ```
 
-### Scripts
+The native executable is `target/release/hsplanner` (`.exe` on Windows).
+Native installer tooling is available via `python3 tools/package-native.py`;
+the app checks GitHub releases for updates and can install them from the footer.
+See [packaging/README.md](packaging/README.md).
 
-| Command | What it does |
-|---|---|
-| `npm run tauri:dev` | Run the desktop app in dev mode |
-| `npm run tauri:build` | Build the installers/binaries |
-| `npm test` | Vitest suite |
-| `npm run lint` | ESLint |
-| `npm run parity` | Rust ↔ TS calculation parity gate (run after touching `calc`) |
+### Archived Tauri reference
 
-### Project schema
+`legacy/` and `tree-renderer/` are optional, ignored local archives. They are
+not required by the native workspace, CI or packaging. The former Tauri
+sources remain available in Git history before the GPUI migration.
+
+### Project structure
 
 | Path | Contents |
 |---|---|
-| `frontend/` | React app (not `src/`) |
-| `engine/` | Rust / Tauri backend, where the calculations live |
-| `data/` | JSON shared by the frontend (`@data`) and the engine (`build.rs`); base = Season 10 |
-
-### Tauri — system prerequisites
-
-**Windows**
-- Microsoft Visual Studio C++ Build Tools (workload "Desktop development with C++")
-- WebView2 Runtime (only needed on Win10; Win11 has it preinstalled)
-
-**macOS**
-- Xcode Command Line Tools: `xcode-select --install`
-
-> [!IMPORTANT]
-> Only for development purpose because game doesn't support macos.
-
-**Linux (Debian/Ubuntu)**
-```bash
-sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev \
-  libssl-dev libayatana-appindicator3-dev librsvg2-dev
-```
-
-**Linux (Arch)**
-```bash
-sudo pacman -S --needed webkit2gtk-4.1 base-devel curl wget file openssl \
-  appmenu-gtk-module libappindicator-gtk3 librsvg xdotool
-```
-
-For more information about tauri see [official Tauri guide](https://tauri.app/start/prerequisites/)
+| `crates/` | Native GPUI app, views, documents and shared UI |
+| `engine/` | Shared Rust calculations, OCR and suggestions |
+| `data/` | Shared game JSON; current base is Season 10 |
+| `assets/` | Shared graphics (skills, items, tree nodes) |
+| `packaging/` | Native installer configuration and icons |
+| `tools/` | Packaging and optional visual comparison tools |
 
 ## FAQ
 

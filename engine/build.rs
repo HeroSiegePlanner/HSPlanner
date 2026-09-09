@@ -3,18 +3,17 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 fn main() {
-    // Lib tests need no tauri artifacts; skipping lets `cargo test --lib` run
-    // while a concurrent `tauri dev` owns the generated files.
-    if env::var_os("HSP_SKIP_TAURI_BUILD").is_none() {
-        tauri_build::build();
-    }
     emit_data_includes();
+    #[cfg(feature = "ocr")]
     emit_ocr_includes();
 }
 
+#[cfg(feature = "ocr")]
 const OCR_MODELS: &[&str] = &["text-detection.rten", "text-recognition.rten"];
+#[cfg(feature = "ocr")]
 const OCR_MODELS_BASE_URL: &str = "https://ocrs-models.s3-accelerate.amazonaws.com";
 
+#[cfg(feature = "ocr")]
 fn emit_ocr_includes() {
     let out_dir = env::var("OUT_DIR").expect("OUT_DIR not set");
     let manifest_dir = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");

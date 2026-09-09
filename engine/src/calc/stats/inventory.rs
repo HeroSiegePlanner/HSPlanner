@@ -13,9 +13,7 @@ fn resolved_stat_key<'a>(
 ) -> Option<Cow<'a, str>> {
     match stat_key {
         RANDOM_ELEMENT_KEY => element.map(|e| Cow::Owned(format!("{e}_skills"))),
-        ALL_SKILLS_CLASS_KEY => {
-            all_skills_class.map(|c| Cow::Owned(format!("all_skills_{c}")))
-        }
+        ALL_SKILLS_CLASS_KEY => all_skills_class.map(|c| Cow::Owned(format!("all_skills_{c}"))),
         _ => Some(Cow::Borrowed(stat_key)),
     }
 }
@@ -42,8 +40,7 @@ pub fn apply_inventory(
         };
 
         // Runeword suppresses per-socket gem contributions and implicit scaling.
-        let socketed_refs: Vec<Option<&str>> =
-            item.socketed.iter().map(|s| s.as_deref()).collect();
+        let socketed_refs: Vec<Option<&str>> = item.socketed.iter().map(|s| s.as_deref()).collect();
         let runeword = data::detect_runeword(base, &socketed_refs);
         let scale_implicit = runeword.is_none();
         let can_sf = data::can_star_forge(slot_key, &base.rarity);
@@ -96,13 +93,11 @@ pub fn apply_inventory(
                 // Frontend keys overrides by the raw base key, so check it first —
                 // random_skill_element resolves to {element}_skills below.
                 let raw_key = stat_key.as_str();
-                let Some(stat_key) =
-                    resolved_stat_key(
+                let Some(stat_key) = resolved_stat_key(
                     stat_key,
                     item.random_skill_element.as_deref(),
                     item.all_skills_class_id.as_deref(),
-                )
-                else {
+                ) else {
                     continue;
                 };
                 let stat_key = stat_key.as_ref();
@@ -113,11 +108,9 @@ pub fn apply_inventory(
                     .copied();
                 let scaled: Ranged = match override_val {
                     Some(ov) => (ov, ov),
-                    None if scale_implicit => apply_stars_to_ranged_value(
-                        value.as_ranged(),
-                        stat_key,
-                        effective_stars,
-                    ),
+                    None if scale_implicit => {
+                        apply_stars_to_ranged_value(value.as_ranged(), stat_key, effective_stars)
+                    }
                     None => value.as_ranged(),
                 };
                 apply_contribution(
@@ -178,8 +171,7 @@ pub fn apply_inventory(
                 stat_key,
                 item.random_skill_element.as_deref(),
                 item.all_skills_class_id.as_deref(),
-            )
-            else {
+            ) else {
                 continue;
             };
             let signed: f64 = if let Some(cv) = eq.custom_value {
@@ -304,12 +296,9 @@ pub fn apply_inventory(
         if let Some(aug_ref) = item.augment.as_ref() {
             if let Some(aug) = data::get_augment(&aug_ref.id) {
                 if !aug.levels.is_empty() {
-                    let lvl = aug_ref
-                        .level
-                        .clamp(1, aug.levels.len() as u32);
+                    let lvl = aug_ref.level.clamp(1, aug.levels.len() as u32);
                     if let Some(tier) = aug.levels.get((lvl - 1) as usize) {
-                        let label =
-                            format!("Augment: {} Lv {} ({})", aug.name, lvl, item_name);
+                        let label = format!("Augment: {} Lv {} ({})", aug.name, lvl, item_name);
                         for (stat_key, &value) in tier.stats.iter() {
                             apply_contribution(
                                 attr_sources,
@@ -329,4 +318,3 @@ pub fn apply_inventory(
 
     weapon_has_attack_speed
 }
-

@@ -1,0 +1,118 @@
+//! Embedded portraits shared by native library and planner screens.
+use gpui_kit::{Image, ImageFormat};
+use std::{
+    collections::HashMap,
+    sync::{Arc, LazyLock},
+};
+
+pub fn class_portrait(id: Option<&str>) -> Option<Arc<Image>> {
+    static ICONS: LazyLock<HashMap<&str, Arc<Image>>> = LazyLock::new(|| {
+        [
+            (
+                "amazon",
+                include_bytes!("../../../assets/classes/amazon.webp").as_slice(),
+            ),
+            (
+                "bard",
+                include_bytes!("../../../assets/classes/bard.webp").as_slice(),
+            ),
+            (
+                "butcher",
+                include_bytes!("../../../assets/classes/butcher.webp").as_slice(),
+            ),
+            (
+                "demon_slayer",
+                include_bytes!("../../../assets/classes/demon_slayer.webp").as_slice(),
+            ),
+            (
+                "demonspawn",
+                include_bytes!("../../../assets/classes/demonspawn.webp").as_slice(),
+            ),
+            (
+                "exo",
+                include_bytes!("../../../assets/classes/exo.webp").as_slice(),
+            ),
+            (
+                "illusionist",
+                include_bytes!("../../../assets/classes/illusionist.webp").as_slice(),
+            ),
+            (
+                "jotunn",
+                include_bytes!("../../../assets/classes/jotunn.webp").as_slice(),
+            ),
+            (
+                "marauder",
+                include_bytes!("../../../assets/classes/marauder.webp").as_slice(),
+            ),
+            (
+                "marksman",
+                include_bytes!("../../../assets/classes/marksman.webp").as_slice(),
+            ),
+            (
+                "necromancer",
+                include_bytes!("../../../assets/classes/necromancer.webp").as_slice(),
+            ),
+            (
+                "nomad",
+                include_bytes!("../../../assets/classes/nomad.webp").as_slice(),
+            ),
+            (
+                "paladin",
+                include_bytes!("../../../assets/classes/paladin.webp").as_slice(),
+            ),
+            (
+                "pirate",
+                include_bytes!("../../../assets/classes/pirate.webp").as_slice(),
+            ),
+            (
+                "plague_doctor",
+                include_bytes!("../../../assets/classes/plague_doctor.webp").as_slice(),
+            ),
+            (
+                "prophet",
+                include_bytes!("../../../assets/classes/prophet.webp").as_slice(),
+            ),
+            (
+                "pyromancer",
+                include_bytes!("../../../assets/classes/pyromancer.webp").as_slice(),
+            ),
+            (
+                "redneck",
+                include_bytes!("../../../assets/classes/redneck.webp").as_slice(),
+            ),
+            (
+                "samurai",
+                include_bytes!("../../../assets/classes/samurai.webp").as_slice(),
+            ),
+            (
+                "shaman",
+                include_bytes!("../../../assets/classes/shaman.webp").as_slice(),
+            ),
+            (
+                "shield_lancer",
+                include_bytes!("../../../assets/classes/shield_lancer.webp").as_slice(),
+            ),
+            (
+                "stormweaver",
+                include_bytes!("../../../assets/classes/stormweaver.webp").as_slice(),
+            ),
+            (
+                "viking",
+                include_bytes!("../../../assets/classes/viking.webp").as_slice(),
+            ),
+            (
+                "white_mage",
+                include_bytes!("../../../assets/classes/white_mage.webp").as_slice(),
+            ),
+        ]
+        .into_iter()
+        .map(|(id, bytes)| {
+            (
+                id,
+                Arc::new(Image::from_bytes(ImageFormat::Webp, bytes.to_vec())),
+            )
+        })
+        .collect()
+    });
+    id.and_then(|id| ICONS.get(id)).cloned()
+}

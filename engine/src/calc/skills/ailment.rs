@@ -1,6 +1,7 @@
+use super::calculation::{number, scalar, CalculationStep};
 use std::collections::HashMap;
 
-use super::{StatMap, r_max, rg};
+use super::{r_max, rg, StatMap};
 
 pub struct Ailment {
     pub state: &'static str,
@@ -89,14 +90,25 @@ pub fn ailment_dps(
     scoped: &StatMap,
     apply_chances: &HashMap<String, f64>,
 ) -> f64 {
+    ailment_calculation(hit_avg, hits_per_second, stats, scoped, apply_chances).0
+}
+
+pub(crate) fn ailment_calculation(
+    hit_avg: f64,
+    hits_per_second: f64,
+    stats: &StatMap,
+    scoped: &StatMap,
+    apply_chances: &HashMap<String, f64>,
+) -> (f64, Vec<CalculationStep>) {
+    let mut trace = Vec::new();
     if hit_avg <= 0.0 {
-        return 0.0;
+        return (0.0, trace);
     }
     let hits = hits_per_second.max(1.0);
     let all_damage = total_pct(stats, scoped, "ailment_damage_all");
     let all_frequency = total_pct(stats, scoped, "increased_ailment_frequency");
 
-    AILMENTS
+    let total = AILMENTS
         .iter()
         .map(|a| {
             let fraction = base_fraction(a.state);
@@ -119,13 +131,13 @@ pub fn ailment_dps(
                 .map(|k| total_pct(stats, scoped, k))
                 .unwrap_or(0.0)
                 + all_frequency;
-            hit_avg
-                * fraction
-                * (1.0 + damage_pct / 100.0)
-                * (1.0 + frequency_pct / 100.0)
-                * uptime
+            let contribution = hit_avg * fraction * (1.0 + damage_pct / 100.0) * (1.0 + frequency_pct / 100.0) * uptime;
+            trace.push(CalculationStep::new(format!("{} uptime", a.state), format!("1 − (1 − clamp({}% stat + {}% subtree, 0, 100) / 100)^max({}, 1 hits/s)", number(from_stat), number(from_procs), number(hits_per_second)), scalar(uptime)));
+            trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × {} base fraction × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
+            contribution
         })
-        .sum()
+        .sum();
+    (total, trace)
 }
 
 #[cfg(test)]
@@ -173,7 +185,10 @@ mod tests {
     fn increased_ailment_damage_scales_the_contribution() {
         let empty = StatMap::new();
         let plain = ailment_dps(1000.0, 1.0, &empty, &empty, &chances(&[("burning", 100.0)]));
-        let boosted = ailment_dps(1000.0, 1.0, &stats(&[("increased_burning_damage", 100.0)]),
+        let boosted = ailment_dps(
+            1000.0,
+            1.0,
+            &stats(&[("increased_burning_damage", 100.0)]),
             &empty,
             &chances(&[("burning", 100.0)]),
         );
@@ -186,11 +201,17 @@ mod tests {
     #[test]
     fn scoped_subtree_value_counts_like_a_shared_one() {
         let empty = StatMap::new();
-        let shared = ailment_dps(1000.0, 1.0, &stats(&[("increased_rabies_damage", 50.0)]),
+        let shared = ailment_dps(
+            1000.0,
+            1.0,
+            &stats(&[("increased_rabies_damage", 50.0)]),
             &empty,
             &chances(&[("rabies", 100.0)]),
         );
-        let scoped = ailment_dps(1000.0, 1.0, &empty,
+        let scoped = ailment_dps(
+            1000.0,
+            1.0,
+            &empty,
             &stats(&[("increased_rabies_damage", 50.0)]),
             &chances(&[("rabies", 100.0)]),
         );
@@ -200,8 +221,17 @@ mod tests {
     #[test]
     fn frequency_and_apply_chance_scale_linearly() {
         let empty = StatMap::new();
-        let base = ailment_dps(1000.0, 1.0, &empty, &empty, &chances(&[("bleeding", 100.0)]));
-        let faster = ailment_dps(1000.0, 1.0, &stats(&[("increased_bleeding_frequency", 50.0)]),
+        let base = ailment_dps(
+            1000.0,
+            1.0,
+            &empty,
+            &empty,
+            &chances(&[("bleeding", 100.0)]),
+        );
+        let faster = ailment_dps(
+            1000.0,
+            1.0,
+            &stats(&[("increased_bleeding_frequency", 50.0)]),
             &empty,
             &chances(&[("bleeding", 100.0)]),
         );
@@ -213,7 +243,10 @@ mod tests {
     #[test]
     fn chance_inflict_stat_applies_the_ailment_on_its_own() {
         let empty = StatMap::new();
-        let dps = ailment_dps(1000.0, 1.0, &stats(&[("chance_inflict_poisoned", 100.0)]),
+        let dps = ailment_dps(
+            1000.0,
+            1.0,
+            &stats(&[("chance_inflict_poisoned", 100.0)]),
             &empty,
             &HashMap::new(),
         );
@@ -223,7 +256,10 @@ mod tests {
     #[test]
     fn apply_chance_is_capped_at_one() {
         let empty = StatMap::new();
-        let capped = ailment_dps(1000.0, 1.0, &stats(&[("chance_inflict_burning", 200.0)]),
+        let capped = ailment_dps(
+            1000.0,
+            1.0,
+            &stats(&[("chance_inflict_burning", 200.0)]),
             &empty,
             &chances(&[("burning", 200.0)]),
         );
@@ -234,7 +270,10 @@ mod tests {
     #[test]
     fn ailments_sum_across_states() {
         let empty = StatMap::new();
-        let both = ailment_dps(1000.0, 1.0, &empty,
+        let both = ailment_dps(
+            1000.0,
+            1.0,
+            &empty,
             &empty,
             &chances(&[("burning", 100.0), ("bleeding", 100.0)]),
         );
@@ -257,7 +296,13 @@ mod tests {
         assert!(uptime > 0.8 && uptime < 0.9, "uptime {uptime}");
 
         // A guaranteed apply cannot exceed full uptime.
-        let sure = ailment_dps(1000.0, 42.5, &empty, &empty, &chances(&[("burning", 100.0)]));
+        let sure = ailment_dps(
+            1000.0,
+            42.5,
+            &empty,
+            &empty,
+            &chances(&[("burning", 100.0)]),
+        );
         assert!((sure - 1000.0 * 0.2).abs() < 1e-9, "got {sure}");
     }
 }

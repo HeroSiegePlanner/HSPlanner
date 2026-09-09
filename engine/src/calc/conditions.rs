@@ -103,7 +103,10 @@ mod tests {
         for key in ["fire_break", "cold_break", "arcane_break", "poison_break"] {
             assert_eq!(condition_key_for(key), None);
         }
-        assert_eq!(condition_key_for("extra_damage_fire_break"), Some("fire_break"));
+        assert_eq!(
+            condition_key_for("extra_damage_fire_break"),
+            Some("fire_break")
+        );
     }
 
     #[test]

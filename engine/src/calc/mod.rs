@@ -10,6 +10,8 @@ pub mod data;
 pub mod defense;
 pub mod lootfilter;
 pub mod passive;
+pub mod performance_diff;
+pub mod planner;
 pub mod rank;
 pub mod season;
 pub mod skill_cost;
@@ -18,3 +20,5 @@ pub mod stats;
 pub mod subskill;
 pub mod tree;
 pub mod types;
+
+pub mod mercenary;

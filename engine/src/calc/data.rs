@@ -22,16 +22,7 @@ mod includes {
 pub(crate) use includes::SEASON_PATCHES;
 
 const GEAR_SLOTS: &[&str] = &[
-    "weapon",
-    "offhand",
-    "helmet",
-    "armor",
-    "gloves",
-    "boots",
-    "belt",
-    "amulet",
-    "ring_1",
-    "ring_2",
+    "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet", "ring_1", "ring_2",
 ];
 
 pub fn is_gear_slot(slot: &str) -> bool {
@@ -142,7 +133,9 @@ pub(crate) fn patched_value(
     name: &str,
     kind: PatchKind,
 ) -> serde_json::Value {
-    let Some(patch) = patches.get(name) else { return base };
+    let Some(patch) = patches.get(name) else {
+        return base;
+    };
     let result = match kind {
         PatchKind::List(key) => season::apply_list_patch(&base, patch, name, key),
         PatchKind::RecordMerge => season::apply_record_patch(&base, patch, name, true),
@@ -196,7 +189,12 @@ fn load_patched_many<T: serde::de::DeserializeOwned>(
     name: &str,
     ctx: &str,
 ) -> Vec<T> {
-    let value = patched_value(concat_values(blobs, ctx), patches, name, PatchKind::List("id"));
+    let value = patched_value(
+        concat_values(blobs, ctx),
+        patches,
+        name,
+        PatchKind::List("id"),
+    );
     from_value(value, name)
 }
 
@@ -456,10 +454,7 @@ pub fn get_socketable_by_id(id: &str) -> Option<Socketable<'static>> {
 }
 
 /// Returns the runeword that exactly matches every socket in order, or None.
-pub fn detect_runeword(
-    base: &ItemBase,
-    socketed: &[Option<&str>],
-) -> Option<&'static Runeword> {
+pub fn detect_runeword(base: &ItemBase, socketed: &[Option<&str>]) -> Option<&'static Runeword> {
     if base.rarity != "common" {
         return None;
     }
@@ -488,6 +483,19 @@ pub fn detect_runeword(
 }
 
 // Linear scan stays season-correct; a process-wide index would pin one season's data.
+/// Skill bonuses granted by the item base plus the runeword completed in its sockets.
+pub fn skill_bonus_entries<'a>(
+    base: &'a ItemBase,
+    item: &'a EquippedItem,
+) -> impl Iterator<Item = (&'a String, &'a super::types::RangedValue)> {
+    let socketed: Vec<Option<&str>> = item.socketed.iter().map(|s| s.as_deref()).collect();
+    let runeword = detect_runeword(base, &socketed).and_then(|rw| rw.skill_bonuses.as_ref());
+    base.skill_bonuses
+        .iter()
+        .flatten()
+        .chain(runeword.into_iter().flatten())
+}
+
 pub fn get_item_granted_skill_by_name(name: &str) -> Option<&'static ItemGrantedSkill> {
     let needle = name.trim().to_lowercase();
     data()
@@ -501,10 +509,32 @@ mod tests {
     use super::*;
 
     #[test]
+    fn completed_runeword_adds_its_granted_skill_to_the_item() {
+        let base = get_item("armors_normal_steel_armor").unwrap();
+        let item = EquippedItem {
+            base_id: base.id.clone(),
+            socketed: vec![Some("rune_io".into()), Some("rune_pul".into())],
+            ..Default::default()
+        };
+        let entries: Vec<_> = skill_bonus_entries(base, &item).collect();
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].0, "Angel\u{2019}s Vibrance Aura");
+        assert_eq!(entries[0].1.as_ranged(), (2., 6.));
+        let granted = get_item_granted_skill_by_name(entries[0].0).unwrap();
+        assert!(granted.aura && granted.passive_stats.is_some());
+
+        let plain = EquippedItem {
+            base_id: base.id.clone(),
+            ..Default::default()
+        };
+        assert_eq!(skill_bonus_entries(base, &plain).count(), 0);
+    }
+
+    #[test]
     fn known_gear_slots() {
         for slot in [
-            "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet",
-            "ring_1", "ring_2",
+            "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet", "ring_1",
+            "ring_2",
         ] {
             assert!(is_gear_slot(slot), "{slot} should be a gear slot");
         }
@@ -589,7 +619,14 @@ mod tests {
         assert!(!cfg.stats.is_empty(), "game config has no stats");
         // Six baseline attributes from the TS data file.
         let attr_keys: Vec<&str> = cfg.attributes.iter().map(|a| a.key.as_str()).collect();
-        for must_have in ["strength", "dexterity", "intelligence", "energy", "vitality", "armor"] {
+        for must_have in [
+            "strength",
+            "dexterity",
+            "intelligence",
+            "energy",
+            "vitality",
+            "armor",
+        ] {
             assert!(
                 attr_keys.contains(&must_have),
                 "missing attribute key: {must_have}"
@@ -609,12 +646,7 @@ mod tests {
     fn item_lookup_resolves_arbitrary_id() {
         // Take the first item from the loaded list and look it up by its own id.
         // Avoids hardcoding an id that could be renamed in data.
-        let any_item_id = data()
-            .items
-            .keys()
-            .next()
-            .expect("no items loaded")
-            .clone();
+        let any_item_id = data().items.keys().next().expect("no items loaded").clone();
         let resolved = get_item(&any_item_id).expect("item not resolvable after listing");
         assert_eq!(resolved.id, any_item_id);
     }

@@ -28,7 +28,9 @@ fn reachable_from_starts(
         }
     }
     while let Some(cur) = queue.pop_front() {
-        let Some(nbrs) = graph.adjacency.get(&cur) else { continue };
+        let Some(nbrs) = graph.adjacency.get(&cur) else {
+            continue;
+        };
         for &nb in nbrs {
             if !allowed.contains(&nb) {
                 continue;
@@ -62,7 +64,9 @@ fn find_path_to(
         queue.push_back(s);
     }
     while let Some(cur) = queue.pop_front() {
-        let Some(nbrs) = graph.adjacency.get(&cur) else { continue };
+        let Some(nbrs) = graph.adjacency.get(&cur) else {
+            continue;
+        };
         for &nb in nbrs {
             if parent.contains_key(&nb) {
                 continue;
@@ -104,6 +108,23 @@ where
     O: Fn(&HashSet<u32>) -> f64 + Sync,
     P: Fn(u32, u32),
 {
+    suggest_with_oracle_controlled(input, oracle, progress, || false).unwrap_or_default()
+}
+
+pub fn suggest_with_oracle_controlled<O, P, C>(
+    input: SearchInput,
+    oracle: O,
+    progress: P,
+    cancelled: C,
+) -> Result<SuggestResult, String>
+where
+    O: Fn(&HashSet<u32>) -> f64 + Sync,
+    P: Fn(u32, u32),
+    C: Fn() -> bool + Sync,
+{
+    if cancelled() {
+        return Err("Operation cancelled.".into());
+    }
     let graph = input.graph;
     let jewelry_set: HashSet<u32> = graph.jewelry_ids.iter().copied().collect();
     let valuable_set: HashSet<u32> = graph.valuable_ids.iter().copied().collect();
@@ -126,6 +147,9 @@ where
         .par_iter()
         .copied()
         .filter(|&v| {
+            if cancelled() {
+                return false;
+            }
             if jewelry_set.contains(&v) {
                 return true;
             }
@@ -139,6 +163,9 @@ where
     // hops away can beat a locally-best 1-hop pick.
     let mut remaining_budget = input.budget;
     loop {
+        if cancelled() {
+            return Err("Operation cancelled.".into());
+        }
         progress(sequence.len() as u32, input.budget);
         if remaining_budget == 0 {
             break;
@@ -171,7 +198,9 @@ where
                 .unwrap_or(std::cmp::Ordering::Equal)
                 .then(b.0.cmp(&a.0))
         });
-        let Some((target, path, final_dps)) = best else { break };
+        let Some((target, path, final_dps)) = best else {
+            break;
+        };
 
         // Walk the path one node at a time so filler steps show their tiny gain.
         let mut step_dps = current_dps;
@@ -197,6 +226,9 @@ where
 
     // Top-up: spend stranded budget greedily on frontier nodes that still gain.
     while remaining_budget > 0 {
+        if cancelled() {
+            return Err("Operation cancelled.".into());
+        }
         let mut frontier: HashSet<u32> = start_set.difference(&allocated).copied().collect();
         for id in &allocated {
             if let Some(nbrs) = graph.adjacency.get(id) {
@@ -214,7 +246,11 @@ where
                 let mut probe = allocated.clone();
                 probe.insert(cand);
                 let dps = oracle(&probe);
-                if dps > current_dps + 1e-6 { Some((cand, dps)) } else { None }
+                if dps > current_dps + 1e-6 {
+                    Some((cand, dps))
+                } else {
+                    None
+                }
             })
             .collect::<Vec<_>>()
             .into_iter()
@@ -241,7 +277,13 @@ where
     // 2-opt: swap any added node for a frontier neighbour while DPS improves.
     const SWAP_MAX_PASSES: u32 = 60;
     for pass in 0..SWAP_MAX_PASSES {
-        progress(sequence.len() as u32 + pass, sequence.len() as u32 + SWAP_MAX_PASSES);
+        if cancelled() {
+            return Err("Operation cancelled.".into());
+        }
+        progress(
+            sequence.len() as u32 + pass,
+            sequence.len() as u32 + SWAP_MAX_PASSES,
+        );
         let removable: Vec<u32> = allocated.difference(&initial).copied().collect();
         if removable.is_empty() {
             break;
@@ -256,8 +298,7 @@ where
                 if !without.iter().all(|n| reachable.contains(n)) {
                     return Vec::new();
                 }
-                let mut frontier: HashSet<u32> =
-                    start_set.difference(&without).copied().collect();
+                let mut frontier: HashSet<u32> = start_set.difference(&without).copied().collect();
                 for id in &without {
                     if let Some(nbrs) = graph.adjacency.get(id) {
                         for &nb in nbrs {
@@ -281,7 +322,11 @@ where
                 new_alloc.remove(&rm);
                 new_alloc.insert(add);
                 let dps = oracle(&new_alloc);
-                if dps > current_dps + 1e-6 { Some((rm, add, dps)) } else { None }
+                if dps > current_dps + 1e-6 {
+                    Some((rm, add, dps))
+                } else {
+                    None
+                }
             })
             .collect::<Vec<_>>()
             .into_iter()
@@ -315,7 +360,10 @@ where
     let budget_used = sequence.len() as u32;
     let mut used_starts: Vec<u32> = allocated.intersection(&start_set).copied().collect();
     used_starts.sort_unstable();
-    SuggestResult {
+    if cancelled() {
+        return Err("Operation cancelled.".into());
+    }
+    Ok(SuggestResult {
         added_nodes,
         sequence,
         base_dps,
@@ -324,7 +372,7 @@ where
         budget_requested: input.budget,
         unsupported_lines: Vec::new(),
         used_starts,
-    }
+    })
 }
 
 #[cfg(test)]
@@ -343,7 +391,11 @@ mod oracle_search_tests {
             }
             adjacency.insert(i, nbrs);
         }
-        TreeGraph { adjacency, start_ids: vec![0], ..Default::default() }
+        TreeGraph {
+            adjacency,
+            start_ids: vec![0],
+            ..Default::default()
+        }
     }
 
     // Oracle: dps = 100 + sum of per-node values over the allocation.
@@ -359,7 +411,11 @@ mod oracle_search_tests {
 
     fn run(graph: &TreeGraph, budget: u32, values: HashMap<u32, f64>) -> SuggestResult {
         suggest_with_oracle(
-            SearchInput { graph, allocated: HashSet::new(), budget },
+            SearchInput {
+                graph,
+                allocated: HashSet::new(),
+                budget,
+            },
             value_oracle(values),
             |_, _| {},
         )
@@ -419,7 +475,11 @@ mod oracle_search_tests {
         }
         values.insert(11, 100.0);
         let result = suggest_with_oracle(
-            SearchInput { graph: &graph, allocated: HashSet::new(), budget: 3 },
+            SearchInput {
+                graph: &graph,
+                allocated: HashSet::new(),
+                budget: 3,
+            },
             value_oracle(values),
             |_, _| {},
         );
@@ -432,7 +492,11 @@ mod oracle_search_tests {
             .collect();
         let reachable = reachable_from_starts(&starts, &alloc, &graph);
         for n in &alloc {
-            assert!(reachable.contains(n), "node {n} detached: {:?}", result.added_nodes);
+            assert!(
+                reachable.contains(n),
+                "node {n} detached: {:?}",
+                result.added_nodes
+            );
         }
     }
 

@@ -1,0 +1,64 @@
+name: Native installers
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, windows-2022, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '15.0'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake pkg-config libssl-dev libfontconfig1-dev \
+            libfreetype6-dev libxkbcommon-dev libxkbcommon-x11-dev libwayland-dev \
+            libvulkan-dev libasound2-dev libudev-dev libdbus-1-dev libdrm-dev \
+            libgbm-dev libx11-xcb-dev libxcb-randr0-dev libxcb-shape0-dev \
+            libxcb-xfixes0-dev libxcb-xkb-dev
+      - name: Linux packaging dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y patchelf desktop-file-utils libfuse2t64
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: '. -> target'
+          key: native-installers-${{ runner.os }}-${{ runner.arch }}
+      - name: Install pinned packager
+        run: cargo install cargo-packager --version 0.11.8 --locked
+      - name: Build native installers
+        run: python tools/package-native.py
+        env:
+          HSPLANNER_MACOS_SIGNING_IDENTITY: ${{ secrets.HSPLANNER_MACOS_SIGNING_IDENTITY }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          HSPLANNER_WINDOWS_SIGN_COMMAND: ${{ secrets.HSPLANNER_WINDOWS_SIGN_COMMAND }}
+      - name: Upload installers for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: hsplanner-${{ runner.os }}-${{ runner.arch }}
+          if-no-files-found: error
+          path: |
+            target/packages/release/*.dmg
+            target/packages/release/*.exe
+            target/packages/release/*.deb
+            target/packages/release/*.AppImage
+            target/packages/release/*.tar.gz
+            target/packages/release/PKGBUILD
+            target/packages/release/SHA256SUMS

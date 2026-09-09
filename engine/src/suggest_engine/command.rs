@@ -1,10 +1,13 @@
 use std::collections::HashSet;
 
-use super::algo::{suggest_with_oracle, ProgressPayload, SearchInput};
+#[cfg(feature = "desktop")]
+use super::algo::ProgressPayload;
+use super::algo::{suggest_with_oracle, SearchInput};
 use super::types::{SuggestInput, SuggestResult};
 use crate::calc::build::compute_build_performance;
 use crate::calc::commands::{combined_dps_mid, perf_deps, BuildPerformanceInput};
 use crate::calc::season::SeasonScope;
+#[cfg(feature = "desktop")]
 use tauri::Emitter;
 
 // SeasonScope is thread_local and Drop clears it, so the oracle re-enters the
@@ -36,6 +39,58 @@ pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> 
     result
 }
 
+/// Native searches reserve worker capacity for input and node previews.
+pub fn run_suggest_controlled(
+    input: &SuggestInput,
+    cancellation: &crate::task_control::Cancellation,
+    progress: impl Fn(u32, u32) + Sync,
+) -> Result<SuggestResult, String> {
+    use std::sync::OnceLock;
+    static POOL: OnceLock<rayon::ThreadPool> = OnceLock::new();
+    let pool = POOL.get_or_init(|| {
+        rayon::ThreadPoolBuilder::new()
+            .num_threads(
+                std::thread::available_parallelism()
+                    .map_or(1, |n| n.get().saturating_sub(2).clamp(1, 4)),
+            )
+            .thread_name(|index| format!("hsplanner-suggest-{index}"))
+            .build()
+            .expect("start suggestion workers")
+    });
+    cancellation.check()?;
+    let season = input.perf.season.clone();
+    let oracle = |allocated: &HashSet<u32>| {
+        if cancellation.is_cancelled() {
+            return 0.;
+        }
+        let _scope = SeasonScope::enter(season.clone());
+        combined_dps_mid(&input.active_skill_ids, |main| {
+            let mut deps = perf_deps(
+                &input.perf,
+                &input.perf.inventory,
+                main.or(input.perf.main_skill_id.as_deref()),
+            );
+            deps.allocated_tree_nodes = allocated;
+            compute_build_performance(&deps)
+        })
+    };
+    let mut result = pool.install(|| {
+        super::algo::suggest_with_oracle_controlled(
+            SearchInput {
+                graph: &input.graph,
+                allocated: input.perf.allocated_tree_nodes.clone(),
+                budget: input.budget,
+            },
+            oracle,
+            &progress,
+            || cancellation.is_cancelled(),
+        )
+    })?;
+    let _scope = SeasonScope::enter(season);
+    result.unsupported_lines = unsupported_lines_for(&result.added_nodes, &input.perf);
+    Ok(result)
+}
+
 fn unsupported_lines_for(added: &[u32], perf: &BuildPerformanceInput) -> Vec<String> {
     use crate::calc::tree::parse::{classify_tree_node_line, TreeLineClass};
     added
@@ -50,20 +105,17 @@ fn unsupported_lines_for(added: &[u32], perf: &BuildPerformanceInput) -> Vec<Str
 
 // A panic inside the search must degrade to "no suggestions" instead of
 // re-panicking on the IPC runtime thread.
-async fn join_or_default(
-    task: tauri::async_runtime::JoinHandle<SuggestResult>,
-) -> SuggestResult {
+#[cfg(feature = "desktop")]
+async fn join_or_default(task: tauri::async_runtime::JoinHandle<SuggestResult>) -> SuggestResult {
     task.await.unwrap_or_else(|e| {
         eprintln!("suggest_tree_nodes task panicked: {e}");
         SuggestResult::default()
     })
 }
 
+#[cfg(feature = "desktop")]
 #[tauri::command]
-pub async fn suggest_tree_nodes(
-    app: tauri::AppHandle,
-    input: SuggestInput,
-) -> SuggestResult {
+pub async fn suggest_tree_nodes(app: tauri::AppHandle, input: SuggestInput) -> SuggestResult {
     join_or_default(tauri::async_runtime::spawn_blocking(move || {
         run_suggest(&input, |current, total| {
             let _ = app.emit("suggest-progress", ProgressPayload { current, total });
@@ -76,12 +128,11 @@ pub async fn suggest_tree_nodes(
 mod tests {
     use super::*;
 
+    #[cfg(feature = "desktop")]
     #[test]
     fn panicked_task_returns_default_result() {
         let result = tauri::async_runtime::block_on(async {
-            let task = tauri::async_runtime::spawn_blocking(|| -> SuggestResult {
-                panic!("boom")
-            });
+            let task = tauri::async_runtime::spawn_blocking(|| -> SuggestResult { panic!("boom") });
             join_or_default(task).await
         });
         assert_eq!(result, SuggestResult::default());
@@ -112,7 +163,10 @@ mod tests {
             .collect();
         node_ids.sort_unstable();
         node_ids.truncate(5);
-        assert!(node_ids.len() >= 3, "need real stat nodes, got {node_ids:?}");
+        assert!(
+            node_ids.len() >= 3,
+            "need real stat nodes, got {node_ids:?}"
+        );
 
         let mut adjacency: HashMap<u32, Vec<u32>> = HashMap::new();
         for (i, &id) in node_ids.iter().enumerate() {
@@ -162,7 +216,10 @@ mod tests {
         eprintln!("suggest on real data took {:?}", started.elapsed());
 
         assert!(result.base_dps > 0.0, "baseline dps missing");
-        assert!(result.final_dps > result.base_dps, "stat nodes must raise dps");
+        assert!(
+            result.final_dps > result.base_dps,
+            "stat nodes must raise dps"
+        );
 
         let final_alloc: HashSet<u32> = result.added_nodes.iter().copied().collect();
         let _scope = SeasonScope::enter(None);
@@ -173,6 +230,10 @@ mod tests {
             compute_build_performance(&deps)
         });
         let rel = (result.final_dps - direct).abs() / direct.max(1.0);
-        assert!(rel < 1e-9, "suggester {} vs direct {direct}", result.final_dps);
+        assert!(
+            rel < 1e-9,
+            "suggester {} vs direct {direct}",
+            result.final_dps
+        );
     }
 }

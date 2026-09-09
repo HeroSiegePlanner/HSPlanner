@@ -2,9 +2,9 @@
 //! import is one round-trip and the fuzzy matching runs on engine data.
 use std::collections::{BTreeMap, HashMap};
 
-use std::sync::LazyLock;
 use regex::Regex;
 use serde::Serialize;
+use std::sync::LazyLock;
 
 use crate::calc::data;
 use crate::calc::types::{Affix, AngelicAugment, CharacterClass, Gem, ItemBase, RangedValue};
@@ -19,7 +19,8 @@ const MINOR_WORDS: [&str; 5] = ["of", "to", "per", "and", "low"];
 
 macro_rules! re {
     ($name:ident, $pat:expr) => {
-        static $name: LazyLock<Regex> = LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
+        static $name: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
     };
 }
 
@@ -918,7 +919,7 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
     }
 }
 
-#[tauri::command]
+#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn parse_tooltip_lines(lines: Vec<String>, season: Option<String>) -> TooltipParseResult {
     let _scope = crate::calc::season::SeasonScope::enter(season);
     parse_tooltip(&lines)
