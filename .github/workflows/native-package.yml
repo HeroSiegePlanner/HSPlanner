@@ -2,19 +2,20 @@ name: Native installers
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: [labeled]
 
 permissions:
   contents: read
 
 jobs:
   package:
+    if: github.event_name != 'pull_request' || github.event.label.name == 'installers'
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, windows-2022, ubuntu-24.04]
+        os: [windows-2022, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
-    env:
-      MACOSX_DEPLOYMENT_TARGET: '15.0'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v6
@@ -42,12 +43,6 @@ jobs:
       - name: Build native installers
         run: python tools/package-native.py
         env:
-          HSPLANNER_MACOS_SIGNING_IDENTITY: ${{ secrets.HSPLANNER_MACOS_SIGNING_IDENTITY }}
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           HSPLANNER_WINDOWS_SIGN_COMMAND: ${{ secrets.HSPLANNER_WINDOWS_SIGN_COMMAND }}
       - name: Upload installers for review
         uses: actions/upload-artifact@v4
@@ -55,7 +50,6 @@ jobs:
           name: hsplanner-${{ runner.os }}-${{ runner.arch }}
           if-no-files-found: error
           path: |
-            target/packages/release/*.dmg
             target/packages/release/*.exe
             target/packages/release/*.deb
             target/packages/release/*.AppImage

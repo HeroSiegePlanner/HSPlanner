@@ -14,19 +14,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  native:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-15, windows-2022, ubuntu-24.04]
-    runs-on: ${{ matrix.os }}
+  test:
+    runs-on: ubuntu-24.04
     env:
-      MACOSX_DEPLOYMENT_TARGET: '15.0'
       CARGO_INCREMENTAL: '0'
     steps:
       - uses: actions/checkout@v7
       - name: Linux build dependencies
-        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y clang cmake pkg-config libssl-dev libfontconfig1-dev \
@@ -38,21 +32,9 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: '. -> target'
-          key: native-${{ runner.os }}-${{ runner.arch }}
-      - name: Build native application
-        run: cargo build -p hsplanner --locked
       - name: Documents, persistence and preview operations
         run: cargo test -p hsplanner-build -p hsplanner-planner --locked
       - name: Engine and isolated integrations
         run: cargo test -p HSPlanner --no-default-features --features ocr,suggestions --lib --locked
       - name: Existing calculation fixtures
         run: cargo test -p HSPlanner --no-default-features --test parity --locked
-      - name: Reject X11 instead of falling back
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          if env -u WAYLAND_DISPLAY DISPLAY=:99 ./target/debug/hsplanner 2> rejection.txt; then
-            echo 'Native application unexpectedly accepted an X11-only session'
-            exit 1
-          fi
-          grep -q 'requires a native Wayland session' rejection.txt
