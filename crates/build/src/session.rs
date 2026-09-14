@@ -450,20 +450,27 @@ mod tests {
         session.edit(|d| {
             d.snapshot.entity_rates.insert("summon".into(), 2.5);
             d.snapshot.allocated_tree_nodes = vec![5, 3, 8];
+            d.snapshot.set_max_subskill_points(27);
         });
         session.save_profile().unwrap();
         session.add_profile("Second", None).unwrap();
-        session.edit(|d| d.snapshot.level = 40);
+        session.edit(|d| {
+            d.snapshot.level = 40;
+            d.snapshot.set_max_subskill_points(30);
+        });
         session.undo();
         assert_eq!(session.snapshot().level, 1);
+        assert_eq!(session.snapshot().subskill_point_budget(), 27);
         session.redo();
         assert_eq!(session.snapshot().level, 40);
+        assert_eq!(session.snapshot().subskill_point_budget(), 30);
         let first = session.state.library.build(&id).unwrap().profiles[0]
             .id
             .clone();
         session.open(&id, Some(&first)).unwrap();
         assert_eq!(session.snapshot().entity_rates["summon"], 2.5);
         assert_eq!(session.snapshot().allocated_tree_nodes, [5, 3, 8]);
+        assert_eq!(session.snapshot().subskill_point_budget(), 27);
         assert!(!session.has_undo());
         assert!(!session.has_redo());
     }

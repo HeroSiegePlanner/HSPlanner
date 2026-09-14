@@ -44,6 +44,7 @@ impl SelectItem for Choice {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 enum NumberField {
     Level,
+    SubskillPoints,
     Resistance(String),
     Kills,
     Entity(String),
@@ -290,7 +291,11 @@ impl ConfigView {
                 state.set_value(snapshot.level as f32, window, cx)
             });
         }
-        let mut fields = vec![NumberField::Level, NumberField::Kills];
+        let mut fields = vec![
+            NumberField::Level,
+            NumberField::SubskillPoints,
+            NumberField::Kills,
+        ];
         fields.extend(
             ["fire", "cold", "lightning", "poison", "arcane"]
                 .into_iter()
@@ -413,6 +418,9 @@ impl ConfigView {
         };
         self.edit(cx, |snapshot| match field {
             NumberField::Level => snapshot.set_level(value.unwrap_or(1.).max(1.) as u32),
+            NumberField::SubskillPoints => {
+                snapshot.set_max_subskill_points(value.unwrap_or(20.).max(1.) as u32)
+            }
             NumberField::Resistance(key) => {
                 if let Some(value) = value {
                     snapshot.enemy_resistances.insert(key.clone(), value);
@@ -476,7 +484,7 @@ impl ConfigView {
     fn number(&self, field: NumberField, label: impl Into<SharedString>, cx: &App) -> Div {
         let p = cx.global::<TooltipTheme>();
         let (width, height) = match &field {
-            NumberField::Level => (54., 30.),
+            NumberField::Level | NumberField::SubskillPoints => (54., 30.),
             NumberField::Resistance(_) => (49., 23.),
             NumberField::Projectile(_) | NumberField::Stack(_) => (45., 23.),
             NumberField::Kills | NumberField::Entity(_) => (65., 27.),
@@ -757,6 +765,11 @@ impl ConfigView {
             .child(panel_with_trailing("config-difficulty","Difficulty",label("difficulty-penalty",format!("{}% all resistances",data::game_config().difficulties.iter().find(|difficulty|difficulty.id==snapshot.difficulty).map(|difficulty|difficulty.resist_penalty).unwrap_or(0.)),if snapshot.difficulty=="normal" {p.muted}else{p.negative}),cx).child(help("Higher difficulties cut every resistance, which lowers survivability and any damage that scales off resistances.",cx))
                 .child(Select::new(&self.difficulty).planner_style(cx).placeholder("Select difficulty…").search_placeholder("Search difficulty…").accessibility_label("Difficulty").w_full()))
             .child(attributes)
+            .child(panel("config-subskill-points", "Sub-skill points", cx)
+                .child(help("Point budget for each skill subtree. Default: 20. Range: 1–30. Existing allocations are kept when you lower the limit.", cx))
+                .child(div().flex().items_center().justify_between().gap_3()
+                    .child(div().child("Maximum points per subtree"))
+                    .child(self.number(NumberField::SubskillPoints, "Maximum sub-skill points", cx))))
             .child(panel("config-charms","Charm Inventory",cx).child(help("Whether your character has unlocked the extra charm cell in-game.",cx))
                 .child(Checkbox::new("extra-charm-slot").checked(self.session.read(cx).state().settings.extra_charm_slot).label("Extra charm slot unlocked")
                     .on_click(cx.listener(|this,checked:&bool,_,cx|this.session.update(cx,|session,cx| {let mut settings=session.state().settings.clone();settings.extra_charm_slot = *checked;session.set_settings(settings);cx.notify();}))))
@@ -1448,6 +1461,7 @@ fn number_text(
 ) -> String {
     match field {
         NumberField::Level => snapshot.level.to_string(),
+        NumberField::SubskillPoints => snapshot.subskill_point_budget().to_string(),
         NumberField::Resistance(key) => snapshot
             .enemy_resistances
             .get(key)

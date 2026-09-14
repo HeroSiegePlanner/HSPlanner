@@ -11,6 +11,7 @@ const FIELDS: &[(&str, &str)] = &[
     ("i", "inventory"),
     ("s", "skillRanks"),
     ("ss", "subskillRanks"),
+    ("msp", "maxSubskillPoints"),
     ("t", "allocatedTreeNodes"),
     ("m", "activeSkillIds"),
     ("u", "activeAuraId"),
@@ -274,6 +275,7 @@ mod tests {
         let snapshot = BuildSnapshot {
             active_skill_ids: vec!["charged_bolts".into()],
             allocated_tree_nodes: vec![5, 1, 3],
+            max_subskill_points: 27,
             ..Default::default()
         };
         let notes = Notes {
@@ -284,9 +286,14 @@ mod tests {
         let (read, notes) = decode(&format!("https://example.com/#b={code}")).unwrap();
         assert_eq!(read.active_skill_ids, snapshot.active_skill_ids);
         assert_eq!(read.allocated_tree_nodes, [1, 3, 5]);
+        assert_eq!(read.subskill_point_budget(), 27);
         assert!(notes.markdown.contains("Żółw 🐢"));
         let utf16 = lz_str::decompress_from_encoded_uri_component(&code).unwrap();
         let mut wire: Value = serde_json::from_str(&String::from_utf16(&utf16).unwrap()).unwrap();
+        wire.as_object_mut().unwrap().remove("msp");
+        assert_eq!(decode_value(&wire).unwrap().0.subskill_point_budget(), 20);
+        wire["msp"] = json!(99);
+        assert_eq!(decode_value(&wire).unwrap().0.subskill_point_budget(), 30);
         wire["v"] = json!(1);
         wire["m"] = json!("charged_bolts");
         assert_eq!(

@@ -1243,7 +1243,7 @@ impl SubtreeView {
             .filter(|(key, _)| key.starts_with(&prefix))
             .map(|(_, v)| *v)
             .sum();
-        let total = snapshot.level / data::game_config().levels_per_subskill_point.max(1);
+        let total = snapshot.subskill_point_budget();
         (spent, total)
     }
     fn change(&mut self, id: &str, increase: bool, modifiers: Modifiers, cx: &mut Context<Self>) {
@@ -1650,12 +1650,16 @@ impl Render for SubtreeView {
                                     )
                                     .child(caption(
                                         "subtree-remaining",
-                                        if remaining > 0 {
+                                        if spent > total {
+                                            format!("{} OVER LIMIT", spent - total)
+                                        } else if remaining > 0 {
                                             format!("{remaining} LEFT")
                                         } else {
                                             "ALL SPENT".into()
                                         },
-                                        if remaining > 0 {
+                                        if spent > total {
+                                            p.negative
+                                        } else if remaining > 0 {
                                             p.accent_deep
                                         } else {
                                             p.faint

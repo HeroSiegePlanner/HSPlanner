@@ -18,6 +18,8 @@ pub struct BuildSnapshot {
     pub inventory: Inventory,
     pub skill_ranks: HashMap<String, u32>,
     pub subskill_ranks: HashMap<String, u32>,
+    #[serde(deserialize_with = "deserialize_max_subskill_points")]
+    pub max_subskill_points: u32,
     pub allocated_tree_nodes: Vec<u32>,
     pub tree_socketed: HashMap<u32, TreeSocketContent>,
     pub active_skill_ids: Vec<String>,
@@ -51,6 +53,7 @@ impl Default for BuildSnapshot {
             inventory: HashMap::new(),
             skill_ranks: HashMap::new(),
             subskill_ranks: HashMap::new(),
+            max_subskill_points: 20,
             allocated_tree_nodes: Vec::new(),
             tree_socketed: HashMap::new(),
             active_skill_ids: Vec::new(),
@@ -82,7 +85,21 @@ impl Default for BuildSnapshot {
     }
 }
 
+fn deserialize_max_subskill_points<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<u32, D::Error> {
+    u32::deserialize(deserializer).map(|points| points.clamp(1, 30))
+}
+
 impl BuildSnapshot {
+    pub fn subskill_point_budget(&self) -> u32 {
+        self.max_subskill_points.clamp(1, 30)
+    }
+
+    pub fn set_max_subskill_points(&mut self, points: u32) {
+        self.max_subskill_points = points.clamp(1, 30);
+    }
+
     pub fn planner_input(&self) -> PlannerInput {
         PlannerInput {
             build: BuildPerformanceInput {
@@ -297,22 +314,107 @@ impl BuildSnapshot {
             return;
         };
         let max = node.max_rank;
-        let levels_per_point = data::game_config().levels_per_subskill_point;
         let key = format!("{skill_id}:{node_id}");
         let prefix = format!("{skill_id}:");
+        let current = self.subskill_ranks.get(&key).copied().unwrap_or(0);
         let other: u32 = self
             .subskill_ranks
             .iter()
             .filter(|(k, _)| k.starts_with(&prefix) && **k != key)
             .map(|(_, v)| *v)
             .sum();
-        let rank = rank
-            .min(max)
-            .min((self.level / levels_per_point.max(1)).saturating_sub(other));
+        let rank = rank.min(max).min(
+            self.subskill_point_budget()
+                .saturating_sub(other)
+                .max(current),
+        );
         if rank == 0 {
             self.subskill_ranks.remove(&key);
         } else {
             self.subskill_ranks.insert(key, rank);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn subskill_budget_defaults_for_old_saves_and_caps_imported_values() {
+        let old: BuildSnapshot = serde_json::from_value(json!({"level": 100})).unwrap();
+        assert_eq!(old.subskill_point_budget(), 20);
+        for (saved, expected) in [(0, 1), (27, 27), (99, 30)] {
+            let snapshot: BuildSnapshot =
+                serde_json::from_value(json!({"maxSubskillPoints": saved})).unwrap();
+            assert_eq!(snapshot.max_subskill_points, expected);
+            assert_eq!(snapshot.subskill_point_budget(), expected);
+        }
+    }
+
+    #[test]
+    fn subskill_budget_applies_per_subtree_at_every_level() {
+        let mut snapshot = BuildSnapshot {
+            class_id: Some("stormweaver".into()),
+            ..Default::default()
+        };
+        let skill = data::get_skills_by_class("stormweaver")
+            .iter()
+            .find(|skill| skill.id == "charged_bolts")
+            .unwrap();
+        let nodes = skill.subskills.as_ref().unwrap();
+        snapshot.subskill_ranks.insert("other:node".into(), 30);
+        for (requested, expected, level) in [(20, 20, 1), (27, 27, 50), (99, 30, 100)] {
+            snapshot.set_level(level);
+            snapshot.set_max_subskill_points(requested);
+            for node in nodes.iter().filter(|node| node.position_index > 0) {
+                snapshot.set_subskill_rank(&skill.id, &node.id, u32::MAX);
+                assert!(
+                    snapshot
+                        .subskill_ranks
+                        .get(&format!("{}:{}", skill.id, node.id))
+                        .copied()
+                        .unwrap_or(0)
+                        <= node.max_rank
+                );
+            }
+            let spent: u32 = snapshot
+                .subskill_ranks
+                .iter()
+                .filter(|(key, _)| key.starts_with("charged_bolts:"))
+                .map(|(_, rank)| rank)
+                .sum();
+            assert_eq!(spent, expected);
+            assert_eq!(snapshot.subskill_ranks["other:node"], 30);
+        }
+    }
+
+    #[test]
+    fn lowering_subskill_budget_preserves_ranks_and_allows_gradual_refunds() {
+        let mut snapshot = BuildSnapshot {
+            class_id: Some("stormweaver".into()),
+            ..Default::default()
+        };
+        for node in ["halting_storm", "weakening_charge", "efficient_wiring"] {
+            snapshot.set_subskill_rank("charged_bolts", node, 5);
+        }
+        let before = snapshot.subskill_ranks.clone();
+        snapshot.set_max_subskill_points(10);
+        assert_eq!(snapshot.subskill_ranks, before);
+        snapshot.set_subskill_rank("charged_bolts", "static_buildup", 1);
+        assert!(
+            !snapshot
+                .subskill_ranks
+                .contains_key("charged_bolts:static_buildup")
+        );
+        snapshot.set_subskill_rank("charged_bolts", "halting_storm", 4);
+        assert_eq!(snapshot.subskill_ranks["charged_bolts:halting_storm"], 4);
+        snapshot.set_subskill_rank("charged_bolts", "halting_storm", 5);
+        assert_eq!(snapshot.subskill_ranks["charged_bolts:halting_storm"], 4);
+        snapshot.set_subskill_rank("charged_bolts", "halting_storm", 0);
+        snapshot.set_subskill_rank("charged_bolts", "weakening_charge", 4);
+        snapshot.set_subskill_rank("charged_bolts", "static_buildup", 1);
+        assert_eq!(snapshot.subskill_ranks["charged_bolts:static_buildup"], 1);
     }
 }
