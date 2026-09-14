@@ -141,12 +141,6 @@ Native installer tooling is available via `python3 tools/package-native.py`;
 the app checks GitHub releases for updates and can install them from the footer.
 See [packaging/README.md](packaging/README.md).
 
-### Archived Tauri reference
-
-`legacy/` and `tree-renderer/` are optional, ignored local archives. They are
-not required by the native workspace, CI or packaging. The former Tauri
-sources remain available in Git history before the GPUI migration.
-
 ### Project structure
 
 | Path | Contents |
