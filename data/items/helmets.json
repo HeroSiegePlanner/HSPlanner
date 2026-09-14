@@ -23,7 +23,9 @@
       "max_all_resistances": -30,
       "increased_all_attributes": 5,
       "damage_per_resist_point": 0.4
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_angelic_mask_of_the_celestial",
@@ -65,7 +67,9 @@
         125
       ],
       "all_skills": 3
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_normal_cap",
@@ -265,7 +269,9 @@
         75,
         125
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_heroic_nikita_s_kj_33_helmet",
@@ -306,7 +312,9 @@
         100,
         150
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_heroic_sight_of_the_gods",
@@ -354,7 +362,9 @@
     },
     "uniqueEffects": [
       "Half Freeze Duration"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_heroic_crown_of_doom",
@@ -436,7 +446,7 @@
     "maxSockets": 4,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 40,
         "description": "cast Breath of Fire Level 125",
         "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
@@ -495,11 +505,14 @@
       }
     ],
     "skillBonuses": {
-      "Eternal Armour": [
+      "Eternal Armor": [
         1,
         3
       ]
-    }
+    },
+    "uniqueEffects": [
+      "+[45-60]% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "helmet_heroic_face_of_existence",
@@ -520,31 +533,26 @@
         3,
         5
       ],
-      "skill_haste": [
-        15,
-        30
-      ],
       "life": 666,
       "physical_damage_reduction": 6,
-      "fire_absorption": 6,
-      "cold_absorption": 6,
-      "lightning_absorption": 6,
-      "poison_absorption": 6,
-      "arcane_absorption": 6,
       "all_resistances": [
         25,
         35
       ],
+      "skill_haste": [
+        15,
+        30
+      ],
+      "cold_absorption": 6,
+      "fire_absorption": 6,
+      "poison_absorption": 6,
+      "lightning_absorption": 6,
       "magic_absorption": 6
     },
     "sockets": 2,
     "maxSockets": 3,
     "skillBonuses": {
-      "Space Equilibrium": 1,
-      "Last Stand": [
-        15,
-        20
-      ],
+      "Spacetime Equilibrium": 1,
       "Random Buff Skill": [
         20,
         30
@@ -605,7 +613,7 @@
       {
         "trigger": "on_cast",
         "chance": 25,
-        "description": "cast Restless Spirits Level 74",
+        "description": "cast Restless Spirits Level [70-85]",
         "details": "Unleash restless spirits from an unholy dimension to seek new hosts inflicting arcane damage to the target."
       }
     ]
@@ -650,7 +658,10 @@
     "sockets": 1,
     "maxSockets": 4,
     "maxAffixes": 1,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy"
+    ]
   },
   {
     "id": "helmet_heroic_high_roller_s_deathcrown",
@@ -659,7 +670,7 @@
     "slot": "helmet",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 1,
     "defenseMin": 1,
     "defenseMax": 100,
     "implicit": {
@@ -690,7 +701,9 @@
     },
     "skillBonuses": {
       "Roll the Dice": 1
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_heroic_the_colossal_avenger",
@@ -729,7 +742,9 @@
         35
       ],
       "damage_based_on_level": 150
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmets_heroic_gabriels_dauntless_vision",
@@ -747,9 +762,9 @@
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 19,
-        "description": "cast Gabriel's Revenge Level 4",
-        "details": "Summon three unholy swords behind you slicing forward dealing arcane damage to monsters on hit."
+        "chance": 15,
+        "description": "cast Gabriel’s Revenge Level [1-4]",
+        "details": "Chance: 15-20%. Summon three unholy swords behind you slicing forward dealing arcane damage to monsters on hit."
       }
     ],
     "implicit": {
@@ -808,7 +823,9 @@
         5
       ],
       "mana": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_ancient_avenger",
@@ -831,7 +848,9 @@
       "to_strength": 20,
       "to_vitality": 10,
       "physical_damage_reduction": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_assassin_s_hood",
@@ -872,7 +891,9 @@
         5,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_aztec_crown",
@@ -901,7 +922,9 @@
       "life": 220,
       "poison_resistance": 50
     },
-    "setId": "aztec_s_mystery"
+    "setId": "aztec_s_mystery",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_battle_worn_visor",
@@ -923,7 +946,9 @@
       "life_per_kill": 15,
       "enhanced_damage_based_on_level": 75
     },
-    "setId": "battle_worn"
+    "setId": "battle_worn",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_blood_letter_s_crown",
@@ -945,7 +970,9 @@
       "life_replenish_pct": 15,
       "increased_life": 3
     },
-    "setId": "blood_letter_s_armament"
+    "setId": "blood_letter_s_armament",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_bloodthirster_s_warhelm",
@@ -969,7 +996,9 @@
         150
       ],
       "life_per_kill": 12
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_burning_gaze",
@@ -998,7 +1027,9 @@
         15,
         35
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_butcher_s_hood",
@@ -1040,7 +1071,9 @@
     "setId": "blood_bond",
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_chronomancer_s_observance",
@@ -1048,7 +1081,7 @@
     "baseType": "Helmet",
     "slot": "helmet",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 87,
     "defenseMin": 42,
     "defenseMax": 54,
@@ -1057,21 +1090,22 @@
         80,
         130
       ],
-      "life": 75,
-      "mana": 75,
-      "all_resistances": 15,
-      "magic_find": 15,
+      "all_skills_illusionist": [
+        2,
+        3
+      ],
       "faster_cast_rate": [
         40,
         50
       ],
-      "flat_arcane_skill_damage": [
-        20,
-        30
-      ],
       "increased_mana": [
         5,
         10
+      ],
+      "all_resistances": 15,
+      "flat_arcane_skill_damage": [
+        20,
+        30
       ]
     },
     "setId": "temporal_mastery",
@@ -1102,7 +1136,9 @@
         10,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_crown_of_the_north",
@@ -1148,7 +1184,9 @@
     },
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_death_knight_s_visage",
@@ -1172,7 +1210,9 @@
       "attack_rating": 30,
       "life": 15,
       "mana": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_death_lord_s_crown",
@@ -1223,7 +1263,9 @@
       ],
       "life_based_on_level": 385,
       "damage_based_on_level": 35
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_doctor_s_visage",
@@ -1240,23 +1282,11 @@
         80,
         120
       ],
-      "additive_physical_damage": [
-        18,
-        38
-      ],
-      "to_strength": 30,
-      "to_dexterity": 30,
       "life": [
         120,
         160
       ],
-      "arcane_resistance": 45,
-      "poison_resistance": 45,
       "to_intelligence": 30,
-      "skill_haste": [
-        15,
-        25
-      ],
       "flat_poison_skill_damage": [
         12,
         24
@@ -1264,9 +1294,15 @@
       "all_resistances": [
         10,
         15
+      ],
+      "skill_haste": [
+        15,
+        25
       ]
     },
-    "setId": "doctor_s_medkit"
+    "setId": "doctor_s_medkit",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_einar_s_horned_helmet",
@@ -1324,7 +1360,9 @@
         30,
         75
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_flame_diviner_s_refuge",
@@ -1332,7 +1370,7 @@
     "baseType": "Helmet",
     "slot": "helmet",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 92,
     "defenseMin": 62,
     "defenseMax": 74,
@@ -1341,17 +1379,18 @@
         380,
         430
       ],
-      "fire_skills": 1,
-      "to_energy": 10,
-      "life": 15,
-      "mana": 30,
-      "fire_resistance": 40,
+      "all_skills_pyromancer": [
+        3,
+        4
+      ],
       "intelligence_converted_to_fire_skill_dmg": [
         4,
         8
       ]
     },
-    "setId": "flames_of_divinity"
+    "setId": "flames_of_divinity",
+    "sockets": 2,
+    "maxSockets": 3
   },
   {
     "id": "helmet_satanic_flame_god_s_helmet",
@@ -1383,7 +1422,9 @@
       "mana": 75,
       "fire_resistance": 75,
       "max_fire_resistance": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_gabriel_s_brimmed_fedora",
@@ -1411,7 +1452,9 @@
         10
       ]
     },
-    "setId": "gabriel_s_devotion"
+    "setId": "gabriel_s_devotion",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_genji_s_battle_helmet",
@@ -1442,7 +1485,9 @@
       ],
       "to_strength": 15
     },
-    "setId": "genji_s_battle_gear"
+    "setId": "genji_s_battle_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_gladiator_s_skullet",
@@ -1472,7 +1517,9 @@
         25
       ]
     },
-    "setId": "gladiator_s_glory"
+    "setId": "gladiator_s_glory",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_guise_of_the_dead",
@@ -1518,7 +1565,9 @@
         20,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_harlequinn_s_crest",
@@ -1579,7 +1628,9 @@
         40
       ],
       "enhanced_defense_based_on_level": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_ice_king_s_crown",
@@ -1613,7 +1664,9 @@
     },
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_juda_s_broken_halo",
@@ -1647,7 +1700,7 @@
       {
         "trigger": "on_cast",
         "chance": 20,
-        "description": "cast Chain of Holy Lightning Level 19",
+        "description": "cast Chain of Holy Lightning Level [10-20]",
         "details": "Cast a holy lightning jumping from monster to monster dealing arcane damage."
       }
     ]
@@ -1676,7 +1729,9 @@
       "all_attributes": 5,
       "fire_resistance": 25,
       "lightning_resistance": 25
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_juggernaut_s_siege_helm",
@@ -1703,7 +1758,9 @@
         2,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_knight_captain_s_helmet",
@@ -1740,7 +1797,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 2
   },
   {
     "id": "helmet_satanic_lost_master_s_vision",
@@ -1765,7 +1822,9 @@
       "to_dexterity": 20,
       "to_armor": 15
     },
-    "setId": "master_s_legacy"
+    "setId": "master_s_legacy",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_lumberjack_s_safety_helm",
@@ -1789,7 +1848,9 @@
       "life": 15,
       "all_resistances": 15
     },
-    "setId": "lumberjack_s_forestry_gear"
+    "setId": "lumberjack_s_forestry_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_lunar_prophet_s_tiara",
@@ -1824,7 +1885,9 @@
         5
       ]
     },
-    "setId": "the_lunar_eclipse"
+    "setId": "the_lunar_eclipse",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_mage_s_starshroud",
@@ -1841,10 +1904,15 @@
         20,
         40
       ],
-      "all_skills": 1,
-      "to_energy": 20,
-      "to_intelligence": 10
-    }
+      "all_skills": [
+        0,
+        1
+      ],
+      "to_intelligence": 10,
+      "to_energy": 20
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_mask_of_the_beyond",
@@ -1886,7 +1954,9 @@
         50
       ],
       "enhanced_damage_based_on_level": 175
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_metal_vocalist_s_leather_mask",
@@ -1903,22 +1973,26 @@
         450,
         600
       ],
-      "all_attributes": 20,
-      "ignore_lightning_res": [
-        10,
-        15
+      "all_skills_bard": [
+        2,
+        3
+      ],
+      "mana_replenish_pct": [
+        75,
+        125
       ],
       "all_resistances": [
         30,
         35
       ],
-      "mana_replenish_pct": [
-        75,
-        125
+      "all_attributes": 20,
+      "ignore_lightning_res": [
+        10,
+        15
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 4
   },
   {
     "id": "helmet_satanic_mevius_mighty_helmet",
@@ -1947,7 +2021,9 @@
       ],
       "damage_mitigation": -3
     },
-    "setId": "mevius_eye_of_chaos"
+    "setId": "mevius_eye_of_chaos",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_nobunaga_s_battle_helmet",
@@ -1964,19 +2040,19 @@
         85,
         145
       ],
-      "all_skills": [
+      "all_skills_samurai": [
         2,
         3
       ],
-      "to_energy": 15,
       "to_intelligence": 15,
+      "to_energy": 15,
       "flat_arcane_skill_damage": [
         18,
         38
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 3,
     "setId": "nobunaga_s_empire"
   },
   {
@@ -2007,7 +2083,9 @@
         8
       ]
     },
-    "setId": "elder_of_mos_arathim"
+    "setId": "elder_of_mos_arathim",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_odin_s_eternal_visage",
@@ -2035,7 +2113,9 @@
         10
       ]
     },
-    "setId": "odin_s_demise"
+    "setId": "odin_s_demise",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_pirate_captain_s_hat",
@@ -2043,7 +2123,7 @@
     "baseType": "Helmet",
     "slot": "helmet",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 93,
     "defenseMin": 72,
     "defenseMax": 84,
@@ -2052,22 +2132,23 @@
         280,
         330
       ],
-      "to_strength": 8,
-      "to_dexterity": 35,
-      "fire_resistance": [
-        25,
-        35
+      "all_skills_pirate": [
+        3,
+        4
       ],
       "increased_attack_speed": [
         20,
         30
       ],
+      "to_dexterity": 35,
       "deadly_blow": [
         5,
         20
       ]
     },
-    "setId": "black_beard_s_remains"
+    "setId": "black_beard_s_remains",
+    "sockets": 3,
+    "maxSockets": 3
   },
   {
     "id": "helmet_satanic_pit_lord_s_vanquisher",
@@ -2105,7 +2186,9 @@
         15
       ],
       "damage_based_on_level": 40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_reaper_s_hood",
@@ -2142,7 +2225,9 @@
     "setId": "death_s_toll",
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_reaver_s_headplate",
@@ -2192,7 +2277,6 @@
         80,
         130
       ],
-      "to_strength": 10,
       "to_vitality": [
         20,
         30
@@ -2203,7 +2287,9 @@
       ],
       "to_intelligence": 25
     },
-    "setId": "redneck_s_work_gear"
+    "setId": "redneck_s_work_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_sand_manipulator_s_mask",
@@ -2211,7 +2297,7 @@
     "baseType": "Helmet",
     "slot": "helmet",
     "rarity": "satanic_set",
-    "grade": "S",
+    "grade": "SS",
     "requiresLevel": 89,
     "defenseMin": 60,
     "defenseMax": 80,
@@ -2220,17 +2306,9 @@
         80,
         130
       ],
-      "mana": [
-        35,
-        50
-      ],
-      "arcane_resistance": [
-        20,
-        30
-      ],
-      "lightning_resistance": [
-        20,
-        30
+      "all_skills_illusionist": [
+        2,
+        3
       ],
       "skill_haste": [
         20,
@@ -2243,7 +2321,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 3,
+    "maxSockets": 3
   },
   {
     "id": "helmet_satanic_sand_traveler_s_guise",
@@ -2271,7 +2351,9 @@
         20
       ],
       "to_vitality": 8
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_sentinel_s_headguard",
@@ -2297,7 +2379,9 @@
         10,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 1
   },
   {
     "id": "helmet_satanic_sheep_king_s_crown",
@@ -2310,34 +2394,31 @@
     "defenseMin": 60,
     "defenseMax": 80,
     "implicit": {
+      "damage_return": 65,
       "all_skills": [
         4,
         5
       ],
       "increased_mana": 25,
-      "damage_return": 65,
-      "damage_recouped_as_mana": [
-        25,
-        35
-      ],
       "all_resistances": [
         5,
         40
       ],
+      "damage_recouped_as_mana": [
+        25,
+        35
+      ],
       "ailment_damage_all": [
         5,
         40
-      ],
-      "damage_drained_from_mana": [
-        25,
-        35
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "sheep_king_s_kingdom",
     "uniqueEffects": [
-      "Cannot be Frozen"
+      "Cannot be Frozen",
+      "+[15-80]% increased Damage Returned to the Attacker"
     ]
   },
   {
@@ -2366,7 +2447,9 @@
         1,
         4
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_sky_crusader_helm",
@@ -2394,7 +2477,9 @@
     },
     "uniqueEffects": [
       "Half Freeze Duration"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_solar_prophet_s_crown",
@@ -2429,7 +2514,9 @@
         5
       ]
     },
-    "setId": "guardian_of_the_sun_temple"
+    "setId": "guardian_of_the_sun_temple",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_surgical_mask",
@@ -2455,7 +2542,7 @@
       "mana_per_kill": 12
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 2
   },
   {
     "id": "helmet_satanic_tenebris_grievance",
@@ -2493,7 +2580,9 @@
         15
       ],
       "damage_based_on_level": 75
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_the_bucket",
@@ -2528,8 +2617,8 @@
       ],
       "magic_find_based_on_level": 45
     },
-    "sockets": 2,
-    "maxSockets": 2
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "helmet_satanic_the_curator_of_secrets",
@@ -2559,7 +2648,9 @@
         1,
         25
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_the_faceless_priest",
@@ -2592,7 +2683,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 3
   },
   {
     "id": "helmet_satanic_the_grand_champion",
@@ -2623,7 +2714,9 @@
       ],
       "armor_based_on_level": 40,
       "vitality_based_on_level": 40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_thor_s_battle_cap",
@@ -2655,7 +2748,9 @@
       ],
       "all_resistances": 10
     },
-    "setId": "thor_s_thunder_hammer"
+    "setId": "thor_s_thunder_hammer",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_thunder_caller_s_veil",
@@ -2688,7 +2783,9 @@
         40
       ]
     },
-    "setId": "thunder_caller_s_wrath"
+    "setId": "thunder_caller_s_wrath",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_uabel_s_helmet",
@@ -2712,7 +2809,9 @@
       "mana_per_kill": 15,
       "magic_find": 10
     },
-    "setId": "uabel_s_majesty"
+    "setId": "uabel_s_majesty",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_underworld_s_skullbreaker",
@@ -2745,7 +2844,7 @@
       "to_strength": 20
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 3
   },
   {
     "id": "helmet_satanic_valkyrie_s_winged_helm",
@@ -2763,20 +2862,20 @@
         160
       ],
       "attack_rating_pct": 5,
-      "attack_rating": [
-        250,
-        350
-      ],
-      "to_strength": 20,
-      "to_dexterity": 10,
+      "defense_ignored": 25,
       "lightning_skills": [
         1,
         2
       ],
-      "intelligence_based_on_level": 50,
-      "defense_ignored": 25
+      "attack_rating": [
+        250,
+        350
+      ],
+      "intelligence_based_on_level": 50
     },
-    "setId": "valkyrie_s_battle_gear"
+    "setId": "valkyrie_s_battle_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_veil_of_consecration",
@@ -2793,6 +2892,14 @@
         125,
         175
       ],
+      "buffing_aura_range": [
+        35,
+        50
+      ],
+      "buffing_aura_effectiveness": [
+        35,
+        50
+      ],
       "life": [
         250,
         350
@@ -2804,24 +2911,10 @@
       "all_resistances": [
         20,
         30
-      ],
-      "buffing_aura_range_increased": [
-        35,
-        50
-      ],
-      "buffing_aura_effectiveness_increased": [
-        35,
-        50
-      ],
-      "buffing_aura_range": [
-        35,
-        50
-      ],
-      "buffing_aura_effectiveness": [
-        35,
-        50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_veil_of_mystery",
@@ -2838,12 +2931,13 @@
         75,
         125
       ],
+      "to_vitality": 10,
       "faster_cast_rate": 20,
       "to_energy": 15,
-      "to_vitality": 10,
-      "life_per_kill": 12,
       "mana_per_kill": 12
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 2
   },
   {
     "id": "helmet_satanic_venom_s_skull",
@@ -2861,13 +2955,14 @@
         130
       ],
       "poison_skills": 2,
-      "arcane_skills": 1,
-      "to_energy": 25,
       "mana_replenish_pct": 15,
-      "increased_mana": 2,
-      "poison_resistance": 50
+      "poison_resistance": 50,
+      "to_energy": 25,
+      "increased_mana": 2
     },
-    "setId": "venom_s_frame"
+    "setId": "venom_s_frame",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_viking_s_sacred_helmet",
@@ -2884,14 +2979,16 @@
         80,
         130
       ],
-      "all_skills": 1,
+      "all_skills_viking": 1,
+      "life_replenish_pct": 15,
       "all_attributes": [
         2,
         5
-      ],
-      "life_replenish_pct": 15
+      ]
     },
-    "setId": "viking_s_demise"
+    "setId": "viking_s_demise",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_warlord_s_fury",
@@ -2920,7 +3017,9 @@
       "life_steal": 8,
       "to_strength": 20,
       "mana_per_kill": 8
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_wendigo_skull",
@@ -2937,20 +3036,26 @@
         80,
         130
       ],
+      "all_skills_shaman": [
+        2,
+        3
+      ],
       "life": [
         35,
         50
       ],
-      "fire_resistance": [
+      "lightning_resistance": [
         20,
         30
       ],
-      "lightning_resistance": [
+      "fire_resistance": [
         20,
         30
       ]
     },
-    "setId": "god_of_the_elements"
+    "setId": "god_of_the_elements",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_witches_brimmed_hat",
@@ -2980,7 +3085,9 @@
         15
       ],
       "arcane_resistance": 30
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_ymir_s_frozen_shroud",
@@ -3014,7 +3121,9 @@
         45
       ]
     },
-    "setId": "ymir_s_wisdom"
+    "setId": "ymir_s_wisdom",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_zealot_s_guise_of_doom",
@@ -3022,7 +3131,7 @@
     "baseType": "Helmet",
     "slot": "helmet",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 87,
     "defenseMin": 42,
     "defenseMax": 54,
@@ -3031,23 +3140,27 @@
         80,
         130
       ],
-      "arcane_skills": 2,
-      "to_energy": [
-        30,
-        40
-      ],
-      "to_vitality": 5,
-      "mana": 500,
-      "increased_mana": [
-        5,
-        20
+      "all_skills_white_mage": [
+        3,
+        4
       ],
       "flat_magic_skill_damage": [
         18,
         48
+      ],
+      "mana": 500,
+      "to_energy": [
+        30,
+        40
+      ],
+      "increased_mana": [
+        5,
+        20
       ]
     },
-    "setId": "zealot_s_prophecy"
+    "setId": "zealot_s_prophecy",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "helmet_satanic_zeus_circlet",
@@ -3078,7 +3191,9 @@
       ],
       "lightning_resistance": 20
     },
-    "setId": "thunder_god_s_wrath"
+    "setId": "thunder_god_s_wrath",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "s10_parasite_queens_tiara",
@@ -3148,7 +3263,7 @@
         30
       ]
     },
-    "sockets": 3,
+    "sockets": 2,
     "maxSockets": 4
   }
 ]

@@ -84,14 +84,20 @@ mod tests {
     #[test]
     fn unset_count_assumes_the_cap() {
         let stats = run(&[]);
-        assert_eq!(stats.get("increased_attack_speed").copied(), Some((30.0, 30.0)));
+        assert_eq!(
+            stats.get("increased_attack_speed").copied(),
+            Some((30.0, 30.0))
+        );
         assert_eq!(stats.get("enhanced_damage").copied(), Some((6.0, 6.0)));
     }
 
     #[test]
     fn count_scales_every_per_stack_effect() {
         let stats = run(&[("rage", 2)]);
-        assert_eq!(stats.get("increased_attack_speed").copied(), Some((10.0, 10.0)));
+        assert_eq!(
+            stats.get("increased_attack_speed").copied(),
+            Some((10.0, 10.0))
+        );
         assert_eq!(stats.get("enhanced_damage").copied(), Some((2.0, 2.0)));
     }
 

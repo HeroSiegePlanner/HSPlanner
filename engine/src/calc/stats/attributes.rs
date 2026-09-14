@@ -71,7 +71,9 @@ pub fn apply_base_attributes(
 // Higher difficulties cut every resistance; the penalty rides `all_resistances`
 // so it fans out per element and feeds the negative-resist conversions.
 pub fn apply_difficulty_penalty(difficulty: Option<&str>, stat_sources: &mut SourceMap) {
-    let Some(def) = data::get_difficulty(difficulty) else { return };
+    let Some(def) = data::get_difficulty(difficulty) else {
+        return;
+    };
     if def.resist_penalty == 0.0 {
         return;
     }
@@ -192,7 +194,12 @@ pub fn apply_increased_all_attributes(attr_sources: &mut SourceMap, stat_sources
     };
     let cfg = data::game_config();
     for attr in cfg.attributes.iter() {
-        let flat_sum = sum_contributions(attr_sources.get(&attr.key).map(|v| v.as_slice()).unwrap_or(&[]));
+        let flat_sum = sum_contributions(
+            attr_sources
+                .get(&attr.key)
+                .map(|v| v.as_slice())
+                .unwrap_or(&[]),
+        );
         for pct_src in pct_sources.iter() {
             let bonus_min = (flat_sum.0 * pct_src.value.0 / 100.0).floor();
             let bonus_max = (flat_sum.1 * pct_src.value.1 / 100.0).floor();
@@ -226,14 +233,21 @@ pub fn apply_increased_per_attribute(attr_sources: &mut SourceMap, stat_sources:
         if add_list.is_empty() && more_list.is_empty() {
             continue;
         }
-        let flat_sum = sum_contributions(attr_sources.get(&attr.key).map(|v| v.as_slice()).unwrap_or(&[]));
+        let flat_sum = sum_contributions(
+            attr_sources
+                .get(&attr.key)
+                .map(|v| v.as_slice())
+                .unwrap_or(&[]),
+        );
         if is_zero(flat_sum) {
             continue;
         }
         let add_sum = sum_contributions(add_list);
         let more_sum = sum_contributions(more_list);
-        let final_min = (flat_sum.0 * (1.0 + add_sum.0 / 100.0) * (1.0 + more_sum.0 / 100.0)).floor();
-        let final_max = (flat_sum.1 * (1.0 + add_sum.1 / 100.0) * (1.0 + more_sum.1 / 100.0)).floor();
+        let final_min =
+            (flat_sum.0 * (1.0 + add_sum.0 / 100.0) * (1.0 + more_sum.0 / 100.0)).floor();
+        let final_max =
+            (flat_sum.1 * (1.0 + add_sum.1 / 100.0) * (1.0 + more_sum.1 / 100.0)).floor();
         let bonus_min = final_min - flat_sum.0;
         let bonus_max = final_max - flat_sum.1;
         if bonus_min == 0.0 && bonus_max == 0.0 {
@@ -289,7 +303,12 @@ pub fn apply_stats_per_attribute(
 
     let mut totals: HashMap<String, Ranged> = HashMap::new();
     for attr in cfg.attributes.iter() {
-        let sum = sum_contributions(attr_sources.get(&attr.key).map(|v| v.as_slice()).unwrap_or(&[]));
+        let sum = sum_contributions(
+            attr_sources
+                .get(&attr.key)
+                .map(|v| v.as_slice())
+                .unwrap_or(&[]),
+        );
         totals.insert(attr.key.clone(), sum);
     }
 
@@ -326,7 +345,9 @@ pub fn apply_stats_per_attribute(
 pub(crate) fn skill_spec_to_subskill_owner(
     skill: &crate::calc::types::SkillSpec,
 ) -> crate::calc::subskill::SubskillOwner {
-    use crate::calc::subskill::{AmountSpec, AppliedStateSpec, SubskillEffect, SubskillNode, SubskillOwner, SubskillProc};
+    use crate::calc::subskill::{
+        AmountSpec, AppliedStateSpec, SubskillEffect, SubskillNode, SubskillOwner, SubskillProc,
+    };
     use crate::calc::types::AppliedStateValue;
 
     let subskills = skill
@@ -401,8 +422,11 @@ pub fn apply_subskill_aggregation(
             continue;
         }
         let owner = skill_spec_to_subskill_owner(skill);
-        let agg =
-            crate::calc::subskill::aggregate_subskill_stats(&owner, subskill_ranks, enemy_conditions);
+        let agg = crate::calc::subskill::aggregate_subskill_stats(
+            &owner,
+            subskill_ranks,
+            enemy_conditions,
+        );
         let mut entry = SubtreeAgg::default();
         for (key, &value) in agg.stats.iter() {
             if value == 0.0 {
@@ -547,7 +571,11 @@ pub fn apply_item_granted_passive_stats(
         };
         // Conditional blessings only apply when their config toggle is on.
         if let Some(cond) = granted.condition.as_ref() {
-            if !player_conditions.get(cond.as_str()).copied().unwrap_or(false) {
+            if !player_conditions
+                .get(cond.as_str())
+                .copied()
+                .unwrap_or(false)
+            {
                 continue;
             }
         }
@@ -589,8 +617,8 @@ pub fn apply_item_granted_passive_stats(
     ranks
 }
 
-// Fans all_resistances / max_all_resistances (and `_more` variants) out
-// to per-element buckets.
+// Fans all-resistance and ignore-all bonuses (including `_more` variants)
+// into the five elemental buckets, preserving the contribution sources.
 pub fn apply_stat_fan_outs(stat_sources: &mut SourceMap) {
     let variants: [&str; 2] = ["", "_more"];
     for (from, targets) in STAT_FAN_OUTS.iter() {
@@ -676,19 +704,84 @@ pub fn apply_stats_based_on_level(
 ) {
     // (item display key, target key, label, target is an attribute → attr_sources)
     const MAP: [(&str, &str, &str, bool); 13] = [
-        ("mana_based_on_level", "mana", "Mana (Based on Level)", false),
-        ("life_based_on_level", "life", "Life (Based on Level)", false),
-        ("damage_based_on_level", "additive_physical_damage", "Damage (Based on Level)", false),
-        ("enhanced_damage_based_on_level", "enhanced_damage", "Enhanced Damage (Based on Level)", false),
-        ("enhanced_defense_based_on_level", "enhanced_defense", "Enhanced Defense (Based on Level)", false),
-        ("magic_find_based_on_level", "magic_find", "Magic Find (Based on Level)", false),
-        ("attack_rating_based_on_level", "attack_rating", "Attack Rating (Based on Level)", false),
-        ("strength_based_on_level", "strength", "Strength (Based on Level)", true),
-        ("dexterity_based_on_level", "dexterity", "Dexterity (Based on Level)", true),
-        ("vitality_based_on_level", "vitality", "Vitality (Based on Level)", true),
-        ("energy_based_on_level", "energy", "Energy (Based on Level)", true),
-        ("intelligence_based_on_level", "intelligence", "Intelligence (Based on Level)", true),
-        ("armor_based_on_level", "armor", "Armor (Based on Level)", true),
+        (
+            "mana_based_on_level",
+            "mana",
+            "Mana (Based on Level)",
+            false,
+        ),
+        (
+            "life_based_on_level",
+            "life",
+            "Life (Based on Level)",
+            false,
+        ),
+        (
+            "damage_based_on_level",
+            "additive_physical_damage",
+            "Damage (Based on Level)",
+            false,
+        ),
+        (
+            "enhanced_damage_based_on_level",
+            "enhanced_damage",
+            "Enhanced Damage (Based on Level)",
+            false,
+        ),
+        (
+            "enhanced_defense_based_on_level",
+            "enhanced_defense",
+            "Enhanced Defense (Based on Level)",
+            false,
+        ),
+        (
+            "magic_find_based_on_level",
+            "magic_find",
+            "Magic Find (Based on Level)",
+            false,
+        ),
+        (
+            "attack_rating_based_on_level",
+            "attack_rating",
+            "Attack Rating (Based on Level)",
+            false,
+        ),
+        (
+            "strength_based_on_level",
+            "strength",
+            "Strength (Based on Level)",
+            true,
+        ),
+        (
+            "dexterity_based_on_level",
+            "dexterity",
+            "Dexterity (Based on Level)",
+            true,
+        ),
+        (
+            "vitality_based_on_level",
+            "vitality",
+            "Vitality (Based on Level)",
+            true,
+        ),
+        (
+            "energy_based_on_level",
+            "energy",
+            "Energy (Based on Level)",
+            true,
+        ),
+        (
+            "intelligence_based_on_level",
+            "intelligence",
+            "Intelligence (Based on Level)",
+            true,
+        ),
+        (
+            "armor_based_on_level",
+            "armor",
+            "Armor (Based on Level)",
+            true,
+        ),
     ];
     let f = level as f64 / 100.0;
     for (source, target, label, is_attr) in MAP.iter() {
@@ -700,7 +793,11 @@ pub fn apply_stats_based_on_level(
             continue;
         }
         let bonus = (per100.0 * f, per100.1 * f);
-        let dest = if *is_attr { &mut *attr_sources } else { &mut *stat_sources };
+        let dest = if *is_attr {
+            &mut *attr_sources
+        } else {
+            &mut *stat_sources
+        };
         push_source(
             dest,
             target,
@@ -713,4 +810,3 @@ pub fn apply_stats_based_on_level(
         );
     }
 }
-

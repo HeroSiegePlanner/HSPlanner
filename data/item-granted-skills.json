@@ -23,7 +23,7 @@
   {
     "id": "holy_aura",
     "name": "Holy Aura",
-    "description": "Increases your and your party members attack damage and magic skill damage.",
+    "description": "When active, increases your and your party members attack damage and magic skill damage.",
     "aura": true,
     "passiveStats": {
       "perRank": {
@@ -849,9 +849,9 @@
     "aura": true,
     "passiveStats": {
       "base": {
-        "attack_rating_pct": -2,
-        "additive_arcane_damage": -10,
-        "all_resistances": -2
+        "attack_rating_pct": 0,
+        "additive_arcane_damage": 0,
+        "all_resistances": 0
       },
       "perRank": {
         "attack_rating_pct": 2,
@@ -1175,7 +1175,7 @@
     "condition": "satanic_chant_buff",
     "passiveStats": {
       "base": {
-        "attack_damage": -5
+        "attack_damage": 0
       },
       "perRank": {
         "attack_damage": 5
@@ -1470,8 +1470,21 @@
   },
   {
     "id": "angels_vibrance",
-    "name": "Angels Vibrance",
-    "description": ""
+    "name": "Angel’s Vibrance Aura",
+    "description": "",
+    "aura": true,
+    "passiveStats": {
+      "base": {
+        "all_resistances": 5,
+        "life_replenish": 45,
+        "mana_replenish": 45
+      },
+      "perRank": {
+        "all_resistances": 2,
+        "life_replenish": 8,
+        "mana_replenish": 8
+      }
+    }
   },
   {
     "id": "berserker_s_rage",
@@ -1774,7 +1787,7 @@
   {
     "id": "naval_bomb",
     "name": "Naval Bomb",
-    "description": ""
+    "description": "Cast to shoot a cannonball towards the ships on the coast."
   },
   {
     "id": "node_detection",
@@ -1854,7 +1867,7 @@
   {
     "id": "satanic_groundsmash",
     "name": "Satanic Groundsmash",
-    "description": "",
+    "description": "Cast to raise spikes around target location dealing Damage.",
     "procDamage": [
       {
         "type": "arcane",
@@ -2134,7 +2147,7 @@
   {
     "id": "demon_form",
     "name": "Demon Form",
-    "description": "Transform into a demon, increasing your attack damage and attack speed.",
+    "description": "Temporarily turn into a demon gaining increased attack damage and attack speed.",
     "condition": "demon_form_buff",
     "passiveStats": {
       "base": {
@@ -2174,5 +2187,160 @@
         "mana_replenish_pct": 2
       }
     }
+  },
+  {
+    "id": "poisonous_hit",
+    "name": "Poisonous Hit",
+    "description": ""
+  },
+  {
+    "id": "shruken_strike",
+    "name": "Shruken Strike",
+    "description": ""
+  },
+  {
+    "id": "stoned",
+    "name": "Stoned",
+    "description": ""
+  },
+  {
+    "id": "meat_bomb",
+    "name": "Meat Bomb",
+    "description": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
+  },
+  {
+    "id": "spiky_plant",
+    "name": "Spiky Plant",
+    "description": ""
+  },
+  {
+    "id": "rotting_carcas",
+    "name": "Rotting Carcas",
+    "description": ""
+  },
+  {
+    "id": "agility",
+    "name": "Agility",
+    "description": "Temporarily increases your movement speed and attack speed."
+  },
+  {
+    "id": "satanic_replenishment",
+    "name": "Satanic Replenishment",
+    "description": "Gain increased Life Replenish for a short period!"
+  },
+  {
+    "id": "burst_of_rage",
+    "name": "Burst of Rage",
+    "description": ""
+  },
+  {
+    "id": "breath_of_fire",
+    "name": "Breath of Fire",
+    "description": "Breathe burning flames dealing fire damage and inflicting burning on hit."
+  },
+  {
+    "id": "frostburn",
+    "name": "Frostburn",
+    "description": ""
+  },
+  {
+    "id": "chilling_strike",
+    "name": "Chilling Strike",
+    "description": "Perform a chilling AOE strike dealing extra damage and freezing enemies."
+  },
+  {
+    "id": "odin_s_fury",
+    "name": "Odin's Fury",
+    "description": "Powerful warcry which deals arcane damage and stuns monsters around you."
+  },
+  {
+    "id": "breath_of_ice",
+    "name": "Breath of Ice",
+    "description": "Breathe glacial air freezing and dealing cold damage to monsters."
+  },
+  {
+    "id": "envenom",
+    "name": "Envenom",
+    "description": "On monster kill you have a chance to explode toxic fissures on all monsters around thje target dealing poison damage and inflicting Poisoned."
+  },
+  {
+    "id": "lucky_numbers",
+    "name": "Lucky Numbers",
+    "description": ""
+  },
+  {
+    "id": "mana_recovery",
+    "name": "Mana Recovery",
+    "description": "Chance on cast to replenish a portion of your maximum mana."
+  },
+  {
+    "id": "divine_scorch",
+    "name": "Divine Scorch",
+    "description": "Perform a fiery attack setting enemies on fire."
+  },
+  {
+    "id": "me_smash",
+    "name": "Me Smash!",
+    "description": ""
+  },
+  {
+    "id": "razor_leaves",
+    "name": "Razor Leaves",
+    "description": ""
+  },
+  {
+    "id": "rupture",
+    "name": "Rupture",
+    "description": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
+  },
+  {
+    "id": "disarming_strike",
+    "name": "Disarming Strike",
+    "description": ""
+  },
+  {
+    "id": "live_by_the_sword",
+    "name": "Live by the Sword",
+    "description": "Temporarily increases your attack speed and movement speed."
+  },
+  {
+    "id": "snowball_throw",
+    "name": "Snowball Throw",
+    "description": "Cast to throw a snowball in target direction dealing Cold Damage."
+  },
+  {
+    "id": "open_the_box",
+    "name": "Open the Box",
+    "description": "Cast to drop a soul box on the ground for a short period."
+  },
+  {
+    "id": "lightning_strike",
+    "name": "Lightning Strike",
+    "description": "Perform a charged attack striking enemies with thunder bolts."
+  },
+  {
+    "id": "heaven_s_light",
+    "name": "Heaven’s Light",
+    "description": ""
+  },
+  {
+    "id": "fiddling_glove",
+    "name": "Fiddling Glove",
+    "description": "Cast to launch a glove towards the nearest target stealing their wallet."
+  },
+  {
+    "id": "dopium",
+    "name": "Dopium!",
+    "description": "Chance on cast to increase your magic skill damage and faster cast rate for a short duration."
+  },
+  {
+    "id": "hexing_strike",
+    "name": "Hexing Strike",
+    "description": ""
+  },
+  {
+    "id": "disease",
+    "name": "Disease",
+    "description": ""
   }
 ]

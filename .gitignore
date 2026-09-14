@@ -14,10 +14,7 @@ node_modules
 dist
 dist-ssr
 *.local
-engine/target/
 engine/models/
-/target/
-/crates/
 
 # Editor directories and files
 .vscode/*
@@ -37,3 +34,27 @@ engine/models/
 
 # Build/tooling output kept local, never committed
 graphify-out/
+
+# Local Tauri reference and its retired WebAssembly renderer
+/legacy/
+/tree-renderer/
+
+# Generated review artifacts and nested Rust builds
+/outputs/
+**/target/
+**/__pycache__/
+*.pyc
+
+# The engine uses the root workspace lockfile
+/engine/Cargo.lock
+
+# Local documentation and agent instructions
+/docs/
+AGENTS.md
+CLAUDE.md
+.agents/
+.claude/
+
+# Local migration experiments and visual comparison tools
+/prototypes/
+/tools/ui-parity/

@@ -43,8 +43,8 @@
       ],
       "all_resistances": 50
     },
-    "sockets": 3,
-    "maxSockets": 3,
+    "sockets": 4,
+    "maxSockets": 6,
     "procs": [
       {
         "trigger": "on_block",
@@ -84,13 +84,16 @@
       "all_resistances": 75
     },
     "sockets": 4,
-    "maxSockets": 4,
+    "maxSockets": 6,
     "skillBonuses": {
-      "Angels Vibrance": [
+      "Angel’s Vibrance Aura": [
         20,
         30
       ]
-    }
+    },
+    "uniqueEffects": [
+      "+40% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "shields_normal_wooden_shield",
@@ -235,7 +238,6 @@
     "defenseMin": 120,
     "defenseMax": 140,
     "implicit": {
-      "block_chance": 40,
       "enhanced_defense": [
         260,
         345
@@ -244,14 +246,15 @@
         1,
         3
       ],
-      "to_energy": [
-        30,
-        40
-      ],
       "to_vitality": 20,
       "magic_skill_damage": [
         15,
         35
+      ],
+      "block_chance": 60,
+      "to_energy": [
+        30,
+        40
       ],
       "faster_hit_recovery": 75,
       "all_resistances": [
@@ -271,7 +274,7 @@
       {
         "trigger": "on_block",
         "chance": 20,
-        "description": "cast Dissipating Tornado Level 20",
+        "description": "cast Dissipating Tornado Level [20-30]",
         "details": "Summon a dissipating tornado around you that pulls nearby monsters and causes you to dodge all attacks and unleash sand at monsters when they strike you dealing arcane damage."
       }
     ]
@@ -349,12 +352,12 @@
       "life_based_on_level": 275
     },
     "sockets": 3,
-    "maxSockets": 3,
+    "maxSockets": 5,
     "procs": [
       {
         "trigger": "on_block",
         "chance": 20,
-        "description": "cast Counter Level 73",
+        "description": "cast Counter Level [55-75]",
         "details": "When active all monster attacks get countered with thrusting lances dealing arcane damage."
       }
     ]
@@ -370,10 +373,13 @@
     "defenseMin": 80,
     "defenseMax": 100,
     "implicit": {
-      "block_chance": 75,
       "enhanced_defense": [
         250,
         365
+      ],
+      "melee_skills": [
+        4,
+        8
       ],
       "physical_skills": [
         3,
@@ -384,24 +390,16 @@
         35
       ],
       "to_vitality": 25,
+      "block_chance": 30,
+      "faster_hit_recovery": 100,
+      "all_resistances": 15,
       "attack_damage": [
         10,
         30
       ],
-      "faster_hit_recovery": 100,
-      "all_resistances": 15,
-      "life_based_on_level": 300,
-      "melee_skills": [
-        4,
-        8
-      ]
+      "life_based_on_level": 300
     },
-    "skillBonuses": {
-      "Shield Slam": [
-        5,
-        10
-      ]
-    },
+    "skillBonuses": {},
     "sockets": 3,
     "maxSockets": 5
   },
@@ -497,7 +495,7 @@
       ]
     },
     "sockets": 4,
-    "maxSockets": 4
+    "maxSockets": 6
   },
   {
     "id": "shield_heroic_the_event_horizon",
@@ -542,13 +540,16 @@
       ]
     },
     "sockets": 5,
-    "maxSockets": 5,
+    "maxSockets": 6,
     "skillBonuses": {
       "Vector Shroud": [
         1,
         3
       ]
-    }
+    },
+    "uniqueEffects": [
+      "+[35-50]% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "shield_heroic_tombstone",
@@ -594,8 +595,13 @@
         30
       ]
     },
-    "sockets": 3,
-    "maxSockets": 3
+    "sockets": 4,
+    "maxSockets": 6,
+    "uniqueEffects": [
+      "[20-25]% Chance to Replenish Life when Blocking",
+      "[10-15]% Life Replenished when Blocking",
+      "+[22-30]% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "shield_satanic_archmagus_glyphward",
@@ -626,7 +632,9 @@
         1,
         3
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_aztec_ward",
@@ -671,7 +679,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "aztec_s_mystery"
   },
   {
@@ -709,7 +717,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_battlemagi_s_rampart",
@@ -722,19 +730,24 @@
     "defenseMin": 6,
     "defenseMax": 10,
     "implicit": {
-      "block_chance": [
-        20,
-        35
-      ],
-      "all_skills": 2,
       "enhanced_defense": [
         50,
         60
       ],
-      "to_armor": 5,
+      "all_skills": [
+        0,
+        2
+      ],
       "life_replenish_pct": 15,
-      "mana_replenish_pct": 10
-    }
+      "block_chance": [
+        20,
+        35
+      ],
+      "mana_replenish_pct": 10,
+      "to_armor": 5
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_blessed_defender",
@@ -747,10 +760,6 @@
     "defenseMin": 14,
     "defenseMax": 18,
     "implicit": {
-      "block_chance": [
-        20,
-        30
-      ],
       "enhanced_defense": [
         50,
         60
@@ -759,20 +768,26 @@
         10,
         15
       ],
+      "block_chance": [
+        75,
+        85
+      ],
+      "all_resistances": 10,
       "damage_mitigation": [
         4,
         8
-      ],
-      "all_resistances": 10
+      ]
     },
     "procs": [
       {
         "trigger": "on_cast",
-        "chance": 20,
-        "description": "cast Holy Hammer Level 20",
+        "chance": 15,
+        "description": "cast Holy Hammer Level [15-20]",
         "details": "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_bob_s_piece_of_plywood",
@@ -785,13 +800,17 @@
     "defenseMin": 14,
     "defenseMax": 18,
     "implicit": {
-      "block_chance": [
-        30,
-        50
-      ],
       "enhanced_defense": [
         50,
         70
+      ],
+      "block_chance": [
+        70,
+        90
+      ],
+      "to_strength": [
+        20,
+        30
       ],
       "crit_chance": [
         5,
@@ -800,10 +819,6 @@
       "crit_damage": [
         30,
         50
-      ],
-      "to_strength": [
-        20,
-        30
       ]
     },
     "procs": [
@@ -813,7 +828,9 @@
         "description": "cast Chainsaw Massacre Level 40",
         "details": "Violently spin your chainsaw dealing damage to monsters around you. Going the full distance unleashes a whirl attack with increased damage and area of effect."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_crystal_infused_shield",
@@ -845,7 +862,9 @@
       ],
       "light_radius": 5,
       "all_resistances": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_darkwood_defender",
@@ -858,10 +877,6 @@
     "defenseMin": 14,
     "defenseMax": 18,
     "implicit": {
-      "block_chance": [
-        20,
-        30
-      ],
       "enhanced_defense": [
         40,
         50
@@ -871,13 +886,19 @@
         20,
         30
       ],
+      "to_vitality": 15,
+      "block_chance": [
+        60,
+        70
+      ],
       "to_strength": 15,
       "to_dexterity": [
         10,
         15
-      ],
-      "to_vitality": 15
-    }
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_den_glider_in",
@@ -890,32 +911,35 @@
     "defenseMin": 52,
     "defenseMax": 70,
     "implicit": {
-      "block_chance": [
+      "damage_return": [
         40,
-        50
+        55
       ],
       "enhanced_defense": [
         90,
         130
       ],
-      "to_vitality": 15,
-      "damage_return": [
-        40,
-        55
+      "all_skills": [
+        1,
+        2
       ],
-      "magic_damage_reduction": 15,
+      "to_vitality": 15,
+      "block_chance": [
+        90,
+        100
+      ],
       "magic_find": [
         20,
         35
       ],
-      "defense_vs_missiles": 75,
-      "all_skills": [
-        1,
-        2
-      ]
+      "magic_damage_reduction": 15,
+      "defense_vs_missiles": 75
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4,
+    "uniqueEffects": [
+      "+25% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "shield_satanic_flame_diviner_s_ward",
@@ -923,42 +947,42 @@
     "baseType": "Shield",
     "slot": "offhand",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 100,
     "defenseMin": 152,
     "defenseMax": 170,
     "implicit": {
-      "block_chance": 40,
       "enhanced_defense": [
         490,
         530
       ],
+      "block_chance": 65,
       "faster_cast_rate": 35,
       "flat_fire_skill_damage": [
         28,
         58
       ],
-      "fire_skill_damage": [
-        25,
-        35
-      ],
-      "mana_replenish_pct": 10,
-      "mana": 25,
       "fire_resistance": [
         40,
         65
       ],
-      "intelligence_converted_to_fire_skill_dmg": [
-        2,
-        5
+      "fire_skill_damage": [
+        25,
+        35
       ],
-      "max_fire_resistance": 5,
       "damage_mitigation": [
         5,
         20
+      ],
+      "max_fire_resistance": 5,
+      "intelligence_converted_to_fire_skill_dmg": [
+        2,
+        5
       ]
     },
-    "setId": "flames_of_divinity"
+    "setId": "flames_of_divinity",
+    "sockets": 4,
+    "maxSockets": 6
   },
   {
     "id": "shield_satanic_gem_encrusted_tower",
@@ -995,7 +1019,7 @@
         40
       ]
     },
-    "sockets": 6,
+    "sockets": 4,
     "maxSockets": 6
   },
   {
@@ -1031,7 +1055,7 @@
       "enhanced_damage_based_on_level": 75
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "gladiator_s_glory"
   },
   {
@@ -1066,7 +1090,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_iron_giants_shield",
@@ -1094,12 +1118,12 @@
       "faster_hit_recovery": 75
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "on_block",
         "chance": 8,
-        "description": "cast Last Stand Level 11",
+        "description": "cast Last Stand Level [10-15]",
         "details": "Restore yourself to full life and temporarily gain increased magic skill damage and physical damage reduction."
       }
     ]
@@ -1135,7 +1159,7 @@
       "mana_per_kill": 10
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "justiciar_s_thunder_raiment"
   },
   {
@@ -1173,7 +1197,10 @@
       "all_resistances": 50
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4,
+    "uniqueEffects": [
+      "+5% Increased Defense"
+    ]
   },
   {
     "id": "shield_satanic_lancer_s_wall",
@@ -1186,17 +1213,17 @@
     "defenseMin": 52,
     "defenseMax": 70,
     "implicit": {
-      "block_chance": [
+      "damage_return": [
         20,
-        30
+        35
       ],
       "enhanced_defense": [
         90,
         130
       ],
-      "damage_return": [
-        20,
-        35
+      "block_chance": [
+        80,
+        90
       ],
       "physical_damage_reduction": [
         10,
@@ -1209,14 +1236,14 @@
       "defense_vs_missiles": [
         50,
         75
-      ],
-      "defense": [
-        3,
-        5
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4,
+    "uniqueEffects": [
+      "+[18-25]% increased Damage Returned to the Attacker",
+      "+[3-5]% Increased Defense"
+    ]
   },
   {
     "id": "shield_satanic_leprechauns_greed",
@@ -1245,7 +1272,7 @@
       "magic_find_based_on_level": 40
     },
     "sockets": 3,
-    "maxSockets": 3
+    "maxSockets": 5
   },
   {
     "id": "shield_satanic_lost_wizard_s_barrier",
@@ -1274,7 +1301,9 @@
         25
       ],
       "increased_mana": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_mirror_of_flesh",
@@ -1301,12 +1330,12 @@
       "physical_damage_reduction": 10
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "on_block",
         "chance": 18,
-        "description": "cast Meat Bomb Level 32",
+        "description": "cast Meat Bomb Level [30-40]",
         "details": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
       }
     ]
@@ -1337,7 +1366,7 @@
       "magic_find_based_on_level": 25
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_pandemic_shield",
@@ -1350,12 +1379,10 @@
     "defenseMin": 22,
     "defenseMax": 40,
     "implicit": {
-      "block_chance": 15,
       "enhanced_defense": [
         160,
         180
       ],
-      "all_skills": 1,
       "poison_skills": [
         2,
         4
@@ -1364,19 +1391,20 @@
         20,
         30
       ],
+      "block_chance": 70,
       "poison_resistance": [
         40,
         75
       ],
       "poison_length_reduced": 50
     },
-    "sockets": 0,
+    "sockets": 2,
     "maxSockets": 4,
     "procs": [
       {
-        "trigger": "on_block",
+        "trigger": "on_cast",
         "chance": 15,
-        "description": "cast Poison Nova Level 24",
+        "description": "cast Poison Nova Level [15-25]",
         "details": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
       }
     ]
@@ -1417,7 +1445,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 3
   },
   {
     "id": "shield_satanic_rendguard_of_carnage",
@@ -1458,7 +1486,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 2,
+    "maxSockets": 3
   },
   {
     "id": "shield_satanic_rift_eye",
@@ -1504,7 +1534,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_rusted_spiked_shield",
@@ -1536,9 +1566,14 @@
       {
         "trigger": "on_block",
         "chance": 18,
-        "description": "cast Fan of Knives Level 10",
+        "description": "cast Fan of Knives Level [10-15]",
         "details": "Attacks have a chance to throw knives around you dealing damage physical damage to nearby monsters. Additionally the knives have a chance to ricochet to nearby monsters."
       }
+    ],
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "+30% increased Damage Returned to the Attacker"
     ]
   },
   {
@@ -1578,7 +1613,7 @@
       "life_based_on_level": 650
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "wall_of_god"
   },
   {
@@ -1629,18 +1664,15 @@
     "defenseMin": 52,
     "defenseMax": 70,
     "implicit": {
-      "block_chance": 65,
       "enhanced_defense": [
         90,
         130
       ],
+      "all_skills_viking": 2,
+      "block_chance": 65,
       "attack_rating": [
         650,
         750
-      ],
-      "life_steal": [
-        6,
-        8
       ],
       "to_strength": [
         40,
@@ -1650,17 +1682,21 @@
         15,
         25
       ],
-      "attack_damage": [
-        40,
-        75
-      ],
       "all_resistances": [
         20,
         30
+      ],
+      "life_steal": [
+        6,
+        8
+      ],
+      "attack_damage": [
+        40,
+        75
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "shield_bearer_s_sanctuary"
   },
   {
@@ -1696,7 +1732,9 @@
         4,
         7
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_spellbinder_s_magebarrier",
@@ -1734,7 +1772,9 @@
         10,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_storm_gladiator_s_wall",
@@ -1773,7 +1813,7 @@
       {
         "trigger": "on_block",
         "chance": 10,
-        "description": "cast Lightning Fury Level 12",
+        "description": "cast Lightning Fury Level [8-12]",
         "details": "Strike monsters with increased attack damage causing lightning to chain between them dealing lightning damage."
       }
     ]
@@ -1807,7 +1847,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_the_templar",
@@ -1841,7 +1881,10 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4,
+    "uniqueEffects": [
+      "+[3-5]% Increased Defense"
+    ]
   },
   {
     "id": "shield_satanic_thunder_lord_s_aegis",
@@ -1876,7 +1919,7 @@
       "max_lightning_resistance": 10
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_thunderburn_aegis",
@@ -1904,7 +1947,9 @@
         15
       ],
       "all_resistances": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "shield_satanic_thunderstruck_deflector",
@@ -1971,7 +2016,7 @@
       "all_resistances": 20
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "setId": "vagabond_s_rags"
   },
   {
@@ -1985,28 +2030,24 @@
     "defenseMin": 52,
     "defenseMax": 70,
     "implicit": {
-      "block_chance": [
-        25,
-        40
-      ],
       "enhanced_defense": [
         90,
         130
       ],
-      "faster_cast_rate": 25,
-      "flat_lightning_skill_damage": [
-        12,
-        26
-      ],
+      "all_skills_amazon": 2,
+      "increased_attack_speed": 25,
       "life": [
         350,
         450
       ],
-      "lightning_resistance": [
-        40,
-        65
+      "block_chance": [
+        65,
+        80
       ],
-      "increased_attack_speed": 25,
+      "flat_lightning_skill_damage": [
+        12,
+        26
+      ],
       "all_resistances": [
         15,
         25
@@ -2047,7 +2088,7 @@
       "life_per_kill": 18
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "shield_satanic_wall_of_the_legion",
@@ -2216,13 +2257,14 @@
         350,
         550
       ],
+      "block_chance": 80,
       "faster_hit_recovery": 150,
       "physical_damage_reduction": 15,
-      "magic_damage_reduction": 15,
       "all_resistances": [
         50,
         75
       ],
+      "magic_damage_reduction": 15,
       "max_all_resistances": -5
     },
     "procs": [
@@ -2235,5 +2277,97 @@
     ],
     "sockets": 4,
     "maxSockets": 6
+  },
+  {
+    "id": "shields_gabriels_unholy_oath",
+    "name": "Gabriel's Unholy Oath",
+    "baseType": "Shield",
+    "slot": "offhand",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 100,
+    "sockets": 4,
+    "maxSockets": 6,
+    "defenseMin": 480,
+    "defenseMax": 550,
+    "implicit": {
+      "enhanced_defense": [
+        450,
+        525
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "summon_skills": [
+        1,
+        2
+      ],
+      "block_chance": 75,
+      "to_intelligence": 25,
+      "to_energy": [
+        20,
+        40
+      ],
+      "faster_hit_recovery": 50,
+      "all_resistances": [
+        30,
+        40
+      ],
+      "life_based_on_level": [
+        300,
+        500
+      ],
+      "summon_max_amount": 1,
+      "summon_damage": [
+        20,
+        40
+      ]
+    },
+    "skillBonuses": {
+      "Summon Heretic": 1
+    }
+  },
+  {
+    "id": "shields_fallen_gladiators_shield",
+    "name": "Pit Ravager's Cetratus",
+    "baseType": "Shield",
+    "slot": "offhand",
+    "rarity": "heroic",
+    "grade": "SS",
+    "requiresLevel": 92,
+    "sockets": 2,
+    "maxSockets": 5,
+    "defenseMin": 180,
+    "defenseMax": 260,
+    "implicit": {
+      "enhanced_defense": [
+        300,
+        420
+      ],
+      "open_wounds": 25,
+      "physical_skills": [
+        3,
+        6
+      ],
+      "block_chance": 60,
+      "faster_hit_recovery": 50,
+      "physical_damage_reduction": 10,
+      "all_attributes": [
+        30,
+        45
+      ],
+      "attack_damage": [
+        50,
+        100
+      ],
+      "magic_damage_reduction": 8
+    },
+    "skillBonuses": {
+      "Fatality": [
+        1,
+        3
+      ]
+    }
   }
 ]

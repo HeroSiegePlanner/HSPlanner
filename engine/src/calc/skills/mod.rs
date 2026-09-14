@@ -4,12 +4,13 @@ use super::conditions::is_condition_active;
 
 pub mod ailment;
 pub mod attack;
+pub mod calculation;
 pub mod conversion;
 pub mod damage;
 pub mod weapon;
 
-pub use attack::{AttackSkillInput, compute_attack_skill_damage};
-pub use damage::{SkillInput, compute_skill_damage};
+pub use attack::{compute_attack_skill_damage, AttackSkillInput};
+pub use damage::{compute_skill_damage, SkillInput};
 pub use weapon::compute_weapon_damage;
 
 pub type Ranged = (f64, f64);
@@ -35,28 +36,48 @@ pub(crate) fn deadly_blow_mult(chance_pct: f64, effect_pct: f64) -> f64 {
 // (stat key, label, counts as an ailment for the generic ailment bonuses). The
 // gating condition is derived from the stat key by `conditions::condition_key_for`.
 pub const EXTRA_DAMAGE_CONDITIONS: &[(&str, &str, bool)] = &[
-    ("extra_damage_stunned",        "Stunned",        true),
-    ("extra_damage_bleeding",       "Bleeding",       true),
-    ("extra_damage_frozen",         "Frozen",         true),
-    ("extra_damage_poisoned",       "Poisoned",       true),
-    ("extra_damage_burning",        "Burning",        true),
-    ("extra_damage_stasis",         "Stasis",         true),
+    ("extra_damage_stunned", "Stunned", true),
+    ("extra_damage_bleeding", "Bleeding", true),
+    ("extra_damage_frozen", "Frozen", true),
+    ("extra_damage_poisoned", "Poisoned", true),
+    ("extra_damage_burning", "Burning", true),
+    ("extra_damage_stasis", "Stasis", true),
     ("extra_damage_shadow_burning", "Shadow Burning", true),
-    ("extra_damage_frost_bitten",   "Frost Bitten",   true),
-    ("extra_dmg_to_deep_frozen",    "Deep Frozen",    true),
-    ("extra_damage_low_life",       "Low Life",       false),
-    ("extra_damage_serrated_chains","Serrated Chains",false),
-    ("extra_damage_bosses",         "Bosses",         false),
+    ("extra_damage_frost_bitten", "Frost Bitten", true),
+    ("extra_dmg_to_deep_frozen", "Deep Frozen", true),
+    ("extra_damage_low_life", "Low Life", false),
+    ("extra_damage_serrated_chains", "Serrated Chains", false),
+    ("extra_damage_bosses", "Bosses", false),
 ];
 
 // Same gating, but the bonus only lands when the hit's damage type matches.
 const ELEMENT_EXTRA_DAMAGE: &[(&str, &str, &str)] = &[
-    ("extra_fire_dmg_to_burning",      "fire",      "Fire vs Burning"),
-    ("extra_poison_dmg_to_poisoned",   "poison",    "Poison vs Poisoned"),
-    ("extra_physical_dmg_to_bleeding", "physical",  "Physical vs Bleeding"),
-    ("extra_lightning_dmg_stasis",     "lightning", "Lightning vs Stasis"),
-    ("extra_lightning_dmg_to_stasis",  "lightning", "Lightning vs Stasis"),
-    ("extra_lightning_dmg_slow",       "lightning", "Lightning vs Slowed"),
+    ("extra_fire_dmg_to_burning", "fire", "Fire vs Burning"),
+    (
+        "extra_poison_dmg_to_poisoned",
+        "poison",
+        "Poison vs Poisoned",
+    ),
+    (
+        "extra_physical_dmg_to_bleeding",
+        "physical",
+        "Physical vs Bleeding",
+    ),
+    (
+        "extra_lightning_dmg_stasis",
+        "lightning",
+        "Lightning vs Stasis",
+    ),
+    (
+        "extra_lightning_dmg_to_stasis",
+        "lightning",
+        "Lightning vs Stasis",
+    ),
+    (
+        "extra_lightning_dmg_slow",
+        "lightning",
+        "Lightning vs Slowed",
+    ),
 ];
 
 // Generic "target is afflicted" bonuses; the data uses both spellings.
@@ -79,8 +100,16 @@ pub struct DamageRow {
 
 #[derive(Debug, Clone)]
 pub enum BonusSource {
-    AttributePoint { source: String, stat: String, value: f64 },
-    SkillLevel { source: String, stat: String, value: f64 },
+    AttributePoint {
+        source: String,
+        stat: String,
+        value: f64,
+    },
+    SkillLevel {
+        source: String,
+        stat: String,
+        value: f64,
+    },
 }
 
 impl BonusSource {
@@ -127,6 +156,8 @@ pub struct Weapon {
 
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct ExtraSource {
+    #[serde(skip)]
+    pub(crate) stat_key: Option<&'static str>,
     pub label: &'static str,
     pub pct: f64,
 }
@@ -134,6 +165,8 @@ pub struct ExtraSource {
 #[derive(Debug, Clone, Default, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SkillDamageBreakdown {
+    #[serde(skip)]
+    pub(crate) calculation: Vec<calculation::CalculationStep>,
     pub effective_rank_min: f64,
     pub effective_rank_max: f64,
     pub base_min: f64,
@@ -171,6 +204,8 @@ pub struct SkillDamageBreakdown {
 #[derive(Debug, Clone, Default, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AttackSkillDamageBreakdown {
+    #[serde(skip)]
+    pub(crate) calculation: Vec<calculation::CalculationStep>,
     pub effective_rank_min: f64,
     pub effective_rank_max: f64,
     pub weapon_damage_pct_min: f64,
@@ -318,7 +353,7 @@ pub(crate) fn collect_extra_damage(
 
 fn push_source(
     stats: &StatMap,
-    stat_key: &str,
+    stat_key: &'static str,
     label: &'static str,
     sum_pct: &mut f64,
     sources: &mut Vec<ExtraSource>,
@@ -328,7 +363,11 @@ fn push_source(
     if avg == 0.0 {
         return;
     }
-    sources.push(ExtraSource { label, pct: avg });
+    sources.push(ExtraSource {
+        label,
+        pct: avg,
+        stat_key: Some(stat_key),
+    });
     *sum_pct += avg;
 }
 
@@ -342,11 +381,19 @@ pub(crate) struct CritFactors {
 pub(crate) fn crit_factors(stats: &StatMap, is_spell: bool) -> CritFactors {
     let chance = r_max(rg(
         stats,
-        if is_spell { "spell_crit_chance" } else { "crit_chance" },
+        if is_spell {
+            "spell_crit_chance"
+        } else {
+            "crit_chance"
+        },
     ));
     let damage_pct = r_max(rg(
         stats,
-        if is_spell { "spell_crit_damage" } else { "crit_damage" },
+        if is_spell {
+            "spell_crit_damage"
+        } else {
+            "crit_damage"
+        },
     ));
     let damage_more = if is_spell {
         0.0
@@ -361,6 +408,17 @@ pub(crate) fn crit_factors(stats: &StatMap, is_spell: bool) -> CritFactors {
         damage_pct,
         on_crit_mult,
         avg_mult,
+    }
+}
+
+impl SkillDamageBreakdown {
+    pub fn calculation(&self) -> &[calculation::CalculationStep] {
+        &self.calculation
+    }
+}
+impl AttackSkillDamageBreakdown {
+    pub fn calculation(&self) -> &[calculation::CalculationStep] {
+        &self.calculation
     }
 }
 
@@ -478,8 +536,12 @@ mod tests {
             ("is_boss", "extra_damage_bosses"),
             ("serrated_chains", "extra_damage_serrated_chains"),
         ] {
-            let (mult, sources) = collect_extra_damage(&stat(stat_key, 40.0), &cond(&[ui_key]), None);
-            assert!((mult - 1.4).abs() < 1e-9, "{ui_key} did not reach {stat_key}");
+            let (mult, sources) =
+                collect_extra_damage(&stat(stat_key, 40.0), &cond(&[ui_key]), None);
+            assert!(
+                (mult - 1.4).abs() < 1e-9,
+                "{ui_key} did not reach {stat_key}"
+            );
             assert_eq!(sources.len(), 1);
             let (off, _) = collect_extra_damage(&stat(stat_key, 40.0), &cond(&[]), None);
             assert_eq!(off, 1.0, "{stat_key} must stay gated by {ui_key}");
@@ -495,7 +557,10 @@ mod tests {
         ]);
         let (mult, sources) =
             collect_extra_damage(&stats, &cond(&["is_boss", "serrated_chains"]), None);
-        assert!((mult - 2.0).abs() < 1e-9, "expected additive 1 + 0.5 + 0.5, got {mult}");
+        assert!(
+            (mult - 2.0).abs() < 1e-9,
+            "expected additive 1 + 0.5 + 0.5, got {mult}"
+        );
         assert_eq!(sources.len(), 2);
     }
 

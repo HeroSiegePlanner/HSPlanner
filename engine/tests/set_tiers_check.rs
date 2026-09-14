@@ -8,7 +8,10 @@ fn applied(item_ids: &[String], n: usize) -> usize {
     for (i, id) in item_ids.iter().take(n).enumerate() {
         inv.insert(
             format!("slot_{i}"),
-            EquippedItem { base_id: id.clone(), ..Default::default() },
+            EquippedItem {
+                base_id: id.clone(),
+                ..Default::default()
+            },
         );
     }
     let mut attrs = HashMap::new();
@@ -23,21 +26,36 @@ fn thresholds_unlock_progressively() {
     let mut by_set: HashMap<String, Vec<String>> = HashMap::new();
     for item in data::data().items.values() {
         if let Some(id) = item.set_id.as_deref() {
-            by_set.entry(id.to_string()).or_default().push(item.id.clone());
+            by_set
+                .entry(id.to_string())
+                .or_default()
+                .push(item.id.clone());
         }
     }
 
     let mut checked = 0;
     for (set_id, set) in data::data().sets.iter() {
-        let Some(ids) = by_set.get(set_id) else { continue };
+        let Some(ids) = by_set.get(set_id) else {
+            continue;
+        };
         let max = ids.len();
 
-        assert_eq!(applied(ids, 1), 0, "{}: 1 sztuka nie moze nic dawac", set.name);
+        assert_eq!(
+            applied(ids, 1),
+            0,
+            "{}: 1 sztuka nie moze nic dawac",
+            set.name
+        );
 
         let mut prev = 0;
         for n in 2..=max {
             let now = applied(ids, n);
-            assert!(now >= prev, "{}: {n} sztuk dalo mniej niz {}", set.name, n - 1);
+            assert!(
+                now >= prev,
+                "{}: {n} sztuk dalo mniej niz {}",
+                set.name,
+                n - 1
+            );
             prev = now;
         }
 
@@ -53,7 +71,11 @@ fn thresholds_unlock_progressively() {
             );
         }
 
-        let unreachable: Vec<_> = set.bonuses.iter().filter(|b| b.pieces as usize > max).collect();
+        let unreachable: Vec<_> = set
+            .bonuses
+            .iter()
+            .filter(|b| b.pieces as usize > max)
+            .collect();
         assert!(unreachable.is_empty(), "{}: progi poza zasiegiem", set.name);
         checked += 1;
     }

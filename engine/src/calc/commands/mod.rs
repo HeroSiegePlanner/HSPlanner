@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+#[cfg(feature = "desktop")]
 use tauri::Emitter;
 
-use super::build::{BuildPerformance, BuildPerformanceDeps, compute_build_performance};
+use super::build::{compute_build_performance, BuildPerformance, BuildPerformanceDeps};
 use super::skills as calc;
 use super::stats::{
-    BuildStatsInput, ComputedStats, StatBreakdown, compute_build_stats, compute_stat_breakdown,
+    compute_build_stats, compute_stat_breakdown, BuildStatsInput, ComputedStats, StatBreakdown,
 };
 use super::types::{Affix, CustomStat, EquippedItem, Inventory, TreeSocketContent};
 
@@ -85,14 +86,20 @@ pub enum BonusSourceDto {
 impl From<BonusSourceDto> for calc::BonusSource {
     fn from(v: BonusSourceDto) -> Self {
         match v {
-            BonusSourceDto::AttributePoint { source, stat, value } => {
-                calc::BonusSource::AttributePoint {
-                    source: norm(&source),
-                    stat,
-                    value,
-                }
-            }
-            BonusSourceDto::SkillLevel { source, stat, value } => calc::BonusSource::SkillLevel {
+            BonusSourceDto::AttributePoint {
+                source,
+                stat,
+                value,
+            } => calc::BonusSource::AttributePoint {
+                source: norm(&source),
+                stat,
+                value,
+            },
+            BonusSourceDto::SkillLevel {
+                source,
+                stat,
+                value,
+            } => calc::BonusSource::SkillLevel {
                 source: norm(&source),
                 stat,
                 value,

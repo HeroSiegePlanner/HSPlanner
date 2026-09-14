@@ -1,70 +1,12 @@
 version: 2
 updates:
-  # Frontend (NPM)
-  - package-ecosystem: "npm"
+  # Native Rust workspace
+  - package-ecosystem: "cargo"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
     groups:
-      tauri-js:
-        patterns:
-          - "@tauri-apps/*"
-      react:
-        patterns:
-          - "react"
-          - "react-dom"
-          - "@types/react"
-          - "@types/react-dom"
-      testing:
-        patterns:
-          - "@testing-library/*"
-          - "vitest"
-          - "@vitest/*"
-          - "jsdom"
-      eslint:
-        patterns:
-          - "eslint"
-          - "@eslint/*"
-          - "eslint-plugin-*"
-          - "typescript-eslint"
-          - "globals"
-      tailwind:
-        patterns:
-          - "tailwindcss"
-          - "@tailwindcss/*"
-      # Catch-all: everything ungrouped, minor/patch in one PR
-      npm-misc:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-    ignore:
-      - dependency-name: "eslint"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@eslint/js"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@types/node"
-        update-types: ["version-update:semver-major"]
-
-  # Tauri engine (Rust)
-  - package-ecosystem: "cargo"
-    directory: "/engine"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    groups:
-      tauri-rs:
-        patterns:
-          - "tauri"
-          - "tauri-build"
-          - "tauri-plugin-*"
-      specta:
-        patterns:
-          - "specta"
-          - "specta-*"
-          - "tauri-specta"
       serde:
         patterns:
           - "serde"

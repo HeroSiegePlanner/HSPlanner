@@ -7,16 +7,20 @@
     "rarity": "angelic",
     "grade": "SS",
     "requiresLevel": 1,
-    "implicit": {
-      "magic_find": 325,
-      "gold_find": 32
-    },
+    "implicit": {},
     "skillBonuses": {
       "Endless Wealth": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_blood_of_spartan",
@@ -28,15 +32,20 @@
     "requiresLevel": 1,
     "defenseMin": 37,
     "defenseMax": 37,
-    "implicit": {
-      "damage_return": 275
-    },
+    "implicit": {},
     "skillBonuses": {
       "Spartan Defense": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 35 seconds"
+    ]
   },
   {
     "id": "potion_satanic_bottle_of_radogate",
@@ -46,15 +55,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "movement_speed": 40
-    },
+    "implicit": {},
     "skillBonuses": {
       "Fleet Footwork": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_bottle_of_sake",
@@ -64,16 +78,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "attack_damage": 32,
-      "crit_damage": 32
-    },
+    "implicit": {},
     "skillBonuses": {
       "Drunken Kung Fu": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_caffeinated_coffee_container",
@@ -83,15 +101,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "extra_damage_burning": 42
-    },
+    "implicit": {},
     "skillBonuses": {
       "The Fragrance of Dark Coffee": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_dark_vial_of_corrosion",
@@ -101,15 +124,20 @@
     "rarity": "satanic",
     "grade": "SS",
     "requiresLevel": 1,
-    "implicit": {
-      "increased_poisoned_damage": 52
-    },
+    "implicit": {},
     "skillBonuses": {
       "Corrosion of Darkness": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_elixir_of_death",
@@ -119,16 +147,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "attack_damage": 42,
-      "magic_skill_damage": 42
-    },
+    "implicit": {},
     "skillBonuses": {
       "Berserker's Rage": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_empty_bottle_of_vodka",
@@ -138,15 +170,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "all_skills": 5
-    },
+    "implicit": {},
     "skillBonuses": {
       "Drunken Infused Wisdom": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_ghostly_potion",
@@ -156,15 +193,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "magic_skill_damage": 57
-    },
+    "implicit": {},
     "skillBonuses": {
       "Parallel Dimension": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_maggot_eye_elixir",
@@ -174,16 +216,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "increased_attack_speed": 42,
-      "attack_rating_pct": 42
-    },
+    "implicit": {},
     "skillBonuses": {
       "Absolute Power": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_power_of_void",
@@ -199,7 +245,14 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_praetorian_blood",
@@ -209,15 +262,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "life_steal": 38
-    },
+    "implicit": {},
     "skillBonuses": {
       "Vampirism": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_prismatic_potion",
@@ -227,15 +285,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "all_resistances": 62
-    },
+    "implicit": {},
     "skillBonuses": {
       "Prismatic Skin": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_protein_shake",
@@ -245,16 +308,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "to_strength": 95,
-      "to_vitality": 60
-    },
+    "implicit": {},
     "skillBonuses": {
       "Flexing": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_radbull",
@@ -264,16 +331,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "increased_attack_speed": 42,
-      "movement_speed": 32
-    },
+    "implicit": {},
     "skillBonuses": {
       "Hyper Activity": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_sarcasters_coffee_mug",
@@ -283,9 +354,17 @@
     "rarity": "satanic",
     "grade": "D",
     "requiresLevel": 1,
-    "implicit": {
-      "movement_speed": 60
-    }
+    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
+    "skillBonuses": {
+      "Caffeinated": 1
+    },
+    "uniqueEffects": [
+      "Potion Effect Duration 25 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_surstr_mming",
@@ -295,16 +374,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "life_replenish_pct": 280,
-      "mana_replenish_pct": 280
-    },
+    "implicit": {},
     "skillBonuses": {
       "Taste of Heaven": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_witches_potion",
@@ -314,16 +397,20 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "life_replenish_pct": 160,
-      "mana_replenish_pct": 160
-    },
+    "implicit": {},
     "skillBonuses": {
       "Conjured Replenishment": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_satanic_wizard_potion",
@@ -333,22 +420,27 @@
     "rarity": "satanic",
     "grade": "S",
     "requiresLevel": 1,
-    "implicit": {
-      "faster_cast_rate": 38
-    },
+    "implicit": {},
     "skillBonuses": {
       "Rapidcaster": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_unholy_amun_ras_demise",
     "name": "Amun Ra's Demise",
     "baseType": "Potion",
     "slot": "potion_1",
-    "rarity": "unholy",
+    "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 1,
     "implicit": {},
@@ -357,49 +449,81 @@
         1,
         3
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 30 seconds"
+    ]
   },
   {
     "id": "potion_unholy_elixir_of_unworldly_cognition",
     "name": "Elixir of Unworldly Cognition",
     "baseType": "Potion",
     "slot": "potion_1",
-    "rarity": "unholy",
+    "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 1,
-    "implicit": {
-      "experience_gain": 56
-    },
+    "implicit": {},
     "skillBonuses": {
       "Untamed Knowledge": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 20 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "potion_unholy_sung_lees_flask_of_carnage",
     "name": "Sung Lee's Flask of Carnage",
     "baseType": "Potion",
     "slot": "potion_1",
-    "rarity": "unholy",
+    "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 1,
-    "implicit": {
-      "increased_bleeding_damage": 40
-    },
+    "implicit": {},
     "skillBonuses": {
       "Momentary Insanity": [
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 45 seconds"
+    ]
   },
   {
     "id": "s10_leviathans_blood",
     "name": "Leviathan's Blood",
     "baseType": "Potion",
     "slot": "potion_1",
-    "rarity": "heroic"
+    "rarity": "heroic",
+    "sockets": 0,
+    "maxSockets": 0,
+    "grade": "SS",
+    "requiresLevel": 1,
+    "skillBonuses": {
+      "Leviathan’s Presence": [
+        1,
+        3
+      ]
+    },
+    "uniqueEffects": [
+      "Potion Effect Duration 15 Seconds",
+      "1 Maximum Potion Charges",
+      "Flask Cooldown 30 seconds"
+    ]
   }
 ]

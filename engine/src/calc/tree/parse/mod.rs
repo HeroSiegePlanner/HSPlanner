@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 
-use std::sync::LazyLock;
 use regex::{Captures, Regex};
+use std::sync::LazyLock;
 
 #[macro_use]
 mod macros;
@@ -167,7 +167,6 @@ pub(crate) fn num(s: &str) -> f64 {
     cleaned.parse::<f64>().unwrap_or(f64::NAN)
 }
 
-
 // ---------- caches ----------
 
 static MOD_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMod>>>> =
@@ -321,7 +320,6 @@ pub fn parse_tree_node_meta(line: &str) -> Option<ParsedMeta> {
     META_CACHE.lock().unwrap().insert(trimmed.to_string(), None);
     None
 }
-
 
 #[cfg(test)]
 mod tests;

@@ -3,8 +3,8 @@
 
 use std::collections::{HashMap, HashSet};
 
-use std::sync::LazyLock;
 use serde::Serialize;
+use std::sync::LazyLock;
 
 use super::affix::{
     apply_stars_to_ranged_value, rolled_affix_range, rolled_affix_value,
@@ -63,6 +63,16 @@ pub const STAT_FAN_OUTS: &[(&str, &[&str])] = &[
             "max_lightning_resistance",
             "max_poison_resistance",
             "max_arcane_resistance",
+        ],
+    ),
+    (
+        "ignore_all_res",
+        &[
+            "ignore_fire_res",
+            "ignore_cold_res",
+            "ignore_lightning_res",
+            "ignore_poison_res",
+            "ignore_arcane_res",
         ],
     ),
 ];

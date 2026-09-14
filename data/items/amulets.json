@@ -60,7 +60,9 @@
         70
       ],
       "magic_find_based_on_level": 35
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_gryphon_s_claw",
@@ -93,7 +95,9 @@
         12,
         18
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_pendant_of_eternity",
@@ -121,7 +125,9 @@
         "description": "cast The Venerated One Level 20",
         "details": "Temporarily increases your cast rate and mana replenish."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_philosopher_s_stone",
@@ -132,27 +138,21 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_skills": [
-        3,
-        6
-      ],
-      "to_energy": [
-        10,
-        40
-      ],
-      "increased_energy": [
-        10,
-        15
-      ],
-      "all_attributes": 20,
-      "all_resistances": 40,
       "suppress_spell_hits": [
         15,
         20
       ],
-      "magic_damage_reduction": 15,
-      "physical_damage_reduction": 15
-    }
+      "all_skills": [
+        3,
+        6
+      ],
+      "physical_damage_reduction": 15,
+      "all_resistances": 40,
+      "all_attributes": 20,
+      "magic_damage_reduction": 15
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_signet_of_kadosh",
@@ -173,7 +173,9 @@
         1,
         3
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_amulet_of_colosseum",
@@ -221,19 +223,17 @@
         35,
         45
       ],
-      "extra_fire_dmg_to_burning": [
-        25,
-        35
-      ],
-      "intelligence_converted_to_magic_skill_dmg": [
-        1,
-        5
-      ],
       "intelligence_converted_to_fire_skill_dmg": [
         1,
         5
+      ],
+      "extra_fire_dmg_to_burning": [
+        25,
+        35
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_fractal_of_existence",
@@ -270,7 +270,9 @@
     },
     "uniqueEffects": [
       "Movement Phasing"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_eagle_s_claw",
@@ -313,9 +315,9 @@
     "maxSockets": 1,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 7,
-        "description": "cast Live by the Sword Level 13",
+        "description": "cast Live by the Sword Level [12-18]",
         "details": "Temporarily increases your attack speed and movement speed."
       }
     ]
@@ -348,11 +350,13 @@
       ]
     },
     "uniqueEffects": [
-      "Unholy",
-      "Movement Phasing"
+      "Movement Phasing",
+      "Unholy"
     ],
     "maxAffixes": 1,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_heroic_tarethiel_s_fall",
@@ -374,7 +378,14 @@
       "increased_all_attributes": 5
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "amulet_heroic_thoth_s_agony",
@@ -429,7 +440,9 @@
         35,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_amethyst_knight_s_amulet",
@@ -453,7 +466,12 @@
         2,
         4
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "shadow_burn_tick_frequency_percent: [10-25]"
+    ]
   },
   {
     "id": "amulet_satanic_anubis_oculus",
@@ -485,7 +503,9 @@
         8
       ]
     },
-    "setId": "anubi_s_eternal_life"
+    "setId": "anubi_s_eternal_life",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_arc_s_sigil",
@@ -511,7 +531,9 @@
         50
       ]
     },
-    "setId": "arc_s_blessed_faith"
+    "setId": "arc_s_blessed_faith",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_arcana_eye",
@@ -522,22 +544,23 @@
     "grade": "A",
     "requiresLevel": 61,
     "implicit": {
+      "magic_skill_damage": 20,
       "faster_cast_rate": [
         15,
         30
       ],
-      "mana_steal": 4,
-      "to_energy": 20,
-      "magic_skill_damage": 20,
       "mana": [
         250,
         300
       ],
+      "to_energy": 20,
       "increased_energy": [
         4,
         8
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_arcane_slayer_s_talisman",
@@ -558,7 +581,9 @@
         75,
         125
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_aztec_necklace",
@@ -570,22 +595,20 @@
     "requiresLevel": 79,
     "implicit": {
       "ignore_poison_res": 15,
-      "poison_resistance": [
-        40,
-        60
-      ],
-      "increased_poisoned_damage": [
-        20,
-        40
-      ],
       "to_dexterity": [
         5,
         30
       ],
+      "increased_dexterity": 10,
       "poison_length_reduced": 50,
-      "increased_dexterity": 10
+      "increased_poisoned_damage": [
+        20,
+        40
+      ]
     },
-    "setId": "aztec_s_mystery"
+    "setId": "aztec_s_mystery",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_baby_log_necklace",
@@ -596,28 +619,25 @@
     "grade": "A",
     "requiresLevel": 64,
     "implicit": {
-      "life_replenish_pct": [
-        15,
-        30
-      ],
-      "life": [
-        150,
-        225
-      ],
       "damage_return": [
         15,
         30
       ],
-      "physical_damage_reduction": 5,
-      "increased_armor": [
-        10,
-        15
-      ],
       "to_armor": [
         10,
         30
+      ],
+      "armor_converted_to_magic_skill_dmg": [
+        6,
+        10
+      ],
+      "increased_armor": [
+        10,
+        15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_bone_conjurer_s_mask",
@@ -636,14 +656,6 @@
         18,
         38
       ],
-      "ignore_arcane_res": [
-        5,
-        10
-      ],
-      "arcane_resistance": [
-        40,
-        50
-      ],
       "energy_converted_to_magic_skill_dmg": [
         5,
         10
@@ -655,7 +667,9 @@
         5,
         8
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_champion_s_medal_of_valor",
@@ -666,17 +680,13 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "to_vitality": [
-        15,
-        30
-      ],
-      "life_replenish_pct": [
-        8,
-        20
-      ],
       "damage_return": [
         25,
         40
+      ],
+      "to_vitality": [
+        15,
+        30
       ],
       "all_resistances": 20,
       "vitality_converted_to_magic_skill_dmg": [
@@ -684,7 +694,9 @@
         10
       ]
     },
-    "setId": "champion_s_valor"
+    "setId": "champion_s_valor",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_charcoal_memento",
@@ -711,7 +723,9 @@
         75,
         125
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_chronomancer_s_curio_of_time",
@@ -719,26 +733,18 @@
     "baseType": "Amulet",
     "slot": "amulet",
     "rarity": "satanic_set",
-    "grade": "S",
+    "grade": "SS",
     "requiresLevel": 85,
     "implicit": {
-      "all_attributes": 25,
       "arcane_skill_damage": [
         15,
         25
-      ],
-      "life": [
-        25,
-        35
       ],
       "mana_per_kill": [
         8,
         15
       ],
-      "arcane_resistance": [
-        30,
-        50
-      ],
+      "all_attributes": 25,
       "increased_shadow_burning_damage": [
         30,
         50
@@ -750,7 +756,9 @@
         10,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_claw_of_the_bloodthirsty",
@@ -778,7 +786,9 @@
         25,
         40
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_claw_of_the_hunter",
@@ -803,7 +813,9 @@
         30
       ],
       "light_radius": 3
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_coldfire_amulet",
@@ -814,21 +826,13 @@
     "grade": "S",
     "requiresLevel": 96,
     "implicit": {
-      "attack_rating_pct": [
-        10,
-        15
+      "all_skills": [
+        1,
+        2
       ],
-      "attack_rating": [
-        250,
-        370
-      ],
-      "additive_fire_damage": [
-        370,
-        410
-      ],
-      "additive_cold_damage": [
-        370,
-        410
+      "cold_skills": [
+        2,
+        3
       ],
       "flat_cold_skill_damage": [
         26,
@@ -837,16 +841,10 @@
       "increased_frost_bite_damage": [
         15,
         25
-      ],
-      "cold_skills": [
-        2,
-        3
-      ],
-      "all_skills": [
-        1,
-        2
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_coldsnap_insignia",
@@ -873,7 +871,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_damien_s_soulstone",
@@ -899,7 +899,9 @@
     ],
     "setId": "damien_s_legacy",
     "randomAffixGroupId": "random_unholy",
-    "maxAffixes": 1
+    "maxAffixes": 1,
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_dark_lord_s_sigil",
@@ -923,7 +925,9 @@
         30
       ],
       "all_resistances": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_devil_s_gem",
@@ -934,25 +938,23 @@
     "grade": "S",
     "requiresLevel": 81,
     "implicit": {
-      "ignore_arcane_res": 15,
-      "mana_replenish_pct": [
-        10,
-        15
-      ],
-      "arcane_resistance": [
-        40,
-        60
+      "all_skills_demonspawn": [
+        2,
+        3
       ],
       "to_intelligence": [
         25,
         50
       ],
+      "ignore_arcane_res": 15,
       "increased_intelligence": [
         1,
         5
       ]
     },
-    "setId": "satan_s_redemption"
+    "setId": "satan_s_redemption",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_eagerblade_s_tooth",
@@ -964,7 +966,6 @@
     "requiresLevel": 24,
     "implicit": {
       "crit_chance": 7,
-      "attack_rating": 50,
       "additive_physical_damage": [
         15,
         25
@@ -972,8 +973,14 @@
       "to_armor": [
         10,
         30
+      ],
+      "armor_converted_to_attack_dmg": [
+        6,
+        10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_earth_goliath_s_protection",
@@ -984,23 +991,25 @@
     "grade": "S",
     "requiresLevel": 85,
     "implicit": {
-      "to_vitality": [
-        20,
-        30
-      ],
-      "enhanced_defense": [
-        3,
-        6
-      ],
       "damage_return": [
         35,
         45
+      ],
+      "to_vitality": [
+        20,
+        30
       ],
       "physical_damage_reduction": [
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "+20% increased Damage Returned to the Attacker",
+      "+[3-6]% Increased Defense"
+    ]
   },
   {
     "id": "amulet_satanic_elder_s_heart",
@@ -1013,27 +1022,19 @@
     "defenseMin": 50,
     "defenseMax": 50,
     "implicit": {
-      "enhanced_defense": [
-        30,
-        45
-      ],
-      "attack_rating_pct": [
-        7,
-        10
-      ],
-      "all_attributes": 15,
-      "all_resistances": 20,
-      "life": [
-        1,
-        1000
-      ],
       "to_vitality": [
         10,
         20
       ],
-      "increased_vitality": 5,
-      "vitality_converted_to_magic_skill_dmg": 5
-    }
+      "life": [
+        1,
+        1000
+      ],
+      "vitality_converted_to_magic_skill_dmg": 5,
+      "increased_vitality": 5
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_engineer_s_master_pendant",
@@ -1044,33 +1045,23 @@
     "grade": "S",
     "requiresLevel": 82,
     "implicit": {
-      "faster_cast_rate": [
-        10,
-        20
-      ],
-      "life": [
-        35,
-        45
-      ],
-      "mana": [
-        20,
-        30
-      ],
-      "damage_reduced": [
-        8,
-        15
+      "all_skills_marksman": [
+        2,
+        3
       ],
       "sentry_attack_speed": [
         10,
         20
       ],
-      "sentry_duration": 15,
       "sentry_damage": [
         15,
         25
-      ]
+      ],
+      "sentry_duration": 15
     },
-    "setId": "engineer_s_combat_gear"
+    "setId": "engineer_s_combat_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_eye_of_horus",
@@ -1081,38 +1072,22 @@
     "grade": "A",
     "requiresLevel": 65,
     "implicit": {
-      "to_energy": 15,
-      "to_vitality": 15,
-      "life_per_kill": [
-        8,
-        12
-      ],
-      "mana_per_kill": [
-        8,
-        12
-      ],
-      "increased_life": [
-        2,
-        4
-      ],
-      "increased_mana": [
-        2,
-        4
-      ],
+      "all_skills": 1,
       "sentry_attack_speed": [
         5,
         20
-      ],
-      "sentry_skills": [
-        2,
-        3
       ],
       "sentry_damage": [
         10,
         30
       ],
-      "all_skills": 1
-    }
+      "sentry_skills": [
+        2,
+        3
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_gambler_s_demise",
@@ -1139,7 +1114,9 @@
         1,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_gurag_s_pebble",
@@ -1155,28 +1132,22 @@
         3
       ],
       "crushing_blow_chance": 15,
-      "additive_physical_damage": [
-        18,
-        38
+      "to_vitality": [
+        5,
+        40
       ],
       "life_steal": [
         4,
         8
-      ],
-      "damage_reduced": [
-        5,
-        10
-      ],
-      "to_vitality": [
-        5,
-        40
       ],
       "vitality_converted_to_attack_dmg": [
         6,
         10
       ]
     },
-    "setId": "gurag_s_fury"
+    "setId": "gurag_s_fury",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_high_demon_s_necklace",
@@ -1195,16 +1166,14 @@
         4,
         7
       ],
-      "additive_cold_damage": [
-        450,
-        480
-      ],
       "vitality_based_on_level": 50,
       "vitality_converted_to_attack_dmg": [
         6,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_insignia_of_the_burning_legion",
@@ -1216,24 +1185,25 @@
     "requiresLevel": 27,
     "implicit": {
       "increased_attack_speed": 20,
-      "life_per_kill": 15,
-      "increased_burning_damage": [
-        10,
-        20
-      ],
       "flat_fire_skill_damage": [
         10,
         15
+      ],
+      "increased_burning_damage": [
+        10,
+        20
       ]
     },
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 6,
-        "description": "cast Fire Enchant Level 11",
+        "description": "cast Fire Enchant Level [10-15]",
         "details": "Enchant your attacks with additive fire damage inflicting burning on monsters. Your spells also apply a stack of Ignite. "
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_insignia_of_the_hunter",
@@ -1244,24 +1214,22 @@
     "grade": "S",
     "requiresLevel": 83,
     "implicit": {
-      "attack_rating_pct": [
-        3,
-        8
-      ],
-      "additive_physical_damage": [
-        22,
-        44
-      ],
-      "attack_damage": [
-        4,
-        8
+      "all_skills_demon_slayer": [
+        2,
+        3
       ],
       "melee_range": [
         5,
         15
+      ],
+      "additive_physical_damage": [
+        22,
+        44
       ]
     },
-    "setId": "gabriel_s_devotion"
+    "setId": "gabriel_s_devotion",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_juggernaut_s_emblem",
@@ -1272,25 +1240,9 @@
     "grade": "S",
     "requiresLevel": 92,
     "implicit": {
-      "physical_skills": [
-        1,
-        2
-      ],
-      "life_replenish_pct": [
-        15,
-        25
-      ],
-      "life": [
-        35,
-        45
-      ],
-      "physical_damage_reduction": [
-        5,
-        10
-      ],
-      "vitality_converted_to_magic_skill_dmg": [
-        6,
-        10
+      "all_skills_marauder": [
+        2,
+        3
       ],
       "to_vitality": [
         10,
@@ -1299,9 +1251,15 @@
       "damage_mitigation": [
         4,
         8
+      ],
+      "vitality_converted_to_magic_skill_dmg": [
+        6,
+        10
       ]
     },
-    "setId": "juggernaut_s_rampart"
+    "setId": "juggernaut_s_rampart",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_kallik_s_fury",
@@ -1312,18 +1270,23 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "all_skills": 1,
-      "increased_attack_speed": 18,
+      "all_skills": 2,
+      "enhanced_damage_based_on_level": 37.5,
+      "increased_attack_speed": [
+        18,
+        28
+      ],
       "additive_lightning_damage": [
         135,
         160
       ],
-      "lightning_resistance": [
-        30,
-        40
-      ],
-      "enhanced_damage_based_on_level": 37.5
-    }
+      "all_resistances": [
+        12,
+        18
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_lifeblood_infuser",
@@ -1344,7 +1307,9 @@
         4,
         7
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_light_bringer_s_mark",
@@ -1379,7 +1344,9 @@
         10,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_lost_dieties_authority",
@@ -1404,7 +1371,9 @@
         35,
         45
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_metal_vocalist_s_pentagram",
@@ -1427,7 +1396,9 @@
         4,
         8
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_nobunaga_s_warrior_spirit",
@@ -1452,7 +1423,9 @@
       ],
       "mana_replenish_pct": 35
     },
-    "setId": "nobunaga_s_empire"
+    "setId": "nobunaga_s_empire",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_plunderer_s_spy_glass",
@@ -1463,21 +1436,13 @@
     "grade": "S",
     "requiresLevel": 82,
     "implicit": {
-      "to_energy": [
-        10,
-        15
-      ],
-      "flat_cold_skill_damage": [
-        18,
-        38
-      ],
       "cold_skill_damage": [
         15,
         25
       ],
-      "cold_resistance": [
-        30,
-        50
+      "energy_converted_to_cold_skill_dmg": [
+        6,
+        10
       ],
       "increased_energy": [
         5,
@@ -1488,7 +1453,9 @@
         25
       ]
     },
-    "setId": "plunderer_s_ensemble"
+    "setId": "plunderer_s_ensemble",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_prophets_foliage",
@@ -1506,7 +1473,9 @@
         75
       ]
     },
-    "setId": "mystic_of_the_forest"
+    "setId": "mystic_of_the_forest",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_pyramid_pendant",
@@ -1521,11 +1490,17 @@
         20,
         30
       ],
+      "increased_bleeding_frequency": [
+        10,
+        20
+      ],
       "extra_damage_bleeding": [
         25,
         35
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_rapidshell_medallion",
@@ -1536,26 +1511,19 @@
     "grade": "D",
     "requiresLevel": 9,
     "implicit": {
-      "faster_cast_rate": 10,
+      "all_skills": 1,
       "increased_attack_speed": [
         12,
         20
       ],
-      "to_vitality": [
-        7,
-        15
-      ],
-      "experience_gain": [
-        1,
-        3
-      ],
-      "all_skills": 1,
       "crushing_blow_chance": 15,
       "all_attributes": [
         10,
         15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_raven_s_claw",
@@ -1566,14 +1534,6 @@
     "grade": "S",
     "requiresLevel": 88,
     "implicit": {
-      "crit_chance": [
-        10,
-        20
-      ],
-      "crit_damage": [
-        20,
-        45
-      ],
       "open_wounds": [
         10,
         20
@@ -1582,8 +1542,17 @@
         15,
         25
       ],
-      "to_dexterity": 10
-    }
+      "crit_chance": [
+        10,
+        20
+      ],
+      "crit_damage": [
+        20,
+        45
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_rift_warrior_s_skull",
@@ -1594,34 +1563,25 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "mana_steal": [
-        11,
-        15
-      ],
-      "to_energy": 20,
-      "to_intelligence": 25,
-      "mana_replenish_pct": 25,
-      "mana_per_kill": [
-        10,
-        15
-      ],
-      "ailment_damage_all": [
-        30,
-        50
-      ],
       "increased_ailment_frequency": [
         15,
         30
+      ],
+      "all_skills": [
+        1,
+        2
       ],
       "extra_damage_ailments": [
         10,
         20
       ],
-      "all_skills": [
-        1,
-        2
+      "ailment_damage_all": [
+        30,
+        50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_ritual_pendant",
@@ -1645,7 +1605,9 @@
         1,
         12
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_sacred_pendant",
@@ -1653,30 +1615,23 @@
     "baseType": "Amulet",
     "slot": "amulet",
     "rarity": "satanic_set",
-    "grade": "S",
+    "grade": "SS",
     "requiresLevel": 83,
     "implicit": {
-      "to_energy": 15,
-      "mana_replenish_pct": [
-        10,
-        20
-      ],
-      "mana_per_kill": [
-        12,
-        24
-      ],
       "all_skills": 2,
       "flat_magic_skill_damage": [
         18,
         46
       ],
+      "skill_haste": 30,
       "ignore_arcane_res": [
         10,
         30
-      ],
-      "skill_haste": 30
+      ]
     },
-    "setId": "the_holy_one"
+    "setId": "the_holy_one",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_satan_s_precious",
@@ -1687,23 +1642,6 @@
     "grade": "S",
     "requiresLevel": 84,
     "implicit": {
-      "fire_skills": [
-        1,
-        3
-      ],
-      "mana_steal": [
-        3,
-        7
-      ],
-      "slow_target": 10,
-      "additive_fire_damage": [
-        420,
-        480
-      ],
-      "fire_resistance": [
-        20,
-        50
-      ],
       "flat_fire_skill_damage": [
         22,
         33
@@ -1712,9 +1650,15 @@
         10,
         20
       ],
+      "fire_skills": [
+        1,
+        3
+      ],
       "intelligence_converted_to_fire_skill_dmg": 8
     },
-    "setId": "satan_s_curse"
+    "setId": "satan_s_curse",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_scout_s_medal_of_honor",
@@ -1725,22 +1669,25 @@
     "grade": "A",
     "requiresLevel": 60,
     "implicit": {
+      "attack_rating_pct": 15,
       "movement_speed": [
         20,
         30
       ],
-      "attack_rating_pct": 15,
-      "to_strength": 15,
       "to_dexterity": [
         15,
         30
       ],
-      "all_attributes": 4,
       "increased_dexterity": [
         4,
         8
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
   },
   {
     "id": "amulet_satanic_serpentine_necklace",
@@ -1764,7 +1711,9 @@
         3,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_shining_pearl",
@@ -1775,8 +1724,6 @@
     "grade": "S",
     "requiresLevel": 91,
     "implicit": {
-      "all_attributes": 30,
-      "magic_skill_damage": 20,
       "all_skills": [
         1,
         2
@@ -1785,15 +1732,17 @@
         5,
         30
       ],
-      "increased_vitality": [
-        5,
-        10
-      ],
       "vitality_converted_to_magic_skill_dmg": [
         6,
         10
+      ],
+      "increased_vitality": [
+        5,
+        10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_skinwalkers_claw",
@@ -1818,7 +1767,9 @@
         3
       ]
     },
-    "setId": "skinwalker_s_bloodlust"
+    "setId": "skinwalker_s_bloodlust",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_soulreplenish_pendant",
@@ -1829,20 +1780,20 @@
     "grade": "C",
     "requiresLevel": 21,
     "implicit": {
-      "to_energy": 15,
-      "to_vitality": 20,
       "life_replenish_pct": 200,
       "mana_replenish_pct": 200,
-      "increased_vitality": [
-        1,
-        8
-      ],
+      "all_resistances": 25,
       "increased_energy": [
         1,
         8
       ],
-      "all_resistances": 25
-    }
+      "increased_vitality": [
+        1,
+        8
+      ]
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_spirit_pendant",
@@ -1853,26 +1804,19 @@
     "grade": "S",
     "requiresLevel": 85,
     "implicit": {
-      "skill_haste": 10,
-      "life": [
-        30,
-        45
+      "all_skills_shaman": [
+        2,
+        3
       ],
-      "mana": [
-        15,
-        25
-      ],
-      "all_resistances": [
-        20,
-        30
-      ],
-      "sentry_max_amount": 1,
       "sentry_damage": [
         15,
         25
-      ]
+      ],
+      "sentry_max_amount": 1
     },
-    "setId": "god_of_the_elements"
+    "setId": "god_of_the_elements",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_steve_s_necklace",
@@ -1883,25 +1827,26 @@
     "grade": "SS",
     "requiresLevel": 86,
     "implicit": {
-      "all_attributes": [
-        50,
-        80
+      "increased_all_attributes": [
+        3,
+        5
       ],
       "physical_damage_reduction": [
         8,
         16
       ],
+      "all_attributes": [
+        50,
+        80
+      ],
       "magic_damage_reduction": [
         8,
         16
-      ],
-      "all_resistances": 15,
-      "increased_all_attributes": [
-        3,
-        5
       ]
     },
-    "setId": "stickman_steve_s_destruction"
+    "setId": "stickman_steve_s_destruction",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_stone_of_archaeology",
@@ -1927,7 +1872,9 @@
         1,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_storm_pendant",
@@ -1954,7 +1901,9 @@
         6,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_tal_s_pendant",
@@ -1979,7 +1928,9 @@
         5
       ]
     },
-    "setId": "tal_s_reaping"
+    "setId": "tal_s_reaping",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_thunderstone_amulet",
@@ -2006,7 +1957,9 @@
         40,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_traveler_s_compass",
@@ -2034,7 +1987,9 @@
         35
       ]
     },
-    "setId": "traveler"
+    "setId": "traveler",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_treasure_pendant",
@@ -2061,7 +2016,9 @@
         1,
         4
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_unfathomable_puzzle",
@@ -2072,34 +2029,22 @@
     "grade": "S",
     "requiresLevel": 86,
     "implicit": {
+      "magic_skill_damage": [
+        15,
+        20
+      ],
       "to_intelligence": [
         20,
         30
       ],
       "all_attributes": 15,
-      "magic_skill_damage": [
-        15,
-        20
-      ],
       "increased_intelligence": [
         2,
         5
-      ],
-      "all_skills": 2,
-      "increased_attack_speed": [
-        18,
-        28
-      ],
-      "enhanced_damage_based_on_level": 37.5,
-      "all_resistances": [
-        12,
-        18
-      ],
-      "additive_lightning_damage": [
-        135,
-        160
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_venom_s_necklace",
@@ -2110,17 +2055,20 @@
     "grade": "S",
     "requiresLevel": 90,
     "implicit": {
-      "increased_poisoned_damage": [
-        15,
-        25
-      ],
+      "all_skills_necromancer": 2,
+      "ignore_poison_res": 15,
       "flat_poison_skill_damage": [
         22,
         44
       ],
-      "ignore_poison_res": 15
+      "increased_poisoned_damage": [
+        15,
+        25
+      ]
     },
-    "setId": "venom_s_frame"
+    "setId": "venom_s_frame",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_visage_s_eye",
@@ -2141,7 +2089,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_satanic_ymir_s_frozen_tear",
@@ -2167,7 +2117,9 @@
         10
       ]
     },
-    "setId": "ymir_s_wisdom"
+    "setId": "ymir_s_wisdom",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "amulet_unholy_lilith_s_scorn",
@@ -2198,10 +2150,13 @@
     "procs": [
       {
         "trigger": "on_kill",
-        "chance": 10,
-        "description": "cast Liliths Rage Level 1"
+        "chance": 7,
+        "description": "cast Lilith’s Rage Level 1",
+        "details": "Chance: 7-10%. "
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "s10_grimtides_necklace",

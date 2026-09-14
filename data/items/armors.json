@@ -29,7 +29,7 @@
         35,
         50
       ],
-      "enemy_all_resist": [
+      "ignore_all_res": [
         20,
         25
       ]
@@ -257,13 +257,13 @@
       ]
     },
     "sockets": 3,
-    "maxSockets": 3,
+    "maxSockets": 6,
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 3,
-        "description": "cast Arcane Wrath Level 18",
-        "details": "Causes your arcane damage skills to inflict shadow burn on monsters for a short period."
+        "description": "cast Arcane Wrath Level [18-26]",
+        "details": "Chance: 3-5%. Causes your arcane damage skills to inflict shadow burn on monsters for a short period."
       }
     ]
   },
@@ -308,9 +308,9 @@
     "procs": [
       {
         "trigger": "on_hit",
-        "chance": 4,
-        "description": "cast Warrior's Path Level 14",
-        "details": "Increases your attack damage and magic skill damage for a short period."
+        "chance": 3,
+        "description": "cast Warrior´s Path Level [12-20]",
+        "details": "Chance: 3-6%. Increases your attack damage and magic skill damage for a short period."
       }
     ]
   },
@@ -331,7 +331,51 @@
       ]
     },
     "sockets": 6,
-    "maxSockets": 6
+    "maxSockets": 6,
+    "socketTransforms": {
+      "gem_pristine_amethyst": {
+        "to_intelligence": 7,
+        "arcane_skill_damage": 20,
+        "skill_haste": 7,
+        "arcane_skills": 1
+      },
+      "gem_pristine_emerald": {
+        "extra_damage_poisoned": 10,
+        "poison_skill_damage": 10,
+        "poison_skills": 1,
+        "poison_length_reduced": 8
+      },
+      "gem_pristine_ruby": {
+        "to_vitality": 10,
+        "increased_life": 10,
+        "fire_skill_damage": 15,
+        "fire_skills": 1
+      },
+      "gem_pristine_sapphire": {
+        "to_energy": 10,
+        "cold_skill_damage": 20,
+        "mana_costs_decreased": 2,
+        "cold_skills": 1
+      },
+      "gem_pristine_skull": {
+        "life_steal": 3,
+        "mana_steal": 3,
+        "attack_damage": 25,
+        "physical_skills": 1
+      },
+      "gem_pristine_topaz": {
+        "lightning_skill_damage": 15,
+        "ignore_lightning_res": 3,
+        "lightning_skills": 1,
+        "magic_find": 15
+      },
+      "gem_pristine_diamond": {
+        "enhanced_damage": 30,
+        "to_strength": 5,
+        "attack_rating": 35,
+        "physical_skills": 1
+      }
+    }
   },
   {
     "id": "body_armor_heroic_isarius_ironthorn_breastplate",
@@ -380,7 +424,7 @@
       {
         "trigger": "when_struck",
         "chance": 5,
-        "description": "cast Combat Orders Level 33",
+        "description": "cast Combat Orders Level [25-45]",
         "details": "Powerful warcry which buffs your and your party members maximum life and mana."
       }
     ],
@@ -389,7 +433,10 @@
         2,
         5
       ]
-    }
+    },
+    "uniqueEffects": [
+      "+[40-50]% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "body_armor_heroic_muspelheim_guardian_s_scorched_plate",
@@ -438,7 +485,7 @@
       {
         "trigger": "when_struck",
         "chance": 15,
-        "description": "cast Volcano Level 53",
+        "description": "cast Volcano Level [40-75]",
         "details": "Spawn a molten volcano that deals fire damage around it and spews out burning rocks that explode on hit."
       }
     ]
@@ -480,13 +527,13 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 3,
-        "description": "cast Warrior's Path Level 12",
-        "details": "Increases your attack damage and magic skill damage for a short period."
+        "description": "cast Warrior´s Path Level [12-20]",
+        "details": "Chance: 3-6%. Increases your attack damage and magic skill damage for a short period."
       }
     ]
   },
@@ -537,7 +584,7 @@
       {
         "trigger": "on_hit",
         "chance": 15,
-        "description": "cast Symphony of Thunder Level 26",
+        "description": "cast Symphony of Thunder Level [25-35]",
         "details": "Gain increased lightning damage for a short period of time also zapping all monsters with thunderbolts when hit by a lightning skill."
       }
     ]
@@ -639,7 +686,7 @@
       {
         "trigger": "on_cast",
         "chance": 20,
-        "description": "cast Poison Nova Level 66",
+        "description": "cast Poison Nova Level [50-70]",
         "details": "Unleash a toxic poison nova dealing poison damage and inflicting Poisoned on all monsters hit."
       }
     ]
@@ -704,6 +751,10 @@
     "defenseMin": 410,
     "defenseMax": 540,
     "implicit": {
+      "damage_return": [
+        40,
+        65
+      ],
       "enhanced_defense": [
         880,
         1000
@@ -716,17 +767,9 @@
         50,
         100
       ],
-      "damage_return": [
-        40,
-        65
-      ],
       "vitality_converted_to_magic_skill_dmg": [
         10,
         15
-      ],
-      "extra_damage_poisoned": [
-        20,
-        35
       ]
     },
     "sockets": 6,
@@ -736,7 +779,10 @@
         1,
         3
       ]
-    }
+    },
+    "uniqueEffects": [
+      "+[40-65]% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "body_armor_heroic_grimbone_s_ribcage",
@@ -757,21 +803,9 @@
         2,
         4
       ],
-      "ailment_damage_all": [
-        30,
-        65
-      ],
-      "mana_regen_per_second": [
-        3,
-        6
-      ],
       "to_vitality": [
         30,
         50
-      ],
-      "damage_recouped_as_life": [
-        15,
-        25
       ],
       "all_resistances": [
         25,
@@ -781,7 +815,15 @@
         3,
         6
       ],
-      "life_based_on_level": 475
+      "life_based_on_level": 475,
+      "damage_recouped_as_life": [
+        15,
+        25
+      ],
+      "ailment_damage_all": [
+        30,
+        65
+      ]
     },
     "sockets": 4,
     "maxSockets": 6
@@ -793,7 +835,7 @@
     "slot": "armor",
     "rarity": "heroic",
     "grade": "SS",
-    "requiresLevel": 98,
+    "requiresLevel": 84,
     "defenseMin": 220,
     "defenseMax": 250,
     "implicit": {
@@ -857,7 +899,12 @@
     "sockets": 5,
     "maxSockets": 5,
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "body_armor_heroic_wraith_s_cloak_arcane",
@@ -874,11 +921,7 @@
         270,
         400
       ],
-      "arcane_skills": [
-        5,
-        8
-      ],
-      "faster_cast_rate": 20,
+      "faster_cast_rate_more": 20,
       "extra_damage_shadow_burning": [
         20,
         35
@@ -890,12 +933,20 @@
       "ignore_arcane_res": [
         15,
         30
+      ],
+      "arcane_skills": [
+        5,
+        8
       ]
     },
     "sockets": 4,
     "maxSockets": 6,
     "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "body_armor_heroic_wraith_s_cloak_cold",
@@ -912,11 +963,7 @@
         270,
         400
       ],
-      "cold_skills": [
-        5,
-        8
-      ],
-      "faster_cast_rate": 20,
+      "faster_cast_rate_more": 20,
       "extra_damage_frost_bitten": [
         20,
         35
@@ -928,12 +975,20 @@
       "ignore_cold_res": [
         15,
         30
+      ],
+      "cold_skills": [
+        5,
+        8
       ]
     },
     "sockets": 4,
     "maxSockets": 6,
     "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "body_armor_heroic_wraith_s_cloak_fire",
@@ -950,11 +1005,7 @@
         270,
         400
       ],
-      "fire_skills": [
-        5,
-        8
-      ],
-      "faster_cast_rate": 20,
+      "faster_cast_rate_more": 20,
       "extra_damage_burning": [
         20,
         35
@@ -966,12 +1017,20 @@
       "ignore_fire_res": [
         15,
         30
+      ],
+      "fire_skills": [
+        5,
+        8
       ]
     },
     "sockets": 4,
     "maxSockets": 6,
     "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "body_armor_heroic_wraith_s_cloak_lightning",
@@ -988,11 +1047,7 @@
         270,
         400
       ],
-      "lightning_skills": [
-        5,
-        8
-      ],
-      "faster_cast_rate": 20,
+      "faster_cast_rate_more": 20,
       "extra_damage_stasis": [
         20,
         35
@@ -1004,12 +1059,20 @@
       "ignore_lightning_res": [
         15,
         30
+      ],
+      "lightning_skills": [
+        5,
+        8
       ]
     },
     "sockets": 4,
     "maxSockets": 6,
     "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "body_armor_heroic_wraith_s_cloak_poison",
@@ -1026,11 +1089,7 @@
         270,
         400
       ],
-      "poison_skills": [
-        5,
-        8
-      ],
-      "faster_cast_rate": 20,
+      "faster_cast_rate_more": 20,
       "extra_damage_poisoned": [
         20,
         35
@@ -1042,12 +1101,20 @@
       "ignore_poison_res": [
         15,
         30
+      ],
+      "poison_skills": [
+        5,
+        8
       ]
     },
     "sockets": 4,
     "maxSockets": 6,
     "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "randomAffixGroupId": "random_unholy",
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "body_armor_satanic_aegisweave_robes",
@@ -1064,6 +1131,10 @@
         30,
         55
       ],
+      "all_skills": [
+        0,
+        2
+      ],
       "faster_cast_rate": [
         5,
         15
@@ -1072,9 +1143,10 @@
         4,
         10
       ],
-      "mana_replenish_pct": 20,
-      "all_skills": 2
-    }
+      "mana_replenish_pct": 20
+    },
+    "sockets": 2,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_anubis_torso",
@@ -1104,7 +1176,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "setId": "anubi_s_eternal_life"
   },
   {
@@ -1131,15 +1203,17 @@
       "arcane_resistance": 40
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 5,
-        "description": "cast Bone Storm Level 7",
-        "details": "Summon a storm of bone and cartilage surrounding you dealing arcane damage."
+        "description": "cast Bone Storm Level [5-10]",
+        "details": "Chance: 5-8%. Summon a storm of bone and cartilage surrounding you dealing arcane damage."
       }
-    ]
+    ],
+    "defenseMin": 10,
+    "defenseMax": 18
   },
   {
     "id": "body_armor_satanic_arcane_robes_of_authority",
@@ -1177,7 +1251,9 @@
         20,
         25
       ]
-    }
+    },
+    "sockets": 1,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_bandit_lord_s_shroud",
@@ -1213,7 +1289,9 @@
         15,
         25
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_behemoth_s_damascus_body",
@@ -1226,26 +1304,26 @@
     "defenseMin": 60,
     "defenseMax": 90,
     "implicit": {
-      "enhanced_defense": [
-        160,
-        180
-      ],
-      "all_attributes": 10,
       "damage_return": [
         15,
         25
+      ],
+      "enhanced_defense": [
+        160,
+        180
       ],
       "physical_damage_reduction": 10,
       "all_resistances": [
         25,
         35
       ],
-      "defense": 5
+      "all_attributes": 10
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "uniqueEffects": [
-      "Cannot be Frozen"
+      "Cannot be Frozen",
+      "+5% Increased Defense"
     ]
   },
   {
@@ -1276,13 +1354,13 @@
       "defense_based_on_level": 125
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 15,
-        "description": "cast Impale Level 13",
-        "details": "Summon spikes from the ground impaling monsters in a target area dealing arcane damage and knocking them up."
+        "chance": 10,
+        "description": "cast Impale Level [12-18]",
+        "details": "Chance: 10-15%. Summon spikes from the ground impaling monsters in a target area dealing arcane damage and knocking them up."
       }
     ]
   },
@@ -1313,7 +1391,9 @@
       ],
       "all_resistances": 25
     },
-    "setId": "blood_letter_s_armament"
+    "setId": "blood_letter_s_armament",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_butcher_s_apron",
@@ -1363,7 +1443,7 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 97,
     "defenseMin": 230,
     "defenseMax": 260,
@@ -1376,20 +1456,12 @@
         3,
         4
       ],
-      "life": [
-        25,
-        35
-      ],
-      "mana_per_kill": [
-        10,
-        20
-      ],
-      "all_attributes": 30,
       "ignore_fire_res": 30,
       "all_resistances": [
         30,
         40
       ],
+      "all_attributes": 30,
       "intelligence_converted_to_fire_skill_dmg": [
         4,
         8
@@ -1437,7 +1509,7 @@
       {
         "trigger": "when_struck",
         "chance": 10,
-        "description": "cast Fan of Knives Level 7",
+        "description": "cast Fan of Knives Level [5-8]",
         "details": "Attacks have a chance to throw knives around you dealing damage physical damage to nearby monsters. Additionally the knives have a chance to ricochet to nearby monsters."
       }
     ]
@@ -1498,10 +1570,13 @@
         1,
         2
       ],
+      "damage_based_on_level": 50,
       "increased_attack_speed": [
         8,
         20
       ],
+      "defense_ignored": 30,
+      "strength_based_on_level": 50,
       "attack_rating": [
         210,
         250
@@ -1510,14 +1585,10 @@
         5,
         7
       ],
-      "defense_ignored": 30,
-      "to_strength": 50,
       "defense_vs_missiles": [
         15,
         20
-      ],
-      "damage_based_on_level": 50,
-      "strength_based_on_level": 50
+      ]
     },
     "sockets": 0,
     "maxSockets": 3
@@ -1549,7 +1620,9 @@
       "to_strength": 20,
       "to_vitality": 10
     },
-    "setId": "dante_s_nightmare"
+    "setId": "dante_s_nightmare",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_death_lord_s_bone_armor",
@@ -1581,7 +1654,9 @@
       "arcane_resistance": 50,
       "mana_based_on_level": 50
     },
-    "setId": "death_lord_s_legacy"
+    "setId": "death_lord_s_legacy",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_demon_s_ribcage",
@@ -1594,24 +1669,22 @@
     "defenseMin": 130,
     "defenseMax": 160,
     "implicit": {
-      "enhanced_damage": [
+      "enhanced_defense": [
         130,
         160
       ],
-      "to_energy": 25,
       "to_vitality": 10,
-      "to_armor": 15,
+      "to_energy": 25,
+      "arcane_resistance": 50,
       "ignore_arcane_res": [
         10,
         20
       ],
-      "arcane_resistance": 50,
-      "enhanced_defense": [
-        130,
-        160
-      ]
+      "to_armor": 15
     },
-    "setId": "satan_s_redemption"
+    "setId": "satan_s_redemption",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_devil_s_cocoon",
@@ -1644,7 +1717,7 @@
       "vitality_based_on_level": 125
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 5
   },
   {
     "id": "body_armor_satanic_earth_shaper_s_body",
@@ -1681,7 +1754,9 @@
       ],
       "all_resistances": 30
     },
-    "setId": "earth_shaper_s_pride"
+    "setId": "earth_shaper_s_pride",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_einar_s_plated_armor",
@@ -1708,13 +1783,9 @@
       "defense_based_on_level": 75
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 5,
     "setId": "einar_s_rage",
     "skillBonuses": {
-      "Avalanche": [
-        4,
-        8
-      ],
       "Random Skill": [
         4,
         8
@@ -1744,7 +1815,9 @@
       "mana_replenish_pct": 10,
       "light_radius": 2,
       "all_resistances": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_empire_s_military_plate",
@@ -1773,7 +1846,9 @@
         30,
         40
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_engineer_s_plated_vest",
@@ -1795,13 +1870,12 @@
         3,
         6
       ],
-      "damage_recouped_as_mana": 15,
       "physical_damage_reduction": [
         5,
         15
       ],
-      "vitality_based_on_level": 30,
-      "damage_drained_from_mana": 15
+      "damage_recouped_as_mana": 15,
+      "vitality_based_on_level": 30
     },
     "setId": "engineer_s_combat_gear",
     "sockets": 0,
@@ -1826,23 +1900,25 @@
         4,
         6
       ],
+      "movement_speed": 30,
       "faster_cast_rate": 30,
-      "to_energy": [
-        25,
-        35
+      "to_intelligence": [
+        35,
+        65
       ],
       "mana_replenish_pct": 75,
       "increased_mana": [
         15,
         25
       ],
-      "to_intelligence": [
-        35,
-        65
-      ],
       "all_attributes": 25,
-      "movement_speed": 30
-    }
+      "faster_cast_rate_percent_converted_to_movement_speed": [
+        25,
+        45
+      ]
+    },
+    "sockets": 4,
+    "maxSockets": 6
   },
   {
     "id": "body_armor_satanic_flame_diviner_s_sanctum",
@@ -1850,7 +1926,7 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 87,
     "defenseMin": 230,
     "defenseMax": 260,
@@ -1859,28 +1935,28 @@
         430,
         560
       ],
-      "to_energy": 20,
+      "all_skills_pyromancer": [
+        4,
+        5
+      ],
       "to_vitality": 50,
+      "to_intelligence": 50,
       "all_attributes": [
         30,
         45
-      ],
-      "mana_replenish_pct": 20,
-      "increased_mana": [
-        2,
-        5
-      ],
-      "fire_absorption": [
-        10,
-        15
       ],
       "mana_costs_decreased": [
         10,
         15
       ],
-      "to_intelligence": 50
+      "fire_absorption": [
+        10,
+        15
+      ]
     },
-    "setId": "flames_of_divinity"
+    "setId": "flames_of_divinity",
+    "sockets": 4,
+    "maxSockets": 6
   },
   {
     "id": "body_armor_satanic_gabriel_s_leather_trench_coat",
@@ -1912,7 +1988,9 @@
         12
       ]
     },
-    "setId": "gabriel_s_devotion"
+    "setId": "gabriel_s_devotion",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_genji_s_battle_armor",
@@ -1936,7 +2014,7 @@
       "attack_rating_based_on_level": 300
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "setId": "genji_s_battle_gear"
   },
   {
@@ -2009,16 +2087,16 @@
       "cold_resistance": 40
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "uniqueEffects": [
       "Cannot be Frozen"
     ],
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 7,
-        "description": "cast Avalanche Level 6",
-        "details": "Release a bellowing shout dealing cold damage to all monsters around you and freezing them."
+        "chance": 5,
+        "description": "cast Avalanche Level [5-10]",
+        "details": "Chance: 5-8%. Release a bellowing shout dealing cold damage to all monsters around you and freezing them."
       }
     ]
   },
@@ -2060,8 +2138,8 @@
       ],
       "strength_based_on_level": 75
     },
-    "sockets": 2,
-    "maxSockets": 2
+    "sockets": 1,
+    "maxSockets": 4
   },
   {
     "id": "body_armor_satanic_grandwizard_s_robe",
@@ -2088,7 +2166,9 @@
         15
       ],
       "all_resistances": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_hazmat_suit",
@@ -2124,8 +2204,8 @@
       "max_poison_resistance": 5,
       "poison_length_reduced": 50
     },
-    "sockets": 1,
-    "maxSockets": 1
+    "sockets": 2,
+    "maxSockets": 4
   },
   {
     "id": "body_armor_satanic_heaven_s_might",
@@ -2157,7 +2237,7 @@
       "vitality_based_on_level": 100
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 6
   },
   {
     "id": "body_armor_satanic_hellfire_cuirass",
@@ -2234,7 +2314,7 @@
       "defense_based_on_level": 125
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 5,
     "uniqueEffects": [
       "Cannot be Frozen"
     ]
@@ -2272,7 +2352,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_juggernaut_s_glorious_plate",
@@ -2328,7 +2410,9 @@
       "lightning_skills": 1,
       "all_resistances": 15
     },
-    "setId": "justiciar_s_thunder_raiment"
+    "setId": "justiciar_s_thunder_raiment",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_lancer_s_chestplate",
@@ -2351,7 +2435,9 @@
       "life_replenish_pct": 15,
       "mana_replenish_pct": 20
     },
-    "setId": "wall_of_god"
+    "setId": "wall_of_god",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_leather_muscle_breastplate",
@@ -2384,12 +2470,12 @@
       "vitality_based_on_level": 30
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 3,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 10,
-        "description": "cast Holy Hammer Level 29",
+        "description": "cast Holy Hammer Level [20-30]",
         "details": "Summon a holy hammer that spirals outwards dealing arcane damage on hit."
       }
     ]
@@ -2421,7 +2507,7 @@
       "damage_mitigation": 25
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 6
   },
   {
     "id": "body_armor_satanic_lichbane",
@@ -2473,18 +2559,16 @@
         8,
         12
       ],
+      "lightning_resistance": 40,
+      "fire_resistance": 40,
       "to_strength": 20,
       "to_dexterity": 10,
-      "additive_fire_damage": [
-        145,
-        170
-      ],
-      "cold_resistance": 40,
-      "fire_resistance": 40,
-      "lightning_resistance": 40,
-      "additive_physical_damage": 25
+      "additive_physical_damage": 25,
+      "cold_resistance": 40
     },
-    "setId": "master_s_legacy"
+    "setId": "master_s_legacy",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_magic_imbued_frozen_plate",
@@ -2510,7 +2594,7 @@
       "max_cold_resistance": 10
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "uniqueEffects": [
       "Cannot be Frozen"
     ]
@@ -2555,29 +2639,27 @@
     "defenseMin": 10,
     "defenseMax": 18,
     "implicit": {
-      "enhanced_damage": 8,
       "enhanced_defense": [
         30,
         60
       ],
+      "enhanced_damage": 8,
       "increased_attack_speed": [
         12,
         20
       ],
-      "life_steal": [
-        3,
-        5
-      ],
-      "arcane_skill_damage": 8,
       "mana_steal": [
         3,
         5
       ],
+      "arcane_skill_damage": 8,
       "all_resistances": [
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_magma_gladiator_s_armor",
@@ -2605,13 +2687,13 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 5,
-        "description": "cast Solar Flare Level 6",
-        "details": "Unleash solar flare projectiles that homes towards monsters."
+        "description": "cast Solar Flare Level [5-10]",
+        "details": "Chance: 5-8%. Unleash solar flare projectiles that homes towards monsters."
       }
     ]
   },
@@ -2644,7 +2726,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "setId": "marksman_s_hunting_gear"
   },
   {
@@ -2670,10 +2752,6 @@
       "physical_damage_reduction": [
         5,
         10
-      ],
-      "defense": [
-        110,
-        150
       ]
     },
     "sockets": 3,
@@ -2707,7 +2785,7 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "setId": "mevius_eye_of_chaos"
   },
   {
@@ -2736,7 +2814,7 @@
       "max_fire_resistance": 5
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_mystique_allure",
@@ -2744,7 +2822,7 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 84,
     "defenseMin": 535,
     "defenseMax": 565,
@@ -2764,7 +2842,7 @@
       "all_resistances": 30,
       "magic_find_based_on_level": 100
     },
-    "sockets": 3,
+    "sockets": 4,
     "maxSockets": 6
   },
   {
@@ -2832,7 +2910,7 @@
     "name": "Noxious Hunter's Reward",
     "baseType": "Armor",
     "slot": "armor",
-    "rarity": "satanic",
+    "rarity": "heroic",
     "grade": "SS",
     "requiresLevel": 84,
     "defenseMin": 220,
@@ -2842,27 +2920,30 @@
         270,
         330
       ],
-      "all_skills": 2,
+      "all_skills": [
+        2,
+        3
+      ],
       "poison_skills": [
         3,
         5
       ],
-      "extra_damage_poisoned": [
-        15,
-        30
-      ],
       "ignore_poison_res": 25,
+      "poison_resistance": [
+        50,
+        75
+      ],
       "poison_absorption": [
         10,
         20
       ],
-      "poison_resistance": [
-        50,
+      "extra_damage_poisoned": [
+        35,
         75
       ]
     },
-    "sockets": 1,
-    "maxSockets": 1
+    "sockets": 3,
+    "maxSockets": 6
   },
   {
     "id": "body_armor_satanic_odin_s_battlearmor",
@@ -2897,7 +2978,9 @@
         10
       ]
     },
-    "setId": "odin_s_demise"
+    "setId": "odin_s_demise",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_pirate_captain_s_shirt",
@@ -2905,7 +2988,7 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 97,
     "defenseMin": 230,
     "defenseMax": 260,
@@ -2914,29 +2997,24 @@
         530,
         660
       ],
-      "movement_speed": [
-        10,
-        20
+      "all_skills_pirate": 3,
+      "to_vitality": 50,
+      "life": [
+        500,
+        750
       ],
       "to_dexterity": [
         40,
         65
-      ],
-      "to_vitality": 50,
-      "flat_fire_skill_damage": [
-        12,
-        26
-      ],
-      "life": [
-        500,
-        750
       ],
       "vitality_converted_to_magic_skill_dmg": [
         4,
         8
       ]
     },
-    "setId": "black_beard_s_remains"
+    "setId": "black_beard_s_remains",
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "body_armor_satanic_pit_fighter_s_band_shirt",
@@ -2968,7 +3046,7 @@
       ]
     },
     "sockets": 3,
-    "maxSockets": 3,
+    "maxSockets": 6,
     "uniqueEffects": [
       "Cannot be Frozen"
     ]
@@ -2988,28 +3066,27 @@
         160,
         200
       ],
-      "flat_cold_skill_damage": [
-        18,
-        38
+      "mana_replenish_pct": [
+        20,
+        30
       ],
       "ignore_cold_res": [
         7,
         15
       ],
-      "mana_replenish_pct": [
-        20,
-        30
-      ],
       "cold_resistance": 40,
-      "defense": [
-        1,
-        3
+      "flat_cold_skill_damage": [
+        18,
+        38
       ],
       "max_cold_resistance": 5
     },
     "setId": "plunderer_s_ensemble",
     "sockets": 0,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "uniqueEffects": [
+      "+[1-3]% Increased Defense"
+    ]
   },
   {
     "id": "body_armor_satanic_prophets_shroud",
@@ -3026,7 +3103,7 @@
         250,
         350
       ],
-      "all_skills": 2,
+      "all_skills_prophet": 2,
       "physical_damage_reduction": [
         10,
         15
@@ -3041,10 +3118,6 @@
     "maxSockets": 3,
     "setId": "mystic_of_the_forest",
     "skillBonuses": {
-      "Random Prophet Skill (Forest Mystic Tree)": [
-        3,
-        4
-      ],
       "Random Skill": [
         3,
         4
@@ -3081,7 +3154,8 @@
       "defense_based_on_level": 100
     },
     "sockets": 0,
-    "maxSockets": 3
+    "maxSockets": 3,
+    "setId": "redneck_s_work_gear"
   },
   {
     "id": "body_armor_satanic_runemaster_s_mantle",
@@ -3112,7 +3186,7 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 87,
     "defenseMin": 130,
     "defenseMax": 160,
@@ -3121,14 +3195,10 @@
         130,
         160
       ],
-      "all_skills": 3,
+      "all_skills_white_mage": 3,
       "to_energy": [
         30,
         45
-      ],
-      "to_vitality": [
-        5,
-        10
       ],
       "all_resistances": [
         25,
@@ -3143,7 +3213,9 @@
         8
       ]
     },
-    "setId": "the_holy_one"
+    "setId": "the_holy_one",
+    "sockets": 3,
+    "maxSockets": 5
   },
   {
     "id": "body_armor_satanic_sand_king_s_scarab",
@@ -3176,7 +3248,7 @@
       "life_based_on_level": 75
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "body_armor_satanic_sand_manipulator_s_kalasiris",
@@ -3184,7 +3256,7 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic_set",
-    "grade": "A",
+    "grade": "SS",
     "requiresLevel": 87,
     "defenseMin": 430,
     "defenseMax": 460,
@@ -3193,26 +3265,27 @@
         260,
         300
       ],
-      "all_skills": [
+      "all_skills_illusionist": [
         3,
         5
+      ],
+      "flat_magic_skill_damage": [
+        30,
+        60
       ],
       "physical_damage_reduction": [
         5,
         10
       ],
       "all_resistances": 30,
-      "arcane_resistance": 45,
       "magic_find": [
         15,
         30
-      ],
-      "flat_magic_skill_damage": [
-        30,
-        60
       ]
     },
-    "setId": "guardian_s_of_the_sands"
+    "setId": "guardian_s_of_the_sands",
+    "sockets": 3,
+    "maxSockets": 6
   },
   {
     "id": "body_armor_satanic_satan_s_cuirass",
@@ -3266,15 +3339,17 @@
       "poison_resistance": 40
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 6,
-        "description": "cast Plague of Rats Level 9",
-        "details": "Send plague rats in target direction dealing poison damage on impact. "
+        "chance": 5,
+        "description": "cast Plague of Rats Level [5-10]",
+        "details": "Chance: 5-8%. Send plague rats in target direction dealing poison damage on impact. "
       }
-    ]
+    ],
+    "defenseMin": 10,
+    "defenseMax": 18
   },
   {
     "id": "body_armor_satanic_sheep_king_s_hide",
@@ -3292,21 +3367,20 @@
         250
       ],
       "all_skills": 8,
-      "physical_damage_reduction": 20,
+      "enhanced_damage_based_on_level": 75,
       "arcane_resistance": [
         25,
         30
       ],
       "life_based_on_level": 525,
-      "enhanced_damage_based_on_level": 75,
+      "damage_mitigation": 20,
       "max_arcane_resistance": [
         1,
         5
-      ],
-      "damage_mitigation": 20
+      ]
     },
     "sockets": 4,
-    "maxSockets": 4,
+    "maxSockets": 6,
     "setId": "sheep_king_s_kingdom"
   },
   {
@@ -3333,7 +3407,9 @@
         50
       ]
     },
-    "setId": "shield_bearer_s_sanctuary"
+    "setId": "shield_bearer_s_sanctuary",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_skinwalkers_mantle",
@@ -3389,10 +3465,15 @@
         150
       ],
       "faster_cast_rate": 10,
+      "fire_resistance": [
+        35,
+        60
+      ],
       "fire_skill_damage": [
         10,
         25
       ],
+      "intelligence_based_on_level": 50,
       "damage_recouped_as_mana": [
         10,
         15
@@ -3400,15 +3481,6 @@
       "fire_absorption": [
         3,
         8
-      ],
-      "fire_resistance": [
-        35,
-        60
-      ],
-      "intelligence_based_on_level": 50,
-      "damage_drained_from_mana": [
-        10,
-        15
       ]
     },
     "setId": "guardian_of_the_sun_temple",
@@ -3450,7 +3522,7 @@
       ]
     },
     "sockets": 4,
-    "maxSockets": 4,
+    "maxSockets": 6,
     "setId": "grenadier_s_explosive",
     "skillBonuses": {
       "Demolition Expert": [
@@ -3493,7 +3565,9 @@
       "lightning_resistance": 40,
       "ignore_arcane_res": 15
     },
-    "setId": "thor_s_thunder_hammer"
+    "setId": "thor_s_thunder_hammer",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_thunder_caller_s_robe",
@@ -3533,7 +3607,7 @@
       "mana_based_on_level": 250
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 3,
     "setId": "thunder_caller_s_wrath"
   },
   {
@@ -3562,13 +3636,13 @@
       "lightning_resistance": 40
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 5,
-        "description": "cast Charged Bolts Level 9",
-        "details": "Unleash multiple sparking bolts of electricity dealing lightning damage on hit."
+        "description": "cast Charged Bolts Level [5-10]",
+        "details": "Chance: 5-8%. Unleash multiple sparking bolts of electricity dealing lightning damage on hit."
       }
     ]
   },
@@ -3578,8 +3652,8 @@
     "baseType": "Armor",
     "slot": "armor",
     "rarity": "satanic_set",
-    "grade": "A",
-    "requiresLevel": 40,
+    "grade": "S",
+    "requiresLevel": 1,
     "defenseMin": 70,
     "defenseMax": 90,
     "implicit": {
@@ -3591,14 +3665,9 @@
         1,
         3
       ],
-      "movement_speed": [
-        20,
-        30
-      ],
-      "to_dexterity": 10,
-      "all_attributes": 20,
       "faster_hit_recovery": 150,
-      "all_resistances": 25
+      "all_resistances": 25,
+      "all_attributes": 20
     },
     "setId": "traveler",
     "sockets": 2,
@@ -3638,12 +3707,12 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 12,
-        "description": "cast Astrope's Battle Maiden Level 21"
+        "description": "cast Astrope's Battle Maiden Level [12-22]"
       }
     ]
   },
@@ -3677,7 +3746,9 @@
         25
       ]
     },
-    "setId": "uabel_s_majesty"
+    "setId": "uabel_s_majesty",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_unearthed_esoteric_panoply",
@@ -3706,7 +3777,7 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "body_armor_satanic_upi_s_sweetshirt",
@@ -3737,7 +3808,7 @@
       "vitality_based_on_level": 25
     },
     "sockets": 1,
-    "maxSockets": 1
+    "maxSockets": 4
   },
   {
     "id": "body_armor_satanic_vagabond_s_wraps",
@@ -3763,7 +3834,9 @@
         15
       ]
     },
-    "setId": "vagabond_s_rags"
+    "setId": "vagabond_s_rags",
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_valkyrie_s_battle_raiment",
@@ -3780,27 +3853,25 @@
         160,
         200
       ],
-      "additive_lightning_damage": [
-        235,
-        350
-      ],
-      "ignore_lightning_res": [
-        15,
-        20
+      "increased_attack_speed": 20,
+      "lightning_resistance": 40,
+      "flat_lightning_skill_damage": [
+        12,
+        24
       ],
       "physical_damage_reduction": [
         2,
         8
       ],
-      "lightning_resistance": 40,
-      "max_lightning_resistance": 5,
-      "flat_lightning_skill_damage": [
-        12,
-        24
+      "ignore_lightning_res": [
+        15,
+        20
       ],
-      "increased_attack_speed": 20
+      "max_lightning_resistance": 5
     },
-    "setId": "valkyrie_s_battle_gear"
+    "setId": "valkyrie_s_battle_gear",
+    "sockets": 2,
+    "maxSockets": 4
   },
   {
     "id": "body_armor_satanic_venom_s_ribcage",
@@ -3817,17 +3888,13 @@
         130,
         160
       ],
-      "ignore_arcane_res": [
+      "ignore_poison_res": [
         10,
         20
       ],
       "mana_replenish_pct": 25,
       "all_resistances": 15,
       "magic_find": [
-        10,
-        20
-      ],
-      "ignore_poison_res": [
         10,
         20
       ],
@@ -3863,13 +3930,13 @@
       ]
     },
     "sockets": 1,
-    "maxSockets": 1,
+    "maxSockets": 4,
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 10,
-        "description": "cast Volatile Shot Level 10",
-        "details": "Fire a colossal arrow exploding on hit dealing area of effect damage."
+        "chance": 7,
+        "description": "cast Volatile Shot Level [8-18]",
+        "details": "Chance: 7-10%. Fire a colossal arrow exploding on hit dealing area of effect damage."
       }
     ]
   },
@@ -3900,7 +3967,7 @@
       "cold_resistance": 45
     },
     "sockets": 2,
-    "maxSockets": 2,
+    "maxSockets": 5,
     "setId": "ymir_s_wisdom",
     "uniqueEffects": [
       "Cannot be Frozen"
@@ -3944,7 +4011,9 @@
         8,
         25
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 3
   },
   {
     "id": "body_armor_satanic_zeus_body_armor",
@@ -3983,7 +4052,8 @@
       ]
     },
     "sockets": 2,
-    "maxSockets": 2
+    "maxSockets": 4,
+    "setId": "thunder_god_s_wrath"
   },
   {
     "id": "body_armor_unholy_grand_arch_wizard_s_mantle",
@@ -4071,7 +4141,7 @@
         35
       ]
     },
-    "sockets": 5,
+    "sockets": 1,
     "maxSockets": 6
   },
   {
@@ -4119,12 +4189,12 @@
     "procs": [
       {
         "trigger": "on_hit",
-        "chance": 4,
-        "description": "cast Warrior's Path Level 13",
-        "details": "Increases your attack damage and magic skill damage for a short period. Magic Skill Damage 39%, Attack Damage 58.50%"
+        "chance": 3,
+        "description": "cast Warrior´s Path Level [12-20]",
+        "details": "Chance: 3-6%. Increases your attack damage and magic skill damage for a short period."
       }
     ],
-    "sockets": 4,
+    "sockets": 2,
     "maxSockets": 4
   }
 ]

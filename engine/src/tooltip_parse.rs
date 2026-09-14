@@ -1,31 +1,39 @@
 //! OCR'd tooltip lines → equipped item. Sits next to ocr.rs so a screenshot
 //! import is one round-trip and the fuzzy matching runs on engine data.
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
-use std::sync::LazyLock;
 use regex::Regex;
 use serde::Serialize;
+use std::sync::LazyLock;
 
 use crate::calc::data;
-use crate::calc::types::{Affix, AngelicAugment, CharacterClass, Gem, ItemBase, RangedValue};
+use crate::calc::types::{
+    Affix, AngelicAugment, CharacterClass, Gem, ItemBase, RangedValue, Runeword,
+};
 
 const NAME_MATCH_THRESHOLD: f64 = 0.72;
 const PHRASE_MATCH_THRESHOLD: f64 = 0.8;
 const SKILL_NAME_THRESHOLD: f64 = 0.7;
 const CLASS_NAME_THRESHOLD: f64 = 0.55;
 const NAME_SCAN_LINES: usize = 4;
+const RUNEWORD_SCAN_LINES: usize = 6;
+const RUNEWORD_WORD_THRESHOLD: f64 = 0.75;
+const RUNES_TRIM: &str = "()[]{}| ";
 const AUGMENT_MAX_LEVEL: i64 = 7;
 const MINOR_WORDS: [&str; 5] = ["of", "to", "per", "and", "low"];
 
 macro_rules! re {
     ($name:ident, $pat:expr) => {
-        static $name: LazyLock<Regex> = LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
+        static $name: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
     };
 }
 
 re!(WS, r"\s+");
 re!(CANON_BRACKETS, r"[\[\]|{}()]");
 re!(CANON_NUMBERS, r"[+-]?\d+(?:\.\d+)?");
+// "+[2-5] to X" leaves a lone "+" once the range is gone; drop it so tiers share one group.
+re!(CANON_SIGNS, r"(?:^|\s)[+\-–]+(?:\s|$)");
 // OCR mangles brackets into 1/|/l/I/), so the range regex accepts them all.
 re!(
     TRAILING_RANGE,
@@ -43,11 +51,16 @@ re!(
 );
 re!(SOCKETS_LINE, r"(?i)^sockets?\s*\(?(\d+)\)?");
 re!(HAS_SIGN, r"^[+-]");
+re!(HANDEDNESS, r"(?i)\b(1|2|i|l|one|two)[\s-]*handed\b");
+// "+5 to All Skills [2-5] Tier S" — the tier tag follows the range on base affixes.
+re!(TRAILING_TIER, r"(?i)\s+tier\s+\S+\s*$");
 
 static IGNORED_PREFIXES: LazyLock<Vec<Regex>> = LazyLock::new(|| {
     [
         r"(?i)^defen",
         r"(?i)^damage\s*[:.]",
+        r"(?i)^attack damage\s*[:.]",
+        r"(?i)^attacks per second",
         r"(?i)^attack speed",
         r"(?i)^block",
         r"(?i)^\(gem",
@@ -114,6 +127,8 @@ pub struct ParsedItem {
     pub skill_bonus_overrides: Option<BTreeMap<String, f64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub all_skills_class_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub runeword_id: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -123,6 +138,64 @@ pub struct TooltipParseResult {
     pub equipped: Option<ParsedItem>,
     pub lines: Vec<TooltipLine>,
     pub errors: Vec<String>,
+}
+
+impl From<ParsedAffix> for crate::calc::types::EquippedAffix {
+    fn from(affix: ParsedAffix) -> Self {
+        Self {
+            affix_id: affix.affix_id,
+            tier: affix.tier,
+            roll: affix.roll,
+            custom_value: None,
+        }
+    }
+}
+
+impl From<ParsedItem> for crate::calc::types::EquippedItem {
+    fn from(item: ParsedItem) -> Self {
+        use crate::calc::types::{AugmentRef, SocketType};
+        Self {
+            base_id: item.base_id,
+            stars: Some(item.stars),
+            affixes: item.affixes.into_iter().map(Into::into).collect(),
+            socket_count: item.socket_count,
+            socketed: item.socketed,
+            socket_types: item
+                .socket_types
+                .into_iter()
+                .map(|kind| {
+                    if kind == "rainbow" {
+                        SocketType::Rainbow
+                    } else {
+                        SocketType::Normal
+                    }
+                })
+                .collect(),
+            forged_mods: item
+                .forged_mods
+                .unwrap_or_default()
+                .into_iter()
+                .map(Into::into)
+                .collect(),
+            augment: item.augment.map(|augment| AugmentRef {
+                id: augment.id,
+                level: augment.level,
+            }),
+            implicit_overrides: item
+                .implicit_overrides
+                .unwrap_or_default()
+                .into_iter()
+                .collect(),
+            skill_bonus_overrides: item
+                .skill_bonus_overrides
+                .unwrap_or_default()
+                .into_iter()
+                .collect(),
+            all_skills_class_id: item.all_skills_class_id,
+            runeword_id: item.runeword_id,
+            ..Default::default()
+        }
+    }
 }
 
 // ---------- text helpers ----------
@@ -167,8 +240,10 @@ fn similarity(a: &str, b: &str) -> f64 {
 
 /// Strip every numeric token, range and % so game/OCR phrasing collapses to one key.
 fn canon_phrase(s: &str) -> String {
-    let s = CANON_BRACKETS.replace_all(s, " ");
+    let s = crate::calc::resistance::canonical_text(s);
+    let s = CANON_BRACKETS.replace_all(&s, " ");
     let s = CANON_NUMBERS.replace_all(&s, " ");
+    let s = CANON_SIGNS.replace_all(&s, " ");
     let s = s.replace('%', " ");
     WS.replace_all(&s, " ").trim().to_lowercase()
 }
@@ -417,6 +492,177 @@ fn find_item_name(lines: &[String]) -> Option<(String, usize)> {
     best.map(|(item, end, _)| (item.id.clone(), end))
 }
 
+struct RunewordHeader {
+    rw: &'static Runeword,
+    base: &'static ItemBase,
+    runes: Vec<String>,
+    name_end: usize,
+    details: Vec<String>,
+}
+
+/// Runeword tooltips name the word, then "Runeword <handedness> <base type>", then the runes.
+/// The exact base is not shown, so the first common base of that type stands in.
+fn detect_runeword(lines: &[String]) -> Option<RunewordHeader> {
+    let scan = lines.len().min(RUNEWORD_SCAN_LINES);
+    let (header_ix, base_text) = (0..scan).find_map(|i| {
+        let (first, rest) = lines[i].split_once(' ').unwrap_or((&lines[i], ""));
+        (similarity(first, "runeword") >= RUNEWORD_WORD_THRESHOLD)
+            .then(|| (i, rest.trim().to_string()))
+    })?;
+    let rune_pool = sorted_by_id(data::data().runes.values(), |r| &r.id);
+    // Rune names are 2-4 letters, so OCR's 1/l/|→i and 0→o swaps matter more than distance.
+    let ocr_normal = |s: &str| {
+        s.to_lowercase()
+            .chars()
+            .map(|c| match c {
+                '1' | 'l' | '|' => 'i',
+                '0' => 'o',
+                c => c,
+            })
+            .collect::<String>()
+    };
+    let rune_id = |name: &str| {
+        let wanted = ocr_normal(name);
+        rune_pool
+            .iter()
+            .map(|rune| {
+                let normal = ocr_normal(&rune.name);
+                let score = if normal == wanted {
+                    1.0
+                } else {
+                    similarity(&wanted, &normal)
+                };
+                (rune, score)
+            })
+            .filter(|(_, score)| *score >= SKILL_NAME_THRESHOLD)
+            .max_by(|a, b| a.1.total_cmp(&b.1))
+            .map(|(rune, _)| rune.id.clone())
+    };
+    // "(Ymn, Co, Qi)" — OCR may drop or mangle the parentheses, so accept the bare list.
+    let runes_line = (header_ix + 1..lines.len().min(header_ix + 4)).find_map(|i| {
+        let names: Vec<String> = lines[i]
+            .trim_matches(|c: char| RUNES_TRIM.contains(c))
+            .split(',')
+            .map(|s| {
+                s.trim()
+                    .trim_matches(|c: char| RUNES_TRIM.contains(c))
+                    .to_string()
+            })
+            .filter(|s| !s.is_empty())
+            .collect();
+        let ids: Vec<String> = names.iter().filter_map(|n| rune_id(n)).collect();
+        (!names.is_empty() && names.len() <= 6 && ids.len() * 2 >= names.len())
+            .then_some((i, names, ids))
+    });
+    let (runes_ix, rune_names, runes) = match runes_line {
+        Some((i, names, ids)) => (Some(i), names, ids),
+        None => (None, Vec::new(), Vec::new()),
+    };
+    let words = data::runewords();
+    let mut names: Vec<String> = lines[..header_ix].to_vec();
+    names.push(lines[..header_ix].join(" "));
+    let rw = words
+        .iter()
+        .find(|rw| !runes.is_empty() && rw.runes == runes)
+        .or_else(|| {
+            words
+                .iter()
+                .flat_map(|rw| names.iter().map(move |n| (rw, similarity(n, &rw.name))))
+                .filter(|(_, score)| *score >= NAME_MATCH_THRESHOLD)
+                .max_by(|a, b| a.1.total_cmp(&b.1))
+                .map(|(rw, _)| rw)
+        })?;
+    let two_handed = HANDEDNESS
+        .captures(&base_text)
+        .is_some_and(|m| matches!(m[1].to_lowercase().as_str(), "2" | "two"));
+    let type_text = canon_phrase(&HANDEDNESS.replace_all(&base_text, " "));
+    let bases = sorted_by_id(data::data().items.values(), |i: &ItemBase| &i.id);
+    let base = bases
+        .iter()
+        .filter(|item| item.rarity == "common")
+        .filter(|item| {
+            rw.allowed_base_types
+                .iter()
+                .any(|t| t.eq_ignore_ascii_case(&item.base_type))
+        })
+        .filter(|item| item.two_handed.unwrap_or(false) == two_handed)
+        .map(|item| (item, similarity(&type_text, &item.base_type.to_lowercase())))
+        .filter(|(_, score)| *score >= PHRASE_MATCH_THRESHOLD)
+        .fold(None::<(&&ItemBase, f64)>, |best, next| match best {
+            Some((_, score)) if score >= next.1 => best,
+            _ => Some(next),
+        })
+        .map(|(item, _)| *item)?;
+    let name_end = runes_ix.unwrap_or(header_ix);
+    let details = (0..=name_end)
+        .map(|i| {
+            if i < header_ix {
+                format!("runeword: {}", rw.name)
+            } else if i == header_ix {
+                format!(
+                    "base type: {} → {} (pick the exact base in the editor)",
+                    base.base_type, base.name
+                )
+            } else {
+                format!("runes: {}", rune_names.join(", "))
+            }
+        })
+        .collect();
+    let rw: &'static Runeword = rw;
+    Some(RunewordHeader {
+        rw,
+        base,
+        runes,
+        name_end,
+        details,
+    })
+}
+
+fn strip_trailing_tier(line: &str) -> String {
+    TRAILING_TIER.replace(line, "").to_string()
+}
+
+fn word_overlap(phrase: &str, needle: &str) -> f64 {
+    let words: HashSet<&str> = phrase.split(' ').collect();
+    let needle: Vec<&str> = needle.split(' ').collect();
+    needle.iter().filter(|w| words.contains(*w)).count() as f64 / needle.len().max(1) as f64
+}
+
+/// Runeword stats print the rolled value plus `[min-max]` (data keeps the max) or a fixed value;
+/// granted skills print "<Skill> Level N [lo-hi]". Neither carries a `Tier`.
+fn match_runeword_stat(rw: &Runeword, line: &str) -> Option<StatMatch> {
+    let (candidates, rest) = extract_trailing_range(&strip_trailing_tier(line));
+    let value = extract_value(&rest);
+    let phrase = canon_phrase(&rest);
+    if phrase.is_empty() {
+        return None;
+    }
+    let mut stats: Vec<(&String, &f64)> = rw.stats.iter().collect();
+    stats.sort_by(|a, b| a.0.cmp(b.0));
+    let mut best: Option<(&String, f64)> = None;
+    for (key, expected) in stats {
+        let name = canon_phrase(&stat_name(key));
+        let sim = best_window_similarity(&phrase, &name);
+        let overlap = word_overlap(&phrase, &name);
+        let value_ok = candidates.iter().any(|(_, hi)| (hi - expected).abs() < 0.5)
+            || value.is_some_and(|v| (v.abs() - expected).abs() < 0.5);
+        let ok = value_ok && (sim >= PHRASE_MATCH_THRESHOLD || overlap >= 0.6);
+        if ok && best.is_none_or(|(_, s)| sim > s) {
+            best = Some((key, sim));
+        }
+    }
+    if let Some((key, _)) = best {
+        return Some(StatMatch::matched(format!("runeword stat: {key}"), vec![]));
+    }
+    let skill = rw.skill_bonuses.as_ref()?.keys().find(|skill| {
+        best_window_similarity(&phrase, &canon_phrase(skill)) >= SKILL_NAME_THRESHOLD
+    })?;
+    Some(StatMatch::matched(
+        format!("runeword skill: {skill}"),
+        vec![],
+    ))
+}
+
 /// "(JÖTUNN)" survives OCR as e.g. "U?TUNN)" — fuzzy-match a trailing token vs class names.
 fn extract_class_suffix(rest: &str) -> (Option<String>, String) {
     let Some(m) = CLASS_SUFFIX.captures(rest) else {
@@ -647,7 +893,7 @@ struct Indexes {
 }
 
 fn match_stat_line(base: &ItemBase, line: &str, idx: &Indexes) -> Option<StatMatch> {
-    let (candidates, no_range) = extract_trailing_range(line);
+    let (candidates, no_range) = extract_trailing_range(&strip_trailing_tier(line));
     let has_sign = HAS_SIGN.is_match(line.trim());
     if !has_sign && candidates.is_empty() {
         return None;
@@ -658,10 +904,16 @@ fn match_stat_line(base: &ItemBase, line: &str, idx: &Indexes) -> Option<StatMat
     if phrase.is_empty() {
         return None;
     }
+    // Red "(Based on Level)" lines are crystal forged mods; the affix pool has look-alikes.
+    let (first, second) = if phrase.contains("based on level") {
+        ((&idx.crystal, true), (&idx.affix, false))
+    } else {
+        ((&idx.affix, false), (&idx.crystal, true))
+    };
     let found = match_implicit(base, &phrase, value, &candidates)
         .or_else(|| match_skill_bonus(base, &phrase, value))
-        .or_else(|| match_pool(&idx.affix, false, &phrase, value, &candidates))
-        .or_else(|| match_pool(&idx.crystal, true, &phrase, value, &candidates));
+        .or_else(|| match_pool(first.0, first.1, &phrase, value, &candidates))
+        .or_else(|| match_pool(second.0, second.1, &phrase, value, &candidates));
     let Some(mut found) = found else {
         let group = best_group(&idx.affix, &phrase).or_else(|| best_group(&idx.crystal, &phrase));
         let mut stat_keys: Vec<String> = Vec::new();
@@ -795,7 +1047,12 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
         .collect();
     let mut out: Vec<TooltipLine> = Vec::new();
 
-    let Some((base_id, name_end)) = find_item_name(&lines) else {
+    let header = detect_runeword(&lines);
+    let found_name = header
+        .as_ref()
+        .map(|h| (h.base.id.clone(), h.name_end))
+        .or_else(|| find_item_name(&lines));
+    let Some((base_id, name_end)) = found_name else {
         return TooltipParseResult {
             base_id: None,
             equipped: None,
@@ -838,11 +1095,11 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
             })
         };
         if i <= name_end {
-            push(
-                &mut out,
-                LineStatus::Matched,
-                Some(format!("item: {}", base.name)),
-            );
+            let detail = header
+                .as_ref()
+                .and_then(|h| h.details.get(i).cloned())
+                .unwrap_or_else(|| format!("item: {}", base.name));
+            push(&mut out, LineStatus::Matched, Some(detail));
             continue;
         }
         if IGNORED_PREFIXES.iter().any(|re| re.is_match(line)) {
@@ -859,7 +1116,10 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
             );
             continue;
         }
-        let found = match_augment_line(line)
+        let found = header
+            .as_ref()
+            .and_then(|h| match_runeword_stat(h.rw, line))
+            .or_else(|| match_augment_line(line))
             .or_else(|| match_proc_line(base, line))
             .or_else(|| match_stat_line(base, line, &idx));
         let Some(found) = found else {
@@ -879,9 +1139,18 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
         push(&mut out, found.status, Some(found.detail));
     }
 
-    let socket_count = acc.socket_count.or(base.sockets).unwrap_or(0);
+    let socket_count = acc
+        .socket_count
+        .or(base.sockets)
+        .unwrap_or(0)
+        .max(header.as_ref().map_or(0, |h| h.runes.len() as u32));
     let gem_fill = resolve_socketed_gems(pending, socket_count);
     let mut socketed: Vec<Option<String>> = vec![None; socket_count as usize];
+    if let Some(h) = &header {
+        for (i, rune) in h.runes.iter().enumerate() {
+            socketed[i] = Some(rune.clone());
+        }
+    }
     if let Some(fill) = &gem_fill {
         for (line_index, detail) in &fill.line_details {
             if let Some(line) = out.get_mut(*line_index) {
@@ -909,6 +1178,7 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
         skill_bonus_overrides: (!acc.skill_bonus_overrides.is_empty())
             .then_some(acc.skill_bonus_overrides),
         all_skills_class_id: acc.all_skills_class_id,
+        runeword_id: header.as_ref().map(|h| h.rw.id.clone()),
     };
     TooltipParseResult {
         base_id: Some(base.id.clone()),
@@ -918,7 +1188,7 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
     }
 }
 
-#[tauri::command]
+#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn parse_tooltip_lines(lines: Vec<String>, season: Option<String>) -> TooltipParseResult {
     let _scope = crate::calc::season::SeasonScope::enter(season);
     parse_tooltip(&lines)
@@ -930,6 +1200,145 @@ mod tests {
 
     fn parse(text: &str) -> TooltipParseResult {
         parse_tooltip(&text.lines().map(str::to_string).collect::<Vec<_>>())
+    }
+
+    const AURORA: &str = "\
+AURORA'S MIGHT
+RUNEWORD 1-HANDED MACE
+(YMN, CO, QI)
+ATTACK DAMAGE: 234 TO 335 [54]
+ATTACKS PER SECOND: 1.50
++520% ENHANCED DAMAGE [430-550]
++5 TO ALL SKILLS [2-5] TIER S
++7% LIFE STOLEN PER HIT
++31% OF TARGET DEFENSE IGNORED [30-40]
++10 TO DEXTERITY
++288 TO ADDITIVE ARCANE DAMAGE [250-320]
++242 TO ADDITIVE COLD DAMAGE [230-280]
+ATTACK DAMAGE INCREASED BY 20%
++25% FASTER HIT RECOVERY
++15% EXTRA GOLD DROPPED FROM KILLS
+LUNAR AURA LEVEL 27 [12-28]
+INCREASES YOUR ATTACK RATING, ADDITIVE ARCANE DAMAGE
+AND ALL RESISTANCES
+ATTACK RATING 54%
+ARCANE DAMAGE 270
+ALL RESISTANCES 54%
+SOCKETS (3) [1-5]
+AURORA, OF OF THE PUREST SOULS TO EVER WALK ON
+EARTH WAS BRUTALLY SLAIN, BUT HER SOUL WAS
+INFUSED INTO THIS WEAPON SO SHE CAN LIVE ON
+AND AVENGE HER DEATH.
+TIER S, REQUIRES LEVEL 57";
+
+    #[test]
+    fn runeword_tooltip_maps_runes_base_type_and_stats() {
+        let result = parse(AURORA);
+        let item = result.equipped.as_ref().expect("runeword item");
+        assert!(
+            item.base_id.starts_with("base_mace_"),
+            "a common mace base, got {}",
+            item.base_id
+        );
+        assert_eq!(item.runeword_id.as_deref(), Some("rw_aurora_s_might"));
+        assert_eq!(item.socket_count, 3);
+        assert_eq!(
+            item.socketed,
+            vec![
+                Some("rune_ymn".to_string()),
+                Some("rune_co".to_string()),
+                Some("rune_qi".to_string())
+            ]
+        );
+        assert!(
+            item.affixes
+                .iter()
+                .any(|a| a.affix_id == "1_to_all_skills_t5_archangel_s"),
+            "the Tier S all-skills line is a base affix: {:?}",
+            item.affixes
+        );
+        assert!(
+            warnings(&result).is_empty(),
+            "runeword stats must not need manual review: {:?}",
+            warnings(&result)
+        );
+        let matched = |needle: &str| {
+            result.lines.iter().any(|line| {
+                line.status == LineStatus::Matched && line.text.to_lowercase().contains(needle)
+            })
+        };
+        assert!(matched("defense ignored"), "ranged runeword stat");
+        assert!(matched("attack damage increased"), "unsigned runeword stat");
+        assert!(matched("lunar aura"), "runeword skill bonus");
+        assert!(ignored_matching(&result, "attack rating 54%"));
+        assert!(ignored_matching(&result, "purest souls"));
+    }
+
+    #[test]
+    fn runeword_detection_survives_ocr_noise() {
+        let noisy = AURORA
+            .replacen("AURORA'S MIGHT", "T4 MJ\nAURORA'S MICHT", 1)
+            .replacen("RUNEWORD 1-HANDED MACE", "RUNEW0RD I-HANDED MACE", 1)
+            .replacen("(YMN, CO, QI)", "1YMN, CO, Q1)", 1);
+        let result = parse(&noisy);
+        let item = result.equipped.as_ref().expect("runeword item");
+        assert_eq!(item.runeword_id.as_deref(), Some("rw_aurora_s_might"));
+        assert!(item.base_id.starts_with("base_mace_"));
+        assert_eq!(item.socketed.len(), 3);
+    }
+
+    #[test]
+    fn parsed_item_converts_into_an_equipped_item() {
+        let parsed = ParsedItem {
+            base_id: "helmet_angelic_lucifers_crown".into(),
+            affixes: vec![ParsedAffix {
+                affix_id: "affix_a".into(),
+                tier: 3,
+                roll: 0.5,
+            }],
+            socket_count: 2,
+            socketed: vec![None, Some("gem_x".into())],
+            socket_types: vec!["normal", "rainbow"],
+            stars: 0,
+            forged_mods: Some(vec![ParsedAffix {
+                affix_id: "crystal_b".into(),
+                tier: 1,
+                roll: 1.,
+            }]),
+            augment: Some(ParsedAugment {
+                id: "augment_c".into(),
+                level: 4,
+            }),
+            implicit_overrides: Some(BTreeMap::from([("strength".to_string(), 42.)])),
+            skill_bonus_overrides: None,
+            all_skills_class_id: Some("viking".into()),
+            runeword_id: Some("rw_x".into()),
+        };
+        let item = crate::calc::types::EquippedItem::from(parsed);
+        assert_eq!(item.runeword_id.as_deref(), Some("rw_x"));
+        assert_eq!(item.base_id, "helmet_angelic_lucifers_crown");
+        assert_eq!(item.stars, Some(0));
+        assert_eq!(item.affixes[0].affix_id, "affix_a");
+        assert_eq!(item.affixes[0].tier, 3);
+        assert_eq!(item.affixes[0].roll, 0.5);
+        assert_eq!(item.affixes[0].custom_value, None);
+        assert_eq!(item.socket_count, 2);
+        assert_eq!(item.socketed, vec![None, Some("gem_x".to_string())]);
+        assert_eq!(
+            item.socket_types,
+            vec![
+                crate::calc::types::SocketType::Normal,
+                crate::calc::types::SocketType::Rainbow
+            ]
+        );
+        assert_eq!(item.forged_mods[0].affix_id, "crystal_b");
+        assert_eq!(
+            item.augment.as_ref().map(|a| (a.id.as_str(), a.level)),
+            Some(("augment_c", 4))
+        );
+        assert_eq!(item.implicit_overrides["strength"], 42.);
+        assert!(item.skill_bonus_overrides.is_empty());
+        assert_eq!(item.all_skills_class_id.as_deref(), Some("viking"));
     }
 
     fn implicit(result: &TooltipParseResult, key: &str) -> Option<f64> {

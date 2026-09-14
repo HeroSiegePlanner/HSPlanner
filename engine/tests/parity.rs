@@ -28,9 +28,8 @@ const EPSILON: f64 = 1e-9;
 
 #[test]
 fn parity_with_ts_fixtures() {
-    let json = std::fs::read_to_string(FIXTURE_PATH).unwrap_or_else(|e| {
-        panic!("missing parity fixture at {FIXTURE_PATH}: {e}")
-    });
+    let json = std::fs::read_to_string(FIXTURE_PATH)
+        .unwrap_or_else(|e| panic!("missing parity fixture at {FIXTURE_PATH}: {e}"));
     let entries: Vec<FixtureEntry> =
         serde_json::from_str(&json).expect("parity.json must be a valid JSON array");
 

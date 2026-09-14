@@ -1,0 +1,34 @@
+{
+  "activeAuraId": null,
+  "activeBuffs": {},
+  "allocatedAttrs": {},
+  "allocatedTreeNodes": [],
+  "classId": "stormweaver",
+  "customStats": [],
+  "enemyConditions": {
+    "burning": true,
+    "frozen": true
+  },
+  "enemyResistances": {
+    "arcane": 85,
+    "cold": 85,
+    "fire": 85,
+    "lightning": 85,
+    "poison": 85
+  },
+  "inventory": {},
+  "killsPerSec": 0,
+  "level": 40,
+  "mainSkillId": "charged_bolts",
+  "playerConditions": {},
+  "procToggles": {},
+  "season": "s10",
+  "skillProjectiles": {
+    "charged_bolts": 3
+  },
+  "skillRanks": {
+    "charged_bolts": 10
+  },
+  "subskillRanks": {},
+  "treeSocketed": {}
+}

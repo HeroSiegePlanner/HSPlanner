@@ -1,0 +1,9 @@
+[package]
+name = "hsplanner-notes"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+[dependencies]
+gpui-kit.workspace = true
+hsplanner-build.workspace = true
+hsplanner-ui.workspace = true

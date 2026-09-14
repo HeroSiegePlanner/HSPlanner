@@ -14,7 +14,8 @@
     "tree": "Solar Prophet",
     "position": { "row": 0, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "attackKind": "attack",
+    "attackKind": "spell",
+    "usesAttackSpeed": true,
     "damageFormula": { "base": 5.2, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [

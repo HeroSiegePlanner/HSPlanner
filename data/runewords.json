@@ -1040,12 +1040,17 @@
       "Sword",
       "Mace"
     ],
+    "skillBonuses": {
+      "Lunar Aura": [
+        12,
+        28
+      ]
+    },
     "stats": {
       "enhanced_damage": 550,
       "life_steal": 7,
       "defense_ignored": 40,
       "to_dexterity": 10,
-      "to_energy": 14,
       "additive_arcane_damage": 320,
       "additive_cold_damage": 280,
       "attack_damage": 20,
@@ -2504,6 +2509,34 @@
       "damage_mitigation": 3
     },
     "requiresLevel": 100,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ents_blessing",
+    "name": "Ent's Blessing",
+    "runes": [
+      "rune_io",
+      "rune_pul"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": 225,
+      "all_skills": 1,
+      "to_vitality": 20,
+      "life": 300,
+      "faster_hit_recovery": 50,
+      "life_per_kill": 10,
+      "damage_recouped_as_life": 10
+    },
+    "skillBonuses": {
+      "Angel’s Vibrance Aura": [
+        2,
+        6
+      ]
+    },
+    "requiresLevel": 47,
     "requiresItemLevel": 1
   }
 ]

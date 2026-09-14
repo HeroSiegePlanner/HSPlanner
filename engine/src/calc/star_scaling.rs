@@ -1,7 +1,7 @@
-use std::sync::LazyLock;
 use serde::Deserialize;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use std::sync::Mutex;
 
 use super::data::{patched_value, PatchKind};

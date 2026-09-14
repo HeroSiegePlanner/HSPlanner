@@ -92,18 +92,12 @@ pub fn apply_skill_ranks(
             .copied()
             .unwrap_or((0.0, 0.0));
 
-        let eff_min = (base_rank as f64
-            + all_skills_bonus.0
-            + elem_bonus.0
-            + tag_bonus.0
-            + item_bonus.0)
-            .max(1.0);
-        let eff_max = (base_rank as f64
-            + all_skills_bonus.1
-            + elem_bonus.1
-            + tag_bonus.1
-            + item_bonus.1)
-            .max(1.0);
+        let eff_min =
+            (base_rank as f64 + all_skills_bonus.0 + elem_bonus.0 + tag_bonus.0 + item_bonus.0)
+                .max(1.0);
+        let eff_max =
+            (base_rank as f64 + all_skills_bonus.1 + elem_bonus.1 + tag_bonus.1 + item_bonus.1)
+                .max(1.0);
 
         let mut combined: HashMap<String, Ranged> = HashMap::new();
         if let Some(base) = passive.base.as_ref() {
@@ -163,4 +157,3 @@ pub fn apply_skill_ranks(
 pub(crate) fn round3(x: f64) -> f64 {
     ((x * 1000.0) + 0.5).floor() / 1000.0
 }
-

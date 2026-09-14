@@ -5,10 +5,10 @@ use std::collections::BTreeMap;
 use base64::engine::general_purpose::GeneralPurpose;
 use base64::engine::{DecodePaddingMode, GeneralPurposeConfig};
 use base64::Engine as _;
-use std::sync::LazyLock;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::sync::LazyLock;
 
 use super::data;
 use super::types::{AffixFormat, Inventory};
@@ -310,7 +310,8 @@ const STAT_ALIASES: &[(&str, &str, &str)] = &[
 
 macro_rules! re {
     ($name:ident, $pat:expr) => {
-        static $name: LazyLock<Regex> = LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
+        static $name: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new($pat).expect(stringify!($name)));
     };
 }
 re!(NORM_PREFIX, r"^(to|increased|extra)\s+");
@@ -462,17 +463,17 @@ pub struct BuildFilterStats {
     pub unmatched: usize,
 }
 
-#[tauri::command]
+#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_decode(code: String) -> Option<LootFilter> {
     decode(&code)
 }
 
-#[tauri::command]
+#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_encode(filter: LootFilter) -> String {
     encode(&filter)
 }
 
-#[tauri::command]
+#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_build_stats(inventory: Inventory, season: Option<String>) -> BuildFilterStats {
     let _scope = super::season::SeasonScope::enter(season);
     let stats = collect_build_stats(&inventory);
@@ -483,7 +484,7 @@ pub fn lootfilter_build_stats(inventory: Inventory, season: Option<String>) -> B
     }
 }
 
-#[tauri::command]
+#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_code_for_stats(stat_ids: Vec<i64>, hide_rest: bool) -> String {
     encode(&build_filter_for_stats(&stat_ids, hide_rest))
 }

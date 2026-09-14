@@ -1,3 +1,4 @@
+use super::calculation::{number, scalar, CalculationStep};
 use super::{r_max, rg, AttrMap, StatMap};
 
 /// Where a `conversion_*` subtree note takes its value from.
@@ -138,6 +139,16 @@ pub fn resolve(
     stats: &StatMap,
     tags: &[String],
 ) -> Conversions {
+    resolve_with_calculation(scoped, attributes, stats, tags).0
+}
+
+pub(crate) fn resolve_with_calculation(
+    scoped: &StatMap,
+    attributes: &AttrMap,
+    stats: &StatMap,
+    tags: &[String],
+) -> (Conversions, Vec<CalculationStep>) {
+    let mut trace = Vec::new();
     let mut out = Conversions::default();
     for (key, source, mode) in CONVERSIONS {
         let pct = r_max(rg(scoped, key));
@@ -145,19 +156,72 @@ pub fn resolve(
             continue;
         }
         if matches!(source, Source::OwnDamage) {
+            trace.push(CalculationStep::new(
+                *key,
+                "Own damage conversion → increased skill damage %",
+                scalar(pct),
+            ));
             out.skill_damage_pct += pct;
             continue;
         }
         let Some(value) = source_value(source, attributes, stats, tags) else {
+            trace.push(CalculationStep::new(
+                *key,
+                "Source unavailable in the calculation model; contributes 0",
+                scalar(0.0),
+            ));
             continue;
         };
-        match mode {
-            Mode::Flat => out.flat += pct / 100.0 * value,
-            Mode::Per500 => out.skill_damage_pct += pct * (value / 500.0).floor(),
-            Mode::PctPerUnit => out.skill_damage_pct += pct * value,
-        }
+        let source_label = match source {
+            Source::Attribute(key) | Source::Stat(key) => *key,
+            Source::EffectiveAttackSpeed => "effective attacks per second",
+            Source::EntityCount => "entity count",
+            _ => "source",
+        };
+        let (expression, contribution) = match mode {
+            Mode::Flat => {
+                let contribution = pct / 100.0 * value;
+                out.flat += contribution;
+                (
+                    format!(
+                        "{}% / 100 × {} {} → flat damage",
+                        number(pct),
+                        number(value),
+                        source_label
+                    ),
+                    contribution,
+                )
+            }
+            Mode::Per500 => {
+                let contribution = pct * (value / 500.0).floor();
+                out.skill_damage_pct += contribution;
+                (
+                    format!(
+                        "{}% × floor({} {} / 500) → increased damage %",
+                        number(pct),
+                        number(value),
+                        source_label
+                    ),
+                    contribution,
+                )
+            }
+            Mode::PctPerUnit => {
+                let contribution = pct * value;
+                out.skill_damage_pct += contribution;
+                (
+                    format!(
+                        "{}% × {} {} → increased damage %",
+                        number(pct),
+                        number(value),
+                        source_label
+                    ),
+                    contribution,
+                )
+            }
+        };
+        trace.push(CalculationStep::new(*key, expression, scalar(contribution)));
     }
-    out
+    (out, trace)
 }
 
 #[cfg(test)]

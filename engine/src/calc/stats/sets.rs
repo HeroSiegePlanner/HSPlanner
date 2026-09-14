@@ -41,4 +41,3 @@ pub fn apply_set_bonuses(
         }
     }
 }
-

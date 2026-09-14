@@ -6,7 +6,7 @@
     "slot": "belt",
     "rarity": "angelic",
     "grade": "SS",
-    "requiresLevel": 100,
+    "requiresLevel": 1,
     "defenseMin": 52,
     "defenseMax": 68,
     "implicit": {
@@ -198,7 +198,9 @@
         5
       ],
       "magic_find_based_on_level": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_belt_of_skulls",
@@ -241,10 +243,15 @@
     },
     "skillBonuses": {
       "Burst of Speed": [
-        25,
-        45
+        60,
+        70
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Movement Phasing"
+    ]
   },
   {
     "id": "belt_heroic_freya_s_frozen_buckle",
@@ -288,14 +295,16 @@
     "procs": [
       {
         "trigger": "on_cast",
-        "chance": 16,
-        "description": "cast Frozen Boulder Level 60",
-        "details": "Throw a frozen boulder dealing cold damage to monsters on its path."
+        "chance": 10,
+        "description": "cast Frozen Boulder Level [50-85]",
+        "details": "Chance: 10-20%. Throw a frozen boulder dealing cold damage to monsters on its path."
       }
     ],
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_serpents_embrace",
@@ -317,14 +326,6 @@
         2,
         3
       ],
-      "increased_poisoned_damage": [
-        15,
-        30
-      ],
-      "extra_damage_poisoned": [
-        15,
-        30
-      ],
       "poison_skill_damage": [
         15,
         30
@@ -334,20 +335,26 @@
         10,
         15
       ],
-      "increased_poisoned_frequency": 15,
+      "increased_poisoned_damage": [
+        15,
+        30
+      ],
       "extra_poison_dmg_to_poisoned": [
         15,
         30
-      ]
+      ],
+      "increased_poisoned_frequency": 15
     },
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 5,
-        "description": "cast Jungle Camouflage Level 10",
-        "details": "Temporarily increases your poison skill damage."
+        "description": "cast Jungle Camouflage Level [10-15]",
+        "details": "Chance: 5-8%. Temporarily increases your poison skill damage."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_set_s_lightning_sash",
@@ -364,15 +371,15 @@
         120,
         140
       ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "to_vitality": 30,
       "lightning_skills": [
         3,
         6
       ],
-      "increased_stasis_damage": [
-        25,
-        35
-      ],
-      "to_vitality": 30,
       "lightning_skill_damage": [
         25,
         35
@@ -381,32 +388,30 @@
         25,
         40
       ],
+      "max_lightning_resistance": 10,
       "lightning_absorption": [
         10,
         15
       ],
-      "max_lightning_resistance": 10,
-      "all_skills": [
-        1,
-        2
-      ],
-      "stasis_damage": [
+      "increased_stasis_damage": [
         25,
         35
       ]
     },
     "procs": [
       {
-        "trigger": "on_hit",
-        "chance": 4,
-        "description": "cast Static Shock Level 24",
-        "details": "Shock target location with static electricity inflicting monsters with static shock dealing lightning damage over time. "
+        "trigger": "on_attack",
+        "chance": 3,
+        "description": "cast Static Shock Level [18-26]",
+        "details": "Chance: 3-5%. Shock target location with static electricity inflicting monsters with static shock dealing lightning damage over time. "
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_soulburn_belt",
-    "name": "Soulborn Belt",
+    "name": "Soulburn Belt",
     "baseType": "Belt",
     "slot": "belt",
     "rarity": "heroic",
@@ -449,9 +454,12 @@
       {
         "trigger": "on_cast",
         "chance": 5,
-        "description": "cast Soulborn Level 22"
+        "description": "cast Soulburn Level [18-26]",
+        "details": "Chance: 5-8%. "
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_girdle_of_eternal_war",
@@ -523,7 +531,9 @@
         20
       ],
       "all_resistances": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_komodo_s_bloodstrap",
@@ -553,15 +563,18 @@
         8,
         14
       ],
-      "random_skill_element": 2,
-      "life_based_on_level": 520
+      "life_based_on_level": 520,
+      "random_skill_element": [
+        1,
+        2
+      ]
     },
     "procs": [
       {
         "trigger": "on_block",
         "chance": 5,
-        "description": "cast Defunct Surgeon Level 27",
-        "details": "Temporarily increase your attack speed and life stolen per hit. When active lose a portion of your maximum life per second (Non-fatal)."
+        "description": "cast Defunct Surgeon Level [20-32]",
+        "details": "Chance: 5-8%. Temporarily increase your attack speed and life stolen per hit. When active lose a portion of your maximum life per second (Non-fatal)."
       }
     ],
     "skillBonuses": {
@@ -569,7 +582,9 @@
         20,
         35
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_heroic_sash_of_eternal_hatred",
@@ -592,8 +607,15 @@
       ],
       "faster_hit_recovery": 75
     },
-    "maxAffixes": 2,
-    "randomAffixGroupId": "random_unholy"
+    "maxAffixes": 3,
+    "randomAffixGroupId": "random_unholy",
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "Unholy",
+      "Unholy",
+      "Unholy"
+    ]
   },
   {
     "id": "belt_heroic_trophy_hunter",
@@ -643,7 +665,9 @@
         "description": "cast Collector Level 1",
         "details": "Activates a random Shrine event."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_ashen_belt",
@@ -670,7 +694,9 @@
       ],
       "life_based_on_level": 500,
       "max_fire_resistance": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_assassin_s_belt",
@@ -701,7 +727,9 @@
       ],
       "to_dexterity": 15,
       "damage_mitigation": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_belt_of_war",
@@ -731,7 +759,9 @@
         3,
         5
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_bronze_legion_girdle",
@@ -762,7 +792,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_brute_s_cord",
@@ -790,7 +822,9 @@
       ],
       "defense_ignored": 20,
       "to_strength": 20
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_butcher_s_belt",
@@ -828,7 +862,9 @@
         30
       ]
     },
-    "setId": "blood_bond"
+    "setId": "blood_bond",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_cingulum_of_shifting_destiny",
@@ -845,7 +881,7 @@
         150,
         175
       ],
-      "all_skills": [
+      "all_skills_class": [
         2,
         3
       ],
@@ -853,7 +889,9 @@
         15,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_combat_duty_belt",
@@ -888,7 +926,9 @@
         40
       ],
       "to_armor": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_commander_s_sash",
@@ -937,7 +977,9 @@
     },
     "uniqueEffects": [
       "Piercing Attack"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_crystal_belt",
@@ -964,7 +1006,9 @@
         15,
         20
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_earth_shaper_s_belt",
@@ -999,7 +1043,9 @@
       ],
       "all_resistances": 5
     },
-    "setId": "earth_shaper_s_pride"
+    "setId": "earth_shaper_s_pride",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_engineer_s_toolbelt",
@@ -1027,7 +1073,9 @@
         12
       ]
     },
-    "setId": "engineer_s_combat_gear"
+    "setId": "engineer_s_combat_gear",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_flame_diviner_s_cord",
@@ -1035,7 +1083,7 @@
     "baseType": "Belt",
     "slot": "belt",
     "rarity": "satanic_set",
-    "grade": "S",
+    "grade": "SS",
     "requiresLevel": 90,
     "defenseMin": 152,
     "defenseMax": 168,
@@ -1044,13 +1092,9 @@
         445,
         575
       ],
+      "fire_resistance": 45,
       "fire_skill_damage": [
         15,
-        25
-      ],
-      "fire_resistance": 45,
-      "magic_find": [
-        10,
         25
       ],
       "all_resistances": 25,
@@ -1063,11 +1107,13 @@
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 5,
-        "description": "cast Hydra Level 34",
-        "details": "Spawn a fiery hydra that shoots fireballs with area of effect fire damage towards the closest monster."
+        "chance": 3,
+        "description": "cast Hydra Level [25-35]",
+        "details": "Chance: 3-6%. Spawn a fiery hydra that shoots fireballs with area of effect fire damage towards the closest monster."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_foxweave_belt",
@@ -1096,7 +1142,9 @@
     },
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_gaze_of_the_void",
@@ -1130,7 +1178,9 @@
         30,
         40
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_girdle_of_resilience",
@@ -1160,7 +1210,9 @@
         25,
         40
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_guardian_s_waistband",
@@ -1178,19 +1230,17 @@
         35
       ],
       "to_vitality": 10,
-      "all_resistances": [
-        5,
-        15
-      ],
-      "ignore_poison_res": [
-        15,
-        20
-      ],
       "poison_resistance": [
         15,
         20
+      ],
+      "all_resistances": [
+        5,
+        15
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_hatshepsut_s_girdle",
@@ -1217,7 +1267,9 @@
         15,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_heavy_duty",
@@ -1249,7 +1301,9 @@
         25,
         50
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_ice_queen_s_cestus",
@@ -1271,26 +1325,24 @@
         10,
         25
       ],
-      "damage_recouped_as_mana": [
-        8,
-        15
+      "cold_skills": [
+        1,
+        2
       ],
       "cold_resistance": [
         40,
         50
       ],
-      "cold_skills": [
-        1,
-        2
-      ],
-      "damage_drained_from_mana": [
+      "damage_recouped_as_mana": [
         8,
         15
       ]
     },
     "uniqueEffects": [
       "Cannot be Frozen"
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_justiciar_s_thunder_sash",
@@ -1307,10 +1359,15 @@
         45,
         75
       ],
-      "faster_cast_rate": [
-        10,
-        15
+      "increased_attack_speed": [
+        15,
+        25
       ],
+      "lightning_skills": [
+        2,
+        3
+      ],
+      "mana_per_kill": 12,
       "increased_mana": [
         2,
         5
@@ -1318,15 +1375,6 @@
       "arcane_resistance": [
         20,
         40
-      ],
-      "lightning_skills": [
-        2,
-        3
-      ],
-      "mana_per_kill": 12,
-      "increased_attack_speed": [
-        15,
-        25
       ]
     },
     "setId": "justiciar_s_thunder_raiment",
@@ -1339,7 +1387,9 @@
         2,
         4
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_knight_s_girdle",
@@ -1364,15 +1414,16 @@
         30,
         40
       ],
-      "damage_return": [
-        40,
-        60
-      ],
       "physical_damage_reduction": [
         2,
         4
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "uniqueEffects": [
+      "+[30-45]% increased Damage Returned to the Attacker"
+    ]
   },
   {
     "id": "belt_satanic_lich_sash",
@@ -1399,7 +1450,9 @@
         45,
         60
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_lunar_prophet_s_girdle",
@@ -1427,7 +1480,9 @@
         60
       ]
     },
-    "setId": "the_lunar_eclipse"
+    "setId": "the_lunar_eclipse",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_monkeyskin_belt",
@@ -1462,7 +1517,9 @@
         10,
         20
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_pitfighter_s_razor_belt",
@@ -1487,7 +1544,9 @@
       ],
       "to_strength": 15,
       "to_dexterity": 15
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_prophets_branch",
@@ -1514,7 +1573,9 @@
       ],
       "all_resistances": 20
     },
-    "setId": "mystic_of_the_forest"
+    "setId": "mystic_of_the_forest",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_rugal_s_sash_of_undertaking",
@@ -1545,11 +1606,13 @@
     "procs": [
       {
         "trigger": "when_struck",
-        "chance": 12,
-        "description": "cast Meat Shield Level 32",
-        "details": "Cast a meat shield reducing physical damage taken."
+        "chance": 6,
+        "description": "cast Meat Shield Level [30-40]",
+        "details": "Chance: 6-12%. Cast a meat shield reducing physical damage taken."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_runemaster_s_waistwrap",
@@ -1572,7 +1635,9 @@
         20
       ],
       "magic_damage_reduction": 5
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_sandmagis_sash",
@@ -1603,7 +1668,9 @@
         5,
         10
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_sash_of_the_magi",
@@ -1639,7 +1706,9 @@
         12,
         18
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_solar_magister_s_sash",
@@ -1647,24 +1716,20 @@
     "baseType": "Belt",
     "slot": "belt",
     "rarity": "satanic",
-    "grade": "B",
+    "grade": "S",
     "requiresLevel": 92,
     "defenseMin": 20,
     "defenseMax": 32,
     "implicit": {
-      "to_armor": [
-        10,
-        15
-      ],
-      "all_attributes": 8,
-      "fire_skill_damage": [
-        12,
-        20
-      ],
       "fire_resistance": [
         25,
         40
       ],
+      "fire_skill_damage": [
+        12,
+        20
+      ],
+      "all_attributes": 8,
       "fire_skills": [
         1,
         2
@@ -1674,10 +1739,12 @@
       {
         "trigger": "on_cast",
         "chance": 8,
-        "description": "cast Supernova Level 10",
+        "description": "cast Supernova Level [10-20]",
         "details": "Explode into a supernova dealing fire damage on a large radius."
       }
-    ]
+    ],
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_storm_s_dawn",
@@ -1703,7 +1770,9 @@
         75
       ],
       "lightning_resistance": -40
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_sun_wukong_s_belt",
@@ -1731,7 +1800,9 @@
         15
       ],
       "life_based_on_level": 300
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_tether_of_anguish",
@@ -1765,7 +1836,9 @@
         60
       ],
       "poison_length_reduced": 25
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_thunder_caller_s_sash",
@@ -1786,12 +1859,8 @@
         15,
         25
       ],
-      "damage_recouped_as_mana": [
-        5,
-        15
-      ],
       "defense_vs_missiles": 40,
-      "damage_drained_from_mana": [
+      "damage_recouped_as_mana": [
         5,
         15
       ]
@@ -1802,7 +1871,9 @@
         2,
         4
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_traveler_s_double_belt",
@@ -1826,7 +1897,9 @@
       "damage_mitigation": 10,
       "all_resistances": 20
     },
-    "setId": "traveler"
+    "setId": "traveler",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_tribal_belt",
@@ -1857,7 +1930,9 @@
         200
       ],
       "all_resistances": 10
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_tundra_warrior_s_girdle",
@@ -1894,7 +1969,9 @@
         10,
         30
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_usb_s_cord",
@@ -1911,7 +1988,10 @@
       "faster_cast_rate": 16,
       "lightning_skill_damage": 8,
       "mana": 64
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0,
+    "attackSpeed": 32
   },
   {
     "id": "belt_satanic_vagabond_s_strap",
@@ -1938,7 +2018,9 @@
       ],
       "damage_based_on_level": 40
     },
-    "setId": "vagabond_s_rags"
+    "setId": "vagabond_s_rags",
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_vipermagi_s_belt",
@@ -1955,15 +2037,20 @@
         30,
         45
       ],
+      "all_skills": [
+        0,
+        1
+      ],
       "faster_cast_rate": [
         10,
         20
       ],
-      "to_energy": 10,
       "mana_replenish_pct": 15,
-      "all_resistances": 15,
-      "all_skills": 1
-    }
+      "to_energy": 10,
+      "all_resistances": 15
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_satanic_warbosses_trophy_belt",
@@ -1988,7 +2075,9 @@
       "to_strength": 30,
       "to_vitality": 8,
       "enhanced_damage_based_on_level": 50
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   },
   {
     "id": "belt_unholy_el_patr_n_s_madness",
@@ -2012,6 +2101,8 @@
         1,
         3
       ]
-    }
+    },
+    "sockets": 0,
+    "maxSockets": 0
   }
 ]

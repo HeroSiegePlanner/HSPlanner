@@ -748,6 +748,91 @@ fn attack_speed_skill_rates_off_attacks_per_second() {
     );
 }
 
+#[test]
+fn scorching_whip_deals_spell_damage_at_every_learned_rank() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    for rank in 1..=20 {
+        let p = perf("exo", "scorching_whip", rank, &[], &[]);
+        let damage = p.damage.as_ref().expect("Scorching Whip damage");
+        assert!(damage.final_min > 0, "rank {rank}");
+        assert!((damage.base_min - (5.2 + 10.0 * rank as f64)).abs() < 1e-9);
+        assert!(
+            p.attack_damage.is_none(),
+            "the whip has no weapon damage component"
+        );
+        assert!(p.hit_dps_min.is_some_and(|dps| dps > 0.0), "rank {rank}");
+        assert_eq!(p.skill_costs["scorching_whip"].cast_rate_min, Some(1.5));
+    }
+    let unlearned = perf("exo", "scorching_whip", 0, &[], &[]);
+    assert!(unlearned.damage.is_none());
+    assert!(unlearned.hit_dps_min.is_none());
+}
+
+#[test]
+fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
+    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
+    let base = perf("exo", "scorching_whip", 20, &[], &[]);
+    let base_dps = base.hit_dps_max.expect("Scorching Whip DPS");
+    let base_mana = base.skill_costs["scorching_whip"].mana_per_sec_max.unwrap();
+    for (stat, multiplier) in [("increased_attack_speed", 2.0), ("faster_cast_rate", 1.0)] {
+        let fast = perf_with_stats("exo", "scorching_whip", 20, &[], &[(stat, "100")], 1.0);
+        assert_eq!(
+            fast.damage.as_ref().unwrap().final_max,
+            base.damage.as_ref().unwrap().final_max
+        );
+        assert!(
+            (fast.hit_dps_max.unwrap() - base_dps * multiplier).abs() < 1e-9,
+            "{stat}"
+        );
+        let cost = &fast.skill_costs["scorching_whip"];
+        assert_eq!(cost.cast_rate_max, Some(1.5 * multiplier), "{stat}");
+        assert!(
+            (cost.mana_per_sec_max.unwrap() - base_mana * multiplier).abs() < 1e-9,
+            "{stat}"
+        );
+    }
+}
+
+#[test]
+fn scorching_whip_uses_equipped_weapon_speed_and_its_subtree_bonus() {
+    use crate::calc::commands::{calc_build_performance, BuildPerformanceInput};
+
+    for (weapon, base_rate) in [
+        ("base_spell_gnarled_staff", 1.25),
+        ("base_sword_scimitar", 1.8),
+    ] {
+        for (chosen_rank, multiplier) in [(0, 1.0), (5, 1.5)] {
+            let input = BuildPerformanceInput {
+                class_id: Some("exo".into()),
+                level: 100,
+                main_skill_id: Some("scorching_whip".into()),
+                skill_ranks: HashMap::from([("scorching_whip".into(), 20)]),
+                subskill_ranks: HashMap::from([(
+                    "scorching_whip:sun_gods_chosen".into(),
+                    chosen_rank,
+                )]),
+                inventory: Inventory::from([(
+                    "weapon".into(),
+                    EquippedItem {
+                        base_id: weapon.into(),
+                        ..Default::default()
+                    },
+                )]),
+                season: Some("s10".into()),
+                ..Default::default()
+            };
+            let p = calc_build_performance(input);
+            let rate = base_rate * multiplier;
+            let dps = p.hit_dps_max.expect("Scorching Whip DPS");
+            assert!(
+                (dps - p.damage.as_ref().unwrap().final_max as f64 * rate).abs() < 1e-9,
+                "{weapon}, chosen {chosen_rank}"
+            );
+            assert_eq!(p.skill_costs["scorching_whip"].cast_rate_max, Some(rate));
+        }
+    }
+}
+
 // demon_slayer:demons_calling#6 inflicts burning and boosts its damage.
 #[test]
 fn ailment_dps_adds_on_top_of_hit_dps() {
@@ -1514,4 +1599,43 @@ fn avalanche_is_cooldown_gated_and_scales_with_skill_haste() {
         "+35% haste expected, got x{}",
         fast / slow
     );
+}
+
+#[test]
+fn native_calculation_steps_reconcile_real_spell_attack_and_entity_dps() {
+    for (class, skill) in [
+        ("stormweaver", "charged_bolts"),
+        ("jotunn", "frost_sunder"),
+        ("marksman", "gunner_drone"),
+    ] {
+        let result = perf(class, skill, 20, &[], &[]);
+        let combined = result
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Combined DPS")
+            .expect(skill);
+        assert_eq!(
+            combined.value(),
+            (
+                result.combined_dps_min.unwrap(),
+                result.combined_dps_max.unwrap()
+            )
+        );
+        let hit = result
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Average hit DPS")
+            .unwrap();
+        assert_eq!(
+            hit.value(),
+            (
+                result.avg_hit_dps_min.unwrap(),
+                result.avg_hit_dps_max.unwrap()
+            )
+        );
+        assert!(!result.calculation_sources().is_empty());
+        let json = serde_json::to_value(result).unwrap();
+        assert!(json.get("calculation").is_none());
+        assert!(json.get("calculationSources").is_none());
+    }
 }

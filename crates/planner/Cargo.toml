@@ -1,0 +1,19 @@
+[package]
+name = "hsplanner-planner"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+hsplanner-engine = { workspace = true, features = ["suggestions", "ocr"] }
+hsplanner-build.workspace = true
+hsplanner-ui.workspace = true
+gpui-kit.workspace = true
+log.workspace = true
+image = { version = "0.25", default-features = false, features = ["png"] }
+serde.workspace = true
+serde_json.workspace = true
+
+[build-dependencies]
+regex = "1"
+serde_json.workspace = true

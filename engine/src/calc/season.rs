@@ -114,11 +114,15 @@ pub fn memoized_current_season<T: 'static>(
 pub fn patches_for(season_id: &str) -> HashMap<String, Value> {
     let mut out = HashMap::new();
     for (rel, content) in SEASON_PATCHES {
-        let Some((dir, file)) = rel.split_once('/') else { continue };
+        let Some((dir, file)) = rel.split_once('/') else {
+            continue;
+        };
         if dir != season_id {
             continue;
         }
-        let Some(name) = file.strip_suffix(".patch.json") else { continue };
+        let Some(name) = file.strip_suffix(".patch.json") else {
+            continue;
+        };
         match serde_json::from_str::<Value>(content) {
             Ok(v) => {
                 out.insert(name.to_string(), v);

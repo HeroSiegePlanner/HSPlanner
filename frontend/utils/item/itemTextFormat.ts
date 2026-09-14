@@ -1,6 +1,0 @@
-export { nativeAffixMath } from './itemTextShared'
-export type { AffixMathProvider } from './itemTextShared'
-export { serializeEquippedItem } from './itemSerialize'
-export { parseItemText } from './itemParse'
-export type { ParseError, ParseResult } from './itemParse'
-export { customImplicitLine, insertImplicitLine } from './itemTextInsert'

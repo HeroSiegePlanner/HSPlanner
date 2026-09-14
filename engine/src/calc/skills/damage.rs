@@ -1,9 +1,10 @@
+use super::calculation::{number, range, scalar, stat_inputs, CalculationStep};
 use std::collections::HashMap;
 
 use super::{
-    AttrMap, BonusSource, ConditionMap, ELEMENTS, ExtraSource, ItemSkillBonuses, Ranged, ResistMap,
-    Skill, SkillDamageBreakdown, SkillRanks, StatMap, collect_extra_damage, crit_factors, r_max,
-    r_min, rg,
+    collect_extra_damage, crit_factors, r_max, r_min, rg, AttrMap, BonusSource, ConditionMap,
+    ExtraSource, ItemSkillBonuses, Ranged, ResistMap, Skill, SkillDamageBreakdown, SkillRanks,
+    StatMap, ELEMENTS,
 };
 use crate::calc::affix_tags;
 use crate::calc::types::AffixEffect;
@@ -14,7 +15,7 @@ pub(super) struct ElementKeys {
     pub skill_damage_more: &'static str,
     pub flat_skill_damage: &'static str,
     pub ignore_res: &'static str,
-    pub enemy_res: &'static str,
+    pub legacy_ignore_res: &'static str,
 }
 
 const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
@@ -26,7 +27,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "fire_skill_damage_more",
             flat_skill_damage: "flat_fire_skill_damage",
             ignore_res: "ignore_fire_res",
-            enemy_res: "enemy_fire_resist",
+            legacy_ignore_res: "enemy_fire_resist",
         },
     ),
     (
@@ -37,7 +38,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "cold_skill_damage_more",
             flat_skill_damage: "flat_cold_skill_damage",
             ignore_res: "ignore_cold_res",
-            enemy_res: "enemy_cold_resist",
+            legacy_ignore_res: "enemy_cold_resist",
         },
     ),
     (
@@ -48,7 +49,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "lightning_skill_damage_more",
             flat_skill_damage: "flat_lightning_skill_damage",
             ignore_res: "ignore_lightning_res",
-            enemy_res: "enemy_lightning_resist",
+            legacy_ignore_res: "enemy_lightning_resist",
         },
     ),
     (
@@ -59,7 +60,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "poison_skill_damage_more",
             flat_skill_damage: "flat_poison_skill_damage",
             ignore_res: "ignore_poison_res",
-            enemy_res: "enemy_poison_resist",
+            legacy_ignore_res: "enemy_poison_resist",
         },
     ),
     (
@@ -70,7 +71,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "arcane_skill_damage_more",
             flat_skill_damage: "flat_arcane_skill_damage",
             ignore_res: "ignore_arcane_res",
-            enemy_res: "enemy_arcane_resist",
+            legacy_ignore_res: "enemy_arcane_resist",
         },
     ),
     (
@@ -81,7 +82,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "physical_skill_damage_more",
             flat_skill_damage: "flat_physical_skill_damage",
             ignore_res: "ignore_physical_res",
-            enemy_res: "enemy_physical_resist",
+            legacy_ignore_res: "enemy_physical_resist",
         },
     ),
     (
@@ -92,7 +93,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "magic_skill_damage_more",
             flat_skill_damage: "flat_magic_skill_damage",
             ignore_res: "ignore_magic_res",
-            enemy_res: "enemy_magic_resist",
+            legacy_ignore_res: "enemy_magic_resist",
         },
     ),
     (
@@ -103,7 +104,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "explosion_skill_damage_more",
             flat_skill_damage: "flat_explosion_skill_damage",
             ignore_res: "ignore_explosion_res",
-            enemy_res: "enemy_explosion_resist",
+            legacy_ignore_res: "enemy_explosion_resist",
         },
     ),
 ];
@@ -142,7 +143,8 @@ pub(super) fn bonus_source_synergy_pct(
     skills_by_name: &HashMap<String, Skill>,
     item_skill_bonuses: &ItemSkillBonuses,
     for_attack: bool,
-) -> Ranged {
+) -> (Ranged, Vec<CalculationStep>) {
+    let mut trace = Vec::new();
     let mut synergy_min = 0.0;
     let mut synergy_max = 0.0;
     for bs in &s.bonus_sources {
@@ -160,6 +162,15 @@ pub(super) fn bonus_source_synergy_pct(
         match bs {
             BonusSource::AttributePoint { source, value, .. } => {
                 let v = attributes.get(source).copied().unwrap_or((0.0, 0.0));
+                trace.push(CalculationStep::new(
+                    format!("Synergy · {source}"),
+                    format!(
+                        "{} attribute points × {}% per point",
+                        range(v),
+                        number(*value)
+                    ),
+                    (r_min(v) * value, r_max(v) * value),
+                ));
                 synergy_min += r_min(v) * value;
                 synergy_max += r_max(v) * value;
             }
@@ -183,16 +194,26 @@ pub(super) fn bonus_source_synergy_pct(
                         .copied()
                         .unwrap_or((0.0, 0.0));
                     let (tg_min, tg_max) = tag_skills_bonus(stats, s2);
+                    let ranks = (
+                        br + r_min(all) + el_min + tg_min + it.0,
+                        br + r_max(all) + el_max + tg_max + it.1,
+                    );
+                    trace.push(CalculationStep::new(format!("Synergy · {source}"), format!("({} allocated + {} all skills + {} element + {} tags + {} item ranks) × {}% per rank", number(br), range(all), range((el_min, el_max)), range((tg_min, tg_max)), range(it), number(*value)), (ranks.0 * value, ranks.1 * value)));
                     synergy_min += (br + r_min(all) + el_min + tg_min + it.0) * value;
                     synergy_max += (br + r_max(all) + el_max + tg_max + it.1) * value;
                 } else {
+                    trace.push(CalculationStep::new(
+                        format!("Synergy · {source}"),
+                        format!("{} rank × {}% per rank", number(br), number(*value)),
+                        scalar(br * value),
+                    ));
                     synergy_min += br * value;
                     synergy_max += br * value;
                 }
             }
         }
     }
-    (synergy_min, synergy_max)
+    ((synergy_min, synergy_max), trace)
 }
 
 pub struct SkillInput<'a> {
@@ -226,10 +247,7 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         return None;
     }
     let has_formula = s.damage_formula.is_some();
-    let has_table = s
-        .damage_per_rank
-        .as_ref()
-        .is_some_and(|t| !t.is_empty());
+    let has_table = s.damage_per_rank.as_ref().is_some_and(|t| !t.is_empty());
     if !has_formula && !has_table {
         return None;
     }
@@ -272,13 +290,21 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
             let r = (eff as i64).max(1);
             let field = |i: usize| {
                 let d = &t[i];
-                if is_max { d.max } else { d.min }
+                if is_max {
+                    d.max
+                } else {
+                    d.min
+                }
             };
             if r <= n {
                 field((r - 1) as usize).max(0.0)
             } else {
                 let last = field((n - 1) as usize);
-                let prev = if n >= 2 { field((n - 2) as usize) } else { last };
+                let prev = if n >= 2 {
+                    field((n - 2) as usize)
+                } else {
+                    last
+                };
                 (last + (last - prev) * (r - n) as f64).max(0.0)
             }
         };
@@ -308,7 +334,7 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     flat_min += input.conversion_flat;
     flat_max += input.conversion_flat;
 
-    let (synergy_min, synergy_max) = bonus_source_synergy_pct(
+    let ((synergy_min, synergy_max), synergy_steps) = bonus_source_synergy_pct(
         s,
         input.attributes,
         input.stats,
@@ -343,10 +369,14 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let skill_more_max =
         (1.0 + r_max(magic_more) / 100.0) * (1.0 + r_max(elem_more) / 100.0) * arch_more.1;
 
-    let (mut extra_mult, mut extra_sources) =
-        collect_extra_damage(input.stats, input.enemy_conditions, s.damage_type.as_deref());
+    let (mut extra_mult, mut extra_sources) = collect_extra_damage(
+        input.stats,
+        input.enemy_conditions,
+        s.damage_type.as_deref(),
+    );
     if input.of_total_damage > 0.0 {
         extra_sources.push(ExtraSource {
+            stat_key: None,
             label: "Subtree",
             pct: input.of_total_damage,
         });
@@ -369,7 +399,11 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         let base = crit_factors(input.stats, is_spell);
         super::CritFactors {
             chance: if crit_portion > 0.0 { base.chance } else { 0.0 },
-            damage_pct: if crit_portion > 0.0 { base.damage_pct } else { 0.0 },
+            damage_pct: if crit_portion > 0.0 {
+                base.damage_pct
+            } else {
+                0.0
+            },
             on_crit_mult: 1.0 - crit_portion + crit_portion * base.on_crit_mult,
             avg_mult: 1.0 - crit_portion + crit_portion * base.avg_mult,
         }
@@ -380,11 +414,14 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         .as_deref()
         .and_then(|dt| input.enemy_resistances.get(dt).copied())
         .unwrap_or(0.0);
-    // Item implicits spell pierce as enemy_<element>_resist / enemy_all_resist.
+    // Compatibility for raw damage API callers using old stat keys. Build stats
+    // already normalize these keys and fan ignore_all_res out to each element;
+    // never add ignore_all_res here again.
     let raw_ignore = keys
         .map(|k| {
             let implicit = if is_elemental {
-                r_max(rg(input.stats, k.enemy_res)) + r_max(rg(input.stats, "enemy_all_resist"))
+                r_max(rg(input.stats, k.legacy_ignore_res))
+                    + r_max(rg(input.stats, "enemy_all_resist"))
             } else {
                 0.0
             };
@@ -468,7 +505,271 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let avg_min_f = hit_min * crit.avg_mult * multicast_mult * projectiles as f64;
     let avg_max_f = hit_max * crit.avg_mult * multicast_mult * projectiles as f64;
 
+    let mut calculation = Vec::new();
+    stat_inputs(&mut calculation, input.stats, ["all_skills"]);
+    if let Some(keys) = keys {
+        stat_inputs(&mut calculation, input.stats, [keys.skills]);
+    }
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        affix_tags::keys_for(AffixEffect::Rank, &s.tags),
+    );
+    calculation.push(CalculationStep::new(
+        "Effective rank",
+        format!(
+            "{} allocated + {} all skills + {} element + {} tags + {} item ranks",
+            number(input.allocated_rank),
+            range(all_skills),
+            range((elem_min, elem_max)),
+            range((tag_min, tag_max)),
+            range(item)
+        ),
+        (eff_min, eff_max),
+    ));
+    let base_formula = s.damage_formula.as_ref().map(|f| format!("max(0, {} + {} × {} rank)", number(f.base), number(f.per_level), range((eff_min, eff_max)))).unwrap_or_else(|| "Damage table at effective rank; above the table, extend its final per-rank slope; minimum 0".into());
+    calculation.push(CalculationStep::new(
+        "Base damage",
+        base_formula,
+        (base_min, base_max),
+    ));
+    stat_inputs(&mut calculation, input.stats, ["flat_skill_damage"]);
+    if is_elemental {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            [
+                "flat_elemental_skill_damage",
+                "flat_magic_skill_damage",
+                "magic_skill_damage",
+                "magic_skill_damage_more",
+            ],
+        );
+    }
+    if let Some(keys) = keys {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            [
+                keys.flat_skill_damage,
+                keys.skill_damage,
+                keys.skill_damage_more,
+                keys.ignore_res,
+            ],
+        );
+        if is_elemental {
+            stat_inputs(
+                &mut calculation,
+                input.stats,
+                [keys.legacy_ignore_res, "enemy_all_resist"],
+            );
+        }
+    }
+    for effect in [
+        AffixEffect::FlatDamage,
+        AffixEffect::Damage,
+        AffixEffect::DamageMore,
+    ] {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            affix_tags::keys_for(effect, &s.tags),
+        );
+    }
+    calculation.push(CalculationStep::new(
+        "Converted flat damage",
+        "Skill subtree conversion from build stats",
+        scalar(input.conversion_flat),
+    ));
+    calculation.push(CalculationStep::new(
+        "Flat added",
+        "Sum of matching flat damage stats + converted flat damage",
+        (flat_min, flat_max),
+    ));
+    calculation.extend(synergy_steps);
+    calculation.push(CalculationStep::new(
+        "Synergy multiplier",
+        format!("1 + {}% / 100", range((synergy_min, synergy_max))),
+        (1.0 + synergy_min / 100.0, 1.0 + synergy_max / 100.0),
+    ));
+    calculation.push(CalculationStep::new(
+        "Converted skill damage %",
+        "Skill subtree conversion from build stats",
+        scalar(input.conversion_skill_damage_pct),
+    ));
+    calculation.push(CalculationStep::new(
+        "Increased skill damage multiplier",
+        format!(
+            "1 + ({} magic + {} element + {} tags + {} conversion)% / 100",
+            range(magic),
+            range(elem),
+            range(arch_add),
+            number(input.conversion_skill_damage_pct)
+        ),
+        (1.0 + skill_dmg_min / 100.0, 1.0 + skill_dmg_max / 100.0),
+    ));
+    calculation.push(CalculationStep::new(
+        "More skill damage multiplier",
+        format!(
+            "(1 + {}% / 100) × (1 + {}% / 100) × {} tag multipliers",
+            range(magic_more),
+            range(elem_more),
+            range(arch_more)
+        ),
+        (skill_more_min, skill_more_max),
+    ));
+    for source in &extra_sources {
+        stat_inputs(&mut calculation, input.stats, source.stat_key);
+        calculation.push(CalculationStep::new(
+            format!("Extra damage · {}", source.label),
+            "Applied bonus %; ranged build bonuses use the mean of their endpoints",
+            scalar(source.pct),
+        ));
+    }
+    calculation.push(CalculationStep::new(
+        "Extra damage multiplier",
+        format!(
+            "(1 + sum of applicable build extra damage % / 100) × (1 + {}% subtree / 100)",
+            number(input.of_total_damage.max(0.0))
+        ),
+        scalar(extra_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Enemy damage taken multiplier",
+        format!(
+            "1 + {}% / 100 from this skill's subtree",
+            number(damage_taken_pct)
+        ),
+        scalar(damage_taken_mult),
+    ));
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        [
+            "elemental_break",
+            if is_spell {
+                "elemental_break_on_spell"
+            } else {
+                "elemental_break_on_strike"
+            },
+        ],
+    );
+    calculation.push(CalculationStep::new(
+        "Elemental break multiplier",
+        format!(
+            "1 + {}% / 100 (elemental hits only)",
+            number(elemental_break_pct)
+        ),
+        scalar(elemental_break_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Element resistance break multiplier",
+        format!(
+            "1 + {}% / 100; requires matching enemy condition",
+            number(element_break_pct)
+        ),
+        scalar(element_break_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Effective enemy resistance %",
+        format!(
+            "{}% configured resistance × (1 − {}% ignored / 100); ignore clamped to 0–100%",
+            number(enemy_res_pct),
+            number(ignore_res_pct)
+        ),
+        scalar(eff_res_pct),
+    ));
+    calculation.push(CalculationStep::new(
+        "Resistance multiplier",
+        format!("1 − {}% / 100", number(eff_res_pct)),
+        scalar(resistance_mult),
+    ));
+    calculation.push(CalculationStep::new("Hit before rounding", format!("({} base + {} flat) × {} synergy × {} increased × {} more × {} extra × {} damage taken × {} elemental break × {} element break × {} resistance", range((base_min, base_max)), range((flat_min, flat_max)), range((1.0 + synergy_min / 100.0, 1.0 + synergy_max / 100.0)), range((1.0 + skill_dmg_min / 100.0, 1.0 + skill_dmg_max / 100.0)), range((skill_more_min, skill_more_max)), number(extra_mult), number(damage_taken_mult), number(elemental_break_mult), number(element_break_mult), number(resistance_mult)), (hit_min, hit_max)));
+    calculation.push(CalculationStep::new(
+        "Hit damage",
+        "Floor hit before rounding; one projectile",
+        (hit_min.floor(), hit_max.floor()),
+    ));
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        if is_spell {
+            ["spell_crit_chance", "spell_crit_damage"]
+        } else {
+            ["crit_chance", "crit_damage"]
+        },
+    );
+    let crit_more = if is_spell {
+        0.0
+    } else {
+        r_max(rg(input.stats, "crit_damage_more"))
+    };
+    if !is_spell {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            ["crit_damage_more", "crit_damage_portion"],
+        );
+    }
+    calculation.push(CalculationStep::new(
+        "Critical damage multiplier",
+        format!(
+            "1 − {} share + {} share × (1 + {}% critical damage / 100) × (1 + {}% more / 100)",
+            number(crit_portion),
+            number(crit_portion),
+            number(crit.damage_pct),
+            number(crit_more)
+        ),
+        scalar(crit.on_crit_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Critical hit",
+        format!(
+            "floor({} unrounded hit × {})",
+            range((hit_min, hit_max)),
+            number(crit.on_crit_mult)
+        ),
+        (crit_min_f.floor(), crit_max_f.floor()),
+    ));
+    calculation.push(CalculationStep::new(
+        "Average critical multiplier",
+        format!(
+            "1 + clamp({}%, 0, 95) / 100 × ({} critical multiplier − 1)",
+            number(crit.chance),
+            number(crit.on_crit_mult)
+        ),
+        scalar(crit.avg_mult),
+    ));
+    if is_spell {
+        stat_inputs(&mut calculation, input.stats, ["multicast_chance"]);
+    }
+    calculation.push(CalculationStep::new(
+        "Multicast multiplier",
+        format!(
+            "1 + {}% / 100; entity-spawning skills cannot multicast",
+            number(multicast_chance)
+        ),
+        scalar(multicast_mult),
+    ));
+    calculation.push(CalculationStep::new(
+        "Projectiles",
+        "Configured/base projectile count plus subtree modifiers; minimum 1",
+        scalar(projectiles as f64),
+    ));
+    calculation.push(CalculationStep::new(
+        "Average damage per cast",
+        format!(
+            "floor({} unrounded hit × {} average crit × {} multicast × {} projectiles)",
+            range((hit_min, hit_max)),
+            number(crit.avg_mult),
+            number(multicast_mult),
+            projectiles
+        ),
+        (avg_min_f.floor(), avg_max_f.floor()),
+    ));
+
     Some(SkillDamageBreakdown {
+        calculation,
         effective_rank_min: eff_min,
         effective_rank_max: eff_max,
         base_min,
@@ -775,7 +1076,10 @@ mod tests {
     #[test]
     fn archetype_spell_damage_needs_the_spell_tag() {
         let s = stats(&[("spell_damage", 10.0), ("spell_damage_more", 25.0)]);
-        assert_eq!(archetype_skill_damage(&s, &tags(&["Spell"])), ((10.0, 10.0), (1.25, 1.25)));
+        assert_eq!(
+            archetype_skill_damage(&s, &tags(&["Spell"])),
+            ((10.0, 10.0), (1.25, 1.25))
+        );
         assert_eq!(
             archetype_skill_damage(&s, &tags(&["Attack", "Melee"])),
             ((0.0, 0.0), (1.0, 1.0)),
@@ -811,7 +1115,10 @@ mod tests {
             stats: stats(&[("guardian_damage", 50.0)]),
             ..Default::default()
         });
-        assert_eq!(plain.hit_max, 100, "flat must not leak to non-Guardian skills");
+        assert_eq!(
+            plain.hit_max, 100,
+            "flat must not leak to non-Guardian skills"
+        );
     }
 
     #[test]
@@ -929,7 +1236,10 @@ mod tests {
             stats: stats(&[("crit_chance", 50.0), ("crit_damage", 100.0)]),
             ..Default::default()
         });
-        assert_eq!(attack.crit_multiplier_avg, 1.0, "elemental member must not crit");
+        assert_eq!(
+            attack.crit_multiplier_avg, 1.0,
+            "elemental member must not crit"
+        );
         assert_eq!(attack.crit_chance, 0.0);
         assert_eq!(attack.avg_max, attack.hit_max);
     }
@@ -991,6 +1301,44 @@ mod tests {
     }
 
     #[test]
+    fn aggregated_ignore_all_counts_once_in_elemental_damage_and_caps_at_100() {
+        use crate::calc::stats::{
+            apply_stat_fan_outs, compute_final_stats, push_source, SourceContribution, SourceMap,
+            SourceType,
+        };
+        for all in [10., 110.] {
+            let mut sources = SourceMap::new();
+            for (key, amount) in [("ignore_all_res", all), ("ignore_cold_res", 20.)] {
+                push_source(
+                    &mut sources,
+                    key,
+                    SourceContribution {
+                        label: "test item".into(),
+                        source_type: SourceType::Item,
+                        value: (amount, amount),
+                        forge: None,
+                    },
+                );
+            }
+            apply_stat_fan_outs(&mut sources);
+            let stats = compute_final_stats(&sources);
+            for damage_type in ["fire", "cold", "lightning", "poison", "arcane", "physical"] {
+                let result = breakdown(&Case {
+                    damage_type,
+                    stats: stats.clone(),
+                    ..Default::default()
+                });
+                let expected = match damage_type {
+                    "physical" => 0.,
+                    "cold" => (all + 20.).min(100.),
+                    _ => all.min(100.),
+                };
+                assert_eq!(result.resistance_ignored_pct, expected, "{damage_type}");
+            }
+        }
+    }
+
+    #[test]
     fn item_implicit_enemy_resist_keys_count_as_pierce() {
         let cold = breakdown(&Case {
             damage_type: "cold",
@@ -1008,5 +1356,44 @@ mod tests {
             ..Default::default()
         });
         assert_eq!(physical.resistance_ignored_pct, 0.0);
+    }
+    #[test]
+    fn explanation_keeps_more_extra_crit_and_conversion_stages_reconcilable() {
+        let d = breakdown(&Case {
+            stats: stats(&[
+                ("lightning_skill_damage", 50.0),
+                ("lightning_skill_damage_more", 100.0),
+                ("extra_damage_burning", 20.0),
+                ("extra_damage_poisoned", 30.0),
+                ("spell_crit_chance", 100.0),
+                ("spell_crit_damage", 100.0),
+                ("multicast_chance", 50.0),
+            ]),
+            conditions: cond(&["burning", "poisoned"]),
+            conversion_flat: 20.0,
+            ..Default::default()
+        });
+        let step = |label| {
+            d.calculation()
+                .iter()
+                .find(|step| step.label() == label)
+                .unwrap()
+        };
+        assert_eq!(step("More skill damage multiplier").value(), (2.0, 2.0));
+        assert_eq!(step("Extra damage multiplier").value(), (1.5, 1.5));
+        assert_eq!(step("Average critical multiplier").value(), (1.95, 1.95));
+        assert_eq!(step("Hit before rounding").value(), (540.0, 540.0));
+        assert_eq!(
+            step("Average damage per cast").value(),
+            (d.avg_min as f64, d.avg_max as f64)
+        );
+        assert!(d
+            .calculation()
+            .iter()
+            .any(|step| step.stat_key() == Some("lightning_skill_damage_more")));
+        assert!(serde_json::to_value(&d)
+            .unwrap()
+            .get("calculation")
+            .is_none());
     }
 }

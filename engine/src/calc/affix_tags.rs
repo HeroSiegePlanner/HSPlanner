@@ -3,7 +3,7 @@
 //! keeping their own tag lists.
 
 use super::data;
-use super::skills::{Ranged, StatMap, r_max, r_min, rg};
+use super::skills::{r_max, r_min, rg, Ranged, StatMap};
 use super::types::AffixEffect;
 
 /// Stat keys of `effect` whose required tags the skill all carries.
@@ -108,7 +108,10 @@ mod tests {
         ]);
         let m = more_for(AffixEffect::DamageMore, &tags(&["Sentry", "Orbital"]), &s);
         assert!((m.0 - 3.0).abs() < 1e-9, "1.5 * 2.0, got {}", m.0);
-        assert_eq!(more_for(AffixEffect::DamageMore, &tags(&[]), &s), (1.0, 1.0));
+        assert_eq!(
+            more_for(AffixEffect::DamageMore, &tags(&[]), &s),
+            (1.0, 1.0)
+        );
     }
 
     #[test]

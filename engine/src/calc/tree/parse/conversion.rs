@@ -318,4 +318,3 @@ pub(crate) static DISABLE_RULES: LazyLock<Vec<DisableRule>> = LazyLock::new(|| {
         target: DisableTarget::LifeReplenish,
     }]
 });
-

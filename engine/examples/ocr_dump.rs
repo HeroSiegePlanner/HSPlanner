@@ -8,8 +8,9 @@ fn main() {
         args
     };
     for path in paths {
-        let bytes = std::fs::read(&path)
-            .unwrap_or_else(|e| panic!("cannot read {path}: {e}\n(run from the engine/ directory)"));
+        let bytes = std::fs::read(&path).unwrap_or_else(|e| {
+            panic!("cannot read {path}: {e}\n(run from the engine/ directory)")
+        });
         println!("=== {path} ===");
         match app_lib::ocr::ocr_image_bytes(&bytes) {
             Ok(lines) => {

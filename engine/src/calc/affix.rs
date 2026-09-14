@@ -1,12 +1,18 @@
 use super::skills::Ranged;
-use super::star_scaling::{is_stat_star_immune, stat_star_flat_bonus, stat_star_percent_multiplier};
+use super::star_scaling::{
+    is_stat_star_immune, stat_star_flat_bonus, stat_star_percent_multiplier,
+};
 pub use super::types::{Affix, AffixFormat, AffixSign};
 
 pub fn rolled_affix_value(affix: &Affix, roll: f64) -> f64 {
     let (Some(min), Some(max)) = (affix.value_min, affix.value_max) else {
         return 0.0;
     };
-    let raw = if min == max { max } else { min + (max - min) * roll };
+    let raw = if min == max {
+        max
+    } else {
+        min + (max - min) * roll
+    };
     let rounded = match affix.format {
         AffixFormat::Flat => raw.round(),
         AffixFormat::Percent => raw,
@@ -126,7 +132,13 @@ mod tests {
 
     #[test]
     fn rolled_value_flat_rounds() {
-        let a = aff(AffixSign::Plus, AffixFormat::Flat, 10.0, 20.0, "to_strength");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Flat,
+            10.0,
+            20.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_value(&a, 0.5), 15.0);
         assert_eq!(rolled_affix_value(&a, 0.33), 13.0);
         assert_eq!(rolled_affix_value(&a, 1.0), 20.0);
@@ -135,21 +147,45 @@ mod tests {
 
     #[test]
     fn rolled_value_percent_no_rounding() {
-        let a = aff(AffixSign::Plus, AffixFormat::Percent, 10.0, 20.0, "increased_life");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Percent,
+            10.0,
+            20.0,
+            "increased_life",
+        );
         assert!((rolled_affix_value(&a, 0.33) - 13.3).abs() < 1e-12);
     }
 
     #[test]
     fn rolled_value_negative_sign_flips() {
-        let a = aff(AffixSign::Minus, AffixFormat::Flat, 10.0, 20.0, "to_strength");
+        let a = aff(
+            AffixSign::Minus,
+            AffixFormat::Flat,
+            10.0,
+            20.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_value(&a, 0.5), -15.0);
-        let p = aff(AffixSign::Minus, AffixFormat::Percent, 10.0, 20.0, "cold_resistance");
+        let p = aff(
+            AffixSign::Minus,
+            AffixFormat::Percent,
+            10.0,
+            20.0,
+            "cold_resistance",
+        );
         assert!((rolled_affix_value(&p, 0.5) - (-15.0)).abs() < 1e-12);
     }
 
     #[test]
     fn rolled_value_collapsed_when_min_equals_max() {
-        let a = aff(AffixSign::Plus, AffixFormat::Flat, 12.0, 12.0, "to_strength");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Flat,
+            12.0,
+            12.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_value(&a, 0.0), 12.0);
         assert_eq!(rolled_affix_value(&a, 1.0), 12.0);
         assert_eq!(rolled_affix_value(&a, 0.5), 12.0);
@@ -165,17 +201,41 @@ mod tests {
 
     #[test]
     fn rolled_range_positive_signed() {
-        let a = aff(AffixSign::Plus, AffixFormat::Flat, 12.0, 18.0, "to_strength");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Flat,
+            12.0,
+            18.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_range(&a), (12.0, 18.0));
-        let p = aff(AffixSign::Plus, AffixFormat::Percent, 12.5, 18.7, "increased_life");
+        let p = aff(
+            AffixSign::Plus,
+            AffixFormat::Percent,
+            12.5,
+            18.7,
+            "increased_life",
+        );
         assert_eq!(rolled_affix_range(&p), (12.5, 18.7));
     }
 
     #[test]
     fn rolled_range_negative_flips_endpoints() {
-        let a = aff(AffixSign::Minus, AffixFormat::Flat, 10.0, 20.0, "to_strength");
+        let a = aff(
+            AffixSign::Minus,
+            AffixFormat::Flat,
+            10.0,
+            20.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_range(&a), (-20.0, -10.0));
-        let eq = aff(AffixSign::Minus, AffixFormat::Flat, 12.0, 12.0, "to_strength");
+        let eq = aff(
+            AffixSign::Minus,
+            AffixFormat::Flat,
+            12.0,
+            12.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_range(&eq), (-12.0, -12.0));
     }
 
@@ -183,7 +243,13 @@ mod tests {
 
     #[test]
     fn with_stars_no_stars_matches_unscaled() {
-        let a = aff(AffixSign::Plus, AffixFormat::Flat, 10.0, 20.0, "to_strength");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Flat,
+            10.0,
+            20.0,
+            "to_strength",
+        );
         // stars=None and stars=Some(0) both fall through to format-aware rounding
         // (Flat → round, Percent → as-is) so the result equals rolled_affix_value.
         assert_eq!(rolled_affix_value_with_stars(&a, 0.5, None), 15.0);
@@ -194,7 +260,13 @@ mod tests {
     fn with_stars_percent_multiplier_floors() {
         // to_strength = percent per_star=5. stars=5 → mult=1.25.
         // base=15, scaled=18.75, floor → 18.
-        let a = aff(AffixSign::Plus, AffixFormat::Flat, 10.0, 20.0, "to_strength");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Flat,
+            10.0,
+            20.0,
+            "to_strength",
+        );
         assert_eq!(rolled_affix_value_with_stars(&a, 0.5, Some(5)), 18.0);
     }
 
@@ -210,7 +282,13 @@ mod tests {
     fn with_stars_immune_stat_falls_back_to_format_rounding() {
         // attacks_per_second = kind None. mult=1, flat=0 → stars_active=false.
         // Percent format keeps fractional; scaled = base = 1.2.
-        let a = aff(AffixSign::Plus, AffixFormat::Percent, 1.0, 1.4, "attacks_per_second");
+        let a = aff(
+            AffixSign::Plus,
+            AffixFormat::Percent,
+            1.0,
+            1.4,
+            "attacks_per_second",
+        );
         assert!((rolled_affix_value_with_stars(&a, 0.5, Some(5)) - 1.2).abs() < 1e-12);
     }
 
@@ -247,7 +325,10 @@ mod tests {
         // fire_skills, 3 stars → flat=+1, mult=1.
         // (2, 4) → (3, 5)
         let v = (2.0, 4.0);
-        assert_eq!(apply_stars_to_ranged_value(v, "fire_skills", Some(3)), (3.0, 5.0));
+        assert_eq!(
+            apply_stars_to_ranged_value(v, "fire_skills", Some(3)),
+            (3.0, 5.0)
+        );
     }
 
     #[test]
@@ -265,7 +346,10 @@ mod tests {
     fn apply_stars_immune_stat_returns_input() {
         // attacks_per_second is kind None → mult=1, flat=0 → bail without floor
         let v = (1.0, 1.4);
-        assert_eq!(apply_stars_to_ranged_value(v, "attacks_per_second", Some(5)), v);
+        assert_eq!(
+            apply_stars_to_ranged_value(v, "attacks_per_second", Some(5)),
+            v
+        );
     }
 
     // ---- thin wrappers ----

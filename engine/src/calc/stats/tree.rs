@@ -85,7 +85,10 @@ pub(crate) fn apply_node_line_contributions(
                 // node_id embedded so TS resolves the exact allocated node
                 // (multiple nodes share the same display title).
                 let label = if parsed.self_condition.is_some() {
-                    format!("{}: {} #{} (conditional)", label_prefix, info.title, node_id)
+                    format!(
+                        "{}: {} #{} (conditional)",
+                        label_prefix, info.title, node_id
+                    )
                 } else {
                     format!("{}: {} #{}", label_prefix, info.title, node_id)
                 };
@@ -189,4 +192,3 @@ pub fn apply_tree_jewelry_sockets(
         }
     }
 }
-

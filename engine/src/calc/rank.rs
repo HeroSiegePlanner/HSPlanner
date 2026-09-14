@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::affix::apply_stars_to_ranged_value;
 use super::data::can_star_forge;
-use super::skills::{ItemSkillBonuses, Ranged, Skill, StatMap, r_max, r_min, rg};
+use super::skills::{r_max, r_min, rg, ItemSkillBonuses, Ranged, Skill, StatMap};
 use super::types::{Inventory, ItemBase};
 
 pub fn normalize_skill_name(name: &str) -> String {
@@ -73,9 +73,10 @@ pub fn aggregate_item_skill_bonuses(
         let Some(base) = items.get(&item.base_id) else {
             continue;
         };
-        let Some(skill_bonuses) = base.skill_bonuses.as_ref() else {
+        let skill_bonuses: Vec<_> = super::data::skill_bonus_entries(base, item).collect();
+        if skill_bonuses.is_empty() {
             continue;
-        };
+        }
         // Charm stars scale skill ranks too, matching implicit scaling and the UI.
         let stars = if can_star_forge(slot_key, &base.rarity) {
             item.stars
@@ -95,12 +96,16 @@ pub fn aggregate_item_skill_bonuses(
                 skill_name.as_str()
             };
             // implicit_overrides contract: a pin is the final total — no range, no star scaling.
-            let override_val = item.skill_bonus_overrides.get(skill_name).copied().or_else(|| {
-                let want = normalize_skill_name(skill_name);
-                item.skill_bonus_overrides
-                    .iter()
-                    .find_map(|(k, v)| (normalize_skill_name(k) == want).then_some(*v))
-            });
+            let override_val = item
+                .skill_bonus_overrides
+                .get(skill_name)
+                .copied()
+                .or_else(|| {
+                    let want = normalize_skill_name(skill_name);
+                    item.skill_bonus_overrides
+                        .iter()
+                        .find_map(|(k, v)| (normalize_skill_name(k) == want).then_some(*v))
+                });
             let (min, max) = if let Some(ov) = override_val {
                 let pinned = ov.round();
                 (pinned, pinned)
@@ -245,8 +250,14 @@ mod tests {
         let s = skill("Fireball", Some("fire"));
         let stats: StatMap = HashMap::new();
         let bonuses: ItemSkillBonuses = HashMap::new();
-        assert_eq!(effective_rank_range_for(&s, 0.0, &stats, &bonuses), (0.0, 0.0));
-        assert_eq!(effective_rank_range_for(&s, -3.0, &stats, &bonuses), (0.0, 0.0));
+        assert_eq!(
+            effective_rank_range_for(&s, 0.0, &stats, &bonuses),
+            (0.0, 0.0)
+        );
+        assert_eq!(
+            effective_rank_range_for(&s, -3.0, &stats, &bonuses),
+            (0.0, 0.0)
+        );
     }
 
     #[test]
@@ -305,7 +316,10 @@ mod tests {
     #[test]
     fn aggregate_item_without_bonuses_skipped() {
         let mut db: HashMap<String, ItemBase> = HashMap::new();
-        db.insert("plain_sword".into(), item_base("plain_sword", "weapon", &[]));
+        db.insert(
+            "plain_sword".into(),
+            item_base("plain_sword", "weapon", &[]),
+        );
         let mut inv: Inventory = HashMap::new();
         inv.insert("weapon".into(), equipped("plain_sword", None));
         let out = aggregate_item_skill_bonuses(&inv, &db);
