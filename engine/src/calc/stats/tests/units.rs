@@ -385,7 +385,7 @@ fn per_light_radius_stats_without_light_radius_add_nothing() {
 
 #[test]
 fn stat_fan_outs_present() {
-    assert_eq!(STAT_FAN_OUTS.len(), 2);
+    assert_eq!(STAT_FAN_OUTS.len(), 3);
     let (all_res_key, all_res_targets) = STAT_FAN_OUTS[0];
     assert_eq!(all_res_key, "all_resistances");
     assert_eq!(all_res_targets.len(), 5);

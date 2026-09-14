@@ -43,6 +43,7 @@ jobs:
       - name: Build native installers
         run: python tools/package-native.py
         env:
+          HSPLANNER_BUG_REPORT_URL: ${{ secrets.HSPLANNER_BUG_REPORT_URL || secrets.VITE_BUG_REPORT_URL }}
           HSPLANNER_WINDOWS_SIGN_COMMAND: ${{ secrets.HSPLANNER_WINDOWS_SIGN_COMMAND }}
       - name: Upload installers for review
         uses: actions/upload-artifact@v4

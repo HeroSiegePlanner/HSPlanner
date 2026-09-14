@@ -12,8 +12,8 @@ use hsplanner_engine::calc::{
 #[path = "gear_affixes.rs"]
 mod affix_pools;
 pub use affix_pools::{
-    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, set_affix_value,
-    set_forge_value,
+    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, jewel_affix_allowed,
+    set_affix_value, set_forge_value,
 };
 
 pub fn make_item(base_id: &str) -> Result<EquippedItem, String> {
@@ -76,6 +76,91 @@ pub fn set_forge(item: &mut EquippedItem, id: Option<&str>) -> Result<(), String
     };
     set_socket_count(item, item.socket_count);
     Ok(())
+}
+
+pub const RELIC_MAX_TIER: u32 = 10;
+
+pub fn is_relic(base: &ItemBase) -> bool {
+    base.rarity == "relic"
+}
+
+/// Ranged relic stats as `(is_skill_bonus, key, (min, max))`.
+fn relic_ranges(base: &ItemBase) -> Vec<(bool, String, (f64, f64))> {
+    let implicit = base
+        .implicit
+        .iter()
+        .flatten()
+        .map(|(k, v)| (false, k, v.as_ranged()));
+    let skills = base
+        .skill_bonuses
+        .iter()
+        .flatten()
+        .map(|(k, v)| (true, k, v.as_ranged()));
+    implicit
+        .chain(skills)
+        .filter(|(_, _, (lo, hi))| lo != hi)
+        .map(|(skill, key, range)| (skill, key.clone(), range))
+        .collect()
+}
+
+// ponytail: tier interpolates linearly between the data range ends; swap for per-tier tables if the game exposes them.
+fn relic_tier_value((lo, hi): (f64, f64), tier: u32) -> f64 {
+    let step = (tier.clamp(1, RELIC_MAX_TIER) - 1) as f64 / (RELIC_MAX_TIER - 1) as f64;
+    lo + (hi - lo) * step
+}
+
+/// Tier 1..=10 read back from the first pinned ranged stat; unpinned relics count as top tier.
+pub fn relic_tier(item: &EquippedItem) -> u32 {
+    let Some(base) = data::get_item(&item.base_id) else {
+        return RELIC_MAX_TIER;
+    };
+    let mut ranges = relic_ranges(base);
+    // Prefer the most precise range: rounded skill ranks can cover several tiers.
+    ranges.sort_by(|a, b| {
+        (b.2.1 - b.2.0)
+            .abs()
+            .total_cmp(&(a.2.1 - a.2.0).abs())
+            .then(a.1.cmp(&b.1))
+    });
+    ranges
+        .into_iter()
+        .find_map(|(skill, key, (lo, hi))| {
+            let pins = if skill {
+                &item.skill_bonus_overrides
+            } else {
+                &item.implicit_overrides
+            };
+            let value = *pins.get(&key)?;
+            value.is_finite().then(|| {
+                (((value - lo) / (hi - lo) * (RELIC_MAX_TIER - 1) as f64).round() + 1.)
+                    .clamp(1., RELIC_MAX_TIER as f64) as u32
+            })
+        })
+        .unwrap_or(RELIC_MAX_TIER)
+}
+
+/// Pins every ranged relic stat to the given tier; returns whether anything changed.
+pub fn set_relic_tier(item: &mut EquippedItem, tier: u32) -> bool {
+    let Some(base) = data::get_item(&item.base_id) else {
+        return false;
+    };
+    let mut changed = false;
+    for (skill, key, range) in relic_ranges(base) {
+        let value = relic_tier_value(range, tier);
+        let value = if skill { value.round() } else { value };
+        let pins = if skill {
+            &mut item.skill_bonus_overrides
+        } else {
+            &mut item.implicit_overrides
+        };
+        changed |= pins.insert(key, value) != Some(value);
+    }
+    changed
+}
+
+/// Only common items and items with a random affix pool take affixes; relics and uniques never do.
+pub fn accepts_affixes(base: &ItemBase) -> bool {
+    base.rarity == "common" || base.random_affix_group_id.is_some()
 }
 
 pub fn add_affix(item: &mut EquippedItem, id: &str) -> Result<(), String> {
@@ -231,6 +316,9 @@ pub fn commit(
 }
 
 pub fn stash(draft: &mut Draft, item: &EquippedItem) {
+    if data::get_item(&item.base_id).is_none_or(is_relic) {
+        return;
+    }
     let value = serde_json::to_value(item).unwrap();
     if draft
         .stash

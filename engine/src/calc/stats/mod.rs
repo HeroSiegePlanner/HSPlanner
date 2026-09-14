@@ -65,6 +65,16 @@ pub const STAT_FAN_OUTS: &[(&str, &[&str])] = &[
             "max_arcane_resistance",
         ],
     ),
+    (
+        "ignore_all_res",
+        &[
+            "ignore_fire_res",
+            "ignore_cold_res",
+            "ignore_lightning_res",
+            "ignore_poison_res",
+            "ignore_arcane_res",
+        ],
+    ),
 ];
 
 #[derive(Debug, Clone, Serialize)]

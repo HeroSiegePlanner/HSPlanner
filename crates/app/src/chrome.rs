@@ -1,4 +1,4 @@
-use crate::shell::{Section, SelectSection, SetUiZoom, ToggleAutoSave, ToggleProfileControls};
+use crate::shell::{OpenSettings, Section, SelectSection};
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
     Icon, IconName, Sizable, WindowExt,
@@ -253,9 +253,6 @@ impl RenderOnce for TopBar {
                     .into_any_element()
             })
             .collect();
-        let auto_save = self.auto_save;
-        let profile_controls = self.profile_controls;
-        let ui_zoom = self.ui_zoom;
         let compact = window.viewport_size().width < window.rem_size() * (1150. / 13.);
         let navigation_overflows = window.viewport_size().width < window.rem_size() * (1330. / 13.);
         let selected_section = self.section;
@@ -412,27 +409,8 @@ impl RenderOnce for TopBar {
                             .p_1p5()
                             .child(Icon::new(IconName::Settings).size_3p5())
                             .cursor_tooltip("Settings")
-                            .dropdown_menu(move |menu, _, _| {
-                                let mut menu = menu
-                                    .menu_with_check(
-                                        "Auto-save",
-                                        auto_save,
-                                        Box::new(ToggleAutoSave),
-                                    )
-                                    .menu_with_check(
-                                        "Build and profile controls",
-                                        profile_controls,
-                                        Box::new(ToggleProfileControls),
-                                    );
-                                menu = menu.separator();
-                                for zoom in theme::UI_ZOOM_STEPS {
-                                    menu = menu.menu_with_check(
-                                        format!("Interface scale · {:.0}%", zoom * 100.),
-                                        (ui_zoom - zoom).abs() < 0.001,
-                                        Box::new(SetUiZoom { zoom }),
-                                    );
-                                }
-                                menu
+                            .on_click(|_, window, cx| {
+                                window.dispatch_action(Box::new(OpenSettings), cx)
                             }),
                     ),
             )
@@ -464,6 +442,7 @@ impl SaveState {
 
 #[derive(IntoElement)]
 pub struct BottomBar {
+    session: Entity<hsplanner_build::session::Session>,
     save: SaveState,
     status: Option<SharedString>,
     updater: Entity<crate::update::Updater>,
@@ -471,11 +450,13 @@ pub struct BottomBar {
 
 impl BottomBar {
     pub fn new(
+        session: Entity<hsplanner_build::session::Session>,
         save: SaveState,
         status: Option<SharedString>,
         updater: Entity<crate::update::Updater>,
     ) -> Self {
         Self {
+            session,
             save,
             status,
             updater,
@@ -602,13 +583,13 @@ impl RenderOnce for BottomBar {
                     .map(|status| div().text_xs().text_color(muted).child(status)),
             )
             .child(
-                chrome_button("report-bug", "Report a bug", cx)
+                chrome_button("report-bug", "Report a bug…", cx)
                     .ml_auto()
                     .child(chrome_icon("bug"))
-                    .child("Report a bug")
-                    .cursor_tooltip("Report a bug on GitHub")
-                    .on_click(|_, _, cx| {
-                        cx.open_url("https://github.com/zium1337/HSPlanner/issues/new")
+                    .child("Report a bug…")
+                    .cursor_tooltip("Report a problem with optional screenshots and build")
+                    .on_click(move |_, window, cx| {
+                        crate::bug_report::open(self.session.clone(), window, cx)
                     }),
             )
             .child(

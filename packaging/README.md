@@ -34,10 +34,12 @@ executable. `HSPLANNER_PACKAGER` can point to a locally installed packager binar
 
 ## GitHub workflow and signing
 
-Run **Native installers** manually. It builds all three platforms and uploads
+Run **Native installers** manually (Actions, Run workflow, any branch) or add the
+`installers` label to a pull request. It builds Windows and Linux (macOS is packaged
+locally) and uploads
 installers as Actions artifacts, without publishing a release or updating any feed.
 Before publishing, choose an unused version in root `Cargo.toml`, edit
-`packaging/release-notes.md`, verify the packages and create the GitHub release.
+`CHANGELOG.md`, verify the packages and create the GitHub release.
 
 ## In-app updates
 
@@ -70,11 +72,12 @@ verification on the release runners. See the [packager configuration reference](
 
 ## Changelog and verification
 
-The native footer's version button opens the bundled `release-notes.md` offline.
+The native footer's version button opens the root `CHANGELOG.md`, embedded at build time for offline use.
 The dialog displays the running Cargo version, renders Markdown, scrolls at small
 window sizes and offers Close/Escape and a keyboard-accessible GitHub link.
-Developer history stays in root `CHANGELOG.md`; it is not copied into user-facing
-release notes. Update release notes before each installer build.
+Keep all release entries in `CHANGELOG.md`, newest first. Update this single file
+before each installer build and use it for the GitHub release body
+(`gh release create <tag> --notes-file CHANGELOG.md`).
 
 Verify on each target: install, launch without a development checkout, reopen a
 native save, open/scroll/close changelog, uninstall without deleting saved data,
@@ -94,3 +97,22 @@ Updates between GPUI releases are handled in-app; see *In-app updates*.
   passed, including ignoring an old malformed transfer file.
 - Windows/Linux packaging workflow, RPM support, public signing/notarization and
   installation on other machines remain unverified. No release was published.
+
+## Problem reports
+
+Native packages use the same report destination as Tauri. Set `HSPLANNER_BUG_REPORT_URL`
+(or the existing `VITE_BUG_REPORT_URL`) in the build environment. Local builds also
+read these keys from the ignored root `.env`; the native key takes precedence.
+The destination is embedded in the executable without printing it in build logs.
+A runtime `HSPLANNER_BUG_REPORT_URL` overrides it for isolated testing. Without a
+destination, the form remains available and explains why sending is disabled.
+
+The **Native installers** workflow passes the `HSPLANNER_BUG_REPORT_URL` Actions
+secret to the build, falling back to the existing `VITE_BUG_REPORT_URL` secret.
+No local `.env` file is needed on the runners. Fork pull requests do not receive
+repository secrets, so their test packages keep report sending disabled.
+
+Reports are sent only through **Send report**. They include the visible fields,
+app version and OS, selected images (PNG/JPEG/WebP/GIF, at most three and 8 MB each),
+and the captured build code only when **Attach build** is checked. Network failures
+preserve the draft; uploads are never retried automatically.

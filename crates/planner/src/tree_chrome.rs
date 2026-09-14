@@ -113,33 +113,12 @@ impl TreeView {
                     ))
                     .on_click(cx.listener(|this, _, window, cx| {
                         this.summary_open = !this.summary_open;
-                        this.inspector_open = false;
                         this.hovered = None;
                         window.focus(&this.focus, cx);
                         cx.notify();
                     })),
                 )
             })
-            .child(
-                hsplanner_ui::controls::planner_button(
-                    "tree-inspector",
-                    hsplanner_ui::controls::ButtonTone::Neutral,
-                    cx,
-                )
-                .label("Inspect")
-                .small()
-                .selected(self.inspector_open)
-                .cursor_tooltip("Inspect the selected node and all Net Change values")
-                .on_click(cx.listener(|this, _, window, cx| {
-                    this.inspector_open = !this.inspector_open;
-                    if this.inspector_open {
-                        this.summary_open = false;
-                    }
-                    this.hovered = None;
-                    window.focus(&this.focus, cx);
-                    cx.notify();
-                })),
-            )
             .when(self.scene.graph.kind == TreeKind::Incarnation, |toolbar| {
                 toolbar.child(
                     hsplanner_ui::controls::planner_button(
@@ -211,6 +190,40 @@ impl TreeView {
                 format!("{:.0}%", self.camera.scale * 100.),
                 accent,
             ))
+            .when_some(self.build.error.clone(), |bar, error| {
+                bar.child(separator())
+                    .child(div().text_color(palette.negative).child(error))
+                    .child(self.button("Retry calculation", Command::RetryCalculation, cx))
+            })
+            .when(std::env::var_os("HSPLANNER_DIAGNOSTICS").is_some(), |bar| {
+                let stats = self.paint_stats.get();
+                let calculation = if self.build.in_flight {
+                    "calculating…".to_owned()
+                } else if let Some(result) = &self.build.result {
+                    format!("calc {:.1} ms", result.milliseconds)
+                } else {
+                    String::new()
+                };
+                bar.child(separator())
+                    .child(div().text_color(palette.faint).child(format!(
+                        "{calculation} · {} visible · canvas {:.2} ms",
+                        stats.visible, stats.milliseconds
+                    )))
+                    .child(self.button(
+                        if self.motion_test.is_some() {
+                            "Stop motion test"
+                        } else {
+                            "Run motion test"
+                        },
+                        Command::Motion,
+                        cx,
+                    ))
+                    .children(
+                        self.motion_result
+                            .clone()
+                            .map(|result| div().text_color(palette.muted).child(result)),
+                    )
+            })
     }
 
     pub(super) fn ether_summary_panel(

@@ -66,14 +66,8 @@ pub fn inventory_entries(inventory: &Inventory) -> Vec<(&str, &EquippedItem, boo
     entries
 }
 
-const SATANIC_CRYSTAL_RARITIES: &[&str] = &[
-    "satanic",
-    "satanic_set",
-    "heroic",
-    "angelic",
-    "unholy",
-    "relic",
-];
+const SATANIC_CRYSTAL_RARITIES: &[&str] =
+    &["satanic", "satanic_set", "heroic", "angelic", "unholy"];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -555,7 +549,7 @@ mod tests {
         assert_eq!(forge_kind_for("heroic"), Some(ForgeKind::SatanicCrystal));
         assert_eq!(forge_kind_for("angelic"), Some(ForgeKind::SatanicCrystal));
         assert_eq!(forge_kind_for("unholy"), Some(ForgeKind::SatanicCrystal));
-        assert_eq!(forge_kind_for("relic"), Some(ForgeKind::SatanicCrystal));
+        assert_eq!(forge_kind_for("relic"), None);
         assert_eq!(forge_kind_for("common"), None);
         assert_eq!(forge_kind_for("rare"), None);
         assert_eq!(forge_kind_for(""), None);

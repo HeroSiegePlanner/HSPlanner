@@ -10,7 +10,7 @@ use hsplanner_ui::{
     theme::{self, TooltipTheme},
 };
 
-const NOTES: &str = include_str!("../../../packaging/release-notes.md");
+const NOTES: &str = include_str!("../../../CHANGELOG.md");
 const RELEASES: &str = "https://github.com/zium1337/HSPlanner/releases";
 
 pub fn open(window: &mut Window, cx: &mut App) {
@@ -46,7 +46,7 @@ pub fn open(window: &mut Window, cx: &mut App) {
                             .text_sm()
                             .font_weight(FontWeight::NORMAL)
                             .text_color(palette.muted)
-                            .child("What's new in this version"),
+                            .child("Release history"),
                     ),
             )
             .child(

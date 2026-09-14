@@ -77,7 +77,8 @@ gpui_kit::actions!(
         Quit,
         ToggleAutoSave,
         ToggleProfileControls,
-        ToggleDebugOverlay
+        ToggleDebugOverlay,
+        OpenSettings
     ]
 );
 
@@ -96,7 +97,7 @@ pub struct Shell {
     stats: Entity<hsplanner_planner::stats::StatsView>,
     sidebar: Entity<hsplanner_planner::stats_sidebar::StatsSidebar>,
     section: Section,
-    profile_controls: bool,
+    pub(crate) profile_controls: bool,
     name: Entity<InputState>,
     logo: Arc<Image>,
     updater: Entity<crate::update::Updater>,
@@ -506,6 +507,9 @@ impl Render for Shell {
                 this.profile_controls = !this.profile_controls;
                 cx.notify();
             }))
+            .on_action(cx.listener(|this, _: &OpenSettings, window, cx| {
+                crate::settings::open(this.session.clone(), cx.entity().downgrade(), window, cx);
+            }))
             .on_action(cx.listener(|this, _: &ToggleAutoSave, _, cx| {
                 this.apply(cx, |session| {
                     let mut settings = session.state().settings.clone();
@@ -637,6 +641,7 @@ impl Render for Shell {
                     .child(div().flex_1().min_w_0().h_full().child(content)),
             )
             .child(BottomBar::new(
+                self.session.clone(),
                 save,
                 (self.status != "Saved" && self.status != "Ready")
                     .then(|| SharedString::from(self.status.clone())),

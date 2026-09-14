@@ -92,10 +92,11 @@ fn prefix(line: &str) -> Option<(f64, bool, String)> {
         .then(|| (if &c[1] == "-" { -n } else { n }, range, c[5].to_owned()))
 }
 fn description_key(text: &str) -> String {
+    let text = hsplanner_engine::calc::resistance::canonical_text(text);
     static NUMBERS: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(r"[+-]?(?:\[[0-9.]+-[0-9.]+\]|[0-9.]+)%?").unwrap());
     NUMBERS
-        .replace_all(text, "")
+        .replace_all(&text, "")
         .split_whitespace()
         .collect::<Vec<_>>()
         .join(" ")
@@ -279,6 +280,8 @@ pub fn serialize(item: &EquippedItem) -> Result<String, String> {
 }
 
 fn parse_modifier(line: &str, forged: bool) -> Result<EquippedAffix, String> {
+    let normalized = hsplanner_engine::calc::resistance::canonical_text(line);
+    let line = normalized.as_ref();
     let unholy = line.starts_with("[Unholy]");
     let text = line.strip_prefix("[Unholy]").unwrap_or(line).trim();
     let c = SUFFIX
@@ -516,6 +519,8 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
             "implicit" | "skills" => {
                 let custom = line.ends_with("[custom]");
                 let body = line.trim_end_matches("[custom]").trim();
+                let normalized = hsplanner_engine::calc::resistance::canonical_text(body);
+                let body = normalized.as_ref();
                 let Some((value, range, name)) = prefix(body) else {
                     report(
                         line_no,
@@ -538,7 +543,9 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
                         .as_ref()
                         .and_then(|stats| {
                             stats.keys().find(|key| {
-                                stat_label(key).eq_ignore_ascii_case(&name) || *key == &name
+                                stat_label(key).eq_ignore_ascii_case(&name)
+                                    || key.as_str()
+                                        == hsplanner_engine::calc::resistance::canonical_key(&name)
                             })
                         })
                         .cloned()
@@ -546,7 +553,11 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
                             custom_stats()
                                 .into_iter()
                                 .find(|(key, label, _)| {
-                                    label.eq_ignore_ascii_case(&name) || key == &name
+                                    label.eq_ignore_ascii_case(&name)
+                                        || key.as_str()
+                                            == hsplanner_engine::calc::resistance::canonical_key(
+                                                &name,
+                                            )
                                 })
                                 .map(|s| s.0)
                         })
@@ -685,6 +696,12 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
     {
         report(0, "Too many affixes for this item".into(), false)
     }
+    if !item.affixes.is_empty() && !gear::accepts_affixes(base) {
+        report(0, "This item cannot have affixes".into(), false)
+    }
+    if !item.forged_mods.is_empty() && !data::can_star_forge(&base.slot, &base.rarity) {
+        report(0, "This item cannot have forged modifiers".into(), false)
+    }
     let valid = !diagnostics.iter().any(|d| !d.warning);
     ParseResult {
         item: valid.then_some(item),
@@ -754,6 +771,32 @@ mod tests {
         assert_eq!(parsed.affixes[0].roll, 0.25);
         assert_eq!(parsed.forged_mods[0].custom_value, Some(17.));
         assert_eq!(parsed.all_skills_class_id, item.all_skills_class_id);
+    }
+    #[test]
+    fn relics_reject_affixes_and_forged_modifiers() {
+        let mut item = gear::make_item("relic_relic_1000_kg").unwrap();
+        gear::set_forge(&mut item, Some("crystal_satanic_all_attributes")).unwrap();
+        let affix = data::get_affix("25_50_enhanced_defense_t1_armorer_s").unwrap();
+        item.affixes.push(EquippedAffix {
+            affix_id: affix.id.clone(),
+            tier: affix.tier,
+            roll: 1.,
+            custom_value: None,
+        });
+        let result = parse(&serialize(&item).unwrap(), &item);
+        assert!(result.item.is_none(), "{:?}", result.diagnostics);
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|d| d.message.contains("affixes"))
+        );
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|d| d.message.contains("forged"))
+        );
     }
     #[test]
     fn sockets_augment_and_deleted_implicit_lines_follow_text() {
@@ -834,5 +877,23 @@ mod tests {
             .unwrap()
             .replace("Implicit:\n", "Implicit:\n+1 Unknown stat [custom]\n");
         assert!(parse(&text, &item).item.is_none());
+    }
+
+    #[test]
+    fn legacy_resistance_names_import_as_current_positive_ignore_bonuses() {
+        let mut item = gear::make_item("body_armor_angelic_st_jupe_s_plate_of_command").unwrap();
+        item.implicit_overrides.insert("ignore_all_res".into(), 23.);
+        let old_text = serialize(&item)
+            .unwrap()
+            .replace("Ignore All Resistance", "Enemy All Resist");
+        let parsed = parse(&old_text, &item);
+        let imported = parsed
+            .item
+            .unwrap_or_else(|| panic!("{:?}", parsed.diagnostics));
+        assert_eq!(imported.implicit_overrides["ignore_all_res"], 23.);
+        assert!(!imported.implicit_overrides.contains_key("enemy_all_resist"));
+        let affix = parse_modifier("-7% to Enemy Cold Resistance [T3, custom]", false).unwrap();
+        assert_eq!(affix.affix_id, "to_enemy_cold_resistance_t3_coldbreaking");
+        assert_eq!(affix.custom_value, Some(7.));
     }
 }

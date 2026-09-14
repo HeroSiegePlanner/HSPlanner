@@ -341,6 +341,15 @@ pub struct ItemProcSpec {
     pub description: Option<String>,
     #[serde(default)]
     pub details: Option<String>,
+    /// Display metadata; this does not grant an unconditional skill bonus.
+    #[serde(default)]
+    pub granted_skill: Option<ItemSkillGrant>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ItemSkillGrant {
+    pub name: String,
+    pub rank: RangedValue,
 }
 
 /// What the calc does with a tag-scoped stat; `None` = known scope, not modelled.
@@ -831,7 +840,7 @@ pub struct EquippedItem {
     pub forged_mods: Vec<EquippedAffix>,
     #[serde(default)]
     pub augment: Option<AugmentRef>,
-    #[serde(default)]
+    #[serde(default, deserialize_with = "super::resistance::deserialize_overrides")]
     pub implicit_overrides: HashMap<String, f64>,
     /// Pinned totals for item-granted skill ranks, keyed by base skillBonuses name.
     #[serde(default)]
@@ -855,7 +864,7 @@ pub type Inventory = HashMap<SlotKey, EquippedItem>;
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CustomStat {
-    #[serde(default)]
+    #[serde(default, deserialize_with = "super::resistance::deserialize_key")]
     pub stat_key: String,
     #[serde(default)]
     pub value: String,

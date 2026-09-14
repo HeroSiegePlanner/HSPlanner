@@ -2,6 +2,43 @@ use super::super::*;
 use crate::calc::types::{EquippedAffix, EquippedItem};
 
 #[test]
+fn auroras_might_grants_lunar_aura_and_preserves_rune_bonuses() {
+    let inventory = Inventory::from([(
+        "weapon".into(),
+        EquippedItem {
+            base_id: "base_mace_cudgel".into(),
+            socket_count: 3,
+            socketed: vec![
+                Some("rune_ymn".into()),
+                Some("rune_co".into()),
+                Some("rune_qi".into()),
+            ],
+            ..Default::default()
+        },
+    )]);
+    let mut attrs = SourceMap::new();
+    let mut stats = SourceMap::new();
+    apply_inventory(&inventory, &mut attrs, &mut stats);
+    let ranks =
+        apply_item_granted_passive_stats(&inventory, None, &HashMap::new(), &mut attrs, &mut stats);
+    assert_eq!(ranks.get("lunar aura"), Some(&(12., 28.)));
+    assert_eq!(sum_ranged_from_map(&stats, "attack_rating_pct"), (24., 56.));
+    assert_eq!(sum_ranged_from_map(&stats, "all_resistances"), (24., 56.));
+    assert_eq!(
+        sum_ranged_from_map(&stats, "additive_arcane_damage"),
+        (440., 600.)
+    );
+    assert_eq!(
+        sum_ranged_from_map(&stats, "additive_cold_damage"),
+        (280., 280.)
+    );
+    assert_eq!(sum_ranged_from_map(&stats, "life_steal"), (7., 7.));
+    assert_eq!(sum_ranged_from_map(&stats, "attack_damage"), (20., 20.));
+    assert_eq!(sum_ranged_from_map(&attrs, "dexterity"), (10., 10.));
+    assert_eq!(sum_ranged_from_map(&attrs, "energy"), (0., 0.));
+}
+
+#[test]
 fn source_socket_prohibition_ignores_legacy_gems_but_keeps_common_sockets() {
     let gem = data::data()
         .gems
@@ -839,4 +876,84 @@ fn two_ritual_bands_mirror_nothing() {
     let mut stats: SourceMap = HashMap::new();
     apply_inventory(&inv, &mut attrs, &mut stats);
     assert!(stats.is_empty() && attrs.is_empty());
+}
+
+#[test]
+fn relic_slot_applies_pinned_ranged_implicit() {
+    let inventory = Inventory::from([(
+        "relic_1".to_string(),
+        EquippedItem {
+            base_id: "relic_relic_the_spoon".into(),
+            implicit_overrides: HashMap::from([("increased_mana".to_string(), 15.0)]),
+            ..Default::default()
+        },
+    )]);
+    let mut attrs = SourceMap::new();
+    let mut stats = SourceMap::new();
+    apply_inventory(&inventory, &mut attrs, &mut stats);
+    let mana: Vec<_> = stats["increased_mana"].iter().map(|s| s.value).collect();
+    assert_eq!(mana, vec![(15.0, 15.0)]);
+}
+
+#[test]
+fn ignore_all_resistance_adds_to_exactly_five_elements_with_sources() {
+    let mut sources = SourceMap::new();
+    for (key, value, label) in [
+        ("ignore_all_res", (10., 20.), "all resistance item"),
+        ("ignore_fire_res", (5., 5.), "fire item"),
+    ] {
+        push_source(
+            &mut sources,
+            key,
+            SourceContribution {
+                label: label.into(),
+                source_type: SourceType::Item,
+                value,
+                forge: None,
+            },
+        );
+    }
+    apply_stat_fan_outs(&mut sources);
+    let totals = compute_final_stats(&sources);
+    for element in ["fire", "cold", "lightning", "poison", "arcane"] {
+        let key = format!("ignore_{element}_res");
+        let expected = if element == "fire" {
+            (15., 25.)
+        } else {
+            (10., 20.)
+        };
+        assert_eq!(totals.get(&key), Some(&expected), "{key}");
+        assert!(sources[&key]
+            .iter()
+            .any(|s| s.label == "all resistance item"));
+    }
+    assert_eq!(totals["ignore_all_res"], (10., 20.));
+    for element in ["physical", "magic", "explosion"] {
+        assert!(!totals.contains_key(&format!("ignore_{element}_res")));
+    }
+}
+
+#[test]
+fn legacy_ignore_pin_replaces_base_once_and_stacks_with_nju_rune() {
+    let item: EquippedItem = serde_json::from_str(
+        r#"{
+        "baseId":"body_armor_angelic_st_jupe_s_plate_of_command",
+        "implicitOverrides":{"enemy_all_resist":23},
+        "socketCount":1,"socketed":["rune_nju"]
+    }"#,
+    )
+    .unwrap();
+    let inventory = Inventory::from([("armor".into(), item)]);
+    let mut attrs = SourceMap::new();
+    let mut sources = SourceMap::new();
+    apply_inventory(&inventory, &mut attrs, &mut sources);
+    apply_stat_fan_outs(&mut sources);
+    let totals = compute_final_stats(&sources);
+    assert_eq!(totals["ignore_all_res"], (26., 26.));
+    assert!(!totals.contains_key("enemy_all_resist"));
+    for element in ["fire", "cold", "lightning", "poison", "arcane"] {
+        let key = format!("ignore_{element}_res");
+        assert_eq!(totals[&key], (26., 26.));
+        assert_eq!(sources[&key].len(), 2, "one item pin and one rune");
+    }
 }

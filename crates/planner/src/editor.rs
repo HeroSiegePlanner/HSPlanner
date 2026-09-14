@@ -9,7 +9,7 @@ use gpui_kit::component::{
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{data, types::SkillKind};
-use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::controls::{PlannerControl, icon_button};
 use hsplanner_ui::theme::TooltipTheme;
 
 #[derive(Clone, Copy)]
@@ -128,25 +128,17 @@ impl EditorView {
                         id = "attribute-name",
                         attribute.name.clone()
                     )))
-                    .child(
-                        Button::new("less")
-                            .planner_style(cx)
-                            .label("−")
-                            .small()
-                            .on_click(cx.listener(move |this, _, _, cx| {
-                                this.edit(cx, |snapshot| snapshot.adjust_attribute(&subtract, -1))
-                            })),
-                    )
+                    .child(icon_button("less", "−", false, cx).on_click(cx.listener(
+                        move |this, _, _, cx| {
+                            this.edit(cx, |snapshot| snapshot.adjust_attribute(&subtract, -1))
+                        },
+                    )))
                     .child(rank.to_string())
-                    .child(
-                        Button::new("more")
-                            .planner_style(cx)
-                            .label("+")
-                            .small()
-                            .on_click(cx.listener(move |this, _, _, cx| {
-                                this.edit(cx, |snapshot| snapshot.adjust_attribute(&key, 1))
-                            })),
-                    ),
+                    .child(icon_button("more", "+", false, cx).on_click(cx.listener(
+                        move |this, _, _, cx| {
+                            this.edit(cx, |snapshot| snapshot.adjust_attribute(&key, 1))
+                        },
+                    ))),
             );
         }
         content.child(
@@ -205,27 +197,17 @@ impl EditorView {
                                 .text_lg()
                                 .child(gpui_kit::text!(id = "skill-name", skill.name.clone())),
                         )
-                        .child(
-                            Button::new("less")
-                                .planner_style(cx)
-                                .label("−")
-                                .small()
-                                .on_click(cx.listener(move |this, _, _, cx| {
-                                    this.edit(cx, |s| {
-                                        s.set_skill_rank(&minus, rank.saturating_sub(1))
-                                    })
-                                })),
-                        )
+                        .child(icon_button("less", "−", false, cx).on_click(cx.listener(
+                            move |this, _, _, cx| {
+                                this.edit(cx, |s| s.set_skill_rank(&minus, rank.saturating_sub(1)))
+                            },
+                        )))
                         .child(format!("{rank} / {}", skill.max_rank))
-                        .child(
-                            Button::new("more")
-                                .planner_style(cx)
-                                .label("+")
-                                .small()
-                                .on_click(cx.listener(move |this, _, _, cx| {
-                                    this.edit(cx, |s| s.set_skill_rank(&plus, rank + 1))
-                                })),
-                        )
+                        .child(icon_button("more", "+", false, cx).on_click(cx.listener(
+                            move |this, _, _, cx| {
+                                this.edit(cx, |s| s.set_skill_rank(&plus, rank + 1))
+                            },
+                        )))
                         .when(kind != SkillKind::Passive, |row| {
                             row.child(
                                 Checkbox::new("active")
@@ -262,25 +244,20 @@ impl EditorView {
                     let node_id = node.id.clone();
                     let plus_main = main.clone();
                     let plus_node = node_id.clone();
-                    card = card.child(
-                        div()
-                            .id(SharedString::from(key))
-                            .flex()
-                            .items_center()
-                            .gap_2()
-                            .pl_4()
-                            .child(
-                                div().flex_1().text_sm().child(gpui_kit::text!(
+                    card =
+                        card.child(
+                            div()
+                                .id(SharedString::from(key))
+                                .flex()
+                                .items_center()
+                                .gap_2()
+                                .pl_4()
+                                .child(div().flex_1().text_sm().child(gpui_kit::text!(
                                     id = "subskill-name",
                                     node.name.clone()
-                                )),
-                            )
-                            .child(
-                                Button::new("less")
-                                    .planner_style(cx)
-                                    .label("−")
-                                    .small()
-                                    .on_click(cx.listener(move |this, _, _, cx| {
+                                )))
+                                .child(icon_button("less", "−", false, cx).on_click(cx.listener(
+                                    move |this, _, _, cx| {
                                         this.edit(cx, |s| {
                                             s.set_subskill_rank(
                                                 &main,
@@ -288,21 +265,17 @@ impl EditorView {
                                                 subrank.saturating_sub(1),
                                             )
                                         })
-                                    })),
-                            )
-                            .child(format!("{subrank} / {}", node.max_rank))
-                            .child(
-                                Button::new("more")
-                                    .planner_style(cx)
-                                    .label("+")
-                                    .small()
-                                    .on_click(cx.listener(move |this, _, _, cx| {
+                                    },
+                                )))
+                                .child(format!("{subrank} / {}", node.max_rank))
+                                .child(icon_button("more", "+", false, cx).on_click(cx.listener(
+                                    move |this, _, _, cx| {
                                         this.edit(cx, |s| {
                                             s.set_subskill_rank(&plus_main, &plus_node, subrank + 1)
                                         })
-                                    })),
-                            ),
-                    );
+                                    },
+                                ))),
+                        );
                 }
             }
             content = content.child(card);

@@ -167,3 +167,93 @@ pub fn stat_row(
                 .child(value.into()),
         )
 }
+
+/// Modal.tsx eyebrow: mono caps with tracking; callers append accent spans.
+pub fn modal_eyebrow(id: impl Into<ElementId>, text: impl Into<SharedString>) -> Div {
+    div().flex().items_center().gap_1().child(TooltipText::new(
+        id,
+        text.into().to_uppercase(),
+        0.12,
+    ))
+}
+
+/// Modal.tsx header: accent dot + eyebrow, 17px title, optional muted subtitle.
+/// Right padding leaves room for Dialog's built-in close button.
+pub fn modal_header(
+    eyebrow: impl IntoElement,
+    title: impl Into<SharedString>,
+    subtitle: Option<SharedString>,
+    cx: &App,
+) -> Div {
+    let p = cx.global::<TooltipTheme>();
+    div()
+        .flex_none()
+        .px_6()
+        .py_4()
+        .pr_10()
+        .border_b_1()
+        .border_color(p.border)
+        .font_family(theme::FONT_FAMILY)
+        .child(
+            div()
+                .mb_1p5()
+                .flex()
+                .items_center()
+                .gap_2()
+                .font_family(theme::MONO_FONT_FAMILY)
+                .text_size(rems(10. / 13.))
+                .text_color(p.faint)
+                .child(div().size_1().flex_none().rounded_full().bg(p.accent))
+                .child(eyebrow),
+        )
+        .child(
+            div()
+                .text_size(rems(17. / 13.))
+                .font_weight(FontWeight::SEMIBOLD)
+                .text_color(p.text)
+                .child(title.into()),
+        )
+        .when_some(subtitle, |view, subtitle| {
+            view.child(
+                div()
+                    .mt_1()
+                    .text_size(rems(12. / 13.))
+                    .text_color(p.muted)
+                    .child(subtitle),
+            )
+        })
+}
+
+/// LABEL_CLASS: mono caps field label.
+pub fn modal_label(id: impl Into<ElementId>, text: impl Into<SharedString>, cx: &App) -> Div {
+    div()
+        .font_family(theme::MONO_FONT_FAMILY)
+        .text_size(rems(10. / 13.))
+        .text_color(cx.global::<TooltipTheme>().faint)
+        .child(TooltipText::new(id, text.into().to_uppercase(), 0.18))
+}
+
+/// MODAL_FOOTER_CLASS: top border, actions right-aligned; a `modal_status` child fills the left.
+pub fn modal_footer(cx: &App) -> Div {
+    div()
+        .flex_none()
+        .flex()
+        .items_center()
+        .justify_end()
+        .gap_2()
+        .px_6()
+        .py_3()
+        .border_t_1()
+        .border_color(cx.global::<TooltipTheme>().border)
+}
+
+pub fn modal_status(text: impl Into<SharedString>, color: Hsla) -> Div {
+    div()
+        .flex_1()
+        .min_w_0()
+        .truncate()
+        .font_family(theme::MONO_FONT_FAMILY)
+        .text_size(rems(11. / 13.))
+        .text_color(color)
+        .child(text.into())
+}

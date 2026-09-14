@@ -1,10 +1,7 @@
 //! SourceTooltip.tsx presentation over the existing engine breakdown contract.
 use gpui_kit::{
     base::Disableable,
-    component::{
-        WindowExt,
-        button::{Button, ButtonVariants},
-    },
+    component::{WindowExt, button::Button},
     prelude::*,
     *,
 };
@@ -344,8 +341,18 @@ fn by_source(b: &StatBreakdown, cx: &App) -> Div {
     }
     div().child(section("By source", None, cx)).child(rows)
 }
-fn source_rows(rows: &[SourceContribution], percent: bool, extended: bool, cx: &App) -> Div {
+fn source_rows(
+    rows: &[SourceContribution],
+    percent: bool,
+    extended: bool,
+    snapshot: Option<&hsplanner_build::BuildSnapshot>,
+    group: &str,
+    cx: &App,
+) -> Div {
     let p = cx.global::<TooltipTheme>();
+    // Identical engine contributions have no distinct domain ID; disambiguate only
+    // repeated occurrences within their stable source key and additive/more group.
+    let mut occurrences = std::collections::HashMap::<String, usize>::new();
     div()
         .flex()
         .flex_col()
@@ -354,7 +361,7 @@ fn source_rows(rows: &[SourceContribution], percent: bool, extended: bool, cx: &
         .py_2()
         .children(ordered_sources(rows).into_iter().map(|s| {
             let label = display_label(s);
-            div()
+            let row = div()
                 .flex()
                 .items_baseline()
                 .justify_between()
@@ -396,10 +403,29 @@ fn source_rows(rows: &[SourceContribution], percent: bool, extended: bool, cx: &
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_color(p.accent_hot)
                         .child(format_source(s.value, percent)),
-                )
+                );
+            let key = format!(
+                "source-{group}-{}-{}-{:?}-{:?}",
+                source_label(s.source_type),
+                s.label,
+                s.forge,
+                s.value
+            );
+            let occurrence = occurrences.entry(key.clone()).or_default();
+            let id = SharedString::from(format!("{key}-{occurrence}"));
+            *occurrence += 1;
+            match snapshot {
+                Some(snapshot) => crate::source_preview::wrap(id.into(), s, snapshot, row),
+                None => row.into_any_element(),
+            }
         }))
 }
-fn body(b: &StatBreakdown, extended: bool, cx: &App) -> Div {
+fn body(
+    b: &StatBreakdown,
+    extended: bool,
+    snapshot: Option<&hsplanner_build::BuildSnapshot>,
+    cx: &App,
+) -> Div {
     let mut content = div().when(extended, |v| {
         v.child(calculation(b, cx)).child(by_source(b, cx))
     });
@@ -422,6 +448,8 @@ fn body(b: &StatBreakdown, extended: bool, cx: &App) -> Div {
         &b.additive_sources,
         b.is_percent && !b.has_increased,
         extended,
+        snapshot,
+        "additive",
         cx,
     ));
     if b.has_increased {
@@ -431,7 +459,14 @@ fn body(b: &StatBreakdown, extended: bool, cx: &App) -> Div {
                 Some(format_total(b.increased_sum, true)),
                 cx,
             ))
-            .child(source_rows(&b.increased_sources, true, extended, cx));
+            .child(source_rows(
+                &b.increased_sources,
+                true,
+                extended,
+                snapshot,
+                "increased",
+                cx,
+            ));
     }
     if b.has_more {
         content = content
@@ -440,7 +475,14 @@ fn body(b: &StatBreakdown, extended: bool, cx: &App) -> Div {
                 Some(multiplier(b.more_sum)),
                 cx,
             ))
-            .child(source_rows(&b.more_sources, true, extended, cx));
+            .child(source_rows(
+                &b.more_sources,
+                true,
+                extended,
+                snapshot,
+                "more",
+                cx,
+            ));
     }
     content
 }
@@ -486,10 +528,11 @@ impl Render for SourcesTooltip {
                             .child("RIGHT-CLICK TO PIN"),
                     ),
             )
-            .child(body(&self.0, false, cx))
+            .child(body(&self.0, false, None, cx))
     }
 }
 struct SourceDialog {
+    snapshot: hsplanner_build::BuildSnapshot,
     breakdown: Arc<StatBreakdown>,
     scroll: ScrollHandle,
     measured_height: Option<Pixels>,
@@ -583,14 +626,14 @@ impl Render for SourceDialog {
                             ),
                     )
                     .child(
-                        Button::new("close-source-breakdown")
-                            .ghost()
-                            .label("×")
-                            .w(units(24.))
-                            .h(units(24.))
-                            .p_0()
-                            .accessibility_label("Close source breakdown")
-                            .on_click(|_, window, cx| window.close_dialog(cx)),
+                        hsplanner_ui::controls::icon_button(
+                            "close-source-breakdown",
+                            "×",
+                            false,
+                            cx,
+                        )
+                        .accessibility_label("Close source breakdown")
+                        .on_click(|_, window, cx| window.close_dialog(cx)),
                     ),
             )
             .child(
@@ -600,7 +643,7 @@ impl Render for SourceDialog {
                     .max_h(max_height - window.rem_size() * (76. / 13.))
                     .overflow_y_scroll()
                     .track_scroll(&self.scroll)
-                    .child(body(&self.breakdown, true, cx)),
+                    .child(body(&self.breakdown, true, Some(&self.snapshot), cx)),
             )
             .child(
                 div()
@@ -612,7 +655,7 @@ impl Render for SourceDialog {
                     .font_family(theme::MONO_FONT_FAMILY)
                     .text_size(units(9.))
                     .text_color(p.faint)
-                    .child("ESC  CLOSE · CLICK OUTSIDE TO DISMISS"),
+                    .child("HOVER OR SELECT ITEM / TREE SOURCES TO PREVIEW · ESC CLOSE"),
             )
     }
 }
@@ -630,6 +673,7 @@ fn open(
             }
         });
         SourceDialog {
+            snapshot: session.read(cx).snapshot().clone(),
             breakdown,
             scroll: ScrollHandle::new(),
             measured_height: None,

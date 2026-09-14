@@ -1,7 +1,10 @@
 #![cfg_attr(all(windows, not(debug_assertions)), windows_subsystem = "windows")]
 
+mod bug_report;
+mod bug_report_transport;
 mod changelog;
 mod chrome;
+mod settings;
 mod shell;
 mod startup;
 mod update;

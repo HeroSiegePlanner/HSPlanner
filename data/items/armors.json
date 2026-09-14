@@ -29,7 +29,7 @@
         35,
         50
       ],
-      "enemy_all_resist": [
+      "ignore_all_res": [
         20,
         25
       ]

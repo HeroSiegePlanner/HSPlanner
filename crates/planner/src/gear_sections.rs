@@ -1,7 +1,7 @@
 //! Quiet-modern building blocks for the gear slot editor, after the reference SectionCard.
-use gpui_kit::component::{Sizable, button::Button};
+use gpui_kit::component::button::Button;
 use gpui_kit::{prelude::*, *};
-use hsplanner_ui::controls::{ButtonTone, planner_button};
+use hsplanner_ui::controls::{self, ButtonSize, ButtonTone, command_button};
 use hsplanner_ui::{
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
@@ -200,17 +200,19 @@ pub(crate) fn chip(text: impl Into<String>, color: Hsla, border: Hsla) -> Div {
         .child(text.into())
 }
 
-/// Square 20px control for "−", "+", "×", "N", "R"; the look comes from `planner_button`.
+/// Square 20px control for "−", "+", "×", "N", "R"; "×" removes, so its hover reddens.
 pub(crate) fn icon_button(id: impl Into<ElementId>, label: &str, cx: &App) -> Button {
-    planner_button(id, ButtonTone::Neutral, cx)
-        .size_5()
-        .p_0()
-        .line_height(relative(1.))
-        .label(label.to_owned())
+    controls::icon_button(id, label, label == "×", cx)
 }
 
 pub(crate) fn ghost_button(id: impl Into<ElementId>, label: &str, cx: &App) -> Button {
-    planner_button(id, ButtonTone::Neutral, cx).label(label.to_owned())
+    command_button(
+        id,
+        label.to_owned(),
+        ButtonTone::Ghost,
+        ButtonSize::Small,
+        cx,
+    )
 }
 
 /// Small action in section headers ("+ Add", "Reset").
@@ -223,11 +225,9 @@ pub(crate) fn header_action(
     let tone = if danger {
         ButtonTone::Danger
     } else {
-        ButtonTone::Primary
+        ButtonTone::Neutral
     };
-    planner_button(id, tone, cx)
-        .xsmall()
-        .label(label.to_owned())
+    command_button(id, label.to_owned(), tone, ButtonSize::Small, cx)
 }
 
 pub(crate) fn row_box(cx: &App) -> Div {

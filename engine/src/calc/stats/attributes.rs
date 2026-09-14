@@ -617,8 +617,8 @@ pub fn apply_item_granted_passive_stats(
     ranks
 }
 
-// Fans all_resistances / max_all_resistances (and `_more` variants) out
-// to per-element buckets.
+// Fans all-resistance and ignore-all bonuses (including `_more` variants)
+// into the five elemental buckets, preserving the contribution sources.
 pub fn apply_stat_fan_outs(stat_sources: &mut SourceMap) {
     let variants: [&str; 2] = ["", "_more"];
     for (from, targets) in STAT_FAN_OUTS.iter() {

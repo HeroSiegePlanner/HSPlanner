@@ -7,6 +7,7 @@ pub mod config;
 pub mod editor;
 pub mod gear;
 mod gear_sections;
+mod gear_stash;
 mod item_tooltip;
 pub mod mercenary;
 mod node_tooltip;
@@ -14,9 +15,11 @@ mod scene;
 mod skill_details;
 pub mod skills;
 mod source_breakdown;
+mod source_preview;
 pub mod stats;
 pub mod stats_sidebar;
 mod tree_chrome;
+mod tree_jewelry;
 mod tree_progression;
 mod tree_suggest;
 use hsplanner_ui::theme;
@@ -32,7 +35,7 @@ use gpui_kit::component::{
 };
 use gpui_kit::{
     Bounds, Context, FocusHandle, MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent,
-    Pixels, Render, ScrollWheelEvent, Window, canvas, div, img, prelude::*, px, size,
+    Pixels, Render, ScrollWheelEvent, Window, canvas, div, prelude::*, px, size,
 };
 use hsplanner_build::{BuildSnapshot, session::Session};
 
@@ -102,7 +105,6 @@ pub struct TreeView {
     suggest_slider: gpui_kit::Entity<gpui_kit::component::slider::SliderState>,
     hovered: Option<usize>,
     inspected: Option<usize>,
-    inspector_open: bool,
     summary_open: bool,
     summary_scroll: gpui_kit::ScrollHandle,
     ether_summary: Vec<hsplanner_engine::calc::planner::EtherSummary>,
@@ -228,7 +230,6 @@ impl TreeView {
             suggest_slider: suggest_slider.clone(),
             hovered: None,
             inspected: None,
-            inspector_open: false,
             summary_open,
             summary_scroll: gpui_kit::ScrollHandle::new(),
             ether_summary,
@@ -710,173 +711,6 @@ impl TreeView {
             cx.notify();
         }
     }
-
-    fn sidebar(&self, cx: &Context<Self>) -> impl IntoElement {
-        let palette = cx.global::<theme::TooltipTheme>();
-        let stats = self.paint_stats.get();
-        let inspected = self.hovered.or(self.example).or(self.inspected);
-        let allocated = inspected.is_some_and(|ix| self.selected.contains(&ix));
-        let mut content = div()
-            .id("build-inspector-content")
-            .flex()
-            .flex_col()
-            .gap_4()
-            .p_4()
-            .child(build_panel::build_summary(
-                &self.build,
-                &self.build_input,
-                cx,
-            ));
-        if let Some(ix) = inspected {
-            let node = &self.scene.graph.nodes[ix];
-            let info = &self.scene.graph.info[&node.id];
-            content =
-                content.child(
-                    div()
-                        .pt_3()
-                        .border_t_1()
-                        .border_color(palette.border)
-                        .flex()
-                        .flex_col()
-                        .gap_2()
-                        .child(
-                            div()
-                                .flex()
-                                .items_center()
-                                .gap_2()
-                                .child(img(self.scene.icon(node)).size(gpui_kit::rems(2.)))
-                                .child(
-                                    div()
-                                        .text_color(palette.accent_hot)
-                                        .font_weight(gpui_kit::FontWeight::SEMIBOLD)
-                                        .child(info.t.clone()),
-                                ),
-                        )
-                        .child(self.button(
-                            if allocated {
-                                "Remove node / branch"
-                            } else {
-                                "Allocate node / path"
-                            },
-                            Command::ToggleNode,
-                            cx,
-                        ))
-                        .children(info.l.iter().map(|line| {
-                            div().text_sm().text_color(palette.text).child(line.clone())
-                        }))
-                        .child(build_panel::preview_changes(
-                            self.build.preview(),
-                            self.build.in_flight,
-                            None,
-                            cx,
-                        )),
-                );
-        } else {
-            content =
-                content.child(div().text_sm().text_color(palette.muted).child(
-                    "Hover a node to compare its effect. Click to apply the highlighted path.",
-                ));
-        }
-        if self.build.error.is_some() {
-            content =
-                content.child(self.button("Retry calculation", Command::RetryCalculation, cx));
-        }
-        let calculation = if self.build.in_flight {
-            "Calculating…".to_owned()
-        } else if let Some(result) = &self.build.result {
-            format!("Last calculation: {:.1} ms", result.milliseconds)
-        } else {
-            String::new()
-        };
-        if std::env::var_os("HSPLANNER_DIAGNOSTICS").is_some() {
-            content = content.child(
-                div()
-                    .pt_3()
-                    .border_t_1()
-                    .border_color(palette.border)
-                    .flex()
-                    .flex_col()
-                    .gap_2()
-                    .child(div().text_xs().text_color(palette.faint).child(calculation))
-                    .child(div().text_xs().text_color(palette.faint).child(format!(
-                        "{} nodes visible · Canvas CPU {:.2} ms",
-                        stats.visible, stats.milliseconds
-                    )))
-                    .child(self.button(
-                        if self.motion_test.is_some() {
-                            "Stop motion test"
-                        } else {
-                            "Run motion test"
-                        },
-                        Command::Motion,
-                        cx,
-                    ))
-                    .when_some(self.motion_result.clone(), |panel, result| {
-                        panel.child(
-                            div()
-                                .text_xs()
-                                .text_color(palette.muted)
-                                .child(gpui_kit::text!(id = "motion-result", result)),
-                        )
-                    })
-                    .when(stats.image_errors > 0, |panel| {
-                        panel.child(format!("Image errors: {}", stats.image_errors))
-                    }),
-            );
-        }
-        div()
-            .w(gpui_kit::rems(22.))
-            .occlude()
-            .h_full()
-            .flex_shrink_0()
-            .flex()
-            .flex_col()
-            .min_h_0()
-            .bg(self.surface())
-            .rounded_sm()
-            .border_1()
-            .border_color(palette.border)
-            .child(
-                div()
-                    .p_4()
-                    .flex_shrink_0()
-                    .flex()
-                    .flex_col()
-                    .gap_2()
-                    .border_b_1()
-                    .border_color(palette.border)
-                    .child(
-                        div()
-                            .flex()
-                            .items_center()
-                            .justify_between()
-                            .child(
-                                div()
-                                    .text_color(self.tree_theme().accent())
-                                    .child(self.scene.graph.kind.label()),
-                            )
-                            .child(
-                                Button::new("close-tree-inspector")
-                                    .planner_style(cx)
-                                    .small()
-                                    .label("Close")
-                                    .on_click(cx.listener(|this, _, window, cx| {
-                                        this.inspector_open = false;
-                                        window.focus(&this.focus, cx);
-                                        cx.notify();
-                                    })),
-                            ),
-                    ),
-            )
-            .child(
-                div()
-                    .id("build-inspector-scroll")
-                    .flex_1()
-                    .min_h_0()
-                    .overflow_y_scroll()
-                    .child(content),
-            )
-    }
 }
 
 impl gpui_kit::Focusable for TreeView {
@@ -994,10 +828,16 @@ impl Render for TreeView {
             .on_mouse_down(MouseButton::Left, cx.listener(Self::mouse_down))
             .on_mouse_down(
                 MouseButton::Right,
-                cx.listener(|this, _, _, cx| {
-                    if this.progression.is_preview() {
-                        cx.stop_propagation();
+                cx.listener(|this, event: &MouseDownEvent, window, cx| {
+                    if let Some(ix) = this
+                        .scene
+                        .graph
+                        .hit(this.camera, this.local(event.position))
+                    {
+                        let id = this.scene.graph.nodes[ix].id as u32;
+                        this.open_jewelry(id, window, cx);
                     }
+                    cx.stop_propagation();
                 }),
             )
             .on_mouse_move(cx.listener(Self::mouse_move))
@@ -1039,6 +879,10 @@ impl Render for TreeView {
                         self.node_lines.get(&node.id),
                     )
                     .effects(self.text_effects)
+                    .socket(
+                        self.build_input.tree_socketed.get(&(node.id as u32)),
+                        self.selected.contains(&ix),
+                    )
                     .performance(self.build.preview(), self.build.in_flight),
                 ),
             )
@@ -1065,10 +909,7 @@ impl Render for TreeView {
             )
             .on_key_down(
                 cx.listener(|this, event: &gpui_kit::KeyDownEvent, window, cx| {
-                    if event.keystroke.key == "escape"
-                        && (this.inspector_open || this.summary_open || this.suggest_open)
-                    {
-                        this.inspector_open = false;
+                    if event.keystroke.key == "escape" && (this.summary_open || this.suggest_open) {
                         this.summary_open = false;
                         if this.suggest_open {
                             this.suggest_open = false;
@@ -1110,17 +951,6 @@ impl Render for TreeView {
             .child(self.toolbar(cx))
             .child(self.status_bar(cx))
             .child(self.progression_bar(window, cx))
-            .when(self.inspector_open, |view| {
-                view.child(
-                    div()
-                        .absolute()
-                        .top_12()
-                        .bottom_16()
-                        .right_3()
-                        .occlude()
-                        .child(self.sidebar(cx)),
-                )
-            })
             .when(self.suggest_open, |view| {
                 view.child(
                     div()
@@ -1132,7 +962,7 @@ impl Render for TreeView {
                         .child(self.suggest_panel(window, cx)),
                 )
             })
-            .when(self.summary_open && !self.inspector_open, |view| {
+            .when(self.summary_open, |view| {
                 view.child(
                     div()
                         .absolute()

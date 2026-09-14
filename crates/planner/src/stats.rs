@@ -18,7 +18,7 @@ use hsplanner_engine::calc::{
 };
 use hsplanner_ui::{
     components::{panel, panel_with_trailing},
-    controls::PlannerControl,
+    controls::{ButtonSize, ButtonTone, PlannerControl, command_button},
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
 };
@@ -334,6 +334,7 @@ pub struct StatsView {
     task: Option<Task<()>>,
     list: ListState,
     rows: Vec<Row>,
+    row_filter: Option<(String, Filter, bool)>,
     last_rem: Pixels,
     _subscriptions: Vec<Subscription>,
 }
@@ -393,6 +394,7 @@ impl StatsView {
             task: None,
             list: ListState::new(0, ListAlignment::Top, LIST_OVERDRAW),
             rows: Vec::new(),
+            row_filter: None,
             last_rem: Pixels::ZERO,
             _subscriptions: subscriptions,
         }
@@ -834,15 +836,18 @@ impl StatsView {
                 .flex()
                 .items_center()
                 .child(
-                    Button::new(SharedString::from(format!("{id}-details")))
-                        .ghost()
-                        .small()
-                        .label(if all_details {
+                    command_button(
+                        SharedString::from(format!("{id}-details")),
+                        if all_details {
                             "Show summary"
                         } else {
                             "Show all details"
-                        })
-                        .on_click(cx.listener(move |this, _, _, cx| this.toggle(&details_key, cx))),
+                        },
+                        ButtonTone::Ghost,
+                        ButtonSize::Small,
+                        cx,
+                    )
+                    .on_click(cx.listener(move |this, _, _, cx| this.toggle(&details_key, cx))),
                 ),
         );
         section = section.child(body);
@@ -1720,17 +1725,25 @@ impl Render for StatsView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let query = self.query.read(cx).value().trim().to_lowercase();
-        let mut rows = vec![Row::Header];
-        if self.tree.read(cx).performance().is_some() {
-            rows.push(Row::Top);
-            rows.extend(self.stat_rows(&query));
-        } else {
-            rows.push(Row::Calculating);
-        }
+        let ready = self.tree.read(cx).performance().is_some();
+        let row_filter = (query, self.filter, ready);
         let rem = window.rem_size();
-        if rows != self.rows || rem != self.last_rem {
-            self.list.reset(rows.len());
-            self.rows = rows;
+        if self.row_filter.as_ref() != Some(&row_filter) {
+            let mut rows = vec![Row::Header];
+            if ready {
+                rows.push(Row::Top);
+                rows.extend(self.stat_rows(&row_filter.0));
+            } else {
+                rows.push(Row::Calculating);
+            }
+            if rows != self.rows {
+                self.list.reset(rows.len());
+                self.rows = rows;
+            }
+            self.row_filter = Some(row_filter);
+        }
+        if rem != self.last_rem {
+            self.list.reset(self.rows.len());
             self.last_rem = rem;
         }
         let rows = list(self.list.clone(), cx.processor(Self::render_row))

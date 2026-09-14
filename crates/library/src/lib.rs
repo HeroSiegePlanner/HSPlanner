@@ -14,7 +14,7 @@ use hsplanner_build::{library::SavedBuild, session::Session};
 use hsplanner_ui::controls::PlannerControl;
 use hsplanner_ui::theme::TooltipTheme;
 use presentation::{label, navigation, portrait, toolbar_button};
-use std::cmp::Reverse;
+use std::{cell::RefCell, cmp::Reverse};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 enum SortColumn {
@@ -33,7 +33,7 @@ enum SortDirection {
     Descending,
 }
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 struct LibrarySort {
     column: SortColumn,
     direction: SortDirection,
@@ -54,22 +54,24 @@ impl LibrarySort {
         self.column = column;
     }
 
-    fn apply(self, builds: &mut Vec<SavedBuild>, recent: bool) {
-        // Recent first chooses its newest twelve entries, then sorts that subset.
+    fn apply_indices(self, indices: &mut Vec<usize>, builds: &[SavedBuild], recent: bool) {
         if recent {
-            builds.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
-            builds.truncate(12);
+            indices.sort_by(|&a, &b| builds[b].updated_at.cmp(&builds[a].updated_at));
+            indices.truncate(12);
         }
-        // Cache profile decoding and text normalization once per build. Both
-        // orders use a stable sort, so equal keys preserve the source order.
         match self.direction {
-            SortDirection::Ascending => {
-                builds.sort_by_cached_key(|build| self.key(build));
-            }
+            SortDirection::Ascending => indices.sort_by_cached_key(|&i| self.key(&builds[i])),
             SortDirection::Descending => {
-                builds.sort_by_cached_key(|build| Reverse(self.key(build)));
+                indices.sort_by_cached_key(|&i| Reverse(self.key(&builds[i])))
             }
         }
+    }
+
+    #[cfg(test)]
+    fn apply(self, builds: &mut Vec<SavedBuild>, recent: bool) {
+        let mut indices: Vec<_> = (0..builds.len()).collect();
+        self.apply_indices(&mut indices, builds, recent);
+        *builds = indices.into_iter().map(|i| builds[i].clone()).collect();
     }
 
     fn key(self, build: &SavedBuild) -> SortKey {
@@ -85,14 +87,9 @@ impl LibrarySort {
                     .unwrap_or("Unknown")
                     .to_lowercase(),
             ),
-            SortColumn::Level => SortKey::Number(
-                build
-                    .profile(&build.active_profile_id)
-                    .or_else(|| build.profiles.first())
-                    .and_then(|profile| profile.snapshot().ok())
-                    .map(|snapshot| snapshot.level)
-                    .unwrap_or(1),
-            ),
+            SortColumn::Level => {
+                SortKey::Number(query::profile_summary(build, true).map_or(1, |s| s.0))
+            }
             SortColumn::Modified => SortKey::Text(build.updated_at.clone()),
         }
     }
@@ -129,6 +126,7 @@ pub struct LibraryView {
     unfiled: bool,
     active_tag: Option<String>,
     columns_scroll: ScrollHandle,
+    query_cache: RefCell<query::Cache>,
     _subscriptions: Vec<Subscription>,
 }
 impl EventEmitter<Opened> for LibraryView {}
@@ -143,6 +141,7 @@ impl LibraryView {
             cx.new(|cx| InputState::new(window, cx).placeholder("Paste a build code or link"));
         let subscriptions = vec![
             cx.observe(&session, |this, _, cx| {
+                this.query_cache.get_mut().invalidate();
                 if this.active && !this.reconcile_selection(cx) {
                     this.refresh_preview(cx);
                 }
@@ -188,6 +187,7 @@ impl LibraryView {
             unfiled: false,
             active_tag: None,
             columns_scroll: ScrollHandle::default(),
+            query_cache: RefCell::default(),
             _subscriptions: subscriptions,
         };
         if let Some(build) = initial {
@@ -208,6 +208,9 @@ impl LibraryView {
             result
         });
         self.error = result.err();
+        if self.error.is_none() {
+            self.query_cache.get_mut().invalidate();
+        }
         cx.notify();
         self.error.is_none()
     }
@@ -235,27 +238,24 @@ impl LibraryView {
         cx.notify();
     }
 
-    fn filtered_builds(&self, cx: &App) -> Vec<SavedBuild> {
+    fn filtered_builds<'a>(&self, cx: &'a App) -> Vec<&'a SavedBuild> {
         let library = &self.session.read(cx).state().library;
-        let search = self.search.read(cx).value().trim().to_lowercase();
-        let mut builds = library
-            .builds
+        let filter = query::Filter {
+            search: self.search.read(cx).value().trim().to_lowercase(),
+            favorites: self.favorites,
+            unfiled: self.unfiled,
+            folder: self.folder.clone(),
+            tag: self.active_tag.clone(),
+            high_level: self.high_level,
+            recent: self.recent,
+            sort: self.sort,
+        };
+        self.query_cache
+            .borrow_mut()
+            .indices(&library.builds, filter)
             .iter()
-            .filter(|build| {
-                query::matches(
-                    build,
-                    &search,
-                    self.favorites,
-                    self.unfiled,
-                    self.folder.as_deref(),
-                    self.active_tag.as_deref(),
-                    self.high_level,
-                )
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-        self.sort.apply(&mut builds, self.recent);
-        builds
+            .map(|&i| &library.builds[i])
+            .collect()
     }
 
     fn sort_by(&mut self, column: SortColumn, cx: &mut Context<Self>) {
@@ -485,12 +485,14 @@ impl Render for LibraryView {
         all_tags.sort();
         all_tags.dedup();
         let active_id = self.session.read(cx).draft().build_id.clone();
-        let folders = library.folders.clone();
-        let selected = self
-            .selected
-            .as_deref()
-            .and_then(|id| library.build(id))
-            .cloned();
+        let folders = &library.folders;
+        let mut folder_counts = std::collections::HashMap::new();
+        for build in &library.builds {
+            if let Some(folder) = &build.folder_id {
+                *folder_counts.entry(folder.as_str()).or_insert(0usize) += 1;
+            }
+        }
+        let selected = self.selected.as_deref().and_then(|id| library.build(id));
         let rows = builds
             .into_iter()
             .skip(self.page * 25)
@@ -498,12 +500,9 @@ impl Render for LibraryView {
             .map(|build| {
                 let id = build.id.clone();
                 let chosen = self.selected.as_ref() == Some(&id);
-                let snapshot = build
-                    .profile(&build.active_profile_id)
-                    .or_else(|| build.profiles.first())
-                    .and_then(|p| p.snapshot().ok());
+                let summary = query::profile_summary(build, true);
                 let favorite_id = id.clone();
-                let select_build = build.clone();
+                let select_id = id.clone();
                 div()
                     .id(SharedString::from(format!("build-{id}")))
                     .relative()
@@ -520,7 +519,16 @@ impl Render for LibraryView {
                     .hover(|row| row.bg(palette.panel_secondary))
                     .cursor_pointer()
                     .on_click(cx.listener(move |this, _, window, cx| {
-                        this.select(&select_build, window, cx)
+                        let build = this
+                            .session
+                            .read(cx)
+                            .state()
+                            .library
+                            .build(&select_id)
+                            .cloned();
+                        if let Some(build) = build {
+                            this.select(&build, window, cx);
+                        }
                     }))
                     .px_4()
                     .flex()
@@ -609,9 +617,8 @@ impl Render for LibraryView {
                     )))
                     .child(
                         div().w(rems(64. / 13.)).flex_none().child(label(
-                            snapshot
-                                .as_ref()
-                                .map(|s| format!("{}/{}", s.level, s.allocated_tree_nodes.len()))
+                            summary
+                                .map(|(level, points)| format!("{level}/{points}"))
                                 .unwrap_or_else(|| "—".into()),
                             muted,
                         )),
@@ -676,7 +683,7 @@ impl Render for LibraryView {
                             })),
                     ),
             );
-        if let Some(build) = selected.clone() {
+        if let Some(build) = selected {
             let rename = build.id.clone();
             let tags = build.id.clone();
             let duplicate = build.id.clone();
@@ -821,11 +828,7 @@ impl Render for LibraryView {
             .child(div().pt_3().child(label("Folders", muted)));
         for folder in folders {
             let id = folder.id.clone();
-            let folder_count = library
-                .builds
-                .iter()
-                .filter(|b| b.folder_id.as_ref() == Some(&id))
-                .count();
+            let folder_count = folder_counts.get(id.as_str()).copied().unwrap_or(0);
             folder_list = folder_list.child(
                 navigation(
                     SharedString::from(format!("folder-{id}")),
@@ -1099,7 +1102,7 @@ impl Render for LibraryView {
                 ),
             )
             .when(count > 25, |v| v.child(pagination));
-        let preview = self.preview(selected.as_ref(), cx);
+        let preview = self.preview(selected, cx);
         let open_id = selected.as_ref().map(|b| b.id.clone());
         let share = selected
             .as_ref()

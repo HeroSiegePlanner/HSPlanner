@@ -1,5 +1,5 @@
 use crate::build_session::DocumentKey;
-use gpui_kit::base::{Disableable, Selectable};
+use gpui_kit::base::Disableable;
 use gpui_kit::component::{
     Sizable, WindowExt,
     button::Button,
@@ -23,6 +23,8 @@ mod text_edit;
 #[path = "gear_editor.rs"]
 pub(crate) mod editor;
 
+#[path = "gear_import.rs"]
+mod import;
 #[path = "gear_picker.rs"]
 pub(crate) mod picker;
 #[path = "gear_presentation.rs"]
@@ -125,6 +127,7 @@ struct RollTarget {
     forged: bool,
     stat: String,
     skill: bool,
+    relic_tier: bool,
 }
 
 struct RollSlider {
@@ -183,6 +186,10 @@ pub struct GearView {
     icon: Option<Arc<RenderImage>>,
     search: Entity<InputState>,
     stash_search: Entity<InputState>,
+    stash_rows: Vec<crate::gear_stash::StashRow>,
+    stash_group: Option<String>,
+    stash_list: ListState,
+    stash_rem: Pixels,
     scroll: ScrollHandle,
     comparison_scroll: ScrollHandle,
     comparison_has_vertical_scroll: bool,
@@ -195,9 +202,13 @@ pub struct GearView {
     picker: Picker,
     rows: Vec<Row>,
     item_rows: Vec<picker::ItemRow>,
+    visible_items: Vec<usize>,
+    picker_list: ListState,
+    picker_rem: Pixels,
     sort_key: String,
     sort_options: Vec<(String, String)>,
     sort_select: Option<Entity<picker::SortSelect>>,
+    sort_subscription: Option<Subscription>,
     dps_values: Option<HashMap<String, f64>>,
     dps_pending: bool,
     picker_context: Option<picker::PickerContext>,
@@ -215,6 +226,11 @@ pub struct GearView {
     _subscriptions: Vec<Subscription>,
 }
 impl GearView {
+    /// Relics are tier-only and never stashed, so the editor and picker hide stash controls.
+    fn is_relic_slot(&self) -> bool {
+        gear::slot_group(&self.slot) == "relic"
+    }
+
     pub fn new(
         session: Entity<Session>,
         mercenary: bool,
@@ -226,7 +242,12 @@ impl GearView {
         let stash_search = cx.new(|cx| InputState::new(window, cx).placeholder("Search stash…"));
         let document = DocumentKey::from_session(session.read(cx));
         let subscriptions = vec![
-            cx.subscribe(&stash_search, |_, _, _: &InputEvent, cx| cx.notify()),
+            cx.subscribe(&stash_search, |this, _, event: &InputEvent, cx| {
+                if matches!(event, InputEvent::Change) {
+                    this.refresh_stash_rows(cx);
+                    cx.notify();
+                }
+            }),
             cx.observe(&session, |this, _, cx| {
                 let document = DocumentKey::from_session(this.session.read(cx));
                 if document != this.document {
@@ -246,9 +267,14 @@ impl GearView {
                     this.refresh_rows(cx);
                     this.changed(cx);
                 } else {
+                    // Stash edits do not change the calculation revision.
+                    if this.picker == Picker::Stash {
+                        this.invalidate_item_picker();
+                    }
                     this.refresh_rows(cx);
                 }
                 this.refresh_charm_layout(cx);
+                this.refresh_stash_rows(cx);
                 cx.notify();
             }),
             cx.subscribe(&search, |this, _, event: &InputEvent, cx| {
@@ -268,6 +294,10 @@ impl GearView {
             icon: None,
             search,
             stash_search,
+            stash_rows: vec![],
+            stash_group: None,
+            stash_list: ListState::new(0, ListAlignment::Top, px(200.)),
+            stash_rem: window.rem_size(),
             scroll: ScrollHandle::new(),
             comparison_scroll: ScrollHandle::new(),
             comparison_has_vertical_scroll: false,
@@ -280,9 +310,13 @@ impl GearView {
             picker: Picker::Items,
             rows: vec![],
             item_rows: vec![],
+            visible_items: vec![],
+            picker_list: ListState::new(0, ListAlignment::Top, px(200.)),
+            picker_rem: window.rem_size(),
             sort_key: "default".into(),
             sort_options: vec![],
             sort_select: None,
+            sort_subscription: None,
             dps_values: None,
             dps_pending: false,
             picker_context: None,
@@ -301,6 +335,7 @@ impl GearView {
         };
         view.revert(cx);
         view.refresh_charm_layout(cx);
+        view.refresh_stash_rows(cx);
         view
     }
     pub fn set_active(&mut self, active: bool, cx: &mut Context<Self>) {
@@ -354,6 +389,8 @@ impl GearView {
     fn choose_picker(&mut self, picker: Picker, window: &mut Window, cx: &mut Context<Self>) {
         self.choosing = true;
         self.picker = picker;
+        self.picker_list.reset(0);
+        self.rows.clear();
         self.search
             .update(cx, |input, cx| input.set_value("", window, cx));
         self.refresh_rows(cx);
@@ -363,6 +400,11 @@ impl GearView {
         cx.notify();
     }
     fn refresh_rows(&mut self, cx: &Context<Self>) {
+        if matches!(self.picker, Picker::Items | Picker::Stash) {
+            self.rows.clear();
+            self.refresh_item_results(cx);
+            return;
+        }
         let session = self.session.read(cx);
         let snapshot = session.snapshot();
         let query = self.search.read(cx).value().to_lowercase();
@@ -371,43 +413,7 @@ impl GearView {
             .as_ref()
             .and_then(|item| data::get_item(&item.base_id));
         let mut rows: Vec<Row> = match self.picker {
-            Picker::Items => data::data()
-                .items
-                .values()
-                .filter(|base| gear::accepts(snapshot, &self.slot, base, self.mercenary))
-                .map(|b| {
-                    Row::new(
-                        &b.id,
-                        &b.name,
-                        format!(
-                            "{} · {} · Level {}",
-                            b.rarity,
-                            b.base_type,
-                            b.requires_level.unwrap_or(0)
-                        ),
-                    )
-                })
-                .collect(),
-            Picker::Stash => session
-                .draft()
-                .stash
-                .iter()
-                .filter_map(|entry| {
-                    let base = data::get_item(&entry.item.base_id)?;
-                    gear::accepts(snapshot, &self.slot, base, self.mercenary).then(|| {
-                        Row::new(
-                            &entry.id,
-                            &base.name,
-                            format!(
-                                "{} · {} stars · {} sockets",
-                                base.rarity,
-                                entry.item.stars.unwrap_or(0),
-                                entry.item.socket_count
-                            ),
-                        )
-                    })
-                })
-                .collect(),
+            Picker::Items | Picker::Stash => unreachable!(),
             Picker::Socket(_) => data::data()
                 .gems
                 .values()
@@ -599,6 +605,13 @@ impl GearView {
                     .then(a.label.cmp(&b.label))
                     .then(a.id.cmp(&b.id))
             });
+        }
+        if rows.len() != self.rows.len()
+            || rows.iter().zip(&self.rows).any(|(a, b)| {
+                a.id != b.id || a.label != b.label || a.detail != b.detail || a.group != b.group
+            })
+        {
+            self.picker_list.reset(rows.len());
         }
         self.rows = rows;
     }
@@ -910,14 +923,9 @@ impl GearView {
         picker: Picker,
         cx: &Context<Self>,
     ) -> Button {
-        Button::new(id)
-            .planner_style(cx)
-            .small()
-            .label(label)
-            .selected(self.picker == picker)
-            .on_click(
-                cx.listener(move |this, _, window, cx| this.choose_picker(picker, window, cx)),
-            )
+        hsplanner_ui::controls::segment(id, label, self.picker == picker, cx).on_click(
+            cx.listener(move |this, _, window, cx| this.choose_picker(picker, window, cx)),
+        )
     }
 }
 
@@ -974,6 +982,11 @@ fn apply_roll_value(
             } else {
                 gear::set_affix_value(item, index, f64::from(value))
             };
+    }
+    if target.relic_tier {
+        let changed = *observed != value || pointer;
+        *observed = value;
+        return changed && gear::set_relic_tier(item, value as u32);
     }
     let values = if target.skill {
         &mut item.skill_bonus_overrides
@@ -1133,6 +1146,7 @@ mod control_tests {
             forged: false,
             stat: "life".into(),
             skill: false,
+            relic_tier: false,
         };
         let mut item = EquippedItem::default();
         let mut observed = 20.;

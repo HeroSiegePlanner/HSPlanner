@@ -125,7 +125,6 @@ impl TreeView {
         self.hovered = None;
         self.example = None;
         self.inspected = None;
-        self.inspector_open = false;
         self.drag = None;
         self.dragged = false;
         // Keep the real build request/results. Scrubbing never schedules a

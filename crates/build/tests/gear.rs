@@ -114,7 +114,11 @@ fn losing_grip_removes_the_offhand_and_gear_preview_uses_the_same_rule() {
 
 #[test]
 fn stash_copies_are_independent_deduplicated_and_bounded() {
-    let base = data::data().items.values().next().unwrap();
+    let base = data::data()
+        .items
+        .values()
+        .find(|base| !gear::is_relic(base))
+        .unwrap();
     let mut item = gear::make_item(&base.id).unwrap();
     let mut draft = Draft::default();
     gear::stash(&mut draft, &item);
@@ -129,6 +133,19 @@ fn stash_copies_are_independent_deduplicated_and_bounded() {
     }
     assert_eq!(draft.stash.len(), 200);
     assert!(!draft.stash.iter().any(|entry| entry.id == id));
+}
+
+#[test]
+fn relics_are_never_stashed() {
+    let relic = data::data()
+        .items
+        .values()
+        .find(|base| gear::is_relic(base))
+        .unwrap();
+    let item = gear::make_item(&relic.id).unwrap();
+    let mut draft = Draft::default();
+    gear::stash(&mut draft, &item);
+    assert!(draft.stash.is_empty());
 }
 
 #[test]
@@ -169,4 +186,74 @@ fn crystal_roll_pins_a_value_and_survives_serialization() {
     assert_eq!(restored.forged_mods[0].custom_value, Some(25.));
     assert!(!gear::set_forge_value(&mut item, 1, 15.));
     assert!(!gear::set_forge_value(&mut item, 0, f64::NAN));
+}
+
+#[test]
+fn relic_tier_pins_every_ranged_stat_and_reads_back() {
+    let mut item = gear::make_item("relic_relic_1000_kg").unwrap();
+    assert_eq!(gear::relic_tier(&item), gear::RELIC_MAX_TIER);
+    assert!(gear::set_relic_tier(&mut item, 1));
+    assert_eq!(item.skill_bonus_overrides["Heavy Weight"], 2.);
+    assert_eq!(gear::relic_tier(&item), 1);
+    assert!(gear::set_relic_tier(&mut item, 10));
+    assert_eq!(item.skill_bonus_overrides["Heavy Weight"], 50.);
+    assert!(gear::set_relic_tier(&mut item, 5));
+    assert_eq!(item.skill_bonus_overrides["Heavy Weight"], 23.);
+    assert_eq!(gear::relic_tier(&item), 5);
+    assert!(!gear::set_relic_tier(&mut item, 5));
+    assert_eq!(gear::max_sockets(&item), 0);
+}
+
+#[test]
+fn the_spoon_tier_scales_increased_mana_from_3_to_30() {
+    let mut item = gear::make_item("relic_relic_the_spoon").unwrap();
+    gear::set_relic_tier(&mut item, 1);
+    assert_eq!(item.implicit_overrides["increased_mana"], 3.);
+    gear::set_relic_tier(&mut item, 10);
+    assert_eq!(item.implicit_overrides["increased_mana"], 30.);
+}
+
+#[test]
+fn relic_tiers_preserve_fractional_stats_and_negative_scaling() {
+    let mut sausage = gear::make_item("relic_relic_sausage").unwrap();
+    gear::set_relic_tier(&mut sausage, 1);
+    assert_eq!(sausage.implicit_overrides["increased_life"], 1.5);
+    for tier in 1..=10 {
+        gear::set_relic_tier(&mut sausage, tier);
+        assert_eq!(gear::relic_tier(&sausage), tier);
+    }
+    let mut sword = gear::make_item("relic_relic_commander_s_sword").unwrap();
+    gear::set_relic_tier(&mut sword, 1);
+    assert_eq!(sword.implicit_overrides["movement_speed"], -2.);
+    gear::set_relic_tier(&mut sword, 10);
+    assert_eq!(sword.implicit_overrides["movement_speed"], -20.);
+    assert_eq!(gear::relic_tier(&sword), 10);
+}
+
+#[test]
+fn refreshed_relics_have_source_stats_without_neighbour_contamination() {
+    let butterfly = data::get_item("relic_relic_butterfly_knife").unwrap();
+    let stats = butterfly.implicit.as_ref().unwrap();
+    assert_eq!(stats["increased_attack_speed"].as_ranged(), (1., 10.));
+    assert_eq!(stats["crit_damage"].as_ranged(), (2., 20.));
+    let globe = data::get_item("relic_relic_arcane_globe").unwrap();
+    let stats = globe.implicit.as_ref().unwrap();
+    assert_eq!(stats.len(), 2);
+    assert_eq!(stats["arcane_skills"].as_ranged(), (1., 5.));
+    assert!(!stats.contains_key("poison_skills"));
+    let apple = data::get_item("relic_relic_apple").unwrap();
+    assert!(apple.implicit.is_none());
+    assert!(apple.unique_effects.as_ref().unwrap()[0].contains("Apple Blast"));
+    let sock = data::get_item("relic_relic_mayo_s_old_sock").unwrap();
+    assert_eq!(
+        sock.implicit.as_ref().unwrap()["life"].as_ranged(),
+        (10., 600.)
+    );
+    for id in ["snowball", "thief_s_glove", "soul_box"] {
+        assert!(gear::make_item(&format!("relic_relic_{id}")).is_ok());
+    }
+    assert_eq!(
+        data::get_item("relic_relic_devil_horn").unwrap().name,
+        "Devil Horn"
+    );
 }

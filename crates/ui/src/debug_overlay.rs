@@ -148,10 +148,8 @@ impl Render for DebugOverlay {
                             }),
                     )
                     .child(
-                        Button::new("debug-close")
-                            .planner_style(cx)
-                            .small()
-                            .label("×")
+                        crate::controls::icon_button("debug-close", "×", false, cx)
+                            .accessibility_label("Close debug overlay")
                             .on_click(cx.listener(|this, _, _, cx| this.toggle(cx))),
                     ),
             )

@@ -787,7 +787,11 @@ pub(crate) fn build_model(
         });
     }
 
-    if let Some(procs) = base.procs.as_ref().filter(|p| !p.is_empty()) {
+    if let Some(procs) = base
+        .procs
+        .as_ref()
+        .filter(|p| base.rarity != "relic" && !p.is_empty())
+    {
         sections.push(Section::plain(
             procs
                 .iter()
@@ -830,6 +834,12 @@ pub(crate) fn build_model(
         .iter()
         .flatten()
         .filter(|e| e.trim() != UNHOLY_EFFECT)
+        .filter(|effect| {
+            base.rarity != "relic"
+                || !effect
+                    .split_once(':')
+                    .is_some_and(|(name, _)| granted_names.contains(&name.trim().to_lowercase()))
+        })
         .collect();
     let recognized =
         |effect: &str| RECOGNIZED_EFFECTS.contains(&effect.trim().to_lowercase().as_str());
@@ -1044,6 +1054,40 @@ fn granted_skill_entries(
             }
         }
         out.push((skill, display_rank, lines));
+    }
+    for grant in base
+        .procs
+        .iter()
+        .flatten()
+        .filter_map(|proc| proc.granted_skill.as_ref())
+    {
+        let Some(skill) = data::get_item_granted_skill_by_name(&grant.name) else {
+            continue;
+        };
+        let (min, max) = grant.rank.as_ranged();
+        if max <= 0. {
+            continue;
+        }
+        let rank = if min == max {
+            num(min)
+        } else {
+            format!("{}-{}", num(min), num(max))
+        };
+        out.push((skill, rank, Vec::new()));
+    }
+    if base.rarity == "relic" {
+        for (skill, _, lines) in &mut out {
+            // Calculated passive stats already provide their rank-specific values.
+            // Other relic formulas describe the skill, never character-wide stats.
+            if lines.is_empty() {
+                lines.extend(base.unique_effects.iter().flatten().filter_map(|effect| {
+                    let (name, formula) = effect.split_once(':')?;
+                    name.trim()
+                        .eq_ignore_ascii_case(&skill.name)
+                        .then(|| formula.trim().to_owned())
+                }));
+            }
+        }
     }
     out
 }
@@ -1698,6 +1742,113 @@ pub(crate) fn equipped_ids(inventory: &hsplanner_engine::calc::types::Inventory)
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn auroras_might_shows_lunar_aura_in_granted_skill_effects() {
+        let base = data::get_item("base_mace_cudgel").unwrap();
+        let mut item = hsplanner_build::gear::make_item(&base.id).unwrap();
+        hsplanner_build::gear::apply_runeword(&mut item, "rw_aurora_s_might").unwrap();
+        let model = build_model(base, Some(&item), &[]);
+        assert_eq!(model.name, "Aurora's Might");
+        let section = model
+            .sections
+            .iter()
+            .find(|section| {
+                section
+                    .header
+                    .as_ref()
+                    .is_some_and(|(name, _, _)| name == "Granted Skill Effects")
+            })
+            .expect("Lunar Aura section");
+        assert!(section.lines.iter().any(|line| {
+            matches!(line, Line::Entry { title, suffix, desc, lines, .. }
+                if title == "Lunar Aura"
+                    && suffix.as_deref() == Some("rank 12-28")
+                    && desc.as_ref().is_some_and(|desc| desc.contains("all resistances"))
+                    && lines.len() == 3)
+        }));
+    }
+
+    #[::core::prelude::v1::test]
+    fn every_relic_skill_has_a_granted_effect_entry() {
+        for base in data::data()
+            .items
+            .values()
+            .filter(|base| base.rarity == "relic")
+        {
+            let expected = base.skill_bonuses.as_ref().map_or(0, HashMap::len)
+                + base.procs.as_ref().map_or(0, Vec::len);
+            assert_eq!(
+                granted_skill_entries(base, None, None).len(),
+                expected,
+                "missing skill effects for {}",
+                base.name,
+            );
+        }
+    }
+
+    #[::core::prelude::v1::test]
+    fn relic_proc_shows_skill_rank_description_and_damage_together() {
+        let base = data::get_item("relic_relic_frozen_orb").unwrap();
+        let model = build_model(base, None, &[]);
+        let granted = model
+            .sections
+            .iter()
+            .find(|section| {
+                section
+                    .header
+                    .as_ref()
+                    .is_some_and(|(title, _, _)| title == "Granted Skill Effects")
+            })
+            .expect("proc skill effects section");
+        assert!(granted.lines.iter().any(|line| {
+            matches!(line, Line::Entry { title, suffix, desc, lines, .. }
+                if title == "Chilling Strike"
+                    && suffix.as_deref() == Some("rank 2-50")
+                    && desc.as_deref().is_some_and(|desc| desc.contains("freezing enemies"))
+                    && lines.iter().any(|line| line == "0 [+30 per level] Cold Damage"))
+        }));
+        assert!(
+            model
+                .sections
+                .iter()
+                .flat_map(|section| &section.lines)
+                .all(|line| !matches!(
+                    line,
+                    Line::Entry {
+                        style: LineStyle::Proc,
+                        ..
+                    }
+                ))
+        );
+        assert!(!model.sections.iter().any(|section| {
+            section
+                .header
+                .as_ref()
+                .is_some_and(|(title, _, _)| title == "Not Yet Supported")
+        }));
+    }
+
+    #[::core::prelude::v1::test]
+    fn relic_proc_metadata_does_not_grant_permanent_skill_ranks() {
+        let base = data::get_item("relic_relic_skull_axe").unwrap();
+        let item = EquippedItem {
+            base_id: base.id.clone(),
+            ..Default::default()
+        };
+        assert_eq!(
+            granted_skill_entries(base, Some(&item), None)[0].0.name,
+            "Demon Form"
+        );
+        let inventory = HashMap::from([("relic_1".to_owned(), item)]);
+        assert!(
+            hsplanner_engine::calc::rank::aggregate_item_skill_bonuses(
+                &inventory,
+                &data::data().items,
+            )
+            .is_empty()
+        );
+    }
 
     #[::core::prelude::v1::test]
     fn runeword_stats_precede_granted_skills_and_sockets() {

@@ -1872,7 +1872,7 @@
         25,
         35
       ],
-      "enemy_all_resist": 10
+      "ignore_all_res": 10
     },
     "setId": "sheep_king_s_kingdom",
     "width": 2,
@@ -2480,7 +2480,7 @@
         3,
         6
       ],
-      "enemy_all_resist": 20,
+      "ignore_all_res": 20,
       "phys_dmg_taken_as_cold": [
         10,
         20

@@ -11,7 +11,7 @@ use crate::{
     build_session::PreviewResult,
     skill_details,
 };
-use gpui_kit::base::{Disableable, Selectable};
+use gpui_kit::base::Disableable;
 use gpui_kit::component::{
     Icon, IconName, Sizable, WindowExt,
     button::{Button, ButtonVariants},
@@ -25,7 +25,7 @@ use hsplanner_engine::calc::{
     types::{AppliedStateValue, SkillKind, SkillSpec, SubskillEffectSpec, SubskillNodeSpec},
 };
 use hsplanner_ui::{
-    controls::PlannerControl,
+    controls::{ButtonTone, PlannerControl, icon_button, modal_button, segment},
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
 };
@@ -733,10 +733,7 @@ impl SkillsView {
             .items_center()
             .gap_1()
             .child(
-                Button::new("detail-less")
-                    .planner_style(cx)
-                    .xsmall()
-                    .label("−")
+                icon_button("detail-less", "−", false, cx)
                     .disabled(rank == 0)
                     .accessibility_label("Remove skill point")
                     .on_click(cx.listener(move |this, event: &ClickEvent, _, cx| {
@@ -744,10 +741,7 @@ impl SkillsView {
                     })),
             )
             .child(
-                Button::new("detail-more")
-                    .planner_style(cx)
-                    .xsmall()
-                    .label("+")
+                icon_button("detail-more", "+", false, cx)
                     .disabled(rank >= skill.max_rank || available == 0 || !prerequisite_met)
                     .accessibility_label("Add skill point")
                     .on_click(cx.listener(move |this, event: &ClickEvent, _, cx| {
@@ -755,41 +749,13 @@ impl SkillsView {
                     })),
             );
         let toggle = (kind != SkillKind::Passive).then(|| {
-            Button::new("toggle-active")
-                .planner_style(cx)
-                .xsmall()
-                .h_auto()
-                .px_2p5()
-                .py_1()
-                .line_height(relative(1.5))
-                .font_weight(FontWeight::SEMIBOLD)
-                .border_color(if enabled {
-                    p.accent_deep
-                } else {
-                    p.border_strong
-                })
-                .bg(if enabled {
-                    p.accent_deep.opacity(0.2)
-                } else {
-                    p.background.opacity(0.)
-                })
-                .text_color(if enabled { p.accent_hot } else { p.muted })
-                .when(enabled, |b| {
-                    b.shadow(vec![BoxShadow {
-                        color: p.accent_hot.opacity(0.25),
-                        offset: point(px(0.), px(0.)),
-                        blur_radius: units(10.).to_pixels(px(13.)),
-                        spread_radius: px(0.),
-                        inset: false,
-                    }])
-                })
-                .child(skill_details::caption(
-                    "toggle-active-label",
-                    if enabled { "✓ Active" } else { "+ Active" },
-                    if enabled { p.accent_hot } else { p.muted },
-                ))
-                .selected(enabled)
-                .on_click(cx.listener(move |this, _, _, cx| this.toggle(&id, kind, cx)))
+            segment(
+                "toggle-active",
+                if enabled { "✓ Active" } else { "+ Active" },
+                enabled,
+                cx,
+            )
+            .on_click(cx.listener(move |this, _, _, cx| this.toggle(&id, kind, cx)))
         });
         let tags = skill_details::effective_tags(skill, snapshot);
         content = content
@@ -1697,15 +1663,7 @@ impl Render for SubtreeView {
                                     )),
                             )
                             .child(
-                                Button::new("reset-subtree")
-                                    .planner_style(cx)
-                                    .small()
-                                    .h_auto()
-                                    .px_3p5()
-                                    .py_1p5()
-                                    .line_height(relative(1.5))
-                                    .bg(p.background.opacity(0.))
-                                    .child(caption("subtree-reset-label", "RESET", p.muted))
+                                modal_button("reset-subtree", "Reset", ButtonTone::Neutral, cx)
                                     .disabled(spent == 0)
                                     .on_click(cx.listener(move |this, _, _, cx| {
                                         let prefix = format!("{skill_id}:");
@@ -1721,18 +1679,7 @@ impl Render for SubtreeView {
                                     })),
                             )
                             .child(
-                                Button::new("close-subtree")
-                                    .planner_style(cx)
-                                    .small()
-                                    .h_auto()
-                                    .px_3()
-                                    .py_1p5()
-                                    .text_size(units(12.))
-                                    .line_height(relative(1.5))
-                                    .rounded_md()
-                                    .border_color(p.border)
-                                    .bg(p.background.opacity(0.))
-                                    .label("Close")
+                                modal_button("close-subtree", "Close", ButtonTone::Neutral, cx)
                                     .on_click(|_, window, cx| window.close_dialog(cx)),
                             ),
                     ),

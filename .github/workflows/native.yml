@@ -32,9 +32,9 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: '. -> target'
-      - name: Documents, persistence and preview operations
-        run: cargo test -p hsplanner-build -p hsplanner-planner --locked
+      - name: Workspace tests including native OCR
+        run: cargo test --workspace --locked
       - name: Engine and isolated integrations
-        run: cargo test -p HSPlanner --no-default-features --features ocr,suggestions --lib --locked
+        run: cargo test -p HSPlanner --no-default-features --features ocr,suggestions --lib --examples --locked
       - name: Existing calculation fixtures
         run: cargo test -p HSPlanner --no-default-features --test parity --locked

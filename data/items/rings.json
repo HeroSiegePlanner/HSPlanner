@@ -49,7 +49,7 @@
         40,
         65
       ],
-      "enemy_all_resist": [
+      "ignore_all_res": [
         15,
         25
       ]
@@ -207,7 +207,7 @@
         "increased_all_attributes": 2,
         "all_attributes": 5,
         "magic_skill_damage": 30,
-        "enemy_all_resist": 20,
+        "ignore_all_res": 20,
         "all_resistances": 15
       }
     }
@@ -310,7 +310,7 @@
     "grade": "SS",
     "requiresLevel": 92,
     "implicit": {
-      "enemy_all_resist": 15,
+      "ignore_all_res": 15,
       "ailment_damage_all": [
         15,
         30
@@ -1499,7 +1499,7 @@
         30,
         50
       ],
-      "enemy_all_resist": 15
+      "ignore_all_res": 15
     },
     "sockets": 0,
     "maxSockets": 0
@@ -1847,7 +1847,7 @@
         25
       ],
       "summon_reduced_dmg_taken": 15,
-      "enemy_all_resist": 15
+      "ignore_all_res": 15
     },
     "skillBonuses": {
       "Ghost Crew": [
@@ -1875,7 +1875,7 @@
         15,
         35
       ],
-      "enemy_all_resist": 15,
+      "ignore_all_res": 15,
       "increased_life": -15,
       "all_resistances": [
         15,

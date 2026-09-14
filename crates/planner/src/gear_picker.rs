@@ -7,7 +7,7 @@ use gpui_kit::component::select::{Select, SelectEvent, SelectState};
 use gpui_kit::component::{Icon, IconName, IndexPath, Sizable};
 use hsplanner_engine::calc::commands::{RankSlotItemsInput, rank_slot_items};
 use hsplanner_engine::calc::types::{ItemBase, RangedValue};
-use hsplanner_ui::controls::{ButtonTone, planner_button};
+use hsplanner_ui::controls::segment;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
 
@@ -185,11 +185,48 @@ fn fmt_sort_value(value: f64, key: &str) -> String {
     format!("{scaled:.digits$}{unit}{suffix}")
 }
 
+/// Keep the catalog in place. Sorting and filtering only rearrange its indices.
+fn item_indices(
+    items: &[ItemRow],
+    query: &str,
+    sort_key: &str,
+    dps_values: Option<&HashMap<String, f64>>,
+) -> Vec<usize> {
+    let mut rows: Vec<usize> = items
+        .iter()
+        .enumerate()
+        .filter(|(_, row)| query.is_empty() || row.search.contains(query))
+        .map(|(index, _)| index)
+        .collect();
+    let value = |row: &ItemRow| -> f64 {
+        match sort_key {
+            "dps" => dps_values
+                .and_then(|v| v.get(&row.base_id))
+                .copied()
+                .unwrap_or(-1.),
+            key => row
+                .sort_values
+                .get(key)
+                .copied()
+                .unwrap_or(f64::NEG_INFINITY),
+        }
+    };
+    if sort_key != "default" {
+        rows.sort_by(|a, b| value(&items[*b]).total_cmp(&value(&items[*a])));
+    }
+    rows
+}
+
 impl GearView {
     pub(super) fn invalidate_item_picker(&mut self) {
         self.ranking_revision += 1;
         self.picker_context = None;
         self.item_rows.clear();
+        self.visible_items.clear();
+        if matches!(self.picker, Picker::Items | Picker::Stash) {
+            self.picker_list.reset(0);
+        }
+        self.sort_subscription = None;
         self.sort_select = None;
         self.sort_options.clear();
         self.sort_key = "default".into();
@@ -255,6 +292,7 @@ impl GearView {
             });
         }
         self.item_rows = rows;
+        self.refresh_item_results(cx);
         if self.sort_select.is_none() {
             self.build_sort_select(window, cx);
         }
@@ -282,7 +320,7 @@ impl GearView {
             .map(|(_, label)| SharedString::from(label.clone()))
             .collect();
         let select = cx.new(|cx| SelectState::new(labels, Some(IndexPath::new(0)), window, cx));
-        self._subscriptions.push(cx.subscribe(
+        self.sort_subscription = Some(cx.subscribe(
             &select,
             |this, _, event: &SelectEvent<Vec<SharedString>>, cx| {
                 let SelectEvent::Confirm(Some(label)) = event else {
@@ -293,9 +331,11 @@ impl GearView {
                     return;
                 };
                 this.sort_key = key.clone();
+                this.picker_list.reset(this.visible_items.len());
                 if this.sort_key == "dps" && this.dps_values.is_none() {
                     this.rank_dps(cx);
                 }
+                this.refresh_item_results(cx);
                 cx.notify();
             },
         ));
@@ -335,6 +375,7 @@ impl GearView {
                 }
                 this.dps_pending = false;
                 this.dps_values = Some(values);
+                this.refresh_item_results(cx);
                 cx.notify();
             });
         })
@@ -353,84 +394,46 @@ impl GearView {
         }
     }
 
-    fn visible_item_rows(&self, cx: &App) -> Vec<ItemRow> {
+    pub(super) fn refresh_item_results(&mut self, cx: &App) {
         let query = self.search.read(cx).value().trim().to_lowercase();
-        let mut rows: Vec<ItemRow> = self
-            .item_rows
-            .iter()
-            .filter(|row| query.is_empty() || row.search.contains(&query))
-            .cloned()
-            .collect();
-        let value = |row: &ItemRow| -> f64 {
-            match self.sort_key.as_str() {
-                "dps" => self
-                    .dps_values
-                    .as_ref()
-                    .and_then(|v| v.get(&row.base_id))
-                    .copied()
-                    .unwrap_or(-1.),
-                key => row
-                    .sort_values
-                    .get(key)
-                    .copied()
-                    .unwrap_or(f64::NEG_INFINITY),
-            }
-        };
-        if self.sort_key != "default" {
-            rows.sort_by(|a, b| value(b).total_cmp(&value(a)));
+        let rows = item_indices(
+            &self.item_rows,
+            &query,
+            &self.sort_key,
+            self.dps_values.as_ref(),
+        );
+        if rows != self.visible_items {
+            self.picker_list.reset(rows.len());
+            self.visible_items = rows;
         }
-        rows
     }
 
     pub(super) fn item_picker(&self, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
-        let (faint, muted, accent, border, panel_secondary) =
-            (p.faint, p.muted, p.accent, p.border, p.panel_secondary);
-        let rows = self.visible_item_rows(cx);
-        let grouped = self.picker == Picker::Items && self.sort_key == "default";
-        let selected = self.candidate.as_ref().map(|item| item.base_id.clone());
-        let equipped_ids = item_tooltip::equipped_ids(&self.session.read(cx).snapshot().inventory);
-        let mut list = div()
+        let (faint, muted, border) = (p.faint, p.muted, p.border);
+        let choices = div()
             .id("gear-choices")
             .flex_1()
             .min_h_0()
-            .overflow_y_scroll()
-            .flex()
-            .flex_col();
-        if rows.is_empty() {
-            list = list.child(
-                div()
-                    .p_10()
-                    .text_center()
-                    .text_size(units(13.))
-                    .text_color(muted)
-                    .child("No items match"),
-            );
-        }
-        let mut last_group: Option<String> = None;
-        for row in &rows {
-            if grouped && last_group.as_deref() != Some(row.rarity.as_str()) {
-                last_group = Some(row.rarity.clone());
-                list = list.child(
+            .when(self.visible_items.is_empty(), |view| {
+                view.child(
                     div()
-                        .flex()
-                        .items_center()
-                        .gap_2()
-                        .px_4()
-                        .py_1p5()
-                        .border_b_1()
-                        .border_color(border)
-                        .bg(panel_secondary)
-                        .text_size(units(11.))
-                        .font_weight(FontWeight::MEDIUM)
+                        .p_10()
+                        .text_center()
+                        .text_size(units(13.))
                         .text_color(muted)
-                        .child(div().size_1().rounded_full().bg(accent))
-                        .child(editor::rarity_label(&row.rarity)),
-                );
-            }
-            let is_selected = selected.as_deref() == Some(row.base_id.as_str());
-            list = list.child(self.item_row(row, is_selected, &equipped_ids, cx));
-        }
+                        .child("No items match"),
+                )
+            })
+            .when(!self.visible_items.is_empty(), |view| {
+                view.child(
+                    list(
+                        self.picker_list.clone(),
+                        cx.processor(Self::render_item_choice),
+                    )
+                    .size_full(),
+                )
+            });
         div()
             .size_full()
             .flex()
@@ -451,7 +454,9 @@ impl GearView {
                             .items_center()
                             .gap_2()
                             .child(self.picker_tab("items", "Items", Picker::Items, cx))
-                            .child(self.picker_tab("stash", "Stash", Picker::Stash, cx))
+                            .when(!self.is_relic_slot(), |v| {
+                                v.child(self.picker_tab("stash", "Stash", Picker::Stash, cx))
+                            })
                             .child(div().flex_1())
                             .when(self.candidate.is_some(), |v| {
                                 v.child(ghost_button("back-to-configure", "← Back", cx).on_click(
@@ -501,7 +506,50 @@ impl GearView {
                         )
                     }),
             )
-            .child(list)
+            .child(choices)
+    }
+
+    fn render_item_choice(
+        &mut self,
+        index: usize,
+        _: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> AnyElement {
+        let Some(&item_index) = self.visible_items.get(index) else {
+            return div().into_any_element();
+        };
+        let row = &self.item_rows[item_index];
+        let grouped = self.picker == Picker::Items && self.sort_key == "default";
+        let header = grouped
+            && (index == 0 || self.item_rows[self.visible_items[index - 1]].rarity != row.rarity);
+        let selected = self
+            .candidate
+            .as_ref()
+            .is_some_and(|item| item.base_id == row.base_id);
+        let equipped_ids = item_tooltip::equipped_ids(&self.session.read(cx).snapshot().inventory);
+        let p = cx.global::<TooltipTheme>();
+        div()
+            .w_full()
+            .when(header, |view| {
+                view.child(
+                    div()
+                        .flex()
+                        .items_center()
+                        .gap_2()
+                        .px_4()
+                        .py_1p5()
+                        .border_b_1()
+                        .border_color(p.border)
+                        .bg(p.panel_secondary)
+                        .text_size(units(11.))
+                        .font_weight(FontWeight::MEDIUM)
+                        .text_color(p.muted)
+                        .child(div().size_1().rounded_full().bg(p.accent))
+                        .child(editor::rarity_label(&row.rarity)),
+                )
+            })
+            .child(self.item_row(row, selected, &equipped_ids, cx))
+            .into_any_element()
     }
 
     fn picker_tab(
@@ -511,18 +559,9 @@ impl GearView {
         picker: Picker,
         cx: &Context<Self>,
     ) -> Button {
-        let active = self.picker == picker;
-        let tone = if active {
-            ButtonTone::Primary
-        } else {
-            ButtonTone::Neutral
-        };
-        planner_button(id, tone, cx)
-            .small()
-            .label(label.to_owned())
-            .on_click(
-                cx.listener(move |this, _, window, cx| this.choose_picker(picker, window, cx)),
-            )
+        segment(id, label.to_owned(), self.picker == picker, cx).on_click(
+            cx.listener(move |this, _, window, cx| this.choose_picker(picker, window, cx)),
+        )
     }
 
     fn item_row(
@@ -647,6 +686,97 @@ impl GearView {
 mod tests {
     use super::*;
     use hsplanner_build::{BuildSnapshot, session::WorkspaceState};
+
+    fn catalog_row(id: &str, search: &str, value: Option<f64>) -> ItemRow {
+        ItemRow {
+            id: id.into(),
+            base_id: id.into(),
+            name: id.into(),
+            rarity: "common".into(),
+            meta: String::new(),
+            search: search.into(),
+            sort_values: value
+                .map(|v| HashMap::from([("strength".into(), v)]))
+                .unwrap_or_default(),
+            item: None,
+        }
+    }
+
+    #[::core::prelude::v1::test]
+    #[ignore = "manual picker model benchmark; excludes GPUI layout and GPU work"]
+    fn benchmark_picker_redraw_model() {
+        use std::{hint::black_box, time::Instant};
+        let snapshot = BuildSnapshot::default();
+        let rows: Vec<_> = item_bases(&snapshot, "weapon", false)
+            .into_iter()
+            .map(|base| ItemRow {
+                id: base.id.clone(),
+                base_id: base.id.clone(),
+                name: base.name.clone(),
+                rarity: base.rarity.clone(),
+                meta: base_meta(base),
+                search: base_search(base),
+                sort_values: sort_values(base),
+                item: None,
+            })
+            .collect();
+        let indices = item_indices(&rows, "", "default", None);
+        assert_eq!(indices, (0..rows.len()).collect::<Vec<_>>());
+        let frames = 1000;
+        let start = Instant::now();
+        for _ in 0..frames {
+            // Previous visible_item_rows: clone every matched record each redraw.
+            let query = black_box("");
+            let visible: Vec<_> = rows
+                .iter()
+                .filter(|row| query.is_empty() || row.search.contains(query))
+                .cloned()
+                .collect();
+            black_box(visible);
+        }
+        let eager = start.elapsed();
+        let start = Instant::now();
+        for _ in 0..frames {
+            // Current redraw consumes the retained index model; events rebuild it.
+            black_box(&indices);
+        }
+        let cached = start.elapsed();
+        eprintln!(
+            "{} weapon rows, {frames} redraws: old model {eager:?}, retained model {cached:?}; excludes row rendering",
+            rows.len()
+        );
+    }
+
+    #[::core::prelude::v1::test]
+    fn item_results_keep_catalog_order_for_ties_and_search_effects() {
+        let rows = vec![
+            catalog_row("a", "sword fire damage", Some(10.)),
+            catalog_row("b", "axe ignore fire resistance", Some(20.)),
+            catalog_row("c", "wand fire damage", Some(20.)),
+            catalog_row("d", "bow cold", None),
+        ];
+        assert_eq!(item_indices(&rows, "fire", "default", None), vec![0, 1, 2]);
+        assert_eq!(item_indices(&rows, "", "strength", None), vec![1, 2, 0, 3]);
+        assert_eq!(
+            item_indices(&rows, "ignore fire", "strength", None),
+            vec![1]
+        );
+        assert!(item_indices(&rows, "missing", "default", None).is_empty());
+    }
+
+    #[::core::prelude::v1::test]
+    fn item_results_reorder_when_dps_arrives_and_preserve_duplicate_stash_bases() {
+        let mut rows = vec![
+            catalog_row("a", "sword", None),
+            catalog_row("b", "axe", None),
+            catalog_row("stash-copy", "sword", None),
+        ];
+        rows[2].base_id = "a".into();
+        assert_eq!(item_indices(&rows, "", "dps", None), vec![0, 1, 2]);
+        let dps = HashMap::from([("a".into(), 10.), ("b".into(), 25.)]);
+        assert_eq!(item_indices(&rows, "", "dps", Some(&dps)), vec![1, 0, 2]);
+        assert_eq!(item_indices(&rows, "sword", "dps", Some(&dps)), vec![0, 2]);
+    }
 
     #[::core::prelude::v1::test]
     fn initial_and_changed_slots_use_only_their_eligible_items() {

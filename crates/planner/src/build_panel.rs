@@ -3,10 +3,7 @@ use gpui_kit::{
 };
 use hsplanner_engine::calc::{performance_diff::PerformanceDiff, skills::Ranged};
 
-use crate::{
-    build_session::{BuildSession, PreviewResult},
-    theme::TooltipTheme,
-};
+use crate::{build_session::PreviewResult, theme::TooltipTheme};
 
 pub fn format_number(value: f64, percent: bool) -> String {
     let number = if (value - value.round()).abs() < 0.05 {
@@ -31,124 +28,6 @@ pub fn format_range(value: Ranged, percent: bool) -> String {
             format_number(value.1, percent)
         )
     }
-}
-
-fn stat_row(label: &str, value: String, palette: &TooltipTheme) -> Stateful<Div> {
-    div()
-        .id(gpui_kit::SharedString::from(format!("build-stat-{label}")))
-        .flex()
-        .justify_between()
-        .gap_3()
-        .text_size(rems(12. / 13.))
-        .child(
-            div()
-                .text_color(palette.muted)
-                .child(gpui_kit::text!(id = "name", label.to_owned())),
-        )
-        .child(
-            div()
-                .text_color(palette.text)
-                .font_weight(FontWeight::MEDIUM)
-                .child(gpui_kit::text!(id = "value", value)),
-        )
-}
-
-pub fn build_summary(
-    session: &BuildSession,
-    input: &hsplanner_build::BuildSnapshot,
-    cx: &App,
-) -> Div {
-    let class = input
-        .class_id
-        .as_deref()
-        .and_then(hsplanner_engine::calc::data::get_class)
-        .map(|c| c.name.as_str())
-        .unwrap_or("Character");
-    let palette = cx.global::<TooltipTheme>();
-    let mut panel = div()
-        .flex()
-        .flex_col()
-        .gap_2()
-        .child(
-            div()
-                .text_xs()
-                .text_color(palette.muted)
-                .child(format!("{class} · Level {}", input.level)),
-        )
-        .child(div().text_xs().text_color(palette.faint).child(format!(
-            "{} active skills · {}",
-            input.active_skill_ids.len(),
-            input.difficulty
-        )));
-    if let Some(error) = &session.error {
-        panel = panel.child(
-            div()
-                .text_sm()
-                .text_color(palette.negative)
-                .child(error.clone()),
-        );
-    }
-    if let Some(performance) = session.current() {
-        let dps = performance
-            .combined_dps_min
-            .zip(performance.combined_dps_max)
-            .map(|range| format_range(range, false))
-            .unwrap_or_else(|| "—".into());
-        panel = panel.child(
-            div()
-                .flex()
-                .flex_col()
-                .gap_1()
-                .child(
-                    div()
-                        .text_xs()
-                        .text_color(palette.muted)
-                        .child(gpui_kit::text!(id = "combined-dps-label", "COMBINED DPS")),
-                )
-                .child(
-                    div()
-                        .text_2xl()
-                        .font_weight(FontWeight::SEMIBOLD)
-                        .text_color(palette.accent_hot)
-                        .child(gpui_kit::text!(id = "combined-dps-value", dps)),
-                ),
-        );
-        for (key, label) in [("life", "Life"), ("mana", "Mana")] {
-            panel = panel.child(stat_row(
-                label,
-                format_range(
-                    performance.stats.get(key).copied().unwrap_or_default(),
-                    false,
-                ),
-                palette,
-            ));
-        }
-        for (key, label) in [
-            ("strength", "Strength"),
-            ("dexterity", "Dexterity"),
-            ("intelligence", "Intelligence"),
-            ("energy", "Energy"),
-            ("vitality", "Vitality"),
-            ("armor", "Armor"),
-        ] {
-            panel = panel.child(stat_row(
-                label,
-                format_range(
-                    performance.attributes.get(key).copied().unwrap_or_default(),
-                    false,
-                ),
-                palette,
-            ));
-        }
-    } else if session.error.is_none() {
-        panel = panel.child(
-            div()
-                .text_sm()
-                .text_color(palette.muted)
-                .child("Calculating build…"),
-        );
-    }
-    panel
 }
 
 pub(crate) fn change_row(change: &PerformanceDiff, palette: &TooltipTheme) -> Stateful<Div> {

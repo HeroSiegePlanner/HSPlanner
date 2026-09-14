@@ -9,7 +9,7 @@ use crate::skill_details::stat_name;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
 use hsplanner_engine::calc::affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars};
 use hsplanner_engine::calc::types::{ItemBase, ItemSet};
-use hsplanner_ui::controls::{ButtonTone, planner_button};
+use hsplanner_ui::controls::{ButtonSize, ButtonTone, command_button, modal_button};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
 
@@ -32,19 +32,14 @@ impl GearView {
         expanded: bool,
         cx: &Context<Self>,
     ) -> Button {
-        let p = cx.global::<TooltipTheme>();
-        Button::new(id)
-            .ghost()
-            .h_auto()
-            .p_0()
-            .text_color(p.muted)
-            .child(
-                div()
-                    .font_family(theme::MONO_FONT_FAMILY)
-                    .text_size(units(10.))
-                    .child(TooltipText::new(id, label.to_uppercase(), 0.14)),
-            )
-            .on_click(cx.listener(move |this, _, _, cx| this.set_sections_mode(expanded, cx)))
+        command_button(
+            id,
+            label.to_owned(),
+            ButtonTone::Ghost,
+            ButtonSize::Small,
+            cx,
+        )
+        .on_click(cx.listener(move |this, _, _, cx| this.set_sections_mode(expanded, cx)))
     }
 
     pub(super) fn inspector(&mut self, window: &Window, cx: &mut Context<Self>) -> Div {
@@ -126,8 +121,14 @@ impl GearView {
         {
             content = content.child(self.set_section(set, &item, cx));
         }
-        content = content.child(self.sockets_section(&item, base, cx));
-        content = content.children(self.rolls_section(&item, base, window, cx));
+        if gear::max_sockets(&item) > 0 || !item.socketed.is_empty() {
+            content = content.child(self.sockets_section(&item, base, cx));
+        }
+        if gear::is_relic(base) {
+            content = content.child(self.relic_tier_section(&item, window, cx));
+        } else {
+            content = content.children(self.rolls_section(&item, base, window, cx));
+        }
         content = content.children(self.runeword_section(&item, base, cx));
         if data::can_star_forge(&self.slot, &base.rarity) {
             content = content.child(self.stars_section(&item, cx));
@@ -182,10 +183,7 @@ impl GearView {
                 content = content.child(self.pick_section(key, label, picker, picked, cx));
             }
         }
-        if base.rarity == "common"
-            || base.random_affix_group_id.is_some()
-            || !item.affixes.is_empty()
-        {
+        if hsplanner_build::gear::accepts_affixes(base) || !item.affixes.is_empty() {
             content = content.child(self.affixes_section(&item, base, window, cx));
         }
         if data::forge_kind_for(&base.rarity).is_some() {
@@ -554,6 +552,7 @@ impl GearView {
                     forged: false,
                     stat,
                     skill: is_skill,
+                    relic_tier: false,
                 },
                 cx,
             );
@@ -664,6 +663,65 @@ impl GearView {
                     .body(rows),
                 cx,
             ),
+        )
+    }
+
+    fn relic_tier_section(
+        &mut self,
+        item: &EquippedItem,
+        window: &Window,
+        cx: &mut Context<Self>,
+    ) -> Stateful<Div> {
+        const KEY: &str = "relic-tier";
+        let p = cx.global::<TooltipTheme>();
+        let (accent_hot, faint) = (p.accent_hot, p.faint);
+        let tier = gear::relic_tier(item);
+        self.roll_slider(
+            KEY.to_owned(),
+            (1., f64::from(gear::RELIC_MAX_TIER)),
+            f64::from(tier),
+            RollTarget {
+                affix: None,
+                forged: false,
+                stat: String::new(),
+                skill: false,
+                relic_tier: true,
+            },
+            cx,
+        );
+        let body = div()
+            .p_2()
+            .flex()
+            .flex_col()
+            .gap_1p5()
+            .child(
+                row_box(cx).child(
+                    div()
+                        .flex()
+                        .items_center()
+                        .gap_2()
+                        .child(self.roll_control(KEY, "Relic tier", window, cx))
+                        .child(
+                            div()
+                                .flex_shrink_0()
+                                .font_family(theme::MONO_FONT_FAMILY)
+                                .text_size(units(9.))
+                                .text_color(faint)
+                                .child(format!("1–{}", gear::RELIC_MAX_TIER)),
+                        ),
+                ),
+            )
+            .child(hint(
+                "relic-tier-hint",
+                "Drag to choose the relic tier; every ranged stat follows it.",
+                cx,
+            ));
+        self.card(
+            Section::new("relic-tier", "Relic Tier", Tone::Default)
+                .default_open(true)
+                .right(mono_summary(format!("T{tier}"), accent_hot))
+                .body(body),
+            cx,
         )
     }
 
@@ -873,6 +931,7 @@ impl GearView {
                             forged: false,
                             stat: String::new(),
                             skill: false,
+                            relic_tier: false,
                         },
                         cx,
                     );
@@ -1033,6 +1092,7 @@ impl GearView {
                             forged: true,
                             stat: String::new(),
                             skill: false,
+                            relic_tier: false,
                         },
                         cx,
                     );
@@ -1463,6 +1523,15 @@ impl GearView {
 }
 impl GearView {
     pub(super) fn editor(&mut self, window: &Window, cx: &mut Context<Self>) -> Div {
+        if self.picker_rem != window.rem_size() {
+            self.picker_rem = window.rem_size();
+            self.picker_list
+                .reset(if matches!(self.picker, Picker::Items | Picker::Stash) {
+                    self.visible_items.len()
+                } else {
+                    self.rows.len()
+                });
+        }
         let (border, muted) = {
             let p = cx.global::<TooltipTheme>();
             (p.border, p.muted)
@@ -1505,18 +1574,13 @@ impl GearView {
         if matches!(self.picker, Picker::Items | Picker::Stash) {
             return self.item_picker(cx);
         }
-        let current = self.current_pick();
         let modifier = matches!(self.picker, Picker::Affix | Picker::Forge | Picker::Augment);
-        let mut previous_group = "";
-        let list = div()
+        let choices = div()
             .id("gear-choices")
             .flex_1()
             .min_h_0()
-            .overflow_y_scroll()
-            .flex()
-            .flex_col()
-            .when(self.rows.is_empty(), |list| {
-                list.child(
+            .when(self.rows.is_empty(), |view| {
+                view.child(
                     div()
                         .p_10()
                         .text_center()
@@ -1525,28 +1589,11 @@ impl GearView {
                         .child("No matches"),
                 )
             })
-            .children(self.rows.iter().map(|row| {
-                let header = !row.group.is_empty() && previous_group != row.group;
-                previous_group = row.group;
-                div()
-                    .flex_none()
-                    .when(header, |view| {
-                        let p = cx.global::<TooltipTheme>();
-                        view.child(
-                            div()
-                                .px_4()
-                                .py_1()
-                                .border_b_1()
-                                .border_color(p.accent_deep.opacity(0.3))
-                                .bg(p.panel_secondary)
-                                .font_family(theme::MONO_FONT_FAMILY)
-                                .text_size(units(10.))
-                                .text_color(p.accent_hot.opacity(0.7))
-                                .child(row.group.to_uppercase()),
-                        )
-                    })
-                    .child(self.choice_row(row, current.as_deref() == Some(row.id.as_str()), cx))
-            }));
+            .when(!self.rows.is_empty(), |view| {
+                view.child(
+                    list(self.picker_list.clone(), cx.processor(Self::render_choice)).size_full(),
+                )
+            });
         div().size_full().flex().flex_col().child(
             div()
                 .w_full()
@@ -1575,7 +1622,17 @@ impl GearView {
                                         Picker::Items,
                                         cx,
                                     ))
-                                    .child(self.picker_button("stash", "Stash", Picker::Stash, cx))
+                                    .when(
+                                        !self.is_relic_slot(),
+                                        |view| {
+                                            view.child(self.picker_button(
+                                                "stash",
+                                                "Stash",
+                                                Picker::Stash,
+                                                cx,
+                                            ))
+                                        },
+                                    )
                                 })
                                 .when(modifier, |view| {
                                     let title = match self.picker {
@@ -1620,7 +1677,7 @@ impl GearView {
                             ),
                         ),
                 )
-                .child(list)
+                .child(choices)
                 .when(self.picker == Picker::Affix, |view| {
                     let pool = self
                         .candidate
@@ -1664,6 +1721,39 @@ impl GearView {
 }
 
 impl GearView {
+    fn render_choice(
+        &mut self,
+        index: usize,
+        _: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> AnyElement {
+        let Some(row) = self.rows.get(index) else {
+            return div().into_any_element();
+        };
+        let header =
+            !row.group.is_empty() && (index == 0 || self.rows[index - 1].group != row.group);
+        let current = self.current_pick();
+        let p = cx.global::<TooltipTheme>();
+        div()
+            .w_full()
+            .when(header, |view| {
+                view.child(
+                    div()
+                        .px_4()
+                        .py_1()
+                        .border_b_1()
+                        .border_color(p.accent_deep.opacity(0.3))
+                        .bg(p.panel_secondary)
+                        .font_family(theme::MONO_FONT_FAMILY)
+                        .text_size(units(10.))
+                        .text_color(p.accent_hot.opacity(0.7))
+                        .child(row.group.to_uppercase()),
+                )
+            })
+            .child(self.choice_row(row, current.as_deref() == Some(row.id.as_str()), cx))
+            .into_any_element()
+    }
+
     /// One row of the generic picker (sockets, runewords, affixes, forge, augment, skills, class).
     fn choice_row(&self, row: &Row, selected: bool, cx: &Context<Self>) -> Stateful<Div> {
         let p = cx.global::<TooltipTheme>();
@@ -1832,16 +1922,18 @@ impl GearView {
                         v.child(ghost_button("item-text-edit", "Text Edit", cx).on_click(
                             cx.listener(|this, _, window, cx| this.open_text_edit(window, cx)),
                         ))
-                        .child(ghost_button("stash-item", "Save to stash", cx).on_click(
-                            cx.listener(|this, _, _, cx| {
-                                if let Some(item) = this.candidate.clone() {
-                                    this.session.update(cx, |session, cx| {
-                                        session.edit(|draft| gear::stash(draft, &item));
-                                        cx.notify();
-                                    });
-                                }
-                            }),
-                        ))
+                        .when(!self.is_relic_slot(), |v| {
+                            v.child(ghost_button("stash-item", "Save to stash", cx).on_click(
+                                cx.listener(|this, _, _, cx| {
+                                    if let Some(item) = this.candidate.clone() {
+                                        this.session.update(cx, |session, cx| {
+                                            session.edit(|draft| gear::stash(draft, &item));
+                                            cx.notify();
+                                        });
+                                    }
+                                }),
+                            ))
+                        })
                         .child(
                             ghost_button("unequip-item", "Remove", cx)
                                 .text_color(p.negative)
@@ -2446,7 +2538,7 @@ fn editor_button(id: &'static str, label: &'static str, primary: bool, cx: &App)
     } else {
         ButtonTone::Neutral
     };
-    planner_button(id, tone, cx).label(label)
+    modal_button(id, label, tone, cx)
 }
 
 #[cfg(test)]

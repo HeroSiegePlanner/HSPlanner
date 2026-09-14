@@ -1,7 +1,7 @@
-//! Greedy DPS optimizer for the Incarnation tree, driven by the engine's suggest_engine.
+//! Budgeted path and beam-search optimizer for the Incarnation tree.
 use super::*;
 use gpui_kit::component::slider::SliderState;
-use gpui_kit::{Div, Entity, FontWeight, SharedString, Window, relative, rems};
+use gpui_kit::{Div, Entity, FontWeight, SharedString, Window, relative, rems, uniform_list};
 use hsplanner_engine::suggest_engine::{
     command::run_suggest_controlled,
     types::{SuggestInput, SuggestResult, SuggestStep, TreeGraph},
@@ -158,6 +158,7 @@ impl TreeView {
             .push(cx.observe(slider, |this, slider, cx| {
                 let budget = slider.read(cx).value().end().round() as u32;
                 if this.suggest.budget != budget {
+                    this.suggest.clear();
                     this.suggest.budget = budget.clamp(MIN_BUDGET, MAX_BUDGET);
                     cx.notify();
                 }
@@ -167,7 +168,6 @@ impl TreeView {
     pub(super) fn toggle_suggest(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.suggest_open = !self.suggest_open;
         if self.suggest_open {
-            self.inspector_open = false;
             self.summary_open = false;
         } else {
             self.suggest.clear();
@@ -291,8 +291,8 @@ impl TreeView {
                 .child(tooltip_text::TooltipText::new(id, text, 0.14))
         };
         let status = match &self.suggest.phase {
-            Phase::Idle => "Greedy DPS optimizer".to_string(),
-            Phase::Computing => format!("Step {current} / {total}"),
+            Phase::Idle => "Path and synergy search".to_string(),
+            Phase::Computing => format!("Search {current} / {total}"),
             Phase::Done => self.suggest.result.as_ref().map_or(String::new(), |r| {
                 format!("Used {} of {}", r.budget_used, r.budget_requested)
             }),
@@ -444,7 +444,7 @@ impl TreeView {
         panel = match (&self.suggest.phase, &self.suggest.result) {
             (Phase::Done, Some(result)) => panel.child(self.suggest_results(result, cx)),
             _ => panel.child(div().px_4().py_5().text_sm().text_color(p.muted).child(
-                "Choose how many nodes to add. The optimizer walks the frontier of your allocation and greedily picks the highest-DPS neighbour each step, falling back to the shortest path toward a notable or jewelry socket when no immediate gain is available.",
+                "Choose the maximum number of nodes to add. The optimizer compares paths and alternative allocations using your build’s DPS, including travel nodes and skill synergies. Existing nodes stay allocated. Results are estimates; the search may leave points unused when no improvement is found.",
             )),
         };
         panel.child(
@@ -526,19 +526,11 @@ impl TreeView {
                     if gain > 0. { p.positive } else { p.muted },
                 )),
         );
-        let rows: Vec<Div> = result
-            .sequence
-            .iter()
-            .enumerate()
-            .map(|(index, step)| self.suggest_row(index, step, cx))
-            .collect();
         section = section.child(
             div()
-                .id("suggest-sequence")
-                .overflow_y_scroll()
-                .max_h(rems(20.))
-                .when(rows.is_empty(), |list| {
-                    list.child(
+                .min_h_0()
+                .when(result.sequence.is_empty(), |view| {
+                    view.child(
                         div()
                             .p_6()
                             .text_center()
@@ -547,7 +539,25 @@ impl TreeView {
                             .child("No improvements found within budget"),
                     )
                 })
-                .children(rows),
+                .when(!result.sequence.is_empty(), |view| {
+                    view.child(
+                        uniform_list(
+                            ("suggest-sequence", self.suggest.run_id),
+                            result.sequence.len(),
+                            cx.processor(|this, range: std::ops::Range<usize>, _, cx| {
+                                range
+                                    .filter_map(|index| {
+                                        let step =
+                                            this.suggest.result.as_ref()?.sequence.get(index)?;
+                                        Some(this.suggest_row(index, step, cx))
+                                    })
+                                    .collect::<Vec<_>>()
+                            }),
+                        )
+                        .w_full()
+                        .h(rems((result.sequence.len() as f32 * 2.6).min(20.))),
+                    )
+                }),
         );
         if !result.unsupported_lines.is_empty() {
             let mut lines: Vec<&String> = result.unsupported_lines.iter().collect();
@@ -611,6 +621,8 @@ impl TreeView {
             )
         };
         div()
+            .w_full()
+            .h(rems(2.6))
             .flex()
             .items_center()
             .gap_3()

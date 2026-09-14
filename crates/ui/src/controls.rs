@@ -1,8 +1,11 @@
 //! Shared control surfaces from the shipping planner; GPUI retains interaction behavior.
 use crate::theme::{self, TooltipTheme};
+use crate::tooltip_text::TooltipText;
+use gpui_kit::base::Selectable;
 use gpui_kit::component::{
+    Sizable,
     button::{Button, ButtonCustomVariant, ButtonVariants},
-    input::Input,
+    input::{Input, Textarea},
     select::{Select, SelectDelegate, SelectItem},
 };
 use gpui_kit::{prelude::*, *};
@@ -11,16 +14,28 @@ pub trait PlannerControl: Sized {
     fn planner_style(self, cx: &App) -> Self;
 }
 
+/// Neutral = ordinary command, Primary = the one commit of a decision area,
+/// Danger = destructive commit, Ghost = quiet inline/toolbar action without a border.
 #[derive(Clone, Copy, PartialEq, Eq, Default)]
 pub enum ButtonTone {
     #[default]
     Neutral,
     Primary,
     Danger,
+    Ghost,
+}
+
+/// Compact = 20px glyph square, Small = 24px toolbar/row control, Regular = 28px dialog action.
+#[derive(Clone, Copy, PartialEq, Eq, Default)]
+pub enum ButtonSize {
+    Compact,
+    #[default]
+    Small,
+    Regular,
 }
 
 /// The one definition of how a planner command button looks. Size and layout stay
-/// with the caller (`.small()`, `.w_full()`); surfaces that need their own colours
+/// with the caller (`button_size`, `.w_full()`); surfaces that need their own colours
 /// call `.custom(...)` after `planner_style`.
 pub fn button_look(button: Button, tone: ButtonTone, cx: &App) -> Button {
     let p = cx.global::<TooltipTheme>();
@@ -39,6 +54,7 @@ pub fn button_look(button: Button, tone: ButtonTone, cx: &App) -> Button {
             clear,
             p.negative.opacity(0.12),
         ),
+        ButtonTone::Ghost => (p.muted, clear, clear, p.panel_secondary),
     };
     button
         .custom(
@@ -65,25 +81,148 @@ impl PlannerControl for Button {
     }
 }
 
+fn field_look<T: Styled>(control: T, cx: &App) -> T {
+    let palette = cx.global::<TooltipTheme>();
+    control
+        .rounded_sm()
+        .border_color(palette.border_strong)
+        .font_family(theme::FONT_FAMILY)
+        .bg(linear_gradient(
+            180.,
+            linear_color_stop(palette.background, 0.),
+            linear_color_stop(palette.panel_secondary, 1.),
+        ))
+        .shadow(vec![BoxShadow {
+            color: palette.shadow.opacity(0.5),
+            offset: point(px(0.), px(1.)),
+            blur_radius: px(2.),
+            spread_radius: px(0.),
+            inset: true,
+        }])
+}
+
 impl PlannerControl for Input {
     fn planner_style(self, cx: &App) -> Self {
-        let palette = cx.global::<TooltipTheme>();
-        self.rounded_sm()
-            .border_color(palette.border_strong)
-            .font_family(theme::FONT_FAMILY)
-            .bg(linear_gradient(
-                180.,
-                linear_color_stop(palette.background, 0.),
-                linear_color_stop(palette.panel_secondary, 1.),
-            ))
-            .shadow(vec![BoxShadow {
-                color: palette.shadow.opacity(0.5),
-                offset: point(px(0.), px(1.)),
-                blur_radius: px(2.),
-                spread_radius: px(0.),
-                inset: true,
-            }])
+        field_look(self, cx)
     }
+}
+
+impl PlannerControl for Textarea {
+    fn planner_style(self, cx: &App) -> Self {
+        field_look(self, cx)
+    }
+}
+
+pub fn button_size(button: Button, size: ButtonSize) -> Button {
+    match size {
+        ButtonSize::Compact => button.xsmall().size_5().p_0().line_height(relative(1.)),
+        ButtonSize::Small => button.small(),
+        ButtonSize::Regular => button.small().h_7().px_3(),
+    }
+}
+
+/// Every labelled command button: tone by meaning, size by placement, Inter sentence case.
+pub fn command_button(
+    id: impl Into<ElementId>,
+    label: impl Into<SharedString>,
+    tone: ButtonTone,
+    size: ButtonSize,
+    cx: &App,
+) -> Button {
+    button_size(planner_button(id, tone, cx), size).label(label)
+}
+
+/// Dialog footer and form action.
+pub fn modal_button(
+    id: impl Into<ElementId>,
+    label: impl Into<SharedString>,
+    tone: ButtonTone,
+    cx: &App,
+) -> Button {
+    command_button(id, label, tone, ButtonSize::Regular, cx)
+}
+
+/// One pill of a group with persistent selection: picker tabs, filter chips, toggles.
+pub fn segment(
+    id: impl Into<ElementId>,
+    label: impl Into<SharedString>,
+    active: bool,
+    cx: &App,
+) -> Button {
+    let tone = if active {
+        ButtonTone::Primary
+    } else {
+        ButtonTone::Neutral
+    };
+    command_button(id, label, tone, ButtonSize::Small, cx).selected(active)
+}
+
+/// Underlined section tab; mono caps because tabs are navigation, not commands.
+pub fn tab(
+    id: impl Into<ElementId>,
+    label: impl Into<SharedString>,
+    active: bool,
+    cx: &App,
+) -> Button {
+    let p = cx.global::<TooltipTheme>();
+    let clear = p.background.opacity(0.);
+    let color = if active { p.accent_hot } else { p.faint };
+    let id = id.into();
+    let label = label.into();
+    let label_id = ElementId::NamedChild(std::sync::Arc::new(id.clone()), "label".into());
+    Button::new(id)
+        .custom(
+            ButtonCustomVariant::new(cx)
+                .color(if active {
+                    p.accent_hot.opacity(0.04)
+                } else {
+                    clear
+                })
+                .foreground(color)
+                .hover(p.accent_hot.opacity(0.04))
+                .active(clear),
+        )
+        .flex_1()
+        .h_auto()
+        .py_3p5()
+        .justify_center()
+        .rounded_none()
+        .border_0()
+        .border_b_2()
+        .border_color(if active { p.accent_hot } else { clear })
+        .font_family(theme::MONO_FONT_FAMILY)
+        .text_size(rems(11. / 13.))
+        .font_weight(FontWeight::SEMIBOLD)
+        .selected(active)
+        .accessibility_label(label.clone())
+        .child(div().text_color(color).child(TooltipText::new(
+            label_id,
+            label.to_uppercase(),
+            0.18,
+        )))
+}
+
+/// 20px glyph control ("×", "−", "+"); `danger` reddens the hover for removals.
+pub fn icon_button(id: impl Into<ElementId>, glyph: &str, danger: bool, cx: &App) -> Button {
+    let p = cx.global::<TooltipTheme>();
+    let button = command_button(
+        id,
+        glyph.to_owned(),
+        ButtonTone::Ghost,
+        ButtonSize::Compact,
+        cx,
+    );
+    if !danger {
+        return button;
+    }
+    let clear = p.background.opacity(0.);
+    button.custom(
+        ButtonCustomVariant::new(cx)
+            .color(clear)
+            .foreground(p.muted)
+            .hover(p.negative.opacity(0.15))
+            .active(p.negative.opacity(0.2)),
+    )
 }
 
 impl<D: SelectDelegate + 'static> PlannerControl for Select<D>

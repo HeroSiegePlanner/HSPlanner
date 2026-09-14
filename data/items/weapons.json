@@ -102,7 +102,7 @@
         25,
         35
       ],
-      "enemy_all_resist": 25,
+      "ignore_all_res": 25,
       "damage_mitigation": 10
     },
     "sockets": 4,
@@ -2373,7 +2373,7 @@
         25,
         60
       ],
-      "enemy_all_resist": 35
+      "ignore_all_res": 35
     },
     "skillBonuses": {
       "Celestial Creation": [
@@ -2510,7 +2510,7 @@
         60
       ],
       "random_skill_element": 12,
-      "enemy_all_resist": [
+      "ignore_all_res": [
         25,
         35
       ]
@@ -2556,7 +2556,7 @@
         20,
         30
       ],
-      "enemy_all_resist": [
+      "ignore_all_res": [
         10,
         25
       ]
@@ -4006,7 +4006,7 @@
         2375
       ],
       "life_per_kill": 12,
-      "enemy_all_resist": 15
+      "ignore_all_res": 15
     },
     "skillBonuses": {
       "Reaper's Culling": 1
@@ -8093,7 +8093,7 @@
         10,
         15
       ],
-      "enemy_all_resist": [
+      "ignore_all_res": [
         10,
         15
       ]
@@ -8890,7 +8890,7 @@
         15,
         25
       ],
-      "enemy_all_resist": 10
+      "ignore_all_res": 10
     },
     "sockets": 2,
     "maxSockets": 4,
@@ -10853,7 +10853,7 @@
         100
       ],
       "phys_dmg_taken_as_arcane": 25,
-      "enemy_all_resist": [
+      "ignore_all_res": [
         25,
         40
       ],

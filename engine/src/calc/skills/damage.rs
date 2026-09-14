@@ -15,7 +15,7 @@ pub(super) struct ElementKeys {
     pub skill_damage_more: &'static str,
     pub flat_skill_damage: &'static str,
     pub ignore_res: &'static str,
-    pub enemy_res: &'static str,
+    pub legacy_ignore_res: &'static str,
 }
 
 const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
@@ -27,7 +27,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "fire_skill_damage_more",
             flat_skill_damage: "flat_fire_skill_damage",
             ignore_res: "ignore_fire_res",
-            enemy_res: "enemy_fire_resist",
+            legacy_ignore_res: "enemy_fire_resist",
         },
     ),
     (
@@ -38,7 +38,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "cold_skill_damage_more",
             flat_skill_damage: "flat_cold_skill_damage",
             ignore_res: "ignore_cold_res",
-            enemy_res: "enemy_cold_resist",
+            legacy_ignore_res: "enemy_cold_resist",
         },
     ),
     (
@@ -49,7 +49,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "lightning_skill_damage_more",
             flat_skill_damage: "flat_lightning_skill_damage",
             ignore_res: "ignore_lightning_res",
-            enemy_res: "enemy_lightning_resist",
+            legacy_ignore_res: "enemy_lightning_resist",
         },
     ),
     (
@@ -60,7 +60,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "poison_skill_damage_more",
             flat_skill_damage: "flat_poison_skill_damage",
             ignore_res: "ignore_poison_res",
-            enemy_res: "enemy_poison_resist",
+            legacy_ignore_res: "enemy_poison_resist",
         },
     ),
     (
@@ -71,7 +71,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "arcane_skill_damage_more",
             flat_skill_damage: "flat_arcane_skill_damage",
             ignore_res: "ignore_arcane_res",
-            enemy_res: "enemy_arcane_resist",
+            legacy_ignore_res: "enemy_arcane_resist",
         },
     ),
     (
@@ -82,7 +82,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "physical_skill_damage_more",
             flat_skill_damage: "flat_physical_skill_damage",
             ignore_res: "ignore_physical_res",
-            enemy_res: "enemy_physical_resist",
+            legacy_ignore_res: "enemy_physical_resist",
         },
     ),
     (
@@ -93,7 +93,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "magic_skill_damage_more",
             flat_skill_damage: "flat_magic_skill_damage",
             ignore_res: "ignore_magic_res",
-            enemy_res: "enemy_magic_resist",
+            legacy_ignore_res: "enemy_magic_resist",
         },
     ),
     (
@@ -104,7 +104,7 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
             skill_damage_more: "explosion_skill_damage_more",
             flat_skill_damage: "flat_explosion_skill_damage",
             ignore_res: "ignore_explosion_res",
-            enemy_res: "enemy_explosion_resist",
+            legacy_ignore_res: "enemy_explosion_resist",
         },
     ),
 ];
@@ -414,11 +414,14 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         .as_deref()
         .and_then(|dt| input.enemy_resistances.get(dt).copied())
         .unwrap_or(0.0);
-    // Item implicits spell pierce as enemy_<element>_resist / enemy_all_resist.
+    // Compatibility for raw damage API callers using old stat keys. Build stats
+    // already normalize these keys and fan ignore_all_res out to each element;
+    // never add ignore_all_res here again.
     let raw_ignore = keys
         .map(|k| {
             let implicit = if is_elemental {
-                r_max(rg(input.stats, k.enemy_res)) + r_max(rg(input.stats, "enemy_all_resist"))
+                r_max(rg(input.stats, k.legacy_ignore_res))
+                    + r_max(rg(input.stats, "enemy_all_resist"))
             } else {
                 0.0
             };
@@ -558,7 +561,7 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
             stat_inputs(
                 &mut calculation,
                 input.stats,
-                [keys.enemy_res, "enemy_all_resist"],
+                [keys.legacy_ignore_res, "enemy_all_resist"],
             );
         }
     }
@@ -1295,6 +1298,44 @@ mod tests {
         });
         assert_eq!(physical.skill_damage_max_pct, 0.0);
         assert_eq!(physical.hit_max, 100);
+    }
+
+    #[test]
+    fn aggregated_ignore_all_counts_once_in_elemental_damage_and_caps_at_100() {
+        use crate::calc::stats::{
+            apply_stat_fan_outs, compute_final_stats, push_source, SourceContribution, SourceMap,
+            SourceType,
+        };
+        for all in [10., 110.] {
+            let mut sources = SourceMap::new();
+            for (key, amount) in [("ignore_all_res", all), ("ignore_cold_res", 20.)] {
+                push_source(
+                    &mut sources,
+                    key,
+                    SourceContribution {
+                        label: "test item".into(),
+                        source_type: SourceType::Item,
+                        value: (amount, amount),
+                        forge: None,
+                    },
+                );
+            }
+            apply_stat_fan_outs(&mut sources);
+            let stats = compute_final_stats(&sources);
+            for damage_type in ["fire", "cold", "lightning", "poison", "arcane", "physical"] {
+                let result = breakdown(&Case {
+                    damage_type,
+                    stats: stats.clone(),
+                    ..Default::default()
+                });
+                let expected = match damage_type {
+                    "physical" => 0.,
+                    "cold" => (all + 20.).min(100.),
+                    _ => all.min(100.),
+                };
+                assert_eq!(result.resistance_ignored_pct, expected, "{damage_type}");
+            }
+        }
     }
 
     #[test]

@@ -48,12 +48,6 @@ impl TreeKind {
             Self::Ether => snapshot.allocated_ether_nodes = nodes.to_vec(),
         }
     }
-    pub fn label(self) -> &'static str {
-        match self {
-            Self::Incarnation => "Incarnation Tree",
-            Self::Ether => "Ether Tree",
-        }
-    }
 }
 
 pub struct Graph {

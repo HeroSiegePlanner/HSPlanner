@@ -20,6 +20,7 @@ pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef
 
 // `_more` keys fall back to base key (UI formatting overlay stays in TS).
 pub fn stat_def(key: &str) -> Option<&'static StatDef> {
+    let key = crate::calc::resistance::canonical_key(key);
     if let Some(def) = STAT_DEFS_MAP.get(key) {
         return Some(*def);
     }
@@ -35,7 +36,9 @@ pub fn push_source(map: &mut SourceMap, key: &str, source: SourceContribution) {
     if is_zero(source.value) {
         return;
     }
-    map.entry(key.to_string()).or_default().push(source);
+    map.entry(crate::calc::resistance::canonical_key(key).to_string())
+        .or_default()
+        .push(source);
 }
 
 pub fn sum_contributions(sources: &[SourceContribution]) -> Ranged {

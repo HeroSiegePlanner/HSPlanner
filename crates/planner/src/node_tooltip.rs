@@ -54,6 +54,8 @@ pub struct NodeTooltip {
     effects: bool,
     preview: Option<PreviewResult>,
     pending: bool,
+    socket: Option<hsplanner_engine::calc::types::TreeSocketContent>,
+    allocated: bool,
 }
 
 impl NodeTooltip {
@@ -65,7 +67,19 @@ impl NodeTooltip {
             effects: true,
             preview: None,
             pending: false,
+            socket: None,
+            allocated: false,
         }
+    }
+
+    pub fn socket(
+        mut self,
+        content: Option<&hsplanner_engine::calc::types::TreeSocketContent>,
+        allocated: bool,
+    ) -> Self {
+        self.socket = content.cloned();
+        self.allocated = allocated;
+        self
     }
 
     pub fn effects(mut self, enabled: bool) -> Self {
@@ -192,6 +206,7 @@ impl RenderOnce for NodeTooltip {
 
         if let Some(info) = self.info {
             if info.n == "jewelry" {
+                let (title, lines) = crate::tree_jewelry::description(self.socket.as_ref());
                 panel = panel.child(
                     section(palette)
                         .child(
@@ -213,7 +228,19 @@ impl RenderOnce for NodeTooltip {
                                     label_tracking,
                                 )),
                         )
-                        .child(text("Empty socket", palette.faint).italic()),
+                        .child(text(title, palette.accent_hot))
+                        .children(lines.into_iter().map(|line| text(line, palette.text)))
+                        .child(
+                            text(
+                                if self.allocated {
+                                    "Right-click to edit socket"
+                                } else {
+                                    "Allocate this node to activate its socket"
+                                },
+                                palette.faint,
+                            )
+                            .italic(),
+                        ),
                 );
             } else {
                 if let Some(lines) = self.lines {
@@ -267,7 +294,7 @@ impl RenderOnce for NodeTooltip {
                 panel = panel.child(section(palette).child(preview_changes(
                     self.preview.as_ref(),
                     self.pending,
-                    Some(4),
+                    None,
                     cx,
                 )));
             }

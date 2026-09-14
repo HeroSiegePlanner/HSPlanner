@@ -5,15 +5,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Heavy Weight": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Heavy Weight: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_a_wizard_s_hat",
@@ -21,15 +23,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Manalicious": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Manalicious: 9.5% [+0.5% per level] Mana Restored"
+    ]
   },
   {
     "id": "relic_relic_aaron_s_staff",
@@ -37,20 +41,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "all_skills": [
-        1,
-        2
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Healing Touch": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Healing Touch: 0 [+10 per level] Healing",
+      "Healing Touch: 0% [+30% per level] Life Replenish"
+    ]
   },
   {
     "id": "relic_relic_amazon_s_spears",
@@ -58,16 +60,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Poisonous Hit Level 10"
+        "description": "cast Poisonous Hit Level [1-10]",
+        "grantedSkill": {
+          "name": "Poisonous Hit",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Poisonous Hit: 0 [+30 per level] Poison Damage"
+    ]
   },
   {
     "id": "relic_relic_ancient_rock",
@@ -75,15 +86,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Ancient Rock": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Ancient Rock: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_angel_staff_of_apocalypse",
@@ -91,15 +104,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Arch Angel's Fury": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Arch Angel's Fury: 0 [+9.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_apple",
@@ -107,20 +122,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "to_vitality": [
-        3,
-        30
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Apple Blast": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Apple Blast: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_arcane_globe",
@@ -129,16 +141,18 @@
     "slot": "relic_1",
     "rarity": "relic",
     "requiresLevel": 1,
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "arcane_skills": 5,
-      "arcane_skill_damage": 20,
-      "poison_skills": [
+      "arcane_skills": [
         1,
         5
+      ],
+      "arcane_skill_damage": [
+        2,
+        20
       ]
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_assassin_s_shuriken",
@@ -146,16 +160,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 8,
-        "description": "cast Shruken Strike Level 50"
+        "description": "cast Shruken Strike Level [2-50]",
+        "grantedSkill": {
+          "name": "Shruken Strike",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Shruken Strike: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_balalayka",
@@ -163,15 +186,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Classic Tunes": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Classic Tunes: 0 [+50 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_barbed_shield",
@@ -179,11 +204,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "damage_return": 100
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "damage_return": [
+        10,
+        55
+      ]
+    }
   },
   {
     "id": "relic_relic_basilisk_s_tooth",
@@ -191,16 +219,23 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 6,
-        "description": "cast Stoned Level 1"
+        "description": "cast Stoned Level 1",
+        "details": "[1-6]% Chance when Striking to cast Stoned Level 1",
+        "grantedSkill": {
+          "name": "Stoned",
+          "rank": 1
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Stoned: 0% [+10% per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_blazing_boots",
@@ -208,20 +243,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "magic_damage_reduction": [
-        1,
-        10
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Blazing Trail": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Blazing Trail: 4.5 [+9.5 per level] Fire Damage"
+    ]
   },
   {
     "id": "relic_relic_bomb",
@@ -229,17 +261,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "explosion_damage": 50
-    },
-    "skillBonuses": {
-      "Naval Bomb": [
-        1,
-        1
+      "explosion_damage": [
+        5,
+        50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "skillBonuses": {
+      "Naval Bomb": 1
+    }
   },
   {
     "id": "relic_relic_bonsai_tree",
@@ -247,11 +279,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "skill_haste": 40
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "skill_haste": [
+        4,
+        40
+      ]
+    }
   },
   {
     "id": "relic_relic_book_of_belial",
@@ -259,15 +294,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Satanic Chant": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Satanic Chant: 0% [+5% per level] Attack Damage"
+    ]
   },
   {
     "id": "relic_relic_book_of_command",
@@ -275,12 +312,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Commanding Power": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_boomerang",
@@ -288,15 +324,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Australian Sport": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Australian Sport: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_bouncy",
@@ -304,15 +342,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Bouncing Spikeball": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Bouncing Spikeball: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_bracer_of_life",
@@ -320,12 +360,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "life_replenish_pct": 50,
-      "increased_life": 15
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "life_replenish_pct": [
+        5,
+        50
+      ],
+      "increased_life": [
+        1.5,
+        15
+      ]
+    }
   },
   {
     "id": "relic_relic_butcher_s_knife",
@@ -333,22 +379,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "attack_damage": [
-        10,
-        100
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Meat Bomb Level 50",
-        "details": "Throw a huge lump of meat that explodes on impact dealing arcane damage and leaving corpse on the ground."
+        "description": "cast Meat Bomb Level [2-50]",
+        "grantedSkill": {
+          "name": "Meat Bomb",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Meat Bomb: 0 [+13.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_butterfly_knife",
@@ -356,12 +405,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_attack_speed": 10,
-      "crit_damage": 20
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_attack_speed": [
+        1,
+        10
+      ],
+      "crit_damage": [
+        2,
+        20
+      ]
+    }
   },
   {
     "id": "relic_relic_cactus",
@@ -369,21 +424,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "all_attributes": [
-        2,
-        20
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 12,
-        "description": "cast Spiky Plant Level 50"
+        "description": "cast Spiky Plant Level [2-50]",
+        "grantedSkill": {
+          "name": "Spiky Plant",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Spiky Plant: 0 [+30 per level] Poison Damage"
+    ]
   },
   {
     "id": "relic_relic_cake",
@@ -391,15 +450,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_life": 20,
-      "to_dexterity": [
-        5,
-        30
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_life": [
+        2,
+        20
+      ]
+    }
   },
   {
     "id": "relic_relic_candy_basket",
@@ -407,20 +465,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "magic_find": [
-        3,
-        30
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Candy Basket": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Candy Basket: 0 [+9.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_candy_crusher",
@@ -428,15 +483,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Candy Crush": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Candy Crush: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_casino_die",
@@ -444,15 +501,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Lucky Dice": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Lucky Dice: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_charmed_blood",
@@ -460,8 +519,13 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "life_steal": 10
+      "life_steal": [
+        1,
+        10
+      ]
     },
     "skillBonuses": {
       "Charmed Blood": [
@@ -469,8 +533,9 @@
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Charmed Blood: 0 [+0.35 per level] s"
+    ]
   },
   {
     "id": "relic_relic_cheese_burger",
@@ -478,12 +543,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "life": 1000,
-      "life_replenish_pct": 50
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "life_replenish_pct": [
+        5,
+        50
+      ],
+      "life": [
+        100,
+        1000
+      ]
+    }
   },
   {
     "id": "relic_relic_chicken_mask",
@@ -491,12 +562,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "All Them Chickens": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_commander_s_sword",
@@ -504,12 +574,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "attack_damage": 100,
-      "movement_speed": -20
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "movement_speed": [
+        -2,
+        -20
+      ],
+      "attack_damage": [
+        10,
+        100
+      ]
+    }
   },
   {
     "id": "relic_relic_cookies_milk",
@@ -517,12 +593,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "physical_damage_reduction": 10,
-      "magic_damage_reduction": 10
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "physical_damage_reduction": [
+        1,
+        10
+      ],
+      "magic_damage_reduction": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_cursed_book",
@@ -530,12 +612,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Dare to Read?": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_damned_buckler",
@@ -543,12 +624,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "to_armor": 50,
-      "faster_hit_recovery": 20
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "faster_hit_recovery": [
+        2,
+        20
+      ],
+      "to_armor": [
+        5,
+        32
+      ]
+    }
   },
   {
     "id": "relic_relic_daplayer_s_dislocated_head",
@@ -556,16 +643,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 12,
-        "description": "cast Rotting Carcas Level 50"
+        "description": "cast Rotting Carcas Level [2-50]",
+        "grantedSkill": {
+          "name": "Rotting Carcas",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Rotting Carcas: 0 [+30 per level] Fire Damage",
+      "Rotting Carcas: 8 [+0 per level] Projectiles"
+    ]
   },
   {
     "id": "relic_relic_darts",
@@ -573,15 +670,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Flying Darts": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Flying Darts: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_death_s_scythe",
@@ -589,17 +688,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 20,
-        "description": "cast Agility Level 30",
-        "details": "Temporarily increases your movement speed and attack speed."
+        "description": "cast Agility Level [3-30]",
+        "grantedSkill": {
+          "name": "Agility",
+          "rank": [
+            3,
+            30
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Agility: 19% [+1% per level] Attack Speed",
+      "Agility: 19% [+1% per level] Movement Speed"
+    ]
   },
   {
     "id": "relic_relic_delicious_pie",
@@ -607,20 +715,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "magic_find": [
-        3,
-        30
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "So Good": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "So Good: 0 [+28 per level] Arcane Damage",
+      "So Good: 0 [+50 per level] Life"
+    ]
   },
   {
     "id": "relic_relic_demon_sheep",
@@ -628,32 +734,43 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Demon Sheep": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Demon Sheep: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_devil_horn",
-    "name": "Devil's Horn",
+    "name": "Devil Horn",
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "when_struck",
-        "description": "cast Satanic Replenishment",
-        "details": "Gain increased Life Replenish for a short period!"
+        "chance": 10,
+        "description": "cast Satanic Replenishment Level [1-10]",
+        "grantedSkill": {
+          "name": "Satanic Replenishment",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Satanic Replenishment: 0% [+25% per level] Life Replenish by"
+    ]
   },
   {
     "id": "relic_relic_devil_skull",
@@ -661,16 +778,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 8,
-        "description": "cast Burst of Rage Level 50"
+        "description": "cast Burst of Rage Level [2-50]",
+        "grantedSkill": {
+          "name": "Burst of Rage",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Burst of Rage: 0 [+30 per level] Arcane Damage",
+      "Burst of Rage: 12 [+0 per level] Projectiles"
+    ]
   },
   {
     "id": "relic_relic_dirge",
@@ -678,12 +805,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "additive_physical_damage": 40,
-      "defense_ignored": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "defense_ignored": [
+        3,
+        30
+      ],
+      "additive_physical_damage": [
+        4,
+        40
+      ]
+    }
   },
   {
     "id": "relic_relic_dislocated_eye",
@@ -691,15 +824,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Crippling Cold": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Crippling Cold: 0 [+30 per level] Cold Damage",
+      "Crippling Cold: 1.8s [+0.2s per level] Freeze Duration"
+    ]
   },
   {
     "id": "relic_relic_doggo",
@@ -707,15 +843,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "To the Moon": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "To the Moon: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_doom_flute",
@@ -723,15 +861,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Holy Aura": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Holy Aura: 0% [+2% per level] Attack Damage",
+      "Holy Aura: 0% [+2.5% per level] Magic Skill Damage"
+    ]
   },
   {
     "id": "relic_relic_double_scythe",
@@ -739,38 +880,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Flying Scythe": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
-  },
-  {
-    "id": "relic_relic_dragon_shield",
-    "name": "Dragon Shield",
-    "baseType": "Relic",
-    "slot": "relic_1",
-    "rarity": "relic",
-    "implicit": {
-      "to_armor": [
-        5,
-        32
-      ]
-    },
-    "procs": [
-      {
-        "trigger": "when_struck",
-        "chance": 10,
-        "description": "cast Breath of Fire Level 50",
-        "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
-      }
-    ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Flying Scythe: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_dragon_s_head",
@@ -778,15 +898,44 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Molten Breath": [
         2,
         50
       ]
     },
+    "uniqueEffects": [
+      "Molten Breath: 0 [+30 per level] Fire Damage"
+    ]
+  },
+  {
+    "id": "relic_relic_dragon_shield",
+    "name": "Dragon Shield",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 10,
+        "description": "cast Breath of Fire Level [2-50]",
+        "grantedSkill": {
+          "name": "Breath of Fire",
+          "rank": [
+            2,
+            50
+          ]
+        }
+      }
+    ],
+    "uniqueEffects": [
+      "Breath of Fire: 7.5 [+12.5 per level] Fire Damage",
+      "Breath of Fire: 35% [+0% per level] Burning Damage"
+    ]
   },
   {
     "id": "relic_relic_es_energy",
@@ -794,15 +943,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Jonnen Valinta": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Jonnen Valinta: 0% [+4% per level] Energy"
+    ]
   },
   {
     "id": "relic_relic_f_e_t_u_s",
@@ -810,32 +961,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "F.E.T.U.S.": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
-  },
-  {
-    "id": "relic_relic_fire_ice",
-    "name": "Fire & Ice",
-    "baseType": "Relic",
-    "slot": "relic_1",
-    "rarity": "relic",
-    "implicit": {},
-    "procs": [
-      {
-        "trigger": "on_hit",
-        "chance": 5,
-        "description": "cast Frostburn Level 50"
-      }
-    ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "F.E.T.U.S.: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_fire_globe",
@@ -844,16 +980,45 @@
     "slot": "relic_1",
     "rarity": "relic",
     "requiresLevel": 1,
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "fire_skills": 5,
-      "fire_skill_damage": 20,
-      "lightning_skills": [
+      "fire_skill_damage": [
+        2,
+        20
+      ],
+      "fire_skills": [
         1,
         5
       ]
-    },
+    }
+  },
+  {
+    "id": "relic_relic_fire_ice",
+    "name": "Fire & Ice",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 5,
+        "description": "cast Frostburn Level [2-50]",
+        "grantedSkill": {
+          "name": "Frostburn",
+          "rank": [
+            2,
+            50
+          ]
+        }
+      }
+    ],
+    "uniqueEffects": [
+      "Frostburn: 0 [+30 per level] Fire Damage",
+      "Frostburn: 0.9s [+0.1s per level] Freeze Duration"
+    ]
   },
   {
     "id": "relic_relic_fish_net",
@@ -861,12 +1026,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Trap the Fish": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_flail",
@@ -874,12 +1038,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Flailstrike": 1
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Flailstrike: 0 [+2500 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_fly_swatter",
@@ -887,15 +1053,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Memes": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Memes: 0 [+0 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_fortune_card",
@@ -903,12 +1071,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "gold_find": 30,
-      "magic_find": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "magic_find": [
+        3,
+        30
+      ],
+      "gold_find": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_frozen_orb",
@@ -916,17 +1090,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Chilling Strike Level 50",
-        "details": "Perform a chilling AOE strike dealing extra damage and freezing enemies."
+        "description": "cast Chilling Strike Level [2-50]",
+        "grantedSkill": {
+          "name": "Chilling Strike",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Chilling Strike: 0 [+30 per level] Cold Damage",
+      "Chilling Strike: 0.9s [+0.1s per level] Freeze Duration"
+    ]
   },
   {
     "id": "relic_relic_gamma_pulser",
@@ -934,12 +1117,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Gamma Pulse": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_guardian_angel",
@@ -947,15 +1129,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Guardian Angel": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Guardian Angel: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_half_eaten_mochi",
@@ -963,11 +1147,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "vitality_converted_to_magic_skill_dmg": 10
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "vitality_converted_to_magic_skill_dmg": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_hand_of_midas",
@@ -975,11 +1162,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "gold_find": 40
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "gold_find": [
+        4,
+        40
+      ]
+    }
   },
   {
     "id": "relic_relic_hand_scythe",
@@ -987,16 +1177,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_attack_speed": 20,
-      "deadly_blow": 30,
-      "crit_chance": [
-        1,
-        10
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_attack_speed": [
+        2,
+        20
+      ],
+      "deadly_blow": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_head_extractor",
@@ -1004,12 +1196,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Extract Heads": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_hellscream_axe",
@@ -1017,12 +1208,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "crushing_blow_chance": 30,
-      "additive_physical_damage": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "crushing_blow_chance": [
+        3,
+        30
+      ],
+      "additive_physical_damage": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_helm_of_chaos",
@@ -1030,16 +1227,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 5,
-        "description": "cast Odin's Fury Level 50"
+        "description": "cast Odin's Fury Level [2-50]",
+        "grantedSkill": {
+          "name": "Odin's Fury",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Odin's Fury: 0 [+15 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_honey_bee",
@@ -1047,15 +1253,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Honey Bee": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Honey Bee: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_horned_mask",
@@ -1063,15 +1271,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "energy_converted_to_magic_skill_dmg": 10,
-      "movement_speed": [
-        3,
-        30
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "energy_converted_to_magic_skill_dmg": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_hungering_blade_of_frost",
@@ -1079,24 +1286,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "additive_physical_damage": [
-        3,
-        30
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "target": "Breath of Ice",
-        "castLevel": 50,
-        "description": "cast Breath of Ice Level 50",
-        "details": "Breathe glacial air freezing and dealing cold damage to monsters."
+        "description": "cast Breath of Ice Level [2-50]",
+        "grantedSkill": {
+          "name": "Breath of Ice",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Breath of Ice: 5.25 [+6.75 per level] Cold Damage"
+    ]
   },
   {
     "id": "relic_relic_ice_globe",
@@ -1105,16 +1313,18 @@
     "slot": "relic_1",
     "rarity": "relic",
     "requiresLevel": 1,
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "cold_skills": 5,
-      "cold_skill_damage": 20,
-      "fire_skills": [
+      "cold_skill_damage": [
+        2,
+        20
+      ],
+      "cold_skills": [
         1,
         5
       ]
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_jar_of_flies",
@@ -1122,15 +1332,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Nasty Flies": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Nasty Flies: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_jefre_s_subscription",
@@ -1138,12 +1350,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "light_radius": 10,
-      "magic_find": 40
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "light_radius": [
+        1,
+        10
+      ],
+      "magic_find": [
+        4,
+        40
+      ]
+    }
   },
   {
     "id": "relic_relic_jungle_vial",
@@ -1151,17 +1369,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 8,
-        "description": "cast Envenom Level 50",
-        "details": "Strikes have a chance to explode toxic fissures on all monsters around you dealing poison damage and inflicting Poisoned."
+        "description": "cast Envenom Level [2-50]",
+        "grantedSkill": {
+          "name": "Envenom",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Envenom: 0 [+24 per level] Poison Damage",
+      "Envenom: 50% [+0% per level] Poisoned Damage"
+    ]
   },
   {
     "id": "relic_relic_karp_head",
@@ -1169,15 +1396,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Karp Head": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Karp Head: 0 [+19.5 per level] Cold Damage"
+    ]
   },
   {
     "id": "relic_relic_keygen_exe",
@@ -1185,15 +1414,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Bluescreen of Death": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Bluescreen of Death: 0 [+30 per level] Arcane Damage",
+      "Bluescreen of Death: 1.8s [+0.2s per level] Stun Duration"
+    ]
   },
   {
     "id": "relic_relic_king_s_crown",
@@ -1201,11 +1433,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "gold_find": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "gold_find": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_large_beer",
@@ -1213,15 +1448,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Nausea": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Nausea: 0% [+10% per level] Attack Damage"
+    ]
   },
   {
     "id": "relic_relic_light_cola",
@@ -1229,15 +1466,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Boost of Energy": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Boost of Energy: 0% [+3% per level] Movement Speed"
+    ]
   },
   {
     "id": "relic_relic_light_katana",
@@ -1245,11 +1484,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_attack_speed": 20
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_attack_speed": [
+        2,
+        20
+      ]
+    }
   },
   {
     "id": "relic_relic_lightning_globe",
@@ -1258,16 +1500,18 @@
     "slot": "relic_1",
     "rarity": "relic",
     "requiresLevel": 1,
-    "implicit": {
-      "lightning_skills": 5,
-      "lightning_skill_damage": 20,
-      "increased_attack_speed": [
-        1,
-        10
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "lightning_skills": [
+        1,
+        5
+      ],
+      "lightning_skill_damage": [
+        2,
+        20
+      ]
+    }
   },
   {
     "id": "relic_relic_lost_wand",
@@ -1275,12 +1519,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "to_energy": 50,
-      "faster_cast_rate": 20
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "faster_cast_rate": [
+        2,
+        20
+      ],
+      "to_energy": [
+        5,
+        50
+      ]
+    }
   },
   {
     "id": "relic_relic_lottery_ticket",
@@ -1288,16 +1538,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_kill",
         "chance": 2,
-        "description": "cast Lucky Numbers Level 10"
+        "description": "cast Lucky Numbers Level [1-10]",
+        "grantedSkill": {
+          "name": "Lucky Numbers",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Lucky Numbers: 0 [+2 per level] Gold Amount"
+    ]
   },
   {
     "id": "relic_relic_magic_mushroom",
@@ -1305,15 +1564,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "all_attributes": 30,
-      "mana_costs_decreased": [
+      "all_attributes": [
         3,
         30
       ]
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_mana_dice",
@@ -1321,17 +1579,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 10,
-        "description": "cast Mana Recovery Level 20",
-        "details": "Chance on cast to replenish a portion of your maximum mana."
+        "description": "cast Mana Recovery Level [2-20]",
+        "grantedSkill": {
+          "name": "Mana Recovery",
+          "rank": [
+            2,
+            20
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Mana Recovery: 0% [+2% per level] Mana Replenish"
+    ]
   },
   {
     "id": "relic_relic_maryo_s_pipe",
@@ -1339,15 +1605,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Pipe Diver": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Pipe Diver: 0% [+9% per level] Skill Haste"
+    ]
   },
   {
     "id": "relic_relic_mayo_s_old_sock",
@@ -1355,12 +1623,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "life": 100,
-      "to_vitality": 20
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "to_vitality": [
+        2,
+        20
+      ],
+      "life": [
+        10,
+        600
+      ]
+    }
   },
   {
     "id": "relic_relic_meat_hook",
@@ -1368,15 +1642,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Meat Hook": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Meat Hook: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_metal_detector",
@@ -1384,15 +1660,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Node Detection": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Node Detection: 800 [+200 per level] Range"
+    ]
   },
   {
     "id": "relic_relic_minisect",
@@ -1400,15 +1678,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Minisect": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Minisect: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_monkey_king_bar",
@@ -1416,16 +1696,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "attack_damage": 50,
-      "movement_speed": 30,
-      "all_attributes": [
-        1,
-        10
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "movement_speed": [
+        3,
+        30
+      ],
+      "attack_damage": [
+        5,
+        50
+      ]
+    }
   },
   {
     "id": "relic_relic_necromancer_s_finger",
@@ -1433,15 +1715,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Bone Spirit": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Bone Spirit: 0 [+12.25 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_newt_tail",
@@ -1449,16 +1733,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "magic_find": 30,
-      "movement_speed": 30,
-      "to_energy": [
-        5,
-        50
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "movement_speed": [
+        3,
+        30
+      ],
+      "magic_find": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_ninja_hook",
@@ -1466,15 +1752,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Ninja Hooks": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Ninja Hooks: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_nunchucks",
@@ -1482,12 +1770,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_attack_speed": 20,
-      "crit_damage": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_attack_speed": [
+        2,
+        20
+      ],
+      "crit_damage": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_odd_book_of_spells",
@@ -1495,11 +1789,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "magic_skill_damage": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "magic_skill_damage": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_odin_s_sword",
@@ -1507,17 +1804,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Divine Scorch Level 10",
-        "details": "Perform a fiery attack setting enemies on fire."
+        "description": "cast Divine Scorch Level [1-10]",
+        "grantedSkill": {
+          "name": "Divine Scorch",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Divine Scorch: 0 [+30 per level] Fire Damage"
+    ]
   },
   {
     "id": "relic_relic_ogre_club",
@@ -1525,18 +1830,32 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "extra_damage_stunned": 30
+      "extra_damage_stunned": [
+        3,
+        30
+      ]
     },
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 20,
-        "description": "cast Me Smash Level 10"
+        "description": "cast Me Smash! Level [1-10]",
+        "grantedSkill": {
+          "name": "Me Smash!",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Me Smash!: 0% [+20% per level] Attack Damage",
+      "Me Smash!: 0.75s [+0.25s per level] Stun Duration"
+    ]
   },
   {
     "id": "relic_relic_orb_of_chaos",
@@ -1544,11 +1863,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "ignore_arcane_res": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "ignore_arcane_res": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_orb_of_fire",
@@ -1556,11 +1878,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "ignore_fire_res": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "ignore_fire_res": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_orb_of_ice",
@@ -1568,11 +1893,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "ignore_cold_res": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "ignore_cold_res": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_orb_of_lightning",
@@ -1580,11 +1908,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "ignore_lightning_res": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "ignore_lightning_res": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_orb_of_poison",
@@ -1592,11 +1923,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "ignore_poison_res": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "ignore_poison_res": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_pickled_brain",
@@ -1604,15 +1938,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Aldo's Rotten Brain": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Aldo's Rotten Brain: 0 [+18 per level] Arcane Damage",
+      "Aldo's Rotten Brain: 0 [+48 per level] Life"
+    ]
   },
   {
     "id": "relic_relic_poison_globe",
@@ -1621,16 +1958,18 @@
     "slot": "relic_1",
     "rarity": "relic",
     "requiresLevel": 1,
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "poison_skills": 5,
-      "poison_skill_damage": 20,
-      "cold_skills": [
+      "poison_skills": [
         1,
         5
+      ],
+      "poison_skill_damage": [
+        2,
+        20
       ]
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_rainbow_gate",
@@ -1638,15 +1977,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Rainbow Drool": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Rainbow Drool: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_razer_blade",
@@ -1654,11 +1995,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "crit_damage": 50
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "crit_damage": [
+        5,
+        50
+      ]
+    }
   },
   {
     "id": "relic_relic_razer_headset",
@@ -1666,15 +2010,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Sonar Pulse": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Sonar Pulse: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_razor_leaf",
@@ -1682,16 +2028,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 8,
-        "description": "cast Razor Leaves Level 50"
+        "description": "cast Razor Leaves Level [2-50]",
+        "grantedSkill": {
+          "name": "Razor Leaves",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Razor Leaves: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_razorwire",
@@ -1699,23 +2054,32 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "increased_bleeding_damage": 30,
-      "additive_physical_damage": [
-        4,
-        40
+      "increased_bleeding_damage": [
+        3,
+        30
       ]
     },
     "procs": [
       {
-        "trigger": "on_hit",
-        "chance": 30,
-        "description": "cast Rupture Level 20",
-        "details": "Perform a rupturing area of effect attack inflicting bleed to targets on hit."
+        "trigger": "on_attack",
+        "chance": 3,
+        "description": "cast Rupture Level [2-20]",
+        "grantedSkill": {
+          "name": "Rupture",
+          "rank": [
+            2,
+            20
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Rupture: 77.5% [+22.5% per level] Bleeding Damage",
+      "Rupture: 0% [+5% per level] Attack Rating"
+    ]
   },
   {
     "id": "relic_relic_rice_chopsticks",
@@ -1723,16 +2087,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Disarming Strike Level 50"
+        "description": "cast Disarming Strike Level [2-50]",
+        "grantedSkill": {
+          "name": "Disarming Strike",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Disarming Strike: 1.5s [+0.5s per level] Disarm Duration"
+    ]
   },
   {
     "id": "relic_relic_rock_belt",
@@ -1740,16 +2113,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "movement_speed": 30,
-      "all_attributes": 20,
-      "magic_find": [
-        4,
-        40
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "movement_speed": [
+        3,
+        30
+      ],
+      "all_attributes": [
+        2,
+        20
+      ]
+    }
   },
   {
     "id": "relic_relic_rocket_barrage",
@@ -1757,15 +2132,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Barrage of Rockets": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Barrage of Rockets: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_rotten_apple",
@@ -1773,15 +2150,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Mass Hex": [
         1,
         10
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Mass Hex: 0 [+30 per level] Poison Damage",
+      "Mass Hex: 22% [+8% per level] Poisoned Damage"
+    ]
   },
   {
     "id": "relic_relic_rubber_duck",
@@ -1789,20 +2169,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_attack_speed": [
-        2,
-        20
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Duck Throw": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Duck Throw: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_satan_s_eye",
@@ -1810,15 +2187,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Burning Vision": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Burning Vision: 0 [+30 per level] Fire Damage",
+      "Burning Vision: 40% [+10% per level] Burning Damage"
+    ]
   },
   {
     "id": "relic_relic_satan_s_horn",
@@ -1826,15 +2206,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Satanic Groundsmash": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Satanic Groundsmash: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_satan_s_tooth",
@@ -1842,15 +2224,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Molten Toothache": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Molten Toothache: 0 [+30 per level] Fire Damage"
+    ]
   },
   {
     "id": "relic_relic_sausage",
@@ -1858,16 +2242,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_life": 15,
-      "increased_mana": 15,
-      "movement_speed": [
-        3,
-        30
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_life": [
+        1.5,
+        15
+      ],
+      "increased_mana": [
+        1.5,
+        15
+      ]
+    }
   },
   {
     "id": "relic_relic_shade_of_death",
@@ -1875,11 +2261,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "reduced_movement_diminish": 100
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "reduced_movement_diminish": [
+        10,
+        100
+      ]
+    }
   },
   {
     "id": "relic_relic_shattered_katana",
@@ -1887,15 +2276,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Gust of Wind": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Gust of Wind: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_shiv",
@@ -1903,17 +2294,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 20,
-        "description": "cast Live by the Sword Level 30",
-        "details": "Temporarily increases your attack speed and movement speed."
+        "description": "cast Live by the Sword Level [3-30]",
+        "grantedSkill": {
+          "name": "Live by the Sword",
+          "rank": [
+            3,
+            30
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Live by the Sword: 29% [+1% per level] Attack Speed",
+      "Live by the Sword: 29% [+1% per level] Movement Speed"
+    ]
   },
   {
     "id": "relic_relic_shocker_3000",
@@ -1921,12 +2321,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Shocker 9000": 1
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Shocker 9000: 0 [+250 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_shredder",
@@ -1934,15 +2336,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Shredder": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Shredder: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_shrunken_head",
@@ -1950,21 +2354,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "poison_skill_damage": [
-        12,
-        25
-      ],
-      "ignore_poison_res": 10
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Shrunken Head": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Shrunken Head: 0 [+19.5 per level] Poison Damage"
+    ]
   },
   {
     "id": "relic_relic_skull_axe",
@@ -1972,22 +2372,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_attack",
         "chance": 20,
-        "description": "cast Demon Form Level [1-10]"
+        "description": "cast Demon Form Level [1-10]",
+        "grantedSkill": {
+          "name": "Demon Form",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "skillBonuses": {
-      "Demon Form": [
-        1,
-        10
-      ]
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Demon Form: 24% [+6% per level] Attack Damage",
+      "Demon Form: 8% [+2% per level] Attack Speed"
+    ]
   },
   {
     "id": "relic_relic_skullbat",
@@ -1995,15 +2399,47 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Skull Bat": [
         1,
         85
       ]
     },
+    "uniqueEffects": [
+      "Skull Bat: 0 [+19.5 per level] Arcane Damage"
+    ]
+  },
+  {
+    "id": "relic_relic_snowball",
+    "name": "Snowball",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "skillBonuses": {
+      "Snowball Throw": [
+        1,
+        10
+      ]
+    },
+    "uniqueEffects": [
+      "Snowball Throw: 0 [+9.5 per level] Cold Damage"
+    ]
+  },
+  {
+    "id": "relic_relic_soul_box",
+    "name": "Soul Box",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
+    "skillBonuses": {
+      "Open the Box": 1
+    }
   },
   {
     "id": "relic_relic_spirit_skull",
@@ -2011,16 +2447,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "to_strength": 30,
-      "to_vitality": 30,
-      "increased_life": [
-        1.5,
-        15
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "to_vitality": [
+        3,
+        30
+      ],
+      "to_strength": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_squishy_the_suicidal_pig",
@@ -2028,15 +2466,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Suicidal Pig": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Suicidal Pig: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_steam_sale",
@@ -2044,15 +2484,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "decreased_merchant_prices": 10,
-      "arcane_skills": [
-        1,
-        5
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "decreased_merchant_prices": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_steve_s_dirty_head",
@@ -2060,15 +2499,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Steves Dirty Head": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Steves Dirty Head: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_stickman_steve",
@@ -2076,15 +2517,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Call of Steve": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Call of Steve: 0 [+30 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_stigmata",
@@ -2092,12 +2535,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "mana_cost_reduction": 30,
-      "mana_replenish_pct": 10
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "mana_replenish_pct": [
+        4,
+        40
+      ],
+      "mana_cost_reduction": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_storm_dagger",
@@ -2105,17 +2554,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Lightning Strike Level 50",
-        "details": "Perform a charged attack striking enemies with thunder bolts."
+        "description": "cast Lightning Strike Level [2-50]",
+        "grantedSkill": {
+          "name": "Lightning Strike",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Lightning Strike: 0 [+30 per level] Lightning Damage"
+    ]
   },
   {
     "id": "relic_relic_sucker_5000",
@@ -2123,12 +2580,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Sucking Power": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_sucker_5000_b",
@@ -2136,12 +2592,11 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Empowered Sucking Power": 1
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_templar_shield",
@@ -2149,20 +2604,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "increased_attack_speed": [
-        2,
-        20
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Templar Shield": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Templar Shield: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_tequila",
@@ -2170,20 +2622,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "life": [
-        10,
-        600
-      ]
-    },
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Drunken Arson": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Drunken Arson: 0 [+30 per level] Fire Damage"
+    ]
   },
   {
     "id": "relic_relic_the_allmighty_fedora",
@@ -2191,15 +2640,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "The Almighty Fedora": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "The Almighty Fedora: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_the_amputation_kit",
@@ -2207,11 +2658,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "movement_speed": 50
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "movement_speed": [
+        5,
+        50
+      ]
+    }
   },
   {
     "id": "relic_relic_the_eye",
@@ -2219,15 +2673,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "The Eye": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "The Eye: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_the_holy_bible",
@@ -2235,12 +2691,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "all_attributes": 10,
-      "all_skills": 2
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "all_skills": [
+        0,
+        2
+      ],
+      "all_attributes": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_the_holy_grail",
@@ -2248,18 +2710,31 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "all_attributes": 10
+      "all_attributes": [
+        1,
+        10
+      ]
     },
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 8,
-        "description": "cast Heaven’s Light Level 10"
+        "description": "cast Heaven’s Light Level [1-10]",
+        "grantedSkill": {
+          "name": "Heaven’s Light",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Heaven’s Light: 2.25% [+0.75% per level] Healing"
+    ]
   },
   {
     "id": "relic_relic_the_mighty_sushi",
@@ -2267,15 +2742,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Tasty Explosion": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Tasty Explosion: 0 [+30 per level] Fire Damage"
+    ]
   },
   {
     "id": "relic_relic_the_spoon",
@@ -2283,12 +2760,29 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "mana": 50,
-      "mana_replenish_pct": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "increased_mana": [
+        3,
+        30
+      ]
+    }
+  },
+  {
+    "id": "relic_relic_thief_s_glove",
+    "name": "Thief's Glove",
+    "baseType": "Relic",
+    "slot": "relic_1",
+    "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
+    "skillBonuses": {
+      "Fiddling Glove": [
+        1,
+        10
+      ]
+    }
   },
   {
     "id": "relic_relic_token_of_luck",
@@ -2296,15 +2790,14 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
+    "sockets": 0,
+    "maxSockets": 0,
     "implicit": {
-      "magic_find": 50,
-      "life_replenish_pct": [
-        5,
+      "magic_find": [
+        2,
         50
       ]
-    },
-    "sockets": 0,
-    "maxSockets": 0
+    }
   },
   {
     "id": "relic_relic_triforce",
@@ -2312,16 +2805,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "all_attributes": 20,
-      "all_resistances": 10,
-      "life": [
-        100,
-        1000
-      ]
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "all_resistances": [
+        1,
+        10
+      ],
+      "all_attributes": [
+        2,
+        20
+      ]
+    }
   },
   {
     "id": "relic_relic_twin_blade",
@@ -2329,12 +2824,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "crit_chance": 10,
-      "crit_damage": 30
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "crit_chance": [
+        1,
+        10
+      ],
+      "crit_damage": [
+        3,
+        30
+      ]
+    }
   },
   {
     "id": "relic_relic_vadjra",
@@ -2342,15 +2843,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "Stormy Javelin": [
         2,
         50
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Stormy Javelin: 0 [+30 per level] Lightning Damage"
+    ]
   },
   {
     "id": "relic_relic_war_zeppelin",
@@ -2358,15 +2861,17 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "skillBonuses": {
       "War Zeppelin": [
         1,
         85
       ]
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "War Zeppelin: 0 [+19.5 per level] Arcane Damage"
+    ]
   },
   {
     "id": "relic_relic_whip",
@@ -2374,12 +2879,18 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {
-      "additive_physical_damage": 23,
-      "increased_attack_speed": 10
-    },
     "sockets": 0,
-    "maxSockets": 0
+    "maxSockets": 0,
+    "implicit": {
+      "to_dexterity": [
+        5,
+        10
+      ],
+      "increased_dexterity": [
+        0.5,
+        5
+      ]
+    }
   },
   {
     "id": "relic_relic_winner_s_drug",
@@ -2387,17 +2898,26 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "on_cast",
         "chance": 8,
-        "description": "cast Dopium! Level 10",
-        "details": "Chance on cast to increase your magic skill damage and faster cast rate for a short duration."
+        "description": "cast Dopium! Level [1-10]",
+        "grantedSkill": {
+          "name": "Dopium!",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Dopium!: 0% [+2% per level] Magic Skill Damage",
+      "Dopium!: 0% [+2% per level] Faster Cast Rate"
+    ]
   },
   {
     "id": "relic_relic_witch_claw",
@@ -2405,16 +2925,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
-        "trigger": "on_hit",
+        "trigger": "on_attack",
         "chance": 3,
-        "description": "cast Hexing Strike Level 10"
+        "description": "cast Hexing Strike Level [1-10]",
+        "grantedSkill": {
+          "name": "Hexing Strike",
+          "rank": [
+            1,
+            10
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Hexing Strike: 1.75s [+0.25s per level] Hex Duration"
+    ]
   },
   {
     "id": "relic_relic_zombie_s_face",
@@ -2422,15 +2951,25 @@
     "baseType": "Relic",
     "slot": "relic_1",
     "rarity": "relic",
-    "implicit": {},
+    "sockets": 0,
+    "maxSockets": 0,
     "procs": [
       {
         "trigger": "when_struck",
         "chance": 10,
-        "description": "cast Disease Level 50"
+        "description": "cast Disease Level [2-50]",
+        "grantedSkill": {
+          "name": "Disease",
+          "rank": [
+            2,
+            50
+          ]
+        }
       }
     ],
-    "sockets": 0,
-    "maxSockets": 0
+    "uniqueEffects": [
+      "Disease: 0 [+30 per level] Poison Damage",
+      "Disease: 1s [+0.2s per level] Slow Duration"
+    ]
   }
 ]

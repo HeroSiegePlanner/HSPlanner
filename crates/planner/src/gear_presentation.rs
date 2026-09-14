@@ -1,13 +1,18 @@
 //! Equipment composition; the parent view retains draft and comparison ownership.
 use super::*;
+use crate::gear_stash::{self, StashRow};
 use crate::item_tooltip;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
 use hsplanner_ui::components::{panel, panel_with_trailing, section_heading};
+use hsplanner_ui::controls::segment;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::{
     collections::HashMap,
     sync::{LazyLock, Mutex},
 };
+
+const STASH_HEADER_PX: f32 = 28.;
+const STASH_ENTRY_PX: f32 = 56.;
 
 static ITEM_IMAGES: LazyLock<Mutex<HashMap<String, Arc<RenderImage>>>> =
     LazyLock::new(Default::default);
@@ -711,120 +716,218 @@ impl GearView {
         }))
     }
 
+    pub(super) fn refresh_stash_rows(&mut self, cx: &App) {
+        let query = self.stash_search.read(cx).value().to_string();
+        let stash = &self.session.read(cx).draft().stash;
+        if self
+            .stash_group
+            .as_deref()
+            .is_some_and(|group| !gear_stash::stash_groups(stash).iter().any(|g| g == group))
+        {
+            self.stash_group = None;
+        }
+        let rows = gear_stash::group_stash_rows(stash, &query, self.stash_group.as_deref());
+        if self.stash_rows != rows {
+            self.stash_list.reset(rows.len());
+            self.stash_rows = rows;
+        }
+    }
+
+    fn stash_list_height(&self) -> Rems {
+        let px: f32 = self
+            .stash_rows
+            .iter()
+            .map(|row| match row {
+                StashRow::Header { .. } => STASH_HEADER_PX,
+                StashRow::Entry { .. } => STASH_ENTRY_PX,
+            })
+            .sum();
+        rems((px / 13.).min(28.))
+    }
+
+    fn stash_group_chips(&self, cx: &Context<Self>) -> Div {
+        let p = cx.global::<TooltipTheme>();
+        let groups = gear_stash::stash_groups(&self.session.read(cx).draft().stash);
+        let chip = |id: SharedString, label: String, group: Option<String>, active: bool| {
+            segment(id, label, active, cx).on_click(cx.listener(move |this, _, _, cx| {
+                this.stash_group = group.clone();
+                this.refresh_stash_rows(cx);
+                cx.notify();
+            }))
+        };
+        div()
+            .px_3()
+            .pb_2()
+            .flex()
+            .flex_wrap()
+            .gap_1()
+            .text_color(p.muted)
+            .when(groups.len() > 1, |view| {
+                view.child(chip(
+                    "stash-group-all".into(),
+                    "All slots".into(),
+                    None,
+                    self.stash_group.is_none(),
+                ))
+                .children(groups.into_iter().map(|group| {
+                    let active = self.stash_group.as_deref() == Some(group.as_str());
+                    chip(
+                        SharedString::from(format!("stash-group-{group}")),
+                        gear_stash::group_label(&group),
+                        Some(group),
+                        active,
+                    )
+                }))
+            })
+    }
+
+    fn render_stash_header(&self, group: &str, count: usize, cx: &Context<Self>) -> AnyElement {
+        let p = cx.global::<TooltipTheme>();
+        div()
+            .w_full()
+            .h(px(STASH_HEADER_PX))
+            .px_3()
+            .flex()
+            .items_end()
+            .justify_between()
+            .gap_2()
+            .pb_1()
+            .border_b_1()
+            .border_color(p.accent_deep.opacity(0.3))
+            .font_family(theme::MONO_FONT_FAMILY)
+            .text_size(rems(10. / 13.))
+            .child(
+                div()
+                    .text_color(p.accent_hot.opacity(0.8))
+                    .child(gear_stash::group_label(group).to_uppercase()),
+            )
+            .child(div().text_color(p.faint).child(count.to_string()))
+            .into_any_element()
+    }
+
+    fn render_stash_row(
+        &mut self,
+        index: usize,
+        _: &mut Window,
+        cx: &mut Context<Self>,
+    ) -> AnyElement {
+        let p = cx.global::<TooltipTheme>();
+        let entry_index = match self.stash_rows.get(index) {
+            Some(StashRow::Header { group, count }) => {
+                return self.render_stash_header(group, *count, cx);
+            }
+            Some(StashRow::Entry { index, .. }) => *index,
+            None => return div().into_any_element(),
+        };
+        let session = self.session.read(cx);
+        let Some(entry) = session.draft().stash.get(entry_index) else {
+            return div().into_any_element();
+        };
+        let Some(base) = data::get_item(&entry.item.base_id) else {
+            return div().into_any_element();
+        };
+        let target = data::game_config()
+            .slots
+            .iter()
+            .flatten()
+            .filter(|slot| gear::accepts(session.snapshot(), &slot.key, base, false))
+            .min_by_key(|slot| session.snapshot().inventory.contains_key(&slot.key))
+            .map(|slot| slot.key.clone());
+        let item = entry.item.clone();
+        let remove = entry.id.clone();
+        let equipped_ids = item_tooltip::equipped_ids(&session.snapshot().inventory);
+        let row = div()
+            .w_full()
+            .px_3()
+            .py_2()
+            .border_b_1()
+            .border_color(p.border)
+            .flex()
+            .items_center()
+            .gap_2()
+            .child(
+                div()
+                    .size(rems(36. / 13.))
+                    .flex_none()
+                    .flex()
+                    .items_center()
+                    .justify_center()
+                    .children(
+                        item_icon(&base.id)
+                            .map(|icon| img(icon).size_full().object_fit(ObjectFit::ScaleDown)),
+                    ),
+            )
+            .child(
+                div()
+                    .min_w_0()
+                    .flex_1()
+                    .child(
+                        div()
+                            .text_size(rems(11. / 13.))
+                            .text_color(theme::rarity_color(&base.rarity, cx))
+                            .child(base.name.clone()),
+                    )
+                    .child(
+                        div()
+                            .text_size(rems(9. / 13.))
+                            .text_color(p.faint)
+                            .child(format!(
+                                "{} · ★{} · {}◇",
+                                base.base_type,
+                                item.stars.unwrap_or(0),
+                                item.socket_count
+                            )),
+                    ),
+            )
+            .children(
+                stash_equip_targets(&base.base_type, target)
+                    .into_iter()
+                    .map(|(label, target)| {
+                        let item = item.clone();
+                        Button::new(SharedString::from(format!(
+                            "equip-{}",
+                            target.as_deref().unwrap_or("none")
+                        )))
+                        .planner_style(cx)
+                        .small()
+                        .label(label)
+                        .disabled(target.is_none())
+                        .on_click(cx.listener(
+                            move |this, _, window, cx| {
+                                if let Some(slot) = &target {
+                                    this.open_slot(slot.clone(), window, cx);
+                                    this.candidate = Some(item.clone());
+                                    this.choosing = false;
+                                    this.load_icon();
+                                    this.changed(cx);
+                                }
+                            },
+                        ))
+                    }),
+            )
+            .child(
+                hsplanner_ui::controls::icon_button("remove", "×", true, cx)
+                    .accessibility_label(format!("Remove {} from stash", base.name))
+                    .on_click(cx.listener(move |this, _, _, cx| {
+                        this.session.update(cx, |session, cx| {
+                            session.edit(|draft| draft.stash.retain(|entry| entry.id != remove));
+                            cx.notify();
+                        });
+                    })),
+            );
+        item_tooltip::with_item_tooltip(
+            SharedString::from(format!("stash-{}", entry.id)),
+            &entry.item,
+            equipped_ids,
+            row,
+        )
+        .into_any_element()
+    }
+
     fn stash(&self, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
         let session = self.session.read(cx);
-        let query = self.stash_search.read(cx).value().to_lowercase();
-        let rows = session
-            .draft()
-            .stash
-            .iter()
-            .filter_map(|entry| {
-                let base = data::get_item(&entry.item.base_id)?;
-                if !format!("{} {}", base.name, base.base_type)
-                    .to_lowercase()
-                    .contains(&query)
-                {
-                    return None;
-                }
-                let target = data::game_config()
-                    .slots
-                    .iter()
-                    .flatten()
-                    .filter(|slot| gear::accepts(session.snapshot(), &slot.key, base, false))
-                    .min_by_key(|slot| session.snapshot().inventory.contains_key(&slot.key))
-                    .map(|slot| slot.key.clone());
-                let item = entry.item.clone();
-                let remove = entry.id.clone();
-                let equipped_ids = item_tooltip::equipped_ids(&session.snapshot().inventory);
-                let row =
-                    div()
-                        .w_full()
-                        .px_3()
-                        .py_2()
-                        .border_b_1()
-                        .border_color(p.border)
-                        .flex()
-                        .items_center()
-                        .gap_2()
-                        .child(
-                            div()
-                                .size(rems(36. / 13.))
-                                .flex_none()
-                                .flex()
-                                .items_center()
-                                .justify_center()
-                                .children(item_icon(&base.id).map(|icon| {
-                                    img(icon).size_full().object_fit(ObjectFit::ScaleDown)
-                                })),
-                        )
-                        .child(
-                            div()
-                                .min_w_0()
-                                .flex_1()
-                                .child(
-                                    div()
-                                        .text_size(rems(11. / 13.))
-                                        .text_color(theme::rarity_color(&base.rarity, cx))
-                                        .child(base.name.clone()),
-                                )
-                                .child(div().text_size(rems(9. / 13.)).text_color(p.faint).child(
-                                    format!(
-                                        "{} · ★{} · {}◇",
-                                        base.base_type,
-                                        item.stars.unwrap_or(0),
-                                        item.socket_count
-                                    ),
-                                )),
-                        )
-                        .children(
-                            stash_equip_targets(&base.base_type, target)
-                                .into_iter()
-                                .map(|(label, target)| {
-                                    let item = item.clone();
-                                    Button::new(SharedString::from(format!(
-                                        "equip-{}",
-                                        target.as_deref().unwrap_or("none")
-                                    )))
-                                    .planner_style(cx)
-                                    .small()
-                                    .label(label)
-                                    .disabled(target.is_none())
-                                    .on_click(cx.listener(move |this, _, window, cx| {
-                                        if let Some(slot) = &target {
-                                            this.open_slot(slot.clone(), window, cx);
-                                            this.candidate = Some(item.clone());
-                                            this.choosing = false;
-                                            this.load_icon();
-                                            this.changed(cx);
-                                        }
-                                    }))
-                                }),
-                        )
-                        .child(
-                            Button::new("remove")
-                                .planner_style(cx)
-                                .small()
-                                .label("×")
-                                .accessibility_label(format!("Remove {} from stash", base.name))
-                                .on_click(cx.listener(move |this, _, _, cx| {
-                                    this.session.update(cx, |session, cx| {
-                                        session.edit(|draft| {
-                                            draft.stash.retain(|entry| entry.id != remove)
-                                        });
-                                        cx.notify();
-                                    });
-                                })),
-                        );
-                Some(item_tooltip::with_item_tooltip(
-                    SharedString::from(format!("stash-{}", entry.id)),
-                    &entry.item,
-                    equipped_ids,
-                    row,
-                ))
-            })
-            .collect::<Vec<_>>();
-        let empty = rows.is_empty();
+        let empty = self.stash_rows.is_empty();
         panel("stash-panel", "Stash", cx)
             .min_w(rems(280. / 13.))
             .flex_1()
@@ -834,10 +937,20 @@ impl GearView {
                     .pb_2()
                     .child(Input::new(&self.stash_search).planner_style(cx)),
             )
+            .child(self.stash_group_chips(cx))
             .child(
                 div()
                     .text_size(rems(11. / 13.))
-                    .children(rows)
+                    .when(!empty, |view| {
+                        view.child(
+                            list(
+                                self.stash_list.clone(),
+                                cx.processor(Self::render_stash_row),
+                            )
+                            .w_full()
+                            .h(self.stash_list_height()),
+                        )
+                    })
                     .when(empty, |v| {
                         v.child(div().px_3().py_8().text_color(p.muted).child(
                             if session.draft().stash.is_empty() {
@@ -1062,7 +1175,11 @@ impl GearView {
         )
     }
 
-    pub(super) fn overview(&self, window: &Window, cx: &Context<Self>) -> Div {
+    pub(super) fn overview(&mut self, window: &Window, cx: &Context<Self>) -> Div {
+        if self.stash_rem != window.rem_size() {
+            self.stash_rem = window.rem_size();
+            self.stash_list.reset(self.stash_rows.len());
+        }
         if self.mercenary {
             return self.merc_loadout(window, cx);
         }
@@ -1088,15 +1205,35 @@ impl GearView {
                                 .child(section_heading("gear-heading", "Loadout", "Gear", cx))
                                 .child(
                                     div()
-                                        .text_size(rems(10. / 13.))
-                                        .font_family(theme::MONO_FONT_FAMILY)
-                                        .text_color(p.faint)
-                                        .child(format!(
-                                            "{} items  ·  {} gems  ·  {} runes",
-                                            data::data().items.len(),
-                                            data::data().gems.len(),
-                                            data::data().runes.len()
-                                        )),
+                                        .flex()
+                                        .items_center()
+                                        .gap_3()
+                                        .child(
+                                            div()
+                                                .text_size(rems(10. / 13.))
+                                                .font_family(theme::MONO_FONT_FAMILY)
+                                                .text_color(p.faint)
+                                                .child(format!(
+                                                    "{} items  ·  {} gems  ·  {} runes",
+                                                    data::data().items.len(),
+                                                    data::data().gems.len(),
+                                                    data::data().runes.len()
+                                                )),
+                                        )
+                                        .child(
+                                            hsplanner_ui::controls::command_button(
+                                                "import-screenshot",
+                                                "Import screenshot",
+                                                hsplanner_ui::controls::ButtonTone::Neutral,
+                                                hsplanner_ui::controls::ButtonSize::Small,
+                                                cx,
+                                            )
+                                            .on_click(
+                                                cx.listener(|this, _, window, cx| {
+                                                    this.open_import(window, cx)
+                                                }),
+                                            ),
+                                        ),
                                 ),
                         )
                         .child(

@@ -1,7 +1,8 @@
 use std::{collections::HashSet, rc::Rc, sync::Arc, time::Instant};
 
+#[cfg(test)]
+use hsplanner_engine::calc::build::BuildPerformance;
 use hsplanner_engine::calc::{
-    build::BuildPerformance,
     performance_diff::{PerformanceDiff, compare_planner},
     planner::{PlannerPerformance, evaluate},
 };
@@ -155,6 +156,7 @@ pub struct BuildSession {
 }
 
 impl BuildSession {
+    #[cfg(test)]
     pub fn current(&self) -> Option<&BuildPerformance> {
         self.result
             .as_ref()
@@ -164,7 +166,6 @@ impl BuildSession {
             })
             .map(|result| &result.current.current)
     }
-
     pub fn performance(&self) -> Option<Arc<PlannerPerformance>> {
         self.result
             .as_ref()

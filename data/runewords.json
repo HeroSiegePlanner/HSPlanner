@@ -1040,12 +1040,17 @@
       "Sword",
       "Mace"
     ],
+    "skillBonuses": {
+      "Lunar Aura": [
+        12,
+        28
+      ]
+    },
     "stats": {
       "enhanced_damage": 550,
       "life_steal": 7,
       "defense_ignored": 40,
       "to_dexterity": 10,
-      "to_energy": 14,
       "additive_arcane_damage": 320,
       "additive_cold_damage": 280,
       "attack_damage": 20,

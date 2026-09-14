@@ -40,6 +40,14 @@ fn pools() -> &'static Pools {
     })
 }
 
+pub fn jewel_affix_allowed(affix: &Affix) -> bool {
+    affix.stat_key.is_some()
+        && pools()
+            .groups
+            .get(&affix.group_id)
+            .is_some_and(|types| types.iter().any(|kind| kind == "Socketable"))
+}
+
 pub fn affix_pool_type(base: &ItemBase) -> Option<&'static str> {
     if base.slot == "weapon" {
         return match base.base_type.as_str() {

@@ -10,7 +10,7 @@ use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{data, mercenary};
 use hsplanner_ui::{
     components::{panel_with_trailing, section_heading},
-    controls::PlannerControl,
+    controls::{PlannerControl, icon_button},
     theme::{self, TooltipTheme},
 };
 use std::{
@@ -217,12 +217,7 @@ impl MercenaryView {
                                 .items_center()
                                 .self_center()
                                 .child(
-                                    Button::new("minus")
-                                        .planner_style(cx)
-                                        .small()
-                                        .w_6()
-                                        .p_0()
-                                        .label("−")
+                                    icon_button("minus", "−", false, cx)
                                         .disabled(rank == 0)
                                         .accessibility_label(format!(
                                             "Decrease {} rank",
@@ -247,12 +242,7 @@ impl MercenaryView {
                                         .child(format!("{rank}/{max}")),
                                 )
                                 .child(
-                                    Button::new("plus")
-                                        .planner_style(cx)
-                                        .small()
-                                        .w_6()
-                                        .p_0()
-                                        .label("+")
+                                    icon_button("plus", "+", false, cx)
                                         .disabled(rank >= max)
                                         .accessibility_label(format!(
                                             "Increase {} rank",

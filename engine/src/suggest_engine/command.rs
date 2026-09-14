@@ -236,4 +236,86 @@ mod tests {
             result.final_dps
         );
     }
+
+    #[test]
+    #[ignore = "full Incarnation graph performance smoke test"]
+    fn full_incarnation_graph_preserves_budget_and_replay() {
+        use super::super::types::TreeGraph;
+        use crate::calc::types::EquippedItem;
+        let raw: serde_json::Value =
+            serde_json::from_str(include_str!("../../../data/incarnation-tree.json")).unwrap();
+        let mut graph = TreeGraph::default();
+        for node in raw["nodes"].as_array().unwrap() {
+            let id = node["id"].as_u64().unwrap() as u32;
+            graph.adjacency.insert(id, vec![]);
+            if node["t"] == "root" {
+                graph.start_ids.push(id);
+            }
+            if node["r"].as_f64().unwrap() >= 10. {
+                graph.valuable_ids.push(id);
+            }
+        }
+        for edge in raw["edges"].as_array().unwrap() {
+            let a = edge[0].as_u64().unwrap() as u32;
+            let b = edge[1].as_u64().unwrap() as u32;
+            graph.adjacency.get_mut(&a).unwrap().push(b);
+            graph.adjacency.get_mut(&b).unwrap().push(a);
+        }
+        let skill = crate::calc::data::get_skills_by_class("amazon")
+            .iter()
+            .find(|s| s.damage_formula.is_some() || s.damage_per_rank.is_some())
+            .unwrap();
+        let input = SuggestInput {
+            perf: BuildPerformanceInput {
+                class_id: Some("amazon".into()),
+                level: 100,
+                main_skill_id: Some(skill.id.clone()),
+                skill_ranks: [(skill.id.clone(), 20)].into(),
+                inventory: [(
+                    "weapon".into(),
+                    EquippedItem {
+                        base_id: "base_mace_ogre_maul".into(),
+                        ..Default::default()
+                    },
+                )]
+                .into(),
+                ..Default::default()
+            },
+            active_skill_ids: vec![skill.id.clone()],
+            graph,
+            budget: 200,
+        };
+        let started = std::time::Instant::now();
+        let result = run_suggest_controlled(&input, &Default::default(), |_, _| {}).unwrap();
+        eprintln!(
+            "full tree: {:?}, {} nodes, DPS {} -> {}",
+            started.elapsed(),
+            result.budget_used,
+            result.base_dps,
+            result.final_dps
+        );
+        assert!(result.budget_used <= input.budget);
+        assert!(result.final_dps > result.base_dps);
+        let mut paid = HashSet::new();
+        for step in &result.sequence {
+            assert!(
+                input.graph.start_ids.contains(&step.node_id)
+                    || input.graph.adjacency[&step.node_id]
+                        .iter()
+                        .any(|n| paid.contains(n))
+            );
+            assert!(paid.insert(step.node_id));
+        }
+        let mut perf = input.perf.clone();
+        perf.allocated_tree_nodes = paid;
+        let direct = run_suggest(
+            &SuggestInput {
+                perf,
+                budget: 0,
+                ..input
+            },
+            |_, _| {},
+        );
+        assert_eq!(result.final_dps, direct.base_dps);
+    }
 }
