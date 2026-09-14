@@ -34,12 +34,34 @@ executable. `HSPLANNER_PACKAGER` can point to a locally installed packager binar
 
 ## GitHub workflow and signing
 
-Run **Native installers** manually (Actions, Run workflow, any branch) or add the
-`installers` label to a pull request. It builds Windows and Linux (macOS is packaged
-locally) and uploads
-installers as Actions artifacts, without publishing a release or updating any feed.
-Before publishing, choose an unused version in root `Cargo.toml`, edit
-`CHANGELOG.md`, verify the packages and create the GitHub release.
+For test packages, run **Native installers** manually (Actions, Run workflow, any
+branch) or add the `installers` label to a pull request. It builds Windows and
+Linux and uploads Actions artifacts without publishing a release.
+
+For a public release, update `CHANGELOG.md`, then open **Actions → Release → Run
+workflow**. Choose the source branch, enter `tag` as `1.1.0` or `v1.1.0`, and
+optionally check `prerelease`. Use an unused three-part version; preview releases
+use the checkbox rather than a suffix. The workflow file must first be present
+on the default branch for GitHub to show the manual dispatch form.
+
+The release workflow:
+
+1. Sets the native workspace version in `Cargo.toml` and `Cargo.lock`, commits the
+   change when needed, and atomically pushes the selected branch and `v<version>`
+   tag. It does not force-push or update dependency versions. Branch/tag rules
+   must allow the workflow's `GITHUB_TOKEN` to perform these writes.
+2. Tests that exact commit and builds Windows x64 NSIS, Linux x64 DEB/AppImage/
+   Pacman, and macOS Apple Silicon DMG packages through the existing workflows.
+3. Verifies every package checksum and produces one combined `SHA256SUMS`,
+   including the Pacman `PKGBUILD`.
+4. Uploads all packages to a draft with `CHANGELOG.md` as its description, then
+   publishes it only after tests, all platforms, and uploads succeed. A preview
+   is marked as a prerelease and never as Latest.
+
+If a build or upload fails, use **Re-run failed jobs** on the same run. The tag is
+already reserved; an upload failure leaves an unpublished draft that the job can
+resume. Existing public releases and drafts from another commit are not replaced.
+The version checked into the tagged source matches the executable and installers.
 
 ## In-app updates
 
@@ -76,8 +98,7 @@ The native footer's version button opens the root `CHANGELOG.md`, embedded at bu
 The dialog displays the running Cargo version, renders Markdown, scrolls at small
 window sizes and offers Close/Escape and a keyboard-accessible GitHub link.
 Keep all release entries in `CHANGELOG.md`, newest first. Update this single file
-before each installer build and use it for the GitHub release body
-(`gh release create <tag> --notes-file CHANGELOG.md`).
+before each installer build; **Release** uses it for the GitHub release body.
 
 Verify on each target: install, launch without a development checkout, reopen a
 native save, open/scroll/close changelog, uninstall without deleting saved data,

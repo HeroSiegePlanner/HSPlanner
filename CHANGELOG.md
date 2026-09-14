@@ -1,3 +1,7 @@
+## Unreleased
+
+- Restored the Release workflow with version/tag input and a prerelease option. It synchronizes native versions, tests and packages Windows/Linux/macOS, verifies combined checksums, and publishes the complete release using this changelog.
+
 ## Native desktop application
 
 - HSPlanner now runs on pure `Rust`

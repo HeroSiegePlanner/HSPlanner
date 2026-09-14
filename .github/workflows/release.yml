@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release version or tag (e.g. 1.1.0 or v1.1.0)'
+        required: true
+        type: string
+      prerelease:
+        description: Mark as pre-release
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Prepare version
+        id: version
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          test "$GITHUB_REF_TYPE" = branch || { echo 'Run Release from a branch.'; exit 1; }
+          python tools/release.py prepare "$RELEASE_TAG" --output "$GITHUB_OUTPUT"
+      - name: Check that the version is unused
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          existing=$(git ls-remote --tags origin "refs/tags/$TAG")
+          test -z "$existing" || { echo "Tag $TAG already exists. Re-run failed jobs to resume a release."; exit 1; }
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[].tag_name' > "$RUNNER_TEMP/release-tags.txt"
+          python -c 'import os, pathlib; assert os.environ["TAG"] not in pathlib.Path(os.environ["RUNNER_TEMP"], "release-tags.txt").read_text().splitlines(), "Release already exists"'
+      - name: Commit version and create tag
+        id: commit
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Cargo.toml Cargo.lock
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(release): $TAG"
+          fi
+          git tag "$TAG"
+          git push --atomic origin "HEAD:refs/heads/$GITHUB_REF_NAME" "refs/tags/$TAG"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  test:
+    needs: prepare
+    uses: ./.github/workflows/native.yml
+    with:
+      ref: ${{ needs.prepare.outputs.sha }}
+
+  package:
+    needs: prepare
+    uses: ./.github/workflows/native-package.yml
+    with:
+      ref: ${{ needs.prepare.outputs.sha }}
+      include_macos: true
+    secrets: inherit
+
+  publish:
+    needs: [prepare, test, package]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: hsplanner-*
+          path: release-downloads
+      - name: Verify packages and combine checksums
+        run: python tools/release.py collect release-downloads release-assets
+      - name: Publish complete release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
+          RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: python tools/release.py publish "$RELEASE_TAG" "$RELEASE_SHA" release-assets --prerelease "$PRERELEASE"

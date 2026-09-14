@@ -5,12 +5,18 @@ on:
     branches: [main, main-private]
   pull_request:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: Commit to test
+        type: string
+        required: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: native-${{ github.ref }}
+  group: native-${{ github.workflow }}-${{ inputs.ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -20,6 +26,13 @@ jobs:
       CARGO_INCREMENTAL: '0'
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Release tooling tests
+        run: python -m unittest discover -s tools -p test_release.py
       - name: Linux build dependencies
         run: |
           sudo apt-get update

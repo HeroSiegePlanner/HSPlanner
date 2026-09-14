@@ -2,6 +2,23 @@ name: Native installers
 
 on:
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: Commit to package
+        type: string
+        required: true
+      include_macos:
+        description: Include the Apple Silicon DMG in a release
+        type: boolean
+        default: false
+    secrets:
+      HSPLANNER_BUG_REPORT_URL:
+        required: false
+      VITE_BUG_REPORT_URL:
+        required: false
+      HSPLANNER_WINDOWS_SIGN_COMMAND:
+        required: false
   pull_request:
     types: [labeled]
 
@@ -14,10 +31,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2022, ubuntu-24.04]
+        os: ${{ fromJSON(inputs.include_macos && '["windows-2022", "ubuntu-24.04", "macos-15"]' || '["windows-2022", "ubuntu-24.04"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -50,8 +69,10 @@ jobs:
         with:
           name: hsplanner-${{ runner.os }}-${{ runner.arch }}
           if-no-files-found: error
+          overwrite: true
           path: |
             target/packages/release/*.exe
+            target/packages/release/*.dmg
             target/packages/release/*.deb
             target/packages/release/*.AppImage
             target/packages/release/*.tar.gz
