@@ -16,7 +16,7 @@ hsplanner-engine = { package = "HSPlanner", path = "engine", default-features = 
 hsplanner-build = { path = "crates/build" }
 hsplanner-planner = { path = "crates/planner" }
 hsplanner-ui = { path = "crates/ui" }
-gpui-kit = "=0.6.0"
+gpui-kit = "=0.6.1"
 log = "0.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
