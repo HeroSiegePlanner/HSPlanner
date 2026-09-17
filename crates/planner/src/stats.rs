@@ -19,6 +19,7 @@ use hsplanner_engine::calc::{
 use hsplanner_ui::{
     components::{panel, panel_with_trailing},
     controls::{ButtonSize, ButtonTone, PlannerControl, command_button},
+    scroll::PageScroll,
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
 };
@@ -1751,6 +1752,7 @@ impl Render for StatsView {
             .min_h_0();
         div()
             .id("stats-scroll")
+            .page_scroll_list(&self.list)
             .size_full()
             .min_h_0()
             .min_w_0()

@@ -1,3 +1,4 @@
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 mod dialogs;
 mod query;
@@ -127,6 +128,9 @@ pub struct LibraryView {
     active_tag: Option<String>,
     columns_scroll: ScrollHandle,
     query_cache: RefCell<query::Cache>,
+    list_scroll: ScrollHandle,
+    preview_scroll: ScrollHandle,
+    folder_scroll: ScrollHandle,
     _subscriptions: Vec<Subscription>,
 }
 impl EventEmitter<Opened> for LibraryView {}
@@ -188,6 +192,9 @@ impl LibraryView {
             active_tag: None,
             columns_scroll: ScrollHandle::default(),
             query_cache: RefCell::default(),
+            list_scroll: ScrollHandle::new(),
+            preview_scroll: ScrollHandle::new(),
+            folder_scroll: ScrollHandle::new(),
             _subscriptions: subscriptions,
         };
         if let Some(build) = initial {
@@ -876,6 +883,7 @@ impl Render for LibraryView {
         }
         let listing = div()
             .id("library-list")
+            .page_scroll(&self.list_scroll)
             .flex_1()
             .min_h_0()
             .w_full()
@@ -1119,6 +1127,7 @@ impl Render for LibraryView {
             .child(
                 div()
                     .id("preview-scroll")
+                    .page_scroll(&self.preview_scroll)
                     .flex_1()
                     .min_h_0()
                     .overflow_y_scroll()
@@ -1172,6 +1181,7 @@ impl Render for LibraryView {
             .child(
                 div()
                     .id("folder-scroll")
+                    .page_scroll(&self.folder_scroll)
                     .flex_1()
                     .min_h_0()
                     .overflow_y_scroll()

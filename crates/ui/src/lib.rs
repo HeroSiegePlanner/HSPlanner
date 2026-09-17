@@ -6,6 +6,7 @@ pub mod debug_log;
 #[cfg(debug_assertions)]
 pub mod debug_overlay;
 pub mod numbers;
+pub mod scroll;
 pub mod theme;
 pub mod tooltip;
 pub mod tooltip_text;

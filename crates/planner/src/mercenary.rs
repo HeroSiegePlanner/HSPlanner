@@ -8,6 +8,7 @@ use gpui_kit::component::{
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{data, mercenary};
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::{
     components::{panel_with_trailing, section_heading},
     controls::{PlannerControl, icon_button},
@@ -491,7 +492,7 @@ impl Render for MercenaryView {
         let used = snapshot.merc_inventory.len();
         let spent: u32 = snapshot.merc_skill_ranks.values().copied().sum();
         let wide = window.viewport_size().width >= window.rem_size() * (1024. / 13.);
-        div().size_full().bg(p.background).child(div().id("mercenary-overview").size_full().track_scroll(&self.scroll).overflow_y_scroll().child(div().p_6().flex().flex_col().gap_4()
+        div().size_full().bg(p.background).child(div().id("mercenary-overview").size_full().page_scroll(&self.scroll).overflow_y_scroll().child(div().p_6().flex().flex_col().gap_4()
             .child(div().flex().items_end().justify_between().gap_3().child(section_heading("merc-heading","Loadout","Mercenary",cx))
                 .when(selected.is_some(),|v|v.child(div().flex().gap_3().items_center().font_family(theme::MONO_FONT_FAMILY).text_size(rems(10./13.)).text_color(p.faint)
                     .child(format!("{used} / {} equipped  ·  {spent} skill points",mercenary::data().slots.len()))

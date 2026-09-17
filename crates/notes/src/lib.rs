@@ -7,6 +7,7 @@ use gpui_kit::component::{
 };
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::session::Session;
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::controls::PlannerControl;
 use hsplanner_ui::theme::TooltipTheme;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -44,6 +45,8 @@ pub struct NotesView {
     // Notes and their editing history are shared by profiles within one build.
     build_id: Option<String>,
     preview: bool,
+    scroll: ScrollHandle,
+    preview_scroll: ScrollHandle,
     _subscriptions: Vec<Subscription>,
 }
 impl NotesView {
@@ -87,6 +90,8 @@ impl NotesView {
             editor,
             build_id,
             preview: false,
+            scroll: ScrollHandle::new(),
+            preview_scroll: ScrollHandle::new(),
             _subscriptions: subscriptions,
         }
     }
@@ -181,6 +186,7 @@ impl Render for NotesView {
         let contents = if self.preview {
             div()
                 .id("notes-preview")
+                .page_scroll(&self.preview_scroll)
                 .size_full()
                 .overflow_y_scroll()
                 .child(
@@ -208,6 +214,7 @@ impl Render for NotesView {
         };
         div()
             .id("notes-view")
+            .page_scroll(&self.scroll)
             .size_full()
             .overflow_y_scroll()
             .bg(palette.background)

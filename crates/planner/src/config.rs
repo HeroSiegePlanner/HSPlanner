@@ -18,6 +18,7 @@ use hsplanner_engine::calc::{
     planner::PlannerPerformance,
     types::{CustomStat, SkillKind},
 };
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::{
     components::{panel, panel_with_trailing, section_heading},
     controls::PlannerControl,
@@ -1450,7 +1451,7 @@ impl Render for ConfigView {
                     .child(div().grid().grid_cols(if wide {2}else{1}).gap_4()
                         .child(div().flex().flex_col().gap_4().child(self.buffs(cx)).child(self.aura(cx)).child(self.procs(cx)).when_some(self.blessings(cx),|view,panel|view.child(panel)).child(self.dynamic_overrides(cx)))
                         .child(div().flex().flex_col().gap_4().child(self.conditions(true,small,cx)).child(self.conditions(false,small,cx)).child(self.resistances(small,cx)).when_some(self.projectiles(small,cx),|view,panel|view.child(panel)).child(self.custom_stats(cx))))))
-            .track_scroll(&self.scroll).overflow_y_scroll()
+            .page_scroll(&self.scroll).overflow_y_scroll()
     }
 }
 

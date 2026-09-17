@@ -9,6 +9,7 @@ use hsplanner_build::session::Session;
 use hsplanner_engine::calc::stats::{
     SourceContribution, SourceType, StatBreakdown, StatTypeSubtotal,
 };
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
     theme::{self, TooltipTheme},
@@ -642,7 +643,7 @@ impl Render for SourceDialog {
                     .min_h_0()
                     .max_h(max_height - window.rem_size() * (76. / 13.))
                     .overflow_y_scroll()
-                    .track_scroll(&self.scroll)
+                    .page_scroll(&self.scroll)
                     .child(body(&self.breakdown, true, Some(&self.snapshot), cx)),
             )
             .child(

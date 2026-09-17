@@ -10,6 +10,7 @@ use hsplanner_engine::calc::{
     skills::Ranged,
     types::SkillKind,
 };
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
     controls::PlannerControl,
@@ -798,7 +799,7 @@ impl Render for StatsSidebar {
                         resistances,
                         cx,
                     ))
-                    .track_scroll(&self.scroll)
+                    .page_scroll(&self.scroll)
                     .overflow_y_scroll(),
             )
     }

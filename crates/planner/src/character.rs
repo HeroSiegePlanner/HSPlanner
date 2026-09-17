@@ -5,6 +5,7 @@ use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
     build::BuildPerformance, data, defense, planner::PlannerPerformance, types::SkillSpec,
 };
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::{
     assets::class_portrait,
     components::{corner_marks, panel_with_heading_style, section_heading},
@@ -957,7 +958,7 @@ impl Render for CharacterView {
                     )
                     .child(self.loadout(snapshot, wide, cx)),
             )
-            .track_scroll(&self.scroll)
+            .page_scroll(&self.scroll)
             .overflow_y_scroll()
     }
 }

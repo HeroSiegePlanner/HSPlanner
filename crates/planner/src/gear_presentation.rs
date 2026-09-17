@@ -3,6 +3,7 @@ use super::*;
 use crate::gear_stash::{self, StashRow};
 use crate::item_tooltip;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::components::{panel, panel_with_trailing, section_heading};
 use hsplanner_ui::controls::segment;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -1188,7 +1189,7 @@ impl GearView {
             div()
                 .id("gear-overview")
                 .size_full()
-                .track_scroll(&self.scroll)
+                .page_scroll(&self.scroll)
                 .overflow_y_scroll()
                 .child(
                     div()

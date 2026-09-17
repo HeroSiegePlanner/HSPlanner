@@ -9,6 +9,7 @@ use crate::skill_details::stat_name;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
 use hsplanner_engine::calc::affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars};
 use hsplanner_engine::calc::types::{ItemBase, ItemSet};
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::controls::{ButtonSize, ButtonTone, command_button, modal_button};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
@@ -1470,7 +1471,7 @@ impl GearView {
             .flex_1()
             .min_h_0()
             .scrollbar_width(rems(if had_vertical_scroll { 10. / 13. } else { 0. }))
-            .track_scroll(&self.comparison_scroll)
+            .page_scroll(&self.comparison_scroll)
             .overflow_y_scroll()
             .child(details);
         div()

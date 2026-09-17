@@ -5,6 +5,7 @@ use gpui_kit::{
     Background, Focusable, FontWeight, Hsla, SharedString, Styled, linear_color_stop,
     linear_gradient, relative, rems,
 };
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::controls::PlannerControl;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
@@ -256,7 +257,7 @@ impl TreeView {
             .flex_initial()
             .min_h_0()
             .overflow_y_scroll()
-            .track_scroll(&self.summary_scroll)
+            .page_scroll(&self.summary_scroll)
             .child(
                 div()
                     .flex_shrink_0()

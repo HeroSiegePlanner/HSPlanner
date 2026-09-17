@@ -1,4 +1,5 @@
 //! Class skill trees and their inspector. The document owns ranks; this view owns selection.
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::{
     collections::HashMap,
@@ -946,7 +947,7 @@ impl Render for SkillsView {
                                     })
                                     .id("skill-trees-scroll")
                                     .overflow_scroll()
-                                    .track_scroll(&self.tree_scroll)
+                                    .page_scroll(&self.tree_scroll)
                                     .child(
                                         div()
                                             // A dual-axis Scrollable wrapper gives its child
@@ -1013,7 +1014,7 @@ impl Render for SkillsView {
                                     })
                                     .id("skill-details-scroll")
                                     .size_full()
-                                    .track_scroll(&self.details_scroll)
+                                    .page_scroll(&self.details_scroll)
                                     .scrollbar_width(units(if self.details_has_vertical_scroll {
                                         10.
                                     } else {

@@ -665,6 +665,7 @@ pub fn run(
         .run(move |cx| {
             gpui_kit::init(cx);
             hsplanner_ui::theme::init(cx);
+            hsplanner_ui::scroll::init(cx);
             cx.set_http_client(std::sync::Arc::new(
                 reqwest_client::ReqwestClient::user_agent(crate::update::USER_AGENT)
                     .expect("http client"),
