@@ -14,6 +14,7 @@ use hsplanner_engine::calc::{
     data,
     types::{Affix, AffixSign, EquippedAffix, TreeSocketContent},
 };
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_footer, modal_header, modal_status},
     controls::{self, ButtonTone, modal_button},
@@ -23,12 +24,17 @@ use hsplanner_ui::{
 
 pub(super) fn description(content: Option<&TreeSocketContent>) -> (String, Vec<String>) {
     match content {
-        None => ("Empty socket".into(), vec![]),
+        None => (tr("gear.empty_socket").into(), vec![]),
         Some(TreeSocketContent::Item { id }) => {
             let (name, stats) = match data::get_socketable_by_id(id) {
                 Some(data::Socketable::Gem(g)) => (&g.name, &g.stats),
                 Some(data::Socketable::Rune(r)) => (&r.name, &r.stats),
-                None => return (format!("Unknown socketable: {id}"), vec![]),
+                None => {
+                    return (
+                        trf("jewelry.unknown_socketable", &[("id", (id).to_string())]),
+                        vec![],
+                    );
+                }
             };
             let mut values: Vec<_> = stats.iter().collect();
             values.sort_by_key(|(key, _)| *key);
@@ -43,25 +49,34 @@ pub(super) fn description(content: Option<&TreeSocketContent>) -> (String, Vec<S
             )
         }
         Some(TreeSocketContent::Uncut { affixes }) => (
-            "Uncut Jewel".into(),
+            tr("jewelry.uncut_jewel").into(),
             affixes
                 .iter()
                 .map(|eq| match data::get_affix(&eq.affix_id) {
                     Some(def) => {
                         let key = def.stat_key.as_deref().unwrap_or("");
-                        format!(
-                            "{} {} · T{}",
-                            format_value(
-                                eq.custom_value
-                                    .unwrap_or_else(|| rolled_affix_value(def, eq.roll)),
-                                key,
-                                true
-                            ),
-                            stat_name(key),
-                            def.tier
+                        trf(
+                            "jewelry.stat_tier",
+                            &[
+                                (
+                                    "arg0",
+                                    (format_value(
+                                        eq.custom_value
+                                            .unwrap_or_else(|| rolled_affix_value(def, eq.roll)),
+                                        key,
+                                        true,
+                                    ))
+                                    .to_string(),
+                                ),
+                                ("arg1", (stat_name(key)).to_string()),
+                                ("arg2", (def.tier).to_string()),
+                            ],
                         )
                     }
-                    None => format!("Unknown affix: {}", eq.affix_id),
+                    None => trf(
+                        "jewelry.unknown_affix",
+                        &[("arg0", (eq.affix_id).to_string())],
+                    ),
                 })
                 .collect(),
         ),
@@ -145,6 +160,7 @@ struct JewelryEditor {
     error: Option<String>,
     invalid_rolls: HashMap<String, String>,
     _subscription: Subscription,
+    _locale_subscription: Subscription,
 }
 
 fn jewel_tiers(group: &str) -> Vec<&'static Affix> {
@@ -183,14 +199,51 @@ impl JewelryEditor {
         } else {
             Tab::Items
         };
-        let search =
-            cx.new(|cx| InputState::new(window, cx).placeholder("Search by name or stat…"));
+        let search = cx.new(|cx| InputState::new(window, cx).placeholder(tr("jewelry.search")));
         let subscription = cx.subscribe(&search, |this, _, event: &InputEvent, cx| {
             if matches!(event, InputEvent::Change) {
                 this.filter(cx);
                 cx.notify();
             }
         });
+        let locale_subscription =
+            cx.observe_global_in::<hsplanner_ui::i18n::Locale>(window, |this, window, cx| {
+                this.search.update(cx, |input, cx| {
+                    input.set_placeholder(tr("jewelry.search"), window, cx)
+                });
+                for row in &mut this.catalog {
+                    if row.kind == "Affix" {
+                        continue;
+                    }
+                    let (_, lines) =
+                        description(Some(&TreeSocketContent::Item { id: row.id.clone() }));
+                    row.stats = if lines.is_empty() {
+                        "—".to_owned()
+                    } else {
+                        lines.join(", ")
+                    };
+                    row.search = format!("{} {}", row.name, row.stats).to_lowercase();
+                }
+                if let Some(TreeSocketContent::Uncut { affixes }) = &this.pending {
+                    for state in &this.affix_inputs {
+                        if let Some(def) = affixes
+                            .iter()
+                            .filter_map(|eq| data::get_affix(&eq.affix_id))
+                            .find(|def| def.group_id == state.group)
+                        {
+                            let placeholder = trf(
+                                "gear.named_roll",
+                                &[("arg0", stat_name(def.stat_key.as_deref().unwrap_or("")))],
+                            );
+                            state.input.update(cx, |input, cx| {
+                                input.set_placeholder(placeholder, window, cx)
+                            });
+                        }
+                    }
+                }
+                this.filter(cx);
+                cx.notify();
+            });
         let mut editor = Self {
             session,
             document,
@@ -207,6 +260,7 @@ impl JewelryEditor {
             error: None,
             invalid_rolls: HashMap::new(),
             _subscription: subscription,
+            _locale_subscription: locale_subscription,
         };
         editor.catalog = data::data()
             .gems
@@ -324,9 +378,12 @@ impl JewelryEditor {
                 });
             let input = cx.new(|cx| {
                 InputState::new(window, cx)
-                    .placeholder(format!(
-                        "{} roll",
-                        stat_name(def.stat_key.as_deref().unwrap_or(""))
+                    .placeholder(trf(
+                        "gear.named_roll",
+                        &[(
+                            "arg0",
+                            (stat_name(def.stat_key.as_deref().unwrap_or(""))).to_string(),
+                        )],
                     ))
                     .default_value(format!("{}", (value * 100.).round() / 100.))
             });
@@ -354,8 +411,13 @@ impl JewelryEditor {
                         eq.custom_value = None;
                         this.invalid_rolls.remove(&id);
                     } else {
-                        this.invalid_rolls
-                            .insert(id.clone(), format!("Enter a roll between {lo} and {hi}."));
+                        this.invalid_rolls.insert(
+                            id.clone(),
+                            trf(
+                                "jewelry.roll_out_of_range",
+                                &[("lo", (lo).to_string()), ("hi", (hi).to_string())],
+                            ),
+                        );
                     }
                 }
                 cx.notify();
@@ -390,10 +452,7 @@ impl JewelryEditor {
             return;
         }
         if self.document != DocumentKey::from_session(self.session.read(cx)) {
-            self.error = Some(
-                "The build changed while this editor was open. Close it and reopen the socket."
-                    .into(),
-            );
+            self.error = Some(tr("jewelry.build_changed").into());
             cx.notify();
             return;
         }
@@ -440,17 +499,25 @@ impl JewelryEditor {
 
     fn status_text(&self) -> String {
         match &self.pending {
-            None => "Empty socket".into(),
-            Some(TreeSocketContent::Uncut { affixes }) => format!(
-                "Uncut Jewel · {} affix{}",
-                affixes.len(),
-                if affixes.len() == 1 { "" } else { "es" }
+            None => tr("gear.empty_socket").into(),
+            Some(TreeSocketContent::Uncut { affixes }) => trf(
+                "jewelry.affix_count",
+                &[("count", affixes.len().to_string())],
             ),
-            Some(TreeSocketContent::Item { id }) => self
-                .catalog
-                .iter()
-                .find(|c| &c.id == id)
-                .map_or_else(|| id.clone(), |c| format!("{} · T{}", c.name, c.tier)),
+            Some(TreeSocketContent::Item { id }) => {
+                self.catalog.iter().find(|c| &c.id == id).map_or_else(
+                    || id.clone(),
+                    |c| {
+                        trf(
+                            "jewelry.item_tier",
+                            &[
+                                ("arg0", (c.name).to_string()),
+                                ("arg1", (c.tier).to_string()),
+                            ],
+                        )
+                    },
+                )
+            }
         }
     }
 
@@ -499,19 +566,21 @@ impl JewelryEditor {
                     .font_family(theme::FONT_FAMILY)
                     .text_size(rems(1.))
                     .selected(selected)
-                    .accessibility_label(format!(
-                        "{} {}",
-                        if is_affix { "Add" } else { "Select" },
-                        row.name
+                    .accessibility_label(trf(
+                        if is_affix {
+                            "jewelry.add_named"
+                        } else {
+                            "jewelry.select_named"
+                        },
+                        &[("name", row.name.clone())],
                     ))
                     .on_click(cx.listener(move |this, _, window, cx| this.pick(&id, window, cx)));
                 let button = if is_affix {
                     button
                         .child(div().flex_1().min_w_0().truncate().child(row.name.clone()))
-                        .child(mono(10., p.faint).flex_none().child(format!(
-                            "{} tier{}",
-                            row.tier,
-                            if row.tier == 1 { "" } else { "s" }
+                        .child(mono(10., p.faint).flex_none().child(trf(
+                            "jewelry.tiers_count",
+                            &[("count", row.tier.to_string())],
                         )))
                 } else {
                     button
@@ -532,10 +601,16 @@ impl JewelryEditor {
                                 ),
                         )
                         .child(
-                            mono(10., p.faint)
-                                .w(rems(56. / 13.))
-                                .flex_none()
-                                .child(row.kind.to_uppercase()),
+                            mono(10., p.faint).w(rems(56. / 13.)).flex_none().child(
+                                match row.kind {
+                                    "Affix" => tr("jewelry.kind_affix"),
+                                    "Gem" => tr("jewelry.kind_gem"),
+                                    "Rune" => tr("jewelry.kind_rune"),
+                                    "Jewel" => tr("jewelry.kind_jewel"),
+                                    other => other,
+                                }
+                                .to_uppercase(),
+                            ),
                         )
                         .child(
                             div()
@@ -556,7 +631,10 @@ impl JewelryEditor {
                                 .px_2()
                                 .py_0p5()
                                 .font_weight(FontWeight::SEMIBOLD)
-                                .child(format!("T{}", row.tier)),
+                                .child(trf(
+                                    "item.numbered_tier_short",
+                                    &[("arg0", (row.tier).to_string())],
+                                )),
                         )
                         .child(
                             mono(10., p.muted)
@@ -606,7 +684,7 @@ impl JewelryEditor {
                         .p_8()
                         .text_center()
                         .text_color(p.muted)
-                        .child("No matches"),
+                        .child(tr("gear.no_matches")),
                 )
             })
             .when(!self.choices.is_empty(), |v| {
@@ -630,22 +708,31 @@ impl JewelryEditor {
         };
         let full = affixes.len() >= jewelry::MAX_AFFIXES;
         let toggle = if self.adding {
-            modal_button("add-affix-done", "Done", ButtonTone::Neutral, cx).on_click(cx.listener(
-                |this, _, window, cx| {
-                    this.adding = false;
-                    this.search
-                        .update(cx, |input, cx| input.set_value("", window, cx));
-                    this.filter(cx);
-                    cx.notify();
-                },
-            ))
+            modal_button(
+                "add-affix-done",
+                tr("jewelry.done"),
+                ButtonTone::Neutral,
+                cx,
+            )
+            .on_click(cx.listener(|this, _, window, cx| {
+                this.adding = false;
+                this.search
+                    .update(cx, |input, cx| input.set_value("", window, cx));
+                this.filter(cx);
+                cx.notify();
+            }))
         } else {
-            modal_button("add-affix", "+ Add affix", ButtonTone::Primary, cx)
-                .disabled(full)
-                .on_click(cx.listener(|this, _, _, cx| {
-                    this.adding = true;
-                    cx.notify();
-                }))
+            modal_button(
+                "add-affix",
+                tr("jewelry.add_affix"),
+                ButtonTone::Primary,
+                cx,
+            )
+            .disabled(full)
+            .on_click(cx.listener(|this, _, _, cx| {
+                this.adding = true;
+                cx.notify();
+            }))
         };
         let tab = div().flex_1().min_h_0().flex().flex_col().child(
             div()
@@ -667,7 +754,10 @@ impl JewelryEditor {
                                 .text_color(p.accent_hot)
                                 .child(affixes.len().to_string()),
                         )
-                        .child(format!("/ {} affixes", jewelry::MAX_AFFIXES)),
+                        .child(trf(
+                            "jewelry.affix_capacity",
+                            &[("arg0", (jewelry::MAX_AFFIXES).to_string())],
+                        )),
                 )
                 .child(toggle),
         );
@@ -707,9 +797,9 @@ impl JewelryEditor {
                             .text_size(rems(14. / 13.))
                             .font_weight(FontWeight::SEMIBOLD)
                             .text_color(p.muted)
-                            .child("No affixes yet"),
+                            .child(tr("jewelry.no_affixes")),
                     )
-                    .child(mono(10., p.faint).child("Click + Add affix to roll")),
+                    .child(mono(10., p.faint).child(tr("jewelry.roll_hint"))),
             );
         }
         tab.child(
@@ -743,7 +833,12 @@ impl JewelryEditor {
         let def = data::get_affix(&eq.affix_id);
         let group = def.map_or_else(|| eq.affix_id.clone(), |a| a.group_id.clone());
         let name = def.map_or_else(
-            || format!("Unknown affix: {}", eq.affix_id),
+            || {
+                trf(
+                    "jewelry.unknown_affix",
+                    &[("arg0", (eq.affix_id).to_string())],
+                )
+            },
             |a| a.description.clone(),
         );
         let stat = def.map_or_else(
@@ -798,7 +893,10 @@ impl JewelryEditor {
                     .children(value.map(|value| mono(11., p.accent_hot).flex_none().child(value)))
                     .child(
                         controls::icon_button("remove-affix", "×", true, cx)
-                            .accessibility_label(format!("Remove affix: {stat}"))
+                            .accessibility_label(trf(
+                                "jewelry.remove_affix_named",
+                                &[("stat", (stat).to_string())],
+                            ))
                             .on_click(cx.listener(move |this, _, window, cx| {
                                 if let Some(TreeSocketContent::Uncut { affixes }) =
                                     &mut this.pending
@@ -831,19 +929,28 @@ impl JewelryEditor {
                             .flex()
                             .items_center()
                             .gap_2()
-                            .child("tier")
+                            .child(tr("jewelry.tier"))
                             .child(
                                 controls::icon_button("tier-down", "−", false, cx)
-                                    .accessibility_label(format!("Lower tier: {stat}"))
+                                    .accessibility_label(trf(
+                                        "jewelry.lower_tier",
+                                        &[("stat", (stat).to_string())],
+                                    ))
                                     .disabled(tiers.first().is_none_or(|a| a.id == eq.affix_id))
                                     .on_click(cx.listener(move |this, _, window, cx| {
                                         this.tier_step(&prev, false, window, cx)
                                     })),
                             )
-                            .child(div().text_color(p.text).child(format!("T{}", eq.tier)))
+                            .child(div().text_color(p.text).child(trf(
+                                "item.numbered_tier_short",
+                                &[("arg0", (eq.tier).to_string())],
+                            )))
                             .child(
                                 controls::icon_button("tier-up", "+", false, cx)
-                                    .accessibility_label(format!("Higher tier: {stat}"))
+                                    .accessibility_label(trf(
+                                        "jewelry.higher_tier",
+                                        &[("stat", (stat).to_string())],
+                                    ))
                                     .disabled(tiers.last().is_none_or(|a| a.id == eq.affix_id))
                                     .on_click(cx.listener(move |this, _, window, cx| {
                                         this.tier_step(&next, true, window, cx)
@@ -855,7 +962,7 @@ impl JewelryEditor {
                             .flex()
                             .items_center()
                             .gap_2()
-                            .child("roll")
+                            .child(tr("jewelry.roll"))
                             .children(self.affix_inputs.iter().find(|i| i.group == group).map(
                                 |i| {
                                     div()
@@ -881,7 +988,7 @@ impl Render for JewelryEditor {
         let dirty = !jewelry::same_content(self.original.as_ref(), self.pending.as_ref());
         let has_pending = self.pending.is_some();
         let status_color = if has_pending { p.accent_hot } else { p.faint };
-        let eyebrow = modal_eyebrow("jewelry-eyebrow", "Jewelry Socket").child(
+        let eyebrow = modal_eyebrow("jewelry-eyebrow", tr("jewelry.socket")).child(
             div().text_color(p.accent_hot).child(TooltipText::new(
                 "jewelry-eyebrow-id",
                 format!("#{}", self.node_id),
@@ -894,8 +1001,8 @@ impl Render for JewelryEditor {
             .border_b_1()
             .border_color(p.border)
             .bg(p.background)
-            .child(self.tab_button(Tab::Items, "Gems / Runes / Jewels", cx))
-            .child(self.tab_button(Tab::Uncut, "Craft Uncut Jewel", cx));
+            .child(self.tab_button(Tab::Items, tr("jewelry.items_tab"), cx))
+            .child(self.tab_button(Tab::Uncut, tr("jewelry.craft_tab"), cx));
         let body = if self.tab == Tab::Items {
             div()
                 .flex_1()
@@ -916,7 +1023,12 @@ impl Render for JewelryEditor {
             .size_full()
             .flex()
             .flex_col()
-            .child(modal_header(eyebrow, "Insert Socketable", None, cx))
+            .child(modal_header(
+                eyebrow,
+                tr("jewelry.insert_socketable"),
+                None,
+                cx,
+            ))
             .child(tabs)
             .child(body)
             .children(error.map(|error| {
@@ -943,24 +1055,31 @@ impl Render for JewelryEditor {
                     )
                     .when(has_pending, |view| {
                         view.child(
-                            modal_button("clear-jewelry", "Clear", ButtonTone::Neutral, cx)
-                                .on_click(cx.listener(|this, _, window, cx| {
+                            modal_button(
+                                "clear-jewelry",
+                                tr("gear.clear"),
+                                ButtonTone::Neutral,
+                                cx,
+                            )
+                            .on_click(cx.listener(
+                                |this, _, window, cx| {
                                     this.pending = None;
                                     this.error = None;
                                     this.adding = false;
                                     this.rebuild_affix_inputs(window, cx);
                                     this.filter(cx);
                                     cx.notify();
-                                })),
+                                },
+                            )),
                         )
                     })
                     .child(
                         modal_button(
                             "apply-jewelry",
                             if !has_pending && self.original.is_some() {
-                                "Remove"
+                                tr("gear.remove")
                             } else {
-                                "Insert"
+                                tr("jewelry.insert")
                             },
                             ButtonTone::Primary,
                             cx,

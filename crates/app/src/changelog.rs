@@ -5,6 +5,7 @@ use gpui_kit::component::{
     text::{TextView, TextViewStyle},
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::i18n::tr;
 use hsplanner_ui::{
     controls::PlannerControl,
     theme::{self, TooltipTheme},
@@ -32,7 +33,7 @@ pub fn open(window: &mut Window, cx: &mut App) {
                             .text_xs()
                             .font_family(theme::MONO_FONT_FAMILY)
                             .text_color(palette.accent)
-                            .child("CHANGELOG"),
+                            .child(tr("changelog.title")),
                     )
                     .child(
                         div()
@@ -46,7 +47,7 @@ pub fn open(window: &mut Window, cx: &mut App) {
                             .text_sm()
                             .font_weight(FontWeight::NORMAL)
                             .text_color(palette.muted)
-                            .child("Release history"),
+                            .child(tr("changelog.history")),
                     ),
             )
             .child(
@@ -75,17 +76,17 @@ pub fn open(window: &mut Window, cx: &mut App) {
                     .gap_3()
                     .child(
                         Link::new("github-releases")
-                            .child("Releases on GitHub")
+                            .child(tr("changelog.github"))
                             .href(RELEASES)
                             .text_color(palette.accent)
                             .underline()
-                            .accessibility_label("Releases on GitHub")
+                            .accessibility_label(tr("changelog.github"))
                             .open_with(|url, _, _, cx| cx.open_url(url)),
                     )
                     .child(
                         Button::new("close-changelog")
                             .planner_style(cx)
-                            .label("Close")
+                            .label(tr("common.close"))
                             .on_click(|_, window, cx| window.close_dialog(cx)),
                     ),
             )

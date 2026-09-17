@@ -10,7 +10,39 @@ use gpui_kit::{prelude::*, *};
 use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{data, types::SkillKind};
 use hsplanner_ui::controls::{PlannerControl, icon_button};
+use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::theme::TooltipTheme;
+
+fn condition_name(key: &str) -> &str {
+    match key {
+        "burning" => tr("tree.condition.burning"),
+        "poisoned" => tr("tree.condition.poisoned"),
+        "frozenbite" => tr("tree.condition.frozenbite"),
+        "stunned" => tr("tree.condition.stunned"),
+        "bleeding" => tr("tree.condition.bleeding"),
+        "shocked" => tr("tree.condition.shocked"),
+        "deep_frozen" => tr("tree.condition.deep_frozen"),
+        "shadow_burn" => tr("tree.condition.shadow_burn"),
+        "frozen" => tr("tree.condition.frozen"),
+        "slow" => tr("tree.condition.slow"),
+        "low_life" => tr("tree.condition.low_life"),
+        "serrated_chains" => tr("tree.condition.serrated_chains"),
+        "lightning_break" => tr("tree.condition.lightning_break"),
+        "fire_break" => tr("tree.condition.fire_break"),
+        "cold_break" => tr("tree.condition.cold_break"),
+        "arcane_break" => tr("tree.condition.arcane_break"),
+        "poison_break" => tr("tree.condition.poison_break"),
+        "is_boss" => tr("tree.condition.is_boss"),
+        "crit_chance_below_40" => tr("tree.condition.crit_chance_below_40"),
+        "life_below_40" => tr("tree.condition.life_below_40"),
+        "fire" => tr("tree.condition.fire"),
+        "cold" => tr("tree.condition.cold"),
+        "lightning" => tr("tree.condition.lightning"),
+        "poison" => tr("tree.condition.poison"),
+        "arcane" => tr("tree.condition.arcane"),
+        _ => key,
+    }
+}
 
 #[derive(Clone, Copy)]
 pub enum Panel {
@@ -33,8 +65,13 @@ impl EditorView {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
-        let level = cx.new(|cx| {
-            let mut input = InputState::new(window, cx).placeholder("Character level");
+        let level = cx.new(|cx: &mut Context<InputState>| {
+            cx.observe_global_in::<Locale>(window, |input, window, cx| {
+                input.set_placeholder(tr("tree.editor.level_placeholder"), window, cx);
+            })
+            .detach();
+            let mut input =
+                InputState::new(window, cx).placeholder(tr("tree.editor.level_placeholder"));
             input.set_value(session.read(cx).snapshot().level.to_string(), window, cx);
             input
         });
@@ -82,7 +119,7 @@ impl EditorView {
             .flex()
             .flex_col()
             .gap_4()
-            .child(div().text_2xl().child("Character"))
+            .child(div().text_2xl().child(tr("tree.editor.character")))
             .child(
                 div()
                     .flex()
@@ -100,19 +137,28 @@ impl EditorView {
                     })),
             )
             .child(
-                div().flex().items_center().gap_3().child("Level").child(
-                    div()
-                        .w(rems(8.))
-                        .child(Input::new(&self.level).planner_style(cx)),
-                ),
+                div()
+                    .flex()
+                    .items_center()
+                    .gap_3()
+                    .child(tr("tree.editor.level"))
+                    .child(
+                        div()
+                            .w(rems(8.))
+                            .child(Input::new(&self.level).planner_style(cx)),
+                    ),
             );
         let spent: u32 = snapshot.allocated.values().sum();
-        content = content.child(format!(
-            "{} attribute points available",
-            snapshot
-                .level
-                .saturating_mul(data::game_config().attribute_points_per_level)
-                .saturating_sub(spent)
+        content = content.child(trf(
+            "tree.editor.attribute_points",
+            &[(
+                "count",
+                snapshot
+                    .level
+                    .saturating_mul(data::game_config().attribute_points_per_level)
+                    .saturating_sub(spent)
+                    .to_string(),
+            )],
         ));
         for attribute in &data::game_config().attributes {
             let key = attribute.key.clone();
@@ -164,7 +210,7 @@ impl EditorView {
             .flex()
             .flex_col()
             .gap_3()
-            .child(div().text_2xl().child("Skills"));
+            .child(div().text_2xl().child(tr("tree.editor.skills")));
         for skill in data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or("")) {
             let id = skill.id.clone();
             let minus = id.clone();
@@ -211,7 +257,7 @@ impl EditorView {
                         .when(kind != SkillKind::Passive, |row| {
                             row.child(
                                 Checkbox::new("active")
-                                    .label("Active")
+                                    .label(tr("tree.editor.active"))
                                     .checked(enabled)
                                     .on_click(cx.listener(move |this, checked: &bool, _, cx| {
                                         this.edit(cx, |s| match kind {
@@ -288,35 +334,46 @@ impl EditorView {
             .flex()
             .flex_col()
             .gap_3()
-            .child(div().text_2xl().child("Stats"));
+            .child(div().text_2xl().child(tr("tree.editor.stats")));
         let Some(performance) = self.tree.read(cx).performance() else {
-            return content.child("Calculating…");
+            return content.child(tr("tree.editor.calculating"));
         };
         for skill in &performance.per_skill {
-            content = content.child(div().text_lg().child(format!(
-                    "{}: {} DPS",
-                    skill
-                        .performance
-                        .active_skill_name
-                        .as_deref()
-                        .unwrap_or(&skill.skill_id),
-                    format_range(
+            content = content.child(
+                div().text_lg().child(trf(
+                    "tree.editor.skill_dps",
+                    &[
                         (
-                            skill.performance.combined_dps_min.unwrap_or(0.),
-                            skill.performance.combined_dps_max.unwrap_or(0.)
+                            "skill",
+                            skill
+                                .performance
+                                .active_skill_name
+                                .as_deref()
+                                .unwrap_or(&skill.skill_id)
+                                .to_owned(),
                         ),
-                        false
-                    )
-                )));
+                        (
+                            "dps",
+                            format_range(
+                                (
+                                    skill.performance.combined_dps_min.unwrap_or(0.),
+                                    skill.performance.combined_dps_max.unwrap_or(0.),
+                                ),
+                                false,
+                            ),
+                        ),
+                    ],
+                )),
+            );
         }
         for (group, stats, sources) in [
             (
-                "Attributes",
+                tr("tree.editor.attributes"),
                 &performance.computed.attributes,
                 &performance.computed.attribute_sources,
             ),
             (
-                "Statistics",
+                tr("tree.editor.statistics"),
                 &performance.computed.stats,
                 &performance.computed.stat_sources,
             ),
@@ -372,7 +429,7 @@ impl EditorView {
             .flex()
             .flex_col()
             .gap_3()
-            .child(div().text_2xl().child("Encounter configuration"));
+            .child(div().text_2xl().child(tr("tree.editor.encounter")));
         for key in [
             "burning",
             "poisoned",
@@ -396,7 +453,10 @@ impl EditorView {
             let enabled = snapshot.enemy_conditions.get(key).copied().unwrap_or(false);
             content = content.child(
                 Checkbox::new(SharedString::from(format!("enemy-{key}")))
-                    .label(format!("Enemy {key}"))
+                    .label(trf(
+                        "tree.editor.enemy_condition",
+                        &[("condition", condition_name(key).to_owned())],
+                    ))
                     .checked(enabled)
                     .on_click(cx.listener(move |this, checked: &bool, _, cx| {
                         this.edit(cx, |s| {
@@ -413,7 +473,10 @@ impl EditorView {
                 .unwrap_or(false);
             content = content.child(
                 Checkbox::new(SharedString::from(format!("player-{key}")))
-                    .label(format!("Player {key}"))
+                    .label(trf(
+                        "tree.editor.player_condition",
+                        &[("condition", condition_name(key).to_owned())],
+                    ))
                     .checked(enabled)
                     .on_click(cx.listener(move |this, checked: &bool, _, cx| {
                         this.edit(cx, |s| {
@@ -430,7 +493,13 @@ impl EditorView {
                     .flex()
                     .gap_3()
                     .items_center()
-                    .child(format!("{key} resistance: {value:.0}%"))
+                    .child(trf(
+                        "tree.editor.resistance",
+                        &[
+                            ("element", condition_name(key).to_owned()),
+                            ("value", format!("{value:.0}")),
+                        ],
+                    ))
                     .child(
                         Button::new("less")
                             .planner_style(cx)

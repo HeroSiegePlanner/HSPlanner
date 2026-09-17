@@ -5,6 +5,7 @@ use gpui_kit::http_client::{
     AsyncBody, HttpClient, HttpRequestExt, RedirectPolicy, Request, Response,
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{controls::PlannerControl, theme::TooltipTheme};
 use semver::Version;
 use serde::Deserialize;
@@ -48,7 +49,19 @@ pub enum State {
     UpToDate,
     Available(Update),
     Installing(Update),
-    Failed(String),
+    Failed(Failure),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Failure {
+    key: &'static str,
+    detail: String,
+}
+
+impl Failure {
+    pub fn message(&self) -> String {
+        trf(self.key, &[("error", self.detail.clone())])
+    }
 }
 
 pub struct Installed;
@@ -87,7 +100,10 @@ impl Updater {
                         if silent {
                             State::Idle
                         } else {
-                            State::Failed(format!("Could not check for updates: {error:#}"))
+                            State::Failed(Failure {
+                                key: "update.check_failed",
+                                detail: format!("{error:#}"),
+                            })
                         }
                     }
                 };
@@ -118,7 +134,10 @@ impl Updater {
                 Ok(()) => cx.emit(Installed),
                 Err(error) => {
                     log::error!("Update install failed: {error:#}");
-                    this.state = State::Failed(format!("Update failed: {error:#}"));
+                    this.state = State::Failed(Failure {
+                        key: "update.install_failed",
+                        detail: format!("{error:#}"),
+                    });
                     cx.notify();
                 }
             });
@@ -311,36 +330,66 @@ pub fn open_dialog(updater: Entity<Updater>, window: &mut Window, cx: &mut App) 
         };
         let Some(update) = update else {
             let message = match state {
-                State::Failed(message) => message,
-                _ => "HSPlanner is up to date.".to_string(),
+                State::Failed(failure) => failure.message(),
+                _ => tr("update.up_to_date").to_string(),
             };
-            return dialog.title("Updates").child(message);
+            return dialog.title(tr("update.title")).child(message);
         };
         let explanation = if update.installer.is_some() {
-            "The installer is downloaded from GitHub, verified against its published checksum and started. HSPlanner closes to finish the update."
+            tr("update.install_hint")
         } else {
-            "Download the package for your platform from the release page and reinstall."
+            tr("update.manual_hint")
         };
         let action = if installing {
-            "Downloading…"
+            tr("update.downloading")
         } else if update.installer.is_some() {
-            "Install and restart"
+            tr("update.restart")
         } else {
-            "Open release page"
+            tr("update.release_page")
         };
         let page = update.page.clone();
         let install = updater.clone();
         dialog
-            .title(format!("HSPlanner v{} is available", update.version))
-            .child(div().flex().flex_col().gap_2()
-                .child(format!("You are running v{}.", current_version()))
-                .child(div().text_color(palette.muted).child(explanation)))
-            .footer(div().flex().items_center().justify_between().gap_3()
-                .child(gpui_kit::base::Link::new("update-release-page").child("Release notes").href(page)
-                    .text_color(palette.accent).underline().accessibility_label("Release notes on GitHub")
-                    .open_with(|url, _, _, cx| cx.open_url(url)))
-                .child(Button::new("install-update").planner_style(cx).label(action).loading(installing)
-                    .on_click(move |_, _, cx| install.update(cx, |updater, cx| updater.install(cx)))))
+            .title(trf(
+                "update.version_available",
+                &[("version", update.version.to_string())],
+            ))
+            .child(
+                div()
+                    .flex()
+                    .flex_col()
+                    .gap_2()
+                    .child(trf(
+                        "update.running_version",
+                        &[("version", current_version().to_string())],
+                    ))
+                    .child(div().text_color(palette.muted).child(explanation)),
+            )
+            .footer(
+                div()
+                    .flex()
+                    .items_center()
+                    .justify_between()
+                    .gap_3()
+                    .child(
+                        gpui_kit::base::Link::new("update-release-page")
+                            .child(tr("update.release_notes"))
+                            .href(page)
+                            .text_color(palette.accent)
+                            .underline()
+                            .accessibility_label(tr("update.github_notes"))
+                            .open_with(|url, _, _, cx| cx.open_url(url)),
+                    )
+                    .child(
+                        Button::new("install-update")
+                            .planner_style(cx)
+                            .label(action)
+                            .loading(installing)
+                            .on_click(move |_, _, cx| {
+                                install.update(cx, |updater, cx| updater.install(cx))
+                            }),
+                    ),
+            )
     });
 }
 

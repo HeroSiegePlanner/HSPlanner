@@ -7,8 +7,9 @@ use gpui_kit::component::{
 };
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::session::Session;
-use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::i18n::{Locale, tr};
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::theme::TooltipTheme;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::ops::Range;
@@ -53,10 +54,14 @@ impl NotesView {
     pub fn new(session: Entity<Session>, window: &mut Window, cx: &mut Context<Self>) -> Self {
         let build_id = session.read(cx).draft().build_id.clone();
         let markdown = session.read(cx).draft().notes.markdown.clone();
-        let editor = cx.new(|cx| {
+        let editor = cx.new(|cx: &mut Context<TextareaState>| {
+            cx.observe_global_in::<Locale>(window, |editor, window, cx| {
+                editor.set_placeholder(tr("notes.placeholder"), window, cx);
+            })
+            .detach();
             let mut state = TextareaState::new(window, cx)
                 .rows(24)
-                .placeholder("Write Markdown notes…");
+                .placeholder(tr("notes.placeholder"));
             state.set_value(markdown, window, cx);
             state
         });
@@ -145,15 +150,15 @@ impl Render for NotesView {
             .border_color(palette.border)
             .bg(palette.panel);
         for (id, label, title, prefix, suffix) in [
-            ("bold", "B", "Bold", "**", "**"),
-            ("italic", "I", "Italic", "*", "*"),
-            ("strike", "S", "Strikethrough", "~~", "~~"),
-            ("heading", "H2", "Heading", "## ", ""),
-            ("subheading", "H3", "Subheading", "### ", ""),
-            ("bullet", "•⁝", "Bullet list", "- ", ""),
-            ("numbered", "1.", "Numbered list", "1. ", ""),
-            ("link", "↗", "Link", "[", "](https://)"),
-            ("code", "</>", "Inline code", "`", "`"),
+            ("bold", "B", tr("notes.bold"), "**", "**"),
+            ("italic", "I", tr("notes.italic"), "*", "*"),
+            ("strike", "S", tr("notes.strike"), "~~", "~~"),
+            ("heading", "H2", tr("notes.heading"), "## ", ""),
+            ("subheading", "H3", tr("notes.subheading"), "### ", ""),
+            ("bullet", "•⁝", tr("notes.bullets"), "- ", ""),
+            ("numbered", "1.", tr("notes.numbered"), "1. ", ""),
+            ("link", "↗", tr("notes.link"), "[", "](https://)"),
+            ("code", "</>", tr("notes.code"), "`", "`"),
         ] {
             toolbar = toolbar.child(
                 Button::new(id)
@@ -176,7 +181,11 @@ impl Render for NotesView {
                 .planner_style(cx)
                 .small()
                 .ml_auto()
-                .label(if self.preview { "Edit" } else { "Preview" })
+                .label(if self.preview {
+                    tr("notes.edit")
+                } else {
+                    tr("notes.preview")
+                })
                 .selected(self.preview)
                 .on_click(cx.listener(|this, _, _, cx| {
                     this.preview = !this.preview;
@@ -203,7 +212,7 @@ impl Render for NotesView {
                     Textarea::new(&self.editor)
                         .h_full()
                         .bordered(false)
-                        .aria_label("Markdown notes")
+                        .aria_label(tr("notes.aria_label"))
                         .p_4()
                         .text_sm()
                         .line_height(relative(1.625))
@@ -219,56 +228,54 @@ impl Render for NotesView {
             .overflow_y_scroll()
             .bg(palette.background)
             .child(
-                div()
-                    .p_6()
-                    .flex()
-                    .justify_center()
-                    .child(div()
-                    .w_full()
-                    .max_w(rems(56.))
-                    .flex()
-                    .flex_col()
-                    .gap_3()
-                    .child(hsplanner_ui::components::section_heading(
-                        "notes-heading",
-                        "Journal",
-                        "Notes",
-                        cx,
-                    ))
-                    .child(toolbar)
-                    .child(
-                        div()
-                            .h(rems(24.))
-                            .flex_none()
-                            .rounded_md()
-                            .border_1()
-                            .border_color(palette.border)
-                            .bg(palette.panel)
-                            .child(contents),
-                    )
-                    .child(
-                        div()
-                            .flex()
-                            .items_center()
-                            .justify_between()
-                            .gap_3()
-                            .text_size(rems(10. / 13.))
-                            .text_color(palette.muted)
-                            .child("Markdown · notes are shared across all profiles in this build.")
-                            .when_some(notes.original_html.clone(), |view, html| {
-                                view.child(
-                                    Button::new("copy-original-notes")
-                                        .planner_style(cx)
-                                        .small()
-                                        .label("Copy original HTML")
-                                        .on_click(move |_, _, cx| {
-                                            cx.write_to_clipboard(ClipboardItem::new_string(
-                                                html.clone(),
-                                            ))
-                                        }),
-                                )
-                            }),
-                    )),
+                div().p_6().flex().justify_center().child(
+                    div()
+                        .w_full()
+                        .max_w(rems(56.))
+                        .flex()
+                        .flex_col()
+                        .gap_3()
+                        .child(hsplanner_ui::components::section_heading(
+                            "notes-heading",
+                            tr("notes.journal"),
+                            tr("notes.title"),
+                            cx,
+                        ))
+                        .child(toolbar)
+                        .child(
+                            div()
+                                .h(rems(24.))
+                                .flex_none()
+                                .rounded_md()
+                                .border_1()
+                                .border_color(palette.border)
+                                .bg(palette.panel)
+                                .child(contents),
+                        )
+                        .child(
+                            div()
+                                .flex()
+                                .items_center()
+                                .justify_between()
+                                .gap_3()
+                                .text_size(rems(10. / 13.))
+                                .text_color(palette.muted)
+                                .child(tr("notes.shared_help"))
+                                .when_some(notes.original_html.clone(), |view, html| {
+                                    view.child(
+                                        Button::new("copy-original-notes")
+                                            .planner_style(cx)
+                                            .small()
+                                            .label(tr("notes.copy_html"))
+                                            .on_click(move |_, _, cx| {
+                                                cx.write_to_clipboard(ClipboardItem::new_string(
+                                                    html.clone(),
+                                                ))
+                                            }),
+                                    )
+                                }),
+                        ),
+                ),
             )
     }
 }

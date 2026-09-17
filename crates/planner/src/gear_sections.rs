@@ -215,7 +215,7 @@ pub(crate) fn ghost_button(id: impl Into<ElementId>, label: &str, cx: &App) -> B
     )
 }
 
-/// Small action in section headers ("+ Add", "Reset").
+/// Small action in section headers (tr("gear.add"), tr("gear.reset")).
 pub(crate) fn header_action(
     id: impl Into<ElementId>,
     label: &str,

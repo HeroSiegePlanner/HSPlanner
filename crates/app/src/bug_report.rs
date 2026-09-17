@@ -12,27 +12,22 @@ use gpui_kit::{
     *,
 };
 use hsplanner_build::session::Session;
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_footer, modal_header, modal_label, modal_status},
     controls::{ButtonTone, PlannerControl, icon_button, modal_button},
     theme::TooltipTheme,
 };
 
-const KINDS: [&str; 3] = [
-    "Something is broken",
-    "Wrong item / skill data",
-    "Idea or request",
-];
+const KINDS: [&str; 3] = ["report.kind_bug", "report.kind_data", "report.kind_idea"];
 const IDEA: usize = 2;
-const STEPS_PLACEHOLDER: &str =
-    "1. Go to '...'\n2. Click on '...'\n3. Scroll down to '...'\n4. See error";
 
 #[derive(Clone)]
 struct Kind(usize);
 impl SelectItem for Kind {
     type Value = usize;
     fn title(&self) -> SharedString {
-        KINDS[self.0].into()
+        tr(KINDS[self.0]).into()
     }
     fn value(&self) -> &usize {
         &self.0
@@ -52,7 +47,7 @@ pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) 
                 .iter()
                 .find(|build| Some(&build.id) == draft.build_id.as_ref())
                 .map(|build| build.name.clone())
-                .unwrap_or_else(|| "Current build".into());
+                .unwrap_or_else(|| tr("report.current_build").into());
             (label, code)
         });
     let editor = cx.new(|cx| ReportEditor::new(build, window, cx));
@@ -95,24 +90,25 @@ struct ReportEditor {
 }
 impl ReportEditor {
     fn new(build: Option<(String, String)>, window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let title = cx.new(|cx| InputState::new(window, cx).placeholder("Frost Nova shows 0 DPS"));
+        let title =
+            cx.new(|cx| InputState::new(window, cx).placeholder(tr("report.title_placeholder")));
         let description = cx.new(|cx| {
             TextareaState::new(window, cx)
                 .rows(4)
-                .placeholder("When I click here, this happens")
+                .placeholder(tr("report.description_placeholder"))
         });
         let steps = cx.new(|cx| {
             TextareaState::new(window, cx)
                 .rows(4)
-                .placeholder(STEPS_PLACEHOLDER)
+                .placeholder(tr("report.steps_placeholder"))
         });
         let expected = cx.new(|cx| {
             TextareaState::new(window, cx)
                 .rows(2)
-                .placeholder("A clear and concise description of what you expected to happen.")
+                .placeholder(tr("report.expected_placeholder"))
         });
-        let contact = cx
-            .new(|cx| InputState::new(window, cx).placeholder("So I can ask follow-up questions"));
+        let contact =
+            cx.new(|cx| InputState::new(window, cx).placeholder(tr("report.contact_placeholder")));
         let kind_select = cx.new(|cx| {
             SelectState::new(
                 SearchableVec::new((0..KINDS.len()).map(Kind).collect::<Vec<_>>()),
@@ -225,7 +221,9 @@ impl ReportEditor {
         for result in incoming {
             match result {
                 Ok(shot) if self.shots.len() < MAX_SHOTS => self.shots.push(shot),
-                Ok(_) => self.error = Some(format!("Attach up to {MAX_SHOTS} screenshots.")),
+                Ok(_) => {
+                    self.error = Some(trf("report.max_shots", &[("count", MAX_SHOTS.to_string())]))
+                }
                 Err(error) => self.error = Some(error),
             }
         }
@@ -241,7 +239,7 @@ impl ReportEditor {
             files: true,
             directories: false,
             multiple: true,
-            prompt: Some("Add screenshots".into()),
+            prompt: Some(tr("report.add_screenshots").into()),
         });
         cx.spawn(async move |this, cx| {
             let results = match paths.await {
@@ -256,7 +254,7 @@ impl ReportEditor {
                     .await
                 }
                 Ok(Ok(None)) => vec![],
-                _ => vec![Err("Could not open the image picker.".into())],
+                _ => vec![Err(tr("report.picker_failed").into())],
             };
             let _ = this.update(cx, |this, cx| this.accept(results, cx));
         })
@@ -283,14 +281,12 @@ impl ReportEditor {
                 _ => vec![],
             };
             let results = if incoming.is_empty() {
-                vec![Err(
-                    "Copy a screenshot image, then choose Paste image.".into()
-                )]
+                vec![Err(tr("report.paste_hint").into())]
             } else {
                 cx.background_spawn(async move {
                     incoming
                         .into_iter()
-                        .map(|bytes| Shot::from_bytes("Pasted screenshot".into(), bytes))
+                        .map(|bytes| Shot::from_bytes(tr("report.pasted").into(), bytes))
                         .collect::<Vec<_>>()
                 })
                 .await
@@ -301,19 +297,19 @@ impl ReportEditor {
     }
     fn status(&self, validation: Option<&String>) -> String {
         if self.endpoint.is_none() {
-            "Reporting is not configured in this build.".into()
+            tr("report.unconfigured").into()
         } else if self.sent {
-            "Report sent — thank you!".into()
+            tr("report.sent").into()
         } else if self.busy {
-            "Sending…".into()
+            tr("report.sending").into()
         } else if self.loading {
-            "Reading screenshots…".into()
+            tr("report.reading").into()
         } else if let Some(error) = self.error.as_ref().or(validation) {
             error.clone()
         } else if self.attach && self.build.is_some() {
-            "Sends app version, OS and your build code.".into()
+            tr("report.sends_build").into()
         } else {
-            "Sends app version and OS.".into()
+            tr("report.sends_system").into()
         }
     }
 }
@@ -341,73 +337,86 @@ impl Render for ReportEditor {
             .gap_2p5()
             .text_size(rems(12. / 13.))
             .child(field(
-                "Type",
+                tr("report.type"),
                 Select::new(&self.kind_select)
                     .planner_style(cx)
-                    .accessibility_label("Type")
+                    .accessibility_label(tr("report.type"))
                     .disabled(locked)
                     .w_full(),
                 cx,
             ))
             .child(field(
-                "Title",
+                tr("report.title"),
                 Input::new(&self.title)
-                    .aria_label("Title")
+                    .aria_label(tr("report.title"))
                     .planner_style(cx)
                     .disabled(locked),
                 cx,
             ))
             .child(field(
-                "Describe your issue",
+                tr("report.description"),
                 Textarea::new(&self.description)
                     .h_24()
-                    .aria_label("Describe your issue")
+                    .aria_label(tr("report.description"))
                     .planner_style(cx)
                     .disabled(locked),
                 cx,
             ))
             .when(self.kind != IDEA, |view| {
                 view.child(field(
-                    "Steps to reproduce (optional)",
+                    tr("report.steps_optional"),
                     Textarea::new(&self.steps)
                         .h_24()
-                        .aria_label("Steps to reproduce")
+                        .aria_label(tr("report.steps"))
                         .planner_style(cx)
                         .disabled(locked),
                     cx,
                 ))
                 .child(field(
-                    "What did you expect instead (optional)",
+                    tr("report.expected_optional"),
                     Textarea::new(&self.expected)
                         .h_16()
-                        .aria_label("What did you expect instead")
+                        .aria_label(tr("report.expected"))
                         .planner_style(cx)
                         .disabled(locked),
                     cx,
                 ))
             })
             .child(field(
-                "Screenshots (optional)",
+                tr("report.screenshots"),
                 div()
                     .flex()
                     .flex_wrap()
                     .items_center()
                     .gap_2()
                     .child(
-                        modal_button("report-add-images", "Add image", ButtonTone::Neutral, cx)
-                            .disabled(locked || self.loading || self.shots.len() >= MAX_SHOTS)
-                            .on_click(cx.listener(|this, _, _, cx| this.choose_images(cx))),
+                        modal_button(
+                            "report-add-images",
+                            tr("report.add_image"),
+                            ButtonTone::Neutral,
+                            cx,
+                        )
+                        .disabled(locked || self.loading || self.shots.len() >= MAX_SHOTS)
+                        .on_click(cx.listener(|this, _, _, cx| this.choose_images(cx))),
                     )
                     .child(
-                        modal_button("report-paste-image", "Paste image", ButtonTone::Neutral, cx)
-                            .disabled(locked || self.loading || self.shots.len() >= MAX_SHOTS)
-                            .on_click(cx.listener(|this, _, _, cx| this.paste_image(cx))),
+                        modal_button(
+                            "report-paste-image",
+                            tr("report.paste_image"),
+                            ButtonTone::Neutral,
+                            cx,
+                        )
+                        .disabled(locked || self.loading || self.shots.len() >= MAX_SHOTS)
+                        .on_click(cx.listener(|this, _, _, cx| this.paste_image(cx))),
                     )
                     .child(
                         div()
                             .text_size(rems(11. / 13.))
                             .text_color(p.faint)
-                            .child(format!("up to {MAX_SHOTS}, 8 MB each")),
+                            .child(trf(
+                                "report.image_limit",
+                                &[("count", MAX_SHOTS.to_string())],
+                            )),
                     ),
                 cx,
             ));
@@ -428,7 +437,10 @@ impl Render for ReportEditor {
                             true,
                             cx,
                         )
-                        .accessibility_label(format!("Remove {}", shot.name))
+                        .accessibility_label(trf(
+                            "report.remove_image",
+                            &[("name", shot.name.clone())],
+                        ))
                         .disabled(locked)
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.shots.retain(|shot| shot.id != id);
@@ -438,9 +450,9 @@ impl Render for ReportEditor {
             );
         }
         fields = fields.child(field(
-            "Discord name (optional)",
+            tr("report.discord_optional"),
             Input::new(&self.contact)
-                .aria_label("Discord name")
+                .aria_label(tr("report.discord"))
                 .planner_style(cx)
                 .disabled(locked),
             cx,
@@ -449,7 +461,7 @@ impl Render for ReportEditor {
             fields = fields.child(
                 div().mt_2().text_color(p.muted).child(
                     Checkbox::new("report-attach-build")
-                        .label(format!("Attach my build ({label}) so it can be reproduced"))
+                        .label(trf("report.attach_build", &[("name", label.clone())]))
                         .checked(self.attach)
                         .disabled(locked)
                         .on_click(cx.listener(|this, checked, _, cx| {
@@ -464,9 +476,9 @@ impl Render for ReportEditor {
             .flex()
             .flex_col()
             .child(modal_header(
-                modal_eyebrow("bug-report-eyebrow", "Feedback"),
-                "Report a problem",
-                Some("Goes straight to the dev — no GitHub account needed.".into()),
+                modal_eyebrow("bug-report-eyebrow", tr("report.feedback")),
+                tr("report.heading"),
+                Some(tr("report.subtitle").into()),
                 cx,
             ))
             .child(fields)
@@ -475,7 +487,7 @@ impl Render for ReportEditor {
                     .child(modal_status(status, status_color))
                     .when(self.sent, |view| {
                         view.child(
-                            modal_button("report-done", "Done", ButtonTone::Primary, cx)
+                            modal_button("report-done", tr("report.done"), ButtonTone::Primary, cx)
                                 .on_click(|_, window, cx| window.close_dialog(cx)),
                         )
                     })
@@ -484,9 +496,9 @@ impl Render for ReportEditor {
                             modal_button(
                                 "report-send",
                                 if self.busy {
-                                    "Sending…"
+                                    tr("report.sending")
                                 } else {
-                                    "Send report"
+                                    tr("report.send")
                                 },
                                 ButtonTone::Primary,
                                 cx,

@@ -2,6 +2,7 @@ use gpui_kit::{
     App, Div, FontWeight, InteractiveElement, ParentElement, Stateful, Styled, div, relative, rems,
 };
 use hsplanner_engine::calc::{performance_diff::PerformanceDiff, skills::Ranged};
+use hsplanner_ui::i18n::{tr, trf};
 
 use crate::{build_session::PreviewResult, theme::TooltipTheme};
 
@@ -46,7 +47,8 @@ pub fn format_change(change: &PerformanceDiff) -> String {
     } else {
         String::new()
     };
-    format!("{sign}{delta} {}{relative}", change.label())
+    let label = crate::stat_labels::performance_name(change);
+    format!("{sign}{delta} {label}{relative}")
 }
 
 fn change_color(change: &PerformanceDiff, palette: &TooltipTheme) -> gpui_kit::Hsla {
@@ -84,27 +86,37 @@ pub fn preview_changes(
                 .text_xs()
                 .font_weight(FontWeight::SEMIBOLD)
                 .text_color(palette.muted)
-                .child("NET CHANGE"),
+                .child(tr("tree.changes.heading")),
         );
     let Some(preview) = preview else {
         return panel.child(div().text_color(palette.faint).child(if pending {
-            "Calculating changes…"
+            tr("tree.changes.calculating")
         } else {
-            "Changes unavailable"
+            tr("tree.changes.unavailable")
         }));
     };
     let path_label = if preview.removed > 0 {
-        format!("Removing {} nodes:", preview.removed)
+        trf(
+            "tree.changes.removing",
+            &[("count", preview.removed.to_string())],
+        )
     } else {
-        format!("Allocating {} nodes:", preview.added)
+        trf(
+            "tree.changes.allocating",
+            &[("count", preview.added.to_string())],
+        )
     };
-    let mut groups = vec![("This node:".to_owned(), &preview.single)];
+    let mut groups = vec![(
+        "single",
+        tr("tree.changes.node").to_owned(),
+        &preview.single,
+    )];
     if preview.added > 1 || preview.removed > 1 {
-        groups.push((path_label, &preview.path));
+        groups.push(("path", path_label, &preview.path));
     }
-    for (label, changes) in groups {
+    for (id, label, changes) in groups {
         let mut group = div()
-            .id(gpui_kit::SharedString::from(label.clone()))
+            .id(id)
             .flex()
             .flex_col()
             .gap_1()
@@ -113,7 +125,7 @@ pub fn preview_changes(
             group = group.child(
                 div()
                     .text_color(palette.faint)
-                    .child("No calculated change"),
+                    .child(tr("tree.changes.none")),
             );
         } else {
             let count = limit.unwrap_or(changes.len()).min(changes.len());
@@ -124,9 +136,9 @@ pub fn preview_changes(
                     .map(|change| change_row(change, palette)),
             );
             if count < changes.len() {
-                group = group.child(div().text_xs().text_color(palette.muted).child(format!(
-                    "{} more changes in the side panel",
-                    changes.len() - count
+                group = group.child(div().text_xs().text_color(palette.muted).child(trf(
+                    "tree.changes.more",
+                    &[("count", (changes.len() - count).to_string())],
                 )));
             }
         }

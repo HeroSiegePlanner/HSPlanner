@@ -3920,6 +3920,8 @@ version = "1.1.0"
 dependencies = [
  "gpui-kit",
  "log",
+ "rust-i18n",
+ "serde_json",
  "sys-locale",
  "unicode-segmentation",
 ]

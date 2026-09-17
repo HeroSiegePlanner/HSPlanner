@@ -13,6 +13,7 @@ use hsplanner_engine::calc::{
     stats::RAINBOW_MULTIPLIER,
     types::{Affix, AffixFormat, AffixSign, EquippedAffix, EquippedItem, ItemBase, SocketType},
 };
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
     theme::{self, TooltipTheme},
@@ -153,7 +154,7 @@ const UNHOLY_EFFECT: &str = "Unholy";
 const UNHOLY_GROUP: &str = "random_unholy";
 const BONUS_SOCKET_MOD_ID: &str = "crystal_add_socket";
 const EQUIPPED_MARK: &str = "✓";
-const NOT_SUPPORTED_FOOTNOTE: &str = "These mods are not yet calculated by the planner.";
+const NOT_SUPPORTED_FOOTNOTE: &str = "item.unsupported_footnote";
 const RECOGNIZED_EFFECTS: [&str; 10] = [
     "attacks can hit multiple enemies",
     "cannot be frozen",
@@ -341,14 +342,6 @@ pub(crate) fn format_affix_value(affix: &Affix, value: f64) -> String {
     format!("{sign}{}{suffix}", num(value))
 }
 
-fn capitalize(text: &str) -> String {
-    let mut chars = text.chars();
-    chars
-        .next()
-        .map(|c| c.to_uppercase().collect::<String>() + chars.as_str())
-        .unwrap_or_default()
-}
-
 fn skill_name(id: &str) -> Option<String> {
     data::skill_name_by_id(id).map(str::to_owned)
 }
@@ -356,42 +349,45 @@ fn skill_name(id: &str) -> Option<String> {
 fn random_skill_label(skill_id: Option<&str>) -> String {
     skill_id
         .and_then(skill_name)
-        .unwrap_or_else(|| format!("{RANDOM_SKILL_NAME} (not rolled)"))
+        .unwrap_or_else(|| tr("item.random_skill_unrolled").to_owned())
 }
 
 fn random_element_label(element: Option<&str>) -> String {
     match element {
-        Some(element) => format!("to {} Skills (random element)", capitalize(element)),
-        None => "to Random Element Skills (not rolled)".into(),
+        Some(element) => trf(
+            "item.random_element_skills",
+            &[("arg0", crate::gear::element_label(element))],
+        ),
+        None => tr("item.random_element_unrolled").into(),
     }
 }
 
 fn all_skills_class_label(class_id: Option<&str>) -> String {
     match class_id.and_then(data::get_class) {
-        Some(class) => format!("to All Skills ({})", class.name),
-        None if class_id.is_some() => "to All Skills (Class)".into(),
-        None => "to All Skills (Class) (not rolled)".into(),
+        Some(class) => trf("item.class_skills", &[("arg0", (class.name).to_string())]),
+        None if class_id.is_some() => tr("item.all_class_skills").into(),
+        None => tr("item.all_class_skills_unrolled").into(),
     }
 }
 
 fn subskill_boost_label(skill_id: Option<&str>) -> String {
     match skill_id.and_then(skill_name) {
-        Some(name) => format!("to {name} Sub Skills"),
-        None if skill_id.is_some() => "to Random Skill Sub Skills".into(),
-        None => "to Random Skill Sub Skills (not rolled)".into(),
+        Some(name) => trf("item.subskills", &[("name", (name).to_string())]),
+        None if skill_id.is_some() => tr("item.random_subskills").into(),
+        None => tr("item.random_subskills_unrolled").into(),
     }
 }
 
 fn trigger_label(trigger: &str) -> Option<&'static str> {
     Some(match trigger {
-        "on_hit" => "on Hit",
-        "on_attack" => "when Attacking",
-        "when_struck" => "when Struck",
-        "on_kill" => "on Kill",
-        "on_cast" => "on Cast",
-        "on_block" => "on Block",
-        "on_death" => "on Death",
-        "aura" => "Aura:",
+        "on_hit" => tr("item.on_hit"),
+        "on_attack" => tr("item.on_attack"),
+        "when_struck" => tr("item.when_struck"),
+        "on_kill" => tr("item.on_kill"),
+        "on_cast" => tr("item.on_cast"),
+        "on_block" => tr("item.on_block"),
+        "on_death" => tr("item.on_death"),
+        "aura" => tr("item.aura"),
         _ => return None,
     })
 }
@@ -433,26 +429,26 @@ pub(crate) fn build_model(
     let mut rows = Vec::new();
     if let Some((min, max)) = base.defense_min.zip(base.defense_max) {
         rows.push(Line::Row {
-            label: "Defense".into(),
+            label: tr("gear.defense").into(),
             value: format!("{}–{}", num(min), num(max)),
         });
     }
     if let Some((min, max)) = base.damage_min.zip(base.damage_max) {
         rows.push(Line::Row {
-            label: "Damage".into(),
+            label: tr("item.damage").into(),
             value: format!("{}–{}", num(min), num(max)),
         });
     }
     if let Some(block) = base.block_chance {
         rows.push(Line::Row {
-            label: "Block".into(),
+            label: tr("item.block").into(),
             value: format!("{}%", num(block)),
         });
     }
     if let Some(speed) = base.attack_speed {
         let (min, max) = speed.as_ranged();
         rows.push(Line::Row {
-            label: "Attacks / sec".into(),
+            label: tr("item.attacks_per_second").into(),
             value: if min == max {
                 num(min)
             } else {
@@ -566,7 +562,13 @@ pub(crate) fn build_model(
                 continue;
             }
             implicit_lines.push(Line::Text {
-                text: format!("{} to {label}", format_ranged(shown, "")),
+                text: trf(
+                    "item.skill_value",
+                    &[
+                        ("arg0", (format_ranged(shown, "")).to_string()),
+                        ("label", (label).to_string()),
+                    ],
+                ),
                 style: LineStyle::Implicit,
                 custom: custom.is_some(),
             });
@@ -596,7 +598,7 @@ pub(crate) fn build_model(
 
     if !implicit_lines.is_empty() {
         sections.push(Section::titled(
-            "Implicit",
+            tr("item.implicit"),
             HeaderTone::Gold,
             implicit_lines,
         ));
@@ -604,14 +606,14 @@ pub(crate) fn build_model(
 
     if !granted.is_empty() {
         sections.push(Section::titled(
-            "Granted Skill Effects",
+            tr("item.granted_effects"),
             HeaderTone::Orange,
             granted
                 .into_iter()
                 .map(|(skill, rank, lines)| Line::Entry {
                     title: skill.name.clone(),
                     style: LineStyle::Implicit,
-                    suffix: Some(format!("rank {rank}")),
+                    suffix: Some(trf("item.rank", &[("rank", (rank).to_string())])),
                     desc: skill
                         .description
                         .clone()
@@ -629,7 +631,11 @@ pub(crate) fn build_model(
         equipped.and_then(|i| i.random_skill_element.as_deref()),
     );
     if !supported.is_empty() {
-        sections.push(Section::titled("Affixes", HeaderTone::Gold, supported));
+        sections.push(Section::titled(
+            tr("gear.affixes"),
+            HeaderTone::Gold,
+            supported,
+        ));
     }
     let unholy_slots = base
         .unique_effects
@@ -641,11 +647,15 @@ pub(crate) fn build_model(
     if !unholy.is_empty() || unrolled > 0 {
         let mut lines = unholy;
         lines.extend((0..unrolled).map(|_| Line::Text {
-            text: "Unholy (not rolled)".into(),
+            text: tr("item.unholy_not_rolled").into(),
             style: LineStyle::UnholyMissing,
             custom: false,
         }));
-        sections.push(Section::titled("Unholy Affixes", HeaderTone::Pink, lines));
+        sections.push(Section::titled(
+            tr("gear.unholy_affixes"),
+            HeaderTone::Pink,
+            lines,
+        ));
     }
 
     if let Some(item) = equipped
@@ -666,7 +676,7 @@ pub(crate) fn build_model(
             .collect();
         if !forged.is_empty() {
             sections.push(Section::titled(
-                "Forged · Satanic Crystal",
+                tr("gear.forged_crystal"),
                 HeaderTone::Red,
                 forged,
             ));
@@ -677,7 +687,7 @@ pub(crate) fn build_model(
         let groups = socket_groups(item, base);
         if !groups.is_empty() {
             sections.push(Section::titled(
-                "From Sockets",
+                tr("item.from_sockets"),
                 HeaderTone::Gold,
                 groups
                     .into_iter()
@@ -709,12 +719,15 @@ pub(crate) fn build_model(
                     tier.stats.iter().filter(|(_, v)| **v != 0.).collect();
                 stats.sort_by(|a, b| a.0.cmp(b.0));
                 sections.push(Section::titled(
-                    "Angelic Augment",
+                    tr("item.angelic_augment"),
                     HeaderTone::Gold,
                     vec![Line::Entry {
                         title: augment.name.clone(),
                         style: LineStyle::Implicit,
-                        suffix: Some(format!("level {}", augment_ref.level)),
+                        suffix: Some(trf(
+                            "item.level",
+                            &[("arg0", (augment_ref.level).to_string())],
+                        )),
                         desc: None,
                         icon: augment_icon(&augment.id),
                         lines: stats
@@ -741,9 +754,9 @@ pub(crate) fn build_model(
                 let active = equipped_count >= bonus.pieces;
                 Line::Entry {
                     title: if active {
-                        format!("{}-Set (active)", bonus.pieces)
+                        trf("item.set_active", &[("arg0", (bonus.pieces).to_string())])
                     } else {
-                        format!("{}-Set", bonus.pieces)
+                        trf("item.set_count", &[("arg0", (bonus.pieces).to_string())])
                     },
                     style: if active {
                         LineStyle::SetActive
@@ -758,7 +771,7 @@ pub(crate) fn build_model(
             })
             .collect();
         lines.push(Line::Entry {
-            title: "Set items".into(),
+            title: tr("gear.set_items").into(),
             style: LineStyle::SetItems,
             suffix: None,
             desc: None,
@@ -780,7 +793,13 @@ pub(crate) fn build_model(
             header: Some((
                 set.name.clone(),
                 HeaderTone::Green,
-                Some(format!("{equipped_count}/{} pieces", set.items.len())),
+                Some(trf(
+                    "item.set_pieces",
+                    &[
+                        ("equipped_count", (equipped_count).to_string()),
+                        ("arg0", (set.items.len()).to_string()),
+                    ],
+                )),
             )),
             lines,
             footnote: None,
@@ -797,22 +816,45 @@ pub(crate) fn build_model(
                 .iter()
                 .map(|proc| {
                     let mut title = match trigger_label(&proc.trigger) {
-                        Some(label) => format!("{}% Chance {label}", num(proc.chance)),
+                        Some(label) => trf(
+                            "item.proc_chance",
+                            &[
+                                ("arg0", (num(proc.chance)).to_string()),
+                                ("label", (label).to_string()),
+                            ],
+                        ),
                         None => format!("{}% {}", num(proc.chance), proc.trigger.replace('_', " ")),
                     };
                     if let Some(description) = &proc.description {
                         title = match trigger_label(&proc.trigger) {
-                            Some(label) => {
-                                format!("{}% Chance {label} to {description}", num(proc.chance))
-                            }
+                            Some(label) => trf(
+                                "item.proc_description",
+                                &[
+                                    ("arg0", (num(proc.chance)).to_string()),
+                                    ("label", (label).to_string()),
+                                    ("description", (description).to_string()),
+                                ],
+                            ),
                             None => format!("{}% {description}", num(proc.chance)),
                         };
                     } else {
                         match (&proc.target, proc.cast_level) {
                             (Some(target), Some(level)) => {
-                                title.push_str(&format!(" to cast level {level} {target}"))
+                                title = trf(
+                                    "item.proc_cast_level",
+                                    &[
+                                        ("trigger", title),
+                                        ("level", level.to_string()),
+                                        ("target", target.to_owned()),
+                                    ],
+                                )
                             }
-                            (Some(target), None) => title.push_str(&format!(" to cast {target}")),
+                            (Some(target), None) => {
+                                title = trf(
+                                    "item.proc_cast",
+                                    &[("trigger", title), ("target", target.to_owned())],
+                                )
+                            }
                             _ => {}
                         }
                     }
@@ -854,7 +896,7 @@ pub(crate) fn build_model(
         .collect();
     if !special.is_empty() {
         sections.push(Section::titled(
-            "Special Effects",
+            tr("item.special_effects"),
             HeaderTone::Gold,
             special,
         ));
@@ -872,9 +914,9 @@ pub(crate) fn build_model(
     );
     if !not_supported.is_empty() {
         sections.push(Section {
-            header: Some(("Not Yet Supported".into(), HeaderTone::Muted, None)),
+            header: Some((tr("item.not_supported").into(), HeaderTone::Muted, None)),
             lines: not_supported,
-            footnote: Some(NOT_SUPPORTED_FOOTNOTE),
+            footnote: Some(tr(NOT_SUPPORTED_FOOTNOTE)),
         });
     }
 
@@ -896,13 +938,16 @@ pub(crate) fn build_model(
         .and_then(|r| r.requires_level)
         .or(base.requires_level)
     {
-        footer.push(format!("Req Level {level}"));
+        footer.push(trf(
+            "item.required_level",
+            &[("level", (level).to_string())],
+        ));
     }
     if let Some(level) = base.item_level {
-        footer.push(format!("iLvl {level}"));
+        footer.push(trf("item.item_level", &[("level", (level).to_string())]));
     }
     if let Some(grade) = &base.grade {
-        footer.push(format!("Tier {grade}"));
+        footer.push(trf("item.grade", &[("grade", (grade).to_string())]));
     }
 
     ItemTooltipModel {
@@ -924,17 +969,17 @@ fn type_line(
     let mut line = format!(
         "{} · {}",
         if runeword {
-            "Runeword".to_owned()
+            tr("item.runeword").to_owned()
         } else {
             rarity_label(&base.rarity)
         },
-        base.base_type
+        base_type_label(&base.base_type)
     );
     if base.slot == "weapon" {
         line.push_str(if base.two_handed.unwrap_or(false) {
-            " · 2-Handed"
+            tr("item.two_handed")
         } else {
-            " · 1-Handed"
+            tr("item.one_handed")
         });
     }
     if let Some(stars) = stars.filter(|stars| *stars > 0) {
@@ -945,9 +990,47 @@ fn type_line(
             .iter()
             .any(|m| m.affix_id == BONUS_SOCKET_MOD_ID)
     }) {
-        line.push_str(" · Tinkered");
+        line.push_str(tr("item.tinkered"));
     }
     line
+}
+
+pub(crate) fn base_type_label(base_type: &str) -> &str {
+    match base_type {
+        "Gun" => tr("item.type_gun"),
+        "Cane" => tr("item.type_cane"),
+        "1-Handed Throwing Weapon" => tr("item.type_1_handed_throwing_weapon"),
+        "Claw" => tr("item.type_claw"),
+        "Bow" => tr("item.type_bow"),
+        "Charm" => tr("item.type_charm"),
+        "Gloves" => tr("item.type_gloves"),
+        "Amulet" => tr("item.type_amulet"),
+        "Helmet" => tr("item.type_helmet"),
+        "Rifle Gun" => tr("item.type_rifle_gun"),
+        "Boots" => tr("item.type_boots"),
+        "Shield" => tr("item.type_shield"),
+        "Belt" => tr("item.type_belt"),
+        "Mace" => tr("item.type_mace"),
+        "Throwing" => tr("item.type_throwing"),
+        "Book" => tr("item.type_book"),
+        "Dagger" => tr("item.type_dagger"),
+        "Staff" => tr("item.type_staff"),
+        "Body Armor" => tr("item.type_body_armor"),
+        "Relic" => tr("item.type_relic"),
+        "Wand" => tr("item.type_wand"),
+        "Potion" => tr("item.type_potion"),
+        "Axe" => tr("item.type_axe"),
+        "Spellblade" => tr("item.type_spellblade"),
+        "Flask" => tr("item.type_flask"),
+        "Sword" => tr("item.type_sword"),
+        "Ring" => tr("item.type_ring"),
+        "Chainsaw" => tr("item.type_chainsaw"),
+        "Polearm" => tr("item.type_polearm"),
+        "Armor" => tr("item.type_armor"),
+        "Weapon" => tr("item.type_weapon"),
+        "Offhand" => tr("item.type_offhand"),
+        other => other,
+    }
 }
 
 fn display_name(
@@ -1023,15 +1106,17 @@ fn granted_skill_entries(
                 } else {
                     format!("{}–{}%", num(a), num(b))
                 };
-                let verb = if convert.replaces {
-                    "converted to"
-                } else {
-                    "added as"
-                };
-                lines.push(format!(
-                    "{pct_text} of {} {verb} {}",
-                    stat_name(&convert.from),
-                    stat_name(&convert.to)
+                lines.push(trf(
+                    if convert.replaces {
+                        "item.convert_damage"
+                    } else {
+                        "item.add_damage"
+                    },
+                    &[
+                        ("percent", pct_text),
+                        ("from", stat_name(&convert.from)),
+                        ("to", stat_name(&convert.to)),
+                    ],
                 ));
             }
         }
@@ -1336,7 +1421,7 @@ fn render_text(text: &str, style: LineStyle, custom: bool, cx: &App) -> Div {
                     .font_family(theme::MONO_FONT_FAMILY)
                     .text_size(units(10.))
                     .text_color(p.accent_hot.opacity(0.7))
-                    .child("CUSTOM"),
+                    .child(tr("item.custom")),
             )
         })
 }
@@ -1683,7 +1768,7 @@ pub(crate) fn item_card(
             .text_size(units(11.))
             .italic()
             .text_color(p.faint)
-            .child("empty slot"),
+            .child(tr("item.empty_slot")),
     }
 }
 

@@ -16,6 +16,7 @@ use hsplanner_engine::calc::{
     stats::{ComputedStats, compute_stat_breakdown},
     types::SkillKind,
 };
+use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::{
     components::{panel, panel_with_trailing},
     controls::{ButtonSize, ButtonTone, PlannerControl, command_button},
@@ -35,10 +36,10 @@ enum Filter {
 impl Filter {
     fn name(self) -> &'static str {
         match self {
-            Self::All => "All",
-            Self::Damage => "Damage",
-            Self::Stats => "Stats",
-            Self::Skills => "Skills",
+            Self::All => tr("planner.stats.all"),
+            Self::Damage => tr("planner.stats.damage"),
+            Self::Stats => tr("planner.common.stats"),
+            Self::Skills => tr("planner.common.skills"),
         }
     }
 }
@@ -95,13 +96,13 @@ enum Group {
 impl Group {
     fn title(self) -> &'static str {
         match self {
-            Self::Offense => "Offense",
-            Self::Mitigation => "Mitigation",
-            Self::Resistances => "Resistances",
-            Self::Resources => "Resources",
-            Self::Skills => "Skill Bonuses",
-            Self::World => "World & Loot",
-            Self::Other => "Other",
+            Self::Offense => tr("planner.common.offense"),
+            Self::Mitigation => tr("planner.stats.mitigation"),
+            Self::Resistances => tr("planner.common.resistances"),
+            Self::Resources => tr("planner.stats.resources"),
+            Self::Skills => tr("planner.stats.skill_bonuses"),
+            Self::World => tr("planner.stats.world_loot"),
+            Self::Other => tr("planner.stats.other"),
         }
     }
     fn visible(self, filter: Filter) -> bool {
@@ -249,33 +250,35 @@ fn decimal_range(value: (f64, f64)) -> String {
 /// Presentation-only overview; the full engine trace remains available below it.
 fn calculation_overview(step: &CalculationStep) -> Option<(&'static str, &'static str)> {
     let (label, operator) = match step.label() {
-        "Base damage" => ("Base damage", ""),
-        "Flat added" => ("Added damage", "+"),
-        "Physical base" => ("Weapon & added damage", ""),
-        "Synergy multiplier" => ("Synergies", "×"),
-        "Increased skill damage multiplier" => ("Increased damage", "×"),
-        "More skill damage multiplier" => ("More damage", "×"),
-        "Attack damage multiplier" => ("Attack damage & synergies", "×"),
-        "Skill weapon multiplier" => ("Skill scaling", "×"),
-        "Crushing blow + armor break" => ("Crushing blow & armor break", "×"),
-        "Deadly blow multiplier" => ("Deadly blow", "×"),
-        "Extra damage multiplier" => ("Extra damage", "×"),
-        "Enemy damage taken multiplier" => ("Enemy vulnerability", "×"),
-        "Elemental break multiplier" => ("Elemental break", "×"),
-        "Element resistance break multiplier" => ("Element resistance break", "×"),
-        "Resistance multiplier" => ("Enemy resistance", "×"),
-        "Hit damage" | "Physical hit" => ("Single hit", "="),
-        "Average critical multiplier" => ("Critical average", "×"),
-        "Multicast multiplier" => ("Multicast", "×"),
-        "Projectiles" => ("Projectiles", "×"),
-        "Average physical damage" => ("Average physical damage", "="),
-        "Actions per second" | "Entity actions per second" => ("Actions per second", ""),
-        "Entity count" => ("Entities", "×"),
-        "Hits per cast" => ("Hits per cast", "×"),
-        "Average hit DPS" => ("Hit DPS", ""),
-        "Proc DPS" => ("Procs", "+"),
-        "Ailment DPS" => ("Damage over time", "+"),
-        "Execute multiplier" => ("Execute", "×"),
+        "Base damage" => (tr("planner.common.base_damage"), ""),
+        "Flat added" => (tr("planner.calculation.added_damage"), "+"),
+        "Physical base" => (tr("planner.calculation.weapon_added"), ""),
+        "Synergy multiplier" => (tr("planner.calculation.synergies"), "×"),
+        "Increased skill damage multiplier" => (tr("planner.calculation.increased_damage"), "×"),
+        "More skill damage multiplier" => (tr("planner.calculation.more_damage"), "×"),
+        "Attack damage multiplier" => (tr("planner.calculation.attack_synergies"), "×"),
+        "Skill weapon multiplier" => (tr("planner.calculation.skill_scaling"), "×"),
+        "Crushing blow + armor break" => (tr("planner.calculation.crushing_armor"), "×"),
+        "Deadly blow multiplier" => (tr("planner.calculation.deadly"), "×"),
+        "Extra damage multiplier" => (tr("planner.calculation.extra_damage"), "×"),
+        "Enemy damage taken multiplier" => (tr("planner.calculation.vulnerability"), "×"),
+        "Elemental break multiplier" => (tr("planner.calculation.elemental_break"), "×"),
+        "Element resistance break multiplier" => (tr("planner.calculation.resistance_break"), "×"),
+        "Resistance multiplier" => (tr("planner.calculation.enemy_resistance"), "×"),
+        "Hit damage" | "Physical hit" => (tr("planner.calculation.single_hit"), "="),
+        "Average critical multiplier" => (tr("planner.calculation.critical_average"), "×"),
+        "Multicast multiplier" => (tr("planner.calculation.multicast"), "×"),
+        "Projectiles" => (tr("planner.calculation.projectiles"), "×"),
+        "Average physical damage" => (tr("planner.calculation.average_physical"), "="),
+        "Actions per second" | "Entity actions per second" => {
+            (tr("planner.calculation.actions_second"), "")
+        }
+        "Entity count" => (tr("planner.calculation.entities"), "×"),
+        "Hits per cast" => (tr("planner.calculation.hits_cast"), "×"),
+        "Average hit DPS" => (tr("planner.sidebar.hit_dps"), ""),
+        "Proc DPS" => (tr("planner.common.procs"), "+"),
+        "Ailment DPS" => (tr("planner.calculation.dot"), "+"),
+        "Execute multiplier" => (tr("planner.calculation.execute"), "×"),
         _ => return None,
     };
     let neutral = match operator {
@@ -347,11 +350,19 @@ impl StatsView {
         cx: &mut Context<Self>,
     ) -> Self {
         let query = cx.new(|cx| {
-            InputState::new(window, cx).placeholder("Search stats, attributes, or skills…")
+            InputState::new(window, cx).placeholder(tr("planner.stats.search_placeholder"))
         });
         let calculation_revision = session.read(cx).calculation_revision();
         let observed_performance = tree.read(cx).performance();
         let subscriptions = vec![
+            cx.observe_global_in::<Locale>(window, |this, window, cx| {
+                this.query.update(cx, |input, cx| {
+                    input.set_placeholder(tr("planner.stats.search_placeholder"), window, cx)
+                });
+                this.list.splice(0..this.rows.len(), this.rows.len());
+                this.row_filter = None;
+                cx.notify();
+            }),
             cx.observe(&session, |this, _, cx| {
                 let revision = this.session.read(cx).calculation_revision();
                 if revision != this.calculation_revision {
@@ -482,6 +493,7 @@ impl StatsView {
         computed: &ComputedStats,
         cx: &Context<Self>,
     ) -> Div {
+        let label = crate::stat_labels::stat_name(key, label);
         let p = cx.global::<TooltipTheme>();
         let raw = computed.stats.get(key).copied().unwrap_or_default();
         let value = computed.stats_combined.get(key).copied().unwrap_or(raw);
@@ -500,7 +512,10 @@ impl StatsView {
             .py_1()
             .px_0()
             .rounded_sm()
-            .accessibility_label(format!("{label} sources"))
+            .accessibility_label(trf(
+                "planner.stats.named_sources",
+                &[("label", (label).to_string())],
+            ))
             .child(
                 div()
                     .w_full()
@@ -538,7 +553,13 @@ impl StatsView {
         let attributes = data::game_config()
             .attributes
             .iter()
-            .filter(|attribute| query.is_empty() || attribute.name.to_lowercase().contains(query))
+            .filter(|attribute| {
+                query.is_empty()
+                    || attribute.name.to_lowercase().contains(query)
+                    || crate::stat_labels::attribute_name(&attribute.key, &attribute.name)
+                        .to_lowercase()
+                        .contains(query)
+            })
             .collect::<Vec<_>>();
         if attributes.is_empty() {
             return None;
@@ -573,7 +594,13 @@ impl StatsView {
                     linear_color_stop(p.panel_secondary, 0.),
                     linear_color_stop(p.background, 1.),
                 ))
-                .accessibility_label(format!("{} sources", attribute.name))
+                .accessibility_label(trf(
+                    "planner.stats.attribute_sources",
+                    &[(
+                        "0",
+                        crate::stat_labels::attribute_name(&attribute.key, &attribute.name),
+                    )],
+                ))
                 .child(
                     div()
                         .w_full()
@@ -585,7 +612,13 @@ impl StatsView {
                                 .font_family(theme::MONO_FONT_FAMILY)
                                 .text_size(units(9.))
                                 .text_color(p.faint)
-                                .child(attribute.name.to_uppercase()),
+                                .child(
+                                    crate::stat_labels::attribute_name(
+                                        &attribute.key,
+                                        &attribute.name,
+                                    )
+                                    .to_uppercase(),
+                                ),
                         )
                         .child(
                             div()
@@ -601,7 +634,8 @@ impl StatsView {
                 &attribute.key,
                 Some(value),
             );
-            breakdown.stat_name = attribute.name.clone();
+            breakdown.stat_name =
+                crate::stat_labels::attribute_name(&attribute.key, &attribute.name);
             strip = strip.child(crate::source_breakdown::trigger(
                 SharedString::from(format!(
                     "attribute-sources-{}-{}",
@@ -612,7 +646,7 @@ impl StatsView {
                 self.session.clone(),
             ));
         }
-        Some(panel("attributes-title", "Attributes", cx).child(strip))
+        Some(panel("attributes-title", tr("planner.common.attributes"), cx).child(strip))
     }
     fn calculation_section(
         &self,
@@ -641,9 +675,13 @@ impl StatsView {
             .h_auto()
             .px_3()
             .py_2p5()
-            .accessibility_label(format!(
-                "{} {title}",
-                if open { "Collapse" } else { "Expand" }
+            .accessibility_label(trf(
+                if open {
+                    "planner.stats.collapse_title"
+                } else {
+                    "planner.stats.expand_title"
+                },
+                &[("title", title.to_owned())],
             ))
             .child(
                 div()
@@ -777,7 +815,10 @@ impl StatsView {
                 breakdown.stat_name = label.clone();
                 body = body.child(crate::source_breakdown::trigger(
                     SharedString::from(format!("{row_key}-sources")),
-                    button.accessibility_label(format!("{label} sources")),
+                    button.accessibility_label(trf(
+                        "planner.stats.named_sources",
+                        &[("label", (label).to_string())],
+                    )),
                     breakdown,
                     self.session.clone(),
                 ));
@@ -785,9 +826,13 @@ impl StatsView {
                 let toggle = row_key.clone();
                 body = body.child(
                     button
-                        .accessibility_label(format!(
-                            "{} {label} calculation",
-                            if expanded { "Hide" } else { "Show" }
+                        .accessibility_label(trf(
+                            if expanded {
+                                "planner.stats.hide_calculation"
+                            } else {
+                                "planner.stats.show_calculation"
+                            },
+                            &[("label", label.to_owned())],
                         ))
                         .on_click(cx.listener(move |this, _, _, cx| this.toggle(&toggle, cx))),
                 );
@@ -840,9 +885,9 @@ impl StatsView {
                     command_button(
                         SharedString::from(format!("{id}-details")),
                         if all_details {
-                            "Show summary"
+                            tr("planner.stats.show_summary")
                         } else {
-                            "Show all details"
+                            tr("planner.stats.show_details")
                         },
                         ButtonTone::Ghost,
                         ButtonSize::Small,
@@ -861,9 +906,9 @@ impl StatsView {
             content = content.child(self.calculation_section(
                 &format!("{id}-element"),
                 if value.attack_damage.is_some() {
-                    "Elemental damage per cast"
+                    tr("planner.stats.elemental_cast")
                 } else {
-                    "Damage per cast"
+                    tr("planner.stats.damage_cast")
                 },
                 damage.calculation(),
                 value,
@@ -873,7 +918,7 @@ impl StatsView {
         if let Some(damage) = &value.attack_damage {
             content = content.child(self.calculation_section(
                 &format!("{id}-physical"),
-                "Damage per swing",
+                tr("planner.stats.damage_swing"),
                 damage.calculation(),
                 value,
                 cx,
@@ -881,7 +926,7 @@ impl StatsView {
         }
         content.child(self.calculation_section(
             &format!("{id}-dps"),
-            "Damage per second",
+            tr("planner.stats.damage_second"),
             value.calculation(),
             value,
             cx,
@@ -905,25 +950,25 @@ impl StatsView {
         let (label, headline) = if let Some(d) = &value.attack_damage {
             metrics.extend([
                 (
-                    "Hit damage",
+                    tr("planner.common.hit_damage"),
                     format_range(
                         (d.combined_hit_min as f64, d.combined_hit_max as f64),
                         false,
                     ),
                 ),
                 (
-                    "Attack damage",
+                    tr("planner.common.attack_damage"),
                     format_range((d.weapon_damage_pct_min, d.weapon_damage_pct_max), true),
                 ),
                 (
-                    "Physical hit",
+                    tr("planner.stats.physical_hit"),
                     format_range(
                         (d.physical_hit_min as f64, d.physical_hit_max as f64),
                         false,
                     ),
                 ),
                 (
-                    "Elemental hit",
+                    tr("planner.stats.elemental_hit"),
                     if d.poison_hit_max > 0 {
                         format_range((d.poison_hit_min as f64, d.poison_hit_max as f64), false)
                     } else {
@@ -932,7 +977,7 @@ impl StatsView {
                 ),
             ]);
             (
-                "AVERAGE HIT",
+                tr("planner.stats.average_hit"),
                 format_range(
                     (d.combined_avg_min as f64, d.combined_avg_max as f64),
                     false,
@@ -941,11 +986,11 @@ impl StatsView {
         } else if let Some(d) = &value.damage {
             metrics.extend([
                 (
-                    "Hit damage",
+                    tr("planner.common.hit_damage"),
                     format_range((d.hit_min as f64, d.hit_max as f64), false),
                 ),
                 (
-                    "Crit damage",
+                    tr("planner.common.crit_damage"),
                     if d.crit_chance > 0. {
                         format_range((d.crit_min as f64, d.crit_max as f64), false)
                     } else {
@@ -953,7 +998,7 @@ impl StatsView {
                     },
                 ),
                 (
-                    "Crit chance",
+                    tr("planner.common.crit_chance"),
                     if d.crit_chance > 0. {
                         format_range((d.crit_chance, d.crit_chance), true)
                     } else {
@@ -961,7 +1006,7 @@ impl StatsView {
                     },
                 ),
                 (
-                    "Crit multi",
+                    tr("planner.stats.crit_multi"),
                     if d.crit_chance > 0. {
                         format!(
                             "+{}",
@@ -974,17 +1019,17 @@ impl StatsView {
             ]);
             if d.crit_chance > 0. {
                 (
-                    "AVERAGE HIT",
+                    tr("planner.stats.average_hit"),
                     format_range((d.avg_min as f64, d.avg_max as f64), false),
                 )
             } else {
                 (
-                    "HIT DAMAGE",
+                    tr("planner.stats.hit_damage_caps"),
                     format_range((d.hit_min as f64, d.hit_max as f64), false),
                 )
             }
         } else {
-            ("HIT DAMAGE", "—".into())
+            (tr("planner.stats.hit_damage_caps"), "—".into())
         };
         let mut summary = div()
             .flex()
@@ -995,10 +1040,16 @@ impl StatsView {
             .text_color(p.muted);
         if let Some(cost) = value.skill_costs.get(id) {
             if let Some(range) = cost.mana_min.zip(cost.mana_max) {
-                summary = summary.child(format!("{} mana", decimal_range(range)));
+                summary = summary.child(trf(
+                    "planner.stats.mana_value",
+                    &[("0", (decimal_range(range)).to_string())],
+                ));
             }
             if let Some(range) = cost.cast_rate_min.zip(cost.cast_rate_max) {
-                summary = summary.child(format!("{} casts/s", decimal_range(range)));
+                summary = summary.child(trf(
+                    "planner.stats.casts_second",
+                    &[("0", (decimal_range(range)).to_string())],
+                ));
             }
         }
         let mut tags = div().flex().flex_wrap().gap_1();
@@ -1017,7 +1068,7 @@ impl StatsView {
                         .text_color(p.accent_hot)
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(9.))
-                        .child(tag.to_uppercase()),
+                        .child(crate::skill_details::tag_name(&tag).to_uppercase()),
                 );
             }
         }
@@ -1045,7 +1096,9 @@ impl StatsView {
                                     .border_1()
                                     .border_color(theme::damage_color(kind).opacity(0.5))
                                     .text_color(theme::damage_color(kind))
-                                    .child(kind.to_uppercase()),
+                                    .child(
+                                        crate::skill_details::damage_type_name(kind).to_uppercase(),
+                                    ),
                             )
                         },
                     ),
@@ -1128,7 +1181,7 @@ impl StatsView {
                     )
                     .find(|skill| &skill.skill_id == id)
             });
-            let mut main_panel = panel("main-skill-title", "Main Skill", cx);
+            let mut main_panel = panel("main-skill-title", tr("planner.stats.main_skill"), cx);
             if let Some(main) = main {
                 let name = main
                     .performance
@@ -1137,7 +1190,7 @@ impl StatsView {
                     .unwrap_or(&main.skill_id);
                 main_panel = panel_with_trailing(
                     "main-skill-title",
-                    "Main Skill",
+                    tr("planner.stats.main_skill"),
                     div()
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(9.))
@@ -1157,9 +1210,7 @@ impl StatsView {
                         .py_6()
                         .text_color(p.muted)
                         .text_size(units(12.))
-                        .child(
-                            "Pick an active skill in the Skills tab to see its damage breakdown.",
-                        ),
+                        .child(tr("planner.stats.pick_active")),
                 );
             }
             content.push(main_panel);
@@ -1169,7 +1220,26 @@ impl StatsView {
         let mut count = 0;
         for skill in skills.iter().filter(|skill| {
             skill.kind == SkillKind::Active
-                && (query.is_empty() || skill.name.to_lowercase().contains(query))
+                && (query.is_empty()
+                    || skill.name.to_lowercase().contains(query)
+                    || skill.damage_type.as_deref().is_some_and(|kind| {
+                        kind.to_lowercase().contains(query)
+                            || crate::skill_details::damage_type_name(kind)
+                                .to_lowercase()
+                                .contains(query)
+                    })
+                    || hsplanner_engine::calc::subskill::effective_skill_tags(
+                        &skill.id,
+                        skill.tags.as_deref().unwrap_or_default(),
+                        &snapshot.subskill_ranks,
+                    )
+                    .iter()
+                    .any(|tag| {
+                        tag.to_lowercase().contains(query)
+                            || crate::skill_details::tag_name(tag)
+                                .to_lowercase()
+                                .contains(query)
+                    }))
         }) {
             count += 1;
             let key = format!("per-skill-{}", skill.id);
@@ -1190,13 +1260,26 @@ impl StatsView {
                 .filter(|_| rank > 0)
                 .unwrap_or_default();
             let rank_label = if bonus == (0., 0.) {
-                format!("RANK {rank}/{}", skill.max_rank)
+                trf(
+                    "planner.stats.rank",
+                    &[
+                        ("rank", (rank).to_string()),
+                        ("0", (skill.max_rank).to_string()),
+                    ],
+                )
             } else {
-                format!(
-                    "RANK {}/{} ({rank} +{})",
-                    decimal_range((rank as f64 + bonus.0, rank as f64 + bonus.1)),
-                    skill.max_rank,
-                    decimal_range(bonus)
+                trf(
+                    "planner.stats.rank_bonus",
+                    &[
+                        (
+                            "0",
+                            (decimal_range((rank as f64 + bonus.0, rank as f64 + bonus.1)))
+                                .to_string(),
+                        ),
+                        ("1", (skill.max_rank).to_string()),
+                        ("rank", (rank).to_string()),
+                        ("2", (decimal_range(bonus)).to_string()),
+                    ],
                 )
             };
             let damage = value.and_then(|value| {
@@ -1217,16 +1300,20 @@ impl StatsView {
                     })
             });
             let damage_label = if rank == 0 {
-                "Not learned".into()
+                tr("planner.stats.not_learned").into()
             } else {
                 damage
                     .map(|value| {
-                        format!(
-                            "{} damage",
-                            hsplanner_ui::numbers::compact_range(
-                                value,
-                                &self.session.read(cx).state().settings.number_scale
-                            )
+                        trf(
+                            "planner.common.damage_value",
+                            &[(
+                                "0",
+                                (hsplanner_ui::numbers::compact_range(
+                                    value,
+                                    &self.session.read(cx).state().settings.number_scale,
+                                ))
+                                .to_string(),
+                            )],
                         )
                     })
                     .unwrap_or_else(|| "—".into())
@@ -1258,7 +1345,10 @@ impl StatsView {
                         .h_auto()
                         .p_0()
                         .selected(open)
-                        .accessibility_label(format!("{} damage", skill.name))
+                        .accessibility_label(trf(
+                            "planner.common.damage_value",
+                            &[("0", (skill.name).to_string())],
+                        ))
                         .child(
                             div()
                                 .w_full()
@@ -1309,7 +1399,7 @@ impl StatsView {
                         .py(units(2.))
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(9.))
-                        .child(kind.to_uppercase()),
+                        .child(crate::skill_details::damage_type_name(kind).to_uppercase()),
                 );
             }
             for tag in hsplanner_engine::calc::subskill::effective_skill_tags(
@@ -1326,7 +1416,7 @@ impl StatsView {
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(9.))
                         .text_color(p.accent_hot)
-                        .child(tag.to_uppercase()),
+                        .child(crate::skill_details::tag_name(&tag).to_uppercase()),
                 );
             }
             card = card.child(tags);
@@ -1339,16 +1429,28 @@ impl StatsView {
                 .text_color(p.muted);
             if let Some(cost) = value.and_then(|value| value.skill_costs.get(&skill.id)) {
                 if let Some(range) = cost.mana_min.zip(cost.mana_max) {
-                    costs = costs.child(format!("{} mana", decimal_range(range)));
+                    costs = costs.child(trf(
+                        "planner.stats.mana_value",
+                        &[("0", (decimal_range(range)).to_string())],
+                    ));
                 }
                 if let Some(range) = cost.cast_rate_min.zip(cost.cast_rate_max) {
-                    costs = costs.child(format!("{} casts/s", decimal_range(range)));
+                    costs = costs.child(trf(
+                        "planner.stats.casts_second",
+                        &[("0", (decimal_range(range)).to_string())],
+                    ));
                 }
             }
             if let Some(speed) = skill.movement_during_use {
-                costs = costs.child(format!("Move {speed}%"));
+                costs = costs.child(trf(
+                    "planner.stats.movement",
+                    &[("speed", (speed).to_string())],
+                ));
             }
-            costs = costs.child(format!("max rank {}", skill.max_rank));
+            costs = costs.child(trf(
+                "planner.stats.max_rank",
+                &[("0", (skill.max_rank).to_string())],
+            ));
             card = card.child(costs);
             if open
                 && rank > 0
@@ -1364,7 +1466,7 @@ impl StatsView {
                 div()
                     .py_2()
                     .text_color(p.muted)
-                    .child("No skills match your search."),
+                    .child(tr("planner.stats.no_skills")),
             );
         }
         content.push(
@@ -1377,7 +1479,11 @@ impl StatsView {
                 .font_weight(FontWeight::SEMIBOLD)
                 .text_color(p.muted)
                 .child(div().w_3p5().h(px(1.)).bg(p.accent_deep))
-                .child(TooltipText::new("per-skill-title", "PER-SKILL DAMAGE", 0.2)),
+                .child(TooltipText::new(
+                    "per-skill-title",
+                    tr("planner.stats.per_skill"),
+                    0.2,
+                )),
         );
         content.push(
             div()
@@ -1440,7 +1546,13 @@ impl StatsView {
                     .border_1()
                     .border_color(if worst { p.accent_deep } else { p.border })
                     .selected(open)
-                    .accessibility_label(format!("{} effective HP", entry.damage_type))
+                    .accessibility_label(trf(
+                        "planner.stats.named_effective_hp",
+                        &[(
+                            "0",
+                            crate::skill_details::damage_type_name(&entry.damage_type).to_owned(),
+                        )],
+                    ))
                     .child(
                         div()
                             .w_full()
@@ -1452,7 +1564,10 @@ impl StatsView {
                                     .font_family(theme::MONO_FONT_FAMILY)
                                     .text_size(units(9.))
                                     .text_color(theme::damage_color(&entry.damage_type))
-                                    .child(entry.damage_type.to_uppercase()),
+                                    .child(
+                                        crate::skill_details::damage_type_name(&entry.damage_type)
+                                            .to_uppercase(),
+                                    ),
                             )
                             .child(
                                 div()
@@ -1462,22 +1577,29 @@ impl StatsView {
                                         entry
                                             .ehp
                                             .map(|v| format_range((v, v), false))
-                                            .unwrap_or_else(|| "Immune".into()),
+                                            .unwrap_or_else(|| tr("planner.stats.immune").into()),
                                     ),
                             )
-                            .child(
-                                div()
-                                    .text_size(units(9.))
-                                    .text_color(p.faint)
-                                    .child(if worst { "LOWEST" } else { "" }),
-                            ),
+                            .child(div().text_size(units(9.)).text_color(p.faint).child(
+                                if worst {
+                                    tr("planner.stats.lowest")
+                                } else {
+                                    ""
+                                },
+                            )),
                     )
                     .on_click(cx.listener(move |this, _, _, cx| this.toggle(&toggle, cx))),
             );
             if open {
                 disclosures = disclosures.child(heading(
                     SharedString::from(format!("ehp-layers-{}", entry.damage_type)),
-                    &format!("{} mitigation", entry.damage_type),
+                    &trf(
+                        "planner.stats.named_mitigation",
+                        &[(
+                            "0",
+                            crate::skill_details::damage_type_name(&entry.damage_type).to_owned(),
+                        )],
+                    ),
                     cx,
                 ));
                 for layer in &entry.layers {
@@ -1488,14 +1610,14 @@ impl StatsView {
                     ));
                 }
                 disclosures = disclosures.child(value_row(
-                    "Damage multiplier",
+                    tr("planner.stats.damage_multiplier"),
                     format!("×{:.3}", entry.multiplier),
                     cx,
                 ));
             }
         }
         Some(
-            panel("ehp-title", "Effective HP", cx)
+            panel("ehp-title", tr("planner.stats.effective_hp"), cx)
                 .child(rows)
                 .child(disclosures),
         )
@@ -1523,7 +1645,11 @@ impl StatsView {
                         && !def.item_only.unwrap_or(false)
                         && !def.skill_scoped.unwrap_or(false)
                         && group(&def.key, &def.category) == category
-                        && (query.is_empty() || def.name.to_lowercase().contains(query))
+                        && (query.is_empty()
+                            || def.name.to_lowercase().contains(query)
+                            || crate::stat_labels::stat_name(&def.key, &def.name)
+                                .to_lowercase()
+                                .contains(query))
                 })
                 .map(|(ix, _)| Cell::Stat(ix))
                 .collect::<Vec<_>>();
@@ -1550,7 +1676,7 @@ impl StatsView {
         match cell {
             None => cell_div,
             Some(Cell::Heading(category)) => cell_div.child(heading(
-                SharedString::from(format!("stat-group-{}", category.title())),
+                SharedString::from(format!("stat-group-{}", category as u8)),
                 category.title(),
                 cx,
             )),
@@ -1592,7 +1718,7 @@ impl StatsView {
                 .px_6()
                 .py_5()
                 .text_color(p.muted)
-                .child("Calculating…")
+                .child(tr("planner.stats.calculating"))
                 .into_any_element(),
             (Row::Top, Some(result)) => {
                 let logical_width =
@@ -1618,7 +1744,7 @@ impl StatsView {
             (Row::StatsStart, _) => div()
                 .mx_6()
                 .child(
-                    panel("all-stats-title", "All Stats", cx)
+                    panel("all-stats-title", tr("planner.stats.all_stats"), cx)
                         .rounded_b_none()
                         .border_b_0()
                         .pb_0(),
@@ -1630,7 +1756,7 @@ impl StatsView {
                     div()
                         .py_3()
                         .text_color(p.muted)
-                        .child("No stats match your search."),
+                        .child(tr("planner.stats.no_stats")),
                 )
                 .into_any_element(),
             (Row::StatsPair { left, right }, Some(result)) => self
@@ -1677,7 +1803,11 @@ impl StatsView {
                             .text_size(units(22.))
                             .font_weight(FontWeight::SEMIBOLD)
                             .text_color(p.accent_hot)
-                            .child(TooltipText::new("stats-title", "Stats", 0.04)),
+                            .child(TooltipText::new(
+                                "stats-title",
+                                tr("planner.common.stats"),
+                                0.04,
+                            )),
                     )
                     .child(
                         div().flex().items_center().gap_1p5().children(
@@ -1686,7 +1816,7 @@ impl StatsView {
                                 .map(|filter| {
                                     Button::new(SharedString::from(format!(
                                         "stats-filter-{}",
-                                        filter.name()
+                                        filter as u8
                                     )))
                                     .map(|button| {
                                         let tone = if self.filter == filter {
@@ -1711,7 +1841,7 @@ impl StatsView {
                 Input::new(&self.query)
                     .planner_style(cx)
                     .cleanable(true)
-                    .aria_label("Search stats, attributes, or skills")
+                    .aria_label(tr("planner.stats.search_label"))
                     .prefix(Icon::new(IconName::Search).size_3p5().text_color(p.faint))
                     .px_3()
                     .py_2()

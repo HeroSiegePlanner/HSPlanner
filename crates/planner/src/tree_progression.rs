@@ -221,7 +221,13 @@ impl TreeView {
                     ))
                     .track_focus(&self.progression_focus)
                     .role(gpui_kit::accesskit::Role::Group)
-                    .aria_label(format!("Progression step {current} of {total}"))
+                    .aria_label(trf(
+                        "tree.progression_step",
+                        &[
+                            ("current", current.to_string()),
+                            ("total", total.to_string()),
+                        ],
+                    ))
                     .when(self.progression_focus.is_focused(window), |view| {
                         view.border_color(self.tree_theme().accent())
                     })
@@ -240,7 +246,7 @@ impl TreeView {
                             .text_color(p.faint)
                             .child(tooltip_text::TooltipText::new(
                                 "progression-heading",
-                                "PROGRESSION",
+                                tr("tree.progression"),
                                 0.14,
                             )),
                     )

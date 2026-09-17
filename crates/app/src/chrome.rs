@@ -7,6 +7,7 @@ use gpui_kit::component::{
     menu::DropdownMenu,
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
     theme::{self, TooltipTheme},
@@ -21,9 +22,9 @@ const SAVE_SHORTCUT: &str = if cfg!(target_os = "macos") {
     "Ctrl+S"
 };
 const BUILD_CHANNEL: &str = if cfg!(debug_assertions) {
-    "Dev"
+    "chrome.dev"
 } else {
-    "Stable"
+    "chrome.stable"
 };
 
 // The reference layout is authored in CSS pixels at the theme's 13px base font,
@@ -71,7 +72,7 @@ impl TopBar {
             on_library,
             on_share,
             build_name: String::new(),
-            library_location: "Recent".into(),
+            library_location: tr("chrome.recent").into(),
             auto_save: true,
             profile_controls: false,
             ui_zoom: 1.,
@@ -109,7 +110,7 @@ impl TopBar {
             palette.muted
         };
         let on_select = self.on_select.clone();
-        let button = Button::new(SharedString::from(format!("nav-{}", section.label())))
+        let button = Button::new(SharedString::from(format!("nav-{}", section.key())))
             .custom(
                 ButtonCustomVariant::new(cx)
                     .foreground(color)
@@ -127,7 +128,7 @@ impl TopBar {
                 // The reference's global `button { font-family: inherit }`
                 // overrides its Tailwind font-mono class on navigation buttons.
                 mono_label(
-                    format!("nav-label-{}", section.label()),
+                    format!("nav-label-{}", section.key()),
                     section.label(),
                     11.,
                     0.16,
@@ -233,16 +234,28 @@ impl RenderOnce for TopBar {
                 .child(divider(border))
                 .child(mono_label(
                     "library-breadcrumb",
-                    format!("Builds / {}", self.library_location),
+                    trf(
+                        "chrome.breadcrumb",
+                        &[("location", self.library_location.clone())],
+                    ),
                     11.,
                     0.18,
                     Some(accent_hot),
                 ))
                 .child(
-                    chrome_button("return-to-planner", "Planner", cx)
+                    chrome_button("return-to-planner", tr("chrome.planner"), cx)
                         .ml_auto()
-                        .label("← Planner")
+                        .label(tr("chrome.back"))
                         .on_click(move |_, window, cx| on_select(Section::Tree, window, cx)),
+                )
+                .child(
+                    chrome_button("settings", tr("settings.title"), cx)
+                        .p_1p5()
+                        .child(Icon::new(IconName::Settings).size_3p5())
+                        .cursor_tooltip(tr("settings.title"))
+                        .on_click(|_, window, cx| {
+                            window.dispatch_action(Box::new(OpenSettings), cx)
+                        }),
                 )
                 .into_any_element();
         }
@@ -254,7 +267,49 @@ impl RenderOnce for TopBar {
             })
             .collect();
         let compact = window.viewport_size().width < window.rem_size() * (1150. / 13.);
-        let navigation_overflows = window.viewport_size().width < window.rem_size() * (1330. / 13.);
+        // The original English breakpoint needs the actual expansion of the
+        // translated labels; otherwise Russian tabs can hide the overflow menu.
+        let mut nav_style = window.text_style();
+        nav_style.font_family = theme::FONT_FAMILY.into();
+        nav_style.font_weight = FontWeight::NORMAL;
+        let font_size = window.rem_size() * (11. / 13.);
+        let measure = |label: &str, tracking: f32| {
+            let label = label.to_uppercase();
+            window
+                .text_system()
+                .shape_line(
+                    label.clone().into(),
+                    font_size,
+                    &[nav_style.to_run(label.len())],
+                    None,
+                )
+                .width
+                + font_size * tracking * label.chars().count() as f32
+        };
+        let locale = hsplanner_ui::i18n::language();
+        let tracking = if matches!(
+            locale,
+            hsplanner_ui::i18n::Language::Korean | hsplanner_ui::i18n::Language::Chinese
+        ) {
+            0.
+        } else {
+            0.16
+        };
+        let expansion = Section::NAV
+            .into_iter()
+            .map(Section::key)
+            .chain(["chrome.filters"])
+            .map(|key| {
+                measure(tr(key), tracking)
+                    - measure(
+                        hsplanner_ui::i18n::text_for(hsplanner_ui::i18n::Language::English, key),
+                        0.16,
+                    )
+            })
+            .fold(px(0.), |total, width| total + width)
+            .max(px(0.));
+        let navigation_overflows =
+            window.viewport_size().width < window.rem_size() * (1330. / 13.) + expansion;
         let selected_section = self.section;
         div()
             .flex_none()
@@ -310,26 +365,32 @@ impl RenderOnce for TopBar {
                                 .px_3p5()
                                 .gap_2()
                                 .custom(ButtonCustomVariant::new(cx).foreground(palette.muted))
-                                .accessibility_label("Filters")
-                                .cursor_tooltip("Filters are not yet available in the native app")
+                                .accessibility_label(tr("chrome.filters"))
+                                .cursor_tooltip(tr("chrome.filters_unavailable"))
                                 .child(diamond(palette.faint, 4.875, None))
                                 .child(
-                                    mono_label("nav-filters-label", "Filters", 11., 0.16, None)
-                                        .font_family(theme::FONT_FAMILY)
-                                        .font_weight(FontWeight::NORMAL)
-                                        .line_height(relative(1.5)),
+                                    mono_label(
+                                        "nav-filters-label",
+                                        tr("chrome.filters"),
+                                        11.,
+                                        0.16,
+                                        None,
+                                    )
+                                    .font_family(theme::FONT_FAMILY)
+                                    .font_weight(FontWeight::NORMAL)
+                                    .line_height(relative(1.5)),
                                 ),
                         ),
                     ),
             )
             .when(navigation_overflows, |view| {
                 view.child(
-                    chrome_button("all-views", "All views", cx)
+                    chrome_button("all-views", tr("chrome.all_views"), cx)
                         .flex_none()
                         .ml_1()
                         .p_1p5()
                         .child(Icon::new(IconName::ChevronDown).size_3p5())
-                        .cursor_tooltip("All views")
+                        .cursor_tooltip(tr("chrome.all_views"))
                         .dropdown_menu(move |menu, _, _| {
                             Section::NAV.into_iter().fold(menu, |menu, section| {
                                 menu.menu_with_check(
@@ -350,9 +411,9 @@ impl RenderOnce for TopBar {
                     .pl_2()
                     .child(divider(border))
                     .child(
-                        chrome_button("open-library", "Builds", cx)
+                        chrome_button("open-library", tr("chrome.builds"), cx)
                             .child(chrome_icon("bookmark"))
-                            .child("Builds")
+                            .child(tr("chrome.builds"))
                             .when(!compact && !self.build_name.is_empty(), |button| {
                                 button
                                     .child(div().text_color(palette.faint).child("·"))
@@ -366,7 +427,10 @@ impl RenderOnce for TopBar {
                                         ),
                                     ))
                             })
-                            .cursor_tooltip(format!("Build library · {}", self.build_name))
+                            .cursor_tooltip(trf(
+                                "chrome.library_hint",
+                                &[("name", self.build_name.clone())],
+                            ))
                             .on_click(self.on_library),
                     )
                     .child(
@@ -377,38 +441,36 @@ impl RenderOnce for TopBar {
                         )
                         .small()
                         .gap_1p5()
-                        .accessibility_label("Share")
+                        .accessibility_label(tr("chrome.share"))
                         .child(chrome_icon("share"))
-                        .child("Share")
-                        .cursor_tooltip("Copy the build code to the clipboard")
+                        .child(tr("chrome.share"))
+                        .cursor_tooltip(tr("chrome.share_hint"))
                         .on_click(self.on_share),
                     )
                     .child(
-                        chrome_button("help", "Help", cx)
+                        chrome_button("help", tr("chrome.help"), cx)
                             .label("?")
-                            .cursor_tooltip("Keyboard shortcuts")
+                            .cursor_tooltip(tr("chrome.shortcuts"))
                             .on_click(|_, window, cx| {
                                 window.open_dialog(cx, |dialog, _, _| {
-                                    dialog.title("Keyboard shortcuts").child(
+                                    dialog.title(tr("chrome.shortcuts")).child(
                                         div()
                                             .flex()
                                             .flex_col()
                                             .gap_2()
-                                            .child("Save: Cmd/Ctrl+S · Undo: Cmd/Ctrl+Z")
-                                            .child(
-                                                "Tree: F to fit · +/− to zoom · Enter to allocate",
-                                            )
-                                            .child("Search: Enter to center the next match")
-                                            .child("Escape closes the active panel"),
+                                            .child(tr("chrome.shortcut_save"))
+                                            .child(tr("chrome.shortcut_tree"))
+                                            .child(tr("chrome.shortcut_search"))
+                                            .child(tr("chrome.shortcut_escape")),
                                     )
                                 })
                             }),
                     )
                     .child(
-                        chrome_button("settings", "Settings", cx)
+                        chrome_button("settings", tr("settings.title"), cx)
                             .p_1p5()
                             .child(Icon::new(IconName::Settings).size_3p5())
-                            .cursor_tooltip("Settings")
+                            .cursor_tooltip(tr("settings.title"))
                             .on_click(|_, window, cx| {
                                 window.dispatch_action(Box::new(OpenSettings), cx)
                             }),
@@ -490,26 +552,32 @@ impl RenderOnce for BottomBar {
         );
         let rem = window.rem_size();
         let (dot_color, save_label, save_tooltip) = match self.save {
-            SaveState::Saving => (faint, "Saving…", None),
-            SaveState::Auto => (positive, "Auto-saved", None),
-            SaveState::Saved => (positive, "Saved", None),
+            SaveState::Saving => (faint, tr("shell.saving"), None),
+            SaveState::Auto => (positive, tr("chrome.autosaved"), None),
+            SaveState::Saved => (positive, tr("shell.saved"), None),
             SaveState::Manual => (
                 accent_hot,
-                "Manual · ",
-                Some(format!("Auto-save is off — press {SAVE_SHORTCUT} to save")),
+                tr("chrome.manual"),
+                Some(trf(
+                    "chrome.manual_hint",
+                    &[("shortcut", SAVE_SHORTCUT.into())],
+                )),
             ),
         };
         let save_text = if self.save == SaveState::Manual {
-            format!("{save_label}{SAVE_SHORTCUT}")
+            trf(
+                "chrome.manual_shortcut",
+                &[("shortcut", SAVE_SHORTCUT.into())],
+            )
         } else {
             save_label.to_string()
         };
-        let channel_color = if BUILD_CHANNEL == "Dev" {
+        let channel_color = if cfg!(debug_assertions) {
             accent_hot
         } else {
             positive
         };
-        let channel_border = if BUILD_CHANNEL == "Dev" {
+        let channel_border = if cfg!(debug_assertions) {
             accent_deep
         } else {
             positive
@@ -549,8 +617,8 @@ impl RenderOnce for BottomBar {
                     .custom(ButtonCustomVariant::new(cx).foreground(faint))
                     .h_auto()
                     .p_0()
-                    .accessibility_label("View changelog")
-                    .cursor_tooltip("View changelog")
+                    .accessibility_label(tr("chrome.changelog"))
+                    .cursor_tooltip(tr("chrome.changelog"))
                     .child(mono_label(
                         "footer-version",
                         format!("v{}", env!("CARGO_PKG_VERSION")),
@@ -570,7 +638,7 @@ impl RenderOnce for BottomBar {
                     .bg(panel_secondary.opacity(0.6))
                     .child(mono_label(
                         "footer-channel",
-                        BUILD_CHANNEL,
+                        tr(BUILD_CHANNEL),
                         9.,
                         0.18,
                         Some(channel_color),
@@ -583,11 +651,11 @@ impl RenderOnce for BottomBar {
                     .map(|status| div().text_xs().text_color(muted).child(status)),
             )
             .child(
-                chrome_button("report-bug", "Report a bug…", cx)
+                chrome_button("report-bug", tr("chrome.report"), cx)
                     .ml_auto()
                     .child(chrome_icon("bug"))
-                    .child("Report a bug…")
-                    .cursor_tooltip("Report a problem with optional screenshots and build")
+                    .child(tr("chrome.report"))
+                    .cursor_tooltip(tr("chrome.report_hint"))
                     .on_click(move |_, window, cx| {
                         crate::bug_report::open(self.session.clone(), window, cx)
                     }),
@@ -612,7 +680,7 @@ impl RenderOnce for BottomBar {
                     .child(chrome_icon("coffee"))
                     .child(mono_label(
                         "footer-kofi",
-                        "Support on Ko-fi",
+                        tr("settings.support"),
                         10.,
                         0.14,
                         Some(accent_hot),
@@ -649,33 +717,33 @@ fn update_button(updater: Entity<crate::update::Updater>, cx: &App) -> Button {
     let state = updater.read(cx).state.clone();
     let (label, tooltip, tone) = match &state {
         State::Idle => (
-            "Check for updates".to_string(),
-            "Check GitHub for a newer version".to_string(),
+            tr("update.check").to_string(),
+            tr("update.check_hint").to_string(),
             ButtonTone::Neutral,
         ),
         State::Checking => (
-            "Checking…".to_string(),
-            "Checking GitHub releases".to_string(),
+            tr("update.checking").to_string(),
+            tr("update.checking_hint").to_string(),
             ButtonTone::Neutral,
         ),
         State::UpToDate => (
-            "Up to date".to_string(),
-            "Check again".to_string(),
+            tr("update.current").to_string(),
+            tr("update.check_again").to_string(),
             ButtonTone::Neutral,
         ),
         State::Available(update) => (
-            format!("Update v{}", update.version),
-            "A newer version is available".to_string(),
+            trf("update.version", &[("version", update.version.to_string())]),
+            tr("update.available").to_string(),
             ButtonTone::Primary,
         ),
         State::Installing(_) => (
-            "Installing…".to_string(),
-            "Downloading the update".to_string(),
+            tr("update.installing").to_string(),
+            tr("update.downloading_hint").to_string(),
             ButtonTone::Primary,
         ),
         State::Failed(message) => (
-            "Update failed".to_string(),
-            message.clone(),
+            tr("update.failed").to_string(),
+            message.message(),
             ButtonTone::Danger,
         ),
     };
@@ -686,7 +754,7 @@ fn update_button(updater: Entity<crate::update::Updater>, cx: &App) -> Button {
     hsplanner_ui::controls::planner_button("check-updates", tone, cx)
         .small()
         .gap_1p5()
-        .accessibility_label("Check for updates")
+        .accessibility_label(tr("update.check"))
         .label(label)
         .cursor_tooltip(tooltip)
         .on_click(move |_, window, cx| {

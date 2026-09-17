@@ -1,3 +1,4 @@
+use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 mod dialogs;
@@ -85,7 +86,7 @@ impl LibrarySort {
                     .as_deref()
                     .and_then(hsplanner_engine::calc::data::get_class)
                     .map(|class| class.name.as_str())
-                    .unwrap_or("Unknown")
+                    .unwrap_or(tr("library.unknown"))
                     .to_lowercase(),
             ),
             SortColumn::Level => {
@@ -134,15 +135,114 @@ pub struct LibraryView {
     _subscriptions: Vec<Subscription>,
 }
 impl EventEmitter<Opened> for LibraryView {}
+
+/// Translate domain diagnostics at the presentation boundary, keeping stored errors
+/// independent of the current language and preserving low-level details.
+fn render_error(error: &str) -> String {
+    match error {
+        "library.select_folder" | "Select a folder" => tr("library.select_folder").to_owned(),
+        "library.select_build" | "Select a build" => tr("library.select_build").to_owned(),
+        "library.no_profile" | "Build has no profile" => tr("library.no_profile").to_owned(),
+        "library.profile_limit" | "This build already contains 100 profiles." => {
+            tr("library.profile_limit").to_owned()
+        }
+        "library.missing_profile" | "Profile no longer exists." => {
+            tr("library.missing_profile").to_owned()
+        }
+        "library.keep_profile" | "Keep at least one profile." => {
+            tr("library.keep_profile").to_owned()
+        }
+        "library.error.build_limit" | "The library already contains 1,000 builds." => {
+            tr("library.error.build_limit").to_owned()
+        }
+        "library.error.folder_limit" | "The library already contains 500 folders." => {
+            tr("library.error.folder_limit").to_owned()
+        }
+        "library.error.missing_folder" | "Folder no longer exists." => {
+            tr("library.error.missing_folder").to_owned()
+        }
+        "library.error.missing_parent" | "Parent folder no longer exists." => {
+            tr("library.error.missing_parent").to_owned()
+        }
+        "library.error.missing_build" | "Build no longer exists." => {
+            tr("library.error.missing_build").to_owned()
+        }
+        "library.error.enter_name" | "Enter a name." => tr("library.error.enter_name").to_owned(),
+        "library.error.save_first" | "Save this build first." => {
+            tr("library.error.save_first").to_owned()
+        }
+        "library.error.share_size" | "This build is too large to share as a code." => {
+            tr("library.error.share_size").to_owned()
+        }
+        "library.error.code_size" | "Build code is too large." => {
+            tr("library.error.code_size").to_owned()
+        }
+        "library.error.invalid_code" | "Invalid build code." => {
+            tr("library.error.invalid_code").to_owned()
+        }
+        "library.error.expanded_size" | "Build code expands beyond the supported size." => {
+            tr("library.error.expanded_size").to_owned()
+        }
+        "library.error.invalid_text" | "Invalid text in build code." => {
+            tr("library.error.invalid_text").to_owned()
+        }
+        "library.error.invalid_data" | "Invalid build data." => {
+            tr("library.error.invalid_data").to_owned()
+        }
+        "library.error.code_version" | "Unsupported build code version." => {
+            tr("library.error.code_version").to_owned()
+        }
+        "library.error.incomplete_code" | "Incomplete build code." => {
+            tr("library.error.incomplete_code").to_owned()
+        }
+        "library.error.tree_nodes" | "Too many tree nodes." => {
+            tr("library.error.tree_nodes").to_owned()
+        }
+        "library.error.equipment" | "Invalid equipment list." => {
+            tr("library.error.equipment").to_owned()
+        }
+        "library.error.slots" | "Too many equipment slots." => tr("library.error.slots").to_owned(),
+        "library.error.item" | "Invalid equipped item." => tr("library.error.item").to_owned(),
+        "library.error.escaped_code" | "Invalid escaped build code." => {
+            tr("library.error.escaped_code").to_owned()
+        }
+        "library.error.code_text" | "Invalid build code text." => {
+            tr("library.error.code_text").to_owned()
+        }
+        _ => {
+            if let Some(field) = error.strip_prefix("Missing or invalid build field: ") {
+                trf("library.error.build_field", &[("field", field.to_owned())])
+            } else if let Some(detail) = error.strip_prefix("Invalid build fields: ") {
+                trf(
+                    "library.error.build_fields",
+                    &[("detail", detail.to_owned())],
+                )
+            } else {
+                trf("library.error.action", &[("detail", error.to_owned())])
+            }
+        }
+    }
+}
+
+fn localized_input(
+    placeholder: &'static str,
+    window: &mut Window,
+    cx: &mut Context<InputState>,
+) -> InputState {
+    // The observer follows the input entity, including inputs hosted in dialogs.
+    // Updating only the placeholder preserves text, selection and undo history.
+    cx.observe_global_in::<Locale>(window, move |input, window, cx| {
+        input.set_placeholder(tr(placeholder), window, cx);
+    })
+    .detach();
+    InputState::new(window, cx).placeholder(tr(placeholder))
+}
 impl LibraryView {
     pub fn new(session: Entity<Session>, window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let search =
-            cx.new(|cx| InputState::new(window, cx).placeholder("Search builds, classes, tags…"));
-        let name = cx.new(|cx| InputState::new(window, cx).placeholder("Build or folder name"));
-        let tags =
-            cx.new(|cx| InputState::new(window, cx).placeholder("Tags, separated by commas"));
-        let code =
-            cx.new(|cx| InputState::new(window, cx).placeholder("Paste a build code or link"));
+        let search = cx.new(|cx| localized_input("library.search_placeholder", window, cx));
+        let name = cx.new(|cx| localized_input("library.name_placeholder", window, cx));
+        let tags = cx.new(|cx| localized_input("library.tags_placeholder", window, cx));
+        let code = cx.new(|cx| localized_input("library.code_placeholder", window, cx));
         let subscriptions = vec![
             cx.observe(&session, |this, _, cx| {
                 this.query_cache.get_mut().invalidate();
@@ -285,19 +385,26 @@ impl LibraryView {
         let color = if sorted { p.accent_hot } else { p.faint };
         let muted = p.muted;
         let accessible_title = if column == SortColumn::Favorite {
-            "Favorite"
+            tr("library.favorite")
         } else {
             title
         };
-        let state = if sorted {
-            match direction {
-                SortDirection::Ascending => ", currently ascending",
-                SortDirection::Descending => ", currently descending",
-            }
-        } else {
-            ""
+        let accessible_label = trf(
+            match (sorted, direction) {
+                (true, SortDirection::Ascending) => "library.sort_ascending",
+                (true, SortDirection::Descending) => "library.sort_descending",
+                (false, _) => "library.sort_by",
+            },
+            &[("column", accessible_title.to_owned())],
+        );
+        let id = match column {
+            SortColumn::Favorite => "sort-favorite",
+            SortColumn::Name => "sort-name",
+            SortColumn::Class => "sort-class",
+            SortColumn::Level => "sort-level",
+            SortColumn::Modified => "sort-modified",
         };
-        Button::new(SharedString::from(format!("sort-{accessible_title}")))
+        Button::new(id)
             .custom(ButtonCustomVariant::new(cx).foreground(color))
             .h_auto()
             .min_w_0()
@@ -305,7 +412,7 @@ impl LibraryView {
             .border_0()
             .rounded_none()
             .font_weight(FontWeight::NORMAL)
-            .accessibility_label(format!("Sort by {accessible_title}{state}"))
+            .accessibility_label(accessible_label)
             .child(
                 div()
                     .flex()
@@ -402,11 +509,11 @@ impl LibraryView {
 
     pub fn location(&self, cx: &App) -> String {
         if self.recent {
-            "Recent".into()
+            tr("library.recent").into()
         } else if self.favorites {
-            "Favorites".into()
+            tr("library.favorites").into()
         } else if self.unfiled {
-            "Unfiled".into()
+            tr("library.unfiled").into()
         } else if let Some(id) = &self.folder {
             self.session
                 .read(cx)
@@ -416,14 +523,14 @@ impl LibraryView {
                 .iter()
                 .find(|f| &f.id == id)
                 .map(|f| f.name.clone())
-                .unwrap_or_else(|| "Folder".into())
+                .unwrap_or_else(|| tr("library.folder").into())
         } else {
-            "All Builds".into()
+            tr("library.all_builds").into()
         }
     }
     fn folder_destinations(&self, build_id: &str, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
-        let destinations = std::iter::once((None, "Unfiled".to_string())).chain(
+        let destinations = std::iter::once((None, tr("library.unfiled").to_string())).chain(
             self.session
                 .read(cx)
                 .state()
@@ -436,7 +543,7 @@ impl LibraryView {
             .flex()
             .flex_col()
             .gap_1()
-            .child(label("Move to folder", p.faint))
+            .child(label(tr("library.move_to_folder"), p.faint))
             .children(destinations.map(|(folder, name)| {
                 let id = build_id.to_string();
                 Button::new(SharedString::from(format!(
@@ -566,7 +673,7 @@ impl Render for LibraryView {
                             .w(rems(28. / 13.))
                             .flex_none()
                             .p_0()
-                            .accessibility_label("Toggle favorite")
+                            .accessibility_label(tr("library.toggle_favorite"))
                             .on_click(cx.listener(move |this, _, _, cx| {
                                 this.apply(cx, |s| {
                                     s.edit_library(|l| {
@@ -601,11 +708,14 @@ impl Render for LibraryView {
                                     .mt(rems(5. / 13.))
                                     .overflow_hidden()
                                     .when(active_id.as_ref() == Some(&id), |v| {
-                                        v.child(label("Active", accent))
+                                        v.child(label(tr("library.active"), accent))
                                     })
                                     .when(build.profiles.len() > 1, |view| {
                                         view.child(label(
-                                            format!("{}P", build.profiles.len()),
+                                            trf(
+                                                "library.profile_count",
+                                                &[("count", build.profiles.len().to_string())],
+                                            ),
                                             accent,
                                         ))
                                     })
@@ -618,10 +728,15 @@ impl Render for LibraryView {
                                     })),
                             ),
                     )
-                    .child(div().w(rems(130. / 13.)).flex_none().child(label(
-                        build.class_id.clone().unwrap_or_else(|| "Unknown".into()),
-                        muted,
-                    )))
+                    .child(
+                        div().w(rems(130. / 13.)).flex_none().child(label(
+                            build
+                                .class_id
+                                .clone()
+                                .unwrap_or_else(|| tr("library.unknown").into()),
+                            muted,
+                        )),
+                    )
                     .child(
                         div().w(rems(64. / 13.)).flex_none().child(label(
                             summary
@@ -657,7 +772,7 @@ impl Render for LibraryView {
             .p_4()
             .border_l_1()
             .border_color(border)
-            .child(div().text_lg().child("Build details"))
+            .child(div().text_lg().child(tr("library.build_details")))
             .child(Input::new(&self.name).planner_style(cx))
             .child(
                 div()
@@ -669,7 +784,7 @@ impl Render for LibraryView {
                             .bg(hsplanner_ui::theme::chrome_gold_surface())
                             .text_color(cx.global::<TooltipTheme>().accent_hot)
                             .border_color(cx.global::<TooltipTheme>().accent_deep)
-                            .label("New build")
+                            .label(tr("library.new_build"))
                             .on_click(cx.listener(|this, _, _, cx| {
                                 let name = this.name.read(cx).value().to_string();
                                 if this.apply(cx, |s| s.new_build(&name).map(|_| ())) {
@@ -680,7 +795,7 @@ impl Render for LibraryView {
                     .child(
                         Button::new("new-folder")
                             .planner_style(cx)
-                            .label("New folder")
+                            .label(tr("library.new_folder"))
                             .on_click(cx.listener(|this, _, _, cx| {
                                 let name = this.name.read(cx).value().to_string();
                                 let parent = this.folder.clone();
@@ -700,7 +815,7 @@ impl Render for LibraryView {
                 .child(
                     Button::new("rename-build")
                         .planner_style(cx)
-                        .label("Rename selected build")
+                        .label(tr("library.rename_selected"))
                         .on_click(cx.listener(move |this, _, _, cx| {
                             let name = this.name.read(cx).value().to_string();
                             this.apply(cx, |s| s.edit_library(|l| l.rename(&rename, &name)));
@@ -710,7 +825,7 @@ impl Render for LibraryView {
                 .child(
                     Button::new("save-tags")
                         .planner_style(cx)
-                        .label("Save tags")
+                        .label(tr("library.save_tags"))
                         .on_click(cx.listener(move |this, _, _, cx| {
                             let value = this.tags.read(cx).value().to_string();
                             this.apply(cx, |s| s.edit_library(|l| l.set_tags(&tags, &value)));
@@ -720,7 +835,7 @@ impl Render for LibraryView {
                 .child(
                     Button::new("duplicate-build")
                         .planner_style(cx)
-                        .label("Duplicate")
+                        .label(tr("library.duplicate"))
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.apply(cx, |s| {
                                 s.edit_library(|l| l.duplicate(&duplicate).map(|_| ()))
@@ -731,9 +846,9 @@ impl Render for LibraryView {
                     Button::new("favorite-build")
                         .planner_style(cx)
                         .label(if build.favorite {
-                            "Remove favorite"
+                            tr("library.remove_favorite")
                         } else {
-                            "Add favorite"
+                            tr("library.add_favorite")
                         })
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.apply(cx, |s| {
@@ -748,7 +863,7 @@ impl Render for LibraryView {
                 .child(
                     Button::new("delete-build")
                         .planner_style(cx)
-                        .label("Delete selected build")
+                        .label(tr("library.delete_selected"))
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.apply(cx, |s| {
                                 s.remove_build(&remove);
@@ -767,25 +882,30 @@ impl Render for LibraryView {
             .p_3()
             .border_r_1()
             .border_color(border)
-            .child(label("◆ Library", accent))
-            .child(div().pt_3().child(label("Smart", muted)))
+            .child(label(tr("library.sidebar_title"), accent))
+            .child(div().pt_3().child(label(tr("library.smart"), muted)))
             .child(
-                navigation("recent", "◷ Recent", total.min(12), self.recent, cx).on_click(
-                    cx.listener(|this, _, _, cx| {
-                        this.recent = true;
-                        this.unfiled = false;
-                        this.favorites = false;
-                        this.folder = None;
-                        this.page = 0;
-                        this.reconcile_selection(cx);
-                        cx.notify();
-                    }),
-                ),
+                navigation(
+                    "recent",
+                    tr("library.nav_recent"),
+                    total.min(12),
+                    self.recent,
+                    cx,
+                )
+                .on_click(cx.listener(|this, _, _, cx| {
+                    this.recent = true;
+                    this.unfiled = false;
+                    this.favorites = false;
+                    this.folder = None;
+                    this.page = 0;
+                    this.reconcile_selection(cx);
+                    cx.notify();
+                })),
             )
             .child(
                 navigation(
                     "all-builds",
-                    "☷ All Builds",
+                    tr("library.nav_all"),
                     total,
                     !self.recent && !self.unfiled && !self.favorites && self.folder.is_none(),
                     cx,
@@ -803,7 +923,7 @@ impl Render for LibraryView {
             .child(
                 navigation(
                     "favorites",
-                    "☆ Favorites",
+                    tr("library.nav_favorites"),
                     favorite_count,
                     self.favorites,
                     cx,
@@ -820,19 +940,24 @@ impl Render for LibraryView {
             );
         folder_list = folder_list
             .child(
-                navigation("unfiled", "□ Unfiled", unfiled_count, self.unfiled, cx).on_click(
-                    cx.listener(|this, _, _, cx| {
-                        this.unfiled = true;
-                        this.recent = false;
-                        this.favorites = false;
-                        this.folder = None;
-                        this.page = 0;
-                        this.reconcile_selection(cx);
-                        cx.notify();
-                    }),
-                ),
+                navigation(
+                    "unfiled",
+                    tr("library.nav_unfiled"),
+                    unfiled_count,
+                    self.unfiled,
+                    cx,
+                )
+                .on_click(cx.listener(|this, _, _, cx| {
+                    this.unfiled = true;
+                    this.recent = false;
+                    this.favorites = false;
+                    this.folder = None;
+                    this.page = 0;
+                    this.reconcile_selection(cx);
+                    cx.notify();
+                })),
             )
-            .child(div().pt_3().child(label("Folders", muted)));
+            .child(div().pt_3().child(label(tr("library.folders"), muted)));
         for folder in folders {
             let id = folder.id.clone();
             let folder_count = folder_counts.get(id.as_str()).copied().unwrap_or(0);
@@ -861,7 +986,7 @@ impl Render for LibraryView {
                 .child(
                     Button::new("rename-folder")
                         .planner_style(cx)
-                        .label("Rename folder")
+                        .label(tr("library.rename_folder"))
                         .on_click(cx.listener(|this, _, window, cx| {
                             this.edit_dialog(EditKind::RenameFolder, window, cx)
                         })),
@@ -869,7 +994,7 @@ impl Render for LibraryView {
                 .child(
                     Button::new("delete-folder")
                         .planner_style(cx)
-                        .label("Remove folder")
+                        .label(tr("library.remove_folder"))
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.apply(cx, |s| {
                                 s.edit_library(|l| {
@@ -890,10 +1015,7 @@ impl Render for LibraryView {
             .overflow_y_scroll()
             .children(rows)
             .when(count == 0, |container| {
-                container.child(div().p_6().text_color(muted).child(gpui_kit::text!(
-                    id = "empty-library",
-                    "No matching builds. Create a build or import an existing code."
-                )))
+                container.child(div().p_6().text_color(muted).child(tr("library.empty")))
             });
         let pagination = div()
             .p_3()
@@ -903,17 +1025,23 @@ impl Render for LibraryView {
             .child(
                 Button::new("previous-page")
                     .planner_style(cx)
-                    .label("Previous")
+                    .label(tr("library.previous"))
                     .on_click(cx.listener(|this, _, _, cx| {
                         this.page = this.page.saturating_sub(1);
                         cx.notify();
                     })),
             )
-            .child(format!("{count} builds · Page {}", self.page + 1))
+            .child(trf(
+                "library.pagination",
+                &[
+                    ("count", count.to_string()),
+                    ("page", (self.page + 1).to_string()),
+                ],
+            ))
             .child(
                 Button::new("next-page")
                     .planner_style(cx)
-                    .label("Next")
+                    .label(tr("library.next"))
                     .on_click(cx.listener(move |this, _, _, cx| {
                         if (this.page + 1) * 25 < count {
                             this.page += 1;
@@ -929,13 +1057,13 @@ impl Render for LibraryView {
             .gap_2()
             .border_b_1()
             .border_color(border)
-            .child(label("Filter", muted))
+            .child(label(tr("library.filter"), muted))
             .child(
                 Button::new("clear-tags")
                     .planner_style(cx)
                     .small()
                     .rounded_full()
-                    .label("All ×")
+                    .label(tr("library.all_filter"))
                     .border_color(if self.active_tag.is_none() && !self.high_level {
                         palette.accent_deep
                     } else {
@@ -974,7 +1102,7 @@ impl Render for LibraryView {
                 .planner_style(cx)
                 .small()
                 .rounded_full()
-                .label("Lv 90+")
+                .label(tr("library.high_level_filter"))
                 .selected(self.high_level)
                 .on_click(cx.listener(|this, _, _, cx| {
                     this.high_level = !this.high_level;
@@ -983,11 +1111,13 @@ impl Render for LibraryView {
                     cx.notify();
                 })),
         );
-        filter_bar = filter_bar.child(
-            div()
-                .ml_auto()
-                .child(label(format!("{count} of {total}"), accent)),
-        );
+        filter_bar = filter_bar.child(div().ml_auto().child(label(
+            trf(
+                "library.filtered_count",
+                &[("count", count.to_string()), ("total", total.to_string())],
+            ),
+            accent,
+        )));
         let header = div()
             .py_2()
             .px_4()
@@ -1004,30 +1134,30 @@ impl Render for LibraryView {
             .child(
                 div()
                     .flex_1()
-                    .child(self.sort_header(SortColumn::Name, "Name", cx)),
+                    .child(self.sort_header(SortColumn::Name, tr("library.name"), cx)),
             )
             .child(
                 div()
                     .w(rems(130. / 13.))
                     .flex_none()
-                    .child(self.sort_header(SortColumn::Class, "Class", cx)),
+                    .child(self.sort_header(SortColumn::Class, tr("library.class"), cx)),
             )
             .child(div().w(rems(64. / 13.)).flex_none().child(self.sort_header(
                 SortColumn::Level,
-                "Lv",
+                tr("library.level"),
                 cx,
             )))
             .child(
                 div()
                     .w(rems(76. / 13.))
                     .flex_none()
-                    .child(label("Season", palette.faint)),
+                    .child(label(tr("library.season"), palette.faint)),
             )
             .child(
                 div()
                     .w(rems(140. / 13.))
                     .flex_none()
-                    .child(self.sort_header(SortColumn::Modified, "Modified", cx)),
+                    .child(self.sort_header(SortColumn::Modified, tr("library.modified"), cx)),
             );
         let import = div()
             .mx_4()
@@ -1041,11 +1171,14 @@ impl Render for LibraryView {
             .child(
                 div()
                     .text_color(palette.text)
-                    .child("↓  Paste a build code to import"),
+                    .child(tr("library.import_heading")),
             )
-            .child(div().text_color(muted).text_sm().child(
-                "Drop a shared build link or code here, or paste a code to import it into Unfiled.",
-            ))
+            .child(
+                div()
+                    .text_color(muted)
+                    .text_sm()
+                    .child(tr("library.import_help")),
+            )
             .when(self.importing, |view| {
                 view.child(
                     div()
@@ -1060,7 +1193,7 @@ impl Render for LibraryView {
                         .child(
                             Button::new("import-build")
                                 .planner_style(cx)
-                                .label("Import")
+                                .label(tr("library.import"))
                                 .on_click(cx.listener(|this, _, _, cx| {
                                     let code = this.code.read(cx).value().to_string();
                                     if this.apply(cx, |s| s.import_code(&code).map(|_| ())) {
@@ -1145,7 +1278,7 @@ impl Render for LibraryView {
                         Button::new("share-selected")
                             .planner_style(cx)
                             .flex_1()
-                            .label("Share")
+                            .label(tr("library.share"))
                             .disabled(share.is_none())
                             .opacity(if share.is_none() { 0.4 } else { 1. })
                             .on_click(move |_, _, cx| {
@@ -1158,7 +1291,7 @@ impl Render for LibraryView {
                         Button::new("open-selected")
                             .planner_style(cx)
                             .flex_1()
-                            .label("▸ Open Build")
+                            .label(tr("library.open_build"))
                             .disabled(open_id.is_none())
                             .opacity(if open_id.is_none() { 0.4 } else { 1. })
                             .bg(hsplanner_ui::theme::chrome_gold_surface())
@@ -1192,12 +1325,12 @@ impl Render for LibraryView {
                     .p_3()
                     .border_t_1()
                     .border_color(border)
-                    .child(label("Local library", muted))
+                    .child(label(tr("library.local_library"), muted))
                     .child(
                         div()
                             .text_sm()
                             .text_color(muted)
-                            .child(format!("{total} builds")),
+                            .child(trf("library.total_count", &[("count", total.to_string())])),
                     ),
             );
         let body = div()
@@ -1228,7 +1361,7 @@ impl Render for LibraryView {
                     .child(
                         Button::new("toolbar-new")
                             .planner_style(cx)
-                            .label("+ New")
+                            .label(tr("library.toolbar_new"))
                             .text_color(accent)
                             .bg(hsplanner_ui::theme::chrome_gold_surface())
                             .on_click(cx.listener(|this, _, window, cx| {
@@ -1236,15 +1369,19 @@ impl Render for LibraryView {
                             })),
                     )
                     .child(
-                        toolbar_button("toolbar-import", "Import…", "import", cx).on_click(
-                            cx.listener(|this, _, _, cx| {
-                                this.importing = !this.importing;
-                                cx.notify();
-                            }),
-                        ),
+                        toolbar_button(
+                            "toolbar-import",
+                            tr("library.toolbar_import"),
+                            "import",
+                            cx,
+                        )
+                        .on_click(cx.listener(|this, _, _, cx| {
+                            this.importing = !this.importing;
+                            cx.notify();
+                        })),
                     )
                     .child(
-                        toolbar_button("toolbar-copy", "Copy", "copy", cx)
+                        toolbar_button("toolbar-copy", tr("library.copy"), "copy", cx)
                             .disabled(duplicate_id.is_none())
                             .on_click(cx.listener(move |this, _, _, cx| {
                                 if let Some(id) = &duplicate_id {
@@ -1255,14 +1392,14 @@ impl Render for LibraryView {
                             })),
                     )
                     .child(
-                        toolbar_button("toolbar-rename", "Rename", "rename", cx)
+                        toolbar_button("toolbar-rename", tr("library.rename"), "rename", cx)
                             .disabled(selected_id.is_none())
                             .on_click(cx.listener(|this, _, window, cx| {
                                 this.edit_dialog(EditKind::Rename, window, cx)
                             })),
                     )
                     .child(
-                        toolbar_button("toolbar-delete", "Delete", "delete", cx)
+                        toolbar_button("toolbar-delete", tr("library.delete"), "delete", cx)
                             .disabled(selected_id.is_none())
                             .on_click(cx.listener(move |this, _, _, cx| {
                                 if let Some(id) = &selected_id {
@@ -1275,17 +1412,21 @@ impl Render for LibraryView {
                             })),
                     )
                     .child(
-                        toolbar_button("toolbar-folder", "New Folder", "newfolder", cx).on_click(
-                            cx.listener(|this, _, window, cx| {
-                                this.edit_dialog(EditKind::NewFolder, window, cx)
-                            }),
-                        ),
+                        toolbar_button(
+                            "toolbar-folder",
+                            tr("library.toolbar_folder"),
+                            "newfolder",
+                            cx,
+                        )
+                        .on_click(cx.listener(|this, _, window, cx| {
+                            this.edit_dialog(EditKind::NewFolder, window, cx)
+                        })),
                     )
                     .child(
                         Button::new("manage-build")
                             .planner_style(cx)
                             .label("…")
-                            .cursor_tooltip("Manage tags and folders")
+                            .cursor_tooltip(tr("library.manage"))
                             .on_click(cx.listener(|this, _, window, cx| {
                                 this.editing = !this.editing;
                                 if let Some(build) = this
@@ -1312,7 +1453,7 @@ impl Render for LibraryView {
                     .px_4()
                     .py_2()
                     .text_color(negative)
-                    .child(error.clone())
+                    .child(render_error(error))
             }))
             .child(body)
     }

@@ -18,6 +18,7 @@ use hsplanner_engine::calc::{
     planner::PlannerPerformance,
     types::{CustomStat, SkillKind},
 };
+use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::{
     components::{panel, panel_with_trailing, section_heading},
@@ -31,11 +32,32 @@ use std::{collections::HashMap, sync::Arc};
 struct Choice {
     id: String,
     name: String,
+    resist_penalty: Option<f64>,
 }
 impl SelectItem for Choice {
     type Value = String;
     fn title(&self) -> SharedString {
-        self.name.clone().into()
+        match self.resist_penalty {
+            Some(penalty) => {
+                let name = match self.id.as_str() {
+                    "normal" => tr("planner.config.normal"),
+                    "nightmare" => tr("planner.config.nightmare"),
+                    "hell" => tr("planner.config.hell"),
+                    "inferno" => tr("planner.config.inferno"),
+                    _ => &self.name,
+                };
+                if penalty == 0. {
+                    name.to_owned().into()
+                } else {
+                    trf(
+                        "planner.config.difficulty_option",
+                        &[("0", name.to_owned()), ("1", format!("{penalty:.0}"))],
+                    )
+                    .into()
+                }
+            }
+            None => self.name.clone().into(),
+        }
     }
     fn value(&self) -> &String {
         &self.id
@@ -117,6 +139,7 @@ impl ConfigView {
             .map(|class| Choice {
                 id: class.id.clone(),
                 name: class.name.clone(),
+                resist_penalty: None,
             })
             .collect::<Vec<_>>();
         classes.sort_by(|a, b| a.name.cmp(&b.name));
@@ -128,14 +151,8 @@ impl ConfigView {
             .iter()
             .map(|difficulty| Choice {
                 id: difficulty.id.clone(),
-                name: if difficulty.resist_penalty == 0. {
-                    difficulty.name.clone()
-                } else {
-                    format!(
-                        "{} ({:.0}% resistances)",
-                        difficulty.name, difficulty.resist_penalty
-                    )
-                },
+                name: difficulty.name.clone(),
+                resist_penalty: Some(difficulty.resist_penalty),
             })
             .collect::<Vec<_>>();
         let difficulty = cx.new(|cx| {
@@ -146,7 +163,7 @@ impl ConfigView {
         let custom_editor = cx.new(|cx| {
             let mut state = TextareaState::new(window, cx)
                 .auto_grow(4, 12)
-                .placeholder("100% Faster Cast Rate\n+50 Life\n12-18 Cold Resistance");
+                .placeholder(tr("planner.config.custom_example"));
             state.set_value(custom_saved.clone(), window, cx);
             state
         });
@@ -160,6 +177,19 @@ impl ConfigView {
         let observed_performance = tree.read(cx).performance();
         let synced_calculation_revision = session.read(cx).calculation_revision();
         let subscriptions = vec![
+            cx.observe_global_in::<Locale>(window, |this, window, cx| {
+                this.custom_editor.update(cx, |input, cx| {
+                    input.set_placeholder(tr("planner.config.custom_example"), window, cx);
+                });
+                let text = this.custom_editor.read(cx).value().to_string();
+                this.custom_issues = parse_custom_text(&text).1;
+                if this.error.is_some() {
+                    this.error = Some(tr("planner.config.finite_number").into());
+                }
+                // Choices retain canonical IDs and resolve their titles in the current locale.
+                this.difficulty.update(cx, |_, cx| cx.notify());
+                cx.notify();
+            }),
             cx.subscribe(&custom_editor, |this, _, event: &InputEvent, cx| {
                 if matches!(event, InputEvent::Change) {
                     this.custom_task = Some(cx.spawn(async move |this, cx| {
@@ -396,7 +426,7 @@ impl ConfigView {
             match text.parse::<f64>() {
                 Ok(value) if value.is_finite() => Some(value),
                 _ => {
-                    self.error = Some("Enter a finite number for this value.".into());
+                    self.error = Some(tr("planner.config.finite_number").into());
                     cx.notify();
                     return;
                 }
@@ -529,14 +559,60 @@ impl ConfigView {
 
     fn custom_stats(&self, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
-        panel_with_trailing("config-custom","Custom Config",count_badge("custom-count",self.session.read(cx).snapshot().custom_stats.len(),None,cx),cx)
-            .child(help("Add stats the engine doesn't compute yet — one per line: value, then stat name. They stack with regular sources and show up in tooltips. Per-profile.",cx))
-            .child(Textarea::new(&self.custom_editor).w_full().font_family(theme::MONO_FONT_FAMILY).text_size(rems(12. / 13.)).border_color(p.border_strong).bg(p.background))
-            .children(self.custom_issues.iter().map(|issue|div().mt_2().px_2p5().py_1p5().rounded_sm().border_1().border_color(theme::stat_color("strength",cx).opacity(0.4)).text_size(rems(10. / 13.)).text_color(theme::stat_color("strength",cx)).child(issue.clone())))
-            .children(self.session.read(cx).snapshot().custom_stats.iter().map(|stat| {
-                let name=data::game_config().stats.iter().find(|def|def.key==stat.stat_key).map(|def|def.name.as_str()).unwrap_or(&stat.stat_key);
-                div().mt_1().font_family(theme::MONO_FONT_FAMILY).text_size(rems(10. / 13.)).text_color(p.positive).child(format!("→ {} {name}",stat.value))
-            }))
+        panel_with_trailing(
+            "config-custom",
+            tr("planner.config.custom"),
+            count_badge(
+                "custom-count",
+                self.session.read(cx).snapshot().custom_stats.len(),
+                None,
+                cx,
+            ),
+            cx,
+        )
+        .child(help(tr("planner.config.custom_help"), cx))
+        .child(
+            Textarea::new(&self.custom_editor)
+                .w_full()
+                .font_family(theme::MONO_FONT_FAMILY)
+                .text_size(rems(12. / 13.))
+                .border_color(p.border_strong)
+                .bg(p.background),
+        )
+        .children(self.custom_issues.iter().map(|issue| {
+            div()
+                .mt_2()
+                .px_2p5()
+                .py_1p5()
+                .rounded_sm()
+                .border_1()
+                .border_color(theme::stat_color("strength", cx).opacity(0.4))
+                .text_size(rems(10. / 13.))
+                .text_color(theme::stat_color("strength", cx))
+                .child(issue.clone())
+        }))
+        .children(
+            self.session
+                .read(cx)
+                .snapshot()
+                .custom_stats
+                .iter()
+                .map(|stat| {
+                    let name = data::game_config()
+                        .stats
+                        .iter()
+                        .find(|def| def.key == stat.stat_key)
+                        .map(|def| def.name.as_str())
+                        .unwrap_or(&stat.stat_key);
+                    let name = crate::stat_labels::stat_name(&stat.stat_key, name);
+                    div()
+                        .mt_1()
+                        .font_family(theme::MONO_FONT_FAMILY)
+                        .text_size(rems(10. / 13.))
+                        .text_color(p.positive)
+                        .child(format!("→ {} {name}", stat.value))
+                }),
+        )
     }
 
     fn level_control(&self, window: &Window, cx: &Context<Self>) -> Stateful<Div> {
@@ -545,7 +621,7 @@ impl ConfigView {
             .flex_1()
             .track_focus(&self.level_slider_focus)
             .role(accesskit::Role::Group)
-            .aria_label("Character level")
+            .aria_label(tr("planner.config.character_level"))
             .rounded_sm()
             .when(self.level_slider_focus.is_focused(window), |view| {
                 view.shadow(vec![BoxShadow {
@@ -595,14 +671,20 @@ impl ConfigView {
         let remaining = total.saturating_sub(spent);
         let mut attributes = panel_with_trailing(
             "config-attributes",
-            "Attributes",
+            tr("planner.common.attributes"),
             div()
                 .flex()
                 .items_center()
                 .gap_2()
                 .child(label(
                     "attribute-budget",
-                    format!("{remaining} / {total} free"),
+                    trf(
+                        "planner.config.attribute_budget",
+                        &[
+                            ("remaining", (remaining).to_string()),
+                            ("total", (total).to_string()),
+                        ],
+                    ),
                     if remaining > 0 { p.accent_hot } else { p.muted },
                 ))
                 .child(
@@ -615,8 +697,12 @@ impl ConfigView {
                         .text_size(rems(10. / 13.))
                         .font_weight(FontWeight::SEMIBOLD)
                         .line_height(relative(1.5))
-                        .accessibility_label("Reset attributes")
-                        .child(TooltipText::new("reset-attributes-label", "RESET", 0.14))
+                        .accessibility_label(tr("planner.config.reset_attributes"))
+                        .child(TooltipText::new(
+                            "reset-attributes-label",
+                            tr("planner.config.reset_caps"),
+                            0.14,
+                        ))
                         .disabled(spent == 0)
                         .on_click(cx.listener(|this, _, _, cx| {
                             this.edit(cx, |snapshot| snapshot.allocated.clear())
@@ -624,10 +710,7 @@ impl ConfigView {
                 ),
             cx,
         )
-        .child(help(
-            "Allocate attribute points. Shift = ×5 · Ctrl/Cmd+Shift = all.",
-            cx,
-        ));
+        .child(help(tr("planner.config.allocate_hint"), cx));
         let class = snapshot.class_id.as_deref().and_then(data::get_class);
         let mut rows = div()
             .grid()
@@ -662,11 +745,16 @@ impl ConfigView {
                                     .text_sm()
                                     .font_weight(FontWeight::MEDIUM)
                                     .text_color(if added > 0 { p.accent_hot } else { p.text })
-                                    .child(attr.name.clone()),
+                                    .child(crate::stat_labels::attribute_name(
+                                        &attr.key, &attr.name,
+                                    )),
                             )
                             .child(label(
                                 SharedString::from(format!("attribute-base-{key}")),
-                                format!("Base {base:.0}"),
+                                trf(
+                                    "planner.config.attribute_base",
+                                    &[("base", format!("{:.0}", base))],
+                                ),
                                 p.faint,
                             )),
                     )
@@ -710,7 +798,15 @@ impl ConfigView {
                                             .child("−"),
                                     )
                                     .disabled(added == 0)
-                                    .accessibility_label(format!("Decrease {}", attr.name))
+                                    .accessibility_label(trf(
+                                        "planner.common.decrease",
+                                        &[(
+                                            "0",
+                                            crate::stat_labels::attribute_name(
+                                                &attr.key, &attr.name,
+                                            ),
+                                        )],
+                                    ))
                                     .on_click(cx.listener(move |this, event, _, cx| {
                                         let count = allocation_step(event, added);
                                         this.edit(cx, |snapshot| {
@@ -745,7 +841,15 @@ impl ConfigView {
                                             .child("+"),
                                     )
                                     .disabled(remaining == 0)
-                                    .accessibility_label(format!("Increase {}", attr.name))
+                                    .accessibility_label(trf(
+                                        "planner.common.increase",
+                                        &[(
+                                            "0",
+                                            crate::stat_labels::attribute_name(
+                                                &attr.key, &attr.name,
+                                            ),
+                                        )],
+                                    ))
                                     .on_click(cx.listener(move |this, event, _, cx| {
                                         let count = allocation_step(event, remaining);
                                         this.edit(cx, |snapshot| {
@@ -757,24 +861,128 @@ impl ConfigView {
             );
         }
         attributes = attributes.child(rows);
-        div().flex().flex_col().gap_4()
-            .child(div().grid().grid_cols(if logical_width >= 768. { 2 } else { 1 }).gap_4()
-                .child(panel("config-class","Class",cx).child(help("The class this build is based on.",cx))
-                    .child(Select::new(&self.class).planner_style(cx).placeholder("Select a class…").search_placeholder("Search class…").accessibility_label("Class").w_full()))
-                .child(panel("config-level","Level",cx).child(help("Sets how many attribute and skill points you have.",cx))
-                    .child(div().flex().items_center().gap_3().child(self.level_control(window, cx)).child(self.number(NumberField::Level,"Character level",cx)))))
-            .child(panel_with_trailing("config-difficulty","Difficulty",label("difficulty-penalty",format!("{}% all resistances",data::game_config().difficulties.iter().find(|difficulty|difficulty.id==snapshot.difficulty).map(|difficulty|difficulty.resist_penalty).unwrap_or(0.)),if snapshot.difficulty=="normal" {p.muted}else{p.negative}),cx).child(help("Higher difficulties cut every resistance, which lowers survivability and any damage that scales off resistances.",cx))
-                .child(Select::new(&self.difficulty).planner_style(cx).placeholder("Select difficulty…").search_placeholder("Search difficulty…").accessibility_label("Difficulty").w_full()))
+        div()
+            .flex()
+            .flex_col()
+            .gap_4()
+            .child(
+                div()
+                    .grid()
+                    .grid_cols(if logical_width >= 768. { 2 } else { 1 })
+                    .gap_4()
+                    .child(
+                        panel("config-class", tr("planner.common.class"), cx)
+                            .child(help(tr("planner.config.class_help"), cx))
+                            .child(
+                                Select::new(&self.class)
+                                    .planner_style(cx)
+                                    .placeholder(tr("planner.config.select_class"))
+                                    .search_placeholder(tr("planner.config.search_class"))
+                                    .accessibility_label(tr("planner.common.class"))
+                                    .w_full(),
+                            ),
+                    )
+                    .child(
+                        panel("config-level", tr("planner.common.level"), cx)
+                            .child(help(tr("planner.config.level_help"), cx))
+                            .child(
+                                div()
+                                    .flex()
+                                    .items_center()
+                                    .gap_3()
+                                    .child(self.level_control(window, cx))
+                                    .child(self.number(
+                                        NumberField::Level,
+                                        tr("planner.config.character_level"),
+                                        cx,
+                                    )),
+                            ),
+                    ),
+            )
+            .child(
+                panel_with_trailing(
+                    "config-difficulty",
+                    tr("planner.common.difficulty"),
+                    label(
+                        "difficulty-penalty",
+                        trf(
+                            "planner.config.all_resistances",
+                            &[(
+                                "0",
+                                (data::game_config()
+                                    .difficulties
+                                    .iter()
+                                    .find(|difficulty| difficulty.id == snapshot.difficulty)
+                                    .map(|difficulty| difficulty.resist_penalty)
+                                    .unwrap_or(0.))
+                                .to_string(),
+                            )],
+                        ),
+                        if snapshot.difficulty == "normal" {
+                            p.muted
+                        } else {
+                            p.negative
+                        },
+                    ),
+                    cx,
+                )
+                .child(help(tr("planner.config.difficulty_help"), cx))
+                .child(
+                    Select::new(&self.difficulty)
+                        .planner_style(cx)
+                        .placeholder(tr("planner.config.select_difficulty"))
+                        .search_placeholder(tr("planner.config.search_difficulty"))
+                        .accessibility_label(tr("planner.common.difficulty"))
+                        .w_full(),
+                ),
+            )
             .child(attributes)
-            .child(panel("config-subskill-points", "Sub-skill points", cx)
-                .child(help("Point budget for each skill subtree. Default: 20. Range: 1–30. Existing allocations are kept when you lower the limit.", cx))
-                .child(div().flex().items_center().justify_between().gap_3()
-                    .child(div().child("Maximum points per subtree"))
-                    .child(self.number(NumberField::SubskillPoints, "Maximum sub-skill points", cx))))
-            .child(panel("config-charms","Charm Inventory",cx).child(help("Whether your character has unlocked the extra charm cell in-game.",cx))
-                .child(Checkbox::new("extra-charm-slot").checked(self.session.read(cx).state().settings.extra_charm_slot).label("Extra charm slot unlocked")
-                    .on_click(cx.listener(|this,checked:&bool,_,cx|this.session.update(cx,|session,cx| {let mut settings=session.state().settings.clone();settings.extra_charm_slot = *checked;session.set_settings(settings);cx.notify();}))))
-                .child(div().pl_6().mt_1().text_size(rems(12. / 13.)).text_color(p.muted).child("Adds the unlockable 30th cell to the charm grid in the Gear tab. Stored on this device, shared by all builds.")))
+            .child(
+                panel(
+                    "config-subskill-points",
+                    tr("planner.config.subskill_points"),
+                    cx,
+                )
+                .child(help(tr("planner.config.subskill_help"), cx))
+                .child(
+                    div()
+                        .flex()
+                        .items_center()
+                        .justify_between()
+                        .gap_3()
+                        .child(div().child(tr("planner.config.maximum_subtree")))
+                        .child(self.number(
+                            NumberField::SubskillPoints,
+                            tr("planner.config.maximum_subskills"),
+                            cx,
+                        )),
+                ),
+            )
+            .child(
+                panel("config-charms", tr("planner.config.charm_inventory"), cx)
+                    .child(help(tr("planner.config.charm_help"), cx))
+                    .child(
+                        Checkbox::new("extra-charm-slot")
+                            .checked(self.session.read(cx).state().settings.extra_charm_slot)
+                            .label(tr("planner.config.extra_charm"))
+                            .on_click(cx.listener(|this, checked: &bool, _, cx| {
+                                this.session.update(cx, |session, cx| {
+                                    let mut settings = session.state().settings.clone();
+                                    settings.extra_charm_slot = *checked;
+                                    session.set_settings(settings);
+                                    cx.notify();
+                                })
+                            })),
+                    )
+                    .child(
+                        div()
+                            .pl_6()
+                            .mt_1()
+                            .text_size(rems(12. / 13.))
+                            .text_color(p.muted)
+                            .child(tr("planner.config.extra_charm_help")),
+                    ),
+            )
     }
 
     fn conditions(&self, enemy: bool, small: bool, cx: &Context<Self>) -> Div {
@@ -783,15 +991,15 @@ impl ConfigView {
         let (id, title, subtitle, conditions) = if enemy {
             (
                 "config-enemy",
-                "Enemy Conditions",
-                "Conditions on the target",
+                tr("planner.config.enemy_conditions"),
+                tr("planner.config.target_conditions"),
                 ENEMY_CONDITIONS,
             )
         } else {
             (
                 "config-player",
-                "Player Conditions",
-                "Self-state flags",
+                tr("planner.config.player_conditions"),
+                tr("planner.config.self_flags"),
                 PLAYER_CONDITIONS,
             )
         };
@@ -815,7 +1023,7 @@ impl ConfigView {
             rows = rows.child(
                 tile(checked, cx).child(
                     Checkbox::new(SharedString::from(format!("{id}-{key}")))
-                        .label(name)
+                        .label(tr(name))
                         .checked(checked)
                         .text_color(if color_key.is_empty() {
                             if checked { p.accent_hot } else { p.text }
@@ -863,13 +1071,70 @@ impl ConfigView {
     }
 
     fn resistances(&self, small: bool, cx: &Context<Self>) -> Div {
-        panel_with_trailing("config-resistances","Enemy Resistances",count_badge("resistance-count",["fire","cold","lightning","poison","arcane"].into_iter().filter(|key|self.session.read(cx).snapshot().enemy_resistances.contains_key(*key)).count(),Some(5),cx),cx)
-            .child(help("Per-element resistance % the target has. Damage modifier = 1 − (Enemy Res × (1 − Ignore)). 100% Ignore fully bypasses resistance; lower values help proportionally even against immune targets.",cx))
-            .child(div().grid().grid_cols(if small { 4 } else { 2 }).gap_2().children([("fire","Fire"),("cold","Cold"),("lightning","Lightning"),("poison","Poison"),("arcane","Arcane")].into_iter().map(|(key,name)| {
-                tile(false,cx).flex().items_center().justify_between().gap_2()
-                    .child(label(SharedString::from(format!("res-label-{key}")),name,condition_color(key,cx)))
-                    .child(div().flex().items_center().gap_1().child(self.number(NumberField::Resistance(key.into()),format!("Enemy {name} resistance"),cx)).child("%"))
-            })))
+        panel_with_trailing(
+            "config-resistances",
+            tr("planner.config.enemy_resistances"),
+            count_badge(
+                "resistance-count",
+                ["fire", "cold", "lightning", "poison", "arcane"]
+                    .into_iter()
+                    .filter(|key| {
+                        self.session
+                            .read(cx)
+                            .snapshot()
+                            .enemy_resistances
+                            .contains_key(*key)
+                    })
+                    .count(),
+                Some(5),
+                cx,
+            ),
+            cx,
+        )
+        .child(help(tr("planner.config.enemy_resistance_help"), cx))
+        .child(
+            div()
+                .grid()
+                .grid_cols(if small { 4 } else { 2 })
+                .gap_2()
+                .children(
+                    [
+                        ("fire", tr("planner.common.fire")),
+                        ("cold", tr("planner.common.cold")),
+                        ("lightning", tr("planner.common.lightning")),
+                        ("poison", tr("planner.common.poison")),
+                        ("arcane", tr("planner.common.arcane")),
+                    ]
+                    .into_iter()
+                    .map(|(key, name)| {
+                        tile(false, cx)
+                            .flex()
+                            .items_center()
+                            .justify_between()
+                            .gap_2()
+                            .child(label(
+                                SharedString::from(format!("res-label-{key}")),
+                                name,
+                                condition_color(key, cx),
+                            ))
+                            .child(
+                                div()
+                                    .flex()
+                                    .items_center()
+                                    .gap_1()
+                                    .child(self.number(
+                                        NumberField::Resistance(key.into()),
+                                        trf(
+                                            "planner.config.enemy_resistance",
+                                            &[("name", (name).to_string())],
+                                        ),
+                                        cx,
+                                    ))
+                                    .child("%"),
+                            )
+                    }),
+                ),
+        )
     }
 
     fn buffs(&self, cx: &Context<Self>) -> Div {
@@ -886,7 +1151,7 @@ impl ConfigView {
             .collect::<Vec<_>>();
         let mut card = panel_with_trailing(
             "config-buffs",
-            "Active Buffs",
+            tr("planner.config.active_buffs"),
             count_badge(
                 "buff-count",
                 buffs
@@ -904,12 +1169,9 @@ impl ConfigView {
             ),
             cx,
         )
-        .child(help(
-            "Enable buffs you have cast and are currently active.",
-            cx,
-        ));
+        .child(help(tr("planner.config.buffs_help"), cx));
         if buffs.is_empty() {
-            return card.child(empty("No buffs available for this class.", cx));
+            return card.child(empty(tr("planner.config.no_buffs"), cx));
         }
         for skill in buffs {
             let key = skill.id.clone();
@@ -971,7 +1233,7 @@ impl ConfigView {
         }
         let mut card = panel_with_trailing(
             "config-aura",
-            "Active Aura",
+            tr("planner.config.active_aura"),
             count_badge(
                 "aura-count",
                 usize::from(snapshot.active_aura_id.is_some())
@@ -990,14 +1252,14 @@ impl ConfigView {
             ),
             cx,
         )
-        .child(help("Select the single aura you are running.", cx));
+        .child(help(tr("planner.config.aura_help"), cx));
         if skills.is_empty() {
-            card = card.child(empty("No auras available for this class.", cx));
+            card = card.child(empty(tr("planner.config.no_auras"), cx));
         } else {
             card = card.child(
                 tile(snapshot.active_aura_id.is_none(), cx).mb_2().child(
                     Radio::new("aura-none")
-                        .label("None")
+                        .label(tr("planner.common.none"))
                         .checked(snapshot.active_aura_id.is_none())
                         .on_click(cx.listener(|this, _, _, cx| {
                             this.edit(cx, |snapshot| snapshot.active_aura_id = None)
@@ -1025,7 +1287,7 @@ impl ConfigView {
         if !merc_auras.is_empty() {
             card = card.child(div().my_3().child(label(
                 "config-merc-aura-label",
-                "Mercenary",
+                tr("planner.common.mercenary"),
                 cx.global::<TooltipTheme>().accent_hot,
             )));
             for (key, (name, item, level)) in merc_auras {
@@ -1040,9 +1302,16 @@ impl ConfigView {
                         .child(
                             Checkbox::new(SharedString::from(format!("config-merc-aura-{key}")))
                                 .checked(enabled)
-                                .label(format!(
-                                    "{name} · Level {}",
-                                    crate::build_panel::format_range(level, false)
+                                .label(trf(
+                                    "planner.config.aura_level",
+                                    &[
+                                        ("name", (name).to_string()),
+                                        (
+                                            "0",
+                                            (crate::build_panel::format_range(level, false))
+                                                .to_string(),
+                                        ),
+                                    ],
                                 ))
                                 .on_click(cx.listener(move |this, checked: &bool, _, cx| {
                                     this.edit(cx, |snapshot| {
@@ -1083,7 +1352,7 @@ impl ConfigView {
         }
         let mut card = panel_with_trailing(
             "config-blessings",
-            "Item Blessings",
+            tr("planner.config.item_blessings"),
             count_badge(
                 "blessing-count",
                 granted
@@ -1101,7 +1370,7 @@ impl ConfigView {
             ),
             cx,
         )
-        .child(help("Conditional item-granted effects", cx));
+        .child(help(tr("planner.config.blessings_help"), cx));
         for (key, skill) in granted {
             let checked = snapshot
                 .player_conditions
@@ -1190,7 +1459,13 @@ impl ConfigView {
                         format!("granted:{}", skill.id),
                         (
                             skill.name.clone(),
-                            format!("Every {}s", skill.proc_cooldown.unwrap_or(1.5).max(1.5)),
+                            trf(
+                                "planner.config.every_seconds",
+                                &[(
+                                    "0",
+                                    (skill.proc_cooldown.unwrap_or(1.5).max(1.5)).to_string(),
+                                )],
+                            ),
                         ),
                     );
                 }
@@ -1218,11 +1493,14 @@ impl ConfigView {
                         key,
                         (
                             skill.name.clone(),
-                            format!(
-                                "{}% · {} · Lv {rank} · {}",
-                                proc.chance,
-                                proc.trigger.replace("on_", ""),
-                                base.name
+                            trf(
+                                "planner.config.proc_summary",
+                                &[
+                                    ("0", (proc.chance).to_string()),
+                                    ("1", (proc.trigger.replace("on_", "")).to_string()),
+                                    ("rank", (rank).to_string()),
+                                    ("2", (base.name).to_string()),
+                                ],
                             ),
                         ),
                     );
@@ -1236,7 +1514,7 @@ impl ConfigView {
         );
         let mut card = panel_with_trailing(
             "config-procs",
-            "Procs",
+            tr("planner.common.procs"),
             count_badge(
                 "proc-count",
                 rows.iter()
@@ -1247,15 +1525,9 @@ impl ConfigView {
             ),
             cx,
         )
-        .child(help(
-            "Skills (and subtree nodes) that trigger another skill on hit / kill / cast.",
-            cx,
-        ));
+        .child(help(tr("planner.config.procs_help"), cx));
         if rows.is_empty() {
-            return card.child(empty(
-                "No proc skills, subtree nodes or item procs available.",
-                cx,
-            ));
+            return card.child(empty(tr("planner.config.no_procs"), cx));
         }
         card = card.child(
             div()
@@ -1265,10 +1537,10 @@ impl ConfigView {
                 .justify_between()
                 .child(label(
                     "kills-per-second-label",
-                    "Kills / sec",
+                    tr("planner.config.kills_sec"),
                     cx.global::<TooltipTheme>().faint,
                 ))
-                .child(self.number(NumberField::Kills, "Kills per second", cx)),
+                .child(self.number(NumberField::Kills, tr("planner.config.kills_second"), cx)),
         );
         for (key, name, detail) in rows {
             let checked = snapshot.proc_toggles.get(&key).copied().unwrap_or(false);
@@ -1314,15 +1586,59 @@ impl ConfigView {
             }
         }
         if !stacks.is_empty() {
-            content=content.child(panel_with_trailing("config-stacks","Combat Stacks",count_badge("stack-count",stacks.iter().filter(|(stack,max)|snapshot.stack_counts.get(&stack.key).copied().unwrap_or(*max)<*max).count(),None,cx),cx).child(help("How many stacks to assume are up. Builds start at their cap; drop the count to see a colder rotation.",cx))
-                .children(stacks.into_iter().map(|(stack,max)|tile(false,cx).flex().items_center().justify_between().gap_2().child(stack.name.clone())
-                    .child(div().flex().items_center().gap_1().child(self.number(NumberField::Stack(stack.key.clone()),format!("{} stacks",stack.name),cx)).child(format!("/ {max}"))))));
+            content = content.child(
+                panel_with_trailing(
+                    "config-stacks",
+                    tr("planner.config.combat_stacks"),
+                    count_badge(
+                        "stack-count",
+                        stacks
+                            .iter()
+                            .filter(|(stack, max)| {
+                                snapshot
+                                    .stack_counts
+                                    .get(&stack.key)
+                                    .copied()
+                                    .unwrap_or(*max)
+                                    < *max
+                            })
+                            .count(),
+                        None,
+                        cx,
+                    ),
+                    cx,
+                )
+                .child(help(tr("planner.config.stacks_help"), cx))
+                .children(stacks.into_iter().map(|(stack, max)| {
+                    tile(false, cx)
+                        .flex()
+                        .items_center()
+                        .justify_between()
+                        .gap_2()
+                        .child(stack.name.clone())
+                        .child(
+                            div()
+                                .flex()
+                                .items_center()
+                                .gap_1()
+                                .child(self.number(
+                                    NumberField::Stack(stack.key.clone()),
+                                    trf(
+                                        "planner.config.stack_count",
+                                        &[("0", (stack.name).to_string())],
+                                    ),
+                                    cx,
+                                ))
+                                .child(format!("/ {max}")),
+                        )
+                })),
+            );
         }
         let skills = data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""));
         let kinds = [
-            ("sentry", "Sentry"),
-            ("summon", "Summon"),
-            ("guardian", "Guardian"),
+            ("sentry", tr("planner.config.sentry")),
+            ("summon", tr("planner.config.summon")),
+            ("guardian", tr("planner.config.guardian")),
         ]
         .into_iter()
         .filter(|(_, tag)| {
@@ -1340,21 +1656,24 @@ impl ConfigView {
         .collect::<Vec<_>>();
         if !kinds.is_empty() {
             content = content.child(
-                panel("config-entity-rate", "Entity Attack Rate", cx)
-                    .child(help(
-                        "Base attacks/casts per second of the entities a skill fields.",
-                        cx,
-                    ))
+                panel("config-entity-rate", tr("planner.config.entity_rate"), cx)
+                    .child(help(tr("planner.config.entity_help"), cx))
                     .children(kinds.into_iter().map(|(key, name)| {
                         div()
                             .mb_2()
                             .flex()
                             .items_center()
                             .justify_between()
-                            .child(format!("{name} / sec"))
+                            .child(trf(
+                                "planner.config.entity_per_second",
+                                &[("name", (name).to_string())],
+                            ))
                             .child(self.number(
                                 NumberField::Entity(key.into()),
-                                format!("{name} attacks per second"),
+                                trf(
+                                    "planner.config.entity_attacks",
+                                    &[("name", (name).to_string())],
+                                ),
                                 cx,
                             ))
                     })),
@@ -1391,28 +1710,67 @@ impl ConfigView {
         Some(
             panel_with_trailing(
                 "config-projectiles",
-                "Skill Projectile Counts",
+                tr("planner.config.projectiles"),
                 count_badge(
                     "projectile-count",
-                    skills.iter().filter(|skill| snapshot.skill_projectiles.contains_key(&skill.id)).count(),
+                    skills
+                        .iter()
+                        .filter(|skill| snapshot.skill_projectiles.contains_key(&skill.id))
+                        .count(),
                     None,
                     cx,
                 ),
                 cx,
             )
-            .child(help("How many projectiles a skill fires per cast. Multiplies that skill's per-cast damage and DPS. Skills start at the count the game gives them; clear the field to go back to it.", cx))
-            .child(div().grid().grid_cols(if small { 2 } else { 1 }).gap_2().children(
-                skills.into_iter().map(|skill| {
-                    let overridden = snapshot.skill_projectiles.get(&skill.id).is_some_and(|value| *value != skill.base_projectiles.unwrap_or(1));
-                    let learned = snapshot.skill_ranks.get(&skill.id).copied().unwrap_or(0) > 0;
-                    tile(overridden, cx)
-                        .px_2p5()
-                        .when(!learned && !overridden, |view| view.opacity(0.6).border_color(p.border))
-                        .flex().items_center().justify_between().gap_2()
-                        .child(skill_caption(skill, 28.).text_color(if overridden { p.accent_hot } else { p.text }))
-                        .child(div().flex().items_center().gap_1().child(self.number(NumberField::Projectile(skill.id.clone()), format!("{} projectiles", skill.name), cx)).child(div().font_family(theme::MONO_FONT_FAMILY).text_size(rems(10. / 13.)).text_color(p.faint).child("×")))
-                }),
-            )),
+            .child(help(tr("planner.config.projectiles_help"), cx))
+            .child(
+                div()
+                    .grid()
+                    .grid_cols(if small { 2 } else { 1 })
+                    .gap_2()
+                    .children(skills.into_iter().map(|skill| {
+                        let overridden = snapshot
+                            .skill_projectiles
+                            .get(&skill.id)
+                            .is_some_and(|value| *value != skill.base_projectiles.unwrap_or(1));
+                        let learned = snapshot.skill_ranks.get(&skill.id).copied().unwrap_or(0) > 0;
+                        tile(overridden, cx)
+                            .px_2p5()
+                            .when(!learned && !overridden, |view| {
+                                view.opacity(0.6).border_color(p.border)
+                            })
+                            .flex()
+                            .items_center()
+                            .justify_between()
+                            .gap_2()
+                            .child(skill_caption(skill, 28.).text_color(if overridden {
+                                p.accent_hot
+                            } else {
+                                p.text
+                            }))
+                            .child(
+                                div()
+                                    .flex()
+                                    .items_center()
+                                    .gap_1()
+                                    .child(self.number(
+                                        NumberField::Projectile(skill.id.clone()),
+                                        trf(
+                                            "planner.config.skill_projectiles",
+                                            &[("0", (skill.name).to_string())],
+                                        ),
+                                        cx,
+                                    ))
+                                    .child(
+                                        div()
+                                            .font_family(theme::MONO_FONT_FAMILY)
+                                            .text_size(rems(10. / 13.))
+                                            .text_color(p.faint)
+                                            .child("×"),
+                                    ),
+                            )
+                    })),
+            ),
         )
     }
 }
@@ -1441,17 +1799,96 @@ impl Render for ConfigView {
                     });
                 }
             })
-            .id("configuration").track_focus(&self.focus).size_full().min_h_0().bg(cx.global::<TooltipTheme>().background)
-            .scrollbar_width(rems(if self.has_vertical_scroll { 10. / 13. } else { 0. }))
-            .child(div().p_6().flex().flex_col().gap_8()
-                .child(section_heading("config-heading","Setup · character & encounter","Configuration",cx))
-                .when_some(self.error.clone(),|view,error|view.child(div().text_color(cx.global::<TooltipTheme>().negative).child(error)))
-                .child(div().flex().flex_col().gap_4().child(group_heading("config-character-heading","Character","Class, level and attribute allocation.",cx)).child(self.basics(logical_width,window,cx)))
-                .child(div().flex().flex_col().gap_4().child(group_heading("config-combat-heading","Encounter & Combat","Buffs, procs, enemy and player state, and manual overrides the calculator reads.",cx))
-                    .child(div().grid().grid_cols(if wide {2}else{1}).gap_4()
-                        .child(div().flex().flex_col().gap_4().child(self.buffs(cx)).child(self.aura(cx)).child(self.procs(cx)).when_some(self.blessings(cx),|view,panel|view.child(panel)).child(self.dynamic_overrides(cx)))
-                        .child(div().flex().flex_col().gap_4().child(self.conditions(true,small,cx)).child(self.conditions(false,small,cx)).child(self.resistances(small,cx)).when_some(self.projectiles(small,cx),|view,panel|view.child(panel)).child(self.custom_stats(cx))))))
-            .page_scroll(&self.scroll).overflow_y_scroll()
+            .id("configuration")
+            .track_focus(&self.focus)
+            .size_full()
+            .min_h_0()
+            .bg(cx.global::<TooltipTheme>().background)
+            .scrollbar_width(rems(if self.has_vertical_scroll {
+                10. / 13.
+            } else {
+                0.
+            }))
+            .child(
+                div()
+                    .p_6()
+                    .flex()
+                    .flex_col()
+                    .gap_8()
+                    .child(section_heading(
+                        "config-heading",
+                        tr("planner.config.setup"),
+                        tr("planner.config.title"),
+                        cx,
+                    ))
+                    .when_some(self.error.clone(), |view, error| {
+                        view.child(
+                            div()
+                                .text_color(cx.global::<TooltipTheme>().negative)
+                                .child(error),
+                        )
+                    })
+                    .child(
+                        div()
+                            .flex()
+                            .flex_col()
+                            .gap_4()
+                            .child(group_heading(
+                                "config-character-heading",
+                                tr("planner.common.character"),
+                                tr("planner.config.character_help"),
+                                cx,
+                            ))
+                            .child(self.basics(logical_width, window, cx)),
+                    )
+                    .child(
+                        div()
+                            .flex()
+                            .flex_col()
+                            .gap_4()
+                            .child(group_heading(
+                                "config-combat-heading",
+                                tr("planner.config.combat_title"),
+                                tr("planner.config.combat_help"),
+                                cx,
+                            ))
+                            .child(
+                                div()
+                                    .grid()
+                                    .grid_cols(if wide { 2 } else { 1 })
+                                    .gap_4()
+                                    .child(
+                                        div()
+                                            .flex()
+                                            .flex_col()
+                                            .gap_4()
+                                            .child(self.buffs(cx))
+                                            .child(self.aura(cx))
+                                            .child(self.procs(cx))
+                                            .when_some(self.blessings(cx), |view, panel| {
+                                                view.child(panel)
+                                            })
+                                            .child(self.dynamic_overrides(cx)),
+                                    )
+                                    .child(
+                                        div()
+                                            .flex()
+                                            .flex_col()
+                                            .gap_4()
+                                            .child(self.conditions(true, small, cx))
+                                            .child(self.conditions(false, small, cx))
+                                            .child(self.resistances(small, cx))
+                                            .when_some(
+                                                self.projectiles(small, cx),
+                                                |view, panel| view.child(panel),
+                                            )
+                                            .child(self.custom_stats(cx)),
+                                    ),
+                            ),
+                    ),
+            )
+            .page_scroll(&self.scroll)
+            .overflow_y_scroll()
     }
 }
 
@@ -1554,9 +1991,9 @@ fn parse_custom_text(text: &str) -> (Vec<CustomStat>, Vec<String>) {
         if let Some((stat_key, value)) = matched {
             stats.push(CustomStat { stat_key, value })
         } else {
-            issues.push(format!(
-                "line {} · Expected a value and known stat name, e.g. +50 Life.",
-                ix + 1
+            issues.push(trf(
+                "planner.config.invalid_custom_line",
+                &[("0", (ix + 1).to_string())],
             ))
         }
     }
@@ -1584,8 +2021,21 @@ fn help(text: &str, cx: &App) -> Div {
 fn count_badge(id: impl Into<ElementId>, count: usize, total: Option<usize>, cx: &App) -> Div {
     let p = cx.global::<TooltipTheme>();
     let text = match total {
-        Some(total) => format!("{count} / {total} active"),
-        None => format!("{count} override{}", if count == 1 { "" } else { "s" }),
+        Some(total) => trf(
+            "planner.config.active_count",
+            &[
+                ("count", (count).to_string()),
+                ("total", (total).to_string()),
+            ],
+        ),
+        None => trf(
+            if count == 1 {
+                "planner.config.override_one"
+            } else {
+                "planner.config.override_count"
+            },
+            &[("count", count.to_string())],
+        ),
     };
     label(id, text, if count > 0 { p.accent_hot } else { p.faint })
 }
@@ -1705,32 +2155,32 @@ fn group_heading(id: &'static str, title: &str, subtitle: &str, cx: &App) -> Div
 }
 
 const ENEMY_CONDITIONS: &[(&str, &str, &str)] = &[
-    ("burning", "Enemy is Burning", "fire"),
-    ("poisoned", "Enemy is Poisoned", "poison"),
-    ("frozenbite", "Enemy is Frost Bitten", "cold"),
-    ("stunned", "Enemy is Stunned", ""),
-    ("bleeding", "Enemy is Bleeding", ""),
-    ("shocked", "Enemy is Stasis", "lightning"),
-    ("deep_frozen", "Enemy is Deep Frozen", "cold"),
-    ("shadow_burn", "Enemy is Shadow Burned", "arcane"),
-    ("frozen", "Enemy is Frozen", "cold"),
-    ("slow", "Enemy is Slowed", ""),
-    ("low_life", "Enemy is Low Life", ""),
-    ("serrated_chains", "Enemy has Serrated Chains", ""),
-    ("lightning_break", "Enemy has Lightning Break", "lightning"),
-    ("fire_break", "Enemy has Fire Break", "fire"),
-    ("cold_break", "Enemy has Cold Break", "cold"),
-    ("arcane_break", "Enemy has Arcane Break", "arcane"),
-    ("poison_break", "Enemy has Poison Break", "poison"),
-    ("is_boss", "Target is Boss", ""),
+    ("burning", "planner.condition.burning", "fire"),
+    ("poisoned", "planner.condition.poisoned", "poison"),
+    ("frozenbite", "planner.condition.frostbitten", "cold"),
+    ("stunned", "planner.condition.stunned", ""),
+    ("bleeding", "planner.condition.bleeding", ""),
+    ("shocked", "planner.condition.stasis", "lightning"),
+    ("deep_frozen", "planner.condition.deep_frozen", "cold"),
+    ("shadow_burn", "planner.condition.shadow_burned", "arcane"),
+    ("frozen", "planner.condition.frozen", "cold"),
+    ("slow", "planner.condition.slowed", ""),
+    ("low_life", "planner.condition.low_life", ""),
+    ("serrated_chains", "planner.condition.serrated_chains", ""),
+    (
+        "lightning_break",
+        "planner.condition.lightning_break",
+        "lightning",
+    ),
+    ("fire_break", "planner.condition.fire_break", "fire"),
+    ("cold_break", "planner.condition.cold_break", "cold"),
+    ("arcane_break", "planner.condition.arcane_break", "arcane"),
+    ("poison_break", "planner.condition.poison_break", "poison"),
+    ("is_boss", "planner.condition.boss", ""),
 ];
 const PLAYER_CONDITIONS: &[(&str, &str, &str)] = &[
-    (
-        "crit_chance_below_40",
-        "Critical Strike Chance is below 40% (auto)",
-        "",
-    ),
-    ("life_below_40", "Current Life is below 40% of Maximum", ""),
+    ("crit_chance_below_40", "planner.condition.crit_below", ""),
+    ("life_below_40", "planner.condition.life_below", ""),
 ];
 
 #[cfg(test)]

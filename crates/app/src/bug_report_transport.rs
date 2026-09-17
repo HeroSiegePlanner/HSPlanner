@@ -1,5 +1,6 @@
 //! Wire-compatible with Tauri's bugReport.ts; no automatic retries or live-test submissions.
 use gpui_kit::http_client::{AsyncBody, HttpClient, HttpRequestExt, RedirectPolicy, Request};
+use hsplanner_ui::i18n::{tr, trf};
 use serde_json::{Value, json};
 use std::{io::Read, path::Path, sync::Arc, time::Duration};
 
@@ -25,16 +26,15 @@ pub(super) struct Shot {
 impl Shot {
     pub fn from_bytes(name: String, bytes: Vec<u8>) -> Result<Self, String> {
         if bytes.len() > MAX_BYTES {
-            return Err("Each screenshot must be at most 8 MB.".into());
+            return Err(tr("report.image_size").into());
         }
-        let format =
-            image::guess_format(&bytes).map_err(|_| "Choose a PNG, JPEG, WebP or GIF image.")?;
+        let format = image::guess_format(&bytes).map_err(|_| tr("report.image_format"))?;
         let (mime, extension) = match format {
             image::ImageFormat::Png => ("image/png", "png"),
             image::ImageFormat::Jpeg => ("image/jpeg", "jpg"),
             image::ImageFormat::WebP => ("image/webp", "webp"),
             image::ImageFormat::Gif => ("image/gif", "gif"),
-            _ => return Err("Choose a PNG, JPEG, WebP or GIF image.".into()),
+            _ => return Err(tr("report.image_format").into()),
         };
         // Decode with bounded dimensions before accepting untrusted image bytes.
         let mut reader = image::ImageReader::with_format(std::io::Cursor::new(&bytes), format);
@@ -43,9 +43,7 @@ impl Shot {
         limits.max_image_height = Some(16384);
         limits.max_alloc = Some(128 * 1024 * 1024);
         reader.limits(limits);
-        reader
-            .decode()
-            .map_err(|_| "The screenshot is damaged or too large to decode.")?;
+        reader.decode().map_err(|_| tr("report.image_damaged"))?;
         Ok(Self {
             id: uuid::Uuid::new_v4().to_string(),
             name,
@@ -57,10 +55,10 @@ impl Shot {
     pub fn from_path(path: &Path) -> Result<Self, String> {
         let mut bytes = Vec::new();
         std::fs::File::open(path)
-            .map_err(|_| "Could not open the selected image.")?
+            .map_err(|_| tr("report.image_open"))?
             .take((MAX_BYTES + 1) as u64)
             .read_to_end(&mut bytes)
-            .map_err(|_| "Could not read the selected image.")?;
+            .map_err(|_| tr("report.image_read"))?;
         Self::from_bytes(
             path.file_name()
                 .unwrap_or_default()
@@ -84,24 +82,31 @@ pub(super) struct Report {
 impl Report {
     pub fn validate(&self) -> Result<(), String> {
         for (label, value, min, max) in [
-            ("Title", &self.title, 3, 100),
-            ("Description", &self.description, 10, 1000),
-            ("Steps", &self.steps, 0, 600),
-            ("Expected result", &self.expected, 0, 400),
-            ("Contact", &self.contact, 0, 80),
+            (tr("report.title"), &self.title, 3, 100),
+            (tr("report.field_description"), &self.description, 10, 1000),
+            (tr("report.field_steps"), &self.steps, 0, 600),
+            (tr("report.field_expected"), &self.expected, 0, 400),
+            (tr("report.field_contact"), &self.contact, 0, 80),
         ] {
             let len = value.trim().chars().count();
             if len < min || len > max {
-                return Err(format!("{label}: enter {min}–{max} characters."));
+                return Err(trf(
+                    "report.validation",
+                    &[
+                        ("field", label.into()),
+                        ("min", min.to_string()),
+                        ("max", max.to_string()),
+                    ],
+                ));
             }
         }
         if self.kind > 2 {
-            return Err("Choose a report type.".into());
+            return Err(tr("report.choose_type").into());
         }
         if self.shots.len() > MAX_SHOTS
             || self.shots.iter().any(|shot| shot.bytes.len() > MAX_BYTES)
         {
-            return Err("Attach up to 3 images, at most 8 MB each.".into());
+            return Err(tr("report.images_limit").into());
         }
         Ok(())
     }
@@ -165,9 +170,9 @@ impl Report {
 fn status_error(status: u16) -> Result<(), String> {
     match status {
         200..=299 => Ok(()),
-        429 => Err("Too many reports. Try again in a minute.".into()),
-        500..=599 => Err("The report server had a problem. Try again shortly.".into()),
-        _ => Err(format!("Sending the report failed ({status}).")),
+        429 => Err(tr("report.rate_limited").into()),
+        500..=599 => Err(tr("report.server_failed").into()),
+        _ => Err(trf("report.send_failed", &[("status", status.to_string())])),
     }
 }
 pub(super) async fn send(
@@ -185,11 +190,11 @@ pub(super) async fn send(
         .follow_redirects(RedirectPolicy::NoFollow)
         .timeout(Duration::from_secs(30))
         .body(AsyncBody::from(report.multipart(&boundary)))
-        .map_err(|_| "Invalid report destination configuration.")?;
+        .map_err(|_| tr("report.destination_invalid"))?;
     let response = http
         .send(request)
         .await
-        .map_err(|_| "Could not confirm delivery. Check your connection before trying again.")?;
+        .map_err(|_| tr("report.delivery_unconfirmed"))?;
     status_error(response.status().as_u16())
 }
 

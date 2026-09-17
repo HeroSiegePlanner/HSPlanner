@@ -19,6 +19,7 @@ pub struct Draft {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Settings {
+    pub language: String,
     pub auto_save: bool,
     pub number_scale: String,
     pub extra_charm_slot: bool,
@@ -27,6 +28,7 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Self {
+            language: "en".into(),
             auto_save: true,
             number_scale: "billions".into(),
             extra_charm_slot: true,
@@ -443,6 +445,28 @@ impl Session {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn older_settings_default_to_english_and_language_survives_storage() {
+        let old: Settings = serde_json::from_str(r#"{"autoSave":false,"uiZoom":1.25}"#).unwrap();
+        assert_eq!(old.language, "en");
+        assert!(!old.auto_save);
+        assert_eq!(old.ui_zoom, 1.25);
+        let directory = tempfile::tempdir().unwrap();
+        let (writer, state) = crate::storage::Writer::open(directory.path().into()).unwrap();
+        let mut session = Session::new(state);
+        let draft = serde_json::to_value(session.draft()).unwrap();
+        let mut settings = session.state().settings.clone();
+        settings.language = "ko".into();
+        session.set_settings(settings);
+        assert_eq!(serde_json::to_value(session.draft()).unwrap(), draft);
+        assert!(!session.has_undo());
+        writer.save(session.state()).unwrap();
+        writer.flush().unwrap();
+        drop(writer);
+        let (_, reopened) = crate::storage::Writer::open(directory.path().into()).unwrap();
+        assert_eq!(reopened.settings.language, "ko");
+    }
+
     #[test]
     fn profiles_preserve_local_fields_and_history_stops_at_document_boundaries() {
         let mut session = Session::new(WorkspaceState::default());

@@ -136,20 +136,24 @@ impl Render for DebugOverlay {
                     .py_1()
                     .border_b_1()
                     .border_color(p.border)
-                    .child(div().text_color(p.accent).child("DEBUG"))
+                    .child(
+                        div()
+                            .text_color(p.accent)
+                            .child(crate::i18n::tr("debug.title")),
+                    )
                     .child(div().flex_1().min_w_0().truncate().child(summary))
                     .child(
                         Button::new("debug-copy")
                             .planner_style(cx)
                             .small()
-                            .label("Copy logs")
+                            .label(crate::i18n::tr("debug.copy"))
                             .on_click(move |_, _, cx| {
                                 cx.write_to_clipboard(ClipboardItem::new_string(copy_text.clone()))
                             }),
                     )
                     .child(
                         crate::controls::icon_button("debug-close", "×", false, cx)
-                            .accessibility_label("Close debug overlay")
+                            .accessibility_label(crate::i18n::tr("debug.close"))
                             .on_click(cx.listener(|this, _, _, cx| this.toggle(cx))),
                     ),
             )
@@ -175,7 +179,7 @@ impl Render for DebugOverlay {
                     .border_t_1()
                     .border_color(p.border)
                     .text_color(p.faint)
-                    .child("newest first · overlay refresh 2/s · cmd-shift-d"),
+                    .child(crate::i18n::tr("debug.help")),
             )
     }
 }

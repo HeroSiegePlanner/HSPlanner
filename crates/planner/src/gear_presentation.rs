@@ -3,9 +3,9 @@ use super::*;
 use crate::gear_stash::{self, StashRow};
 use crate::item_tooltip;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
-use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::components::{panel, panel_with_trailing, section_heading};
 use hsplanner_ui::controls::segment;
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::{
     collections::HashMap,
@@ -112,12 +112,7 @@ impl GearView {
         if self.choosing {
             self.prepare_item_picker(window, cx);
         }
-        let title = data::game_config()
-            .slots
-            .iter()
-            .flatten()
-            .find(|s| s.key == self.slot)
-            .map_or_else(|| self.slot.clone(), |s| s.name.clone());
+        let slot_key = self.slot.clone();
         let owner = cx.entity();
         let window_handle = window.window_handle();
         let editor = cx.new(|cx: &mut Context<GearEditor>| GearEditor {
@@ -179,7 +174,7 @@ impl GearView {
                                         .text_color(palette.faint)
                                         .child(hsplanner_ui::tooltip_text::TooltipText::new(
                                             "gear-slot-eyebrow",
-                                            "GEAR SLOT",
+                                            tr("gear.slot"),
                                             0.12,
                                         )),
                                 ),
@@ -189,7 +184,7 @@ impl GearView {
                                 .text_size(rems(17. / 13.))
                                 .font_weight(FontWeight::SEMIBOLD)
                                 .text_color(palette.text)
-                                .child(title.clone()),
+                                .child(gear_stash::slot_label(&slot_key)),
                         ),
                 );
             dialog
@@ -255,12 +250,7 @@ impl GearView {
         let item = inventory.get(key);
         let equipped_ids = item_tooltip::equipped_ids(inventory);
         let base = item.and_then(|i| data::get_item(&i.base_id));
-        let name = data::game_config()
-            .slots
-            .iter()
-            .flatten()
-            .find(|s| s.key == key)
-            .map_or(key, |s| s.name.as_str());
+        let name = gear_stash::slot_label(key);
         let locked = key == "offhand"
             && inventory
                 .get("weapon")
@@ -278,7 +268,14 @@ impl GearView {
         });
         let label = format!(
             "{name}: {}",
-            base.map_or(if locked { "locked" } else { "empty" }, |b| b.name.as_str())
+            base.map_or(
+                if locked {
+                    tr("gear.locked")
+                } else {
+                    tr("gear.empty")
+                },
+                |b| b.name.as_str()
+            )
         );
         let charm = key.starts_with("charm_");
         let key = key.to_owned();
@@ -328,9 +325,9 @@ impl GearView {
                                 .font_family(theme::MONO_FONT_FAMILY)
                                 .text_center()
                                 .child(if locked {
-                                    "2H".into()
+                                    tr("gear.two_handed_short").into()
                                 } else {
-                                    empty.unwrap_or(name).to_uppercase()
+                                    empty.unwrap_or(&name).to_uppercase()
                                 }),
                         )
                     })
@@ -395,10 +392,15 @@ impl GearView {
             .count();
         let row = || div().flex().gap_3().items_start();
         let col = |width: f32| div().w(rems(width / 13.)).flex().justify_center();
-        let relics =
-            div().flex().flex_col().gap_2().children((1..=5).map(|n| {
-                self.slot_cell(&format!("relic_{n}"), 44., 44., Some(&format!("R{n}")), cx)
-            }));
+        let relics = div().flex().flex_col().gap_2().children((1..=5).map(|n| {
+            self.slot_cell(
+                &format!("relic_{n}"),
+                44.,
+                44.,
+                Some(&trf("gear.relic_short", &[("n", (n).to_string())])),
+                cx,
+            )
+        }));
         let potions = div().flex().gap_2().children((1..=4).map(|n| {
             let key = format!("potion_{n}");
             let enabled = !snapshot
@@ -411,7 +413,13 @@ impl GearView {
                 .flex_col()
                 .items_center()
                 .gap_1()
-                .child(self.slot_cell(&key, 30., 96., Some(&format!("P{n}")), cx))
+                .child(self.slot_cell(
+                    &key,
+                    30.,
+                    96.,
+                    Some(&trf("gear.potion_short", &[("n", (n).to_string())])),
+                    cx,
+                ))
                 .when(snapshot.inventory.contains_key(&key), |view| {
                     view.child(
                         Button::new(SharedString::from(format!("enabled-{key}")))
@@ -447,14 +455,18 @@ impl GearView {
                                     inset: false,
                                 }])
                             })
-                            .accessibility_label(format!(
-                                "Potion {n} effects {}",
-                                if enabled { "on" } else { "off" }
+                            .accessibility_label(trf(
+                                if enabled {
+                                    "gear.potion_enabled"
+                                } else {
+                                    "gear.potion_disabled"
+                                },
+                                &[("n", n.to_string())],
                             ))
                             .cursor_tooltip(if enabled {
-                                "Effects applied — click to disable"
+                                tr("gear.effects_on")
                             } else {
-                                "Effects off — click to enable"
+                                tr("gear.effects_off")
                             })
                             .on_click(cx.listener(move |this, _, _, cx| {
                                 this.session.update(cx, |session, cx| {
@@ -472,7 +484,7 @@ impl GearView {
         }));
         panel_with_trailing(
             "equipment-panel",
-            "Equipment",
+            tr("gear.equipment"),
             div()
                 .flex()
                 .font_family(theme::MONO_FONT_FAMILY)
@@ -483,7 +495,10 @@ impl GearView {
                         .text_color(if count > 0 { p.accent_hot } else { p.muted })
                         .child(count.to_string()),
                 )
-                .child(format!(" / {equipment} EQUIPPED")),
+                .child(trf(
+                    "gear.equipped_count",
+                    &[("equipment", (equipment).to_string())],
+                )),
             cx,
         )
         .child(
@@ -514,7 +529,7 @@ impl GearView {
                                         "amulet",
                                         44.,
                                         44.,
-                                        Some("AMU"),
+                                        Some(tr("gear.amulet_short")),
                                         cx,
                                     ))),
                             )
@@ -545,7 +560,7 @@ impl GearView {
                                                 "ring_1",
                                                 44.,
                                                 44.,
-                                                Some("RING"),
+                                                Some(tr("gear.ring_short")),
                                                 cx,
                                             ))
                                             .child(self.slot_cell("belt", 68., 44., None, cx))
@@ -553,7 +568,7 @@ impl GearView {
                                                 "ring_2",
                                                 44.,
                                                 44.,
-                                                Some("RING"),
+                                                Some(tr("gear.ring_short")),
                                                 cx,
                                             )),
                                     )
@@ -646,7 +661,7 @@ impl GearView {
                         .border_color(theme::inventory_border(false))
                         .bg(theme::inventory_cell(false))
                         .disabled(key.is_none())
-                        .accessibility_label("Add charm…")
+                        .accessibility_label(tr("gear.add_charm"))
                         .on_click(cx.listener(move |this, _, window, cx| {
                             if let Some(key) = &key {
                                 this.open_slot(key.clone(), window, cx);
@@ -673,7 +688,7 @@ impl GearView {
         }
         panel_with_trailing(
             "charms-panel",
-            "Charm Inventory",
+            tr("gear.charm_inventory"),
             div()
                 .flex()
                 .font_family(theme::MONO_FONT_FAMILY)
@@ -713,7 +728,7 @@ impl GearView {
                 .px_3()
                 .pb_2()
                 .child(self.slot_cell(key, 64., 64., None, cx))
-                .child(div().text_color(p.negative).child("Does not fit"))
+                .child(div().text_color(p.negative).child(tr("gear.does_not_fit")))
         }))
     }
 
@@ -766,7 +781,7 @@ impl GearView {
             .when(groups.len() > 1, |view| {
                 view.child(chip(
                     "stash-group-all".into(),
-                    "All slots".into(),
+                    tr("gear.all_slots").into(),
                     None,
                     self.stash_group.is_none(),
                 ))
@@ -874,7 +889,7 @@ impl GearView {
                             .text_color(p.faint)
                             .child(format!(
                                 "{} · ★{} · {}◇",
-                                base.base_type,
+                                item_tooltip::base_type_label(&base.base_type),
                                 item.stars.unwrap_or(0),
                                 item.socket_count
                             )),
@@ -908,7 +923,10 @@ impl GearView {
             )
             .child(
                 hsplanner_ui::controls::icon_button("remove", "×", true, cx)
-                    .accessibility_label(format!("Remove {} from stash", base.name))
+                    .accessibility_label(trf(
+                        "gear.remove_named_from_stash",
+                        &[("arg0", (base.name).to_string())],
+                    ))
                     .on_click(cx.listener(move |this, _, _, cx| {
                         this.session.update(cx, |session, cx| {
                             session.edit(|draft| draft.stash.retain(|entry| entry.id != remove));
@@ -929,7 +947,7 @@ impl GearView {
         let p = cx.global::<TooltipTheme>();
         let session = self.session.read(cx);
         let empty = self.stash_rows.is_empty();
-        panel("stash-panel", "Stash", cx)
+        panel("stash-panel", tr("gear.stash"), cx)
             .min_w(rems(280. / 13.))
             .flex_1()
             .child(
@@ -955,9 +973,9 @@ impl GearView {
                     .when(empty, |v| {
                         v.child(div().px_3().py_8().text_color(p.muted).child(
                             if session.draft().stash.is_empty() {
-                                "Your stash is empty. Save an item from its editor."
+                                tr("gear.stash_empty")
                             } else {
-                                "No matching items."
+                                tr("gear.no_matching_items")
                             },
                         ))
                     }),
@@ -974,7 +992,7 @@ impl GearView {
             .count();
         panel_with_trailing(
             "merc-loadout",
-            "Loadout",
+            tr("gear.loadout"),
             div()
                 .flex()
                 .font_family(theme::MONO_FONT_FAMILY)
@@ -985,7 +1003,10 @@ impl GearView {
                         .text_color(if count > 0 { p.accent_hot } else { p.muted })
                         .child(count.to_string()),
                 )
-                .child(format!(" / {} EQUIPPED", slots.len())),
+                .child(trf(
+                    "gear.loadout_count",
+                    &[("arg0", (slots.len()).to_string())],
+                )),
             cx,
         )
         .child(
@@ -1000,12 +1021,7 @@ impl GearView {
                 )
                 .gap_1p5()
                 .children(slots.iter().map(|key| {
-                    let name = data::game_config()
-                        .slots
-                        .iter()
-                        .flatten()
-                        .find(|s| s.key == *key)
-                        .map_or(key.as_str(), |s| s.name.as_str());
+                    let name = gear_stash::slot_label(key);
                     let item = snapshot.merc_inventory.get(key);
                     let base = item.and_then(|i| data::get_item(&i.base_id));
                     let runeword = base.zip(item).and_then(|(base, item)| {
@@ -1032,10 +1048,16 @@ impl GearView {
                     let mut badges = Vec::new();
                     if let Some((base, item)) = base.zip(item) {
                         if let Some((min, max)) = base.defense_min.zip(base.defense_max) {
-                            badges.push(format!("DEF {min}–{max}"));
+                            badges.push(trf(
+                                "gear.defense_badge",
+                                &[("min", (min).to_string()), ("max", (max).to_string())],
+                            ));
                         }
                         if let Some((min, max)) = base.damage_min.zip(base.damage_max) {
-                            badges.push(format!("DMG {min}–{max}"));
+                            badges.push(trf(
+                                "gear.damage_badge",
+                                &[("min", (min).to_string()), ("max", (max).to_string())],
+                            ));
                         }
                         if item.socket_count > 0 {
                             badges.push(format!(
@@ -1048,7 +1070,7 @@ impl GearView {
                             badges.push("★".repeat(item.stars.unwrap_or(0) as usize));
                         }
                         if let Some(level) = base.requires_level.filter(|level| *level > 0) {
-                            badges.push(format!("L{level}"));
+                            badges.push(trf("item.level_short", &[("level", (level).to_string())]));
                         }
                     }
                     let target = key.clone();
@@ -1071,9 +1093,14 @@ impl GearView {
                         .when(base.is_none(), |view| view.border_dashed())
                         .accessibility_label(format!(
                             "{name}: {}",
-                            base.map_or(if locked { "locked" } else { "empty" }, |b| b
-                                .name
-                                .as_str())
+                            base.map_or(
+                                if locked {
+                                    tr("gear.locked")
+                                } else {
+                                    tr("gear.empty")
+                                },
+                                |b| b.name.as_str()
+                            )
                         ))
                         .child(
                             div()
@@ -1128,9 +1155,9 @@ impl GearView {
                                                         .or_else(|| base.map(|b| b.name.clone()))
                                                         .unwrap_or_else(|| {
                                                             if locked {
-                                                                "locked · 2H weapon equipped"
+                                                                tr("gear.locked_two_handed")
                                                             } else {
-                                                                "empty"
+                                                                tr("gear.empty")
                                                             }
                                                             .into()
                                                         }),
@@ -1142,9 +1169,19 @@ impl GearView {
                                                 .text_size(rems(10. / 13.))
                                                 .text_color(p.muted)
                                                 .child(if runeword.is_some() {
-                                                    format!("Runeword · {}", b.base_type)
+                                                    trf(
+                                                        "gear.runeword_base",
+                                                        &[(
+                                                            "arg0",
+                                                            item_tooltip::base_type_label(
+                                                                &b.base_type,
+                                                            )
+                                                            .to_owned(),
+                                                        )],
+                                                    )
                                                 } else {
-                                                    b.base_type.clone()
+                                                    item_tooltip::base_type_label(&b.base_type)
+                                                        .to_owned()
                                                 })
                                         })),
                                 )
@@ -1203,7 +1240,12 @@ impl GearView {
                                 .items_end()
                                 .justify_between()
                                 .gap_3()
-                                .child(section_heading("gear-heading", "Loadout", "Gear", cx))
+                                .child(section_heading(
+                                    "gear-heading",
+                                    tr("gear.loadout"),
+                                    tr("gear.gear"),
+                                    cx,
+                                ))
                                 .child(
                                     div()
                                         .flex()
@@ -1214,17 +1256,28 @@ impl GearView {
                                                 .text_size(rems(10. / 13.))
                                                 .font_family(theme::MONO_FONT_FAMILY)
                                                 .text_color(p.faint)
-                                                .child(format!(
-                                                    "{} items  ·  {} gems  ·  {} runes",
-                                                    data::data().items.len(),
-                                                    data::data().gems.len(),
-                                                    data::data().runes.len()
+                                                .child(trf(
+                                                    "gear.catalog_counts",
+                                                    &[
+                                                        (
+                                                            "arg0",
+                                                            (data::data().items.len()).to_string(),
+                                                        ),
+                                                        (
+                                                            "arg1",
+                                                            (data::data().gems.len()).to_string(),
+                                                        ),
+                                                        (
+                                                            "arg2",
+                                                            (data::data().runes.len()).to_string(),
+                                                        ),
+                                                    ],
                                                 )),
                                         )
                                         .child(
                                             hsplanner_ui::controls::command_button(
                                                 "import-screenshot",
-                                                "Import screenshot",
+                                                tr("gear.import_screenshot"),
                                                 hsplanner_ui::controls::ButtonTone::Neutral,
                                                 hsplanner_ui::controls::ButtonSize::Small,
                                                 cx,
@@ -1263,11 +1316,17 @@ fn stash_equip_targets(
 ) -> Vec<(&'static str, Option<String>)> {
     if base_type.eq_ignore_ascii_case("ring") {
         vec![
-            ("Ring 1…", target.as_ref().map(|_| "ring_1".into())),
-            ("Ring 2…", target.as_ref().map(|_| "ring_2".into())),
+            (
+                tr("gear.ring_one"),
+                target.as_ref().map(|_| "ring_1".into()),
+            ),
+            (
+                tr("gear.ring_two"),
+                target.as_ref().map(|_| "ring_2".into()),
+            ),
         ]
     } else {
-        vec![("Equip…", target)]
+        vec![(tr("gear.equip_dialog"), target)]
     }
 }
 

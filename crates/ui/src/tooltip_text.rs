@@ -42,7 +42,14 @@ impl TooltipText {
         Self {
             id: id.into(),
             text: text.into(),
-            tracking,
+            tracking: if matches!(
+                crate::i18n::language(),
+                crate::i18n::Language::Korean | crate::i18n::Language::Chinese
+            ) {
+                0.
+            } else {
+                tracking
+            },
             glow: None,
             wrap: false,
         }

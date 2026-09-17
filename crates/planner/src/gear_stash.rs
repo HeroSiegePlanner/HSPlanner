@@ -4,6 +4,7 @@ use hsplanner_build::{
     library::StashEntry,
 };
 use hsplanner_engine::calc::{data, types::ItemBase};
+use hsplanner_ui::i18n::trf;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum StashRow {
@@ -44,6 +45,21 @@ pub(crate) fn stash_groups(entries: &[StashEntry]) -> Vec<String> {
 
 /// Display name for a slot group: the first matching slot's name without its number.
 pub(crate) fn group_label(group: &str) -> String {
+    match group {
+        "helmet" => return crate::item_tooltip::base_type_label("Helmet").to_owned(),
+        "amulet" => return crate::item_tooltip::base_type_label("Amulet").to_owned(),
+        "weapon" => return crate::item_tooltip::base_type_label("Weapon").to_owned(),
+        "armor" => return crate::item_tooltip::base_type_label("Armor").to_owned(),
+        "offhand" => return crate::item_tooltip::base_type_label("Offhand").to_owned(),
+        "ring" => return crate::item_tooltip::base_type_label("Ring").to_owned(),
+        "belt" => return crate::item_tooltip::base_type_label("Belt").to_owned(),
+        "gloves" => return crate::item_tooltip::base_type_label("Gloves").to_owned(),
+        "boots" => return crate::item_tooltip::base_type_label("Boots").to_owned(),
+        "potion" => return crate::item_tooltip::base_type_label("Potion").to_owned(),
+        "charm" => return crate::item_tooltip::base_type_label("Charm").to_owned(),
+        "relic" => return crate::item_tooltip::base_type_label("Relic").to_owned(),
+        _ => {}
+    }
     data::game_config()
         .slots
         .iter()
@@ -55,6 +71,16 @@ pub(crate) fn group_label(group: &str) -> String {
                 .to_owned()
         })
         .unwrap_or_else(|| group.to_owned())
+}
+
+pub(crate) fn slot_label(key: &str) -> String {
+    match key.rsplit_once('_') {
+        Some((group, number)) if number.parse::<u32>().is_ok() => trf(
+            "gear.numbered_slot",
+            &[("slot", group_label(group)), ("number", number.to_owned())],
+        ),
+        _ => group_label(key),
+    }
 }
 
 /// Rows for the stash list: entries matching `query` (name or base type), grouped by slot

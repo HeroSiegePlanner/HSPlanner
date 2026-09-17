@@ -75,17 +75,20 @@ impl ImportView {
             files: true,
             directories: false,
             multiple: false,
-            prompt: Some("Import screenshot".into()),
+            prompt: Some(tr("gear.import_screenshot").into()),
         });
         cx.spawn(async move |this, cx| {
             let bytes = match paths.await {
                 Ok(Ok(Some(paths))) => match paths.first().map(std::fs::read) {
                     Some(Ok(bytes)) => Ok(Some(bytes)),
-                    Some(Err(error)) => Err(format!("Could not read the image: {error}")),
+                    Some(Err(error)) => Err(trf(
+                        "gear.image_read_error",
+                        &[("error", (error).to_string())],
+                    )),
                     None => Ok(None),
                 },
                 Ok(Ok(None)) => Ok(None),
-                _ => Err("Could not open the image picker.".into()),
+                _ => Err(tr("gear.image_picker_failed").into()),
             };
             let _ = this.update(cx, |this, cx| match bytes {
                 Ok(Some(bytes)) => this.analyze(bytes, cx),
@@ -115,7 +118,7 @@ impl ImportView {
             let _ = this.update(cx, |this, cx| match bytes {
                 Some(bytes) => this.analyze(bytes, cx),
                 None => {
-                    this.error = Some("Copy a tooltip screenshot first, then paste it.".into());
+                    this.error = Some(tr("gear.copy_screenshot").into());
                     cx.notify();
                 }
             });
@@ -177,7 +180,7 @@ impl ImportView {
             return;
         };
         let Some(slot) = self.target_slot(base, cx) else {
-            self.error = Some("No slot can take this item right now.".into());
+            self.error = Some(tr("gear.no_slot").into());
             cx.notify();
             return;
         };
@@ -247,8 +250,8 @@ impl Render for ImportView {
         let item = self.item();
         let base = item.as_ref().map(|(_, base)| *base);
         let subtitle = base.map_or_else(
-            || "Paste a tooltip screenshot or choose a file".to_owned(),
-            |base| format!("{} — {}", base.name, base.rarity),
+            || tr("gear.screenshot_prompt").to_owned(),
+            |base| format!("{} — {}", base.name, editor::rarity_label(&base.rarity)),
         );
         let target = base.and_then(|base| self.target_slot(base, cx));
         let slot_label = target.as_ref().and_then(|key| {
@@ -286,9 +289,9 @@ impl Render for ImportView {
                         modal_button(
                             "import-choose",
                             if self.busy {
-                                "Reading…"
+                                tr("gear.reading")
                             } else {
-                                "Choose image"
+                                tr("gear.choose_image")
                             },
                             ButtonTone::Neutral,
                             cx,
@@ -297,16 +300,21 @@ impl Render for ImportView {
                         .on_click(cx.listener(|this, _, _, cx| this.choose_file(cx))),
                     )
                     .child(
-                        modal_button("import-paste", "Paste image", ButtonTone::Neutral, cx)
-                            .disabled(self.busy)
-                            .on_click(cx.listener(|this, _, _, cx| this.paste(cx))),
+                        modal_button(
+                            "import-paste",
+                            tr("gear.paste_image"),
+                            ButtonTone::Neutral,
+                            cx,
+                        )
+                        .disabled(self.busy)
+                        .on_click(cx.listener(|this, _, _, cx| this.paste(cx))),
                     )
                     .child(
                         div()
                             .font_family(theme::MONO_FONT_FAMILY)
                             .text_size(rems(10. / 13.))
                             .text_color(p.faint)
-                            .child("from a file or the clipboard"),
+                            .child(tr("gear.image_source")),
                     ),
             );
         if let Some(image) = &self.image {
@@ -349,7 +357,10 @@ impl Render for ImportView {
                                 .text_size(rems(10. / 13.))
                                 .font_weight(FontWeight::SEMIBOLD)
                                 .text_color(p.accent_hot)
-                                .child(format!("MANUAL REVIEW ({})", warnings.len())),
+                                .child(trf(
+                                    "gear.manual_review",
+                                    &[("arg0", (warnings.len()).to_string())],
+                                )),
                         )
                         .children(warnings.iter().map(|line| line_row(line, p))),
                 );
@@ -358,7 +369,10 @@ impl Render for ImportView {
                 .child(
                     segment(
                         "import-debug",
-                        format!("Debug ({} lines)", result.lines.len()),
+                        trf(
+                            "gear.debug_lines",
+                            &[("arg0", (result.lines.len()).to_string())],
+                        ),
                         self.debug_open,
                         cx,
                     )
@@ -383,8 +397,8 @@ impl Render for ImportView {
             .flex()
             .flex_col()
             .child(modal_header(
-                modal_eyebrow("import-eyebrow", "Import"),
-                "Import from screenshot",
+                modal_eyebrow("import-eyebrow", tr("gear.import")),
+                tr("gear.import_title"),
                 Some(subtitle.into()),
                 cx,
             ))
@@ -394,7 +408,7 @@ impl Render for ImportView {
                     .child(
                         command_button(
                             "import-stash",
-                            "Add to stash",
+                            tr("gear.add_to_stash"),
                             ButtonTone::Neutral,
                             ButtonSize::Regular,
                             cx,
@@ -406,8 +420,8 @@ impl Render for ImportView {
                         modal_button(
                             "import-equip",
                             slot_label.map_or_else(
-                                || "Equip".to_owned(),
-                                |name| format!("Equip ({name})"),
+                                || tr("gear.equip").to_owned(),
+                                |name| trf("gear.equip_named", &[("name", (name).to_string())]),
                             ),
                             ButtonTone::Primary,
                             cx,

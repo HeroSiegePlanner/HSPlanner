@@ -1,10 +1,11 @@
 //! Local rank projection. Native rank maps retain counts, not JavaScript key order.
 use super::*;
 use hsplanner_build::session::Draft;
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::collections::HashSet;
 
-const ORDER_EXPLANATION: &str = "Display order follows skill prerequisites and class tree order. Saved ranks do not retain allocation history.";
+const ORDER_EXPLANATION: &str = "planner.progression.help";
 
 /// Tauri's rankPointOrder prerequisite repair, using authored class order in place
 /// of the insertion order lost by the native HashMap. Keep rank blocks compact.
@@ -332,8 +333,13 @@ fn render_bar(
                 ))
                 .track_focus(focus)
                 .role(accesskit::Role::Group)
-                .aria_label(format!(
-                    "Progression step {current} of {total}. {ORDER_EXPLANATION}"
+                .aria_label(trf(
+                    "planner.progression.step",
+                    &[
+                        ("current", current.to_string()),
+                        ("total", total.to_string()),
+                        ("explanation", tr(ORDER_EXPLANATION).to_owned()),
+                    ],
                 ))
                 .when(focus.is_focused(window), |bar| {
                     bar.border_color(p.accent_hot)
@@ -377,12 +383,12 @@ fn render_bar(
                         .flex_shrink_0()
                         .whitespace_nowrap()
                         .cursor_tooltip_view(|window, cx| {
-                            gpui_kit::component::tooltip::Tooltip::new(ORDER_EXPLANATION)
+                            gpui_kit::component::tooltip::Tooltip::new(tr(ORDER_EXPLANATION))
                                 .build(window, cx)
                         })
                         .child(caption(
                             "skills-progression-heading",
-                            "PROGRESSION",
+                            tr("planner.progression.heading"),
                             p.faint,
                         )),
                 )

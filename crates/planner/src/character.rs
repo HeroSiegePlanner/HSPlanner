@@ -5,6 +5,7 @@ use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
     build::BuildPerformance, data, defense, planner::PlannerPerformance, types::SkillSpec,
 };
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::{
     assets::class_portrait,
@@ -91,7 +92,7 @@ impl CharacterView {
                     .find(|build| &build.id == id)
             })
             .map(|build| build.name.as_str())
-            .unwrap_or("Unsaved build");
+            .unwrap_or(tr("planner.common.unsaved_build"));
         let class = snapshot.class_id.as_deref().and_then(data::get_class);
         let attr_spent: u32 = snapshot.allocated.values().sum();
         let skill_spent: u32 = snapshot.skill_ranks.values().sum();
@@ -141,18 +142,28 @@ impl CharacterView {
                                 .text_color(p.accent_hot)
                                 .child(name.to_owned()),
                         )
-                        .child(div().mt_1().child(caption_tracked(
-                            "character-identity",
-                            format!(
-                                "{} · Lv {} · Hero Lv {}",
-                                class.map(|c| c.name.as_str()).unwrap_or("No class"),
-                                snapshot.level,
-                                snapshot.allocated_tree_nodes.len()
-                            ),
-                            p.muted,
-                            11.,
-                            0.16,
-                        ))),
+                        .child(
+                            div().mt_1().child(caption_tracked(
+                                "character-identity",
+                                trf(
+                                    "planner.character.identity",
+                                    &[
+                                        (
+                                            "0",
+                                            (class
+                                                .map(|c| c.name.as_str())
+                                                .unwrap_or(tr("planner.common.no_class")))
+                                            .to_string(),
+                                        ),
+                                        ("1", (snapshot.level).to_string()),
+                                        ("2", (snapshot.allocated_tree_nodes.len()).to_string()),
+                                    ],
+                                ),
+                                p.muted,
+                                11.,
+                                0.16,
+                            )),
+                        ),
                 ),
             )
             .child(
@@ -161,21 +172,21 @@ impl CharacterView {
                     .gap_2()
                     .child(point_stat(
                         "attr-used",
-                        "Attr used",
+                        tr("planner.common.attr_used"),
                         attr_spent,
                         Some(snapshot.level * data::game_config().attribute_points_per_level),
                         cx,
                     ))
                     .child(point_stat(
                         "skill-used",
-                        "Skill used",
+                        tr("planner.common.skill_used"),
                         skill_spent,
                         Some(snapshot.level * data::game_config().skill_points_per_level),
                         cx,
                     ))
                     .child(point_stat(
                         "tree-used",
-                        "Tree nodes",
+                        tr("planner.common.tree_nodes"),
                         snapshot.allocated_tree_nodes.len() as u32,
                         None,
                         cx,
@@ -260,7 +271,10 @@ impl CharacterView {
                             )
                             .child(caption_tracked(
                                 key,
-                                definition.name.clone(),
+                                crate::stat_labels::attribute_name(
+                                    &definition.key,
+                                    &definition.name,
+                                ),
                                 p.faint,
                                 10.,
                                 0.18,
@@ -290,9 +304,12 @@ impl CharacterView {
                     .child(caption(
                         format!("{key}-delta"),
                         if delta > 0. {
-                            format!("+{delta:.0} added")
+                            trf(
+                                "planner.character.added",
+                                &[("delta", format!("{:.0}", delta))],
+                            )
                         } else {
-                            "base".into()
+                            tr("planner.common.base").into()
                         },
                         p.faint,
                         10.,
@@ -344,8 +361,13 @@ impl CharacterView {
             .and_then(|result| result.active_skill_name.as_deref())
             .or_else(|| main.map(|skill| skill.name.as_str()));
         let title = skill_name
-            .map(|name| format!("Total DPS · {name}"))
-            .unwrap_or_else(|| "Total DPS".into());
+            .map(|name| {
+                trf(
+                    "planner.character.skill_dps",
+                    &[("name", (name).to_string())],
+                )
+            })
+            .unwrap_or_else(|| tr("planner.common.total_dps").into());
         let average = result.and_then(|r| {
             r.damage
                 .as_ref()
@@ -411,9 +433,17 @@ impl CharacterView {
                         .children(
                             [
                                 ("character-average-hit", integer(hit), p.muted),
-                                ("character-average-label", " AVG HIT × ".into(), p.faint),
+                                (
+                                    "character-average-label",
+                                    tr("planner.common.average_hit_factor").into(),
+                                    p.faint,
+                                ),
                                 ("character-cast-rate", decimal(rate), p.muted),
-                                ("character-rate-label", " / SEC".into(), p.faint),
+                                (
+                                    "character-rate-label",
+                                    tr("planner.common.per_second").into(),
+                                    p.faint,
+                                ),
                             ]
                             .into_iter()
                             .map(|(id, text, color)| {
@@ -425,7 +455,7 @@ impl CharacterView {
                         ),
                     None => caption(
                         "character-rate-summary",
-                        "select a main skill to see the breakdown",
+                        tr("planner.character.select_main"),
                         p.faint,
                         11.,
                     ),
@@ -440,9 +470,9 @@ impl CharacterView {
                     .child(metric(
                         "crit-chance",
                         if is_spell {
-                            "Spell crit chance"
+                            tr("planner.common.spell_crit_chance")
                         } else {
-                            "Crit chance"
+                            tr("planner.common.crit_chance")
                         },
                         stat_text(result, crit_chance),
                         p.accent_hot,
@@ -451,9 +481,9 @@ impl CharacterView {
                     .child(metric(
                         "crit-damage",
                         if is_spell {
-                            "Spell crit damage"
+                            tr("planner.common.spell_crit_damage")
                         } else {
-                            "Crit damage"
+                            tr("planner.common.crit_damage")
                         },
                         stat_text(result, crit_damage),
                         p.text,
@@ -462,9 +492,9 @@ impl CharacterView {
                     .child(metric(
                         "rate",
                         if attack_rate {
-                            "Attack rate"
+                            tr("planner.common.attack_rate")
                         } else {
-                            "Cast rate"
+                            tr("planner.common.cast_rate")
                         },
                         rate.map(|v| format!("{}/s", decimal(v)))
                             .unwrap_or_else(|| "—".into()),
@@ -473,21 +503,21 @@ impl CharacterView {
                     ))
                     .child(metric(
                         "hit",
-                        "Hit damage",
+                        tr("planner.common.hit_damage"),
                         hit.map(integer_range).unwrap_or_else(|| "—".into()),
                         p.text,
                         cx,
                     ))
                     .child(metric(
                         "attack-speed",
-                        "Attack speed",
+                        tr("planner.common.attack_speed"),
                         stat_text(result, "increased_attack_speed"),
                         p.text,
                         cx,
                     ))
                     .child(metric(
                         "enhanced-damage",
-                        "Enhanced dmg",
+                        tr("planner.common.enhanced_damage"),
                         stat_text(result, "enhanced_damage"),
                         p.text,
                         cx,
@@ -498,9 +528,9 @@ impl CharacterView {
     fn defense(&self, result: Option<&BuildPerformance>, cx: &App) -> Div {
         let p = cx.global::<TooltipTheme>();
         let avoidance = [
-            ("block_chance", "block"),
-            ("dodge_chance", "dodge"),
-            ("dodge_spell_hits", "spell dodge"),
+            ("block_chance", tr("planner.common.block")),
+            ("dodge_chance", tr("planner.common.dodge")),
+            ("dodge_spell_hits", tr("planner.common.spell_dodge")),
         ]
         .into_iter()
         .filter_map(|(key, label)| {
@@ -511,19 +541,22 @@ impl CharacterView {
         let mut card =
             panel_with_trailing(
                 "character-defense",
-                "Resistances & Defense",
+                tr("planner.character.resistance_defense"),
                 caption(
                     "resistance-cap",
-                    format!(
-                        "Capped {}",
-                        decimal(
-                            result
-                                .and_then(|result| defense::effective_cap(
-                                    "fire_resistance",
-                                    &result.stats
-                                ))
-                                .unwrap_or(75.)
-                        )
+                    trf(
+                        "planner.character.capped",
+                        &[(
+                            "0",
+                            (decimal(
+                                result
+                                    .and_then(|result| {
+                                        defense::effective_cap("fire_resistance", &result.stats)
+                                    })
+                                    .unwrap_or(75.),
+                            ))
+                            .to_string(),
+                        )],
                     ),
                     p.faint,
                     10.,
@@ -539,13 +572,17 @@ impl CharacterView {
                     .border_color(p.accent_deep.opacity(0.25))
                     .child(caption(
                         "avoidance",
-                        format!(
-                            "Avoidance: {}",
-                            if avoidance.is_empty() {
-                                "—".into()
-                            } else {
-                                avoidance.join(" · ")
-                            }
+                        trf(
+                            "planner.character.avoidance",
+                            &[(
+                                "0",
+                                (if avoidance.is_empty() {
+                                    "—".into()
+                                } else {
+                                    avoidance.join(" · ")
+                                })
+                                .to_string(),
+                            )],
                         ),
                         p.muted,
                         10.,
@@ -575,11 +612,11 @@ impl CharacterView {
             );
         let mut resistance_rows = div().flex().flex_col().gap_2();
         for (key, label) in [
-            ("fire_resistance", "Fire"),
-            ("cold_resistance", "Cold"),
-            ("lightning_resistance", "Lightning"),
-            ("poison_resistance", "Poison"),
-            ("arcane_resistance", "Arcane"),
+            ("fire_resistance", tr("planner.common.fire")),
+            ("cold_resistance", tr("planner.common.cold")),
+            ("lightning_resistance", tr("planner.common.lightning")),
+            ("poison_resistance", tr("planner.common.poison")),
+            ("arcane_resistance", tr("planner.common.arcane")),
         ] {
             let value = stat_value(result, key).1;
             let cap = result
@@ -655,13 +692,13 @@ impl CharacterView {
             .flex_col()
             .gap(rems(1. / 13.))
             .child(defense_row(
-                "Life",
+                tr("planner.common.life"),
                 defense_stat_text(result, "life"),
                 theme::stat_color("life", cx),
                 cx,
             ))
             .child(defense_row(
-                "Mana",
+                tr("planner.common.mana"),
                 defense_stat_text(result, "mana"),
                 theme::stat_color("mana", cx),
                 cx,
@@ -677,9 +714,12 @@ impl CharacterView {
             }
         }
         for (key, label) in [
-            ("block_chance", "Block chance"),
-            ("physical_damage_reduction", "Phys reduction"),
-            ("movement_speed", "Movement speed"),
+            ("block_chance", tr("planner.common.block_chance")),
+            (
+                "physical_damage_reduction",
+                tr("planner.common.phys_reduction"),
+            ),
+            ("movement_speed", tr("planner.common.movement_speed")),
         ] {
             let armor = stat_value(result, "defense");
             defense_rows = defense_rows.child(
@@ -694,7 +734,10 @@ impl CharacterView {
                         |view| {
                             view.child(caption_tracked(
                                 "defense-armor-hint",
-                                format!("armor {}", formatted_stat(armor, "defense")),
+                                trf(
+                                    "planner.character.armor",
+                                    &[("0", (formatted_stat(armor, "defense")).to_string())],
+                                ),
                                 p.faint,
                                 10.,
                                 0.12,
@@ -722,8 +765,18 @@ impl CharacterView {
                 skills.iter().find(|skill| &skill.id == id).map(|skill| {
                     LoadoutEntry::skill(
                         skill,
-                        if ix == 0 { "Main" } else { "Active" },
-                        format!("Lv {}", snapshot.skill_ranks.get(id).unwrap_or(&0)),
+                        if ix == 0 {
+                            tr("planner.common.main")
+                        } else {
+                            tr("planner.common.active")
+                        },
+                        trf(
+                            "planner.common.level_value",
+                            &[(
+                                "0",
+                                (snapshot.skill_ranks.get(id).unwrap_or(&0)).to_string(),
+                            )],
+                        ),
                     )
                 })
             })
@@ -735,8 +788,14 @@ impl CharacterView {
         {
             active.push(LoadoutEntry::skill(
                 aura,
-                "Aura",
-                format!("Lv {}", snapshot.skill_ranks.get(&aura.id).unwrap_or(&0)),
+                tr("planner.common.aura"),
+                trf(
+                    "planner.common.level_value",
+                    &[(
+                        "0",
+                        (snapshot.skill_ranks.get(&aura.id).unwrap_or(&0)).to_string(),
+                    )],
+                ),
             ));
         }
         let mut seen = std::collections::HashSet::new();
@@ -767,7 +826,7 @@ impl CharacterView {
                     id: format!("granted-{}", skill.id),
                     name: skill.name.clone(),
                     icon: None,
-                    sub: "Granted".into(),
+                    sub: tr("planner.common.granted").into(),
                     detail: String::new(),
                 });
             }
@@ -784,7 +843,7 @@ impl CharacterView {
             .map(|skill| {
                 LoadoutEntry::skill(
                     skill,
-                    "Buff",
+                    tr("planner.common.buff"),
                     skill
                         .effect_duration
                         .map(|duration| format!("{}s", decimal(duration)))
@@ -844,23 +903,23 @@ impl CharacterView {
             .gap_4()
             .child(loadout_card(
                 "active-skills",
-                "Active Skills",
+                tr("planner.common.active_skills"),
                 &active,
-                "No active skill selected.",
+                tr("planner.character.no_active_skills"),
                 cx,
             ))
             .child(loadout_card(
                 "buffs",
-                "Buffs",
+                tr("planner.common.buffs"),
                 &buffs,
-                "No buffs active.",
+                tr("planner.character.no_buffs"),
                 cx,
             ))
             .child(loadout_card(
                 "procs",
-                "Procs",
+                tr("planner.common.procs"),
                 &procs,
-                "No procs active.",
+                tr("planner.character.no_procs"),
                 cx,
             ))
     }
@@ -913,8 +972,8 @@ impl Render for CharacterView {
                     .gap_4()
                     .child(section_heading(
                         "character-heading",
-                        "Summary",
-                        "Character",
+                        tr("planner.character.summary"),
+                        tr("planner.common.character"),
                         cx,
                     ))
                     .child(self.identity(snapshot, cx))
@@ -1116,7 +1175,10 @@ fn loadout_card(
         title,
         caption(
             format!("{id}-count"),
-            format!("{} active", entries.len()),
+            trf(
+                "planner.character.active_count",
+                &[("0", (entries.len()).to_string())],
+            ),
             p.faint,
             10.,
         ),
@@ -1283,11 +1345,11 @@ fn ehp_rows(result: &defense::EhpResult) -> Vec<(String, Option<f64>)> {
         && elements.iter().all(|entry| same(entry.ehp, first.ehp))
     {
         return if same(physical, first.ehp) {
-            vec![("eHP".into(), physical)]
+            vec![(tr("planner.common.ehp").into(), physical)]
         } else {
             vec![
-                ("Physical eHP".into(), physical),
-                ("Elemental eHP".into(), first.ehp),
+                (tr("planner.common.physical_ehp").into(), physical),
+                (tr("planner.common.elemental_ehp").into(), first.ehp),
             ]
         };
     }
@@ -1295,11 +1357,11 @@ fn ehp_rows(result: &defense::EhpResult) -> Vec<(String, Option<f64>)> {
         .entries
         .iter()
         .map(|entry| {
-            let mut name = entry.damage_type.clone();
-            if let Some(first) = name.get_mut(0..1) {
-                first.make_ascii_uppercase()
-            }
-            (format!("{name} eHP"), entry.ehp)
+            let name = crate::skill_details::damage_type_name(&entry.damage_type);
+            (
+                trf("planner.common.named_ehp", &[("name", (name).to_string())]),
+                entry.ehp,
+            )
         })
         .collect()
 }

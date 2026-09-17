@@ -18,6 +18,7 @@ use hsplanner_engine::calc::{
     stats::{SourceContribution, SourceType},
     types::EquippedItem,
 };
+use hsplanner_ui::i18n::trf;
 use hsplanner_ui::theme::TreeTheme;
 use std::{
     collections::HashSet,
@@ -119,7 +120,10 @@ pub(super) fn wrap(
         .h_auto()
         .p_0()
         .justify_start()
-        .accessibility_label(format!("Preview {}", item_name(source)))
+        .accessibility_label(trf(
+            "planner.sources.preview_item",
+            &[("0", (item_name(source)).to_string())],
+        ))
         .child(
             div()
                 .id("source-item-hover")
@@ -185,9 +189,9 @@ pub(super) fn wrap(
             .h_auto()
             .p_0()
             .justify_start()
-            .accessibility_label(format!(
-                "Preview tree node #{}",
-                preview.scene.graph.nodes[index].id
+            .accessibility_label(trf(
+                "planner.sources.preview_node",
+                &[("0", (preview.scene.graph.nodes[index].id).to_string())],
             ))
             .child(
                 div()
@@ -239,12 +243,18 @@ impl NodePreview {
             .child(
                 div()
                     .p_3()
-                    .child(info.map_or_else(|| format!("Node #{}", node.id), |info| info.t.clone()))
+                    .child(info.map_or_else(
+                        || trf("planner.sources.node", &[("0", (node.id).to_string())]),
+                        |info| info.t.clone(),
+                    ))
                     .child(
                         div()
                             .text_xs()
                             .text_color(cx.theme().muted_foreground)
-                            .child(format!("Incarnation Tree · #{}", node.id)),
+                            .child(trf(
+                                "planner.sources.incarnation_tree",
+                                &[("0", (node.id).to_string())],
+                            )),
                     ),
             )
             .child(

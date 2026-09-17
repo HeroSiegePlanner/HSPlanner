@@ -235,10 +235,11 @@ pub(super) fn action_icon(name: &str) -> impl IntoElement {
     img(ICONS[name].clone()).size(rems(12. / 13.)).flex_none()
 }
 
-fn preview_section(title: &str, count: Option<usize>, cx: &App) -> Stateful<Div> {
+fn preview_section(key: &str, count: Option<usize>, cx: &App) -> Stateful<Div> {
+    let title = tr(key);
     let p = cx.global::<TooltipTheme>();
     div()
-        .id(SharedString::from(format!("preview-section-{title}")))
+        .id(SharedString::from(format!("preview-section-{key}")))
         .py_3p5()
         .border_b_1()
         .border_color(p.border)
@@ -272,19 +273,40 @@ fn preview_ehp(result: &hsplanner_engine::calc::defense::EhpResult) -> Vec<(Stri
         && elements.iter().all(|e| same(e.ehp, first.ehp))
     {
         return if same(physical, first.ehp) {
-            vec![("eHP".into(), physical)]
+            vec![(tr("library.ehp").into(), physical)]
         } else {
             vec![
-                ("Physical eHP".into(), physical),
-                ("Elemental eHP".into(), first.ehp),
+                (tr("library.physical_ehp").into(), physical),
+                (tr("library.elemental_ehp").into(), first.ehp),
             ]
         };
     }
     result
         .entries
         .iter()
-        .map(|e| (format!("{} eHP", e.damage_type), e.ehp))
+        .map(|e| {
+            (
+                trf(
+                    "library.damage_ehp",
+                    &[("damage", damage_name(&e.damage_type).to_owned())],
+                ),
+                e.ehp,
+            )
+        })
         .collect()
+}
+
+fn damage_name(kind: &str) -> &str {
+    match kind {
+        "physical" => tr("library.damage.physical"),
+        "fire" => tr("library.damage.fire"),
+        "cold" => tr("library.damage.cold"),
+        "lightning" => tr("library.damage.lightning"),
+        "poison" => tr("library.damage.poison"),
+        "arcane" => tr("library.damage.arcane"),
+        "magic" => tr("library.damage.magic"),
+        _ => kind,
+    }
 }
 
 impl LibraryView {
@@ -307,19 +329,24 @@ impl LibraryView {
             .pb_3p5()
             .flex()
             .flex_col()
-            .child(div().pt_3().pb_2().child(label("◆ Preview", p.accent_hot)));
+            .child(
+                div()
+                    .pt_3()
+                    .pb_2()
+                    .child(label(tr("library.preview"), p.accent_hot)),
+            );
         let Some(build) = build else {
             return view.child(
                 div()
                     .py_12()
                     .text_center()
                     .text_color(p.muted)
-                    .child(label("No build selected", p.faint))
+                    .child(label(tr("library.no_selection"), p.faint))
                     .child(
                         div()
                             .mt_2()
                             .text_size(rems(11. / 13.))
-                            .child("Pick a build from the list to preview it."),
+                            .child(tr("library.preview_help")),
                     ),
             );
         };
@@ -330,8 +357,7 @@ impl LibraryView {
             .as_deref()
             .and_then(hsplanner_engine::calc::data::get_class)
             .map(|c| c.name.as_str())
-            .unwrap_or("Unknown");
-        let class_color = theme::class_color(build.class_id.as_deref().unwrap_or(""));
+            .unwrap_or(tr("library.unknown"));
         view = view.child(
             div()
                 .flex()
@@ -360,22 +386,16 @@ impl LibraryView {
                                 .text_size(rems(10. / 13.))
                                 .font_family(theme::MONO_FONT_FAMILY)
                                 .text_color(p.faint)
-                                .child(
-                                    StyledText::new(format!(
-                                        "{} · LV {} · HERO LV {nodes} · {}P · {}",
-                                        class_name.to_uppercase(),
-                                        snapshot.map_or(1, |s| s.level),
-                                        build.profiles.len(),
-                                        build.season.to_uppercase()
-                                    ))
-                                    .with_highlights([(
-                                        0..class_name.len(),
-                                        HighlightStyle {
-                                            color: Some(class_color),
-                                            ..Default::default()
-                                        },
-                                    )]),
-                                ),
+                                .child(StyledText::new(trf(
+                                    "library.build_summary",
+                                    &[
+                                        ("class", class_name.to_owned()),
+                                        ("level", snapshot.map_or(1, |s| s.level).to_string()),
+                                        ("hero", nodes.to_string()),
+                                        ("profiles", build.profiles.len().to_string()),
+                                        ("season", build.season.clone()),
+                                    ],
+                                ))),
                         )
                         .when(!build.tags.is_empty(), |v| {
                             v.child(div().mt_3().flex().flex_wrap().gap_1p5().children(
@@ -418,10 +438,18 @@ impl LibraryView {
                 .unwrap_or_else(|| "—".into())
         };
         let mut stats = vec![
-            ("Life".to_string(), stat("life"), p.negative),
-            ("Mana".into(), stat("mana"), theme::mana_color()),
-            ("Crit".into(), percent("crit_chance", ""), p.text),
-            ("Crit Dmg".into(), percent("crit_damage", "+"), p.text),
+            (tr("library.life").to_string(), stat("life"), p.negative),
+            (tr("library.mana").into(), stat("mana"), theme::mana_color()),
+            (
+                tr("library.crit").into(),
+                percent("crit_chance", ""),
+                p.text,
+            ),
+            (
+                tr("library.crit_damage").into(),
+                percent("crit_damage", "+"),
+                p.text,
+            ),
         ];
         let resists = ["fire", "cold", "lightning", "poison", "arcane"]
             .iter()
@@ -439,23 +467,23 @@ impl LibraryView {
             })
             .collect::<Vec<_>>()
             .join("/");
-        stats.push(("Resists".into(), resists, p.text));
+        stats.push((tr("library.resists").into(), resists, p.text));
         stats.push((
-            "Nodes · Skills".into(),
+            tr("library.nodes_skills").into(),
             snapshot
                 .map(|s| format!("{nodes} · {}", s.skill_ranks.len()))
                 .unwrap_or_else(|| "—".into()),
             p.text,
         ));
         stats.push((
-            "Ether".into(),
+            tr("library.ether").into(),
             snapshot
                 .map(|s| s.allocated_ether_nodes.len().to_string())
                 .unwrap_or_else(|| "—".into()),
             p.text,
         ));
         stats.push((
-            "Merc".into(),
+            tr("library.mercenary").into(),
             snapshot
                 .and_then(|s| s.merc_class_id.as_ref())
                 .map(|id| {
@@ -539,7 +567,7 @@ impl LibraryView {
                         .border_1()
                         .border_color(p.border)
                         .bg(theme::library_highlight(cx))
-                        .child(label("Combined DPS", p.accent_hot.opacity(0.6)))
+                        .child(label(tr("library.combined_dps"), p.accent_hot.opacity(0.6)))
                         .child(
                             div()
                                 .mt_1()
@@ -554,12 +582,12 @@ impl LibraryView {
                 .child(grid),
         );
         if self.preview_task.is_some() {
-            view = view.child(div().pt_2().child(label("Computing…", p.faint)));
+            view = view.child(div().pt_2().child(label(tr("library.computing"), p.faint)));
         } else if snapshot.is_none() {
             view = view.child(
                 div()
                     .pt_2()
-                    .child(label("Build data could not be read", p.negative)),
+                    .child(label(tr("library.unreadable"), p.negative)),
             );
         }
         let mut profiles = div().flex().flex_col().gap(rems(5. / 13.));
@@ -617,9 +645,9 @@ impl LibraryView {
                             .min_w_0()
                             .flex_1()
                             .accessibility_label(if active {
-                                "Active profile"
+                                tr("library.active_profile")
                             } else {
-                                "Switch to this profile"
+                                tr("library.switch_profile")
                             })
                             .child(
                                 div()
@@ -643,7 +671,7 @@ impl LibraryView {
                                                 .font_family(theme::MONO_FONT_FAMILY)
                                                 .text_size(rems(9. / 13.))
                                                 .text_color(p.accent_deep)
-                                                .child("ACTIVE"),
+                                                .child(tr("library.active_badge")),
                                         )
                                     }),
                             )
@@ -657,44 +685,48 @@ impl LibraryView {
                         div()
                             .flex()
                             .gap_0p5()
-                            .child(action("rename", "rename", "Rename profile").on_click(
-                                cx.listener(move |this, _, window, cx| {
-                                    this.rename_preview_profile(
-                                        rename_build.clone(),
-                                        rename_id.clone(),
-                                        rename_name.clone(),
-                                        window,
-                                        cx,
-                                    )
-                                }),
-                            ))
-                            .child(action("duplicate", "copy", "Duplicate profile").on_click(
-                                cx.listener(move |this, _, _, cx| {
-                                    this.apply(cx, |session| {
-                                        session.edit_library(|library| {
-                                            let build = library.build_mut(&duplicate_build)?;
-                                            if build.profiles.len() >= 100 {
-                                                return Err(
-                                                    "This build already contains 100 profiles."
-                                                        .into(),
-                                                );
-                                            }
-                                            let source = build
-                                                .profile(&duplicate_id)
-                                                .ok_or("Profile no longer exists.")?;
-                                            let copied = hsplanner_build::library::Profile::new(
-                                                &format!("{} Copy", source.name),
-                                                &source.snapshot()?,
-                                            )?;
-                                            build.profiles.push(copied);
-                                            build.updated_at = hsplanner_build::library::now();
-                                            Ok(())
-                                        })
-                                    });
-                                }),
-                            ))
                             .child(
-                                action("remove", "delete", "Remove profile")
+                                action("rename", "rename", tr("library.rename_profile")).on_click(
+                                    cx.listener(move |this, _, window, cx| {
+                                        this.rename_preview_profile(
+                                            rename_build.clone(),
+                                            rename_id.clone(),
+                                            rename_name.clone(),
+                                            window,
+                                            cx,
+                                        )
+                                    }),
+                                ),
+                            )
+                            .child(
+                                action("duplicate", "copy", tr("library.duplicate_profile"))
+                                    .on_click(cx.listener(move |this, _, _, cx| {
+                                        this.apply(cx, |session| {
+                                            session.edit_library(|library| {
+                                                let build = library.build_mut(&duplicate_build)?;
+                                                if build.profiles.len() >= 100 {
+                                                    return Err("library.profile_limit".into());
+                                                }
+                                                let source = build
+                                                    .profile(&duplicate_id)
+                                                    .ok_or("library.missing_profile")?;
+                                                let copied =
+                                                    hsplanner_build::library::Profile::new(
+                                                        &trf(
+                                                            "library.profile_copy_name",
+                                                            &[("name", source.name.clone())],
+                                                        ),
+                                                        &source.snapshot()?,
+                                                    )?;
+                                                build.profiles.push(copied);
+                                                build.updated_at = hsplanner_build::library::now();
+                                                Ok(())
+                                            })
+                                        });
+                                    })),
+                            )
+                            .child(
+                                action("remove", "delete", tr("library.remove_profile"))
                                     .disabled(build.profiles.len() <= 1)
                                     .on_click(cx.listener(move |this, _, _, cx| {
                                         this.apply(cx, |session| {
@@ -706,9 +738,7 @@ impl LibraryView {
                                                 session.edit_library(|library| {
                                                     let build = library.build_mut(&remove_build)?;
                                                     if build.profiles.len() <= 1 {
-                                                        return Err(
-                                                            "Keep at least one profile.".into()
-                                                        );
+                                                        return Err("library.keep_profile".into());
                                                     }
                                                     build.profiles.retain(|p| p.id != remove_id);
                                                     if build.active_profile_id == remove_id {
@@ -737,13 +767,14 @@ impl LibraryView {
                 .border_color(p.border_strong)
                 .text_color(p.faint)
                 .text_size(rems(11. / 13.))
-                .label("+ Add profile")
+                .label(tr("library.add_profile_button"))
                 .on_click(cx.listener(|this, _, window, cx| {
                     this.edit_dialog(EditKind::AddProfile, window, cx)
                 })),
         );
-        view =
-            view.child(preview_section("Profiles", Some(build.profiles.len()), cx).child(profiles));
+        view = view.child(
+            preview_section("library.profiles", Some(build.profiles.len()), cx).child(profiles),
+        );
         if let Some(snapshot) = snapshot
             && !snapshot.active_skill_ids.is_empty()
         {
@@ -785,9 +816,9 @@ impl LibraryView {
             view = view.child(
                 preview_section(
                     if count > 1 {
-                        "Main Skills"
+                        "library.main_skills"
                     } else {
-                        "Main Skill"
+                        "library.main_skill"
                     },
                     (count > 1).then_some(count),
                     cx,
@@ -798,22 +829,24 @@ impl LibraryView {
         let notes = build.notes().markdown;
         if !notes.trim().is_empty() {
             view = view.child(
-                preview_section("Notes", None, cx).border_b_0().child(
-                    div()
-                        .px_2p5()
-                        .py_2()
-                        .border_1()
-                        .rounded_sm()
-                        .border_color(p.border)
-                        .bg(p.panel_secondary)
-                        .font_family(theme::MONO_FONT_FAMILY)
-                        .text_size(rems(12. / 13.))
-                        .text_color(p.muted)
-                        .child(TextView::markdown(
-                            SharedString::from(format!("preview-notes-{}", build.id)),
-                            notes,
-                        )),
-                ),
+                preview_section("library.notes", None, cx)
+                    .border_b_0()
+                    .child(
+                        div()
+                            .px_2p5()
+                            .py_2()
+                            .border_1()
+                            .rounded_sm()
+                            .border_color(p.border)
+                            .bg(p.panel_secondary)
+                            .font_family(theme::MONO_FONT_FAMILY)
+                            .text_size(rems(12. / 13.))
+                            .text_color(p.muted)
+                            .child(TextView::markdown(
+                                SharedString::from(format!("preview-notes-{}", build.id)),
+                                notes,
+                            )),
+                    ),
             );
         }
         view
@@ -829,7 +862,7 @@ impl LibraryView {
     ) {
         use gpui_kit::component::WindowExt;
         let input = cx.new(|cx| {
-            let mut input = InputState::new(window, cx).placeholder("Profile name");
+            let mut input = localized_input("library.profile_name", window, cx);
             input.set_value(name, window, cx);
             input
         });
@@ -841,12 +874,12 @@ impl LibraryView {
             let build_id = build_id.clone();
             let profile_id = profile_id.clone();
             dialog
-                .title("Rename profile")
+                .title(tr("library.rename_profile"))
                 .child(Input::new(&input).planner_style(cx))
                 .footer(
                     Button::new("save-profile-name")
                         .planner_style(cx)
-                        .label("Save")
+                        .label(tr("library.save"))
                         .on_click(move |_, window, cx| {
                             let name = input_for_save.read(cx).value().to_string();
                             let _ = owner.update(cx, |this, cx| {
@@ -857,7 +890,7 @@ impl LibraryView {
                                             .profiles
                                             .iter_mut()
                                             .find(|p| p.id == profile_id)
-                                            .ok_or("Profile no longer exists.")?
+                                            .ok_or("library.missing_profile")?
                                             .name = hsplanner_build::library::clean_name(&name)?;
                                         build.updated_at = hsplanner_build::library::now();
                                         Ok(())

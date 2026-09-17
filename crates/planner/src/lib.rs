@@ -1,4 +1,5 @@
 use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 mod build_panel;
 mod build_session;
@@ -16,6 +17,7 @@ mod skill_details;
 pub mod skills;
 mod source_breakdown;
 mod source_preview;
+mod stat_labels;
 pub mod stats;
 pub mod stats_sidebar;
 mod tree_chrome;
@@ -61,6 +63,27 @@ struct MotionTest {
     base: Camera,
     intervals: Vec<f64>,
     paint_times: Vec<f64>,
+}
+
+struct MotionResult {
+    fps: f64,
+    p95: f64,
+    paint: f64,
+    samples: usize,
+}
+
+impl MotionResult {
+    fn summary(&self) -> String {
+        trf(
+            "tree.motion_result",
+            &[
+                ("fps", format!("{:.1}", self.fps)),
+                ("p95", format!("{:.1}", self.p95)),
+                ("paint", format!("{:.2}", self.paint)),
+                ("samples", self.samples.to_string()),
+            ],
+        )
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -113,7 +136,7 @@ pub struct TreeView {
     dragged: bool,
     focus: FocusHandle,
     motion_test: Option<MotionTest>,
-    motion_result: Option<String>,
+    motion_result: Option<MotionResult>,
 }
 
 impl TreeView {
@@ -185,11 +208,17 @@ impl TreeView {
             node_tooltip::load_lines()
         };
         let placeholder = if scene.graph.kind == TreeKind::Ether {
-            "Search ether nodes…"
+            "tree.search_ether"
         } else {
-            "Search nodes or #id…"
+            "tree.search_nodes"
         };
-        let search = cx.new(|cx| InputState::new(window, cx).placeholder(placeholder));
+        let search = cx.new(|cx: &mut Context<InputState>| {
+            cx.observe_global_in::<Locale>(window, move |input, window, cx| {
+                input.set_placeholder(tr(placeholder), window, cx);
+            })
+            .detach();
+            InputState::new(window, cx).placeholder(tr(placeholder))
+        });
         let focus = cx.focus_handle();
         let summary_open = scene.graph.kind == TreeKind::Ether;
         let ether_summary =
@@ -411,7 +440,7 @@ impl TreeView {
             std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 build_session::calculate(&input, job_request, cached)
             }))
-            .map_err(|_| "Could not calculate this build. Try again.".to_owned())
+            .map_err(|_| "tree.calculate_failed".to_owned())
         });
         cx.spawn(async move |this, cx| {
             let result = task.await;
@@ -556,15 +585,14 @@ impl TreeView {
                 .copied()
                 .unwrap_or(0.0);
             let paint = test.paint_times.iter().sum::<f64>() / test.paint_times.len().max(1) as f64;
-            let summary = format!(
-                "{:.1} frames/s · p95 {:.1} ms\nCanvas CPU {:.2} ms · {} samples",
-                1000.0 / mean.max(0.001),
+            let result = MotionResult {
+                fps: 1000.0 / mean.max(0.001),
                 p95,
                 paint,
-                test.intervals.len()
-            );
-            log::info!("Motion test: {}", summary.replace('\n', "; "));
-            self.motion_result = Some(summary);
+                samples: test.intervals.len(),
+            };
+            log::info!("Motion test: {}", result.summary().replace('\n', "; "));
+            self.motion_result = Some(result);
         } else {
             self.camera = test.base;
             self.camera.zoom(
@@ -678,13 +706,11 @@ impl TreeView {
             .disabled(matches!(command, Command::ToggleNode) && self.inspected.is_none())
             .small()
             .cursor_tooltip(match command {
-                Command::TooltipExample => "Next tooltip example (T)",
-                Command::TextEffects => {
-                    "Toggle glow, letter spacing and fade (E). Font stays Inter."
-                }
-                Command::ToggleNode => "Apply the inspected node's path change (Enter)",
-                Command::ZoomIn => "Zoom in (+)",
-                Command::ZoomOut => "Zoom out (−)",
+                Command::TooltipExample => tr("tree.tooltip_example"),
+                Command::TextEffects => tr("tree.text_effects"),
+                Command::ToggleNode => tr("tree.apply_node_path"),
+                Command::ZoomIn => tr("tree.zoom_in"),
+                Command::ZoomOut => tr("tree.zoom_out"),
                 _ => label,
             })
             .on_click(cx.listener(move |this, _, window, cx| {

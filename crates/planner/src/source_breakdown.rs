@@ -9,6 +9,7 @@ use hsplanner_build::session::Session;
 use hsplanner_engine::calc::stats::{
     SourceContribution, SourceType, StatBreakdown, StatTypeSubtotal,
 };
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
@@ -60,16 +61,16 @@ fn multiplier(value: (f64, f64)) -> String {
 
 fn source_label(kind: SourceType) -> &'static str {
     match kind {
-        SourceType::Class => "CLASS",
-        SourceType::Allocated => "ALLOCATED",
-        SourceType::Level => "LEVEL",
-        SourceType::Attribute => "ATTRIBUTE",
-        SourceType::Item => "ITEM",
-        SourceType::Socket => "SOCKET",
-        SourceType::Skill => "SKILL",
-        SourceType::Subskill => "SUBTREE",
-        SourceType::Custom => "CONFIG",
-        SourceType::Tree => "TREE",
+        SourceType::Class => tr("planner.sources.class"),
+        SourceType::Allocated => tr("planner.sources.allocated"),
+        SourceType::Level => tr("planner.sources.level"),
+        SourceType::Attribute => tr("planner.sources.attribute"),
+        SourceType::Item => tr("planner.sources.item"),
+        SourceType::Socket => tr("planner.sources.socket"),
+        SourceType::Skill => tr("planner.sources.skill"),
+        SourceType::Subskill => tr("planner.sources.subtree"),
+        SourceType::Custom => tr("planner.sources.config"),
+        SourceType::Tree => tr("planner.sources.tree"),
     }
 }
 fn source_color(kind: SourceType, p: &TooltipTheme) -> Hsla {
@@ -87,7 +88,10 @@ fn source_color(kind: SourceType, p: &TooltipTheme) -> Hsla {
 }
 fn display_label(source: &SourceContribution) -> String {
     if let Some(forge) = &source.forge {
-        return format!("↳ Forged modifier ({})", forge.mod_name);
+        return trf(
+            "planner.sources.forged_modifier",
+            &[("0", (forge.mod_name).to_string())],
+        );
     }
     if source.source_type != SourceType::Tree {
         return source.label.clone();
@@ -144,7 +148,8 @@ fn ordered_sources(sources: &[SourceContribution]) -> Vec<&SourceContribution> {
     result
 }
 
-fn section(title: &str, value: Option<String>, cx: &App) -> Div {
+fn section(key: &str, value: Option<String>, cx: &App) -> Div {
+    let title = tr(key);
     let p = cx.global::<TooltipTheme>();
     div()
         .flex()
@@ -160,7 +165,7 @@ fn section(title: &str, value: Option<String>, cx: &App) -> Div {
         .font_weight(FontWeight::SEMIBOLD)
         .text_color(p.accent_hot.opacity(0.8))
         .child(TooltipText::new(
-            SharedString::from(format!("source-section-{title}")),
+            SharedString::from(format!("source-section-{key}")),
             title.to_uppercase(),
             0.12,
         ))
@@ -197,14 +202,19 @@ fn calculation(b: &StatBreakdown, cx: &App) -> Div {
     let mut rows = div().px_3().py_2().flex().flex_col().gap_1();
     let total = format_total(b.combined, b.is_percent);
     if !b.has_more && !b.has_increased {
-        rows = rows.child(value_row("Total", total.clone(), true, cx));
+        rows = rows.child(value_row(
+            tr("planner.sources.total"),
+            total.clone(),
+            true,
+            cx,
+        ));
     } else {
         let flat = b.has_increased || !b.is_percent;
         rows = rows.child(value_row(
             if flat {
-                "Additive (flat)"
+                tr("planner.sources.additive_flat")
             } else {
-                "Additive (+)"
+                tr("planner.sources.additive")
             },
             format_total(b.additive_sum, !flat),
             false,
@@ -212,7 +222,7 @@ fn calculation(b: &StatBreakdown, cx: &App) -> Div {
         ));
         if b.has_increased {
             rows = rows.child(value_row(
-                "Increased (+%)",
+                tr("planner.sources.increased_percent"),
                 format_total(b.increased_sum, true),
                 false,
                 cx,
@@ -221,9 +231,9 @@ fn calculation(b: &StatBreakdown, cx: &App) -> Div {
         if b.has_more {
             rows = rows.child(value_row(
                 if flat {
-                    "More (×)"
+                    tr("planner.sources.more")
                 } else {
-                    "Multiplicative (×)"
+                    tr("planner.sources.multiplicative_symbol")
                 },
                 multiplier(b.more_sum),
                 false,
@@ -241,13 +251,13 @@ fn calculation(b: &StatBreakdown, cx: &App) -> Div {
                     .text_size(units(10.))
                     .text_color(p.text.opacity(0.4))
                     .child(if flat {
-                        "flat × (1 + inc/100) × (1 + more/100)"
+                        tr("planner.sources.flat_formula")
                     } else {
-                        "(1 + add/100) × (1 + more/100) − 1"
+                        tr("planner.sources.percent_formula")
                     }),
             )
             .child(
-                value_row("Combined", total.clone(), true, cx)
+                value_row(tr("planner.sources.combined"), total.clone(), true, cx)
                     .border_t_1()
                     .border_color(p.border.opacity(0.4))
                     .pt_1(),
@@ -255,14 +265,14 @@ fn calculation(b: &StatBreakdown, cx: &App) -> Div {
     }
     if let Some(raw) = b.pre_diminish {
         rows = rows.child(value_row(
-            "Before diminishing returns",
+            tr("planner.sources.before_returns"),
             format_total(raw, b.is_percent),
             false,
             cx,
         ));
     }
     div()
-        .child(section("Calculation", Some(total), cx))
+        .child(section("planner.sources.calculation", Some(total), cx))
         .child(rows)
 }
 fn subtotal_rows(rows: &[StatTypeSubtotal], percent: bool, more: bool, cx: &App) -> Div {
@@ -316,8 +326,8 @@ fn by_source(b: &StatBreakdown, cx: &App) -> Div {
         cx,
     ));
     for (title, sources, more) in [
-        ("Increased", &b.increased_by_type, false),
-        ("Multiplicative", &b.more_by_type, true),
+        (tr("planner.sources.increased"), &b.increased_by_type, false),
+        (tr("planner.sources.multiplicative"), &b.more_by_type, true),
     ] {
         if !sources.is_empty() {
             rows = rows
@@ -340,7 +350,9 @@ fn by_source(b: &StatBreakdown, cx: &App) -> Div {
                 .child(subtotal_rows(sources, true, more, cx));
         }
     }
-    div().child(section("By source", None, cx)).child(rows)
+    div()
+        .child(section("planner.sources.by_source", None, cx))
+        .child(rows)
 }
 fn source_rows(
     rows: &[SourceContribution],
@@ -434,9 +446,9 @@ fn body(
     if grouped {
         content = content.child(section(
             if b.is_percent && !b.has_increased {
-                "Additive (+)"
+                "planner.sources.additive"
             } else {
-                "Additive (flat)"
+                "planner.sources.additive_flat"
             },
             Some(format_total(
                 b.additive_sum,
@@ -456,7 +468,7 @@ fn body(
     if b.has_increased {
         content = content
             .child(section(
-                "Increased (+%)",
+                "planner.sources.increased_percent",
                 Some(format_total(b.increased_sum, true)),
                 cx,
             ))
@@ -472,7 +484,7 @@ fn body(
     if b.has_more {
         content = content
             .child(section(
-                "Multiplicative (Total)",
+                "planner.sources.multiplicative_total",
                 Some(multiplier(b.more_sum)),
                 cx,
             ))
@@ -520,13 +532,17 @@ impl Render for SourcesTooltip {
                             .text_size(units(10.))
                             .text_color(p.accent_hot)
                             .font_weight(FontWeight::SEMIBOLD)
-                            .child(TooltipText::new("sources-title", "SOURCES", 0.12)),
+                            .child(TooltipText::new(
+                                "sources-title",
+                                tr("planner.sources.title"),
+                                0.12,
+                            )),
                     )
                     .child(
                         div()
                             .text_size(units(9.))
                             .text_color(p.text.opacity(0.4))
-                            .child("RIGHT-CLICK TO PIN"),
+                            .child(tr("planner.sources.pin_hint")),
                     ),
             )
             .child(body(&self.0, false, None, cx))
@@ -610,7 +626,11 @@ impl Render for SourceDialog {
                                     .child(
                                         TooltipText::new(
                                             "breakdown-title",
-                                            self.breakdown.stat_name.to_uppercase(),
+                                            crate::stat_labels::stat_name(
+                                                &self.breakdown.stat_key,
+                                                &self.breakdown.stat_name,
+                                            )
+                                            .to_uppercase(),
                                             0.14,
                                         )
                                         .wrap(),
@@ -633,7 +653,7 @@ impl Render for SourceDialog {
                             false,
                             cx,
                         )
-                        .accessibility_label("Close source breakdown")
+                        .accessibility_label(tr("planner.sources.close"))
                         .on_click(|_, window, cx| window.close_dialog(cx)),
                     ),
             )
@@ -656,7 +676,7 @@ impl Render for SourceDialog {
                     .font_family(theme::MONO_FONT_FAMILY)
                     .text_size(units(9.))
                     .text_color(p.faint)
-                    .child("HOVER OR SELECT ITEM / TREE SOURCES TO PREVIEW · ESC CLOSE"),
+                    .child(tr("planner.sources.preview_hint")),
             )
     }
 }

@@ -5,10 +5,31 @@ use gpui_kit::{
     Background, Focusable, FontWeight, Hsla, SharedString, Styled, linear_color_stop,
     linear_gradient, relative, rems,
 };
-use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
+
+fn region_name(name: &str) -> &str {
+    match name {
+        "Universal" => tr("tree.region.universal"),
+        "Overworld" => tr("tree.region.overworld"),
+        "Chaos Tower" => tr("tree.region.chaos_tower"),
+        "Chaos Pillars" => tr("tree.region.chaos_pillars"),
+        "Shadow Realm" => tr("tree.region.shadow_realm"),
+        "Prime Evil" => tr("tree.region.prime_evil"),
+        "Unstable Rift" => tr("tree.region.unstable_rift"),
+        "Mining" => tr("tree.region.mining"),
+        "Eternal Battlefield" => tr("tree.region.eternal_battlefield"),
+        "Cursed Spirit" => tr("tree.region.cursed_spirit"),
+        "Unholy Siege" => tr("tree.region.unholy_siege"),
+        "Dungeons" => tr("tree.region.dungeons"),
+        "Ruby Gardens" => tr("tree.region.ruby_gardens"),
+        "Colossal Creatures" => tr("tree.region.colossal_creatures"),
+        "Other" => tr("tree.region.other"),
+        _ => name,
+    }
+}
 
 impl TreeView {
     pub(super) fn tree_theme(&self) -> theme::TreeTheme {
@@ -63,8 +84,8 @@ impl TreeView {
                                             .planner_style(cx)
                                             .small()
                                             .label(format!("{}", self.search_matches.len()))
-                                            .accessibility_label("Next matching node")
-                                            .cursor_tooltip("Next matching node (Enter)")
+                                            .accessibility_label(tr("tree.next_match"))
+                                            .cursor_tooltip(tr("tree.next_match_hint"))
                                             .disabled(self.search_matches.is_empty())
                                             .text_color(tree.accent())
                                             .on_click(cx.listener(|this, _, _, cx| {
@@ -76,8 +97,8 @@ impl TreeView {
                                             .planner_style(cx)
                                             .small()
                                             .icon(IconName::Close)
-                                            .accessibility_label("Clear search")
-                                            .cursor_tooltip("Clear search")
+                                            .accessibility_label(tr("tree.clear_search"))
+                                            .cursor_tooltip(tr("tree.clear_search"))
                                             .on_click(cx.listener(|this, _, window, cx| {
                                                 this.search.update(cx, |input, cx| {
                                                     input.set_value("", window, cx)
@@ -99,7 +120,7 @@ impl TreeView {
                         hsplanner_ui::controls::ButtonTone::Neutral,
                         cx,
                     )
-                    .label("Summary")
+                    .label(tr("tree.summary"))
                     .small()
                     .selected(self.summary_open)
                     .text_color(if self.summary_open {
@@ -127,35 +148,36 @@ impl TreeView {
                         hsplanner_ui::controls::ButtonTone::Neutral,
                         cx,
                     )
-                    .label("Suggest")
+                    .label(tr("tree.suggest"))
                     .small()
                     .selected(self.suggest_open)
-                    .cursor_tooltip("Suggest nodes that raise DPS within a point budget")
+                    .cursor_tooltip(tr("tree.suggest_hint"))
                     .on_click(cx.listener(|this, _, window, cx| this.toggle_suggest(window, cx))),
                 )
             })
-            .child(self.button("Fit", Command::Fit, cx))
-            .child(self.button("Reset", Command::Reset, cx))
+            .child(self.button(tr("tree.fit"), Command::Fit, cx))
+            .child(self.button(tr("tree.reset"), Command::Reset, cx))
     }
 
     pub(super) fn status_bar(&self, cx: &Context<Self>) -> impl IntoElement {
         let palette = cx.global::<theme::TooltipTheme>();
         let accent = self.tree_theme().accent();
-        let status = |label: &'static str, value: String, color: Hsla| {
+        let status = |key: &'static str, value: String, color: Hsla| {
+            let label = tr(key);
             div()
                 .flex()
                 .items_center()
                 .gap_1p5()
-                .when(label != "Zoom", |row| {
+                .when(key != "tree.zoom", |row| {
                     row.child(div().text_size(rems(4. / 13.)).text_color(color).child("◆"))
                 })
                 .child(div().text_color(palette.faint).child(TooltipText::new(
-                    SharedString::from(format!("tree-status-{label}")),
+                    SharedString::from(format!("tree-status-{key}")),
                     label.to_uppercase(),
                     0.14,
                 )))
                 .child(div().text_color(color).child(TooltipText::new(
-                    SharedString::from(format!("tree-value-{label}")),
+                    SharedString::from(format!("tree-value-{key}")),
                     value,
                     0.14,
                 )))
@@ -179,50 +201,67 @@ impl TreeView {
             .line_height(relative(1.5))
             .occlude()
             .child(status(
-                "Nodes",
+                "tree.nodes",
                 self.scene.graph.nodes.len().to_string(),
                 palette.text,
             ))
             .child(separator())
-            .child(status("Allocated", self.selected.len().to_string(), accent))
+            .child(status(
+                "tree.allocated",
+                self.selected.len().to_string(),
+                accent,
+            ))
             .child(separator())
             .child(status(
-                "Zoom",
+                "tree.zoom",
                 format!("{:.0}%", self.camera.scale * 100.),
                 accent,
             ))
             .when_some(self.build.error.clone(), |bar, error| {
                 bar.child(separator())
-                    .child(div().text_color(palette.negative).child(error))
-                    .child(self.button("Retry calculation", Command::RetryCalculation, cx))
+                    .child(div().text_color(palette.negative).child(
+                        if error == "tree.calculate_failed" {
+                            tr("tree.calculate_failed").to_owned()
+                        } else {
+                            error
+                        },
+                    ))
+                    .child(self.button(tr("tree.retry"), Command::RetryCalculation, cx))
             })
             .when(std::env::var_os("HSPLANNER_DIAGNOSTICS").is_some(), |bar| {
                 let stats = self.paint_stats.get();
                 let calculation = if self.build.in_flight {
-                    "calculating…".to_owned()
+                    tr("tree.calculating_lower").to_owned()
                 } else if let Some(result) = &self.build.result {
-                    format!("calc {:.1} ms", result.milliseconds)
+                    trf(
+                        "tree.calculation_time",
+                        &[("time", format!("{:.1}", result.milliseconds))],
+                    )
                 } else {
                     String::new()
                 };
                 bar.child(separator())
-                    .child(div().text_color(palette.faint).child(format!(
-                        "{calculation} · {} visible · canvas {:.2} ms",
-                        stats.visible, stats.milliseconds
+                    .child(div().text_color(palette.faint).child(trf(
+                        "tree.diagnostics",
+                        &[
+                            ("calculation", calculation),
+                            ("visible", stats.visible.to_string()),
+                            ("time", format!("{:.2}", stats.milliseconds)),
+                        ],
                     )))
                     .child(self.button(
                         if self.motion_test.is_some() {
-                            "Stop motion test"
+                            tr("tree.stop_motion")
                         } else {
-                            "Run motion test"
+                            tr("tree.run_motion")
                         },
                         Command::Motion,
                         cx,
                     ))
                     .children(
                         self.motion_result
-                            .clone()
-                            .map(|result| div().text_color(palette.muted).child(result)),
+                            .as_ref()
+                            .map(|result| div().text_color(palette.muted).child(result.summary())),
                     )
             })
     }
@@ -274,7 +313,7 @@ impl TreeView {
                                 .italic()
                                 .text_center()
                                 .text_color(palette.muted)
-                                .child("Allocate nodes to see totals."),
+                                .child(tr("tree.allocate_help")),
                         )
                     })
                     .children(groups.into_iter().map(|(name, entries)| {
@@ -294,7 +333,7 @@ impl TreeView {
                                     .child(div().text_size(rems(4. / 13.)).child("◆"))
                                     .child(TooltipText::new(
                                         SharedString::from(format!("ether-group-{name}")),
-                                        name.to_uppercase(),
+                                        region_name(name).to_uppercase(),
                                         0.18,
                                     ))
                                     .child(div().flex_1().h_px().bg(palette.border)),
@@ -393,7 +432,7 @@ impl TreeView {
                             .child(div().text_size(rems(5. / 13.)).child("◆"))
                             .child(TooltipText::new(
                                 "ether-summary-title",
-                                "STAT SUMMARY",
+                                tr("tree.stat_summary"),
                                 0.18,
                             )),
                     )
@@ -404,7 +443,10 @@ impl TreeView {
                             .text_color(palette.faint)
                             .child(TooltipText::new(
                                 "ether-summary-count",
-                                format!("{} NODES", self.selected.len()),
+                                trf(
+                                    "tree.node_count",
+                                    &[("count", self.selected.len().to_string())],
+                                ),
                                 0.14,
                             )),
                     ),
@@ -420,7 +462,11 @@ impl TreeView {
                     .border_b_1()
                     .border_color(palette.border)
                     .text_size(rems(12. / 13.))
-                    .child(div().font_weight(FontWeight::MEDIUM).child("Magic Find"))
+                    .child(
+                        div()
+                            .font_weight(FontWeight::MEDIUM)
+                            .child(tr("tree.magic_find")),
+                    )
                     .child(
                         div()
                             .font_family(theme::MONO_FONT_FAMILY)

@@ -103,9 +103,9 @@ fn sort_values(base: &ItemBase) -> HashMap<String, f64> {
 }
 
 fn base_meta(base: &ItemBase) -> String {
-    let mut parts = vec![base.base_type.clone()];
+    let mut parts = vec![item_tooltip::base_type_label(&base.base_type).to_owned()];
     if let Some(grade) = &base.grade {
-        parts.push(format!("Grade {grade}"));
+        parts.push(trf("gear.grade", &[("grade", (grade).to_string())]));
     }
     if base.base_type == "Charm" {
         parts.push(format!(
@@ -115,20 +115,32 @@ fn base_meta(base: &ItemBase) -> String {
         ));
     }
     if let (Some(min), Some(max)) = (base.defense_min, base.defense_max) {
-        parts.push(format!("Def {min}–{max}"));
+        parts.push(trf(
+            "gear.defense_range",
+            &[("min", (min).to_string()), ("max", (max).to_string())],
+        ));
     }
     if let (Some(min), Some(max)) = (base.damage_min, base.damage_max) {
-        parts.push(format!("Dmg {min}–{max}"));
+        parts.push(trf(
+            "gear.damage_range",
+            &[("min", (min).to_string()), ("max", (max).to_string())],
+        ));
     }
     if let Some(block) = base.block_chance {
-        parts.push(format!("Block {block}%"));
+        parts.push(trf("gear.block_percent", &[("block", (block).to_string())]));
     }
     if let Some(sockets) = base.sockets {
         let max = base.max_sockets.unwrap_or(sockets);
         parts.push(if max > sockets {
-            format!("{sockets}/{max} sockets")
+            trf(
+                "gear.sockets_capacity",
+                &[
+                    ("sockets", (sockets).to_string()),
+                    ("max", (max).to_string()),
+                ],
+            )
         } else {
-            format!("{sockets} sockets")
+            trf("gear.sockets_count", &[("sockets", (sockets).to_string())])
         });
     }
     parts.join(" · ")
@@ -136,7 +148,11 @@ fn base_meta(base: &ItemBase) -> String {
 
 fn base_search(base: &ItemBase) -> String {
     let mut parts = vec![base.name.clone(), base.base_type.clone()];
-    parts.extend(base.grade.iter().map(|g| format!("Grade {g}")));
+    parts.extend(
+        base.grade
+            .iter()
+            .map(|g| trf("gear.search_grade", &[("g", (g).to_string())])),
+    );
     for (key, value) in base.implicit.iter().flatten() {
         parts.push(stat_name(key));
         parts.push(item_tooltip::format_ranged(value.as_ranged(), key));
@@ -161,10 +177,10 @@ fn base_search(base: &ItemBase) -> String {
 
 fn sort_label(key: &str) -> String {
     match key {
-        "defense" => "Defense".into(),
-        "weapon_damage" => "Weapon Damage".into(),
-        "block_chance" => "Block Chance".into(),
-        "sockets" => "Sockets".into(),
+        "defense" => tr("gear.defense").into(),
+        "weapon_damage" => tr("gear.weapon_damage").into(),
+        "block_chance" => tr("gear.block_chance").into(),
+        "sockets" => tr("gear.sockets").into(),
         _ => stat_name(key),
     }
 }
@@ -270,11 +286,16 @@ impl GearView {
                         base_id: base.id.clone(),
                         name: base.name.clone(),
                         rarity: base.rarity.clone(),
-                        meta: format!(
-                            "{} · {} stars · {} sockets",
-                            base.base_type,
-                            entry.item.stars.unwrap_or(0),
-                            entry.item.socket_count
+                        meta: trf(
+                            "gear.stash_metadata",
+                            &[
+                                (
+                                    "arg0",
+                                    item_tooltip::base_type_label(&base.base_type).to_owned(),
+                                ),
+                                ("arg1", (entry.item.stars.unwrap_or(0)).to_string()),
+                                ("arg2", (entry.item.socket_count).to_string()),
+                            ],
                         ),
                         search: base_search(base),
                         sort_values: sort_values(base),
@@ -298,6 +319,34 @@ impl GearView {
         }
     }
 
+    pub(super) fn refresh_item_language(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        for row in &mut self.item_rows {
+            let Some(base) = data::get_item(&row.base_id) else {
+                continue;
+            };
+            row.meta = match &row.item {
+                Some(item) => trf(
+                    "gear.stash_metadata",
+                    &[
+                        (
+                            "arg0",
+                            item_tooltip::base_type_label(&base.base_type).to_owned(),
+                        ),
+                        ("arg1", item.stars.unwrap_or(0).to_string()),
+                        ("arg2", item.socket_count.to_string()),
+                    ],
+                ),
+                None => base_meta(base),
+            };
+            row.search = base_search(base);
+        }
+        if self.sort_select.is_some() {
+            self.build_sort_select(window, cx);
+        }
+        self.picker_list.reset(self.visible_items.len());
+        self.refresh_item_results(cx);
+    }
+
     fn build_sort_select(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let mut counts: HashMap<&str, usize> = HashMap::new();
         for row in &self.item_rows {
@@ -310,16 +359,29 @@ impl GearView {
             .map(|(key, count)| (key.to_owned(), sort_label(key), count))
             .collect();
         stats.sort_by(|a, b| b.2.cmp(&a.2).then_with(|| a.1.cmp(&b.1)));
-        let mut options = vec![("default".to_owned(), "Default".to_owned())];
+        let mut options = vec![("default".to_owned(), tr("gear.default_sort").to_owned())];
         if !self.mercenary {
-            options.push(("dps".into(), "DPS".into()));
+            options.push(("dps".into(), tr("gear.dps").into()));
         }
         options.extend(stats.into_iter().map(|(key, label, _)| (key, label)));
         let labels: Vec<SharedString> = options
             .iter()
             .map(|(_, label)| SharedString::from(label.clone()))
             .collect();
-        let select = cx.new(|cx| SelectState::new(labels, Some(IndexPath::new(0)), window, cx));
+        let selected_index = options
+            .iter()
+            .position(|(key, _)| key == &self.sort_key)
+            .unwrap_or(0);
+        if let Some(select) = &self.sort_select {
+            select.update(cx, |select, cx| {
+                select.set_items(labels, window, cx);
+                select.set_selected_index(Some(IndexPath::new(selected_index)), window, cx);
+            });
+            self.sort_options = options;
+            return;
+        }
+        let select =
+            cx.new(|cx| SelectState::new(labels, Some(IndexPath::new(selected_index)), window, cx));
         self.sort_subscription = Some(cx.subscribe(
             &select,
             |this, _, event: &SelectEvent<Vec<SharedString>>, cx| {
@@ -422,7 +484,7 @@ impl GearView {
                         .text_center()
                         .text_size(units(13.))
                         .text_color(muted)
-                        .child("No items match"),
+                        .child(tr("gear.no_items_match")),
                 )
             })
             .when(!self.visible_items.is_empty(), |view| {
@@ -453,18 +515,24 @@ impl GearView {
                             .flex()
                             .items_center()
                             .gap_2()
-                            .child(self.picker_tab("items", "Items", Picker::Items, cx))
+                            .child(self.picker_tab("items", tr("gear.items"), Picker::Items, cx))
                             .when(!self.is_relic_slot(), |v| {
-                                v.child(self.picker_tab("stash", "Stash", Picker::Stash, cx))
+                                v.child(self.picker_tab(
+                                    "stash",
+                                    tr("gear.stash"),
+                                    Picker::Stash,
+                                    cx,
+                                ))
                             })
                             .child(div().flex_1())
                             .when(self.candidate.is_some(), |v| {
-                                v.child(ghost_button("back-to-configure", "← Back", cx).on_click(
-                                    cx.listener(|this, _, _, cx| {
-                                        this.choosing = false;
-                                        cx.notify();
-                                    }),
-                                ))
+                                v.child(
+                                    ghost_button("back-to-configure", tr("gear.back"), cx)
+                                        .on_click(cx.listener(|this, _, _, cx| {
+                                            this.choosing = false;
+                                            cx.notify();
+                                        })),
+                                )
                             }),
                     )
                     .child(
@@ -483,7 +551,11 @@ impl GearView {
                                         .font_family(theme::MONO_FONT_FAMILY)
                                         .text_size(units(9.))
                                         .text_color(faint)
-                                        .child(TooltipText::new("sort-label", "SORT", 0.18)),
+                                        .child(TooltipText::new(
+                                            "sort-label",
+                                            tr("gear.sort"),
+                                            0.18,
+                                        )),
                                 )
                                 .children(self.sort_select.as_ref().map(|state| {
                                     div()
@@ -498,7 +570,7 @@ impl GearView {
                                             .text_color(faint)
                                             .child(TooltipText::new(
                                                 "sort-computing",
-                                                "COMPUTING…",
+                                                tr("gear.computing"),
                                                 0.14,
                                             )),
                                     )
@@ -658,7 +730,7 @@ impl GearView {
                         "×",
                         cx,
                     )
-                    .cursor_tooltip("Remove from stash")
+                    .cursor_tooltip(tr("gear.remove_from_stash"))
                     .on_click(cx.listener(move |this, _, window, cx| {
                         this.session.update(cx, |session, cx| {
                             session.edit(|draft| draft.stash.retain(|entry| entry.id != remove));

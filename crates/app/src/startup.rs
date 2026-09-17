@@ -6,6 +6,7 @@ use hsplanner_build::{
     storage::Writer,
 };
 use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::i18n::tr;
 use hsplanner_ui::theme::TooltipTheme;
 use std::path::PathBuf;
 
@@ -81,14 +82,60 @@ impl Render for Startup {
             return shell.clone().into_any_element();
         }
         let palette = cx.global::<TooltipTheme>();
-        div().size_full().flex().items_center().justify_center().bg(palette.panel).text_color(palette.text)
-            .child(div().max_w(rems(48.)).p_6().flex().flex_col().gap_4()
-                .child(div().text_2xl().child(gpui_kit::text!(id="startup-title","Your library could not be opened")))
-                .child(gpui_kit::text!(id="startup-error",self.error.clone().unwrap_or_default()))
-                .child(div().text_color(palette.muted).child("The saved file stays in place. Restoring the previous copy also keeps the unreadable file for recovery."))
-                .child(div().flex().gap_3()
-                    .child(Button::new("retry-open").planner_style(cx).label(if self.loading {"Loading…"} else {"Retry"}).on_click(cx.listener(|this,_,window,cx|this.retry(false,window,cx))))
-                    .child(Button::new("restore-backup").planner_style(cx).label("Restore previous copy").on_click(cx.listener(|this,_,window,cx|this.retry(true,window,cx))))))
+        div()
+            .size_full()
+            .flex()
+            .items_center()
+            .justify_center()
+            .bg(palette.panel)
+            .text_color(palette.text)
+            .child(
+                div()
+                    .max_w(rems(48.))
+                    .p_6()
+                    .flex()
+                    .flex_col()
+                    .gap_4()
+                    .child(
+                        div()
+                            .text_2xl()
+                            .child(gpui_kit::text!(id = "startup-title", tr("startup.failed"))),
+                    )
+                    .child(gpui_kit::text!(
+                        id = "startup-error",
+                        self.error.clone().unwrap_or_default()
+                    ))
+                    .child(
+                        div()
+                            .text_color(palette.muted)
+                            .child(tr("startup.recovery_hint")),
+                    )
+                    .child(
+                        div()
+                            .flex()
+                            .gap_3()
+                            .child(
+                                Button::new("retry-open")
+                                    .planner_style(cx)
+                                    .label(if self.loading {
+                                        tr("common.loading")
+                                    } else {
+                                        tr("common.retry")
+                                    })
+                                    .on_click(cx.listener(|this, _, window, cx| {
+                                        this.retry(false, window, cx)
+                                    })),
+                            )
+                            .child(
+                                Button::new("restore-backup")
+                                    .planner_style(cx)
+                                    .label(tr("startup.restore"))
+                                    .on_click(cx.listener(|this, _, window, cx| {
+                                        this.retry(true, window, cx)
+                                    })),
+                            ),
+                    ),
+            )
             .into_any_element()
     }
 }

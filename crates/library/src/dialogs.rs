@@ -17,15 +17,15 @@ impl LibraryView {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) {
-        let title = match kind {
-            EditKind::NewBuild => "New build",
-            EditKind::NewFolder => "New folder",
-            EditKind::RenameFolder => "Rename folder",
-            EditKind::Rename => "Rename build",
-            EditKind::AddProfile => "Add profile",
+        let title_key = match kind {
+            EditKind::NewBuild => "library.new_build",
+            EditKind::NewFolder => "library.new_folder",
+            EditKind::RenameFolder => "library.rename_folder",
+            EditKind::Rename => "library.rename_build",
+            EditKind::AddProfile => "library.add_profile",
         };
         self.error = None;
-        let input = cx.new(|cx| InputState::new(window, cx).placeholder("Name"));
+        let input = cx.new(|cx| localized_input("library.name", window, cx));
         let build_id = self.selected.clone();
         if matches!(kind, EditKind::Rename) {
             let name = build_id
@@ -51,6 +51,7 @@ impl LibraryView {
         let focus = input.read(cx).focus_handle(cx);
         let weak = cx.entity().downgrade();
         window.open_dialog(cx, move |dialog, _, cx| {
+            let title = tr(title_key);
             let target = weak.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();
@@ -63,7 +64,7 @@ impl LibraryView {
                 .children(error.map(|error| {
                     div()
                         .text_color(cx.global::<TooltipTheme>().negative)
-                        .child(error)
+                        .child(render_error(&error))
                 }))
                 .child(
                     Button::new("submit-library-edit")
@@ -88,20 +89,24 @@ impl LibraryView {
                             }),
                             EditKind::RenameFolder => session.edit_library(|library| {
                                 library.rename_folder(
-                                    folder.as_deref().ok_or("Select a folder")?,
+                                    folder.as_deref().ok_or("library.select_folder")?,
                                     &name,
                                 )
                             }),
                             EditKind::Rename => session.edit_library(|library| {
-                                library.rename(build_id.as_deref().ok_or("Select a build")?, &name)
+                                library.rename(
+                                    build_id.as_deref().ok_or("library.select_build")?,
+                                    &name,
+                                )
                             }),
                             EditKind::AddProfile => session.edit_library(|library| {
-                                let build = library
-                                    .build_mut(build_id.as_deref().ok_or("Select a build")?)?;
+                                let build = library.build_mut(
+                                    build_id.as_deref().ok_or("library.select_build")?,
+                                )?;
                                 let snapshot = build
                                     .profile(&build.active_profile_id)
                                     .or_else(|| build.profiles.first())
-                                    .ok_or("Build has no profile")?
+                                    .ok_or("library.no_profile")?
                                     .snapshot()?;
                                 build.profiles.push(hsplanner_build::library::Profile::new(
                                     &name, &snapshot,

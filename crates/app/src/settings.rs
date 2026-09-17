@@ -10,6 +10,7 @@ use hsplanner_build::session::{Session, Settings};
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_header},
     controls::segment,
+    i18n::{self, Language, tr, trf},
     numbers::compact,
     theme::{self, TooltipTheme, UI_ZOOM_STEPS},
     tooltip_text::TooltipText,
@@ -23,10 +24,10 @@ const SAVE_SHORTCUT: &str = if cfg!(target_os = "macos") {
     "Ctrl+S"
 };
 const NUMBER_SCALES: [(&str, &str, &str); 4] = [
-    ("none", "None", "12,345"),
-    ("thousands", "Thousands", "12.3k"),
-    ("millions", "Millions", "12.3M"),
-    ("billions", "Billions", "12.3B"),
+    ("none", "settings.none", "12,345"),
+    ("thousands", "settings.thousands", "12.3k"),
+    ("millions", "settings.millions", "12.3M"),
+    ("billions", "settings.billions", "12.3B"),
 ];
 const PREVIEW_SAMPLES: [f64; 3] = [45_678., 12_345_678., 2_500_000_000.];
 
@@ -78,6 +79,7 @@ impl SettingsView {
         self.session.update(cx, |session, cx| {
             let mut settings = session.state().settings.clone();
             edit(&mut settings);
+            i18n::apply_language(&settings.language, cx);
             session.set_settings(settings);
             cx.notify();
         });
@@ -137,6 +139,26 @@ impl Render for SettingsView {
             .shell
             .upgrade()
             .is_some_and(|shell| shell.read(cx).profile_controls);
+        let language = section("settings-language", tr("settings.language"), cx)
+            .child(
+                div()
+                    .flex()
+                    .flex_wrap()
+                    .gap_1p5()
+                    .children(Language::ALL.into_iter().map(|language| {
+                        segment(
+                            SharedString::from(format!("settings-language-{}", language.code())),
+                            language.name(),
+                            Language::from_code(&settings.language) == language,
+                            cx,
+                        )
+                        .accessibility_label(language.name())
+                        .on_click(cx.listener(move |this, _, _, cx| {
+                            this.edit(cx, |settings| settings.language = language.code().into());
+                        }))
+                    })),
+            )
+            .child(hint(tr("settings.language_hint").into(), p.faint));
         let zoom = theme::normalize_zoom(settings.ui_zoom);
         let scale = settings.number_scale.clone();
         let preview = PREVIEW_SAMPLES
@@ -144,33 +166,39 @@ impl Render for SettingsView {
             .map(|sample| compact(*sample, &scale))
             .collect::<Vec<_>>()
             .join("  ·  ");
-        let saving = section("settings-saving", "Saving", cx)
+        let saving = section("settings-saving", tr("settings.saving"), cx)
             .child(
                 Checkbox::new("settings-auto-save")
-                    .label("Auto-save")
+                    .label(tr("settings.auto_save"))
                     .checked(settings.auto_save)
                     .on_click(cx.listener(|this, checked: &bool, _, cx| {
                         let checked = *checked;
                         this.edit(cx, |settings| settings.auto_save = checked);
                     })),
             )
-            .child(description(
-                "Saves changes to the active build as you make them.",
-                cx,
-            ))
+            .child(description(tr("settings.auto_save_hint"), cx))
             .child(if settings.auto_save {
-                hint(format!("{SAVE_SHORTCUT} still saves instantly"), p.faint)
+                hint(
+                    trf(
+                        "settings.instant_save",
+                        &[("shortcut", SAVE_SHORTCUT.into())],
+                    ),
+                    p.faint,
+                )
             } else {
                 hint(
-                    format!("Manual mode — press {SAVE_SHORTCUT} to save the active build"),
+                    trf(
+                        "settings.manual_save",
+                        &[("shortcut", SAVE_SHORTCUT.into())],
+                    ),
                     p.accent_hot.opacity(0.8),
                 )
             });
-        let numbers = section("settings-numbers", "Numbers", cx)
+        let numbers = section("settings-numbers", tr("settings.numbers"), cx)
             .child(
                 div()
                     .font_weight(FontWeight::SEMIBOLD)
-                    .child("Largest unit"),
+                    .child(tr("settings.largest_unit")),
             )
             .child(
                 div()
@@ -180,7 +208,7 @@ impl Render for SettingsView {
                     .children(NUMBER_SCALES.into_iter().map(|(key, label, sample)| {
                         segment(
                             SharedString::from(format!("settings-scale-{key}")),
-                            format!("{label} · {sample}"),
+                            format!("{} · {sample}", tr(label)),
                             scale == key,
                             cx,
                         )
@@ -193,11 +221,15 @@ impl Render for SettingsView {
                 div()
                     .flex()
                     .gap_1p5()
-                    .child(hint("Preview ·".into(), p.faint))
+                    .child(hint(tr("settings.preview").into(), p.faint))
                     .child(hint(preview, p.accent_hot.opacity(0.8))),
             );
-        let display = section("settings-display", "Display", cx)
-            .child(div().font_weight(FontWeight::SEMIBOLD).child("UI scale"))
+        let display = section("settings-display", tr("settings.display"), cx)
+            .child(
+                div()
+                    .font_weight(FontWeight::SEMIBOLD)
+                    .child(tr("settings.ui_scale")),
+            )
             .child(
                 div()
                     .flex()
@@ -215,24 +247,18 @@ impl Render for SettingsView {
                         }))
                     })),
             )
-            .child(hint(
-                "Ctrl + / Ctrl − zooms too, this is the one that sticks".into(),
-                p.faint,
-            ));
-        let interface = section("settings-interface", "Interface", cx)
+            .child(hint(tr("settings.zoom_hint").into(), p.faint));
+        let interface = section("settings-interface", tr("settings.interface"), cx)
             .child(
                 Checkbox::new("settings-profile-controls")
-                    .label("Build and profile controls")
+                    .label(tr("settings.profile_controls"))
                     .checked(profile_controls)
                     .on_click(|_, window, cx| {
                         window.dispatch_action(Box::new(ToggleProfileControls), cx)
                     }),
             )
-            .child(description(
-                "Shows the build name, profile switcher and save state under the top bar.",
-                cx,
-            ));
-        let credits = section("settings-credits", "Credits", cx)
+            .child(description(tr("settings.profile_controls_hint"), cx));
+        let credits = section("settings-credits", tr("settings.credits"), cx)
             .child(
                 div()
                     .flex()
@@ -262,13 +288,18 @@ impl Render for SettingsView {
                 div()
                     .text_size(rems(12. / 13.))
                     .text_color(p.muted)
-                    .child("Built and maintained by zium."),
+                    .child(tr("settings.author")),
             )
             .child(
                 div()
                     .flex()
                     .gap_3()
-                    .child(external("settings-kofi", "Support on Ko-fi", KOFI_URL, cx))
+                    .child(external(
+                        "settings-kofi",
+                        tr("settings.support"),
+                        KOFI_URL,
+                        cx,
+                    ))
                     .child(external("settings-github", "GitHub", GITHUB_URL, cx)),
             )
             .child(
@@ -277,11 +308,7 @@ impl Render for SettingsView {
                     .pt_2p5()
                     .border_t_1()
                     .border_color(p.border)
-                    .child(hint(
-                        "Fan-made planner. Hero Siege © Panic Art Studios — not affiliated."
-                            .to_uppercase(),
-                        p.faint,
-                    )),
+                    .child(hint(tr("settings.disclaimer").to_uppercase(), p.faint)),
             );
         div()
             .size_full()
@@ -289,9 +316,9 @@ impl Render for SettingsView {
             .flex_col()
             .text_size(rems(1.))
             .child(modal_header(
-                modal_eyebrow("settings-eyebrow", "Preferences"),
-                "Settings",
-                Some("Stored on this device".into()),
+                modal_eyebrow("settings-eyebrow", tr("settings.preferences")),
+                tr("settings.title"),
+                Some(tr("settings.local").into()),
                 cx,
             ))
             .child(
@@ -305,6 +332,7 @@ impl Render for SettingsView {
                     .flex()
                     .flex_col()
                     .gap_6()
+                    .child(language)
                     .child(saving)
                     .child(numbers)
                     .child(display)

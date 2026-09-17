@@ -9,8 +9,8 @@ use crate::skill_details::stat_name;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
 use hsplanner_engine::calc::affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars};
 use hsplanner_engine::calc::types::{ItemBase, ItemSet};
-use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::controls::{ButtonSize, ButtonTone, command_button, modal_button};
+use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
 
@@ -81,24 +81,20 @@ impl GearView {
                                 div()
                                     .text_size(units(14.))
                                     .font_weight(FontWeight::SEMIBOLD)
-                                    .child("No item selected"),
+                                    .child(tr("gear.no_item_selected")),
                             )
-                            .child(
-                                div()
-                                    .text_color(muted)
-                                    .child("This slot will be emptied when you Apply."),
-                            ),
+                            .child(div().text_color(muted).child(tr("gear.slot_will_empty"))),
                     )
                     .child(self.picker_button(
                         "choose-empty-item",
-                        "Choose an item",
+                        tr("gear.choose_item"),
                         Picker::Items,
                         cx,
                     )),
             );
         };
         let Some(base) = data::get_item(&item.base_id) else {
-            return content.child("Unknown item base.");
+            return content.child(tr("gear.unknown_base"));
         };
         content = content.child(
             div()
@@ -106,15 +102,20 @@ impl GearView {
                 .items_center()
                 .justify_between()
                 .gap_3()
-                .child(eyebrow("configure", "◆ Configure", cx))
+                .child(eyebrow("configure", tr("gear.configure"), cx))
                 .child(
                     div()
                         .flex()
                         .items_center()
                         .gap_2()
-                        .child(self.sections_action("expand-all", "Expand all", true, cx))
+                        .child(self.sections_action("expand-all", tr("gear.expand_all"), true, cx))
                         .child(div().text_color(faint.opacity(0.5)).child("|"))
-                        .child(self.sections_action("collapse-all", "Collapse all", false, cx)),
+                        .child(self.sections_action(
+                            "collapse-all",
+                            tr("gear.collapse_all"),
+                            false,
+                            cx,
+                        )),
                 ),
         );
         if let Some(set) = base.set_id.as_deref().and_then(data::get_set)
@@ -137,13 +138,13 @@ impl GearView {
         for (key, label, picker, picked) in [
             (
                 "random_skill_element",
-                "Random Skill Element",
+                tr("gear.random_skill_element"),
                 Picker::RandomElement,
                 item.random_skill_element.clone(),
             ),
             (
                 "random_skill",
-                "Random skill",
+                tr("gear.random_skill"),
                 Picker::RandomSkill,
                 item.random_skill_id
                     .as_deref()
@@ -152,7 +153,7 @@ impl GearView {
             ),
             (
                 "grant_subskills",
-                "Subskill bonus",
+                tr("gear.subskill_bonus"),
                 Picker::Subskill,
                 item.subskill_boost_skill_id
                     .as_deref()
@@ -161,7 +162,7 @@ impl GearView {
             ),
             (
                 "all_skills_class",
-                "Class bonus",
+                tr("gear.class_bonus"),
                 Picker::Class,
                 item.all_skills_class_id
                     .as_deref()
@@ -232,7 +233,10 @@ impl GearView {
                                     .text_color(if active { p.positive } else { p.faint })
                                     .child(TooltipText::new(
                                         SharedString::from(format!("set-bonus-{}", bonus.pieces)),
-                                        format!("{}-SET", bonus.pieces),
+                                        trf(
+                                            "gear.set_bonus_count",
+                                            &[("arg0", (bonus.pieces).to_string())],
+                                        ),
                                         0.14,
                                     )),
                             )
@@ -266,7 +270,7 @@ impl GearView {
                 .pt_2()
                 .border_t_1()
                 .border_color(p.text.opacity(0.05))
-                .child(eyebrow("set-items", "Set items", cx))
+                .child(eyebrow("set-items", tr("gear.set_items"), cx))
                 .child(div().ml_3().mt_1().flex().flex_col().gap_0p5().children(
                     set.items.iter().map(|piece| {
                         let worn = equipped_ids.contains(&piece.item_id);
@@ -292,7 +296,13 @@ impl GearView {
                 .default_open(count >= 2)
                 .right(
                     mono_summary(
-                        format!("{count}/{} pieces", set.items.len()),
+                        trf(
+                            "gear.set_pieces",
+                            &[
+                                ("count", (count).to_string()),
+                                ("arg0", (set.items.len()).to_string()),
+                            ],
+                        ),
                         p.positive.opacity(0.8),
                     )
                     .into_any_element(),
@@ -322,7 +332,7 @@ impl GearView {
         let summary = match (names.len(), unique.len()) {
             (0, _) => None,
             (n, 1) => Some(format!("{} ×{n}", unique[0].to_uppercase())),
-            (n, _) => Some(format!("{n} SOCKETED")),
+            (n, _) => Some(trf("gear.socketed_count", &[("n", (n).to_string())])),
         };
         let right = div()
             .flex()
@@ -357,19 +367,23 @@ impl GearView {
                     })),
             );
         let body = if item.socket_count == 0 {
-            empty_note("no-sockets", "No sockets allocated", cx)
+            empty_note("no-sockets", tr("gear.no_sockets"), cx)
         } else {
             let mut rows = div().p_2().flex().flex_col().gap_1p5();
             for index in 0..item.socket_count as usize {
                 rows = rows.child(self.socket_row(item, base, index, cx));
             }
             if let Some(count) = base.sockets.filter(|count| *count != item.socket_count) {
-                rows = rows.child(hint("base-sockets", &format!("base · {count}"), cx));
+                rows = rows.child(hint(
+                    "base-sockets",
+                    &trf("gear.base_socket_count", &[("count", (count).to_string())]),
+                    cx,
+                ));
             }
             rows
         };
         self.card(
-            Section::new("sockets", "Sockets", Tone::Default)
+            Section::new("sockets", tr("gear.sockets"), Tone::Default)
                 .default_open(item.socketed.iter().any(Option::is_some))
                 .right(right)
                 .body(body),
@@ -399,7 +413,7 @@ impl GearView {
             .as_deref()
             .and_then(super::presentation::socketable_icon);
         let toggle = if built_in {
-            chip("R", p.angelic, p.angelic.opacity(0.6))
+            chip(tr("gear.rainbow_short"), p.angelic, p.angelic.opacity(0.6))
                 .size(units(20.))
                 .flex()
                 .items_center()
@@ -408,16 +422,20 @@ impl GearView {
         } else {
             icon_button(
                 SharedString::from(format!("socket-type-{index}")),
-                if rainbow { "R" } else { "N" },
+                if rainbow {
+                    tr("gear.rainbow_short")
+                } else {
+                    tr("gear.normal_short")
+                },
                 cx,
             )
             .when(rainbow, |b| {
                 b.text_color(p.angelic).border_color(p.angelic.opacity(0.6))
             })
             .cursor_tooltip(if rainbow {
-                "Rainbow socket: +50% effect — click for Normal"
+                tr("gear.rainbow_socket_hint")
             } else {
-                "Normal socket — click for Rainbow (+50% effect)"
+                tr("gear.normal_socket_hint")
             })
             .on_click(cx.listener(move |this, _, _, cx| {
                 this.edit(cx, |item| {
@@ -481,11 +499,14 @@ impl GearView {
                                     .truncate()
                                     .text_size(units(12.))
                                     .when(name.is_none(), |v| v.italic().text_color(p.faint))
-                                    .child(name.clone().unwrap_or_else(|| "Empty socket".into())),
+                                    .child(
+                                        name.clone()
+                                            .unwrap_or_else(|| tr("gear.empty_socket").into()),
+                                    ),
                             )
                             .children(tier.map(|tier| {
                                 chip(
-                                    format!("T{tier}"),
+                                    trf("item.tier_short", &[("tier", (tier).to_string())]),
                                     p.accent_hot.opacity(0.75),
                                     p.accent_deep.opacity(0.4),
                                 )
@@ -499,7 +520,7 @@ impl GearView {
                             .text_color(p.faint)
                             .child(TooltipText::new(
                                 SharedString::from(format!("browse-{index}")),
-                                "BROWSE →",
+                                tr("gear.browse"),
                                 0.14,
                             )),
                     ),
@@ -517,7 +538,7 @@ impl GearView {
             .when(socketed.is_some(), |row| {
                 row.child(
                     icon_button(SharedString::from(format!("socket-clear-{index}")), "×", cx)
-                        .cursor_tooltip("Clear socket")
+                        .cursor_tooltip(tr("gear.clear_socket"))
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.edit(cx, |item| {
                                 let _ = gear::set_socket(item, index, None);
@@ -592,12 +613,16 @@ impl GearView {
                                             .child(entry.label.clone()),
                                     )
                                     .when(pinned, |v| {
-                                        v.child(chip("custom", accent_hot, accent_hot.opacity(0.6)))
+                                        v.child(chip(
+                                            tr("gear.custom"),
+                                            accent_hot,
+                                            accent_hot.opacity(0.6),
+                                        ))
                                     }),
                             )
                             .child(
                                 icon_button(SharedString::from(format!("reset-{key}")), "×", cx)
-                                    .cursor_tooltip("Reset to full range")
+                                    .cursor_tooltip(tr("gear.reset_full_range"))
                                     .when(!pinned, |b| b.invisible())
                                     .on_click(cx.listener(move |this, _, window, cx| {
                                         this.unpin_roll(&reset, window, cx)
@@ -622,11 +647,7 @@ impl GearView {
                     ),
             );
         }
-        rows = rows.child(hint(
-            "rolls-hint",
-            "Drag to pin a roll — unpinned stats count as their full range.",
-            cx,
-        ));
+        rows = rows.child(hint("rolls-hint", tr("gear.roll_hint"), cx));
         let total = entries.len();
         let pinned_count = entries.iter().filter(|e| e.pinned.is_some()).count();
         let right = div()
@@ -635,9 +656,15 @@ impl GearView {
             .gap_2()
             .child(mono_summary(
                 if pinned_count > 0 {
-                    format!("{pinned_count}/{total} pinned")
+                    trf(
+                        "gear.pinned_count",
+                        &[
+                            ("pinned_count", (pinned_count).to_string()),
+                            ("total", (total).to_string()),
+                        ],
+                    )
                 } else {
-                    format!("{total} rollable")
+                    trf("gear.rollable_count", &[("total", (total).to_string())])
                 },
                 if pinned_count > 0 {
                     accent_hot.opacity(0.8)
@@ -647,7 +674,7 @@ impl GearView {
             ))
             .when(pinned_count > 0, |v| {
                 v.child(
-                    header_action("rolls-reset", "Reset", true, cx).on_click(cx.listener(
+                    header_action("rolls-reset", tr("gear.reset"), true, cx).on_click(cx.listener(
                         move |this, _, window, cx| {
                             for entry in entries.iter().filter(|e| e.pinned.is_some()) {
                                 this.unpin_roll(entry, window, cx);
@@ -658,7 +685,7 @@ impl GearView {
             });
         Some(
             self.card(
-                Section::new("stat-rolls", "Stat Rolls", Tone::Default)
+                Section::new("stat-rolls", tr("gear.stat_rolls"), Tone::Default)
                     .default_open(pinned_count > 0)
                     .right(right)
                     .body(rows),
@@ -701,7 +728,7 @@ impl GearView {
                         .flex()
                         .items_center()
                         .gap_2()
-                        .child(self.roll_control(KEY, "Relic tier", window, cx))
+                        .child(self.roll_control(KEY, tr("gear.relic_tier"), window, cx))
                         .child(
                             div()
                                 .flex_shrink_0()
@@ -712,15 +739,14 @@ impl GearView {
                         ),
                 ),
             )
-            .child(hint(
-                "relic-tier-hint",
-                "Drag to choose the relic tier; every ranged stat follows it.",
-                cx,
-            ));
+            .child(hint("relic-tier-hint", tr("gear.relic_tier_hint"), cx));
         self.card(
-            Section::new("relic-tier", "Relic Tier", Tone::Default)
+            Section::new("relic-tier", tr("gear.relic_tier_title"), Tone::Default)
                 .default_open(true)
-                .right(mono_summary(format!("T{tier}"), accent_hot))
+                .right(mono_summary(
+                    trf("item.tier_short", &[("tier", (tier).to_string())]),
+                    accent_hot,
+                ))
                 .body(body),
             cx,
         )
@@ -751,15 +777,18 @@ impl GearView {
         }
         let p = cx.global::<TooltipTheme>();
         let active = item_tooltip::runeword_for(base, Some(item)).map(|r| r.name.clone());
-        let right = mono_summary(format!("{count} compatible"), p.faint);
+        let right = mono_summary(
+            trf("gear.compatible_count", &[("count", (count).to_string())]),
+            p.faint,
+        );
         let body = div().px_3().py_2().child(
-            ghost_button("pick-runeword", "Browse runewords →", cx).on_click(
+            ghost_button("pick-runeword", tr("gear.browse_runewords"), cx).on_click(
                 cx.listener(|this, _, window, cx| this.choose_picker(Picker::Runeword, window, cx)),
             ),
         );
         Some(
             self.card(
-                Section::new("runeword", "Runeword Presets", Tone::Default)
+                Section::new("runeword", tr("gear.runeword_presets"), Tone::Default)
                     .default_open(active.is_some())
                     .right(right)
                     .body(body),
@@ -774,11 +803,15 @@ impl GearView {
         let right = div().flex().items_center().gap_2().map(|v| {
             if stars > 0 {
                 v.child(mono_summary("★".repeat(stars as usize), p.accent_hot))
-                    .child(header_action("stars-clear", "Clear", true, cx).on_click(
-                        cx.listener(|this, _, _, cx| this.edit(cx, |item| item.stars = Some(0))),
-                    ))
+                    .child(
+                        header_action("stars-clear", tr("gear.clear"), true, cx).on_click(
+                            cx.listener(|this, _, _, cx| {
+                                this.edit(cx, |item| item.stars = Some(0))
+                            }),
+                        ),
+                    )
             } else {
-                v.child(mono_summary("no bonus", p.faint))
+                v.child(mono_summary(tr("gear.no_bonus"), p.faint))
             }
         });
         let mut row = div().flex().items_center().gap_1p5();
@@ -830,11 +863,11 @@ impl GearView {
         }
         let body = div().p_3().flex().flex_col().gap_2().child(row).child(hint(
             "stars-hint",
-            "Each star scales a stat by the game's own step for that stat. Many stats never scale, runeword items never do.",
+            tr("gear.stars_hint"),
             cx,
         ));
         self.card(
-            Section::new("stars", "Stars", Tone::Default)
+            Section::new("stars", tr("gear.stars"), Tone::Default)
                 .default_open(stars > 0)
                 .right(right)
                 .body(body),
@@ -853,10 +886,18 @@ impl GearView {
         let p = cx.global::<TooltipTheme>();
         let right = match &picked {
             Some(name) => mono_summary(name.to_uppercase(), p.accent_hot),
-            None => mono_summary("not rolled", p.faint),
+            None => mono_summary(tr("gear.not_rolled"), p.faint),
         };
         let body = div().px_3().py_2().child(
-            ghost_button(key, &format!("Pick {} →", label.to_lowercase()), cx).on_click(
+            ghost_button(
+                key,
+                &trf(
+                    "gear.pick_named",
+                    &[("arg0", (label.to_lowercase()).to_string())],
+                ),
+                cx,
+            )
+            .on_click(
                 cx.listener(move |this, _, window, cx| this.choose_picker(picker, window, cx)),
             ),
         );
@@ -896,14 +937,14 @@ impl GearView {
                 accent_hot.opacity(0.8),
             ))
             .child(
-                header_action("affix-add", "+ Add", false, cx)
+                header_action("affix-add", tr("gear.add"), false, cx)
                     .disabled(at_cap)
                     .on_click(cx.listener(|this, _, window, cx| {
                         this.choose_picker(Picker::Affix, window, cx)
                     })),
             );
         let body = if item.affixes.is_empty() {
-            empty_note("no-affixes", "No affixes rolled", cx)
+            empty_note("no-affixes", tr("gear.no_affixes"), cx)
         } else {
             let mut rows = div().p_2().flex().flex_col().gap_1p5();
             for (index, eq) in item.affixes.iter().enumerate() {
@@ -969,13 +1010,16 @@ impl GearView {
                                             ),
                                         )
                                         .child(chip(
-                                            format!("T{}", affix.tier),
+                                            trf(
+                                                "item.numbered_tier_short",
+                                                &[("arg0", (affix.tier).to_string())],
+                                            ),
                                             accent_hot.opacity(0.75),
                                             accent_deep.opacity(0.4),
                                         ))
                                         .when(eq.custom_value.is_some(), |v| {
                                             v.child(chip(
-                                                "custom",
+                                                tr("gear.custom"),
                                                 accent_hot,
                                                 accent_hot.opacity(0.6),
                                             ))
@@ -987,7 +1031,7 @@ impl GearView {
                                         "×",
                                         cx,
                                     )
-                                    .cursor_tooltip("Remove affix")
+                                    .cursor_tooltip(tr("gear.remove_affix"))
                                     .on_click(cx.listener(
                                         move |this, _, _, cx| {
                                             this.edit(cx, |item| {
@@ -1009,7 +1053,10 @@ impl GearView {
                                     .gap_2()
                                     .child(self.roll_control(
                                         &key,
-                                        &format!("{} roll", affix.name),
+                                        &trf(
+                                            "gear.named_roll",
+                                            &[("arg0", (affix.name).to_string())],
+                                        ),
                                         window,
                                         cx,
                                     ))
@@ -1031,9 +1078,9 @@ impl GearView {
             Section::new(
                 "affixes",
                 if base.random_affix_group_id.as_deref() == Some("random_unholy") {
-                    "Unholy Affixes"
+                    tr("gear.unholy_affixes")
                 } else {
-                    "Affixes"
+                    tr("gear.affixes")
                 },
                 Tone::Default,
             )
@@ -1055,20 +1102,23 @@ impl GearView {
             (p.negative, p.text, p.accent_hot, p.accent_deep);
         let right =
             if item.forged_mods.is_empty() {
-                header_action("forge-add", "+ Add", true, cx)
+                header_action("forge-add", tr("gear.add"), true, cx)
                     .on_click(cx.listener(|this, _, window, cx| {
                         this.choose_picker(Picker::Forge, window, cx)
                     }))
                     .into_any_element()
             } else {
                 mono_summary(
-                    format!("{} forged", item.forged_mods.len()),
+                    trf(
+                        "gear.forged_count",
+                        &[("arg0", (item.forged_mods.len()).to_string())],
+                    ),
                     negative.opacity(0.9),
                 )
                 .into_any_element()
             };
         let body = if item.forged_mods.is_empty() {
-            empty_note("no-forge", "No crystal forged", cx)
+            empty_note("no-forge", tr("gear.no_forged"), cx)
         } else {
             let mut rows = div().p_2().flex().flex_col().gap_1p5();
             for (index, eq) in item.forged_mods.iter().enumerate() {
@@ -1135,7 +1185,10 @@ impl GearView {
                                         )
                                         .children(tier.map(|tier| {
                                             chip(
-                                                format!("T{tier}"),
+                                                trf(
+                                                    "item.tier_short",
+                                                    &[("tier", (tier).to_string())],
+                                                ),
                                                 accent_hot.opacity(0.75),
                                                 accent_deep.opacity(0.4),
                                             )
@@ -1147,7 +1200,7 @@ impl GearView {
                                         "×",
                                         cx,
                                     )
-                                    .cursor_tooltip("Remove forged mod")
+                                    .cursor_tooltip(tr("gear.remove_forged"))
                                     .on_click(cx.listener(
                                         |this, _, _, cx| {
                                             this.edit(cx, |item| {
@@ -1169,7 +1222,7 @@ impl GearView {
                                     .gap_2()
                                     .child(self.roll_control(
                                         &key,
-                                        &format!("{name} roll"),
+                                        &trf("gear.forged_roll", &[("name", (name).to_string())]),
                                         window,
                                         cx,
                                     ))
@@ -1188,7 +1241,7 @@ impl GearView {
             rows
         };
         self.card(
-            Section::new("forged", "Forged · Satanic Crystal", Tone::Satanic)
+            Section::new("forged", tr("gear.forged_crystal"), Tone::Satanic)
                 .default_open(!item.forged_mods.is_empty())
                 .right(right)
                 .body(body),
@@ -1208,27 +1261,33 @@ impl GearView {
                 .items_center()
                 .gap_2()
                 .child(mono_summary(
-                    format!("{} · Lv {level}", augment.name.to_uppercase()),
+                    trf(
+                        "gear.augment_level",
+                        &[
+                            ("arg0", (augment.name.to_uppercase()).to_string()),
+                            ("level", (level).to_string()),
+                        ],
+                    ),
                     p.angelic.opacity(0.9),
                 ))
                 .child(
-                    header_action("augment-remove", "Remove", true, cx).on_click(
+                    header_action("augment-remove", tr("gear.remove"), true, cx).on_click(
                         cx.listener(|this, _, _, cx| this.edit(cx, |item| item.augment = None)),
                     ),
                 )
                 .into_any_element(),
-            None => header_action("augment-add", "+ Add", false, cx)
+            None => header_action("augment-add", tr("gear.add"), false, cx)
                 .on_click(cx.listener(|this, _, window, cx| {
                     this.choose_picker(Picker::Augment, window, cx)
                 }))
                 .into_any_element(),
         };
         let body = match augment {
-            None => empty_note("no-augment", "No angelic augment", cx),
+            None => empty_note("no-augment", tr("gear.no_augment"), cx),
             Some((augment, level)) => self.augment_body(augment, level, cx),
         };
         self.card(
-            Section::new("augment", "Angelic augment", Tone::Angelic)
+            Section::new("augment", tr("gear.angelic_augment"), Tone::Angelic)
                 .default_open(augment.is_some())
                 .right(right)
                 .body(body),
@@ -1276,7 +1335,7 @@ impl GearView {
                     .gap_2p5()
                     .px_2p5()
                     .py_1p5()
-                    .child(label("augment-level-label", "LEVEL"))
+                    .child(label("augment-level-label", tr("gear.level")))
                     .child(
                         icon_button("augment-minus", "−", cx)
                             .disabled(level <= 1)
@@ -1320,7 +1379,11 @@ impl GearView {
                 v.child(
                     boxed()
                         .p_2()
-                        .child(div().mb_1().child(label("augment-stats-label", "STATS")))
+                        .child(
+                            div()
+                                .mb_1()
+                                .child(label("augment-stats-label", tr("gear.stats"))),
+                        )
                         .children(stats.into_iter().map(|(key, value)| {
                             div()
                                 .flex()
@@ -1352,13 +1415,13 @@ impl GearView {
             .bg(p.border)
             .child(compare_identity(
                 "current-item",
-                "Currently Equipped",
+                tr("gear.currently_equipped"),
                 baseline,
                 cx,
             ))
             .child(compare_identity(
                 "selected-item",
-                "Selected",
+                tr("gear.selected"),
                 self.candidate.as_ref(),
                 cx,
             ));
@@ -1379,8 +1442,8 @@ impl GearView {
                 .flex_col()
                 .child(compare_heading(
                     "compare-item-heading",
-                    "Item",
-                    Some("unchanged"),
+                    tr("gear.item"),
+                    Some(tr("gear.unchanged")),
                     cx,
                 ))
                 .child(card("compare-selected-card", self.candidate.as_ref()))
@@ -1389,7 +1452,12 @@ impl GearView {
                 .min_w_0()
                 .flex()
                 .flex_col()
-                .child(compare_heading("compare-items-heading", "Items", None, cx))
+                .child(compare_heading(
+                    "compare-items-heading",
+                    tr("gear.items"),
+                    None,
+                    cx,
+                ))
                 .child(
                     div()
                         .min_w_0()
@@ -1409,7 +1477,7 @@ impl GearView {
                     div()
                         .text_size(rems(11. / 13.))
                         .text_color(p.faint)
-                        .child("No calculated change"),
+                        .child(tr("gear.no_calculated_change")),
                 );
             } else {
                 let damage = |row: &&PerformanceDiff| {
@@ -1421,14 +1489,13 @@ impl GearView {
                 let damage_rows = rows.iter().filter(damage).collect::<Vec<_>>();
                 let stat_rows = rows.iter().filter(|row| !damage(row)).collect::<Vec<_>>();
                 for (id, title, changes) in [
-                    ("damage-changes", "Active Skill", damage_rows),
-                    ("build-changes", "Build Stats", stat_rows),
+                    ("damage-changes", tr("gear.active_skill"), damage_rows),
+                    ("build-changes", tr("gear.build_stats"), stat_rows),
                 ] {
                     if !changes.is_empty() {
-                        let count = format!(
-                            "{} change{}",
-                            changes.len(),
-                            if changes.len() == 1 { "" } else { "s" }
+                        let count = trf(
+                            "gear.changes_count",
+                            &[("count", changes.len().to_string())],
                         );
                         details = details.child(
                             div()
@@ -1446,7 +1513,7 @@ impl GearView {
                 div()
                     .text_size(rems(11. / 13.))
                     .text_color(p.faint)
-                    .child("Calculating changes…"),
+                    .child(tr("gear.calculating_changes")),
             );
         }
         let scroll = self.comparison_scroll.clone();
@@ -1506,13 +1573,17 @@ impl GearView {
                                     .flex()
                                     .flex_col()
                                     .gap_1()
-                                    .child(editor_eyebrow("comparison-heading", "Comparison", cx))
+                                    .child(editor_eyebrow(
+                                        "comparison-heading",
+                                        tr("gear.comparison"),
+                                        cx,
+                                    ))
                                     .child(
                                         div()
                                             .text_size(rems(16. / 13.))
                                             .font_weight(FontWeight::SEMIBOLD)
                                             .text_color(p.text.opacity(0.85))
-                                            .child("Net change"),
+                                            .child(tr("gear.net_change")),
                                     ),
                             )
                             .children(verdict_badge(self.verdict, cx)),
@@ -1587,7 +1658,7 @@ impl GearView {
                         .text_center()
                         .text_size(units(13.))
                         .text_color(muted)
-                        .child("No matches"),
+                        .child(tr("gear.no_matches")),
                 )
             })
             .when(!self.rows.is_empty(), |view| {
@@ -1619,7 +1690,7 @@ impl GearView {
                                 .when(!modifier, |view| {
                                     view.child(self.picker_button(
                                         "items",
-                                        "Items",
+                                        tr("gear.items"),
                                         Picker::Items,
                                         cx,
                                     ))
@@ -1628,7 +1699,7 @@ impl GearView {
                                         |view| {
                                             view.child(self.picker_button(
                                                 "stash",
-                                                "Stash",
+                                                tr("gear.stash"),
                                                 Picker::Stash,
                                                 cx,
                                             ))
@@ -1637,8 +1708,8 @@ impl GearView {
                                 })
                                 .when(modifier, |view| {
                                     let title = match self.picker {
-                                        Picker::Forge => "Pick Satanic Affix",
-                                        Picker::Augment => "Pick Angelic Augment",
+                                        Picker::Forge => tr("gear.pick_satanic_affix"),
+                                        Picker::Augment => tr("gear.pick_angelic_augment"),
                                         _ if self
                                             .candidate
                                             .as_ref()
@@ -1648,9 +1719,9 @@ impl GearView {
                                                     == Some("random_unholy")
                                             }) =>
                                         {
-                                            "Pick Unholy Affix"
+                                            tr("gear.pick_unholy_affix")
                                         }
-                                        _ => "Add Affix",
+                                        _ => tr("gear.add_affix"),
                                     };
                                     view.child(
                                         div()
@@ -1661,12 +1732,13 @@ impl GearView {
                                     )
                                 })
                                 .child(div().flex_1())
-                                .child(ghost_button("back-to-configure", "← Back", cx).on_click(
-                                    cx.listener(|this, _, _, cx| {
-                                        this.choosing = false;
-                                        cx.notify();
-                                    }),
-                                )),
+                                .child(
+                                    ghost_button("back-to-configure", tr("gear.back"), cx)
+                                        .on_click(cx.listener(|this, _, _, cx| {
+                                            this.choosing = false;
+                                            cx.notify();
+                                        })),
+                                ),
                         )
                         .child(
                             Input::new(&self.search).planner_style(cx).prefix(
@@ -1693,7 +1765,7 @@ impl GearView {
                         );
                         div().px_4().py_2().child(
                             gpui_kit::component::checkbox::Checkbox::new("affixes-outside-pool")
-                                .label(format!("Show all affixes (outside the {label} pool)"))
+                                .label(trf("gear.all_affixes", &[("label", (label).to_string())]))
                                 .checked(self.show_all_affixes)
                                 .on_click(cx.listener(|this, checked: &bool, _, cx| {
                                     this.show_all_affixes = *checked;
@@ -1715,7 +1787,10 @@ impl GearView {
                         .border_color(border)
                         .text_size(units(11.))
                         .text_color(muted)
-                        .child(format!("{} results", self.rows.len())),
+                        .child(trf(
+                            "gear.results_count",
+                            &[("arg0", (self.rows.len()).to_string())],
+                        )),
                 ),
         )
     }
@@ -1748,7 +1823,14 @@ impl GearView {
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(10.))
                         .text_color(p.accent_hot.opacity(0.7))
-                        .child(row.group.to_uppercase()),
+                        .child(
+                            match row.group {
+                                "Prefixes" => tr("gear.prefixes"),
+                                "Suffixes" => tr("gear.suffixes"),
+                                group => group,
+                            }
+                            .to_uppercase(),
+                        ),
                 )
             })
             .child(self.choice_row(row, current.as_deref() == Some(row.id.as_str()), cx))
@@ -1821,7 +1903,14 @@ impl GearView {
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(10.))
                         .text_color(p.faint)
-                        .child(row.kind),
+                        .child(match row.kind {
+                            "PREFIX" => tr("gear.prefix"),
+                            "SUFFIX" => tr("gear.suffix"),
+                            "AFFIX" => tr("gear.affix"),
+                            "CRYSTAL" => tr("gear.crystal"),
+                            "AUGMENT" => tr("gear.augment"),
+                            kind => kind,
+                        }),
                 )
             })
             .child(
@@ -1841,11 +1930,15 @@ impl GearView {
                     accent_hot
                 };
                 div().w(units(42.)).flex_none().child(
-                    chip(format!("T{tier}"), tone, p.accent_deep)
-                        .px_2()
-                        .py_0p5()
-                        .font_family(theme::MONO_FONT_FAMILY)
-                        .text_size(units(11.)),
+                    chip(
+                        trf("item.tier_short", &[("tier", (tier).to_string())]),
+                        tone,
+                        p.accent_deep,
+                    )
+                    .px_2()
+                    .py_0p5()
+                    .font_family(theme::MONO_FONT_FAMILY)
+                    .text_size(units(11.)),
                 )
             }))
             .when(!row.detail.is_empty(), |v| {
@@ -1903,7 +1996,7 @@ impl GearView {
                                 base.map_or(p.faint, |base| theme::rarity_color(&base.rarity, cx)),
                             )
                             .child(
-                                base.map_or("Empty slot", |base| base.name.as_str())
+                                base.map_or(tr("gear.empty_slot"), |base| base.name.as_str())
                                     .to_owned(),
                             ),
                     )
@@ -1920,23 +2013,27 @@ impl GearView {
                     .items_center()
                     .gap_2()
                     .when(base.is_some(), |v| {
-                        v.child(ghost_button("item-text-edit", "Text Edit", cx).on_click(
-                            cx.listener(|this, _, window, cx| this.open_text_edit(window, cx)),
-                        ))
+                        v.child(
+                            ghost_button("item-text-edit", tr("gear.text_edit"), cx).on_click(
+                                cx.listener(|this, _, window, cx| this.open_text_edit(window, cx)),
+                            ),
+                        )
                         .when(!self.is_relic_slot(), |v| {
-                            v.child(ghost_button("stash-item", "Save to stash", cx).on_click(
-                                cx.listener(|this, _, _, cx| {
-                                    if let Some(item) = this.candidate.clone() {
-                                        this.session.update(cx, |session, cx| {
-                                            session.edit(|draft| gear::stash(draft, &item));
-                                            cx.notify();
-                                        });
-                                    }
-                                }),
-                            ))
+                            v.child(
+                                ghost_button("stash-item", tr("gear.save_to_stash"), cx).on_click(
+                                    cx.listener(|this, _, _, cx| {
+                                        if let Some(item) = this.candidate.clone() {
+                                            this.session.update(cx, |session, cx| {
+                                                session.edit(|draft| gear::stash(draft, &item));
+                                                cx.notify();
+                                            });
+                                        }
+                                    }),
+                                ),
+                            )
                         })
                         .child(
-                            ghost_button("unequip-item", "Remove", cx)
+                            ghost_button("unequip-item", tr("gear.remove"), cx)
                                 .text_color(p.negative)
                                 .on_click(cx.listener(|this, _, _, cx| {
                                     this.candidate = None;
@@ -1946,9 +2043,11 @@ impl GearView {
                         )
                     })
                     .child(
-                        ghost_button("change-item", "← Change item", cx).on_click(cx.listener(
-                            |this, _, window, cx| this.choose_picker(Picker::Items, window, cx),
-                        )),
+                        ghost_button("change-item", tr("gear.change_item"), cx).on_click(
+                            cx.listener(|this, _, window, cx| {
+                                this.choose_picker(Picker::Items, window, cx)
+                            }),
+                        ),
                     ),
             )
     }
@@ -1998,69 +2097,71 @@ impl GearView {
             .as_ref()
             .and_then(|item| data::get_item(&item.base_id))
             .map_or_else(
-                || "Empty slot".to_string(),
+                || tr("gear.empty_slot").to_string(),
                 |base| format!("{} · {}", base.name, rarity_label(&base.rarity)),
             );
-        let footer =
-            div()
-                .flex_none()
-                .flex()
-                .items_center()
-                .justify_between()
-                .gap_3()
-                .px_5()
-                .py_3()
-                .border_t_1()
-                .border_color(p.border)
-                .bg(p.shadow.opacity(0.2))
-                .child(
-                    div()
-                        .flex_1()
-                        .min_w_0()
-                        .flex()
-                        .items_center()
-                        .gap_2()
-                        .child(div().size_1p5().flex_none().rounded_full().bg(
-                            if self.candidate.is_some() {
-                                p.accent
-                            } else {
-                                p.faint
-                            },
-                        ))
-                        .child(
+        let footer = div()
+            .flex_none()
+            .flex()
+            .items_center()
+            .justify_between()
+            .gap_3()
+            .px_5()
+            .py_3()
+            .border_t_1()
+            .border_color(p.border)
+            .bg(p.shadow.opacity(0.2))
+            .child(
+                div()
+                    .flex_1()
+                    .min_w_0()
+                    .flex()
+                    .items_center()
+                    .gap_2()
+                    .child(div().size_1p5().flex_none().rounded_full().bg(
+                        if self.candidate.is_some() {
+                            p.accent
+                        } else {
+                            p.faint
+                        },
+                    ))
+                    .child(
+                        div()
+                            .min_w_0()
+                            .text_ellipsis()
+                            .text_size(rems(12. / 13.))
+                            .child(label),
+                    )
+                    .when(dirty, |v| {
+                        v.child(
                             div()
-                                .min_w_0()
-                                .text_ellipsis()
-                                .text_size(rems(12. / 13.))
-                                .child(label),
+                                .flex_none()
+                                .rounded_sm()
+                                .border_1()
+                                .border_color(p.accent_hot.opacity(0.4))
+                                .px_1p5()
+                                .py_0p5()
+                                .text_size(rems(10. / 13.))
+                                .text_color(p.accent_hot)
+                                .child(tr("gear.unsaved")),
                         )
-                        .when(dirty, |v| {
-                            v.child(
-                                div()
-                                    .flex_none()
-                                    .rounded_sm()
-                                    .border_1()
-                                    .border_color(p.accent_hot.opacity(0.4))
-                                    .px_1p5()
-                                    .py_0p5()
-                                    .text_size(rems(10. / 13.))
-                                    .text_color(p.accent_hot)
-                                    .child("Unsaved"),
-                            )
-                        }),
-                )
-                .child(
-                    div()
-                        .flex()
-                        .flex_none()
-                        .gap_2()
-                        .child(editor_button("revert-item", "Revert", false, cx).on_click(
+                    }),
+            )
+            .child(
+                div()
+                    .flex()
+                    .flex_none()
+                    .gap_2()
+                    .child(
+                        editor_button("revert-item", tr("gear.revert"), false, cx).on_click(
                             cx.listener(|this, _, window, cx| {
                                 this.keep_editor_open(window, cx);
                                 this.revert(cx);
                             }),
-                        ))
-                        .child(editor_button("cancel-item", "Cancel", false, cx).on_click(
+                        ),
+                    )
+                    .child(
+                        editor_button("cancel-item", tr("gear.cancel"), false, cx).on_click(
                             cx.listener(|this, _, window, cx| {
                                 this.confirming_close = false;
                                 this.confirmation_return_focus = None;
@@ -2068,23 +2169,24 @@ impl GearView {
                                 this.revert(cx);
                                 window.close_dialog(cx);
                             }),
-                        ))
-                        .child(
-                            editor_button("apply-item", "Apply", true, cx)
-                                .text_color(p.accent_hot)
-                                .border_color(p.accent_deep)
-                                .on_click(cx.listener(|this, _, window, cx| {
-                                    this.apply(cx);
-                                    if this.error.is_none() {
-                                        this.confirming_close = false;
-                                        this.confirmation_return_focus = None;
-                                        this.editing = false;
-                                        this.revert(cx);
-                                        window.close_dialog(cx);
-                                    }
-                                })),
                         ),
-                );
+                    )
+                    .child(
+                        editor_button("apply-item", tr("gear.apply"), true, cx)
+                            .text_color(p.accent_hot)
+                            .border_color(p.accent_deep)
+                            .on_click(cx.listener(|this, _, window, cx| {
+                                this.apply(cx);
+                                if this.error.is_none() {
+                                    this.confirming_close = false;
+                                    this.confirmation_return_focus = None;
+                                    this.editing = false;
+                                    this.revert(cx);
+                                    window.close_dialog(cx);
+                                }
+                            })),
+                    ),
+            );
         div()
             .flex_none()
             .flex()
@@ -2095,7 +2197,7 @@ impl GearView {
                         .id("unsaved-item-confirmation")
                         .track_focus(&self.confirmation_focus)
                         .role(gpui_kit::accesskit::Role::Group)
-                        .aria_label("You have unsaved item changes")
+                        .aria_label(tr("gear.unsaved_item_changes"))
                         .flex()
                         .flex_wrap()
                         .items_center()
@@ -2108,19 +2210,24 @@ impl GearView {
                         .bg(p.accent_hot.opacity(0.08))
                         .text_size(rems(12. / 13.))
                         .text_color(p.accent_hot)
-                        .child("You have unsaved changes")
+                        .child(tr("gear.unsaved_changes"))
                         .child(
                             div()
                                 .flex()
                                 .gap_2()
                                 .child(
-                                    editor_button("keep-editing-item", "Keep Editing", false, cx)
-                                        .on_click(cx.listener(|this, _, window, cx| {
-                                            this.keep_editor_open(window, cx)
-                                        })),
+                                    editor_button(
+                                        "keep-editing-item",
+                                        tr("gear.keep_editing"),
+                                        false,
+                                        cx,
+                                    )
+                                    .on_click(cx.listener(
+                                        |this, _, window, cx| this.keep_editor_open(window, cx),
+                                    )),
                                 )
                                 .child(
-                                    editor_button("discard-item", "Discard", false, cx)
+                                    editor_button("discard-item", tr("gear.discard"), false, cx)
                                         .text_color(p.negative)
                                         .on_click(cx.listener(|this, _, window, cx| {
                                             this.confirming_close = false;
@@ -2131,10 +2238,16 @@ impl GearView {
                                         })),
                                 )
                                 .child(
-                                    editor_button("save-item-before-close", "Save", true, cx)
-                                        .text_color(p.accent_hot)
-                                        .border_color(p.accent_deep)
-                                        .on_click(cx.listener(|this, _, window, cx| {
+                                    editor_button(
+                                        "save-item-before-close",
+                                        tr("gear.save"),
+                                        true,
+                                        cx,
+                                    )
+                                    .text_color(p.accent_hot)
+                                    .border_color(p.accent_deep)
+                                    .on_click(cx.listener(
+                                        |this, _, window, cx| {
                                             this.apply(cx);
                                             if this.error.is_none() {
                                                 this.confirming_close = false;
@@ -2145,7 +2258,8 @@ impl GearView {
                                             } else {
                                                 this.keep_editor_open(window, cx);
                                             }
-                                        })),
+                                        },
+                                    )),
                                 ),
                         ),
                 )
@@ -2156,16 +2270,16 @@ impl GearView {
 
 pub(crate) fn rarity_label(rarity: &str) -> String {
     match rarity {
-        "common" => "Common".into(),
-        "rare" => "Rare".into(),
-        "mythic" => "Mythic".into(),
-        "uncommon" => "Superior".into(),
-        "satanic_set" => "Satanic Set".into(),
-        "unholy" => "Unholy".into(),
-        "relic" => "Relic".into(),
-        "satanic" => "Satanic".into(),
-        "heroic" => "Heroic".into(),
-        "angelic" => "Angelic".into(),
+        "common" => tr("gear.rarity_common").into(),
+        "rare" => tr("gear.rarity_rare").into(),
+        "mythic" => tr("gear.rarity_mythic").into(),
+        "uncommon" => tr("gear.rarity_superior").into(),
+        "satanic_set" => tr("gear.rarity_satanic_set").into(),
+        "unholy" => tr("gear.rarity_unholy").into(),
+        "relic" => tr("gear.rarity_relic").into(),
+        "satanic" => tr("gear.rarity_satanic").into(),
+        "heroic" => tr("gear.rarity_heroic").into(),
+        "angelic" => tr("gear.rarity_angelic").into(),
         _ => rarity.into(),
     }
 }
@@ -2203,7 +2317,7 @@ fn compare_identity(
                 .font_weight(FontWeight::MEDIUM)
                 .text_color(base.map_or(p.faint, |base| theme::rarity_color(&base.rarity, cx)))
                 .child(
-                    base.map_or("Empty slot", |base| base.name.as_str())
+                    base.map_or(tr("gear.empty_slot"), |base| base.name.as_str())
                         .to_owned(),
                 ),
         )
@@ -2320,9 +2434,9 @@ pub(super) fn comparison_verdict(
 fn verdict_badge(verdict: Option<Verdict>, cx: &App) -> Option<Div> {
     let p = cx.global::<TooltipTheme>();
     let (label, arrow, color, glow) = match verdict? {
-        Verdict::Upgrade => ("Upgrade", "▲", p.positive, true),
-        Verdict::Downgrade => ("Downgrade", "▼", p.negative, true),
-        Verdict::Sidegrade => ("Sidegrade", "≈", p.muted, false),
+        Verdict::Upgrade => (tr("gear.upgrade"), "▲", p.positive, true),
+        Verdict::Downgrade => (tr("gear.downgrade"), "▼", p.negative, true),
+        Verdict::Sidegrade => (tr("gear.sidegrade"), "≈", p.muted, false),
     };
     Some(
         div()
@@ -2398,7 +2512,7 @@ fn diff_row(row: &PerformanceDiff, cx: &App) -> Div {
                 .font_family(theme::FONT_FAMILY)
                 .text_size(units(12.))
                 .text_color(p.text.opacity(0.85))
-                .child(row.label().to_owned()),
+                .child(crate::stat_labels::performance_name(row)),
         )
         .child(
             div()
@@ -2485,7 +2599,7 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
             entries.push(RollEntry {
                 key: format!("skill:{name}"),
                 stat: name.clone(),
-                label: format!("to {name}"),
+                label: trf("gear.skill_bonus", &[("name", (name).to_string())]),
                 format_key: String::new(),
                 bounds: apply_stars_to_ranged_value((min, max), "item_granted_skill_rank", stars),
                 pinned: item.skill_bonus_overrides.get(name).copied(),

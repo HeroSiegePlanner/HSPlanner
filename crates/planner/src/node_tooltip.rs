@@ -1,3 +1,4 @@
+use hsplanner_ui::i18n::{tr, trf};
 use std::collections::HashMap;
 
 use gpui_kit::base::Tooltip;
@@ -36,13 +37,13 @@ enum Tone {
 
 fn tier(node: &Node, info: Option<&Info>) -> (&'static str, Tone) {
     match info.map(|info| info.n.as_str()) {
-        Some("jewelry") => ("Jewelry Socket", Tone::Rare),
-        Some("warp") => ("Warp Node", Tone::Rare),
-        Some("root") => ("Starting Node", Tone::Angelic),
-        Some("big") => ("Notable", Tone::Rare),
-        _ if node.r >= 12. => ("Keystone", Tone::Rare),
-        _ if node.r >= 10. => ("Minor", Tone::Rare),
-        _ => ("Minor", Tone::Neutral),
+        Some("jewelry") => (tr("tree.tier.jewelry"), Tone::Rare),
+        Some("warp") => (tr("tree.tier.warp"), Tone::Rare),
+        Some("root") => (tr("tree.tier.start"), Tone::Angelic),
+        Some("big") => (tr("tree.tier.notable"), Tone::Rare),
+        _ if node.r >= 12. => (tr("tree.tier.keystone"), Tone::Rare),
+        _ if node.r >= 10. => (tr("tree.tier.minor"), Tone::Rare),
+        _ => (tr("tree.tier.minor"), Tone::Neutral),
     }
 }
 
@@ -184,7 +185,12 @@ impl RenderOnce for NodeTooltip {
                                     self.info
                                         .as_ref()
                                         .map(|info| info.t.clone())
-                                        .unwrap_or_else(|| format!("Node #{}", self.node.id)),
+                                        .unwrap_or_else(|| {
+                                            trf(
+                                                "tree.node_name",
+                                                &[("id", self.node.id.to_string())],
+                                            )
+                                        }),
                                     title_tracking,
                                 )
                                 .glow(self.effects.then_some(accent)),
@@ -224,7 +230,7 @@ impl RenderOnce for NodeTooltip {
                                 .text_color(palette.accent_hot.opacity(0.85))
                                 .child(TooltipText::new(
                                     "tooltip-socketed",
-                                    "SOCKETED",
+                                    tr("tree.socketed"),
                                     label_tracking,
                                 )),
                         )
@@ -233,9 +239,9 @@ impl RenderOnce for NodeTooltip {
                         .child(
                             text(
                                 if self.allocated {
-                                    "Right-click to edit socket"
+                                    tr("tree.edit_socket")
                                 } else {
-                                    "Allocate this node to activate its socket"
+                                    tr("tree.activate_socket")
                                 },
                                 palette.faint,
                             )
@@ -264,7 +270,7 @@ impl RenderOnce for NodeTooltip {
                                         .text_color(palette.muted)
                                         .child(TooltipText::new(
                                             "tooltip-unsupported",
-                                            "NOT YET SUPPORTED",
+                                            tr("tree.unsupported"),
                                             label_tracking,
                                         )),
                                 )
@@ -282,7 +288,7 @@ impl RenderOnce for NodeTooltip {
                                         .text_size(rems(10. / 13.))
                                         .italic()
                                         .text_color(palette.muted.opacity(0.7))
-                                        .child("These mods are not yet calculated by the planner."),
+                                        .child(tr("tree.unsupported_help")),
                                 ),
                         );
                     }
@@ -323,7 +329,7 @@ impl RenderOnce for NodeTooltip {
                 );
             }
         } else {
-            panel = panel.child(section(palette).child(text("No data available", palette.faint)));
+            panel = panel.child(section(palette).child(text(tr("tree.no_data"), palette.faint)));
         }
         if self.effects {
             EffectTransition::new(fade)

@@ -15,6 +15,7 @@ use hsplanner_engine::calc::{
     types::{EquippedItem, SocketType},
 };
 use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::theme::{self, TooltipTheme};
 
 #[path = "gear_text_edit.rs"]
@@ -102,10 +103,27 @@ fn gem_detail(description: Option<&str>) -> String {
         .join(" · ")
 }
 
+pub(crate) fn element_label(element: &str) -> String {
+    match element {
+        "fire" => tr("gear.element_fire").to_owned(),
+        "cold" => tr("gear.element_cold").to_owned(),
+        "lightning" => tr("gear.element_lightning").to_owned(),
+        "poison" => tr("gear.element_poison").to_owned(),
+        "arcane" => tr("gear.element_arcane").to_owned(),
+        other => other.to_owned(),
+    }
+}
+
 fn tier_detail(tier: u32, description: Option<&str>) -> String {
     match description.filter(|d| !d.is_empty()) {
-        Some(description) => format!("Tier {tier} · {description}"),
-        None => format!("Tier {tier}"),
+        Some(description) => trf(
+            "gear.tier_description",
+            &[
+                ("tier", (tier).to_string()),
+                ("description", (description).to_string()),
+            ],
+        ),
+        None => trf("gear.tier", &[("tier", (tier).to_string())]),
     }
 }
 
@@ -237,11 +255,23 @@ impl GearView {
         window: &mut Window,
         cx: &mut Context<Self>,
     ) -> Self {
-        let search = cx
-            .new(|cx| InputState::new(window, cx).placeholder("Search by name, affix, or effect…"));
-        let stash_search = cx.new(|cx| InputState::new(window, cx).placeholder("Search stash…"));
+        let search = cx.new(|cx| InputState::new(window, cx).placeholder(tr("gear.search")));
+        let stash_search =
+            cx.new(|cx| InputState::new(window, cx).placeholder(tr("gear.search_stash")));
         let document = DocumentKey::from_session(session.read(cx));
         let subscriptions = vec![
+            cx.observe_global_in::<hsplanner_ui::i18n::Locale>(window, |this, window, cx| {
+                this.search.update(cx, |input, cx| {
+                    input.set_placeholder(tr("gear.search"), window, cx)
+                });
+                this.stash_search.update(cx, |input, cx| {
+                    input.set_placeholder(tr("gear.search_stash"), window, cx)
+                });
+                this.refresh_item_language(window, cx);
+                this.refresh_rows(cx);
+                this.refresh_stash_rows(cx);
+                cx.notify();
+            }),
             cx.subscribe(&stash_search, |this, _, event: &InputEvent, cx| {
                 if matches!(event, InputEvent::Change) {
                     this.refresh_stash_rows(cx);
@@ -512,17 +542,20 @@ impl GearView {
                             .icon(crate::skills::skill_icon(&s.class_id, &s.id))
                     })
                     .collect::<Vec<_>>();
-                rows.push(Row::new("", "No skill", ""));
+                rows.push(Row::new("", tr("gear.no_skill"), ""));
                 rows
             }
-            Picker::RandomElement => std::iter::once(Row::new("", "No element", ""))
+            Picker::RandomElement => std::iter::once(Row::new("", tr("gear.no_element"), ""))
                 .chain(
                     ["fire", "cold", "lightning", "poison", "arcane"]
                         .into_iter()
                         .map(|element| {
                             Row::new(
                                 element,
-                                format!("{}{} Skills", element[..1].to_uppercase(), &element[1..]),
+                                trf(
+                                    "gear.element_skills",
+                                    &[("element", element_label(element))],
+                                ),
                                 "",
                             )
                         }),
@@ -532,7 +565,7 @@ impl GearView {
                 .classes
                 .values()
                 .map(|c| Row::new(&c.id, &c.name, ""))
-                .chain(std::iter::once(Row::new("", "No class", "")))
+                .chain(std::iter::once(Row::new("", tr("gear.no_class"), "")))
                 .collect(),
         };
         if self.picker == Picker::Affix {
@@ -648,7 +681,7 @@ impl GearView {
                 .iter()
                 .find(|entry| entry.id == id)
                 .map(|entry| self.candidate = Some(entry.item.clone()))
-                .ok_or_else(|| "Stash item no longer exists.".to_owned()),
+                .ok_or_else(|| tr("gear.stash_missing").to_owned()),
             picker => {
                 if let Some(item) = &mut self.candidate {
                     match picker {
@@ -678,7 +711,7 @@ impl GearView {
                         _ => unreachable!(),
                     }
                 } else {
-                    Err("Choose an item first.".into())
+                    Err(tr("gear.choose_first").into())
                 }
             }
         };
@@ -874,7 +907,7 @@ impl GearView {
             .min_w_0()
             .track_focus(&binding.focus)
             .role(accesskit::Role::Group)
-            .aria_label(format!("{label} roll"))
+            .aria_label(trf("gear.roll_label", &[("label", (label).to_string())]))
             .rounded_sm()
             .when(binding.focus.is_focused(window), |v| {
                 v.shadow(vec![BoxShadow {

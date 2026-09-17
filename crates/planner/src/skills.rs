@@ -1,4 +1,5 @@
 //! Class skill trees and their inspector. The document owns ranks; this view owns selection.
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::{
@@ -536,7 +537,10 @@ impl SkillsView {
                         } else {
                             palette.border
                         })
-                        .accessibility_label(format!("Inspect {}", skill.name))
+                        .accessibility_label(trf(
+                            "planner.skills.inspect",
+                            &[("0", (skill.name).to_string())],
+                        ))
                         .cursor_tooltip(skill.name.clone())
                         .child(skill_image(skill, units(CELL)).opacity(if locked {
                             0.3
@@ -597,8 +601,11 @@ impl SkillsView {
                         .bg(theme::chrome_gold_surface())
                         .text_color(palette.accent_hot)
                         .label("+")
-                        .accessibility_label(format!("Add point to {}", skill.name))
-                        .cursor_tooltip("Add a point · Shift ×5 · Ctrl/Cmd+Shift all")
+                        .accessibility_label(trf(
+                            "planner.skills.add_to",
+                            &[("0", (skill.name).to_string())],
+                        ))
+                        .cursor_tooltip(tr("planner.skills.add_hint"))
                         .on_mouse_down(MouseButton::Right, |_, _, cx| cx.stop_propagation())
                         .on_click(cx.listener(move |this, event: &ClickEvent, _, cx| {
                             this.change_rank(&add, true, event.modifiers(), cx)
@@ -619,8 +626,11 @@ impl SkillsView {
                         .size_5()
                         .p_0()
                         .child(Icon::new(IconName::Settings).size_3())
-                        .accessibility_label(format!("Open {} subtree", skill.name))
-                        .cursor_tooltip("Open subtree…")
+                        .accessibility_label(trf(
+                            "planner.skills.open_named_subtree",
+                            &[("0", (skill.name).to_string())],
+                        ))
+                        .cursor_tooltip(tr("planner.skills.open_subtree_dialog"))
                         .on_mouse_down(MouseButton::Right, |_, _, cx| cx.stop_propagation())
                         .on_click(cx.listener(move |this, _, window, cx| {
                             this.subtree(&subtree, window, cx)
@@ -654,13 +664,23 @@ impl SkillsView {
                             .text_color(color)
                             .child(TooltipText::new(
                                 SharedString::from(format!("tree-{name}")),
-                                format!("◆ {}", name.to_uppercase()),
+                                format!(
+                                    "◆ {}",
+                                    if name == "Skills" {
+                                        tr("planner.common.skills").to_uppercase()
+                                    } else {
+                                        name.to_uppercase()
+                                    }
+                                ),
                                 0.14,
                             )),
                     )
                     .child(div().ml_auto().child(caption(
                         SharedString::from(format!("tree-points-{name}")),
-                        format!("{spent} PTS"),
+                        trf(
+                            "planner.skills.points_spent",
+                            &[("spent", (spent).to_string())],
+                        ),
                         palette.faint,
                     ))),
             )
@@ -684,7 +704,7 @@ impl SkillsView {
                 div()
                     .text_size(units(12.))
                     .text_color(p.muted)
-                    .child("Return to the full build to inspect skill details."),
+                    .child(tr("planner.skills.return_full_build")),
             );
         }
         let Some(skill) = skill else {
@@ -736,7 +756,7 @@ impl SkillsView {
             .child(
                 icon_button("detail-less", "−", false, cx)
                     .disabled(rank == 0)
-                    .accessibility_label("Remove skill point")
+                    .accessibility_label(tr("planner.skills.remove_point"))
                     .on_click(cx.listener(move |this, event: &ClickEvent, _, cx| {
                         this.change_rank(&minus, false, event.modifiers(), cx)
                     })),
@@ -744,7 +764,7 @@ impl SkillsView {
             .child(
                 icon_button("detail-more", "+", false, cx)
                     .disabled(rank >= skill.max_rank || available == 0 || !prerequisite_met)
-                    .accessibility_label("Add skill point")
+                    .accessibility_label(tr("planner.skills.add_point"))
                     .on_click(cx.listener(move |this, event: &ClickEvent, _, cx| {
                         this.change_rank(&plus, true, event.modifiers(), cx)
                     })),
@@ -752,7 +772,11 @@ impl SkillsView {
         let toggle = (kind != SkillKind::Passive).then(|| {
             segment(
                 "toggle-active",
-                if enabled { "✓ Active" } else { "+ Active" },
+                if enabled {
+                    tr("planner.skills.enabled")
+                } else {
+                    tr("planner.skills.disabled")
+                },
                 enabled,
                 cx,
             )
@@ -808,7 +832,10 @@ impl SkillsView {
             content = content.child(
                 Button::new("open-subtree")
                     .planner_style(cx)
-                    .label(format!("Subtree… · {spent} points"))
+                    .label(trf(
+                        "planner.skills.subtree_points",
+                        &[("spent", (spent).to_string())],
+                    ))
                     .disabled(nodes.is_empty())
                     .on_click(
                         cx.listener(move |this, _, window, cx| this.subtree(&subtree, window, cx)),
@@ -828,7 +855,7 @@ impl Render for SkillsView {
             .as_deref()
             .and_then(data::get_class)
             .map(|class| class.name.clone())
-            .unwrap_or_else(|| "Select a class in Config".into());
+            .unwrap_or_else(|| tr("planner.skills.select_class").into());
         let total = snapshot
             .level
             .saturating_mul(data::game_config().skill_points_per_level);
@@ -870,7 +897,7 @@ impl Render for SkillsView {
                     .py_3()
                     .border_b_1()
                     .border_color(p.border)
-                    .child(caption("skills-title", "◆ SKILLS", p.faint))
+                    .child(caption("skills-title", tr("planner.skills.title"), p.faint))
                     .child(
                         div()
                             .text_size(units(15.))
@@ -886,22 +913,26 @@ impl Render for SkillsView {
                             .gap_3()
                             .child(caption(
                                 "points",
-                                format!(
-                                    "POINTS {spent} / {total}  ·  {} AVAILABLE",
-                                    total.saturating_sub(spent)
+                                trf(
+                                    "planner.skills.point_budget",
+                                    &[
+                                        ("spent", (spent).to_string()),
+                                        ("total", (total).to_string()),
+                                        ("0", (total.saturating_sub(spent)).to_string()),
+                                    ],
                                 ),
                                 p.accent_hot,
                             ))
                             .child(caption(
                                 "skill-modifier-hint",
-                                "SHIFT ×5 · CTRL/CMD+SHIFT ALL",
+                                tr("planner.skills.modifier_hint"),
                                 p.faint,
                             ))
                             .child(
                                 Button::new("reset-skills")
                                     .planner_style(cx)
                                     .small()
-                                    .label("Reset")
+                                    .label(tr("planner.common.reset"))
                                     .disabled(spent == 0)
                                     .on_click(cx.listener(|this, _, _, cx| {
                                         this.edit(cx, |s| s.skill_ranks.clear())
@@ -977,9 +1008,7 @@ impl Render for SkillsView {
                                                 self.tree_panel(name, skills, window, cx)
                                             }))
                                             .when(trees.is_empty(), |v| {
-                                                v.child(
-                                                    "Choose a class in Config to view its skills.",
-                                                )
+                                                v.child(tr("planner.skills.choose_class"))
                                             }),
                                     ),
                             )
@@ -1112,7 +1141,7 @@ fn effect_rows(
 fn stat_display(key: &str, value: f64) -> (String, String) {
     let definition = data::game_config().stats.iter().find(|s| s.key == key);
     let label = definition
-        .map(|s| s.name.clone())
+        .map(|s| crate::stat_labels::stat_name(&s.key, &s.name))
         .unwrap_or_else(|| key.to_owned());
     let percent = definition.is_some_and(|s| s.format.as_deref() == Some("percent"));
     (label, format_range((value, value), percent))
@@ -1357,7 +1386,14 @@ impl SubtreeView {
             .when(allocated && !root, |b| {
                 b.shadow(vec![rem_glow(p.accent_hot.opacity(0.35), 12.)])
             })
-            .accessibility_label(format!("{} — rank {rank} of {}", node.name, node.max_rank));
+            .accessibility_label(trf(
+                "planner.skills.node_rank",
+                &[
+                    ("0", (node.name).to_string()),
+                    ("rank", (rank).to_string()),
+                    ("1", (node.max_rank).to_string()),
+                ],
+            ));
         face = match self.node_image(node) {
             Some(image) => face.child(img(image).size_full().object_fit(ObjectFit::Contain)),
             None => face.child(
@@ -1604,7 +1640,7 @@ impl Render for SubtreeView {
                                     .child(div().size(rems(0.25)).rounded_full().bg(p.accent))
                                     .child(TooltipText::new(
                                         "subtree-eyebrow",
-                                        "SKILL SUBTREE",
+                                        tr("planner.skills.subtree_title"),
                                         0.12,
                                     )),
                             )
@@ -1623,7 +1659,7 @@ impl Render for SubtreeView {
                                     .mt_1()
                                     .text_size(units(12.))
                                     .text_color(p.muted)
-                                    .child("Specialize · Boost · Change how this skill works"),
+                                    .child(tr("planner.skills.subtree_help")),
                             ),
                     )
                     .child(
@@ -1641,7 +1677,7 @@ impl Render for SubtreeView {
                                     .font_family(theme::MONO_FONT_FAMILY)
                                     .text_size(units(11.))
                                     .text_color(p.faint)
-                                    .child("Points")
+                                    .child(tr("planner.common.points"))
                                     .child(
                                         div()
                                             .text_size(units(13.))
@@ -1652,11 +1688,17 @@ impl Render for SubtreeView {
                                     .child(caption(
                                         "subtree-remaining",
                                         if spent > total {
-                                            format!("{} OVER LIMIT", spent - total)
+                                            trf(
+                                                "planner.skills.over_limit",
+                                                &[("0", (spent - total).to_string())],
+                                            )
                                         } else if remaining > 0 {
-                                            format!("{remaining} LEFT")
+                                            trf(
+                                                "planner.skills.remaining",
+                                                &[("remaining", (remaining).to_string())],
+                                            )
                                         } else {
-                                            "ALL SPENT".into()
+                                            tr("planner.skills.all_spent").into()
                                         },
                                         if spent > total {
                                             p.negative
@@ -1668,9 +1710,15 @@ impl Render for SubtreeView {
                                     )),
                             )
                             .child(
-                                modal_button("reset-subtree", "Reset", ButtonTone::Neutral, cx)
-                                    .disabled(spent == 0)
-                                    .on_click(cx.listener(move |this, _, _, cx| {
+                                modal_button(
+                                    "reset-subtree",
+                                    tr("planner.common.reset"),
+                                    ButtonTone::Neutral,
+                                    cx,
+                                )
+                                .disabled(spent == 0)
+                                .on_click(cx.listener(
+                                    move |this, _, _, cx| {
                                         let prefix = format!("{skill_id}:");
                                         this.session.update(cx, |session, cx| {
                                             session.edit(|draft| {
@@ -1681,11 +1729,17 @@ impl Render for SubtreeView {
                                             });
                                             cx.notify();
                                         });
-                                    })),
+                                    },
+                                )),
                             )
                             .child(
-                                modal_button("close-subtree", "Close", ButtonTone::Neutral, cx)
-                                    .on_click(|_, window, cx| window.close_dialog(cx)),
+                                modal_button(
+                                    "close-subtree",
+                                    tr("planner.common.close"),
+                                    ButtonTone::Neutral,
+                                    cx,
+                                )
+                                .on_click(|_, window, cx| window.close_dialog(cx)),
                             ),
                     ),
             )
@@ -1752,9 +1806,9 @@ impl Render for SubtreeView {
                     .when(nodes.is_empty(), |v| {
                         v.child(caption(
                             "subtree-empty",
-                            format!(
-                                "NO SUBSKILLS DEFINED FOR {} YET.",
-                                self.skill.name.to_uppercase()
+                            trf(
+                                "planner.skills.no_subskills",
+                                &[("0", (self.skill.name.to_uppercase()).to_string())],
                             ),
                             p.faint,
                         ))
@@ -1770,8 +1824,11 @@ impl Render for SubtreeView {
                     .py_2p5()
                     .border_t_1()
                     .border_color(p.border)
-                    .child(hint("subtree-hint-click", "L-Click add · R-Click remove"))
-                    .child(hint("subtree-hint-mods", "Shift ×5 · Ctrl/Cmd+Shift all")),
+                    .child(hint("subtree-hint-click", tr("planner.skills.click_hint")))
+                    .child(hint(
+                        "subtree-hint-mods",
+                        tr("planner.skills.modifier_hint_mixed"),
+                    )),
             )
     }
 }
@@ -1875,65 +1932,68 @@ impl Render for SubskillTooltip {
             "{}/{}_{}_subskill_{}",
             self.skill.class_id, self.skill.class_id, self.skill.id, self.node.position_index
         );
-        let mut panel =
-            div()
-                .flex()
-                .flex_col()
-                .w(units(400.))
-                .max_w(window.viewport_size().width - rem * (24. / 13.))
-                .bg(p.panel)
-                .text_color(p.text)
-                .line_height(relative(1.5))
-                .rounded(units(4.))
-                .border_1()
-                .border_color(p.accent.opacity(0.6))
-                .overflow_hidden()
-                .shadow(vec![BoxShadow {
-                    color: p.shadow.opacity(0.8),
-                    offset: point(px(0.), rem * (8. / 13.)),
-                    blur_radius: rem * (32. / 13.),
-                    spread_radius: px(0.),
-                    inset: false,
-                }])
-                .child(
-                    div()
-                        .flex_shrink_0()
-                        .px_3()
-                        .py_2()
-                        .flex()
-                        .items_center()
-                        .gap_2()
-                        .bg(linear_gradient(
-                            180.,
-                            linear_color_stop(p.accent.opacity(0.14), 0.),
-                            linear_color_stop(p.accent.opacity(0.04), 1.),
-                        ))
-                        .when_some(ICONS.get(icon_key.as_str()), |v, image| {
-                            v.child(
-                                img(image.clone())
-                                    .size(units(32.))
-                                    .flex_shrink_0()
-                                    .object_fit(ObjectFit::Contain),
+        let mut panel = div()
+            .flex()
+            .flex_col()
+            .w(units(400.))
+            .max_w(window.viewport_size().width - rem * (24. / 13.))
+            .bg(p.panel)
+            .text_color(p.text)
+            .line_height(relative(1.5))
+            .rounded(units(4.))
+            .border_1()
+            .border_color(p.accent.opacity(0.6))
+            .overflow_hidden()
+            .shadow(vec![BoxShadow {
+                color: p.shadow.opacity(0.8),
+                offset: point(px(0.), rem * (8. / 13.)),
+                blur_radius: rem * (32. / 13.),
+                spread_radius: px(0.),
+                inset: false,
+            }])
+            .child(
+                div()
+                    .flex_shrink_0()
+                    .px_3()
+                    .py_2()
+                    .flex()
+                    .items_center()
+                    .gap_2()
+                    .bg(linear_gradient(
+                        180.,
+                        linear_color_stop(p.accent.opacity(0.14), 0.),
+                        linear_color_stop(p.accent.opacity(0.04), 1.),
+                    ))
+                    .when_some(ICONS.get(icon_key.as_str()), |v, image| {
+                        v.child(
+                            img(image.clone())
+                                .size(units(32.))
+                                .flex_shrink_0()
+                                .object_fit(ObjectFit::Contain),
+                        )
+                    })
+                    .child(
+                        div()
+                            .min_w_0()
+                            .flex()
+                            .flex_col()
+                            .child(
+                                div()
+                                    .font_weight(FontWeight::SEMIBOLD)
+                                    .text_color(p.accent_hot)
+                                    .child(self.node.name.clone()),
                             )
-                        })
-                        .child(
-                            div()
-                                .min_w_0()
-                                .flex()
-                                .flex_col()
-                                .child(
-                                    div()
-                                        .font_weight(FontWeight::SEMIBOLD)
-                                        .text_color(p.accent_hot)
-                                        .child(self.node.name.clone()),
-                                )
-                                .when(!self.root, |v| {
-                                    v.child(div().text_size(units(11.)).text_color(p.muted).child(
-                                        format!("Rank {} / {}", self.rank, self.node.max_rank),
-                                    ))
-                                }),
-                        ),
-                );
+                            .when(!self.root, |v| {
+                                v.child(div().text_size(units(11.)).text_color(p.muted).child(trf(
+                                    "planner.skills.rank_value",
+                                    &[
+                                        ("0", (self.rank).to_string()),
+                                        ("1", (self.node.max_rank).to_string()),
+                                    ],
+                                )))
+                            }),
+                    ),
+            );
         if let Some(description) = &self.node.description {
             panel = panel.child(
                 Self::section(cx).child(
@@ -1969,15 +2029,22 @@ impl Render for SubskillTooltip {
                         .flex_wrap()
                         .items_center()
                         .gap_1()
-                        .child(Self::section_label("subskill-tags", "Tags".into(), cx))
+                        .child(Self::section_label(
+                            "subskill-tags",
+                            tr("planner.common.tags").into(),
+                            cx,
+                        ))
                         .children(tags.add.iter().map(|tag| {
-                            chip(format!("+{tag}"), p.accent_hot, p.accent_hot.opacity(0.7))
+                            chip(
+                                format!("+{}", skill_details::tag_name(tag)),
+                                p.accent_hot,
+                                p.accent_hot.opacity(0.7),
+                            )
                         }))
-                        .children(
-                            tags.remove
-                                .iter()
-                                .map(|tag| chip(tag.clone(), p.faint, p.border).line_through()),
-                        ),
+                        .children(tags.remove.iter().map(|tag| {
+                            chip(skill_details::tag_name(tag).to_owned(), p.faint, p.border)
+                                .line_through()
+                        })),
                 ),
             );
         }
@@ -2004,13 +2071,22 @@ impl Render for SubskillTooltip {
                 .iter()
                 .flatten()
                 .map(|state| match state {
-                    AppliedStateValue::Name(name) => format!("applies {}", name.replace('_', " ")),
-                    AppliedStateValue::Full { state, .. } => {
-                        format!("applies {}", state.replace('_', " "))
-                    }
+                    AppliedStateValue::Name(name) => trf(
+                        "planner.skills.applies",
+                        &[("0", (name.replace('_', " ")).to_string())],
+                    ),
+                    AppliedStateValue::Full { state, .. } => trf(
+                        "planner.skills.applies",
+                        &[("0", (state.replace('_', " ")).to_string())],
+                    ),
                 })
                 .collect();
-            trailing.extend(proc.tags.iter().flatten().cloned());
+            trailing.extend(
+                proc.tags
+                    .iter()
+                    .flatten()
+                    .map(|tag| skill_details::tag_name(tag).to_owned()),
+            );
             let mut section = Self::section(cx).child(
                 div()
                     .flex()
@@ -2020,7 +2096,10 @@ impl Render for SubskillTooltip {
                     .mb_1()
                     .child(Self::section_label(
                         "subskill-proc",
-                        format!("{} proc", proc.trigger.replace('_', " ")),
+                        trf(
+                            "planner.skills.proc_trigger",
+                            &[("0", (proc.trigger.replace('_', " ")).to_string())],
+                        ),
                         cx,
                     ))
                     .when(!trailing.is_empty(), |v| {
@@ -2034,7 +2113,7 @@ impl Render for SubskillTooltip {
                     }),
             );
             section = section.child(Self::stat(
-                "Proc Chance",
+                tr("planner.skills.proc_chance"),
                 Self::rank_value(
                     percent(chance),
                     next_value(chance, chance_next, &percent),
@@ -2048,12 +2127,10 @@ impl Render for SubskillTooltip {
                 let average = chance / 100. * current;
                 let value = Self::rank_value(shown, next_value(current, upcoming, &format), cx)
                     .when(average > 0., |v| {
-                        v.child(
-                            div()
-                                .text_size(units(10.))
-                                .text_color(p.faint)
-                                .child(format!("(avg {})", stat_display(&key, average).1)),
-                        )
+                        v.child(div().text_size(units(10.)).text_color(p.faint).child(trf(
+                            "planner.skills.average",
+                            &[("0", (stat_display(&key, average).1).to_string())],
+                        )))
                     });
                 section = section.child(Self::stat(label, value, cx));
             }

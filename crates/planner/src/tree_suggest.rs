@@ -291,12 +291,24 @@ impl TreeView {
                 .child(tooltip_text::TooltipText::new(id, text, 0.14))
         };
         let status = match &self.suggest.phase {
-            Phase::Idle => "Path and synergy search".to_string(),
-            Phase::Computing => format!("Search {current} / {total}"),
+            Phase::Idle => tr("tree.optimizer.idle").to_string(),
+            Phase::Computing => trf(
+                "tree.optimizer.progress",
+                &[
+                    ("current", current.to_string()),
+                    ("total", total.to_string()),
+                ],
+            ),
             Phase::Done => self.suggest.result.as_ref().map_or(String::new(), |r| {
-                format!("Used {} of {}", r.budget_used, r.budget_requested)
+                trf(
+                    "tree.optimizer.used",
+                    &[
+                        ("used", r.budget_used.to_string()),
+                        ("total", r.budget_requested.to_string()),
+                    ],
+                )
             }),
-            Phase::Failed(_) => "Last run errored".to_string(),
+            Phase::Failed(_) => tr("tree.optimizer.failed").to_string(),
         };
         let can_apply = self
             .suggest
@@ -323,7 +335,7 @@ impl TreeView {
                     .gap_3()
                     .child(mono(
                         "suggest-eyebrow",
-                        "TALENT TREE OPTIMIZER".into(),
+                        tr("tree.optimizer.eyebrow").into(),
                         p.faint,
                     ))
                     .child(
@@ -331,7 +343,7 @@ impl TreeView {
                             .text_lg()
                             .font_weight(FontWeight::SEMIBOLD)
                             .text_color(p.accent_hot)
-                            .child("Suggest Nodes"),
+                            .child(tr("tree.optimizer.title")),
                     )
                     .child(
                         div()
@@ -340,7 +352,7 @@ impl TreeView {
                             .justify_between()
                             .child(mono(
                                 "suggest-budget-label",
-                                "NODES TO ALLOCATE".into(),
+                                tr("tree.optimizer.budget").into(),
                                 p.faint,
                             ))
                             .child(
@@ -373,7 +385,7 @@ impl TreeView {
                                                 cx,
                                             )
                                             .small()
-                                            .label("Reset")
+                                            .label(tr("tree.reset"))
                                             .on_click(
                                                 cx.listener(|this, _, _, cx| {
                                                     this.suggest.clear();
@@ -394,9 +406,9 @@ impl TreeView {
                                         )
                                         .small()
                                         .label(match self.suggest.phase {
-                                            Phase::Computing => "Cancel",
-                                            Phase::Done => "Recalculate",
-                                            _ => "Calculate",
+                                            Phase::Computing => tr("tree.optimizer.cancel"),
+                                            Phase::Done => tr("tree.optimizer.recalculate"),
+                                            _ => tr("tree.optimizer.calculate"),
                                         })
                                         .on_click(
                                             cx.listener(move |this, _, _, cx| {
@@ -432,20 +444,26 @@ impl TreeView {
                     }),
             );
         if let Phase::Failed(error) = &self.suggest.phase {
-            panel = panel.child(
-                div()
-                    .px_4()
-                    .py_3()
-                    .text_sm()
-                    .text_color(p.negative)
-                    .child(error.clone()),
-            );
+            panel = panel.child(div().px_4().py_3().text_sm().text_color(p.negative).child(
+                match error.as_str() {
+                    "Operation cancelled." => tr("tree.optimizer.cancelled").to_owned(),
+                    "Cannot suggest nodes: calculated DPS is not finite." => {
+                        tr("tree.optimizer.invalid_dps").to_owned()
+                    }
+                    _ => trf("tree.optimizer.failure", &[("detail", error.clone())]),
+                },
+            ));
         }
         panel = match (&self.suggest.phase, &self.suggest.result) {
             (Phase::Done, Some(result)) => panel.child(self.suggest_results(result, cx)),
-            _ => panel.child(div().px_4().py_5().text_sm().text_color(p.muted).child(
-                "Choose the maximum number of nodes to add. The optimizer compares paths and alternative allocations using your build’s DPS, including travel nodes and skill synergies. Existing nodes stay allocated. Results are estimates; the search may leave points unused when no improvement is found.",
-            )),
+            _ => panel.child(
+                div()
+                    .px_4()
+                    .py_5()
+                    .text_sm()
+                    .text_color(p.muted)
+                    .child(tr("tree.optimizer.help")),
+            ),
         };
         panel.child(
             div()
@@ -458,10 +476,13 @@ impl TreeView {
                 .child(mono(
                     "suggest-footer",
                     match &self.suggest.phase {
-                        Phase::Done => format!("{} NODES READY", self.suggest.added.len()),
-                        Phase::Computing => "OPTIMIZING".into(),
-                        Phase::Failed(_) => "ERROR".into(),
-                        Phase::Idle => "CONFIGURE BUDGET".into(),
+                        Phase::Done => trf(
+                            "tree.optimizer.ready",
+                            &[("count", self.suggest.added.len().to_string())],
+                        ),
+                        Phase::Computing => tr("tree.optimizer.optimizing").into(),
+                        Phase::Failed(_) => tr("tree.optimizer.error").into(),
+                        Phase::Idle => tr("tree.optimizer.configure").into(),
                     },
                     match &self.suggest.phase {
                         Phase::Done => p.accent_hot,
@@ -476,7 +497,7 @@ impl TreeView {
                         cx,
                     )
                     .small()
-                    .label("Apply")
+                    .label(tr("tree.optimizer.apply"))
                     .disabled(!can_apply)
                     .on_click(cx.listener(|this, _, _, cx| this.apply_suggest(cx))),
                 ),
@@ -517,10 +538,20 @@ impl TreeView {
                 .py_3()
                 .border_b_1()
                 .border_color(p.border)
-                .child(stat("BASE DPS", dps(result.base_dps), None, p.text))
-                .child(stat("FINAL DPS", dps(result.final_dps), None, p.accent_hot))
                 .child(stat(
-                    "GAIN",
+                    tr("tree.optimizer.base_dps"),
+                    dps(result.base_dps),
+                    None,
+                    p.text,
+                ))
+                .child(stat(
+                    tr("tree.optimizer.final_dps"),
+                    dps(result.final_dps),
+                    None,
+                    p.accent_hot,
+                ))
+                .child(stat(
+                    tr("tree.optimizer.gain"),
                     format!("{}{}", if gain > 0. { "+" } else { "" }, dps(gain)),
                     Some(gain_percent(result.base_dps, result.final_dps)),
                     if gain > 0. { p.positive } else { p.muted },
@@ -536,7 +567,7 @@ impl TreeView {
                             .text_center()
                             .text_sm()
                             .text_color(p.muted)
-                            .child("No improvements found within budget"),
+                            .child(tr("tree.optimizer.no_improvement")),
                     )
                 })
                 .when(!result.sequence.is_empty(), |view| {
@@ -580,15 +611,16 @@ impl TreeView {
                             this.suggest.unsupported_expanded = !this.suggest.unsupported_expanded;
                             cx.notify();
                         }))
-                        .child(format!(
-                            "▲ {} unsupported mod line{} (treated as 0 DPS) {}",
-                            result.unsupported_lines.len(),
+                        .child(trf(
                             if result.unsupported_lines.len() == 1 {
-                                ""
+                                "tree.optimizer.unsupported_one"
                             } else {
-                                "s"
+                                "tree.optimizer.unsupported_many"
                             },
-                            if expanded { "−" } else { "+" }
+                            &[
+                                ("count", result.unsupported_lines.len().to_string()),
+                                ("toggle", if expanded { "−" } else { "+" }.to_owned()),
+                            ],
                         ))
                         .children(lines.into_iter().take(shown).map(|line| {
                             div().pl_4().text_color(p.muted).child(format!("· {line}"))
@@ -604,19 +636,25 @@ impl TreeView {
         let name = info
             .map(|info| info.t.trim())
             .filter(|name| !name.is_empty())
-            .map_or_else(|| format!("Node #{}", step.node_id), str::to_string);
+            .map_or_else(
+                || trf("tree.node_name", &[("id", step.node_id.to_string())]),
+                str::to_string,
+            );
         let (badge, badge_color) = match info.map(|info| info.n.as_str()) {
-            Some("jewelry") => ("SOCKET", p.stat_blue),
-            Some("big") => ("NOTABLE", p.accent_hot),
-            Some(_) => ("MINOR", p.muted),
-            None => ("NODE", p.faint),
+            Some("jewelry") => (tr("tree.optimizer.socket"), p.stat_blue),
+            Some("big") => (tr("tree.optimizer.notable"), p.accent_hot),
+            Some(_) => (tr("tree.optimizer.minor"), p.muted),
+            None => (tr("tree.optimizer.node"), p.faint),
         };
         let scale = self.session.read(cx).state().settings.number_scale.clone();
         let (gain, gain_color) = if step.is_filler {
-            ("Path".to_string(), p.faint)
+            (tr("tree.optimizer.path").to_string(), p.faint)
         } else {
             (
-                format!("+{} DPS", hsplanner_ui::numbers::compact(step.gain, &scale)),
+                trf(
+                    "tree.optimizer.dps_gain",
+                    &[("dps", hsplanner_ui::numbers::compact(step.gain, &scale))],
+                ),
                 if step.gain > 0. { p.positive } else { p.muted },
             )
         };

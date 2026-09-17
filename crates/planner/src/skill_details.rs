@@ -14,6 +14,7 @@ use hsplanner_engine::calc::{
         AffixEffect, AppliedStateValue, AttackKindSpec, DamageFormulaSpec, SkillKind, SkillSpec,
     },
 };
+use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
@@ -58,12 +59,15 @@ impl DetailsContext<'_> {
 pub(crate) fn stat_name(key: &str) -> String {
     let stats = &data::game_config().stats;
     if let Some(def) = stats.iter().find(|s| s.key == key) {
-        return def.name.clone();
+        return crate::stat_labels::stat_name(key, &def.name);
     }
     if let Some(base) = key.strip_suffix("_more")
         && let Some(def) = stats.iter().find(|s| s.key == base)
     {
-        return format!("Total {}", def.name);
+        return trf(
+            "planner.skills.total_stat",
+            &[("0", crate::stat_labels::stat_name(base, &def.name))],
+        );
     }
     key.split('_').map(capitalize).collect::<Vec<_>>().join(" ")
 }
@@ -284,31 +288,47 @@ pub(crate) fn empty_state(cx: &App) -> Div {
         .gap_4()
         .child(
             div()
-                .child(section("details-heading", "Details", p.accent_hot))
+                .child(section(
+                    "details-heading",
+                    tr("planner.skills.details"),
+                    p.accent_hot,
+                ))
                 .child(
                     div()
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(units(11.))
                         .line_height(relative(1.6))
                         .text_color(p.muted)
-                        .child("Click a skill to inspect its damage, mana cost, synergies, and subtree bonuses."),
+                        .child(tr("planner.skills.details_help")),
                 ),
         )
         .child(
             div()
-                .child(section("controls-heading", "Controls", p.accent_deep))
+                .child(section(
+                    "controls-heading",
+                    tr("planner.skills.controls"),
+                    p.accent_deep,
+                ))
                 .child(
                     div().flex().flex_col().gap_2().children(
                         [
-                            ("L-CLICK", "Select skill"),
-                            ("+", "Add a point"),
-                            ("R-CLICK", "Remove a point"),
-                            ("SHIFT", "5 points at a time"),
-                            ("CTRL/CMD+SHIFT", "All the points"),
-                            ("⚙", "Open subtree"),
+                            (
+                                "select",
+                                tr("planner.skills.left_click"),
+                                tr("planner.skills.select"),
+                            ),
+                            ("add", "+", tr("planner.skills.add_one")),
+                            (
+                                "remove",
+                                tr("planner.skills.right_click"),
+                                tr("planner.skills.remove_one"),
+                            ),
+                            ("five", "SHIFT", tr("planner.skills.five_at_time")),
+                            ("all", "CTRL/CMD+SHIFT", tr("planner.skills.all_points")),
+                            ("subtree", "⚙", tr("planner.skills.open_subtree")),
                         ]
                         .into_iter()
-                        .map(|(key, label)| {
+                        .map(|(id, key, label)| {
                             div()
                                 .flex()
                                 .items_center()
@@ -316,7 +336,7 @@ pub(crate) fn empty_state(cx: &App) -> Div {
                                 .gap_2()
                                 .child(key_chip(key))
                                 .child(caption(
-                                    SharedString::from(format!("control-{label}")),
+                                    SharedString::from(format!("control-{id}")),
                                     label,
                                     p.muted,
                                 ))
@@ -326,7 +346,11 @@ pub(crate) fn empty_state(cx: &App) -> Div {
         )
         .child(
             div()
-                .child(section("damage-heading", "Damage Types", p.accent_deep))
+                .child(section(
+                    "damage-heading",
+                    tr("planner.skills.damage_types"),
+                    p.accent_deep,
+                ))
                 .child(
                     div().flex().flex_wrap().gap_y_2().children(
                         [
@@ -354,7 +378,7 @@ pub(crate) fn empty_state(cx: &App) -> Div {
                                 )
                                 .child(caption(
                                     SharedString::from(format!("legend-{kind}")),
-                                    kind,
+                                    damage_type_name(kind),
                                     p.muted,
                                 ))
                         }),
@@ -363,12 +387,68 @@ pub(crate) fn empty_state(cx: &App) -> Div {
         )
 }
 
+pub(crate) fn damage_type_name(kind: &str) -> &str {
+    match kind {
+        "physical" => tr("planner.common.physical"),
+        "fire" => tr("planner.common.fire"),
+        "cold" => tr("planner.common.cold"),
+        "lightning" => tr("planner.common.lightning"),
+        "poison" => tr("planner.common.poison"),
+        "arcane" => tr("planner.common.arcane"),
+        "explosion" => tr("planner.common.explosion"),
+        "magic" => tr("planner.common.magic"),
+        _ => kind,
+    }
+}
+
+fn tag_translation_key(tag: &str) -> Option<&'static str> {
+    Some(match tag {
+        "Physical" => "planner.common.physical",
+        "Arcane" => "planner.common.arcane",
+        "Cold" => "planner.common.cold",
+        "Fire" => "planner.common.fire",
+        "Poison" => "planner.common.poison",
+        "Lightning" => "planner.common.lightning",
+        "Explosion" => "planner.common.explosion",
+        "Magic" => "planner.common.magic",
+        "Active" => "planner.common.active",
+        "Passive" => "planner.skills.tag_passive",
+        "Aura" => "planner.common.aura",
+        "Buff" => "planner.common.buff",
+        "Area of Effect" => "planner.stat.area_of_effect",
+        "Summon" => "planner.config.summon",
+        "Sentry" => "planner.config.sentry",
+        "Guardian" => "planner.config.guardian",
+        "Cast" => "planner.skills.tag_cast",
+        "Spell" => "planner.skills.tag_spell",
+        "Projectile" => "planner.skills.tag_projectile",
+        "Strike" => "planner.skills.tag_strike",
+        "Attack" => "planner.skills.tag_attack",
+        "Melee" => "planner.skills.tag_melee",
+        "Ranged" => "planner.skills.tag_ranged",
+        "Movement" => "planner.skills.tag_movement",
+        "Orbital" => "planner.skills.tag_orbital",
+        "Chain Lightning" => "planner.skills.tag_chain_lightning",
+        "Chaining" => "planner.skills.tag_chaining",
+        "Blink" => "planner.skills.tag_blink",
+        "Shape Shift" => "planner.skills.tag_shape_shift",
+        "Charge" => "planner.skills.tag_charge",
+        "Shield" => "planner.skills.tag_shield",
+        _ => return None,
+    })
+}
+
+/// Translate only the displayed tag; identity, membership and rules keep the canonical value.
+pub(crate) fn tag_name(tag: &str) -> &str {
+    tag_translation_key(tag).map(tr).unwrap_or(tag)
+}
+
 fn kind_label(kind: SkillKind) -> &'static str {
     match kind {
-        SkillKind::Active => "active",
-        SkillKind::Passive => "passive",
-        SkillKind::Aura => "aura",
-        SkillKind::Buff => "buff",
+        SkillKind::Active => tr("planner.skills.kind_active"),
+        SkillKind::Passive => tr("planner.skills.kind_passive"),
+        SkillKind::Aura => tr("planner.skills.kind_aura"),
+        SkillKind::Buff => tr("planner.skills.kind_buff"),
     }
 }
 
@@ -411,7 +491,7 @@ pub(crate) fn header(skill: &SkillSpec, icon: Div, cx: &App) -> Div {
                     "skill-kind",
                     format!(
                         "{} · {}",
-                        skill.damage_type.as_deref().unwrap_or("—"),
+                        damage_type_name(skill.damage_type.as_deref().unwrap_or("—")),
                         kind_label(skill.kind)
                     ),
                     p.muted,
@@ -429,7 +509,11 @@ pub(crate) fn rank_row(details: &DetailsContext, cx: &App) -> Div {
         .gap_2()
         .font_family(theme::MONO_FONT_FAMILY)
         .text_size(units(12.))
-        .child(caption("skill-rank-label", "Rank", p.muted))
+        .child(caption(
+            "skill-rank-label",
+            tr("planner.skills.rank"),
+            p.muted,
+        ))
         .child(div().text_color(p.accent_hot).child(format_pair(min, max)))
         .child(
             div()
@@ -518,7 +602,7 @@ pub(crate) fn tag_chips(view: &TagView, cx: &App) -> Option<Div> {
             .text_size(units(10.))
             .child(TooltipText::new(
                 SharedString::from(format!("tag-{text}")),
-                text.to_uppercase(),
+                tag_name(text).to_uppercase(),
                 0.18,
             ))
     };
@@ -566,13 +650,20 @@ pub(crate) fn bonuses_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     if has_bonus {
         let all = details.stat("all_skills");
         if all != (0., 0.) {
-            rows = rows.child(row("+ to All Skills", value(all.0, all.1), cx));
+            rows = rows.child(row(
+                tr("planner.skills.all_skill_bonus"),
+                value(all.0, all.1),
+                cx,
+            ));
         }
         if let Some(kind) = skill.damage_type.as_deref() {
             let element = details.stat(&format!("{kind}_skills"));
             if element != (0., 0.) {
                 rows = rows.child(row(
-                    format!("+ to {} Skills", capitalize(kind)),
+                    trf(
+                        "planner.skills.tag_bonus",
+                        &[("0", damage_type_name(kind).to_owned())],
+                    ),
                     value(element.0, element.1),
                     cx,
                 ));
@@ -588,7 +679,17 @@ pub(crate) fn bonuses_block(details: &DetailsContext, cx: &App) -> Option<Div> {
             let bonus = details.stat(key);
             if bonus != (0., 0.) {
                 rows = rows.child(row(
-                    format!("+ to {} Skills", def.tags.join(" + ")),
+                    trf(
+                        "planner.skills.tag_bonus",
+                        &[(
+                            "0",
+                            def.tags
+                                .iter()
+                                .map(|tag| tag_name(tag))
+                                .collect::<Vec<_>>()
+                                .join(" + "),
+                        )],
+                    ),
                     value(bonus.0, bonus.1),
                     cx,
                 ));
@@ -605,7 +706,10 @@ pub(crate) fn bonuses_block(details: &DetailsContext, cx: &App) -> Option<Div> {
             .unwrap_or((0., 0.));
         if item != (0., 0.) {
             rows = rows.child(row(
-                format!("+ to {}", skill.name),
+                trf(
+                    "planner.skills.named_bonus",
+                    &[("skill", skill.name.clone())],
+                ),
                 value(item.0, item.1),
                 cx,
             ));
@@ -613,7 +717,7 @@ pub(crate) fn bonuses_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     }
     if has_aura {
         rows = rows.child(row(
-            "Buffing Aura Effectiveness",
+            tr("planner.skills.aura_effectiveness"),
             div()
                 .font_family(theme::MONO_FONT_FAMILY)
                 .text_color(p.accent_hot)
@@ -625,7 +729,16 @@ pub(crate) fn bonuses_block(details: &DetailsContext, cx: &App) -> Option<Div> {
             cx,
         ));
     }
-    Some(detail_block("skill-bonuses", "Skill bonuses", None, None, cx).child(rows))
+    Some(
+        detail_block(
+            "skill-bonuses",
+            tr("planner.skills.bonuses"),
+            None,
+            None,
+            cx,
+        )
+        .child(rows),
+    )
 }
 
 fn passive_skill(skill: &SkillSpec) -> PassiveSkill {
@@ -738,7 +851,10 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
         .text_color(p.muted)
         .flex()
         .gap_1()
-        .child(format!("rank {}", format_pair(cur_min, cur_max)))
+        .child(trf(
+            "planner.skills.rank_lower",
+            &[("0", (format_pair(cur_min, cur_max)).to_string())],
+        ))
         .children(next.map(|(a, b)| {
             div()
                 .flex()
@@ -749,8 +865,11 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     let mut rows = div().flex().flex_col().gap_1();
     if let (Some(min), Some(max)) = (base_min, base_max) {
         let label = match (skill.attack_kind, skill.damage_type.as_deref()) {
-            (Some(AttackKindSpec::Attack), Some(kind)) => format!("{} damage", capitalize(kind)),
-            _ => "Base damage".into(),
+            (Some(AttackKindSpec::Attack), Some(kind)) => trf(
+                "planner.common.damage_value",
+                &[("0", damage_type_name(kind).to_owned())],
+            ),
+            _ => tr("planner.common.base_damage").into(),
         };
         let next_label = next.and_then(|(a, b)| {
             Some(damage_range_label(
@@ -769,8 +888,14 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     }
     if let Some(scaling) = skill.attack_scaling {
         for (label, f) in [
-            ("Attack damage", scaling.weapon_damage_pct),
-            ("Attack rating", scaling.attack_rating_pct),
+            (
+                tr("planner.common.attack_damage"),
+                scaling.weapon_damage_pct,
+            ),
+            (
+                tr("planner.common.attack_rating"),
+                scaling.attack_rating_pct,
+            ),
         ] {
             let Some(f) = f else { continue };
             let pct = |a: f64, b: f64| {
@@ -793,7 +918,7 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     }
     if let (Some(a), Some(b)) = (mana(cur_min), mana(cur_max)) {
         rows = rows.child(eff_row(
-            "Mana cost",
+            tr("planner.skills.mana_cost"),
             format_pair(a, b),
             next.and_then(|(x, y)| Some(format_pair(mana(x)?, mana(y)?))),
             None,
@@ -821,20 +946,40 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
         ));
     }
     let plain = [
-        ("Base cast rate", skill.base_cast_rate, Some("/s")),
-        ("Movement during use", skill.movement_during_use, Some("%")),
-        ("Range", skill.range, None),
-        ("Cooldown", skill.base_cooldown, Some("s")),
-        ("Effect duration", skill.effect_duration, Some("s")),
         (
-            "Hit interval",
+            tr("planner.skills.base_cast_rate"),
+            skill.base_cast_rate,
+            Some("/s"),
+        ),
+        (
+            tr("planner.skills.movement_during_use"),
+            skill.movement_during_use,
+            Some("%"),
+        ),
+        (tr("planner.skills.range"), skill.range, None),
+        (
+            tr("planner.skills.cooldown"),
+            skill.base_cooldown,
+            Some("s"),
+        ),
+        (
+            tr("planner.skills.effect_duration"),
+            skill.effect_duration,
+            Some("s"),
+        ),
+        (
+            tr("planner.skills.hit_interval"),
             skill
                 .hit_model
                 .as_ref()
                 .and_then(|model| model.tick_frequency),
             Some("s"),
         ),
-        ("Requires level", skill.requires_level.map(f64::from), None),
+        (
+            tr("planner.skills.requires_level"),
+            skill.requires_level.map(f64::from),
+            None,
+        ),
     ];
     for (label, value, suffix) in plain {
         if let Some(value) = value {
@@ -852,7 +997,7 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
                 .child(
                     div()
                         .text_color(p.text.opacity(0.8))
-                        .child("Requires skill"),
+                        .child(tr("planner.skills.requires_skill")),
                 )
                 .child(
                     div()
@@ -866,9 +1011,9 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
         detail_block(
             "skill-stats",
             if allocated {
-                "Stats"
+                tr("planner.common.stats")
             } else {
-                "Preview (not learned)"
+                tr("planner.skills.unlearned_preview")
             },
             Some(trailing.into_any_element()),
             None,
@@ -962,14 +1107,17 @@ pub(crate) fn synergy_blocks(details: &DetailsContext, cx: &App) -> Vec<Div> {
                 &other.name,
                 format_stat_pair(&bs.stat, bs.value * cur_min, bs.value * cur_max),
                 if allocated { p.stat_orange } else { p.muted },
-                format!("{}% per rank", round2(bs.value)),
+                trf(
+                    "planner.skills.percent_rank",
+                    &[("0", (round2(bs.value)).to_string())],
+                ),
                 cx,
             ));
         }
         blocks.push(
             detail_block(
                 "provides-synergy",
-                "Provides synergy to",
+                tr("planner.skills.provides_synergy"),
                 None,
                 Some(p.stat_orange),
                 cx,
@@ -1030,11 +1178,7 @@ pub(crate) fn synergy_blocks(details: &DetailsContext, cx: &App) -> Vec<Div> {
             } else {
                 None
             };
-            let unit = if bs.per == "skill_level" {
-                "rank"
-            } else {
-                "point"
-            };
+
             list = list.child(synergy_row(
                 if source_skill.is_some() {
                     p.synergy
@@ -1051,10 +1195,16 @@ pub(crate) fn synergy_blocks(details: &DetailsContext, cx: &App) -> Vec<Div> {
                 } else {
                     p.faint
                 },
-                format!(
-                    "{} {} per {unit}",
-                    format_value(bs.value, &bs.stat, true),
-                    stat_name(&bs.stat)
+                trf(
+                    if bs.per == "skill_level" {
+                        "planner.skills.synergy_rank"
+                    } else {
+                        "planner.skills.synergy_point"
+                    },
+                    &[
+                        ("value", format_value(bs.value, &bs.stat, true)),
+                        ("stat", stat_name(&bs.stat)),
+                    ],
                 ),
                 cx,
             ));
@@ -1062,7 +1212,7 @@ pub(crate) fn synergy_blocks(details: &DetailsContext, cx: &App) -> Vec<Div> {
         blocks.push(
             detail_block(
                 "receives-synergy",
-                "Receives synergy from",
+                tr("planner.skills.receives_synergy"),
                 None,
                 Some(p.synergy),
                 cx,
@@ -1107,7 +1257,13 @@ pub(crate) fn subtree_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     if stats.is_empty() && procs.is_empty() {
         return None;
     }
-    let mut block = detail_block("subtree-bonuses", "Subtree bonuses", None, None, cx);
+    let mut block = detail_block(
+        "subtree-bonuses",
+        tr("planner.skills.subtree_bonuses"),
+        None,
+        None,
+        cx,
+    );
     if !stats.is_empty() {
         block = block.child(div().flex().flex_col().gap_1().children(stats.iter().map(
             |(key, value)| {
@@ -1160,15 +1316,27 @@ pub(crate) fn subtree_block(details: &DetailsContext, cx: &App) -> Option<Div> {
                 .collect();
             for state in proc.applies_states.iter().flatten() {
                 parts.push(match state {
-                    AppliedStateValue::Name(name) => format!("applies {}", name.replace('_', " ")),
+                    AppliedStateValue::Name(name) => trf(
+                        "planner.skills.applies",
+                        &[("0", (name.replace('_', " ")).to_string())],
+                    ),
                     AppliedStateValue::Full { state, amount } => {
                         let amount = amount
                             .map(|a| a.base.unwrap_or(0.) + a.per_rank.unwrap_or(0.) * rank as f64)
                             .unwrap_or(0.);
                         if amount != 0. {
-                            format!("applies {} ({}%)", state.replace('_', " "), round2(amount))
+                            trf(
+                                "planner.skills.applies_chance",
+                                &[
+                                    ("0", (state.replace('_', " ")).to_string()),
+                                    ("1", (round2(amount)).to_string()),
+                                ],
+                            )
                         } else {
-                            format!("applies {}", state.replace('_', " "))
+                            trf(
+                                "planner.skills.applies",
+                                &[("0", (state.replace('_', " ")).to_string())],
+                            )
                         }
                     }
                 });
@@ -1218,6 +1386,35 @@ pub(crate) fn subtree_block(details: &DetailsContext, cx: &App) -> Option<Div> {
 mod tests {
     use super::*;
     use hsplanner_engine::calc::types::DamageRangeSpec;
+
+    #[::core::prelude::v1::test]
+    fn canonical_skill_tags_have_localized_presentation() {
+        use hsplanner_ui::i18n::{Language, text_for};
+        let data = data::data();
+        let mut tags = HashSet::new();
+        for class in data.classes.values() {
+            for skill in data::get_skills_by_class(&class.id) {
+                tags.extend(skill.tags.iter().flatten().cloned());
+            }
+        }
+        for changes in data.subskill_tags.values() {
+            for change in changes.values() {
+                tags.extend(change.add.iter().cloned());
+                tags.extend(change.remove.iter().cloned());
+            }
+        }
+        for tag in tags {
+            let key =
+                tag_translation_key(&tag).unwrap_or_else(|| panic!("Untranslated tag: {tag}"));
+            assert_eq!(text_for(Language::English, key), tag);
+            for language in [Language::Korean, Language::Russian, Language::Chinese] {
+                let name = text_for(language, key);
+                assert_ne!(name, tag);
+                assert_ne!(name, "⟦missing translation⟧");
+            }
+        }
+        assert_eq!(tag_name("Future Tag"), "Future Tag");
+    }
 
     #[::core::prelude::v1::test]
     fn stat_pairs_format_like_the_reference() {
