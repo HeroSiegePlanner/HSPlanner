@@ -43,24 +43,14 @@ fn late_transfer_preserves_native_edits_ids_and_the_unsaved_tauri_document() {
     let mut session = Session::new(WorkspaceState::default());
     let id = session.new_build("Shared build").unwrap();
     session.edit(|draft| draft.snapshot.level = 40);
-    session.save_profile().unwrap();
+    session.save_build().unwrap();
     let legacy = session.state().library.clone();
-    let profile_id = session.draft().profile_id.clone().unwrap();
     session.edit(|draft| draft.snapshot.level = 80);
-    session.save_profile().unwrap();
+    session.save_build().unwrap();
     session.import_transfer(transfer(legacy.clone())).unwrap();
     assert_eq!(session.snapshot().level, 80);
     assert_eq!(
-        session
-            .state()
-            .library
-            .build(&id)
-            .unwrap()
-            .profile(&profile_id)
-            .unwrap()
-            .snapshot()
-            .unwrap()
-            .level,
+        session.state().library.build(&id).unwrap().snapshot.level,
         80
     );
     assert_eq!(session.state().library.builds.len(), 2);
@@ -71,7 +61,7 @@ fn late_transfer_preserves_native_edits_ids_and_the_unsaved_tauri_document() {
         .iter()
         .find(|build| build.id != id)
         .unwrap();
-    assert_eq!(recovered.profiles[0].snapshot().unwrap().level, 60);
+    assert_eq!(recovered.snapshot.level, 60);
     assert!(recovered.notes().original_html.is_some());
     assert_eq!(
         session.state().legacy_storage["heroplanner.savedBuilds.v1"],
@@ -104,7 +94,7 @@ fn metadata_and_notes_do_not_invalidate_calculations_and_stale_save_cannot_clear
     let calculation = session.calculation_revision();
     let revision = session.revision();
     session.edit(|draft| draft.notes.markdown = "New notes".into());
-    session.save_profile().unwrap();
+    session.save_build().unwrap();
     assert_eq!(session.calculation_revision(), calculation);
     session.persisted(revision);
     assert!(session.is_dirty());

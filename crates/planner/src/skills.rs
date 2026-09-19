@@ -155,6 +155,7 @@ fn adjust_skill_rank(snapshot: &mut BuildSnapshot, id: &str, increase: bool, mod
 
 pub struct SkillsView {
     session: Entity<Session>,
+    header_controls: Option<AnyView>,
     tree: Entity<TreeView>,
     observed_performance: Option<Arc<PlannerPerformance>>,
     selected: Option<String>,
@@ -174,6 +175,12 @@ pub struct SkillsView {
     _subscriptions: Vec<Subscription>,
 }
 impl SkillsView {
+    /// Embeds retained controls in the view's existing header.
+    pub fn with_header_controls(mut self, controls: impl Into<AnyView>) -> Self {
+        self.header_controls = Some(controls.into());
+        self
+    }
+
     pub fn new(
         session: Entity<Session>,
         tree: Entity<TreeView>,
@@ -220,6 +227,7 @@ impl SkillsView {
         ];
         Self {
             session,
+            header_controls: None,
             tree,
             observed_performance,
             selected: None,
@@ -889,6 +897,8 @@ impl Render for SkillsView {
             .text_color(p.text)
             .child(
                 div()
+                    .min_w_0()
+                    .flex_shrink_0()
                     .flex()
                     .flex_wrap()
                     .items_center()
@@ -905,10 +915,13 @@ impl Render for SkillsView {
                             .text_color(p.accent_hot)
                             .child(class),
                     )
+                    .children(self.header_controls.clone())
                     .child(
                         div()
                             .ml_auto()
+                            .min_w_0()
                             .flex()
+                            .flex_wrap()
                             .items_center()
                             .gap_3()
                             .child(caption(
@@ -923,11 +936,16 @@ impl Render for SkillsView {
                                 ),
                                 p.accent_hot,
                             ))
-                            .child(caption(
-                                "skill-modifier-hint",
-                                tr("planner.skills.modifier_hint"),
-                                p.faint,
-                            ))
+                            .when(
+                                window.viewport_size().width >= window.rem_size() * (1200. / 13.),
+                                |header| {
+                                    header.child(caption(
+                                        "skill-modifier-hint",
+                                        tr("planner.skills.modifier_hint"),
+                                        p.faint,
+                                    ))
+                                },
+                            )
                             .child(
                                 Button::new("reset-skills")
                                     .planner_style(cx)

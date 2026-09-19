@@ -1,4 +1,4 @@
-use crate::shell::{OpenSettings, Section, SelectSection};
+use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection};
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
     Icon, IconName, Sizable, WindowExt,
@@ -53,7 +53,6 @@ pub struct TopBar {
     build_name: String,
     library_location: String,
     auto_save: bool,
-    profile_controls: bool,
     ui_zoom: f32,
 }
 
@@ -74,15 +73,13 @@ impl TopBar {
             build_name: String::new(),
             library_location: tr("chrome.recent").into(),
             auto_save: true,
-            profile_controls: false,
             ui_zoom: 1.,
         }
     }
 
-    pub fn document(mut self, name: String, auto_save: bool, profile_controls: bool) -> Self {
+    pub fn document(mut self, name: String, auto_save: bool) -> Self {
         self.build_name = name;
         self.auto_save = auto_save;
-        self.profile_controls = profile_controls;
         self
     }
 
@@ -432,6 +429,15 @@ impl RenderOnce for TopBar {
                                 &[("name", self.build_name.clone())],
                             ))
                             .on_click(self.on_library),
+                    )
+                    .child(
+                        chrome_button("build-actions", tr("loadouts.build_actions"), cx)
+                            .child(Icon::new(IconName::Ellipsis).size_4())
+                            .cursor_tooltip(tr("loadouts.build_actions"))
+                            .dropdown_menu(|menu, _, _| {
+                                menu.menu(tr("shell.save"), Box::new(Save))
+                                    .menu(tr("loadouts.save_as"), Box::new(SaveAs))
+                            }),
                     )
                     .child(
                         hsplanner_ui::controls::planner_button(

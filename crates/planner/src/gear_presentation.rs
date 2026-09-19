@@ -1230,49 +1230,73 @@ impl GearView {
                 .overflow_y_scroll()
                 .child(
                     div()
+                        .w_full()
+                        .min_w_0()
                         .p_6()
                         .flex()
                         .flex_col()
                         .gap_4()
                         .child(
                             div()
+                                .min_w_0()
                                 .flex()
+                                .flex_wrap()
                                 .items_end()
                                 .justify_between()
                                 .gap_3()
-                                .child(section_heading(
-                                    "gear-heading",
-                                    tr("gear.loadout"),
-                                    tr("gear.gear"),
-                                    cx,
-                                ))
                                 .child(
                                     div()
+                                        .min_w_0()
                                         .flex()
+                                        .flex_wrap()
+                                        .items_end()
+                                        .gap_3()
+                                        .child(section_heading(
+                                            "gear-heading",
+                                            tr("gear.loadout"),
+                                            tr("gear.gear"),
+                                            cx,
+                                        ))
+                                        .children(self.header_controls.clone()),
+                                )
+                                .child(
+                                    div()
+                                        .min_w_0()
+                                        .flex()
+                                        .flex_wrap()
                                         .items_center()
                                         .gap_3()
-                                        .child(
-                                            div()
-                                                .text_size(rems(10. / 13.))
-                                                .font_family(theme::MONO_FONT_FAMILY)
-                                                .text_color(p.faint)
-                                                .child(trf(
-                                                    "gear.catalog_counts",
-                                                    &[
-                                                        (
-                                                            "arg0",
-                                                            (data::data().items.len()).to_string(),
-                                                        ),
-                                                        (
-                                                            "arg1",
-                                                            (data::data().gems.len()).to_string(),
-                                                        ),
-                                                        (
-                                                            "arg2",
-                                                            (data::data().runes.len()).to_string(),
-                                                        ),
-                                                    ],
-                                                )),
+                                        .when(
+                                            window.viewport_size().width
+                                                >= window.rem_size() * (1200. / 13.),
+                                            |header| {
+                                                header.child(
+                                                    div()
+                                                        .text_size(rems(10. / 13.))
+                                                        .font_family(theme::MONO_FONT_FAMILY)
+                                                        .text_color(p.faint)
+                                                        .child(trf(
+                                                            "gear.catalog_counts",
+                                                            &[
+                                                                (
+                                                                    "arg0",
+                                                                    (data::data().items.len())
+                                                                        .to_string(),
+                                                                ),
+                                                                (
+                                                                    "arg1",
+                                                                    (data::data().gems.len())
+                                                                        .to_string(),
+                                                                ),
+                                                                (
+                                                                    "arg2",
+                                                                    (data::data().runes.len())
+                                                                        .to_string(),
+                                                                ),
+                                                            ],
+                                                        )),
+                                                )
+                                            },
                                         )
                                         .child(
                                             hsplanner_ui::controls::command_button(

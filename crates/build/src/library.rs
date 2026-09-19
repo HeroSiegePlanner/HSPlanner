@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{BuildSnapshot, codec, notes::Notes};
+use crate::{BuildSnapshot, codec, loadout::Loadouts, notes::Notes};
 
 pub fn new_id(prefix: &str) -> String {
     format!("{prefix}_{}", uuid::Uuid::new_v4())
@@ -9,32 +9,24 @@ pub fn now() -> String {
     chrono::Utc::now().to_rfc3339()
 }
 
+/// Original native profile payloads retained only for compatibility recovery.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Profile {
-    pub id: String,
-    pub name: String,
-    pub code: String,
-    pub updated_at: String,
+pub(crate) struct LegacyProfile {
+    id: String,
+    name: String,
+    code: String,
+    updated_at: String,
     #[serde(default)]
-    pub snapshot: Option<BuildSnapshot>,
+    snapshot: Option<BuildSnapshot>,
 }
 
-impl Profile {
-    pub fn snapshot(&self) -> Result<BuildSnapshot, String> {
+impl LegacyProfile {
+    fn snapshot(&self) -> Result<BuildSnapshot, String> {
         self.snapshot
             .clone()
             .map(Ok)
             .unwrap_or_else(|| codec::decode(&self.code).map(|v| v.0))
-    }
-    pub fn new(name: &str, snapshot: &BuildSnapshot) -> Result<Self, String> {
-        Ok(Self {
-            id: new_id("p"),
-            name: clean_name(name)?,
-            code: codec::encode(snapshot, &Notes::default())?,
-            updated_at: now(),
-            snapshot: Some(snapshot.clone()),
-        })
     }
 }
 
@@ -47,6 +39,7 @@ pub struct StashEntry {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(try_from = "SavedBuildWire")]
 #[serde(rename_all = "camelCase")]
 pub struct SavedBuild {
     pub id: String,
@@ -58,8 +51,10 @@ pub struct SavedBuild {
     pub native_notes: Option<Notes>,
     pub created_at: String,
     pub updated_at: String,
-    pub profiles: Vec<Profile>,
-    pub active_profile_id: String,
+    pub snapshot: BuildSnapshot,
+    pub loadouts: Loadouts,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub(crate) archived_profiles: Vec<LegacyProfile>,
     #[serde(default)]
     pub folder_id: Option<String>,
     #[serde(default)]
@@ -82,8 +77,84 @@ impl SavedBuild {
             .clone()
             .unwrap_or_else(|| Notes::from_html(&self.notes))
     }
-    pub fn profile(&self, id: &str) -> Option<&Profile> {
-        self.profiles.iter().find(|p| p.id == id)
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct SavedBuildWire {
+    id: String,
+    name: String,
+    class_id: Option<String>,
+    #[serde(default)]
+    notes: String,
+    #[serde(default)]
+    native_notes: Option<Notes>,
+    created_at: String,
+    updated_at: String,
+    snapshot: Option<BuildSnapshot>,
+    loadouts: Option<Loadouts>,
+    #[serde(default)]
+    archived_profiles: Vec<LegacyProfile>,
+    profiles: Option<Vec<LegacyProfile>>,
+    active_profile_id: Option<String>,
+    folder_id: Option<String>,
+    #[serde(default)]
+    favorite: bool,
+    #[serde(default)]
+    tags: Vec<String>,
+    #[serde(default = "current_season")]
+    season: String,
+    #[serde(default)]
+    stash: Vec<StashEntry>,
+}
+
+impl TryFrom<SavedBuildWire> for SavedBuild {
+    type Error = String;
+    fn try_from(wire: SavedBuildWire) -> Result<Self, Self::Error> {
+        let (snapshot, loadouts, archived_profiles) = match (wire.snapshot, wire.loadouts) {
+            (Some(snapshot), Some(loadouts)) => {
+                loadouts.validate()?;
+                (snapshot, loadouts, wire.archived_profiles)
+            }
+            (None, None) => {
+                let profiles = wire.profiles.ok_or("Missing build loadouts.")?;
+                let active_id = wire.active_profile_id.ok_or("Missing active profile.")?;
+                let snapshots: Vec<_> = profiles
+                    .iter()
+                    .map(|profile| {
+                        profile
+                            .snapshot()
+                            .map(|snapshot| (profile.id.clone(), profile.name.clone(), snapshot))
+                    })
+                    .collect::<Result<_, _>>()?;
+                let snapshot = snapshots
+                    .iter()
+                    .find(|(id, _, _)| id == &active_id)
+                    .ok_or("Invalid active profile.")?
+                    .2
+                    .clone();
+                let loadouts = Loadouts::from_legacy(&snapshots, &active_id)?;
+                (snapshot, loadouts, profiles)
+            }
+            _ => return Err("Incomplete build loadouts.".into()),
+        };
+        Ok(Self {
+            id: wire.id,
+            name: wire.name,
+            class_id: wire.class_id,
+            notes: wire.notes,
+            native_notes: wire.native_notes,
+            created_at: wire.created_at,
+            updated_at: wire.updated_at,
+            snapshot,
+            loadouts,
+            archived_profiles,
+            folder_id: wire.folder_id,
+            favorite: wire.favorite,
+            tags: wire.tags,
+            season: wire.season,
+            stash: wire.stash,
+        })
     }
 }
 
@@ -97,16 +168,39 @@ pub struct Folder {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(try_from = "LibraryWire")]
 pub struct Library {
     pub version: u32,
     pub builds: Vec<SavedBuild>,
     pub folders: Vec<Folder>,
 }
 
+#[derive(Deserialize)]
+struct LibraryWire {
+    version: u32,
+    builds: Vec<SavedBuild>,
+    folders: Vec<Folder>,
+}
+impl TryFrom<LibraryWire> for Library {
+    type Error = String;
+    fn try_from(wire: LibraryWire) -> Result<Self, Self::Error> {
+        if !matches!(wire.version, 3 | 4) {
+            return Err("Unsupported library version. The original data was not changed.".into());
+        }
+        let library = Self {
+            version: 4,
+            builds: wire.builds,
+            folders: wire.folders,
+        };
+        library.validate()?;
+        Ok(library)
+    }
+}
+
 impl Default for Library {
     fn default() -> Self {
         Self {
-            version: 3,
+            version: 4,
             builds: Vec::new(),
             folders: Vec::new(),
         }
@@ -115,21 +209,18 @@ impl Default for Library {
 
 impl Library {
     pub fn validate(&self) -> Result<(), String> {
-        if self.version != 3 {
+        if self.version != 4 {
             return Err("Unsupported library version. The original data was not changed.".into());
         }
         let mut ids = std::collections::HashSet::new();
         for build in &self.builds {
-            if !ids.insert(&build.id)
-                || build.profiles.is_empty()
-                || build.profile(&build.active_profile_id).is_none()
-            {
+            if build.id.is_empty() || !ids.insert(&build.id) {
                 return Err(format!("Invalid library record: {}", build.name));
             }
-            let mut profiles = std::collections::HashSet::new();
-            if build.profiles.iter().any(|p| !profiles.insert(&p.id)) {
-                return Err(format!("Duplicate profile in {}", build.name));
-            }
+            build
+                .loadouts
+                .validate()
+                .map_err(|error| format!("{}: {error}", build.name))?;
         }
         let folders: std::collections::HashMap<_, _> =
             self.folders.iter().map(|f| (f.id.as_str(), f)).collect();
@@ -178,7 +269,7 @@ impl Library {
         {
             return Err("Folder no longer exists.".into());
         }
-        let profile = Profile::new("Default", snapshot)?;
+        let loadouts = Loadouts::from_snapshot(snapshot);
         let id = new_id("b");
         self.builds.push(SavedBuild {
             id: id.clone(),
@@ -188,8 +279,9 @@ impl Library {
             native_notes: Some(notes.clone()),
             created_at: now(),
             updated_at: now(),
-            active_profile_id: profile.id.clone(),
-            profiles: vec![profile],
+            snapshot: snapshot.clone(),
+            loadouts,
+            archived_profiles: Vec::new(),
             folder_id,
             favorite: false,
             tags: Vec::new(),
@@ -205,13 +297,6 @@ impl Library {
         let mut build = self.build(id).ok_or("Build no longer exists.")?.clone();
         build.id = new_id("b");
         build.name = duplicate_name(&build.name, self.builds.iter().map(|b| b.name.as_str()));
-        for profile in &mut build.profiles {
-            let id = new_id("p");
-            if profile.id == build.active_profile_id {
-                build.active_profile_id = id.clone();
-            }
-            profile.id = id;
-        }
         build.created_at = now();
         build.updated_at = now();
         let id = build.id.clone();

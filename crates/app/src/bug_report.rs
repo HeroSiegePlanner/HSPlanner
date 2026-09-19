@@ -36,20 +36,21 @@ impl SelectItem for Kind {
 
 pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) {
     let draft = session.read(cx).draft();
-    let build = hsplanner_build::codec::encode(&draft.snapshot, &draft.notes)
-        .ok()
-        .map(|code| {
-            let label = session
-                .read(cx)
-                .state()
-                .library
-                .builds
-                .iter()
-                .find(|build| Some(&build.id) == draft.build_id.as_ref())
-                .map(|build| build.name.clone())
-                .unwrap_or_else(|| tr("report.current_build").into());
-            (label, code)
-        });
+    let build =
+        hsplanner_build::codec::encode_loadouts(&draft.snapshot, &draft.notes, &draft.loadouts)
+            .ok()
+            .map(|code| {
+                let label = session
+                    .read(cx)
+                    .state()
+                    .library
+                    .builds
+                    .iter()
+                    .find(|build| Some(&build.id) == draft.build_id.as_ref())
+                    .map(|build| build.name.clone())
+                    .unwrap_or_else(|| tr("report.current_build").into());
+                (label, code)
+            });
     let editor = cx.new(|cx| ReportEditor::new(build, window, cx));
     window.open_dialog(cx, move |dialog, window, cx| {
         let palette = cx.global::<TooltipTheme>();

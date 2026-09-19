@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     BuildSnapshot, codec,
-    library::{Library, Profile, StashEntry, clean_name, now},
+    library::{Library, StashEntry, now},
+    loadout::{LoadoutKind, Loadouts},
     notes::Notes,
 };
 
@@ -10,10 +11,19 @@ use crate::{
 #[serde(default, rename_all = "camelCase")]
 pub struct Draft {
     pub build_id: Option<String>,
-    pub profile_id: Option<String>,
     pub snapshot: BuildSnapshot,
+    pub loadouts: Loadouts,
     pub notes: Notes,
     pub stash: Vec<StashEntry>,
+}
+
+impl Draft {
+    fn calculation_changed(&self, other: &Self) -> bool {
+        serde_json::to_value(&self.snapshot).ok() != serde_json::to_value(&other.snapshot).ok()
+            || LoadoutKind::ALL
+                .into_iter()
+                .any(|kind| self.loadouts.active_id(kind) != other.loadouts.active_id(kind))
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,7 +48,7 @@ impl Default for Settings {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all = "camelCase", try_from = "WorkspaceWire")]
 pub struct WorkspaceState {
     pub version: u32,
     #[serde(default)]
@@ -58,7 +68,7 @@ pub struct WorkspaceState {
 impl Default for WorkspaceState {
     fn default() -> Self {
         Self {
-            version: 1,
+            version: 2,
             revision: 0,
             library: Library::default(),
             draft: Draft::default(),
@@ -67,6 +77,74 @@ impl Default for WorkspaceState {
             legacy_storage: Default::default(),
             migrated_from: None,
         }
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct WorkspaceWire {
+    version: u32,
+    #[serde(default)]
+    revision: u64,
+    library: Library,
+    #[serde(default)]
+    draft: serde_json::Value,
+    #[serde(default)]
+    settings: Settings,
+    #[serde(default)]
+    filters: serde_json::Value,
+    #[serde(default)]
+    legacy_storage: std::collections::BTreeMap<String, String>,
+    #[serde(default)]
+    migrated_from: Option<String>,
+}
+impl TryFrom<WorkspaceWire> for WorkspaceState {
+    type Error = String;
+    fn try_from(wire: WorkspaceWire) -> Result<Self, Self::Error> {
+        if !matches!(wire.version, 1 | 2) {
+            return Err("Unsupported saved-data version. The original file is unchanged.".into());
+        }
+        let mut draft: Draft = if wire.draft.is_null() {
+            Draft::default()
+        } else {
+            serde_json::from_value(wire.draft.clone()).map_err(|error| error.to_string())?
+        };
+        if wire.draft.get("loadouts").is_none() {
+            if wire.version == 2 && !wire.draft.is_null() {
+                return Err("Missing draft loadouts. The original file is unchanged.".into());
+            }
+            if let Some(build) = draft
+                .build_id
+                .as_deref()
+                .and_then(|id| wire.library.build(id))
+            {
+                draft.loadouts = build.loadouts.clone();
+                if let Some(id) = wire.draft["profileId"].as_str()
+                    && !LoadoutKind::ALL
+                        .into_iter()
+                        .all(|kind| draft.loadouts.select(kind, id).is_ok())
+                {
+                    draft.build_id = None;
+                    draft.loadouts = Loadouts::from_snapshot(&draft.snapshot);
+                }
+            } else {
+                draft.build_id = None;
+                draft.loadouts = Loadouts::from_snapshot(&draft.snapshot);
+            }
+        }
+        draft.loadouts.validate()?;
+        // The in-progress document may be newer than the last saved build.
+        draft.loadouts.capture_active(&draft.snapshot);
+        Ok(Self {
+            version: 2,
+            revision: wire.revision,
+            library: wire.library,
+            draft,
+            settings: wire.settings,
+            filters: wire.filters,
+            legacy_storage: wire.legacy_storage,
+            migrated_from: wire.migrated_from,
+        })
     }
 }
 
@@ -92,7 +170,8 @@ pub struct Session {
     calculation_revision: u64,
 }
 impl Session {
-    pub fn new(state: WorkspaceState) -> Self {
+    pub fn new(mut state: WorkspaceState) -> Self {
+        state.draft.loadouts.capture_active(&state.draft.snapshot);
         Self {
             calculation_revision: state.revision,
             state,
@@ -132,12 +211,17 @@ impl Session {
     pub fn edit(&mut self, edit: impl FnOnce(&mut Draft)) {
         let previous = self.state.draft.clone();
         edit(&mut self.state.draft);
+        if previous.snapshot.class_id != self.state.draft.snapshot.class_id {
+            self.state.draft.loadouts.class_changed();
+        }
+        self.state
+            .draft
+            .loadouts
+            .capture_active(&self.state.draft.snapshot);
         if serde_json::to_value(&previous).ok() == serde_json::to_value(&self.state.draft).ok() {
             return;
         }
-        if serde_json::to_value(&previous.snapshot).ok()
-            != serde_json::to_value(&self.state.draft.snapshot).ok()
-        {
+        if previous.calculation_changed(&self.state.draft) {
             self.calculation_revision += 1;
         }
         if self.undo.len() == 50 {
@@ -149,7 +233,9 @@ impl Session {
     }
     pub fn undo(&mut self) {
         if let Some(previous) = self.undo.pop() {
-            self.calculation_revision += 1;
+            if previous.calculation_changed(&self.state.draft) {
+                self.calculation_revision += 1;
+            }
             self.redo
                 .push(std::mem::replace(&mut self.state.draft, previous));
             self.changed();
@@ -157,7 +243,9 @@ impl Session {
     }
     pub fn redo(&mut self) {
         if let Some(next) = self.redo.pop() {
-            self.calculation_revision += 1;
+            if next.calculation_changed(&self.state.draft) {
+                self.calculation_revision += 1;
+            }
             self.undo
                 .push(std::mem::replace(&mut self.state.draft, next));
             self.changed();
@@ -178,7 +266,6 @@ impl Session {
             .is_some_and(|id| next.build(id).is_none())
         {
             self.state.draft.build_id = None;
-            self.state.draft.profile_id = None;
         }
         self.state.library = next;
         self.changed();
@@ -188,52 +275,42 @@ impl Session {
         self.state.settings = settings;
         self.changed();
     }
-    pub fn save_profile(&mut self) -> Result<(), String> {
+    pub fn save_build(&mut self) -> Result<(), String> {
         let draft = &self.state.draft;
-        let (Some(build_id), Some(profile_id)) = (&draft.build_id, &draft.profile_id) else {
+        let Some(build_id) = &draft.build_id else {
             return Ok(());
         };
-        let code = codec::encode(&draft.snapshot, &Notes::default())?;
         let build = self.state.library.build_mut(build_id)?;
-        let profile = build
-            .profiles
-            .iter_mut()
-            .find(|p| &p.id == profile_id)
-            .ok_or("Profile no longer exists.")?;
-        profile.snapshot = Some(draft.snapshot.clone());
-        profile.code = code;
-        profile.updated_at = now();
+        let previous = serde_json::to_value(&*build).map_err(|error| error.to_string())?;
+        build.snapshot = draft.snapshot.clone();
+        build.loadouts = draft.loadouts.clone();
         build.native_notes = Some(draft.notes.clone());
         build.notes = draft.notes.to_html();
         build.stash = draft.stash.clone();
         build.class_id = draft.snapshot.class_id.clone();
         build.season = draft.snapshot.season.clone();
-        build.updated_at = now();
-        self.changed();
+        if serde_json::to_value(&*build).map_err(|error| error.to_string())? != previous {
+            build.updated_at = now();
+            self.changed();
+        }
         Ok(())
     }
-    pub fn open(&mut self, build_id: &str, profile_id: Option<&str>) -> Result<(), String> {
+    pub fn open(&mut self, build_id: &str) -> Result<(), String> {
         if self.state.settings.auto_save {
-            self.save_profile()?;
+            self.save_build()?;
         }
         let build = self
             .state
             .library
             .build(build_id)
             .ok_or("Build no longer exists.")?;
-        let profile = build
-            .profile(profile_id.unwrap_or(&build.active_profile_id))
-            .ok_or("Profile no longer exists.")?;
-        let draft = Draft {
+        self.state.draft = Draft {
             build_id: Some(build.id.clone()),
-            profile_id: Some(profile.id.clone()),
-            snapshot: profile.snapshot()?,
+            snapshot: build.snapshot.clone(),
+            loadouts: build.loadouts.clone(),
             notes: build.notes(),
             stash: build.stash.clone(),
         };
-        self.state.library.build_mut(build_id)?.active_profile_id =
-            draft.profile_id.clone().unwrap();
-        self.state.draft = draft;
         self.calculation_revision += 1;
         self.undo.clear();
         self.redo.clear();
@@ -242,7 +319,7 @@ impl Session {
     }
     pub fn new_build(&mut self, name: &str) -> Result<String, String> {
         if self.state.settings.auto_save {
-            self.save_profile()?;
+            self.save_build()?;
         }
         let id = self.state.library.create(
             name,
@@ -251,105 +328,82 @@ impl Session {
             &[],
             None,
         )?;
-        self.open(&id, None)?;
+        self.open(&id)?;
         Ok(id)
     }
     pub fn save_as(&mut self, name: &str) -> Result<String, String> {
         let draft = &self.state.draft;
+        let archive = draft
+            .build_id
+            .as_deref()
+            .and_then(|id| self.state.library.build(id))
+            .map(|build| build.archived_profiles.clone())
+            .unwrap_or_default();
         let id =
             self.state
                 .library
                 .create(name, &draft.snapshot, &draft.notes, &draft.stash, None)?;
-        self.open(&id, None)?;
+        let saved = self.state.library.build_mut(&id)?;
+        saved.loadouts = draft.loadouts.clone();
+        saved.archived_profiles = archive;
+        self.open(&id)?;
         Ok(id)
     }
     pub fn import_code(&mut self, code: &str) -> Result<String, String> {
-        let (snapshot, notes) = codec::decode(code)?;
+        let (snapshot, notes, loadouts) = codec::decode_loadouts(code)?;
         let name = snapshot
             .class_id
             .as_deref()
             .and_then(hsplanner_engine::calc::data::get_class)
-            .map(|c| format!("Imported {}", c.name))
+            .map(|class| format!("Imported {}", class.name))
             .unwrap_or_else(|| "Imported build".into());
         let id = self
             .state
             .library
             .create(&name, &snapshot, &notes, &[], None)?;
-        self.open(&id, None)?;
+        self.state.library.build_mut(&id)?.loadouts = loadouts;
+        self.open(&id)?;
         Ok(id)
     }
-    pub fn add_profile(&mut self, name: &str, copy_from: Option<&str>) -> Result<(), String> {
-        self.save_profile()?;
-        let id = self
-            .state
-            .draft
-            .build_id
-            .clone()
-            .ok_or("Save this build first.")?;
-        let snapshot = match copy_from {
-            Some(profile) => self
-                .state
-                .library
-                .build(&id)
-                .and_then(|b| b.profile(profile))
-                .ok_or("Profile no longer exists.")?
-                .snapshot()?,
-            None => self.snapshot().clone(),
-        };
-        let profile = Profile::new(name, &snapshot)?;
-        let profile_id = profile.id.clone();
-        let build = self.state.library.build_mut(&id)?;
-        if build.profiles.len() >= 100 {
-            return Err("This build already contains 100 profiles.".into());
-        }
-        build.profiles.push(profile);
-        self.open(&id, Some(&profile_id))
-    }
-    pub fn rename_profile(&mut self, id: &str, name: &str) -> Result<(), String> {
-        let build_id = self
-            .state
-            .draft
-            .build_id
-            .clone()
-            .ok_or("Save this build first.")?;
-        let build = self.state.library.build_mut(&build_id)?;
-        build
-            .profiles
-            .iter_mut()
-            .find(|p| p.id == id)
-            .ok_or("Profile no longer exists.")?
-            .name = clean_name(name)?;
-        self.changed();
+    pub fn add_loadout(&mut self, kind: LoadoutKind, name: &str) -> Result<(), String> {
+        let mut loadouts = self.state.draft.loadouts.clone();
+        loadouts.duplicate(kind, name)?;
+        self.edit(|draft| draft.loadouts = loadouts);
         Ok(())
     }
-    pub fn remove_profile(&mut self, id: &str) -> Result<(), String> {
-        let build_id = self
-            .state
-            .draft
-            .build_id
-            .clone()
-            .ok_or("Save this build first.")?;
-        let build = self.state.library.build_mut(&build_id)?;
-        if build.profiles.len() <= 1 {
-            return Err("Keep at least one profile.".into());
-        }
-        build.profiles.retain(|p| p.id != id);
-        if build.active_profile_id == id {
-            build.active_profile_id = build.profiles[0].id.clone();
-        }
-        if self.state.draft.profile_id.as_deref() == Some(id) {
-            self.state.draft.build_id = None;
-            self.state.draft.profile_id = None;
-            self.open(&build_id, None)?;
-        }
-        self.changed();
+    pub fn switch_loadout(&mut self, kind: LoadoutKind, id: &str) -> Result<(), String> {
+        let mut loadouts = self.state.draft.loadouts.clone();
+        loadouts.select(kind, id)?;
+        self.edit(|draft| {
+            loadouts.apply(kind, &mut draft.snapshot);
+            draft.loadouts = loadouts;
+        });
+        Ok(())
+    }
+    pub fn rename_loadout(
+        &mut self,
+        kind: LoadoutKind,
+        id: &str,
+        name: &str,
+    ) -> Result<(), String> {
+        let mut loadouts = self.state.draft.loadouts.clone();
+        loadouts.rename(kind, id, name)?;
+        self.edit(|draft| draft.loadouts = loadouts);
+        Ok(())
+    }
+    pub fn remove_loadout(&mut self, kind: LoadoutKind, id: &str) -> Result<(), String> {
+        let mut loadouts = self.state.draft.loadouts.clone();
+        loadouts.remove(kind, id)?;
+        self.edit(|draft| {
+            loadouts.apply(kind, &mut draft.snapshot);
+            draft.loadouts = loadouts;
+        });
         Ok(())
     }
     pub fn remove_build(&mut self, id: &str) {
         self.state.library.remove(id);
         if self.state.draft.build_id.as_deref() == Some(id) {
             self.state.draft.build_id = None;
-            self.state.draft.profile_id = None;
         }
         self.changed();
     }
@@ -383,15 +437,8 @@ impl Session {
                     .iter_mut()
                     .find(|current| current.id == build.id)
                 {
-                    for profile in build.profiles {
-                        if !existing
-                            .profiles
-                            .iter()
-                            .any(|current| current.id == profile.id)
-                        {
-                            existing.profiles.push(profile);
-                        }
-                    }
+                    existing.loadouts.merge_missing(build.loadouts);
+                    existing.archived_profiles.extend(build.archived_profiles);
                 } else {
                     next.library.builds.push(build);
                 }
@@ -465,37 +512,5 @@ mod tests {
         drop(writer);
         let (_, reopened) = crate::storage::Writer::open(directory.path().into()).unwrap();
         assert_eq!(reopened.settings.language, "ko");
-    }
-
-    #[test]
-    fn profiles_preserve_local_fields_and_history_stops_at_document_boundaries() {
-        let mut session = Session::new(WorkspaceState::default());
-        let id = session.new_build("Test").unwrap();
-        session.edit(|d| {
-            d.snapshot.entity_rates.insert("summon".into(), 2.5);
-            d.snapshot.allocated_tree_nodes = vec![5, 3, 8];
-            d.snapshot.set_max_subskill_points(27);
-        });
-        session.save_profile().unwrap();
-        session.add_profile("Second", None).unwrap();
-        session.edit(|d| {
-            d.snapshot.level = 40;
-            d.snapshot.set_max_subskill_points(30);
-        });
-        session.undo();
-        assert_eq!(session.snapshot().level, 1);
-        assert_eq!(session.snapshot().subskill_point_budget(), 27);
-        session.redo();
-        assert_eq!(session.snapshot().level, 40);
-        assert_eq!(session.snapshot().subskill_point_budget(), 30);
-        let first = session.state.library.build(&id).unwrap().profiles[0]
-            .id
-            .clone();
-        session.open(&id, Some(&first)).unwrap();
-        assert_eq!(session.snapshot().entity_rates["summon"], 2.5);
-        assert_eq!(session.snapshot().allocated_tree_nodes, [5, 3, 8]);
-        assert_eq!(session.snapshot().subskill_point_budget(), 27);
-        assert!(!session.has_undo());
-        assert!(!session.has_redo());
     }
 }

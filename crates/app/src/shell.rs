@@ -1,12 +1,13 @@
 use crate::chrome::{self, BottomBar, SaveState, TopBar};
-use gpui_kit::base::Selectable;
+use crate::loadouts::LoadoutBar;
 use gpui_kit::component::{
-    Root, Sizable,
+    Root, WindowExt,
     button::Button,
+    dialog::Confirm,
     input::{Input, InputState},
 };
 use gpui_kit::{prelude::*, *};
-use hsplanner_build::{session::Session, storage::Writer};
+use hsplanner_build::{loadout::LoadoutKind, session::Session, storage::Writer};
 use hsplanner_library::LibraryView;
 use hsplanner_notes::NotesView;
 use hsplanner_planner::TreeView;
@@ -81,7 +82,7 @@ gpui_kit::actions!(
         Redo,
         Quit,
         ToggleAutoSave,
-        ToggleProfileControls,
+        SaveAs,
         ToggleDebugOverlay,
         OpenSettings
     ]
@@ -102,8 +103,6 @@ pub struct Shell {
     stats: Entity<hsplanner_planner::stats::StatsView>,
     sidebar: Entity<hsplanner_planner::stats_sidebar::StatsSidebar>,
     section: Section,
-    pub(crate) profile_controls: bool,
-    name: Entity<InputState>,
     logo: Arc<Image>,
     updater: Entity<crate::update::Updater>,
     status: String,
@@ -130,11 +129,25 @@ impl Shell {
         hsplanner_ui::i18n::apply_language(&session.state().settings.language, cx);
         hsplanner_ui::theme::apply_zoom(session.state().settings.ui_zoom, cx);
         let session = cx.new(|_| session);
+        let loadout_bars = [
+            LoadoutKind::Incarnation,
+            LoadoutKind::Ether,
+            LoadoutKind::Gear,
+            LoadoutKind::Skills,
+        ]
+        .map(|kind| cx.new(|cx| LoadoutBar::new(session.clone(), kind, window, cx)));
         let library = cx.new(|cx| LibraryView::new(session.clone(), window, cx));
-        let tree = cx.new(|cx| TreeView::new(session.clone(), window, cx));
-        let ether = cx.new(|cx| TreeView::new_ether(session.clone(), window, cx));
-        let gear =
-            cx.new(|cx| hsplanner_planner::gear::GearView::new(session.clone(), false, window, cx));
+        let tree = cx.new(|cx| {
+            TreeView::new(session.clone(), window, cx).with_header_controls(loadout_bars[0].clone())
+        });
+        let ether = cx.new(|cx| {
+            TreeView::new_ether(session.clone(), window, cx)
+                .with_header_controls(loadout_bars[1].clone())
+        });
+        let gear = cx.new(|cx| {
+            hsplanner_planner::gear::GearView::new(session.clone(), false, window, cx)
+                .with_header_controls(loadout_bars[2].clone())
+        });
         let merc = cx.new(|cx| {
             hsplanner_planner::mercenary::MercenaryView::new(
                 session.clone(),
@@ -142,6 +155,7 @@ impl Shell {
                 window,
                 cx,
             )
+            .with_header_controls(loadout_bars[2].clone())
         });
         let notes = cx.new(|cx| NotesView::new(session.clone(), window, cx));
         let character = cx.new(|cx| {
@@ -157,6 +171,7 @@ impl Shell {
         });
         let skills = cx.new(|cx| {
             hsplanner_planner::skills::SkillsView::new(session.clone(), tree.clone(), window, cx)
+                .with_header_controls(loadout_bars[3].clone())
         });
         let stats = cx.new(|cx| {
             hsplanner_planner::stats::StatsView::new(session.clone(), tree.clone(), window, cx)
@@ -169,7 +184,6 @@ impl Shell {
                 cx,
             )
         });
-        let name = cx.new(|cx| InputState::new(window, cx).placeholder(tr("shell.build_name")));
         let updater = cx.new(crate::update::Updater::new);
         let subscriptions = vec![
             cx.subscribe(&updater, |this, _, _: &crate::update::Installed, cx| {
@@ -182,7 +196,7 @@ impl Shell {
                 if this.session.read(cx).is_dirty() {
                     let result = this.session.update(cx, |session, _| {
                         if session.state().settings.auto_save {
-                            session.save_profile()?;
+                            session.save_build()?;
                         }
                         this.writer.save(session.state())?;
                         this.writer.flush()
@@ -205,10 +219,7 @@ impl Shell {
                 this.schedule_save(cx);
                 cx.notify();
             }),
-            cx.observe_global_in::<hsplanner_ui::i18n::Locale>(window, |this, window, cx| {
-                this.name.update(cx, |input, cx| {
-                    input.set_placeholder(hsplanner_ui::i18n::tr("shell.build_name"), window, cx);
-                });
+            cx.observe_global_in::<hsplanner_ui::i18n::Locale>(window, |_, _, cx| {
                 cx.set_menus([Menu::new("HSPlanner")
                     .items([MenuItem::action(hsplanner_ui::i18n::tr("shell.quit"), Quit)])]);
                 cx.notify();
@@ -240,8 +251,6 @@ impl Shell {
             stats,
             sidebar,
             section: Section::Library,
-            profile_controls: false,
-            name,
             logo: chrome::logo(),
             updater,
             status: "shell.ready".into(),
@@ -301,7 +310,7 @@ impl Shell {
         self.saving = true;
         let prepared = self.session.update(cx, |session, _| {
             if manual || session.state().settings.auto_save {
-                session.save_profile()?;
+                session.save_build()?;
             }
             self.writer.save(session.state())
         });
@@ -366,7 +375,11 @@ impl Shell {
     }
     fn copy_build_code(&mut self, cx: &mut Context<Self>) {
         let draft = self.session.read(cx).draft();
-        match hsplanner_build::codec::encode(&draft.snapshot, &draft.notes) {
+        match hsplanner_build::codec::encode_loadouts(
+            &draft.snapshot,
+            &draft.notes,
+            &draft.loadouts,
+        ) {
             Ok(code) => {
                 cx.write_to_clipboard(ClipboardItem::new_string(code));
                 self.status = "shell.copied".into();
@@ -374,6 +387,91 @@ impl Shell {
             Err(error) => self.error = Some(error),
         }
         cx.notify();
+    }
+    fn save_as_dialog(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        self.error = None;
+        let build_id = self.session.read(cx).draft().build_id.clone();
+        let name = build_id
+            .as_deref()
+            .and_then(|id| self.session.read(cx).state().library.build(id))
+            .map(|build| build.name.clone())
+            .unwrap_or_else(|| tr("shell.unsaved_build").into());
+        let input = cx.new(|cx| {
+            let mut input = InputState::new(window, cx);
+            input.set_value(name, window, cx);
+            input
+        });
+        let focus = input.read(cx).focus_handle(cx);
+        let owner = cx.entity().downgrade();
+        // Shell renders the dialog layer, so its builder must not read Shell.
+        let dialog_error = cx.new(|_| None::<String>);
+        window.open_dialog(cx, move |dialog, _, cx| {
+            let target = owner.clone();
+            let input_for_save = input.clone();
+            let build_id = build_id.clone();
+            let error = dialog_error.read(cx).clone();
+            let error_for_save = dialog_error.clone();
+            dialog
+                .title(tr("loadouts.save_as_title"))
+                .child(
+                    div()
+                        .flex()
+                        .flex_col()
+                        .gap_2()
+                        .child(div().child(tr("shell.build_name")))
+                        .child(Input::new(&input).planner_style(cx))
+                        .children(error.map(|error| {
+                            div()
+                                .text_color(cx.global::<TooltipTheme>().negative)
+                                .child(error)
+                        })),
+                )
+                .footer(
+                    div()
+                        .flex()
+                        .justify_end()
+                        .gap_2()
+                        .child(
+                            Button::new("cancel-save-as")
+                                .planner_style(cx)
+                                .label(tr("component.Dialog.cancel"))
+                                .on_click(|_, window, cx| window.close_dialog(cx)),
+                        )
+                        .child(
+                            hsplanner_ui::controls::planner_button(
+                                "confirm-save-as",
+                                hsplanner_ui::controls::ButtonTone::Primary,
+                                cx,
+                            )
+                            .label(tr("shell.save"))
+                            .on_click(|_, window, cx| {
+                                window.dispatch_action(Box::new(Confirm { secondary: false }), cx)
+                            }),
+                        ),
+                )
+                .on_ok(move |_, _, cx| {
+                    let name = input_for_save.read(cx).value().to_string();
+                    target
+                        .update(cx, |this, cx| {
+                            this.apply(cx, |session| {
+                                if session.draft().build_id != build_id {
+                                    return Err(tr("loadouts.changed").into());
+                                }
+                                if name.trim().is_empty() {
+                                    return Err(tr("loadouts.enter_name").into());
+                                }
+                                session.save_as(&name).map(|_| ())
+                            });
+                            error_for_save.update(cx, |error, cx| {
+                                *error = this.error.clone();
+                                cx.notify();
+                            });
+                            this.error.is_none()
+                        })
+                        .unwrap_or(false)
+                })
+        });
+        window.focus(&focus, cx);
     }
     pub fn request_close(&mut self, cx: &mut Context<Self>) {
         if !self.closing {
@@ -427,46 +525,15 @@ impl Render for Shell {
         }
         let dialog_layer = Root::render_dialog_layer(window, cx);
         let palette = cx.global::<TooltipTheme>();
-        let (panel, text, border, muted, negative) = (
-            palette.panel,
-            palette.text,
-            palette.border,
-            palette.muted,
-            palette.negative,
-        );
+        let (panel, text, negative) = (palette.panel, palette.text, palette.negative);
         let session = self.session.read(cx);
-        let build = session
+        let title = session
             .draft()
             .build_id
             .as_deref()
             .and_then(|id| session.state().library.build(id))
-            .cloned();
-        let active = session.draft().profile_id.clone();
-        let title = build
-            .as_ref()
             .map(|b| b.name.clone())
             .unwrap_or_else(|| tr("shell.unsaved_build").into());
-        let mut profiles = div()
-            .flex()
-            .gap_2()
-            .items_center()
-            .child(div().text_color(muted).child(title.clone()));
-        if let Some(build) = build {
-            for profile in build.profiles {
-                let build_id = build.id.clone();
-                let id = profile.id.clone();
-                profiles = profiles.child(
-                    Button::new(SharedString::from(format!("profile-{id}")))
-                        .planner_style(cx)
-                        .small()
-                        .label(profile.name)
-                        .selected(active.as_ref() == Some(&id))
-                        .on_click(cx.listener(move |this, _, _, cx| {
-                            this.apply(cx, |session| session.open(&build_id, Some(&id)))
-                        })),
-                );
-            }
-        }
         let select = cx.entity().downgrade();
         let auto_save = session.state().settings.auto_save;
         let save = SaveState::derive(
@@ -519,12 +586,9 @@ impl Render for Shell {
                 #[cfg(not(debug_assertions))]
                 let _ = (this, cx);
             }))
-            .on_action(cx.listener(|this, _: &ToggleProfileControls, _, cx| {
-                this.profile_controls = !this.profile_controls;
-                cx.notify();
-            }))
+            .on_action(cx.listener(|this, _: &SaveAs, window, cx| this.save_as_dialog(window, cx)))
             .on_action(cx.listener(|this, _: &OpenSettings, window, cx| {
-                crate::settings::open(this.session.clone(), cx.entity().downgrade(), window, cx);
+                crate::settings::open(this.session.clone(), window, cx);
             }))
             .on_action(cx.listener(|this, _: &ToggleAutoSave, _, cx| {
                 this.apply(cx, |session| {
@@ -556,82 +620,10 @@ impl Render for Shell {
                     ),
                     Box::new(cx.listener(|this, _, _, cx| this.copy_build_code(cx))),
                 )
-                .document(title, auto_save, self.profile_controls)
+                .document(title, auto_save)
                 .ui_zoom(self.session.read(cx).state().settings.ui_zoom)
                 .library_location(self.library.read(cx).location(cx)),
             )
-            .when(self.profile_controls, |view| {
-                view.child(
-                    div()
-                        .p_2()
-                        .flex()
-                        .flex_wrap()
-                        .gap_2()
-                        .items_center()
-                        .border_b_1()
-                        .border_color(border)
-                        .child(profiles)
-                        .child(
-                            div()
-                                .w(rems(15.))
-                                .child(Input::new(&self.name).planner_style(cx)),
-                        )
-                        .child(
-                            Button::new("save")
-                                .planner_style(cx)
-                                .small()
-                                .label(tr("shell.save"))
-                                .on_click(
-                                    cx.listener(|this, _, _, cx| this.persist(false, true, cx)),
-                                ),
-                        )
-                        .child(
-                            Button::new("save-as")
-                                .planner_style(cx)
-                                .small()
-                                .label(tr("shell.save_as"))
-                                .on_click(cx.listener(|this, _, _, cx| {
-                                    let name = this.name.read(cx).value().to_string();
-                                    this.apply(cx, |s| s.save_as(&name).map(|_| ()));
-                                })),
-                        )
-                        .child(
-                            Button::new("new-profile")
-                                .planner_style(cx)
-                                .small()
-                                .label(tr("shell.add_profile"))
-                                .on_click(cx.listener(|this, _, _, cx| {
-                                    let name = this.name.read(cx).value().to_string();
-                                    this.apply(cx, |s| s.add_profile(&name, None));
-                                })),
-                        )
-                        .child(
-                            Button::new("rename-profile")
-                                .planner_style(cx)
-                                .small()
-                                .label(tr("shell.rename_profile"))
-                                .on_click(cx.listener(|this, _, _, cx| {
-                                    let name = this.name.read(cx).value().to_string();
-                                    let id = this.session.read(cx).draft().profile_id.clone();
-                                    if let Some(id) = id {
-                                        this.apply(cx, |s| s.rename_profile(&id, &name));
-                                    }
-                                })),
-                        )
-                        .child(
-                            Button::new("delete-profile")
-                                .planner_style(cx)
-                                .small()
-                                .label(tr("shell.delete_profile"))
-                                .on_click(cx.listener(|this, _, _, cx| {
-                                    let id = this.session.read(cx).draft().profile_id.clone();
-                                    if let Some(id) = id {
-                                        this.apply(cx, |s| s.remove_profile(&id));
-                                    }
-                                })),
-                        ),
-                )
-            })
             .children(self.error.as_ref().map(|error| {
                 div()
                     .px_3()
@@ -654,7 +646,15 @@ impl Render for Shell {
                                 .child(self.sidebar.clone()),
                         )
                     })
-                    .child(div().flex_1().min_w_0().h_full().child(content)),
+                    .child(
+                        div()
+                            .flex_1()
+                            .min_w_0()
+                            .h_full()
+                            .flex()
+                            .flex_col()
+                            .child(div().flex_1().min_h_0().child(content)),
+                    ),
             )
             .child(BottomBar::new(
                 self.session.clone(),
@@ -688,6 +688,7 @@ pub fn run(
             ));
             cx.bind_keys([
                 KeyBinding::new("secondary-s", Save, Some("Planner")),
+                KeyBinding::new("secondary-shift-s", SaveAs, Some("Planner")),
                 KeyBinding::new("secondary-z", Undo, Some("Planner")),
                 KeyBinding::new("secondary-shift-z", Redo, Some("Planner")),
                 KeyBinding::new("secondary-q", Quit, None),

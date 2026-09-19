@@ -7,7 +7,6 @@ pub(super) enum EditKind {
     NewFolder,
     RenameFolder,
     Rename,
-    AddProfile,
 }
 
 impl LibraryView {
@@ -22,7 +21,6 @@ impl LibraryView {
             EditKind::NewFolder => "library.new_folder",
             EditKind::RenameFolder => "library.rename_folder",
             EditKind::Rename => "library.rename_build",
-            EditKind::AddProfile => "library.add_profile",
         };
         self.error = None;
         let input = cx.new(|cx| localized_input("library.name", window, cx));
@@ -98,21 +96,6 @@ impl LibraryView {
                                     build_id.as_deref().ok_or("library.select_build")?,
                                     &name,
                                 )
-                            }),
-                            EditKind::AddProfile => session.edit_library(|library| {
-                                let build = library.build_mut(
-                                    build_id.as_deref().ok_or("library.select_build")?,
-                                )?;
-                                let snapshot = build
-                                    .profile(&build.active_profile_id)
-                                    .or_else(|| build.profiles.first())
-                                    .ok_or("library.no_profile")?
-                                    .snapshot()?;
-                                build.profiles.push(hsplanner_build::library::Profile::new(
-                                    &name, &snapshot,
-                                )?);
-                                build.updated_at = hsplanner_build::library::now();
-                                Ok(())
                             }),
                         });
                         if success && matches!(kind, EditKind::NewBuild) {

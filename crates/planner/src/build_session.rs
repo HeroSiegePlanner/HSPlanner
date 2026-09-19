@@ -8,7 +8,7 @@ use hsplanner_engine::calc::{
 };
 
 use crate::tree::{Graph, TreeKind};
-use hsplanner_build::{BuildSnapshot, session::Session};
+use hsplanner_build::{BuildSnapshot, loadout::LoadoutKind, session::Session};
 
 #[cfg(test)]
 use hsplanner_engine::calc::commands::BuildPerformanceInput;
@@ -32,14 +32,15 @@ pub fn example_input() -> BuildSnapshot {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct DocumentKey {
     build: Option<String>,
-    profile: Option<String>,
+    loadouts: [String; 4],
     revision: u64,
 }
 impl DocumentKey {
     pub fn from_session(session: &Session) -> Self {
         Self {
             build: session.draft().build_id.clone(),
-            profile: session.draft().profile_id.clone(),
+            loadouts: LoadoutKind::ALL
+                .map(|kind| session.draft().loadouts.active_id(kind).to_owned()),
             revision: session.calculation_revision(),
         }
     }

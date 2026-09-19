@@ -1,6 +1,6 @@
 //! Local rank projection. Native rank maps retain counts, not JavaScript key order.
 use super::*;
-use hsplanner_build::session::Draft;
+use hsplanner_build::{loadout::LoadoutKind, session::Draft};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::collections::HashSet;
@@ -45,7 +45,7 @@ fn rank_order(
 }
 
 pub(super) struct RankProgression {
-    identity: (Option<String>, Option<String>, Option<String>),
+    identity: (Option<String>, String, Option<String>),
     source: HashMap<String, u32>,
     prefix: Option<String>,
     order: Vec<String>,
@@ -71,7 +71,7 @@ impl RankProgression {
         Self::new(
             (
                 draft.build_id.clone(),
-                draft.profile_id.clone(),
+                draft.loadouts.active_id(LoadoutKind::Skills).to_owned(),
                 draft.snapshot.class_id.clone(),
             ),
             draft.snapshot.skill_ranks.clone(),
@@ -98,7 +98,7 @@ impl RankProgression {
         let mut result = Self::new(
             (
                 draft.build_id.clone(),
-                draft.profile_id.clone(),
+                draft.loadouts.active_id(LoadoutKind::Skills).to_owned(),
                 draft.snapshot.class_id.clone(),
             ),
             source,
@@ -110,7 +110,7 @@ impl RankProgression {
     }
 
     fn new(
-        identity: (Option<String>, Option<String>, Option<String>),
+        identity: (Option<String>, String, Option<String>),
         source: HashMap<String, u32>,
         authored: &[String],
         requires: &HashMap<String, String>,
@@ -129,7 +129,7 @@ impl RankProgression {
 
     fn matches(&self, draft: &Draft) -> bool {
         self.identity.0 == draft.build_id
-            && self.identity.1 == draft.profile_id
+            && self.identity.1 == draft.loadouts.active_id(LoadoutKind::Skills)
             && self.identity.2 == draft.snapshot.class_id
             && if let Some(prefix) = &self.prefix {
                 self.source
@@ -439,7 +439,7 @@ mod tests {
         requires: &[(&str, &str)],
     ) -> RankProgression {
         RankProgression::new(
-            (None, None, None),
+            (None, String::new(), None),
             ranks(values),
             &strings(authored),
             &dependencies(requires),
@@ -496,27 +496,59 @@ mod tests {
     }
 
     #[::core::prelude::v1::test]
-    fn switching_document_or_changing_ranks_invalidates_preview_but_other_edits_do_not() {
-        let mut draft = Draft {
-            build_id: Some("build-a".into()),
-            profile_id: Some("profile-a".into()),
-            snapshot: BuildSnapshot {
-                skill_ranks: ranks(&[("charged_bolts", 3)]),
-                class_id: Some("stormweaver".into()),
+    fn switching_skills_loadout_invalidates_equal_rank_preview_but_other_loadouts_do_not() {
+        use hsplanner_build::session::WorkspaceState;
+
+        let mut session = Session::new(WorkspaceState {
+            draft: Draft {
+                snapshot: BuildSnapshot {
+                    skill_ranks: ranks(&[("charged_bolts", 3)]),
+                    class_id: Some("stormweaver".into()),
+                    ..Default::default()
+                },
                 ..Default::default()
             },
             ..Default::default()
-        };
-        let mut view = RankProgression::for_draft(&draft);
+        });
+        let mut view = RankProgression::for_draft(session.draft());
         view.set_step(1);
-        draft.snapshot.level += 1;
-        assert!(view.matches(&draft));
-        draft.profile_id = Some("profile-b".into());
-        assert!(!view.matches(&draft));
-        let reset = RankProgression::for_draft(&draft);
+        session.edit(|draft| draft.snapshot.level += 1);
+        assert!(view.matches(session.draft()));
+        session
+            .add_loadout(LoadoutKind::Gear, "Other gear")
+            .unwrap();
+        assert!(view.matches(session.draft()));
+
+        let previous_id = session
+            .draft()
+            .loadouts
+            .active_id(LoadoutKind::Skills)
+            .to_owned();
+        session
+            .add_loadout(LoadoutKind::Skills, "Same ranks")
+            .unwrap();
+        assert_ne!(
+            session.draft().loadouts.active_id(LoadoutKind::Skills),
+            previous_id
+        );
+        assert_eq!(view.source, session.snapshot().skill_ranks);
+        assert!(!view.matches(session.draft()));
+        let before = serde_json::to_value(session.draft()).unwrap();
+        let reset = RankProgression::for_draft(session.draft());
         assert!(!reset.is_preview());
-        draft.snapshot.skill_ranks.insert("charged_bolts".into(), 2);
-        assert!(!reset.matches(&draft));
+        assert_eq!(reset.visible(), &session.snapshot().skill_ranks);
+        view.finish();
+        assert_eq!(serde_json::to_value(session.draft()).unwrap(), before);
+
+        session
+            .switch_loadout(LoadoutKind::Skills, &previous_id)
+            .unwrap();
+        assert!(!reset.matches(session.draft()));
+        let reset = RankProgression::for_draft(session.draft());
+        session.edit(|draft| {
+            draft.snapshot.skill_ranks.insert("charged_bolts".into(), 2);
+        });
+        assert!(!reset.matches(session.draft()));
     }
 
     #[::core::prelude::v1::test]

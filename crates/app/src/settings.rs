@@ -1,5 +1,4 @@
 //! Application preferences dialog, after the reference SettingsModal.
-use crate::shell::{Shell, ToggleProfileControls};
 use gpui_kit::{
     base::Link,
     component::{WindowExt, checkbox::Checkbox},
@@ -31,13 +30,8 @@ const NUMBER_SCALES: [(&str, &str, &str); 4] = [
 ];
 const PREVIEW_SAMPLES: [f64; 3] = [45_678., 12_345_678., 2_500_000_000.];
 
-pub(super) fn open(
-    session: Entity<Session>,
-    shell: WeakEntity<Shell>,
-    window: &mut Window,
-    cx: &mut App,
-) {
-    let view = cx.new(|cx| SettingsView::new(session, shell, cx));
+pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) {
+    let view = cx.new(|cx| SettingsView::new(session, cx));
     window.open_dialog(cx, move |dialog, window, cx| {
         let palette = cx.global::<TooltipTheme>();
         dialog
@@ -58,19 +52,14 @@ pub(super) fn open(
 
 struct SettingsView {
     session: Entity<Session>,
-    shell: WeakEntity<Shell>,
     _subscriptions: Vec<Subscription>,
 }
 
 impl SettingsView {
-    fn new(session: Entity<Session>, shell: WeakEntity<Shell>, cx: &mut Context<Self>) -> Self {
-        let mut subscriptions = vec![cx.observe(&session, |_, _, cx| cx.notify())];
-        if let Some(shell) = shell.upgrade() {
-            subscriptions.push(cx.observe(&shell, |_, _, cx| cx.notify()));
-        }
+    fn new(session: Entity<Session>, cx: &mut Context<Self>) -> Self {
+        let subscriptions = vec![cx.observe(&session, |_, _, cx| cx.notify())];
         Self {
             session,
-            shell,
             _subscriptions: subscriptions,
         }
     }
@@ -135,10 +124,6 @@ impl Render for SettingsView {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let settings = self.session.read(cx).state().settings.clone();
-        let profile_controls = self
-            .shell
-            .upgrade()
-            .is_some_and(|shell| shell.read(cx).profile_controls);
         let language = section("settings-language", tr("settings.language"), cx)
             .child(
                 div()
@@ -248,16 +233,6 @@ impl Render for SettingsView {
                     })),
             )
             .child(hint(tr("settings.zoom_hint").into(), p.faint));
-        let interface = section("settings-interface", tr("settings.interface"), cx)
-            .child(
-                Checkbox::new("settings-profile-controls")
-                    .label(tr("settings.profile_controls"))
-                    .checked(profile_controls)
-                    .on_click(|_, window, cx| {
-                        window.dispatch_action(Box::new(ToggleProfileControls), cx)
-                    }),
-            )
-            .child(description(tr("settings.profile_controls_hint"), cx));
         let credits = section("settings-credits", tr("settings.credits"), cx)
             .child(
                 div()
@@ -336,7 +311,6 @@ impl Render for SettingsView {
                     .child(saving)
                     .child(numbers)
                     .child(display)
-                    .child(interface)
                     .child(credits),
             )
     }

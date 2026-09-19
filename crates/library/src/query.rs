@@ -13,7 +13,7 @@ pub(super) fn matches(
         && (!unfiled || build.folder_id.is_none())
         && folder.is_none_or(|id| build.folder_id.as_deref() == Some(id))
         && tag.is_none_or(|tag| build.tags.iter().any(|value| value == tag))
-        && (!high_level || profile_summary(build, false).is_some_and(|s| s.0 >= 90))
+        && (!high_level || build_summary(build).0 >= 90)
         && (search.is_empty()
             || build.name.to_lowercase().contains(search)
             || build
@@ -26,20 +26,12 @@ pub(super) fn matches(
                 .any(|tag| tag.to_lowercase().contains(search)))
 }
 
-/// Read row metadata without cloning inventories, trees and every skill in a profile.
-/// Encoded-only imported profiles keep their existing decoding fallback.
-pub(super) fn profile_summary(build: &SavedBuild, fallback: bool) -> Option<(u32, usize)> {
-    let profile = build
-        .profile(&build.active_profile_id)
-        .or_else(|| fallback.then(|| build.profiles.first()).flatten())?;
-    if let Some(snapshot) = &profile.snapshot {
-        Some((snapshot.level, snapshot.allocated_tree_nodes.len()))
-    } else {
-        profile
-            .snapshot()
-            .ok()
-            .map(|snapshot| (snapshot.level, snapshot.allocated_tree_nodes.len()))
-    }
+/// Read the composed build metadata without cloning any loadout collections.
+pub(super) fn build_summary(build: &SavedBuild) -> (u32, usize) {
+    (
+        build.snapshot.level,
+        build.snapshot.allocated_tree_nodes.len(),
+    )
 }
 
 #[derive(PartialEq, Eq)]
@@ -157,17 +149,12 @@ mod tests {
     }
 
     #[test]
-    fn row_summary_preserves_encoded_profiles_and_invalid_active_profile_fallback() {
+    fn row_summary_uses_the_composed_build_snapshot() {
         let mut build = build();
-        let expected = profile_summary(&build, true);
-        assert_eq!(expected, Some((90, 0)));
-        build.profiles[0].snapshot = None;
-        assert_eq!(profile_summary(&build, true), expected);
-        build.active_profile_id = "missing".into();
-        assert_eq!(profile_summary(&build, true), expected);
-        assert_eq!(profile_summary(&build, false), None);
-        build.profiles[0].code = "invalid".into();
-        assert_eq!(profile_summary(&build, true), None);
+        assert_eq!(build_summary(&build), (90, 0));
+        build.snapshot.level = 95;
+        build.snapshot.allocated_tree_nodes = vec![5];
+        assert_eq!(build_summary(&build), (95, 1));
     }
 
     #[test]
@@ -204,7 +191,7 @@ mod tests {
             None,
             false
         ));
-        build.profiles[0].snapshot.as_mut().unwrap().level = 89;
+        build.snapshot.level = 89;
         assert!(!matches(&build, "", false, false, None, None, true));
     }
 }

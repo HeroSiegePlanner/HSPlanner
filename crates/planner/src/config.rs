@@ -11,7 +11,11 @@ use gpui_kit::component::{
     slider::SliderState,
 };
 use gpui_kit::{prelude::*, *};
-use hsplanner_build::{BuildSnapshot, session::Session};
+use hsplanner_build::{
+    BuildSnapshot,
+    loadout::LoadoutKind,
+    session::{Draft, Session},
+};
 use hsplanner_engine::calc::{
     custom_stat::parse_custom_stat_value,
     data,
@@ -75,6 +79,34 @@ enum NumberField {
     Projectile(String),
 }
 
+#[derive(Clone, PartialEq, Eq)]
+struct ConfigDocument {
+    build: Option<String>,
+    skills: String,
+    class: Option<String>,
+}
+
+impl ConfigDocument {
+    fn from_draft(draft: &Draft) -> Self {
+        Self {
+            build: draft.build_id.clone(),
+            skills: draft.loadouts.active_id(LoadoutKind::Skills).to_owned(),
+            class: draft.snapshot.class_id.clone(),
+        }
+    }
+
+    fn number_changed(&self, next: &Self, field: &NumberField) -> bool {
+        self.build != next.build
+            || match field {
+                NumberField::SubskillPoints => {
+                    self.skills != next.skills || self.class != next.class
+                }
+                NumberField::Projectile(_) => self.class != next.class,
+                _ => false,
+            }
+    }
+}
+
 /// The last value written into a field by the model, rather than by the user.
 /// Keeping this separate lets notifications detect a pending edit even before
 /// the input's Change/Blur event has reached the view.
@@ -118,7 +150,7 @@ pub struct ConfigView {
     custom_saved: String,
     custom_issues: Vec<String>,
     custom_task: Option<Task<()>>,
-    document: (Option<String>, Option<String>),
+    document: ConfigDocument,
     error: Option<String>,
     focus: FocusHandle,
     scroll: ScrollHandle,
@@ -207,8 +239,7 @@ impl ConfigView {
                 let session = this.session.read(cx);
                 let draft = session.draft();
                 if this.synced_calculation_revision != session.calculation_revision()
-                    || this.document.0 != draft.build_id
-                    || this.document.1 != draft.profile_id
+                    || this.document != ConfigDocument::from_draft(draft)
                 {
                     this.sync(window, cx);
                 }
@@ -248,10 +279,7 @@ impl ConfigView {
                 }
             }),
         ];
-        let document = (
-            session.read(cx).draft().build_id.clone(),
-            session.read(cx).draft().profile_id.clone(),
-        );
+        let document = ConfigDocument::from_draft(session.read(cx).draft());
         let mut view = Self {
             session,
             tree,
@@ -291,9 +319,9 @@ impl ConfigView {
         self.synced_calculation_revision = self.session.read(cx).calculation_revision();
         let snapshot = self.session.read(cx).snapshot().clone();
         let draft = self.session.read(cx).draft();
-        let document = (draft.build_id.clone(), draft.profile_id.clone());
-        let changed_document = document != self.document;
-        self.document = document;
+        let document = ConfigDocument::from_draft(draft);
+        let previous_document = std::mem::replace(&mut self.document, document);
+        let changed_document = previous_document.build != self.document.build;
         let custom = serialize_custom_stats(&snapshot.custom_stats);
         if changed_document || custom != self.custom_saved {
             self.custom_task = None;
@@ -368,7 +396,8 @@ impl ConfigView {
                         .or_insert_with(|| NumberDraft {
                             applied: current.to_string(),
                         });
-                if draft.reconcile(&current, &value, focused, changed_document) {
+                let changed_owner = previous_document.number_changed(&self.document, &field);
+                if draft.reconcile(&current, &value, focused, changed_owner) {
                     input.update(cx, |input, cx| input.set_value(value, window, cx));
                 }
             } else {
@@ -401,7 +430,10 @@ impl ConfigView {
 
     fn commit_number(&mut self, field: &NumberField, window: &mut Window, cx: &mut Context<Self>) {
         let draft = self.session.read(cx).draft();
-        if (draft.build_id.clone(), draft.profile_id.clone()) != self.document {
+        if self
+            .document
+            .number_changed(&ConfigDocument::from_draft(draft), field)
+        {
             self.sync(window, cx);
             return;
         }
@@ -2217,13 +2249,60 @@ mod tests {
     }
 
     #[::core::prelude::v1::test]
-    fn profile_change_replaces_even_focused_dirty_numbers() {
+    fn changed_owner_replaces_even_focused_dirty_numbers() {
         let mut draft = NumberDraft {
             applied: "10".into(),
         };
         assert!(draft.reconcile("-20", "5", true, true));
         assert!(!draft.is_dirty("5"));
         assert!(draft.reconcile("5", "7", false, false));
+    }
+
+    #[::core::prelude::v1::test]
+    fn loadout_switches_only_replace_numeric_drafts_owned_by_that_loadout() {
+        use hsplanner_build::session::WorkspaceState;
+
+        let mut session = Session::new(WorkspaceState::default());
+        let original = ConfigDocument::from_draft(session.draft());
+        session
+            .add_loadout(LoadoutKind::Gear, "Other gear")
+            .unwrap();
+        let gear = ConfigDocument::from_draft(session.draft());
+        assert!(!original.number_changed(&gear, &NumberField::SubskillPoints));
+        assert!(!original.number_changed(&gear, &NumberField::Level));
+
+        session
+            .add_loadout(LoadoutKind::Skills, "Other skills")
+            .unwrap();
+        let skills = ConfigDocument::from_draft(session.draft());
+        assert!(gear.number_changed(&skills, &NumberField::SubskillPoints));
+        assert!(!gear.number_changed(&skills, &NumberField::Level));
+        assert!(!gear.number_changed(&skills, &NumberField::Projectile("charged_bolts".into())));
+        assert_eq!(gear.build, skills.build); // Common custom stats keep their pending text.
+
+        let mut budget = NumberDraft {
+            applied: "20".into(),
+        };
+        assert!(budget.reconcile(
+            "25",
+            "20",
+            true,
+            gear.number_changed(&skills, &NumberField::SubskillPoints)
+        ));
+        let mut level = NumberDraft {
+            applied: "10".into(),
+        };
+        assert!(!level.reconcile(
+            "99",
+            "10",
+            true,
+            gear.number_changed(&skills, &NumberField::Level)
+        ));
+
+        session.edit(|draft| draft.snapshot.set_class("stormweaver"));
+        let class = ConfigDocument::from_draft(session.draft());
+        assert!(skills.number_changed(&class, &NumberField::Projectile("charged_bolts".into())));
+        assert!(!skills.number_changed(&class, &NumberField::Level));
     }
 
     #[::core::prelude::v1::test]

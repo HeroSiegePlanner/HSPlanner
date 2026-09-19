@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     BuildSnapshot,
     library::Library,
+    loadout::{LoadoutKind, Loadouts},
     notes::Notes,
     session::{Draft, Settings, WorkspaceState},
 };
@@ -44,13 +45,18 @@ impl MigrationExport {
             );
         }
         self.library.validate()?;
-        for build in &self.library.builds {
-            for profile in &build.profiles {
-                profile.snapshot().map_err(|e| {
-                    format!("Cannot migrate {} / {}: {e}", build.name, profile.name)
-                })?;
+        let mut loadouts = self
+            .active_build_id
+            .as_deref()
+            .and_then(|id| self.library.build(id))
+            .map(|build| build.loadouts.clone())
+            .unwrap_or_else(|| Loadouts::from_snapshot(&self.snapshot));
+        if let Some(id) = self.active_profile_id.as_deref() {
+            for kind in LoadoutKind::ALL {
+                loadouts.select(kind, id)?;
             }
         }
+        loadouts.capture_active(&self.snapshot);
         let mut state = WorkspaceState {
             library: self.library,
             settings: self.settings,
@@ -59,27 +65,20 @@ impl MigrationExport {
             migrated_from: Some(self.exported_at),
             draft: Draft {
                 build_id: self.active_build_id,
-                profile_id: self.active_profile_id,
+                loadouts,
                 snapshot: self.snapshot,
                 notes: Notes::from_html(&self.notes),
                 stash: self.stash,
             },
             ..Default::default()
         };
-        let draft = &state.draft;
-        if !draft
+        if state
+            .draft
             .build_id
             .as_deref()
-            .and_then(|id| state.library.build(id))
-            .is_some_and(|build| {
-                draft
-                    .profile_id
-                    .as_deref()
-                    .is_some_and(|id| build.profile(id).is_some())
-            })
+            .is_some_and(|id| state.library.build(id).is_none())
         {
             state.draft.build_id = None;
-            state.draft.profile_id = None;
         }
         Ok(state)
     }
@@ -165,10 +164,11 @@ fn read_json<T: serde::de::DeserializeOwned>(path: &Path) -> Result<T, String> {
 }
 
 fn validate(state: &WorkspaceState) -> Result<(), String> {
-    if state.version != 1 {
+    if state.version != 2 {
         return Err("Unsupported saved-data version. The original file is unchanged.".into());
     }
-    state.library.validate()
+    state.library.validate()?;
+    state.draft.loadouts.validate()
 }
 
 fn replace_file(path: &Path, bytes: &[u8]) -> Result<(), String> {
@@ -195,12 +195,28 @@ pub fn write_atomic(directory: &Path, state: &WorkspaceState) -> Result<(), Stri
     fs::create_dir_all(directory).map_err(|e| format!("Cannot create data directory: {e}"))?;
     let path = directory.join("state.json");
     if path.exists() {
-        let previous: WorkspaceState = read_json(&path)?;
+        if fs::metadata(&path)
+            .map_err(|error| error.to_string())?
+            .len()
+            > MAX_STATE_BYTES
+        {
+            return Err("The saved data exceeds the supported file size.".into());
+        }
+        let previous_bytes = fs::read(&path).map_err(|error| error.to_string())?;
+        let previous: WorkspaceState =
+            serde_json::from_slice(&previous_bytes).map_err(|error| {
+                format!("Cannot read saved data: {error}. The original file is unchanged.")
+            })?;
         validate(&previous)?;
-        replace_file(
-            &directory.join("state.backup.json"),
-            &serde_json::to_vec(&previous).map_err(|e| e.to_string())?,
-        )?;
+        let original: serde_json::Value =
+            serde_json::from_slice(&previous_bytes).map_err(|error| error.to_string())?;
+        if original["version"].as_u64() == Some(1) {
+            let archive = directory.join("state.before-loadouts.json");
+            if !archive.exists() {
+                replace_file(&archive, &previous_bytes)?;
+            }
+        }
+        replace_file(&directory.join("state.backup.json"), &previous_bytes)?;
     }
     replace_file(&path, &bytes)
 }

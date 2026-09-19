@@ -1,6 +1,6 @@
 use serde_json::{Value, json};
 
-use crate::{BuildSnapshot, notes::Notes};
+use crate::{BuildSnapshot, loadout::Loadouts, notes::Notes};
 
 pub const MAX_CODE_LENGTH: usize = 200_000;
 
@@ -104,7 +104,91 @@ fn remove_null_properties(value: &mut Value) {
     }
 }
 
+/// Share the complete build, including inactive loadouts and common settings.
+pub fn encode_loadouts(
+    snapshot: &BuildSnapshot,
+    notes: &Notes,
+    loadouts: &Loadouts,
+) -> Result<String, String> {
+    loadouts.validate()?;
+    let mut loadouts = loadouts.clone();
+    loadouts.capture_active(snapshot);
+    let json = serde_json::to_string(&json!({
+        "v": 3, "snapshot": snapshot, "loadouts": loadouts, "n": notes.to_html(),
+    }))
+    .map_err(|error| error.to_string())?;
+    if json.len() > MAX_CODE_LENGTH {
+        return Err("This build is too large to share as a code.".into());
+    }
+    Ok(lz_str::compress_to_encoded_uri_component(json.as_str()))
+}
+
+pub fn decode_loadouts(input: &str) -> Result<(BuildSnapshot, Notes, Loadouts), String> {
+    let wire = decompress(input)?;
+    decode_loadout_value(&wire)
+}
+
+fn decode_loadout_value(wire: &Value) -> Result<(BuildSnapshot, Notes, Loadouts), String> {
+    if wire["v"].as_u64() != Some(3) {
+        let (snapshot, notes) = decode_value(wire)?;
+        let loadouts = Loadouts::from_snapshot(&snapshot);
+        return Ok((snapshot, notes, loadouts));
+    }
+    let mut snapshot = wire["snapshot"].clone();
+    let fields = snapshot
+        .as_object_mut()
+        .ok_or("Invalid shared build fields.")?;
+    if let Some(level) = fields.get_mut("level") {
+        *level = json!(
+            level
+                .as_f64()
+                .ok_or("Invalid character level.")?
+                .floor()
+                .clamp(1., 10_000.) as u32
+        );
+    }
+    for key in ["inventory", "mercInventory"] {
+        if let Some(inventory) = fields.get_mut(key) {
+            normalize_loadout_inventory(inventory)?;
+        }
+    }
+    let mut loadouts = wire["loadouts"].clone();
+    let gear = loadouts
+        .get_mut("gear")
+        .and_then(|gear| gear.get_mut("entries"))
+        .and_then(Value::as_array_mut)
+        .ok_or("Invalid gear loadouts.")?;
+    for entry in gear {
+        let value = entry
+            .get_mut("value")
+            .and_then(Value::as_object_mut)
+            .ok_or("Invalid gear loadout.")?;
+        for key in ["inventory", "mercInventory"] {
+            normalize_loadout_inventory(value.get_mut(key).ok_or("Missing equipment list.")?)?;
+        }
+    }
+    let mut snapshot: BuildSnapshot = serde_json::from_value(snapshot)
+        .map_err(|error| format!("Invalid build fields: {error}"))?;
+    let mut loadouts: Loadouts =
+        serde_json::from_value(loadouts).map_err(|error| format!("Invalid loadouts: {error}"))?;
+    loadouts.validate()?;
+    if snapshot.season != "s10" {
+        loadouts.clear_trees();
+        snapshot.season = "s10".into();
+    }
+    loadouts.apply_active(&mut snapshot);
+    Ok((
+        snapshot,
+        Notes::from_html(wire["n"].as_str().unwrap_or("")),
+        loadouts,
+    ))
+}
+
 pub fn decode(input: &str) -> Result<(BuildSnapshot, Notes), String> {
+    decode_value(&decompress(input)?)
+}
+
+fn decompress(input: &str) -> Result<Value, String> {
     let code = parse_input(input)?;
     if code.len() > MAX_CODE_LENGTH {
         return Err("Build code is too large.".into());
@@ -116,10 +200,13 @@ pub fn decode(input: &str) -> Result<(BuildSnapshot, Notes), String> {
     }
     let json = String::from_utf16(&utf16).map_err(|_| "Invalid text in build code.")?;
     let wire: Value = serde_json::from_str(&json).map_err(|_| "Invalid build data.")?;
-    decode_value(&wire)
+    Ok(wire)
 }
 
 pub fn decode_value(wire: &Value) -> Result<(BuildSnapshot, Notes), String> {
+    if wire["v"].as_u64() == Some(3) {
+        return decode_loadout_value(wire).map(|(snapshot, notes, _)| (snapshot, notes));
+    }
     if !matches!(wire["v"].as_u64(), Some(1 | 2)) {
         return Err("Unsupported build code version.".into());
     }
@@ -184,6 +271,23 @@ pub fn decode_value(wire: &Value) -> Result<(BuildSnapshot, Notes), String> {
         }
     }
     Ok((decoded, Notes::from_html(wire["n"].as_str().unwrap_or(""))))
+}
+
+fn normalize_loadout_inventory(value: &mut Value) -> Result<(), String> {
+    let unspecified_stars: Vec<_> = value
+        .as_object()
+        .into_iter()
+        .flatten()
+        .filter(|(_, item)| item.get("stars").is_none_or(Value::is_null))
+        .map(|(slot, _)| slot.clone())
+        .collect();
+    normalize_inventory(value)?;
+    for slot in unspecified_stars {
+        if let Some(item) = value.get_mut(slot).and_then(Value::as_object_mut) {
+            item.remove("stars");
+        }
+    }
+    Ok(())
 }
 
 fn normalize_inventory(value: &mut Value) -> Result<(), String> {

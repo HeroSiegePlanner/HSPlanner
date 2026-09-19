@@ -41,6 +41,7 @@ static IMAGES: LazyLock<HashMap<&'static str, Arc<RenderImage>>> = LazyLock::new
 
 pub struct MercenaryView {
     session: Entity<Session>,
+    header_controls: Option<AnyView>,
     gear: Entity<GearView>,
     tree: Entity<TreeView>,
     show_equipment_stats: bool,
@@ -48,6 +49,12 @@ pub struct MercenaryView {
     _subscriptions: Vec<Subscription>,
 }
 impl MercenaryView {
+    /// Embeds retained controls in the view's existing header.
+    pub fn with_header_controls(mut self, controls: impl Into<AnyView>) -> Self {
+        self.header_controls = Some(controls.into());
+        self
+    }
+
     pub fn new(
         session: Entity<Session>,
         tree: Entity<TreeView>,
@@ -61,6 +68,7 @@ impl MercenaryView {
         ];
         Self {
             session,
+            header_controls: None,
             gear,
             tree,
             show_equipment_stats: false,
@@ -510,26 +518,41 @@ impl Render for MercenaryView {
                 .overflow_y_scroll()
                 .child(
                     div()
+                        .w_full()
+                        .min_w_0()
                         .p_6()
                         .flex()
                         .flex_col()
                         .gap_4()
                         .child(
                             div()
+                                .min_w_0()
                                 .flex()
+                                .flex_wrap()
                                 .items_end()
                                 .justify_between()
                                 .gap_3()
-                                .child(section_heading(
-                                    "merc-heading",
-                                    tr("planner.mercenary.loadout"),
-                                    tr("planner.common.mercenary"),
-                                    cx,
-                                ))
+                                .child(
+                                    div()
+                                        .min_w_0()
+                                        .flex()
+                                        .flex_wrap()
+                                        .items_end()
+                                        .gap_3()
+                                        .child(section_heading(
+                                            "merc-heading",
+                                            tr("planner.mercenary.loadout"),
+                                            tr("planner.common.mercenary"),
+                                            cx,
+                                        ))
+                                        .children(self.header_controls.clone()),
+                                )
                                 .when(selected.is_some(), |v| {
                                     v.child(
                                         div()
+                                            .min_w_0()
                                             .flex()
+                                            .flex_wrap()
                                             .gap_3()
                                             .items_center()
                                             .font_family(theme::MONO_FONT_FAMILY)

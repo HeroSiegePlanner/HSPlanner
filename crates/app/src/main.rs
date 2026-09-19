@@ -4,6 +4,7 @@ mod bug_report;
 mod bug_report_transport;
 mod changelog;
 mod chrome;
+mod loadouts;
 mod settings;
 mod shell;
 mod startup;

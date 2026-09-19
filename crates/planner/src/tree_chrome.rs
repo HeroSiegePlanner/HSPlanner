@@ -59,10 +59,19 @@ impl TreeView {
             .right_3p5()
             .flex()
             .flex_wrap()
-            .justify_end()
+            .when(self.header_controls.is_none(), |toolbar| {
+                toolbar.justify_end()
+            })
             .items_center()
             .gap_1p5()
             .occlude()
+            .children(self.header_controls.as_ref().map(|controls| {
+                div()
+                    .min_w_0()
+                    .flex_none()
+                    .mr_auto()
+                    .child(controls.clone())
+            }))
             .child(
                 div().w_64().child(
                     Input::new(&self.search)

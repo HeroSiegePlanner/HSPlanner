@@ -89,9 +89,7 @@ impl LibrarySort {
                     .unwrap_or(tr("library.unknown"))
                     .to_lowercase(),
             ),
-            SortColumn::Level => {
-                SortKey::Number(query::profile_summary(build, true).map_or(1, |s| s.0))
-            }
+            SortColumn::Level => SortKey::Number(query::build_summary(build).0),
             SortColumn::Modified => SortKey::Text(build.updated_at.clone()),
         }
     }
@@ -142,16 +140,6 @@ fn render_error(error: &str) -> String {
     match error {
         "library.select_folder" | "Select a folder" => tr("library.select_folder").to_owned(),
         "library.select_build" | "Select a build" => tr("library.select_build").to_owned(),
-        "library.no_profile" | "Build has no profile" => tr("library.no_profile").to_owned(),
-        "library.profile_limit" | "This build already contains 100 profiles." => {
-            tr("library.profile_limit").to_owned()
-        }
-        "library.missing_profile" | "Profile no longer exists." => {
-            tr("library.missing_profile").to_owned()
-        }
-        "library.keep_profile" | "Keep at least one profile." => {
-            tr("library.keep_profile").to_owned()
-        }
         "library.error.build_limit" | "The library already contains 1,000 builds." => {
             tr("library.error.build_limit").to_owned()
         }
@@ -471,12 +459,12 @@ impl LibraryView {
     }
 
     fn refresh_preview(&mut self, cx: &mut Context<Self>) {
-        let build = self
+        let snapshot = self
             .selected
             .as_ref()
             .and_then(|id| self.session.read(cx).state().library.build(id))
-            .cloned();
-        let Some(build) = build else {
+            .map(|build| build.snapshot.clone());
+        let Some(snapshot) = snapshot else {
             self.preview_task = None;
             self.performance = None;
             self.preview_snapshot = None;
@@ -484,10 +472,7 @@ impl LibraryView {
         };
         self.preview_revision += 1;
         let revision = self.preview_revision;
-        self.preview_snapshot = build
-            .profile(&build.active_profile_id)
-            .or_else(|| build.profiles.first())
-            .and_then(|p| p.snapshot().ok());
+        self.preview_snapshot = Some(snapshot);
         self.performance = None;
         self.preview_task = None;
         if let Some(snapshot) = self.preview_snapshot.clone() {
@@ -565,8 +550,33 @@ impl LibraryView {
             }))
     }
 
+    fn share(&mut self, id: &str, cx: &mut Context<Self>) {
+        let result = self
+            .session
+            .read(cx)
+            .state()
+            .library
+            .build(id)
+            .ok_or_else(|| "library.error.missing_build".to_string())
+            .and_then(|build| {
+                hsplanner_build::codec::encode_loadouts(
+                    &build.snapshot,
+                    &build.notes(),
+                    &build.loadouts,
+                )
+            });
+        self.error = match result {
+            Ok(code) => {
+                cx.write_to_clipboard(ClipboardItem::new_string(code));
+                None
+            }
+            Err(error) => Some(error),
+        };
+        cx.notify();
+    }
+
     fn open(&mut self, id: String, cx: &mut Context<Self>) {
-        if self.apply(cx, |session| session.open(&id, None)) {
+        if self.apply(cx, |session| session.open(&id)) {
             cx.emit(Opened);
         }
     }
@@ -614,7 +624,7 @@ impl Render for LibraryView {
             .map(|build| {
                 let id = build.id.clone();
                 let chosen = self.selected.as_ref() == Some(&id);
-                let summary = query::profile_summary(build, true);
+                let (level, points) = query::build_summary(build);
                 let favorite_id = id.clone();
                 let select_id = id.clone();
                 div()
@@ -710,15 +720,6 @@ impl Render for LibraryView {
                                     .when(active_id.as_ref() == Some(&id), |v| {
                                         v.child(label(tr("library.active"), accent))
                                     })
-                                    .when(build.profiles.len() > 1, |view| {
-                                        view.child(label(
-                                            trf(
-                                                "library.profile_count",
-                                                &[("count", build.profiles.len().to_string())],
-                                            ),
-                                            accent,
-                                        ))
-                                    })
                                     .children(build.tags.iter().map(|tag| {
                                         div()
                                             .px_1()
@@ -738,12 +739,10 @@ impl Render for LibraryView {
                         )),
                     )
                     .child(
-                        div().w(rems(64. / 13.)).flex_none().child(label(
-                            summary
-                                .map(|(level, points)| format!("{level}/{points}"))
-                                .unwrap_or_else(|| "—".into()),
-                            muted,
-                        )),
+                        div()
+                            .w(rems(64. / 13.))
+                            .flex_none()
+                            .child(label(format!("{level}/{points}"), muted)),
                     )
                     .child(
                         div()
@@ -1245,10 +1244,7 @@ impl Render for LibraryView {
             .when(count > 25, |v| v.child(pagination));
         let preview = self.preview(selected, cx);
         let open_id = selected.as_ref().map(|b| b.id.clone());
-        let share = selected
-            .as_ref()
-            .and_then(|b| b.profile(&b.active_profile_id))
-            .map(|p| p.code.clone());
+        let share_id = selected.map(|build| build.id.clone());
         let details = div()
             .w(rems(360. / 13.))
             .h_full()
@@ -1279,13 +1275,13 @@ impl Render for LibraryView {
                             .planner_style(cx)
                             .flex_1()
                             .label(tr("library.share"))
-                            .disabled(share.is_none())
-                            .opacity(if share.is_none() { 0.4 } else { 1. })
-                            .on_click(move |_, _, cx| {
-                                if let Some(code) = &share {
-                                    cx.write_to_clipboard(ClipboardItem::new_string(code.clone()));
+                            .disabled(share_id.is_none())
+                            .opacity(if share_id.is_none() { 0.4 } else { 1. })
+                            .on_click(cx.listener(move |this, _, _, cx| {
+                                if let Some(id) = &share_id {
+                                    this.share(id, cx);
                                 }
-                            }),
+                            })),
                     )
                     .child(
                         Button::new("open-selected")
@@ -1462,11 +1458,7 @@ impl Render for LibraryView {
 #[cfg(test)]
 mod sorting_tests {
     use super::{LibrarySort, SavedBuild, SortColumn, SortDirection};
-    use hsplanner_build::{
-        BuildSnapshot,
-        library::{Library, Profile},
-        notes::Notes,
-    };
+    use hsplanner_build::{BuildSnapshot, library::Library, notes::Notes};
 
     fn build(name: &str, level: u32) -> SavedBuild {
         let mut library = Library::default();
@@ -1514,30 +1506,18 @@ mod sorting_tests {
     }
 
     #[test]
-    fn level_uses_active_profile_with_legacy_and_invalid_profile_fallbacks() {
-        let mut active = build("Active", 2);
-        let profile = Profile::new(
-            "Endgame",
-            &BuildSnapshot {
-                level: 90,
-                ..Default::default()
-            },
-        )
-        .unwrap();
-        active.active_profile_id = profile.id.clone();
-        active.profiles.push(profile);
-        let mut fallback = build("Fallback", 40);
-        fallback.active_profile_id = "missing".into();
-        let mut invalid = build("Invalid", 80);
-        invalid.profiles[0].snapshot = None;
-        invalid.profiles[0].code = "invalid".into();
-        let mut builds = vec![invalid, fallback, active];
+    fn level_sort_uses_the_composed_build_snapshot() {
+        let mut edited = build("Edited", 2);
+        edited.snapshot.level = 90;
+        let middle = build("Middle", 40);
+        let early = build("Early", 10);
+        let mut builds = vec![early, middle, edited];
         LibrarySort {
             column: SortColumn::Level,
             direction: SortDirection::Descending,
         }
         .apply(&mut builds, false);
-        assert_eq!(names(&builds), ["Active", "Fallback", "Invalid"]);
+        assert_eq!(names(&builds), ["Edited", "Middle", "Early"]);
     }
 
     #[test]
@@ -1571,7 +1551,7 @@ mod sorting_tests {
             })
             .collect::<Vec<_>>();
         let selected = builds[7].id.clone();
-        let selected_profile = builds[7].active_profile_id.clone();
+        let selected_loadouts = builds[7].loadouts.clone();
         LibrarySort {
             column: SortColumn::Name,
             direction: SortDirection::Ascending,
@@ -1581,7 +1561,17 @@ mod sorting_tests {
         assert_eq!(builds.first().unwrap().name, "Build 02");
         assert_eq!(builds.last().unwrap().name, "Build 13");
         let selected = builds.iter().find(|build| build.id == selected).unwrap();
-        assert_eq!(selected.active_profile_id, selected_profile);
+        for kind in [
+            hsplanner_build::loadout::LoadoutKind::Incarnation,
+            hsplanner_build::loadout::LoadoutKind::Ether,
+            hsplanner_build::loadout::LoadoutKind::Gear,
+            hsplanner_build::loadout::LoadoutKind::Skills,
+        ] {
+            assert_eq!(
+                selected.loadouts.active_id(kind),
+                selected_loadouts.active_id(kind)
+            );
+        }
     }
 
     #[test]

@@ -871,12 +871,16 @@ mod tests {
     }
 
     #[::core::prelude::v1::test]
-    fn ranking_rejects_changed_slot_profile_document_and_superseded_requests() {
-        let mut state = WorkspaceState::default();
-        state.draft.build_id = Some("review-build".into());
-        state.draft.profile_id = Some("profile-one".into());
+    fn ranking_rejects_changed_slot_loadout_document_and_superseded_requests() {
+        let mut session = Session::new(WorkspaceState::default());
+        session.new_build("Gear ranking").unwrap();
+        let original_gear = session
+            .draft()
+            .loadouts
+            .active_id(LoadoutKind::Gear)
+            .to_owned();
         let context = PickerContext {
-            document: DocumentKey::from_session(&Session::new(state.clone())),
+            document: DocumentKey::from_session(&session),
             slot: "weapon".into(),
             mercenary: false,
             picker: Picker::Items,
@@ -894,13 +898,16 @@ mod tests {
         changed = context.clone();
         changed.picker = Picker::Stash;
         assert!(!request.is_current(Some(&changed), 4));
-        state.draft.profile_id = Some("profile-two".into());
+        session
+            .add_loadout(LoadoutKind::Gear, "Other gear")
+            .unwrap();
         changed = context.clone();
-        changed.document = DocumentKey::from_session(&Session::new(state.clone()));
+        changed.document = DocumentKey::from_session(&session);
         assert!(!request.is_current(Some(&changed), 4));
-        state.draft.profile_id = Some("profile-one".into());
-        state.revision += 1;
-        changed.document = DocumentKey::from_session(&Session::new(state));
+        session
+            .switch_loadout(LoadoutKind::Gear, &original_gear)
+            .unwrap();
+        changed.document = DocumentKey::from_session(&session);
         assert!(!request.is_current(Some(&changed), 4));
     }
 }

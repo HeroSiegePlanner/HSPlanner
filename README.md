@@ -88,7 +88,7 @@ Across every tab:
 - [x] **Affixes** — add affixes by family, pick a tier, and drag roll sliders (item-granted skill ranks roll too)
 - [x] **Custom stats** — free-text user-entered stats for things outside the data model
 - [x] **Seasons** — Season 10 is the base data; later seasons are applied as patch layers on top
-- [x] **Builds menu** — multiple saved builds, each with multiple profiles
+- [x] **Builds menu** — multiple saved builds, each with independent incarnation tree, ether tree, gear and skills loadouts
 - [x] **Share** — export the entire build to a compressed URL (lz-string), optionally via the web share service
 - [x] **Update check** — opt-in update check via GitHub Releases
 

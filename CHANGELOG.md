@@ -22,5 +22,8 @@
 
 - Added an explicit average-contact model for Butcher Blender and all 14 subskills: separate Nanoblender groups/blades, Blenderang travel estimates, physical and conditional bonuses, and non-recursive Microblade proc DPS. Calculation details expose positioning assumptions and movement/life-drain effects.
 
+- Replaced whole-build profiles with independent incarnation tree, ether tree, gear and skills loadouts. Each category supports switching, duplication, renaming, deletion and undo; saves and share codes retain every loadout. Existing native profiles are converted with their original snapshots retained for recovery.
+- Integrated compact loadout selectors into each view’s existing header or tree toolbar, with secondary actions grouped in a menu.
+- Made the loadout actions button more visible and gave its three-dot icon an explicit, unclipped frame.
 - Added an immediately applied, saved interface language setting for English, Korean, Russian and Simplified Chinese, with translations maintained in separate JSON catalogs.
 - Added Page Up / Page Down scrolling to planner panels (including the virtualized Stats view), the build library and notes preview.

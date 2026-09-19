@@ -102,6 +102,7 @@ enum Command {
 
 pub struct TreeView {
     session: gpui_kit::Entity<Session>,
+    header_controls: Option<gpui_kit::AnyView>,
     subscriptions: Vec<gpui_kit::Subscription>,
     search: gpui_kit::Entity<InputState>,
     search_matches: Vec<usize>,
@@ -140,6 +141,12 @@ pub struct TreeView {
 }
 
 impl TreeView {
+    /// Embeds retained controls in the view's existing header.
+    pub fn with_header_controls(mut self, controls: impl Into<gpui_kit::AnyView>) -> Self {
+        self.header_controls = Some(controls.into());
+        self
+    }
+
     pub fn new(
         session: gpui_kit::Entity<Session>,
         window: &mut Window,
@@ -232,6 +239,7 @@ impl TreeView {
         let suggest_slider = cx.new(|_| tree_suggest::slider_state());
         let mut app = Self {
             session: session.clone(),
+            header_controls: None,
             subscriptions: vec![],
             search: search.clone(),
             search_matches: vec![],

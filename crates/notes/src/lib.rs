@@ -43,7 +43,7 @@ fn prefix_selected_lines(
 pub struct NotesView {
     session: Entity<Session>,
     editor: Entity<TextareaState>,
-    // Notes and their editing history are shared by profiles within one build.
+    // Notes and their editing history are shared by loadouts within one build.
     build_id: Option<String>,
     preview: bool,
     scroll: ScrollHandle,

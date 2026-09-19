@@ -7,7 +7,7 @@ use gpui_kit::component::{
     slider::{SliderEvent, SliderState},
 };
 use gpui_kit::{prelude::*, *};
-use hsplanner_build::{gear, session::Session};
+use hsplanner_build::{gear, loadout::LoadoutKind, session::Session};
 use hsplanner_engine::calc::{
     data,
     performance_diff::{PerformanceDiff, compare_planner},
@@ -158,7 +158,7 @@ struct RollSlider {
 
 #[derive(Default)]
 struct CandidateBaseline {
-    identity: (Option<String>, Option<String>),
+    identity: (Option<String>, String),
     equipped: Option<EquippedItem>,
 }
 
@@ -174,7 +174,10 @@ impl CandidateBaseline {
         candidate: &mut Option<EquippedItem>,
     ) -> bool {
         let draft = session.draft();
-        let identity = (draft.build_id.clone(), draft.profile_id.clone());
+        let identity = (
+            draft.build_id.clone(),
+            draft.loadouts.active_id(LoadoutKind::Gear).to_owned(),
+        );
         let retain = editing
             && self.identity == identity
             && !editor::same_item(candidate.as_ref(), self.equipped.as_ref());
@@ -196,6 +199,7 @@ impl CandidateBaseline {
 
 pub struct GearView {
     session: Entity<Session>,
+    header_controls: Option<AnyView>,
     document: DocumentKey,
     mercenary: bool,
     slot: String,
@@ -244,6 +248,12 @@ pub struct GearView {
     _subscriptions: Vec<Subscription>,
 }
 impl GearView {
+    /// Embeds retained controls in the view's existing header.
+    pub fn with_header_controls(mut self, controls: impl Into<AnyView>) -> Self {
+        self.header_controls = Some(controls.into());
+        self
+    }
+
     /// Relics are tier-only and never stashed, so the editor and picker hide stash controls.
     fn is_relic_slot(&self) -> bool {
         gear::slot_group(&self.slot) == "relic"
@@ -316,6 +326,7 @@ impl GearView {
         ];
         let mut view = Self {
             session,
+            header_controls: None,
             document,
             mercenary,
             slot: "weapon".into(),
@@ -1078,30 +1089,24 @@ mod control_tests {
     }
 
     fn draft_session() -> Session {
-        use hsplanner_build::{
-            BuildSnapshot,
-            session::{Draft, WorkspaceState},
-        };
+        use hsplanner_build::{BuildSnapshot, session::WorkspaceState};
 
-        Session::new(WorkspaceState {
-            draft: Draft {
-                build_id: Some("build-a".into()),
-                profile_id: Some("profile-a".into()),
-                snapshot: BuildSnapshot {
-                    level: 100,
-                    inventory: HashMap::from([(
-                        "weapon".into(),
-                        EquippedItem {
-                            base_id: "draft-reconciliation-fixture".into(),
-                            ..Default::default()
-                        },
-                    )]),
-                    ..Default::default()
-                },
+        let mut session = Session::new(WorkspaceState::default());
+        session.new_build("Draft reconciliation").unwrap();
+        session.edit(|draft| {
+            draft.snapshot = BuildSnapshot {
+                level: 100,
+                inventory: HashMap::from([(
+                    "weapon".into(),
+                    EquippedItem {
+                        base_id: "draft-reconciliation-fixture".into(),
+                        ..Default::default()
+                    },
+                )]),
                 ..Default::default()
-            },
-            ..Default::default()
-        })
+            };
+        });
+        session
     }
 
     #[::core::prelude::v1::test]
@@ -1145,7 +1150,7 @@ mod control_tests {
     }
 
     #[::core::prelude::v1::test]
-    fn clean_item_follows_external_edits_and_profile_changes_replace_dirty_drafts() {
+    fn clean_item_follows_external_edits_and_gear_loadouts_replace_dirty_drafts() {
         let mut session = draft_session();
         let mut source = CandidateBaseline::default();
         let mut candidate = None;
@@ -1158,12 +1163,36 @@ mod control_tests {
         assert_eq!(candidate.as_ref().unwrap().stars, Some(2));
 
         candidate.as_mut().unwrap().stars = Some(5);
-        session.edit(|draft| draft.profile_id = Some("profile-b".into()));
+        session
+            .add_loadout(LoadoutKind::Skills, "Same skills")
+            .unwrap();
+        assert!(!source.synchronize(&session, "weapon", false, true, &mut candidate));
+        assert_eq!(candidate.as_ref().unwrap().stars, Some(5));
+
+        let initial_gear = session
+            .draft()
+            .loadouts
+            .active_id(LoadoutKind::Gear)
+            .to_owned();
+        session
+            .add_loadout(LoadoutKind::Gear, "Same weapon")
+            .unwrap();
+        assert_ne!(
+            session.draft().loadouts.active_id(LoadoutKind::Gear),
+            initial_gear
+        );
         assert!(source.synchronize(&session, "weapon", false, true, &mut candidate));
         assert_eq!(candidate.as_ref().unwrap().stars, Some(2));
 
         candidate.as_mut().unwrap().stars = Some(4);
-        session.edit(|draft| draft.build_id = Some("build-b".into()));
+        session
+            .switch_loadout(LoadoutKind::Gear, &initial_gear)
+            .unwrap();
+        assert!(source.synchronize(&session, "weapon", false, true, &mut candidate));
+        assert_eq!(candidate.as_ref().unwrap().stars, Some(2));
+
+        candidate.as_mut().unwrap().stars = Some(4);
+        session.save_as("Other build").unwrap();
         assert!(source.synchronize(&session, "weapon", false, true, &mut candidate));
         assert_eq!(candidate.as_ref().unwrap().stars, Some(2));
 
