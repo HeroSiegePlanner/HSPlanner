@@ -1022,7 +1022,8 @@
     "tree": "Arsonist",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 3.5, "perLevel": 20 },
+    "damageScaling": "rankAndFlat",
+    "damageFormula": { "base": 4, "perLevel": 18 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -1067,8 +1068,8 @@
         "description": "Increases the damage dealt by fireball.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 15 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 15 }
         }
       },
       {
@@ -1110,8 +1111,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "fire_skill_damage": 0 },
-            "perRank": { "fire_skill_damage": 35 }
+            "base": { "subtree_damage_on_proc": 0 },
+            "perRank": { "subtree_damage_on_proc": 35 }
           }
         }
       },
@@ -1139,6 +1140,10 @@
         "name": "Critical Burn",
         "description": "Chance on hit to deal double damage.",
         "maxRank": 5,
+        "effects": {
+          "base": { "double_damage_chance": 0 },
+          "perRank": { "double_damage_chance": 6 }
+        },
         "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 6 } }
       },
       {
@@ -1151,8 +1156,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 1 },
           "effects": {
-            "base": { "fire_skill_damage": 0 },
-            "perRank": { "fire_skill_damage": 50 }
+            "base": { "subtree_damage_on_proc": 0 },
+            "perRank": { "subtree_damage_on_proc": 50 }
           }
         }
       },
@@ -1174,8 +1179,8 @@
         "description": "Fireball now splits to multiple smaller fireballs on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "fire_skill_damage": 0, "single_target_hit_cap": 1 },
-          "perRank": { "projectile_count": 3, "fire_skill_damage": 40, "single_target_hit_cap": 0 }
+          "base": { "secondary_projectile_count": 0, "subtree_damage": 0 },
+          "perRank": { "secondary_projectile_count": 3, "subtree_damage": 40 }
         }
       },
       {
@@ -1185,8 +1190,8 @@
         "description": "Fireball now has piercing and leaves a trail of fire on its’ path.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 60, "area_of_effect": 30 }
+          "base": { "trail_damage_percent": 0, "area_of_effect": 0 },
+          "perRank": { "trail_damage_percent": 60, "area_of_effect": 30 }
         }
       },
       {
@@ -1199,12 +1204,12 @@
           "base": {
             "skill_duration": 0,
             "area_of_effect": 0,
-            "projectile_count": 0
+            "primary_projectile_count": 0
           },
           "perRank": {
             "skill_duration": 18,
             "area_of_effect": 30,
-            "projectile_count": 4
+            "primary_projectile_count": 4
           }
         }
       },
@@ -1218,8 +1223,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 20 },
           "effects": {
-            "base": { "projectile_count": 0, "fire_skill_damage": 0 },
-            "perRank": { "projectile_count": 4, "fire_skill_damage": 60 }
+            "base": { "secondary_projectile_count": 0, "subtree_damage_on_proc": 0 },
+            "perRank": { "secondary_projectile_count": 4, "subtree_damage_on_proc": 60 }
           }
         }
       }
@@ -2058,7 +2063,7 @@
           },
           "perRank": {
             "fire_skill_damage": 25,
-            "area_of_effect": 25,
+            "area_of_effect": 15,
             "projectile_count": 1
           }
         }

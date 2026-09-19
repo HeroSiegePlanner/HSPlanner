@@ -2093,7 +2093,7 @@
           },
           "perRank": {
             "physical_skill_damage": 8,
-            "increased_attack_speed": 10,
+            "increased_attack_speed": 8,
             "max_skill_stacks": 1
           }
         }

@@ -8,7 +8,7 @@ use super::affix_tags;
 use super::build::DEFAULT_ENTITY_RATE;
 use super::passive::{self, ManaCostFormula, PassiveSkill, SkillRank};
 use super::skills::{r_max, rg, Ranged, StatMap};
-use super::types::{AffixEffect, SkillSpec};
+use super::types::{AffixEffect, AttackKindSpec, SkillSpec};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -104,10 +104,37 @@ pub fn entity_rate(
     }
 }
 
+/// A skill's declared cooldown plus a cooldown introduced by its own subtree.
+/// At <= 0.5s the runtime replaces this with action-speed timing. Keep that
+/// base in the sum before checking the threshold (e.g. Circle: 0.25 + 5).
+pub fn effective_cooldown(skill: &SkillSpec, stats: &StatMap) -> Option<f64> {
+    let cooldown = skill.base_cooldown.unwrap_or(0.0) + r_max(rg(stats, "cooldown_added")).max(0.0);
+    (cooldown > 0.5).then_some(cooldown)
+}
+
+/// Maximum uses per second for a positive normal skill cooldown. The game's
+/// stat 103 contributes 0.5% faster recovery per point (belt cooldowns differ).
+pub fn cooldown_rate(skill: &SkillSpec, cooldown: f64, haste: Ranged) -> Ranged {
+    // Controller.Step explicitly disables haste for talent 75, Cloud of Sand.
+    let haste = if skill.id == "cloud_of_sand" {
+        (0.0, 0.0)
+    } else {
+        haste
+    };
+    (
+        (1.0 + haste.0 * 0.005).max(0.0) / cooldown,
+        (1.0 + haste.1 * 0.005).max(0.0) / cooldown,
+    )
+}
+
+fn uses_weapon_rate(skill: &SkillSpec) -> bool {
+    skill.uses_attack_speed || matches!(skill.attack_kind, Some(AttackKindSpec::Attack))
+}
+
 /// Base casts per second and the speed stat scaling them. Attack-speed skills
 /// swing with the weapon; cooldown-gated ones fire once per cooldown.
 pub fn cast_rate(skill: &SkillSpec, stats: &StatMap) -> (Option<f64>, Ranged) {
-    if skill.uses_attack_speed {
+    if uses_weapon_rate(skill) {
         let aps = r_max(rg(stats, "attacks_per_second"));
         let base = if aps > 0.0 {
             Some(aps)
@@ -117,12 +144,15 @@ pub fn cast_rate(skill: &SkillSpec, stats: &StatMap) -> (Option<f64>, Ranged) {
         return (base, rg(stats, "increased_attack_speed"));
     }
     if skill.uses_skill_haste {
-        let base = skill
-            .base_cooldown
-            .filter(|cd| *cd > 0.0)
+        let base = effective_cooldown(skill, stats)
             .map(|cd| 1.0 / cd)
             .or(skill.base_cast_rate);
-        return (base, rg(stats, "skill_haste"));
+        let haste = if skill.id == "cloud_of_sand" {
+            (0.0, 0.0)
+        } else {
+            rg(stats, "skill_haste")
+        };
+        return (base, (haste.0 * 0.5, haste.1 * 0.5));
     }
     (skill.base_cast_rate, rg(stats, "faster_cast_rate"))
 }
@@ -148,8 +178,19 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
     let life_max = cost_max.map(|c| c * (pct_max / 100.0));
 
     let (base_rate, speed) = cast_rate(input.skill, stats);
-    let cast_rate_min = base_rate.map(|r| r * (1.0 + speed.0 / 100.0));
-    let cast_rate_max = base_rate.map(|r| r * (1.0 + speed.1 / 100.0));
+    let weapon_rate = rg(stats, "attacks_per_second");
+    let base_rate_min = if uses_weapon_rate(input.skill) && r_max(weapon_rate) > 0.0 {
+        Some(weapon_rate.0)
+    } else {
+        base_rate
+    };
+    let mut cast_rate_min = base_rate_min.map(|r| r * (1.0 + speed.0 / 100.0).max(0.0));
+    let mut cast_rate_max = base_rate.map(|r| r * (1.0 + speed.1 / 100.0).max(0.0));
+    if let Some(cooldown) = effective_cooldown(input.skill, stats) {
+        let (cap_min, cap_max) = cooldown_rate(input.skill, cooldown, rg(stats, "skill_haste"));
+        cast_rate_min = Some(cast_rate_min.map_or(cap_min, |rate| rate.min(cap_min)));
+        cast_rate_max = Some(cast_rate_max.map_or(cap_max, |rate| rate.min(cap_max)));
+    }
     let entity_rate = affix_tags::entity_tag_for(input.tags)
         .map(|kind| entity_rate(kind, input.tags, stats, input.entity_rates));
 
@@ -315,7 +356,7 @@ mod tests {
             &stats(&[("skill_haste", 75.0), ("faster_cast_rate", 500.0)]),
         );
         assert!(close(base.unwrap(), 1.0 / 1.75));
-        assert!(close(base.unwrap() * (1.0 + speed.1 / 100.0), 1.0));
+        assert!(close(base.unwrap() * (1.0 + speed.1 / 100.0), 1.375 / 1.75));
         let bolt = SkillSpec {
             base_cast_rate: Some(2.0),
             ..Default::default()
@@ -326,6 +367,112 @@ mod tests {
         );
         assert_eq!(base, Some(2.0));
         assert!(close(base.unwrap() * (1.0 + speed.1 / 100.0), 3.0));
+    }
+
+    #[test]
+    fn circle_of_slugs_cost_rate_respects_added_cooldown_and_weapon_range() {
+        let buckshot = crate::calc::data::get_skills_by_class("pirate")
+            .iter()
+            .find(|skill| skill.id == "buckshot")
+            .unwrap();
+        let mut bonuses = stats(&[("cooldown_added", 5.0)]);
+        bonuses.insert("attacks_per_second".into(), (1.0, 2.0));
+        let capped = cost(buckshot, 1.0, &bonuses);
+        assert_eq!(
+            (capped.cast_rate_min, capped.cast_rate_max),
+            (Some(1.0 / 5.25), Some(1.0 / 5.25))
+        );
+        assert_eq!(capped.mana_per_sec_max, Some(4.0 / 5.25));
+
+        bonuses.insert("skill_haste".into(), (0.0, 100.0));
+        let haste = cost(buckshot, 1.0, &bonuses);
+        assert_eq!(
+            (haste.cast_rate_min, haste.cast_rate_max),
+            (Some(1.0 / 5.25), Some(1.5 / 5.25))
+        );
+
+        bonuses.insert("attacks_per_second".into(), (0.05, 0.08));
+        // The caller already folds speed-more into the base stat; retain it
+        // once while preserving both endpoints of the weapon's rate.
+        bonuses.insert("increased_attack_speed".into(), (100.0, 200.0));
+        bonuses.insert("increased_attack_speed_more".into(), (100.0, 100.0));
+        let slow_weapon = cost(buckshot, 1.0, &bonuses);
+        assert!(close(slow_weapon.cast_rate_min.unwrap(), 0.1));
+        assert!(close(slow_weapon.cast_rate_max.unwrap(), 0.24));
+    }
+
+    #[test]
+    fn declared_cooldown_caps_cast_cost_even_without_haste_flag() {
+        let skill = SkillSpec {
+            base_cooldown: Some(5.0),
+            ..thunder_fury()
+        };
+        let capped = cost(&skill, 1.0, &stats(&[("faster_cast_rate", 100.0)]));
+        assert_eq!(capped.cast_rate_max, Some(0.2));
+        let slower_cast = SkillSpec {
+            base_cast_rate: Some(0.1),
+            ..skill
+        };
+        let capped = cost(&slower_cast, 1.0, &stats(&[("skill_haste", 100.0)]));
+        assert_eq!(capped.cast_rate_max, Some(0.1));
+    }
+
+    #[test]
+    fn added_cooldown_supplies_haste_base_without_inventing_negative_cooldown() {
+        let skill = SkillSpec {
+            uses_skill_haste: true,
+            ..Default::default()
+        };
+        let bonuses = stats(&[("cooldown_added", 5.0), ("skill_haste", 100.0)]);
+        let (base, speed) = cast_rate(&skill, &bonuses);
+        assert_eq!(base, Some(0.2));
+        assert_eq!(speed, (50.0, 50.0));
+        assert!(close(
+            cost(&skill, 1.0, &bonuses).cast_rate_max.unwrap(),
+            0.3
+        ));
+        assert_eq!(
+            effective_cooldown(&skill, &stats(&[("cooldown_added", -5.0)])),
+            None
+        );
+        let skill = SkillSpec {
+            base_cooldown: Some(2.0),
+            ..skill
+        };
+        assert_eq!(effective_cooldown(&skill, &bonuses), Some(7.0));
+    }
+
+    #[test]
+    fn cooldown_cost_uses_half_percent_per_haste_point_and_never_negative_rate() {
+        let skill = SkillSpec {
+            uses_skill_haste: true,
+            base_cooldown: Some(8.0),
+            ..thunder_fury()
+        };
+        for (haste, expected) in [(0.0, 0.125), (100.0, 0.1875), (200.0, 0.25), (-300.0, 0.0)] {
+            let result = cost(&skill, 1.0, &stats(&[("skill_haste", haste)]));
+            assert!(
+                close(result.cast_rate_min.unwrap(), expected),
+                "haste {haste}"
+            );
+            assert!(
+                close(result.cast_rate_max.unwrap(), expected),
+                "haste {haste}"
+            );
+        }
+        assert_eq!(
+            cooldown_rate(&SkillSpec::default(), 8.0, (-300.0, 100.0)),
+            (0.0, 0.1875)
+        );
+    }
+
+    #[test]
+    fn cloud_of_sand_retains_the_runtime_no_haste_exception() {
+        let skill = SkillSpec {
+            id: "cloud_of_sand".into(),
+            ..Default::default()
+        };
+        assert_eq!(cooldown_rate(&skill, 8.0, (100.0, 200.0)), (0.125, 0.125));
     }
 
     #[test]

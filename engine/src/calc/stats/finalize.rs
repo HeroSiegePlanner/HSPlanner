@@ -65,6 +65,7 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
         Some("life_replenish_more"),
         false,
     );
+    apply_multiplier(stats, "life_steal", None, Some("life_steal_more"), false);
     // Light radius is counted in whole points by the "per point" nodes.
     apply_multiplier(stats, "light_radius", Some("light_radius_pct"), None, true);
     // Ailment durations: (base + flat seconds) × increased%. No floor — the

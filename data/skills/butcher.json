@@ -473,8 +473,8 @@
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "damage": 20, "life_replenish": -95, "life_steal": -95 },
-      "perRank": { "damage": 1.5, "life_replenish": 0, "life_steal": 0 }
+      "base": { "damage": 20, "life_replenish_more": -95, "life_steal_more": -95 },
+      "perRank": { "damage": 1.5, "life_replenish_more": 0, "life_steal_more": 0 }
     }
   },
   {
@@ -579,7 +579,7 @@
     "damageType": "physical",
     "tags": ["Attack", "Active", "Melee", "Strike"],
     "movementDuringUse": 85,
-    "baseCooldown": 2,
+    "baseCooldown": 1.25,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Flesh Ripper",
@@ -1059,7 +1059,7 @@
     "damageType": "physical",
     "tags": ["Cast", "Active", "Spell", "Orbital"],
     "movementDuringUse": 85,
-    "baseCooldown": 5,
+    "baseCooldown": 6.75,
     "maxRank": 20,
     "requiresLevel": 16,
     "tree": "Flesh Ripper",
@@ -1270,7 +1270,7 @@
     "tags": ["Cast", "Active", "Spell", "Movement", "Strike"],
     "movementDuringUse": 85,
     "baseCastRate": 1,
-    "baseCooldown": 2.5,
+    "baseCooldown": 1,
     "maxRank": 20,
     "requiresLevel": 16,
     "tree": "Flesh Ripper",
@@ -1477,7 +1477,7 @@
     "damageType": "physical",
     "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike"],
     "movementDuringUse": 85,
-    "baseCooldown": 2.5,
+    "baseCooldown": 1.5,
     "maxRank": 20,
     "requiresLevel": 24,
     "tree": "Flesh Ripper",
@@ -1703,7 +1703,10 @@
     "damageType": "physical",
     "tags": ["Cast", "Active", "Melee", "Orbital", "Strike"],
     "movementDuringUse": 85,
-    "baseCooldown": 5,
+    "baseCooldown": 8,
+    "effectDuration": 5,
+    "baseProjectiles": 2,
+    "usesSkillHaste": true,
     "maxRank": 20,
     "requiresLevel": 30,
     "tree": "Flesh Ripper",
@@ -1712,9 +1715,8 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 37.5, "perLevel": 15 },
-      "flatPhysicalMin": { "base": 3, "perLevel": 0 },
-      "flatPhysicalMax": { "base": 8, "perLevel": 1 },
+      "weaponBonusScaling": true,
+      "weaponDamagePct": { "base": 175, "perLevel": 15 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [

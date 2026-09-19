@@ -1,3 +1,4 @@
+mod blender;
 pub mod commands;
 pub mod skills;
 

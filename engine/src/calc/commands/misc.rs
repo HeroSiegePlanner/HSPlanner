@@ -303,6 +303,11 @@ pub struct SkillDamageInput {
     pub attributes: HashMap<String, NumberOrRange>,
     #[serde(default)]
     pub stats: HashMap<String, NumberOrRange>,
+    /// Effects belonging only to this skill's subtree, kept separate from
+    /// the shared build stats so their damage stage is preserved. The existing
+    /// `of_total_damage` input remains separate and is not read from this map.
+    #[serde(default)]
+    pub scoped_stats: HashMap<String, NumberOrRange>,
     #[serde(default)]
     pub skill_ranks_by_name: HashMap<String, f64>,
     #[serde(default)]

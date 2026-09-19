@@ -429,6 +429,13 @@ pub fn apply_subskill_aggregation(
         );
         let mut entry = SubtreeAgg::default();
         for (key, &value) in agg.stats.iter() {
+            // Blender's microblades have their own damage calculation and
+            // Blood Thirst grants temporary stacks, not permanent base stats.
+            let value = if skill.id == "blender" {
+                value - agg.proc_stats.get(key).copied().unwrap_or(0.0)
+            } else {
+                value
+            };
             if value == 0.0 {
                 continue;
             }

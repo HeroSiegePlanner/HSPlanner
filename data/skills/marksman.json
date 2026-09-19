@@ -1197,7 +1197,7 @@
         "maxRank": 5,
         "effects": {
           "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 12, "area_of_effect": 15 }
+          "perRank": { "arcane_skill_damage": 12, "area_of_effect": 10 }
         }
       },
       {
@@ -1270,7 +1270,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 20 }
+          "perRank": { "skill_duration": 15 }
         }
       },
       {

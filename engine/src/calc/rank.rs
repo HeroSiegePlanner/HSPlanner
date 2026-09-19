@@ -141,6 +141,7 @@ mod tests {
             tags: vec![],
             damage_type: damage_type.map(String::from),
             damage_formula: None,
+            damage_scaling: Default::default(),
             damage_per_rank: None,
             bonus_sources: vec![],
             attack_kind: None,

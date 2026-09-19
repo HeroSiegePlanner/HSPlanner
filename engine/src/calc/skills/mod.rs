@@ -129,6 +129,7 @@ pub enum AttackKind {
 
 #[derive(Debug, Clone, Default)]
 pub struct AttackSkillScaling {
+    pub weapon_bonus_scaling: bool,
     pub weapon_damage_pct: Option<DamageFormula>,
     pub flat_physical_min: Option<DamageFormula>,
     pub flat_physical_max: Option<DamageFormula>,
@@ -141,6 +142,7 @@ pub struct Skill {
     pub tags: Vec<String>,
     pub damage_type: Option<String>,
     pub damage_formula: Option<DamageFormula>,
+    pub damage_scaling: super::types::DamageScaling,
     pub damage_per_rank: Option<Vec<DamageRow>>,
     pub bonus_sources: Vec<BonusSource>,
     pub attack_kind: Option<AttackKind>,
@@ -317,6 +319,10 @@ pub(crate) fn collect_extra_damage(
     let mut sum_pct = 0.0;
     let mut any_ailment = false;
 
+    // Generic damage (e.g. Holy/Unholy Form) is unconditional and applies to
+    // both weapon/attack damage and spells through this shared stage.
+    push_source(stats, "damage", "Damage", &mut sum_pct, &mut sources);
+
     for (stat_key, label, is_ailment) in EXTRA_DAMAGE_CONDITIONS {
         if !is_condition_active(stat_key, Some(enemy_conditions)) {
             continue;
@@ -369,6 +375,17 @@ fn push_source(
         stat_key: Some(stat_key),
     });
     *sum_pct += avg;
+}
+
+/// A binary damage roll changes expected damage, not the number of contacts.
+/// At chance p: (1-p)×1 + p×2 = 1+p. Keep it independent of extra damage.
+pub(crate) fn double_damage_factor(stats: &StatMap, scoped: &StatMap) -> Ranged {
+    let shared = rg(stats, "double_damage_chance");
+    let local = rg(scoped, "double_damage_chance");
+    (
+        1.0 + (shared.0 + local.0).clamp(0.0, 100.0) / 100.0,
+        1.0 + (shared.1 + local.1).clamp(0.0, 100.0) / 100.0,
+    )
 }
 
 pub(crate) struct CritFactors {
@@ -448,6 +465,31 @@ mod tests {
             }
         }
         out
+    }
+
+    #[test]
+    fn double_damage_expectation_preserves_and_clamps_each_endpoint() {
+        let shared = StatMap::from([("double_damage_chance".into(), (-50.0, 150.0))]);
+        let local = StatMap::from([("double_damage_chance".into(), (25.0, 25.0))]);
+        assert_eq!(double_damage_factor(&shared, &local), (1.0, 2.0));
+        let shared = StatMap::from([("double_damage_chance".into(), (0.0, 50.0))]);
+        assert_eq!(double_damage_factor(&shared, &local), (1.25, 1.75));
+        assert_eq!(
+            double_damage_factor(&StatMap::new(), &stat("double_damage_chance", 30.0)),
+            (1.3, 1.3)
+        );
+    }
+
+    #[test]
+    fn generic_damage_applies_without_target_conditions_to_every_damage_type() {
+        for damage_type in [None, Some("physical"), Some("fire")] {
+            for (bonus, expected) in [(18.5, 1.185), (-50.0, 0.5)] {
+                let (mult, sources) =
+                    collect_extra_damage(&stat("damage", bonus), &cond(&[]), damage_type);
+                assert!((mult - expected).abs() < 1e-9);
+                assert_eq!(sources[0].stat_key, Some("damage"));
+            }
+        }
     }
 
     #[test]

@@ -10,6 +10,7 @@
     "movementDuringUse": 65,
     "range": 320,
     "baseCastRate": 1,
+    "baseCooldown": 0.25,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Bone Conjurer",
@@ -189,8 +190,8 @@
         "description": "Summon a bone altar at target location casting bone fragments for a short period. Bone fragments now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "arcane_skill_damage": 25, "skill_duration": 25 }
+          "base": { "arcane_skill_damage": 0, "skill_duration": 0, "cooldown_added": 8 },
+          "perRank": { "arcane_skill_damage": 25, "skill_duration": 25, "cooldown_added": 0 }
         }
       },
       {
@@ -1677,7 +1678,7 @@
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1 }],
     "damageFormula": { "base": 0.4, "perLevel": 17.57 },
-    "proc": { "chance": 40, "trigger": "on_cast", "target": "Blood Demon" },
+    "proc": { "chance": 40, "trigger": "on_cast", "target": "Blood Demons" },
     "bonusSources": [
       { "source": "Blood Surge", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },

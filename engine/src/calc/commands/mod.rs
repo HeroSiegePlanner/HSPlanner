@@ -119,6 +119,8 @@ pub struct SkillDto {
     #[serde(default)]
     pub damage_formula: Option<DamageFormulaDto>,
     #[serde(default)]
+    pub damage_scaling: crate::calc::types::DamageScaling,
+    #[serde(default)]
     pub damage_per_rank: Option<Vec<DamageRowDto>>,
     #[serde(default)]
     pub bonus_sources: Vec<BonusSourceDto>,
@@ -138,6 +140,7 @@ impl From<SkillDto> for calc::Skill {
             tags: v.tags,
             damage_type: v.damage_type,
             damage_formula: v.damage_formula.map(Into::into),
+            damage_scaling: v.damage_scaling,
             damage_per_rank: v
                 .damage_per_rank
                 .map(|t| t.into_iter().map(Into::into).collect()),
@@ -147,6 +150,7 @@ impl From<SkillDto> for calc::Skill {
                 crate::calc::types::AttackKindSpec::Spell => calc::AttackKind::Spell,
             }),
             attack_scaling: v.attack_scaling.map(|s| calc::AttackSkillScaling {
+                weapon_bonus_scaling: s.weapon_bonus_scaling,
                 weapon_damage_pct: s.weapon_damage_pct.map(to_formula),
                 flat_physical_min: s.flat_physical_min.map(to_formula),
                 flat_physical_max: s.flat_physical_max.map(to_formula),

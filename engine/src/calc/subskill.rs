@@ -80,7 +80,19 @@ pub fn effective_skill_tags(
     };
     let mut adds: Vec<&String> = Vec::new();
     let mut removes: Vec<&String> = Vec::new();
+    // GetTalentInfo uses the first learned transformation with replacement
+    // tags. Blender's node 11 (Nanoblenders) keeps its orbital tags and takes
+    // precedence over node 12 (Blenderang). Damage/haste effects still stack.
+    let nano_tags = skill_id == "blender"
+        && subskill_ranks
+            .get(&subskill_key(skill_id, "a_i_empowered_nanoblenders"))
+            .copied()
+            .unwrap_or(0)
+            > 0;
     for (sub_id, ch) in changes {
+        if nano_tags && sub_id == "blenderang" {
+            continue;
+        }
         let key = subskill_key(skill_id, sub_id);
         if subskill_ranks.get(&key).copied().unwrap_or(0) == 0 {
             continue;

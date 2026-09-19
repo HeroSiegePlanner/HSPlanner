@@ -27,6 +27,7 @@
     },
     "damageType": "fire",
     "attackKind": "attack",
+    "baseCooldown": 0.25,
     "movementDuringUse": 65,
     "damageFormula": {
       "base": 1,
@@ -244,13 +245,15 @@
         "maxRank": 3,
         "effects": {
           "base": {
-            "max_targets": 0,
             "projectile_count": 0,
+            "wave_count": 0,
+            "cooldown_added": 5,
             "fire_skill_damage": 0
           },
           "perRank": {
-            "max_targets": 5,
-            "projectile_count": 2,
+            "projectile_count": 5,
+            "wave_count": 2,
+            "cooldown_added": 0,
             "fire_skill_damage": 15
           }
         }

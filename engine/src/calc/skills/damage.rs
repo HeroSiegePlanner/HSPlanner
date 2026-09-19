@@ -7,7 +7,7 @@ use super::{
     StatMap, ELEMENTS,
 };
 use crate::calc::affix_tags;
-use crate::calc::types::AffixEffect;
+use crate::calc::types::{AffixEffect, DamageScaling};
 
 pub(super) struct ElementKeys {
     pub skills: &'static str,
@@ -242,6 +242,22 @@ pub struct SkillInput<'a> {
 }
 
 pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdown> {
+    compute_skill_damage_with_rank(input, None)
+}
+
+/// A triggered cast's explicit level replaces the effective rank in the game;
+/// its all/element/tag/item skill bonuses must not be added a second time.
+pub(crate) fn compute_skill_damage_at_rank(
+    input: &SkillInput<'_>,
+    effective_rank: f64,
+) -> Option<SkillDamageBreakdown> {
+    compute_skill_damage_with_rank(input, Some(effective_rank))
+}
+
+fn compute_skill_damage_with_rank(
+    input: &SkillInput<'_>,
+    fixed_rank: Option<f64>,
+) -> Option<SkillDamageBreakdown> {
     let s = input.skill;
     if input.allocated_rank == 0.0 {
         return None;
@@ -253,6 +269,8 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     }
 
     let keys = s.damage_type.as_deref().and_then(element_keys);
+    let staged_elemental = s.damage_scaling == DamageScaling::RankAndFlat;
+    let is_spell = s.tags.iter().any(|t| t == "Spell");
 
     let all_skills = rg(input.stats, "all_skills");
     let (elem_min, elem_max): Ranged = match keys {
@@ -269,8 +287,10 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         .copied()
         .unwrap_or((0.0, 0.0));
     let (tag_min, tag_max) = tag_skills_bonus(input.stats, s);
-    let eff_min = input.allocated_rank + r_min(all_skills) + elem_min + tag_min + item.0;
-    let eff_max = input.allocated_rank + r_max(all_skills) + elem_max + tag_max + item.1;
+    let eff_min = fixed_rank
+        .unwrap_or(input.allocated_rank + r_min(all_skills) + elem_min + tag_min + item.0);
+    let eff_max = fixed_rank
+        .unwrap_or(input.allocated_rank + r_max(all_skills) + elem_max + tag_max + item.1);
 
     // Clamp to >= 0: a skill never deals negative damage, even when the
     // linear formula extrapolates below zero at low ranks.
@@ -352,7 +372,30 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let elem = keys
         .map(|k| rg(input.stats, k.skill_damage))
         .unwrap_or((0.0, 0.0));
-    let (arch_add, arch_more) = archetype_skill_damage(input.stats, &s.tags);
+    let (arch_add, arch_more) = if staged_elemental {
+        // Runtime 255 and Spell-gated 256 belong to later whole-value stages.
+        // Keep other tag sources in their existing stages until source-audited.
+        let add = affix_tags::keys_for(AffixEffect::Damage, &s.tags)
+            .into_iter()
+            .filter(|key| *key != "spell_damage")
+            .fold((0.0, 0.0), |acc, key| {
+                let value = rg(input.stats, key);
+                (acc.0 + value.0, acc.1 + value.1)
+            });
+        let more = affix_tags::keys_for(AffixEffect::DamageMore, &s.tags)
+            .into_iter()
+            .filter(|key| *key != "spell_damage_more")
+            .fold((1.0, 1.0), |acc, key| {
+                let value = rg(input.stats, key);
+                (
+                    acc.0 * (1.0 + value.0 / 100.0),
+                    acc.1 * (1.0 + value.1 / 100.0),
+                )
+            });
+        (add, more)
+    } else {
+        archetype_skill_damage(input.stats, &s.tags)
+    };
     let skill_dmg_min = r_min(magic) + r_min(elem) + arch_add.0 + input.conversion_skill_damage_pct;
     let skill_dmg_max = r_max(magic) + r_max(elem) + arch_add.1 + input.conversion_skill_damage_pct;
 
@@ -374,17 +417,43 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         input.enemy_conditions,
         s.damage_type.as_deref(),
     );
-    if input.of_total_damage > 0.0 {
+    let total_damage = if staged_elemental {
+        let total = rg(input.stats, "damage");
+        let spell_total = if is_spell {
+            rg(input.stats, "spell_damage_more")
+        } else {
+            (0.0, 0.0)
+        };
+        // Target conditions are evaluated later, independently of runtime190.
+        // Preserve their existing additive pool while removing the known total
+        // damage source before forming the generic helper's T pool.
+        extra_mult = 1.0
+            + extra_sources
+                .iter()
+                .filter(|source| source.stat_key != Some("damage"))
+                .map(|source| source.pct)
+                .sum::<f64>()
+                / 100.0;
+        (total.0 + spell_total.0, total.1 + spell_total.1)
+    } else {
+        (0.0, 0.0)
+    };
+    let total_mult = (1.0 + total_damage.0 / 100.0, 1.0 + total_damage.1 / 100.0);
+    let spell_damage = if staged_elemental {
+        rg(input.stats, "spell_damage")
+    } else {
+        (0.0, 0.0)
+    };
+    if input.of_total_damage != 0.0 {
         extra_sources.push(ExtraSource {
             stat_key: None,
             label: "Subtree",
             pct: input.of_total_damage,
         });
-        extra_mult *= 1.0 + input.of_total_damage / 100.0;
+        extra_mult *= (1.0 + input.of_total_damage / 100.0).max(0.0);
     }
-    let extra_pct = (extra_mult - 1.0) * 100.0;
+    let extra_pct = (extra_mult * (total_mult.0 + total_mult.1) * 0.5 - 1.0) * 100.0;
 
-    let is_spell = s.tags.iter().any(|t| t == "Spell");
     // Crit belongs to the weapon swing the attack path computes; an attack's
     // elemental member only crits on the share a subskill converts.
     let crit_portion = if s.attack_kind == Some(super::AttackKind::Attack) {
@@ -465,24 +534,72 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     let damage_taken_pct = r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0);
     let damage_taken_mult = 1.0 + damage_taken_pct / 100.0;
 
-    let hit_min = (base_min + flat_min)
-        * (1.0 + synergy_min / 100.0)
-        * (1.0 + skill_dmg_min / 100.0)
-        * skill_more_min
-        * extra_mult
+    // The runtime elemental path adds the intercept after the rank/flat
+    // term's synergy and generic modifiers. Only verified metadata opts in.
+    let unscaled_base = if staged_elemental {
+        s.damage_formula
+            .as_ref()
+            .map_or(0.0, |formula| formula.base)
+    } else {
+        0.0
+    };
+    let scaled_min = unscaled_base
+        + (base_min - unscaled_base + flat_min)
+            * (1.0 + synergy_min / 100.0)
+            * (1.0 + skill_dmg_min / 100.0);
+    let scaled_max = unscaled_base
+        + (base_max - unscaled_base + flat_max)
+            * (1.0 + synergy_max / 100.0)
+            * (1.0 + skill_dmg_max / 100.0);
+    let subtree = rg(input.scoped, "subtree_damage");
+    let subtree_mult = (
+        (1.0 + subtree.0 / 100.0).max(0.0),
+        (1.0 + subtree.1 / 100.0).max(0.0),
+    );
+    // LoadTalentDamage's ordinary elemental branch uses ceil; positive stat255
+    // first multiplies and floors. The class then floors after its own S pool.
+    let generic_damage = |scaled: f64, more: f64, total: f64, spell: f64| {
+        let value = scaled * more * total;
+        if staged_elemental {
+            if spell > 0.0 {
+                (value * (1.0 + spell / 100.0)).floor()
+            } else {
+                value.ceil()
+            }
+        } else {
+            value
+        }
+    };
+    let before_subtree = (
+        generic_damage(scaled_min, skill_more_min, total_mult.0, spell_damage.0),
+        generic_damage(scaled_max, skill_more_max, total_mult.1, spell_damage.1),
+    );
+    let target_mult = extra_mult
         * damage_taken_mult
         * elemental_break_mult
         * element_break_mult
         * resistance_mult;
-    let hit_max = (base_max + flat_max)
-        * (1.0 + synergy_max / 100.0)
-        * (1.0 + skill_dmg_max / 100.0)
-        * skill_more_max
-        * extra_mult
-        * damage_taken_mult
-        * elemental_break_mult
-        * element_break_mult
-        * resistance_mult;
+    let cast_hit = |value: f64| {
+        if staged_elemental {
+            value.floor()
+        } else {
+            value
+        }
+    };
+    let hit_min = cast_hit(before_subtree.0 * subtree_mult.0) * target_mult;
+    let hit_max = cast_hit(before_subtree.1 * subtree_mult.1) * target_mult;
+    // These are positive bonuses in the same additive subtree pool, weighted
+    // by their independent cast rolls during aggregation. They affect the
+    // expectation, not every ordinary hit. Do not multiply them by S again.
+    let proc_subtree = rg(input.scoped, "subtree_damage_on_proc");
+    let expected_subtree_mult = (
+        (1.0 + (subtree.0 + proc_subtree.0) / 100.0).max(0.0),
+        (1.0 + (subtree.1 + proc_subtree.1) / 100.0).max(0.0),
+    );
+    let expected_hit = (
+        before_subtree.0 * expected_subtree_mult.0 * target_mult,
+        before_subtree.1 * expected_subtree_mult.1 * target_mult,
+    );
 
     let crit_min_f = hit_min * crit.on_crit_mult;
     let crit_max_f = hit_max * crit.on_crit_mult;
@@ -502,8 +619,18 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     };
     let multicast_mult = 1.0 + multicast_chance / 100.0;
     let projectiles = input.projectile_count.max(1);
-    let avg_min_f = hit_min * crit.avg_mult * multicast_mult * projectiles as f64;
-    let avg_max_f = hit_max * crit.avg_mult * multicast_mult * projectiles as f64;
+    // Fractional chance-weighted extra projectiles must not be truncated into
+    // the ordinary integer projectile count (e.g. Tiny Storms at rank one).
+    let extra_projectiles = rg(input.scoped, "expected_additional_projectiles");
+    let expected_projectiles = (
+        projectiles as f64 + extra_projectiles.0.max(0.0),
+        projectiles as f64 + extra_projectiles.1.max(0.0),
+    );
+    let double_damage = super::double_damage_factor(input.stats, input.scoped);
+    let avg_min_f =
+        expected_hit.0 * crit.avg_mult * double_damage.0 * multicast_mult * expected_projectiles.0;
+    let avg_max_f =
+        expected_hit.1 * crit.avg_mult * double_damage.1 * multicast_mult * expected_projectiles.1;
 
     let mut calculation = Vec::new();
     stat_inputs(&mut calculation, input.stats, ["all_skills"]);
@@ -517,14 +644,21 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     );
     calculation.push(CalculationStep::new(
         "Effective rank",
-        format!(
-            "{} allocated + {} all skills + {} element + {} tags + {} item ranks",
-            number(input.allocated_rank),
-            range(all_skills),
-            range((elem_min, elem_max)),
-            range((tag_min, tag_max)),
-            range(item)
-        ),
+        if let Some(rank) = fixed_rank {
+            format!(
+                "Explicit triggered cast rank {}; skill-rank bonuses are not added",
+                number(rank)
+            )
+        } else {
+            format!(
+                "{} allocated + {} all skills + {} element + {} tags + {} item ranks",
+                number(input.allocated_rank),
+                range(all_skills),
+                range((elem_min, elem_max)),
+                range((tag_min, tag_max)),
+                range(item)
+            )
+        },
         (eff_min, eff_max),
     ));
     let base_formula = s.damage_formula.as_ref().map(|f| format!("max(0, {} + {} × {} rank)", number(f.base), number(f.per_level), range((eff_min, eff_max)))).unwrap_or_else(|| "Damage table at effective rank; above the table, extend its final per-rank slope; minimum 0".into());
@@ -618,6 +752,49 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         ),
         (skill_more_min, skill_more_max),
     ));
+    calculation.push(CalculationStep::new(
+        "Damage after synergy and generic bonuses",
+        format!(
+            "{} unscaled base + ({} base − {} unscaled base + {} flat) × {} synergy × {} increased",
+            number(unscaled_base),
+            range((base_min, base_max)),
+            number(unscaled_base),
+            range((flat_min, flat_max)),
+            range((1.0 + synergy_min / 100.0, 1.0 + synergy_max / 100.0)),
+            range((1.0 + skill_dmg_min / 100.0, 1.0 + skill_dmg_max / 100.0))
+        ),
+        (scaled_min, scaled_max),
+    ));
+    calculation.push(CalculationStep::new(
+        "Own subtree damage multiplier",
+        format!(
+            "max(0, 1 + {}% / 100); applies to the complete skill damage including its base",
+            range(subtree)
+        ),
+        subtree_mult,
+    ));
+    if staged_elemental {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            ["damage", "spell_damage_more", "spell_damage"],
+        );
+        calculation.push(CalculationStep::new(
+            "Total damage multiplier",
+            "1 + (damage + Spell-tagged total magic damage) / 100; additive runtime190 + 256 pool",
+            total_mult,
+        ));
+        calculation.push(CalculationStep::new(
+            "Damage after generic helper rounding",
+            format!("ceil(damage after generic bonuses × more × total); if spell damage {}% is positive, multiply by it and floor first", range(spell_damage)),
+            before_subtree,
+        ));
+    }
+    calculation.push(CalculationStep::new(
+        "Expected own subtree damage multiplier",
+        format!("max(0, 1 + ({}% guaranteed + {}% chance-weighted bonuses) / 100); independent rolls add within the same pool", range(subtree), range(proc_subtree)),
+        expected_subtree_mult,
+    ));
     for source in &extra_sources {
         stat_inputs(&mut calculation, input.stats, source.stat_key);
         calculation.push(CalculationStep::new(
@@ -628,10 +805,12 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
     }
     calculation.push(CalculationStep::new(
         "Extra damage multiplier",
-        format!(
-            "(1 + sum of applicable build extra damage % / 100) × (1 + {}% subtree / 100)",
-            number(input.of_total_damage.max(0.0))
-        ),
+        if staged_elemental {
+            format!("Target-condition damage pool × max(0, 1 + {}% legacy subtree / 100); total damage has its own earlier stage", number(input.of_total_damage))
+        } else { format!(
+            "(1 + sum of applicable build extra damage % / 100) × max(0, 1 + {}% subtree / 100)",
+            number(input.of_total_damage)
+        ) },
         scalar(extra_mult),
     ));
     calculation.push(CalculationStep::new(
@@ -684,7 +863,21 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         format!("1 − {}% / 100", number(eff_res_pct)),
         scalar(resistance_mult),
     ));
-    calculation.push(CalculationStep::new("Hit before rounding", format!("({} base + {} flat) × {} synergy × {} increased × {} more × {} extra × {} damage taken × {} elemental break × {} element break × {} resistance", range((base_min, base_max)), range((flat_min, flat_max)), range((1.0 + synergy_min / 100.0, 1.0 + synergy_max / 100.0)), range((1.0 + skill_dmg_min / 100.0, 1.0 + skill_dmg_max / 100.0)), range((skill_more_min, skill_more_max)), number(extra_mult), number(damage_taken_mult), number(elemental_break_mult), number(element_break_mult), number(resistance_mult)), (hit_min, hit_max)));
+    calculation.push(CalculationStep::new(
+        "Hit before rounding",
+        format!(
+            "{} generic damage × {} own subtree {}; then × {} target modifiers",
+            range(before_subtree),
+            range(subtree_mult),
+            if staged_elemental {
+                "(floor at cast)"
+            } else {
+                ""
+            },
+            number(target_mult)
+        ),
+        (hit_min, hit_max),
+    ));
     calculation.push(CalculationStep::new(
         "Hit damage",
         "Floor hit before rounding; one projectile",
@@ -757,13 +950,29 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
         scalar(projectiles as f64),
     ));
     calculation.push(CalculationStep::new(
+        "Expected projectiles per cast",
+        format!(
+            "{} ordinary + {} chance-weighted additional projectiles",
+            projectiles,
+            range(extra_projectiles)
+        ),
+        expected_projectiles,
+    ));
+    calculation.push(CalculationStep::new("Double damage expectation", "1 + clamp(double damage chance, 0, 100) / 100; one contact, independent of critical and extra damage", double_damage));
+    calculation.push(CalculationStep::new(
+        "Expected damage before critical hits",
+        format!("{} generic damage × {} expected subtree × {} target modifiers; proc expectations are averaged before the final floor", range(before_subtree), range(expected_subtree_mult), number(target_mult)),
+        expected_hit,
+    ));
+    calculation.push(CalculationStep::new(
         "Average damage per cast",
         format!(
-            "floor({} unrounded hit × {} average crit × {} multicast × {} projectiles)",
-            range((hit_min, hit_max)),
+            "floor({} expected hit × {} average crit × {} double damage expectation × {} multicast × {} projectiles)",
+            range(expected_hit),
             number(crit.avg_mult),
+            range(double_damage),
             number(multicast_mult),
-            projectiles
+            range(expected_projectiles)
         ),
         (avg_min_f.floor(), avg_max_f.floor()),
     ));
@@ -806,6 +1015,10 @@ pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdo
 }
 
 #[cfg(test)]
+#[path = "damage_stage_tests.rs"]
+mod stage_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -829,6 +1042,7 @@ mod tests {
                 base: 100.0,
                 per_level: 0.0,
             }),
+            damage_scaling: DamageScaling::Full,
             damage_per_rank: None,
             bonus_sources: Vec::new(),
             attack_kind: None,
@@ -1014,6 +1228,34 @@ mod tests {
     }
 
     #[test]
+    fn ranged_double_damage_preserves_spell_hit_and_average_bounds() {
+        let result = breakdown(&Case {
+            stats: StatMap::from([("double_damage_chance".into(), (0.0, 50.0))]),
+            scoped: StatMap::from([("double_damage_chance".into(), (0.0, 50.0))]),
+            ..Default::default()
+        });
+        assert_eq!((result.hit_min, result.hit_max), (100, 100));
+        assert_eq!((result.avg_min, result.avg_max), (100, 200));
+        assert_eq!(result.projectile_count, 1);
+        assert_eq!(
+            result
+                .calculation()
+                .iter()
+                .find(|s| s.label() == "Double damage expectation")
+                .unwrap()
+                .value(),
+            (1.0, 2.0)
+        );
+    }
+
+    #[test]
+    fn negative_of_total_damage_reduces_the_hit_and_stops_at_zero() {
+        assert_eq!(hit_max_with(-50.0), 50);
+        assert_eq!(hit_max_with(-100.0), 0);
+        assert_eq!(hit_max_with(-150.0), 0);
+    }
+
+    #[test]
     fn archetype_orbital_applies_additive_and_more() {
         let s = stats(&[
             ("orbital_skill_damage", 30.0),
@@ -1158,6 +1400,7 @@ mod tests {
             tags: tags(&["Active", "Projectile"]),
             damage_type: Some("physical".to_string()),
             damage_formula: None,
+            damage_scaling: DamageScaling::Full,
             damage_per_rank: None,
             bonus_sources: Vec::new(),
             attack_kind: None,

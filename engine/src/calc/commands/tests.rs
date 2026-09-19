@@ -196,6 +196,58 @@ mod projectile_dto_tests {
     }
 }
 
+mod sourced_damage_dto_tests {
+    use super::*;
+
+    fn staged_input() -> serde_json::Value {
+        serde_json::json!({
+            "skill": {
+                "name": "Staged fire hit",
+                "damageType": "fire",
+                "damageFormula": { "base": 4.0, "perLevel": 18.0 },
+                "damageScaling": "rankAndFlat",
+                "bonusSources": [{
+                    "per": "attribute_point", "source": "Intelligence",
+                    "stat": "fire_skill_damage", "value": 10.0
+                }]
+            },
+            "allocatedRank": 1.0,
+            "attributes": { "intelligence": 10.0 },
+            "stats": { "fire_skill_damage": 100.0 },
+            "scopedStats": { " SUBTREE_DAMAGE ": [50.0, 100.0] },
+            "projectileCount": 3.0
+        })
+    }
+
+    #[test]
+    fn standalone_skill_preserves_scoped_range_and_formula_stage() {
+        let input: SkillDamageInput = serde_json::from_value(staged_input()).unwrap();
+        let out = compute_skill_damage(input).unwrap();
+        // (4 + 18 * 2 synergy * 2 generic) * (1.5..2 own subtree).
+        assert_eq!((out.hit_min, out.hit_max), (114, 152));
+        assert_eq!((out.avg_min, out.avg_max), (342, 456));
+    }
+
+    #[test]
+    fn standalone_hybrid_forwards_scope_to_both_damage_components() {
+        let mut input = staged_input();
+        input["skill"]["attackKind"] = serde_json::json!("attack");
+        input["skill"]["attackScaling"] = serde_json::json!({
+            "weaponDamagePct": { "base": 100.0, "perLevel": 0.0 }
+        });
+        input["scopedStats"]["armor_break"] = serde_json::json!(100.0);
+        input["weapon"] = serde_json::json!({
+            "name": "Test weapon", "damageMin": 100.0, "damageMax": 100.0
+        });
+        input["stats"]["attacks_per_second"] = serde_json::json!(1.0);
+        let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
+        // Physical: 100 weapon * (1.5 crushing + 1 own armor break).
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (250, 250));
+        assert_eq!((out.poison_hit_min, out.poison_hit_max), (114, 152));
+        assert_eq!((out.combined_hit_min, out.combined_hit_max), (364, 402));
+    }
+}
+
 mod combined_dps_mid_tests {
     use crate::calc::build::BuildPerformance;
     use crate::calc::commands::performance::combined_dps_mid;

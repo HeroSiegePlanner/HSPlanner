@@ -616,7 +616,13 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     merged.extend(stats_combined.iter().map(|(k, v)| (k.clone(), *v)));
     let ehp = defense::compute_ehp(&merged);
     let defense_insights = defense::derive_defense_insights(&merged);
-    let skill_costs = skill_costs_for(input, &merged, &skill_stat_overrides, &rank_bonuses);
+    let skill_costs = skill_costs_for(
+        input,
+        &merged,
+        &skill_stat_overrides,
+        &skill_scoped,
+        &rank_bonuses,
+    );
 
     ComputedStats {
         attributes,
@@ -640,6 +646,7 @@ fn skill_costs_for(
     input: &BuildStatsInput,
     merged: &HashMap<String, Ranged>,
     overrides: &HashMap<String, HashMap<String, Ranged>>,
+    scoped: &HashMap<String, HashMap<String, Ranged>>,
     rank_bonuses: &HashMap<String, Ranged>,
 ) -> HashMap<String, SkillCost> {
     let Some(class_id) = input.class_id else {
@@ -659,14 +666,17 @@ fn skill_costs_for(
                 s.tags.as_deref().unwrap_or(&[]),
                 input.subskill_ranks,
             );
+            let own = overrides.get(&s.id).filter(|o| !o.is_empty());
+            let own_scoped = scoped.get(&s.id).filter(|o| !o.is_empty());
             let per_skill: std::borrow::Cow<HashMap<String, Ranged>> =
-                match overrides.get(&s.id).filter(|o| !o.is_empty()) {
-                    Some(o) => {
-                        let mut m = merged.clone();
-                        m.extend(o.iter().map(|(k, v)| (k.clone(), *v)));
-                        std::borrow::Cow::Owned(m)
+                if own.is_some() || own_scoped.is_some() {
+                    let mut m = merged.clone();
+                    for source in [own, own_scoped].into_iter().flatten() {
+                        m.extend(source.iter().map(|(k, v)| (k.clone(), *v)));
                     }
-                    None => std::borrow::Cow::Borrowed(merged),
+                    std::borrow::Cow::Owned(m)
+                } else {
+                    std::borrow::Cow::Borrowed(merged)
                 };
             let cost = skill_cost::compute_skill_cost(&SkillCostInput {
                 skill: s,

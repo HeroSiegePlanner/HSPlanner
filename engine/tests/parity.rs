@@ -46,9 +46,22 @@ fn parity_with_ts_fixtures() {
         let Some(input_v) = entry.input.as_ref() else {
             continue;
         };
-        let Some(expected) = entry.output.as_ref() else {
+        let Some(archived_expected) = entry.output.as_ref() else {
             continue;
         };
+        let mut expected = archived_expected.clone();
+        // Keep the historical TS snapshot intact. Its three-projectile Charged
+        // Bolts case counted all three only in average DPS, but just one in
+        // noncritical DPS. This named correction is independently covered by
+        // noncritical_dps_counts_every_projectile_contact.
+        if entry.name == "class_with_active_skill_damage" {
+            assert_eq!(input_v["skillProjectiles"]["charged_bolts"], 3);
+            for field in ["hitDpsMin", "hitDpsMax"] {
+                assert_eq!(archived_expected[field], 15.0);
+                expected[field] = serde_json::json!(45.0); // 15 damage × 3 projectiles × 1 cast/s.
+            }
+        }
+        correct_archived_cost_cadence(input_v, archived_expected, &mut expected);
 
         let input: app_lib::calc::commands::BuildPerformanceInput =
             match serde_json::from_value(input_v.clone()) {
@@ -66,7 +79,7 @@ fn parity_with_ts_fixtures() {
         let actual_json =
             serde_json::to_value(&actual).expect("BuildPerformance must be JSON-serialisable");
 
-        if let Some(diff) = compare_value("", &actual_json, expected) {
+        if let Some(diff) = compare_value("", &actual_json, &expected) {
             diffs.push(format!("scenario '{}': {diff}", entry.name));
         }
         compared += 1;
@@ -90,6 +103,69 @@ fn parity_with_ts_fixtures() {
              diverged from TS, or the fixture is stale (re-run the dump).",
             diffs.len()
         );
+    }
+}
+
+// The archived UI cost path ignored declared cooldowns without usesSkillHaste
+// and returned no cost cadence for Attack-kind skills. Keep the archive intact:
+// correct only these named rows using fixed rates and its unchanged mana/regen.
+// Damage, ranks, per-use costs and every unrelated field retain TS expectations.
+fn correct_archived_cost_cadence(input: &Value, archived: &Value, expected: &mut Value) {
+    let class = input["classId"].as_str().unwrap_or("");
+    let mut rows = Vec::new();
+    if class == "amazon" {
+        let attack_rate = if input["inventory"]["weapon"].is_object() {
+            1.75
+        } else {
+            1.5
+        };
+        assert_eq!(
+            archived["stats"]["attacks_per_second"],
+            serde_json::json!([attack_rate, attack_rate])
+        );
+        for id in [
+            "astropes_gift",
+            "caustic_spearhead",
+            "noxious_strike",
+            "rebound",
+            "spearnage",
+            "thunder_fury",
+        ] {
+            assert!(archived["skillCosts"][id]["baseRate"].is_null());
+            expected["skillCosts"][id]["baseRate"] = serde_json::json!(attack_rate);
+            rows.push((id, attack_rate));
+        }
+        rows.extend([
+            ("astropes_battle_maiden", 1.0 / 70.0),
+            ("jungle_camouflage", 1.0 / 70.0),
+        ]);
+    } else if class == "stormweaver" {
+        rows.extend([
+            ("static_shock", 1.0 / 3.0),
+            ("storm_cloud", 1.0 / 3.0),
+            ("symphony_of_thunder", 1.0 / 70.0),
+        ]);
+    }
+    for (id, rate) in rows {
+        let old = &archived["skillCosts"][id];
+        assert_eq!(old["speedMax"], 0.0);
+        assert!(old["castRateMax"].is_null() || old["castRateMax"] == 1.0);
+        let mana_min = old["manaMin"].as_f64().unwrap() * rate;
+        let mana_max = old["manaMax"].as_f64().unwrap() * rate;
+        let regen_min = old["manaRegenMin"].as_f64().unwrap();
+        let regen_max = old["manaRegenMax"].as_f64().unwrap();
+        let cost = &mut expected["skillCosts"][id];
+        for field in ["castRateMin", "castRateMax"] {
+            cost[field] = serde_json::json!(rate);
+        }
+        cost["manaPerSecMin"] = serde_json::json!(mana_min);
+        cost["manaPerSecMax"] = serde_json::json!(mana_max);
+        cost["netMin"] = serde_json::json!(regen_min - mana_max);
+        cost["netMax"] = serde_json::json!(regen_max - mana_min);
+        cost["sustainable"] = serde_json::json!(mana_max <= regen_min);
+        cost["unsustainable"] = serde_json::json!(mana_min > regen_max);
+        cost["uptimeMin"] = serde_json::json!((regen_min / mana_max * 100.0).min(100.0));
+        cost["uptimeMax"] = serde_json::json!((regen_max / mana_min * 100.0).min(100.0));
     }
 }
 

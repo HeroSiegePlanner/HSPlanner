@@ -1209,8 +1209,8 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     );
     assert_eq!(fcr_dps, base_dps, "faster cast rate must not touch the orb");
     assert!(
-        (haste_dps / base_dps - 1.75).abs() < 1e-9,
-        "75% skill haste should be 1.75x, got x{}",
+        (haste_dps / base_dps - 1.375).abs() < 1e-9,
+        "75 skill haste gives 1 + 75 × 0.005 = 1.375x, got x{}",
         haste_dps / base_dps
     );
 
@@ -1226,8 +1226,8 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
         panic!("expected dps for orb_of_frost");
     };
     assert!(
-        (tundra_dps / base_dps - 1.5).abs() < 1e-9,
-        "Timeless Tundra's 50% skill haste should be 1.5x, got x{}",
+        (tundra_dps / base_dps - 1.25).abs() < 1e-9,
+        "Timeless Tundra's 50 skill haste gives 1.25x, got x{}",
         tundra_dps / base_dps
     );
 }
@@ -1595,8 +1595,8 @@ fn avalanche_is_cooldown_gated_and_scales_with_skill_haste() {
         panic!("expected dps for avalanche");
     };
     assert!(
-        (fast / slow - 1.35).abs() < 1e-9,
-        "+35% haste expected, got x{}",
+        (fast / slow - 1.175).abs() < 1e-9,
+        "35 skill haste gives 1 + 35 × 0.005 = 1.175x, got x{}",
         fast / slow
     );
 }
@@ -1638,4 +1638,553 @@ fn native_calculation_steps_reconcile_real_spell_attack_and_entity_dps() {
         assert!(json.get("calculation").is_none());
         assert!(json.get("calculationSources").is_none());
     }
+}
+
+#[test]
+fn blender_uses_game_weapon_coefficient_without_invented_flat_damage() {
+    for rank in [1, 20] {
+        let result = perf("butcher", "blender", rank, &[], &[]);
+        let attack = result.attack_damage.as_ref().unwrap();
+        // TalentsButcher: projDamage * (1 + (75 + 15 * rank) / 100).
+        assert_eq!(attack.weapon_damage_pct_min, 175.0 + 15.0 * rank as f64);
+        assert_eq!(attack.weapon_damage_pct_max, attack.weapon_damage_pct_min);
+        assert_eq!(attack.skill_flat_phys_min, 0.0);
+        assert_eq!(attack.skill_flat_phys_max, 0.0);
+    }
+}
+
+#[test]
+fn nanoblenders_average_contacts_and_separate_blade_count() {
+    let base = perf(
+        "butcher",
+        "blender",
+        20,
+        &[("a_i_empowered_nanoblenders", 1)],
+        &[],
+    );
+    let attack = base.attack_damage.as_ref().unwrap();
+    assert_eq!(
+        attack.projectile_count, 6,
+        "3 nanoblenders with 2 blades each"
+    );
+    assert_eq!(base.hits_per_cast, Some((2.5, 2.5)));
+    assert!((base.avg_hit_dps_max.unwrap() / attack.combined_avg_max as f64 - 0.3125).abs() < 1e-9);
+    let extra = perf(
+        "butcher",
+        "blender",
+        20,
+        &[
+            ("a_i_empowered_nanoblenders", 3),
+            ("extra_cleaver_addon", 2),
+        ],
+        &[],
+    );
+    assert_eq!(extra.attack_damage.as_ref().unwrap().projectile_count, 30);
+    assert!(base
+        .calculation()
+        .iter()
+        .any(|s| s.label() == "Nanoblender contact estimate"));
+}
+
+#[test]
+fn nanoblenders_use_duration_and_haste_not_weapon_or_cast_speed() {
+    let nodes = [("a_i_empowered_nanoblenders", 1)];
+    let base = perf_with_stats("butcher", "blender", 20, &nodes, &[], 1.0);
+    for key in ["increased_attack_speed", "faster_cast_rate"] {
+        let faster = perf_with_stats("butcher", "blender", 20, &nodes, &[(key, "100")], 1.0);
+        assert_eq!(base.avg_hit_dps_max, faster.avg_hit_dps_max, "{key}");
+    }
+    for key in [
+        "skill_duration",
+        "skill_haste",
+        "orbital_skill_duration",
+        "orbital_skill_speed",
+    ] {
+        let boosted = perf_with_stats("butcher", "blender", 20, &nodes, &[(key, "100")], 1.0);
+        let expected = if key == "skill_haste" { 1.5 } else { 2.0 };
+        assert!(
+            (boosted.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9,
+            "{key}"
+        );
+    }
+    let unlearned = perf("butcher", "blender", 0, &nodes, &[]);
+    assert!(unlearned.avg_hit_dps_max.is_none());
+}
+
+#[test]
+fn blender_every_node_has_an_explicit_calculation_effect() {
+    let base = perf("butcher", "blender", 20, &[], &[]);
+    assert_eq!(base.attack_damage.as_ref().unwrap().projectile_count, 2);
+    for (node, label) in [
+        ("sharpened_cleavers", "Sharpened Cleavers"),
+        ("industrial_sized", "Industrial Sized"),
+        ("no_bits_nor_pieces", "No Bits Nor Pieces"),
+        ("ragefueled_energy", "Ragefueled Energy"),
+        ("extra_cleaver_addon", "Extra Cleaver Addon"),
+        ("obsidian_blades", "Obsidian Blades"),
+        ("attachment_malfunction", "Attachment Malfunction"),
+        ("it_will_blend", "It Will Blend"),
+        (
+            "blood_thirsting_killing_machine",
+            "Blood Thirsting Killing Machine",
+        ),
+        ("will_it_blend", "Will it Blend?"),
+        ("a_i_empowered_nanoblenders", "A.I. Empowered Nanoblenders"),
+        ("blenderang", "Blenderang"),
+        ("attachable_microblades", "Attachable Microblades"),
+        ("blending_blood_pact", "Blending Blood Pact"),
+    ] {
+        let changed = perf("butcher", "blender", 20, &[(node, 1)], &[]);
+        assert!(
+            changed
+                .calculation()
+                .iter()
+                .any(|s| s.label().starts_with("Blender · ") && s.label().contains(label)),
+            "missing node {node}: {:?}",
+            changed.calculation()
+        );
+        match node {
+            "attachment_malfunction"
+            | "blood_thirsting_killing_machine"
+            | "no_bits_nor_pieces"
+            | "it_will_blend" => {
+                assert_eq!(base.avg_hit_dps_max, changed.avg_hit_dps_max, "{node}")
+            }
+            "attachable_microblades" => {
+                assert_eq!(base.avg_hit_dps_max, changed.avg_hit_dps_max);
+                assert!(changed.proc_dps_max > 0.0);
+            }
+            "blenderang" | "obsidian_blades" => {}
+            _ => assert!(changed.avg_hit_dps_max > base.avg_hit_dps_max, "{node}"),
+        }
+    }
+    let accuracy = perf("butcher", "blender", 20, &[("no_bits_nor_pieces", 5)], &[]);
+    assert_eq!(
+        accuracy.attack_damage.unwrap().attack_rating_pct_max
+            - base.attack_damage.unwrap().attack_rating_pct_max,
+        50.0
+    );
+}
+
+#[test]
+fn blender_conditional_critical_and_additive_damage_bonuses() {
+    let base = perf("butcher", "blender", 20, &[], &[("bleeding", true)]);
+    let bleeding = perf(
+        "butcher",
+        "blender",
+        20,
+        &[("it_will_blend", 5)],
+        &[("bleeding", true)],
+    );
+    assert!(bleeding.avg_hit_dps_max > base.avg_hit_dps_max);
+    let crit = perf_with_stats(
+        "butcher",
+        "blender",
+        20,
+        &[],
+        &[("crit_chance", "100")],
+        1.0,
+    );
+    let obsidian = perf_with_stats(
+        "butcher",
+        "blender",
+        20,
+        &[("obsidian_blades", 5)],
+        &[("crit_chance", "100")],
+        1.0,
+    );
+    assert!(obsidian.avg_hit_dps_max > crit.avg_hit_dps_max);
+    let stacked = perf(
+        "butcher",
+        "blender",
+        20,
+        &[
+            ("sharpened_cleavers", 5),
+            ("will_it_blend", 5),
+            ("blending_blood_pact", 3),
+        ],
+        &[],
+    );
+    let mult = stacked
+        .attack_damage
+        .as_ref()
+        .unwrap()
+        .calculation()
+        .iter()
+        .find(|s| s.label() == "Physical skill multiplier")
+        .unwrap()
+        .value();
+    assert_eq!(mult, (3.9, 3.9)); // 40 + 25 + 225%, additive.
+}
+
+#[test]
+fn blender_microblades_are_separate_non_recursive_and_scale_with_contacts() {
+    let nodes = [
+        ("a_i_empowered_nanoblenders", 1),
+        ("attachable_microblades", 3),
+    ];
+    let result = perf("butcher", "blender", 20, &nodes, &[]);
+    let expected = 0.15 * 2.05 * 3.0 * ((240.0 * 2.0 + 17.1 * 4.0) / 360.0) * 0.75;
+    assert!((result.proc_dps_max / result.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9);
+    let extra = perf(
+        "butcher",
+        "blender",
+        20,
+        &[nodes[0], nodes[1], ("extra_cleaver_addon", 1)],
+        &[],
+    );
+    assert!((extra.proc_dps_max / result.proc_dps_max - 2.0).abs() < 0.03);
+    let unlearned = perf("butcher", "blender", 0, &nodes, &[]);
+    assert_eq!(unlearned.proc_dps_max, 0.0);
+    let zero = perf_with_stats(
+        "butcher",
+        "blender",
+        20,
+        &nodes,
+        &[("skill_duration", "-100")],
+        1.0,
+    );
+    assert_eq!(zero.proc_dps_max, 0.0);
+}
+
+#[test]
+fn projectile_damage_affix_follows_blender_transformation_tags() {
+    for (nodes, expected_multiplier) in [
+        (vec![], 4.75),
+        (vec![("blenderang", 1)], 8.5),
+        (vec![("a_i_empowered_nanoblenders", 1)], 4.75),
+        (
+            vec![("blenderang", 1), ("a_i_empowered_nanoblenders", 1)],
+            4.75,
+        ),
+    ] {
+        let result = perf_with_stats(
+            "butcher",
+            "blender",
+            20,
+            &nodes,
+            &[("projectile_damage_increase", "100")],
+            1.0,
+        );
+        let step = result
+            .attack_damage
+            .as_ref()
+            .unwrap()
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Skill weapon multiplier")
+            .unwrap();
+        // Generic projectile damage boosts the 375% bonus only when Projectile
+        // is present. Nano's earlier replacement tags take precedence.
+        assert_eq!(step.value(), (expected_multiplier, expected_multiplier));
+    }
+}
+
+#[test]
+fn nanoblender_tags_take_precedence_over_blenderang() {
+    for (nodes, projectile_bonus) in [
+        (vec![("blenderang", 1)], 10.0),
+        (vec![("a_i_empowered_nanoblenders", 1)], 0.0),
+        (
+            vec![("blenderang", 1), ("a_i_empowered_nanoblenders", 1)],
+            0.0,
+        ),
+    ] {
+        let result = perf_with_stats(
+            "butcher",
+            "blender",
+            20,
+            &nodes,
+            &[("projectile_skills", "10")],
+            1.0,
+        );
+        assert_eq!(
+            result.attack_damage.unwrap().effective_rank_max,
+            20.0 + projectile_bonus,
+            "{nodes:?}"
+        );
+    }
+}
+
+#[test]
+fn blenderang_haste_and_hybrid_orbit_are_accounted_for() {
+    let returning = perf("butcher", "blender", 20, &[("blenderang", 3)], &[]);
+    assert_eq!(returning.hits_per_cast, Some((1.5, 1.5)));
+    assert_eq!(
+        returning
+            .attack_damage
+            .as_ref()
+            .unwrap()
+            .attacks_per_second_max,
+        0.171875 // (1 + 75 × 0.005) / 8 seconds.
+    );
+    let hybrid = perf(
+        "butcher",
+        "blender",
+        20,
+        &[("blenderang", 3), ("a_i_empowered_nanoblenders", 1)],
+        &[],
+    );
+    assert_eq!(hybrid.hits_per_cast, Some((2.5, 2.5)));
+    assert_eq!(hybrid.attack_damage.as_ref().unwrap().projectile_count, 6);
+    let plain = perf("butcher", "blender", 20, &[], &[]);
+    let fast = perf_with_stats(
+        "butcher",
+        "blender",
+        20,
+        &[],
+        &[("increased_attack_speed", "100")],
+        1.0,
+    );
+    assert_eq!(plain.avg_hit_dps_max, fast.avg_hit_dps_max);
+}
+
+#[test]
+fn unholy_form_stats_and_damage_follow_rank_and_activation() {
+    let run = |form_rank: u32, enabled: bool, main: &str| {
+        let allocated = HashMap::new();
+        let inventory = HashMap::new();
+        let skill_ranks =
+            HashMap::from([(main.to_string(), 20), ("unholy_form".into(), form_rank)]);
+        let subskills = HashMap::new();
+        let buffs = HashMap::from([("unholy_form".into(), enabled)]);
+        let custom = vec![CustomStat {
+            stat_key: "life_steal".into(),
+            value: "10".into(),
+        }];
+        let tree = HashSet::new();
+        let sockets = HashMap::new();
+        let enemy = HashMap::new();
+        let player = HashMap::new();
+        let projectiles = HashMap::new();
+        let resistances = HashMap::new();
+        let procs = HashMap::from([("granted:the_eye".into(), true)]);
+        let granted_ranks = HashMap::from([("the eye".into(), (10.0, 20.0))]);
+        let mut deps = empty_deps(
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &subskills,
+            &buffs,
+            &custom,
+            &tree,
+            &sockets,
+            &enemy,
+            &player,
+            &projectiles,
+            &resistances,
+            &procs,
+        );
+        deps.class_id = Some("butcher");
+        deps.level = 50;
+        deps.main_skill_id = Some(main);
+        deps.granted_skill_ranks = Some(&granted_ranks);
+        compute_build_performance(&deps)
+    };
+    for skill in ["blender", "brutalizing_slash"] {
+        let off = run(1, false, skill);
+        let on = run(1, true, skill);
+        let high = run(20, true, skill);
+        let unlearned = run(0, true, skill);
+        assert_eq!(on.stats.get("damage"), Some(&(20.0, 20.0)));
+        assert_eq!(high.stats.get("damage"), Some(&(48.5, 48.5)));
+        for key in ["life_replenish", "life_steal"] {
+            let factor = on.stats.get(key).unwrap().0 / off.stats.get(key).unwrap().0;
+            assert!((factor - 0.05).abs() < 1e-9, "{key}: {factor}");
+            assert_eq!(on.stats.get(&format!("{key}_more")), Some(&(-95.0, -95.0)));
+            assert_eq!(on.stats.get(key), high.stats.get(key));
+        }
+        let ratio = on.avg_hit_dps_max.unwrap() / off.avg_hit_dps_max.unwrap();
+        assert!((ratio - 1.2).abs() < 0.01, "{skill}: {ratio}");
+        assert!(high.avg_hit_dps_max > on.avg_hit_dps_max);
+        assert_eq!(off.avg_hit_dps_max, unlearned.avg_hit_dps_max);
+        assert!((on.proc_dps_min / off.proc_dps_min - 1.2).abs() < 1e-9);
+        assert!((on.proc_dps_max / off.proc_dps_max - 1.2).abs() < 1e-9);
+        assert_eq!(off.proc_dps_max, unlearned.proc_dps_max);
+    }
+}
+
+#[test]
+fn all_attack_skills_scale_physical_hits_and_projectile_ranks() {
+    let mut checked = 0;
+    for (class, skills) in &data::data().skills_by_class {
+        for skill in skills.iter().filter(|s| {
+            matches!(s.kind, crate::calc::types::SkillKind::Active)
+                && matches!(
+                    s.attack_kind,
+                    Some(crate::calc::types::AttackKindSpec::Attack)
+                )
+        }) {
+            let base = perf(class, &skill.id, 20, &[], &[]);
+            let boosted = perf_with_stats(
+                class,
+                &skill.id,
+                20,
+                &[],
+                &[("physical_skill_damage", "100")],
+                1.0,
+            );
+            let original = base.attack_damage.as_ref().expect(&skill.id);
+            let changed = boosted.attack_damage.as_ref().expect(&skill.id);
+            // Integer rounding may leave one point below twice the rounded hit.
+            assert!(
+                (changed.physical_hit_max - 2 * original.physical_hit_max).abs() <= 1,
+                "{class}/{}",
+                skill.id
+            );
+            assert_eq!(
+                changed.poison_hit_max, original.poison_hit_max,
+                "Physical bonus must not raise elemental damage: {class}/{}",
+                skill.id
+            );
+            if skill
+                .tags
+                .as_ref()
+                .is_some_and(|t| t.iter().any(|t| t == "Projectile"))
+            {
+                let ranked = perf_with_stats(
+                    class,
+                    &skill.id,
+                    20,
+                    &[],
+                    &[("projectile_skills", "3")],
+                    1.0,
+                );
+                assert_eq!(
+                    ranked.attack_damage.unwrap().effective_rank_max,
+                    original.effective_rank_max + 3.0,
+                    "{class}/{}",
+                    skill.id
+                );
+            }
+            checked += 1;
+        }
+    }
+    assert!(
+        checked > 50,
+        "cross-class attack coverage unexpectedly missing"
+    );
+}
+
+#[test]
+fn blood_demons_proc_resolves_its_own_damage_skill() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let ranks = HashMap::from([("blood_surge".into(), 20), ("blood_demons".into(), 10)]);
+    let subskills = HashMap::new();
+    let buffs = HashMap::new();
+    let custom = Vec::new();
+    let tree = HashSet::new();
+    let sockets = HashMap::new();
+    let enemy = HashMap::new();
+    let player = HashMap::new();
+    let projectiles = HashMap::new();
+    let resistances = HashMap::new();
+    let procs = HashMap::from([("blood_demons".into(), true)]);
+    let mut deps = empty_deps(
+        &allocated,
+        &inventory,
+        &ranks,
+        &subskills,
+        &buffs,
+        &custom,
+        &tree,
+        &sockets,
+        &enemy,
+        &player,
+        &projectiles,
+        &resistances,
+        &procs,
+    );
+    deps.class_id = Some("demonspawn");
+    deps.level = 50;
+    deps.main_skill_id = Some("blood_surge");
+    let result = compute_build_performance(&deps);
+    assert!(result.proc_dps_min > 0.0);
+    assert!(result
+        .calculation()
+        .iter()
+        .any(|s| s.label() == "Proc · Blood Demons"));
+}
+
+#[test]
+fn noncritical_dps_counts_every_projectile_contact() {
+    let result = perf(
+        "butcher",
+        "blender",
+        20,
+        &[("a_i_empowered_nanoblenders", 1)],
+        &[],
+    );
+    let attack = result.attack_damage.as_ref().unwrap();
+    let expected = attack.combined_hit_max as f64 * 6.0 * 2.5 / 8.0;
+    assert!((result.hit_dps_max.unwrap() - expected).abs() < 1e-9);
+}
+
+#[test]
+fn projectile_count_changes_ailment_application_rate_not_single_contact_damage() {
+    let nodes = [("a_i_empowered_nanoblenders", 1)];
+    let stats = [("chance_inflict_bleeding", "100")];
+    let single = perf_with_stats("butcher", "blender", 20, &nodes, &stats, 1.0);
+    let double = perf_with_stats(
+        "butcher",
+        "blender",
+        20,
+        &[nodes[0], ("extra_cleaver_addon", 1)],
+        &stats,
+        1.0,
+    );
+    // Both already guarantee application. More blades cannot double an
+    // individual bleed merely by being included in a volley average.
+    assert!((double.ailment_dps_max.unwrap() / single.ailment_dps_max.unwrap() - 1.0).abs() < 0.01);
+}
+
+#[test]
+fn frost_sunder_ailment_magnitude_uses_one_icicle() {
+    let result = perf_with_stats(
+        "jotunn",
+        "frost_sunder",
+        20,
+        &[],
+        &[("chance_inflict_bleeding", "100")],
+        1.0,
+    );
+    let attack = result.attack_damage.as_ref().unwrap();
+    assert_eq!(attack.projectile_count, 4);
+    let expected = attack.combined_avg_max as f64 / 4.0 * 0.2;
+    assert!((result.ailment_dps_max.unwrap() - expected).abs() < 1e-9);
+}
+
+#[test]
+fn hybrid_multicast_does_not_repeat_the_physical_component() {
+    let result = perf_with_stats(
+        "samurai",
+        "blade_barrier",
+        20,
+        &[],
+        &[("multicast_chance", "100")],
+        1.0,
+    );
+    let attack = result.attack_damage.as_ref().unwrap();
+    let damage = result.damage.as_ref().unwrap();
+    assert_eq!(damage.multicast_multiplier, 2.0);
+    let expected = (attack.physical_hit_max as f64 + attack.poison_hit_max as f64 * 2.0)
+        * attack.projectile_count as f64
+        * attack.attacks_per_second_max
+        * result.hits_per_cast.unwrap_or((1.0, 1.0)).1;
+    assert!((result.hit_dps_max.unwrap() - expected).abs() < 1e-9);
+}
+
+#[test]
+fn fireball_critical_burn_is_independent_expected_double_damage() {
+    let base = perf("pyromancer", "fireball", 20, &[], &[]);
+    let doubled = perf("pyromancer", "fireball", 20, &[("critical_burn", 5)], &[]);
+    let plain = base.damage.as_ref().unwrap();
+    let changed = doubled.damage.as_ref().unwrap();
+    assert_eq!(plain.hit_max, changed.hit_max);
+    assert_eq!(plain.projectile_count, changed.projectile_count);
+    assert!((changed.avg_max as f64 - 1.3 * plain.avg_max as f64).abs() < 1.3, "separate rounding of base and boosted expectations");
+    assert_eq!(base.hits_per_cast, doubled.hits_per_cast);
+    let step = changed.calculation().iter().find(|s| s.label() == "Double damage expectation").unwrap();
+    assert_eq!(step.value(), (1.3, 1.3));
 }

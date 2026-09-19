@@ -450,6 +450,17 @@ pub struct DamageFormulaSpec {
     pub per_level: f64,
 }
 
+/// Verified formula model. `RankAndFlat` uses the direct elemental helper's
+/// unscaled intercept, total-damage pool and ceil/floor stages; the class's own
+/// subtree multiplier follows. Only source-audited casts opt in.
+#[derive(Debug, Clone, Copy, Deserialize, Default, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub enum DamageScaling {
+    #[default]
+    Full,
+    RankAndFlat,
+}
+
 #[derive(Debug, Clone, Copy, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ManaCostFormulaSpec {
@@ -480,6 +491,10 @@ pub enum AttackKindSpec {
 #[derive(Debug, Clone, Copy, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct AttackSkillScalingSpec {
+    /// The weapon formula includes a neutral 100%; synergies and matching tag
+    /// bonuses scale only the remainder before it is added back to that 100%.
+    #[serde(default)]
+    pub weapon_bonus_scaling: bool,
     #[serde(default)]
     pub weapon_damage_pct: Option<DamageFormulaSpec>,
     #[serde(default)]
@@ -649,6 +664,8 @@ pub struct SkillSpec {
     pub damage_per_rank: Option<Vec<DamageRangeSpec>>,
     #[serde(default)]
     pub damage_formula: Option<DamageFormulaSpec>,
+    #[serde(default)]
+    pub damage_scaling: DamageScaling,
     #[serde(default)]
     pub mana_cost_formula: Option<ManaCostFormulaSpec>,
     #[serde(default)]

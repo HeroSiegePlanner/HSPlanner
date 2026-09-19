@@ -101,10 +101,10 @@ pub(crate) fn ailment_calculation(
     apply_chances: &HashMap<String, f64>,
 ) -> (f64, Vec<CalculationStep>) {
     let mut trace = Vec::new();
-    if hit_avg <= 0.0 {
+    if hit_avg <= 0.0 || hits_per_second <= 0.0 {
         return (0.0, trace);
     }
-    let hits = hits_per_second.max(1.0);
+    let hits = hits_per_second;
     let all_damage = total_pct(stats, scoped, "ailment_damage_all");
     let all_frequency = total_pct(stats, scoped, "increased_ailment_frequency");
 
@@ -132,7 +132,7 @@ pub(crate) fn ailment_calculation(
                 .unwrap_or(0.0)
                 + all_frequency;
             let contribution = hit_avg * fraction * (1.0 + damage_pct / 100.0) * (1.0 + frequency_pct / 100.0) * uptime;
-            trace.push(CalculationStep::new(format!("{} uptime", a.state), format!("1 − (1 − clamp({}% stat + {}% subtree, 0, 100) / 100)^max({}, 1 hits/s)", number(from_stat), number(from_procs), number(hits_per_second)), scalar(uptime)));
+            trace.push(CalculationStep::new(format!("{} uptime", a.state), format!("1 − (1 − clamp({}% stat + {}% subtree, 0, 100) / 100)^({} hits/s)", number(from_stat), number(from_procs), number(hits_per_second)), scalar(uptime)));
             trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × {} base fraction × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
             contribution
         })
@@ -153,6 +153,35 @@ mod tests {
 
     fn chances(pairs: &[(&str, f64)]) -> HashMap<String, f64> {
         pairs.iter().map(|(k, v)| (k.to_string(), *v)).collect()
+    }
+
+    #[test]
+    fn zero_contacts_cannot_inflict_damage_and_sparse_hits_are_not_promoted() {
+        let empty = StatMap::new();
+        assert_eq!(
+            ailment_dps(
+                1000.0,
+                0.0,
+                &empty,
+                &empty,
+                &chances(&[("bleeding", 100.0)])
+            ),
+            0.0
+        );
+        assert_eq!(
+            ailment_dps(
+                1000.0,
+                -1.0,
+                &empty,
+                &empty,
+                &chances(&[("bleeding", 100.0)])
+            ),
+            0.0
+        );
+        let chances = chances(&[("bleeding", 25.0)]);
+        let sparse = ailment_dps(1000.0, 0.25, &empty, &empty, &chances);
+        let once = ailment_dps(1000.0, 1.0, &empty, &empty, &chances);
+        assert!(sparse > 0.0 && sparse < once);
     }
 
     #[test]

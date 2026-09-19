@@ -50,6 +50,7 @@ pub(crate) fn multiplier_keys_for(stat_key: &str) -> (Option<&'static str>, Opti
         "mana" => (Some("increased_mana"), Some("increased_mana_more")),
         "mana_replenish" => (None, Some("mana_replenish_more")),
         "life_replenish" => (None, Some("life_replenish_more")),
+        "life_steal" => (None, Some("life_steal_more")),
         "light_radius" => (Some("light_radius_pct"), None),
         "bleed_duration" => (Some("bleed_duration_pct"), None),
         "burning_duration" => (Some("burning_duration_pct"), None),

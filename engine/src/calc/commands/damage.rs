@@ -205,6 +205,7 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
     let skill: calc::Skill = input.skill.into();
     let attributes = ranged_map(normalized_keys(input.attributes));
     let stats = ranged_map(normalized_keys(input.stats));
+    let scoped = ranged_map(normalized_keys(input.scoped_stats));
     let skill_ranks = normalized_keys(input.skill_ranks_by_name);
     let item_bonuses = normalized_keys(input.item_skill_bonuses);
     let skills_by_name: HashMap<String, calc::Skill> = input
@@ -213,9 +214,6 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
         .map(|(k, v)| (norm(&k), v.into()))
         .collect();
 
-    // Standalone preview: the caller passes the already-resolved
-    // `of_total_damage`, so there is no scoped subtree map to hand over.
-    let no_scoped = calc::StatMap::new();
     let inp = calc::SkillInput {
         skill: &skill,
         allocated_rank: input.allocated_rank,
@@ -228,7 +226,7 @@ pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput
         skills_by_name: &skills_by_name,
         projectile_count: input.projectile_count.max(0.0) as u32,
         of_total_damage: input.of_total_damage,
-        scoped: &no_scoped,
+        scoped: &scoped,
         conversion_flat: 0.0,
         conversion_skill_damage_pct: 0.0,
     };
@@ -357,6 +355,7 @@ pub fn compute_attack_skill_damage(
     let skill: calc::Skill = b.skill.into();
     let attributes = ranged_map(normalized_keys(b.attributes));
     let stats = ranged_map(normalized_keys(b.stats));
+    let scoped = ranged_map(normalized_keys(b.scoped_stats));
     let skill_ranks = normalized_keys(b.skill_ranks_by_name);
     let item_bonuses = normalized_keys(b.item_skill_bonuses);
     let skills_by_name: HashMap<String, calc::Skill> = b
@@ -365,7 +364,6 @@ pub fn compute_attack_skill_damage(
         .map(|(k, v)| (norm(&k), v.into()))
         .collect();
 
-    let no_scoped = calc::StatMap::new();
     let spell_input = calc::SkillInput {
         skill: &skill,
         allocated_rank: b.allocated_rank,
@@ -378,13 +376,15 @@ pub fn compute_attack_skill_damage(
         skills_by_name: &skills_by_name,
         projectile_count: b.projectile_count.max(0.0) as u32,
         of_total_damage: b.of_total_damage,
-        scoped: &no_scoped,
+        scoped: &scoped,
         conversion_flat: 0.0,
         conversion_skill_damage_pct: 0.0,
     };
     let elemental = calc::compute_skill_damage(&spell_input);
 
     let attack_input = calc::AttackSkillInput {
+        of_total_damage: b.of_total_damage,
+        action_rate_override: None,
         skill: &skill,
         allocated_rank: b.allocated_rank,
         attributes: &attributes,
@@ -395,7 +395,7 @@ pub fn compute_attack_skill_damage(
         enemy_conditions: &b.enemy_conditions,
         weapon: weapon.as_ref(),
         poison_breakdown: elemental.as_ref(),
-        scoped: &no_scoped,
+        scoped: &scoped,
         projectile_count: b.projectile_count.max(0.0) as u32,
         conversion_flat: 0.0,
     };

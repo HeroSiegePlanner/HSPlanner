@@ -1418,7 +1418,8 @@
     "ranks": [
       { "rank": 1 }
     ],
-    "damageFormula": { "base": 8, "perLevel": 15 },
+    "damageScaling": "rankAndFlat",
+    "damageFormula": { "base": 8, "perLevel": 12 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "bonusSources": [
       { "source": "Loaded Pulse", "stat": "lightning_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1441,8 +1442,8 @@
         "description": "Increases the damage dealt by storm bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 10 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 10 }
         }
       },
       {
@@ -1488,8 +1489,8 @@
           "trigger": "on_cast",
           "chance": { "base": 0, "perRank": 5 },
           "effects": {
-            "base": { "projectile_count": 0 },
-            "perRank": { "projectile_count": 1 }
+            "base": { "expected_additional_projectiles": 0 },
+            "perRank": { "expected_additional_projectiles": 1 }
           }
         }
       },
@@ -1514,8 +1515,8 @@
           "trigger": "on_cast",
           "chance": { "base": 0, "perRank": 4 },
           "effects": {
-            "base": { "of_total_damage": 100 },
-            "perRank": { "of_total_damage": 0 }
+            "base": { "expected_additional_projectiles": 1 },
+            "perRank": { "expected_additional_projectiles": 0 }
           }
         }
       },
@@ -1533,8 +1534,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "lightning_skill_damage": 0 },
-            "perRank": { "lightning_skill_damage": 30 }
+            "base": { "discharge_damage": 0 },
+            "perRank": { "discharge_damage": 30 }
           },
           "appliesStates": [
             {
@@ -1554,8 +1555,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 40 }
+            "base": { "secondary_damage_percent": 0 },
+            "perRank": { "secondary_damage_percent": 40 }
           }
         }
       },
@@ -1577,8 +1578,8 @@
         "description": "Unleash a piercing and pulsating storm bolt with increased area of effect radius and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "lightning_skill_damage": 45, "area_of_effect": 20 }
+          "base": { "subtree_damage": 0, "area_of_effect": 0 },
+          "perRank": { "subtree_damage": 45, "area_of_effect": 20 }
         }
       },
       {
@@ -1588,8 +1589,8 @@
         "description": "Unleash a piercing storm bolt bouncing between nearby monsters on hit increasing the damage dealt with each bounce.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "lightning_skill_damage": 25, "projectile_bounces": 2 }
+          "base": { "bounce_damage_increased": 0, "projectile_bounces": 0 },
+          "perRank": { "bounce_damage_increased": 25, "projectile_bounces": 2 }
         }
       },
       {
@@ -1602,8 +1603,8 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 8 },
           "effects": {
-            "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
-            "perRank": { "lightning_skill_damage": 60, "projectile_count": 3 }
+            "base": { "surge_damage": 0, "secondary_projectile_count": 0 },
+            "perRank": { "surge_damage": 60, "secondary_projectile_count": 3 }
           }
         }
       },
@@ -1615,12 +1616,12 @@
         "maxRank": 3,
         "effects": {
           "base": {
-            "lightning_skill_damage": 0,
+            "secondary_damage_increased": 0,
             "area_of_effect": 0,
             "skill_range": 0
           },
           "perRank": {
-            "lightning_skill_damage": 40,
+            "secondary_damage_increased": 40,
             "area_of_effect": 10,
             "skill_range": 20
           }

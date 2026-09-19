@@ -390,6 +390,12 @@
       "format": "percent"
     },
     {
+      "key": "damage",
+      "name": "Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "attack_damage",
       "name": "Attack Damage",
       "category": "offense",
@@ -1366,8 +1372,106 @@
       "skillScoped": true
     },
     {
+      "key": "wave_count",
+      "name": "Additional Waves",
+      "category": "offense",
+      "format": "flat",
+      "skillScoped": true
+    },
+    {
+      "key": "cooldown_added",
+      "name": "Added Cooldown (s)",
+      "category": "offense",
+      "format": "flat",
+      "skillScoped": true
+    },
+    {
       "key": "projectile_size",
       "name": "Size",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "double_damage_chance",
+      "name": "Chance to Deal Double Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "subtree_damage",
+      "name": "Skill Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "subtree_damage_on_proc",
+      "name": "Damage on Proc",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "primary_projectile_count",
+      "name": "Primary Projectiles",
+      "category": "offense",
+      "format": "flat",
+      "skillScoped": true
+    },
+    {
+      "key": "expected_additional_projectiles",
+      "name": "Additional Projectiles on Proc",
+      "category": "offense",
+      "format": "flat",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_projectile_count",
+      "name": "Secondary Projectiles",
+      "category": "offense",
+      "format": "flat",
+      "skillScoped": true
+    },
+    {
+      "key": "trail_damage_percent",
+      "name": "Trail Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "bounce_damage_increased",
+      "name": "Damage per Bounce",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_damage_percent",
+      "name": "Secondary Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_damage_increased",
+      "name": "Secondary Hit Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "discharge_damage",
+      "name": "Discharge Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "surge_damage",
+      "name": "Surge Damage",
       "category": "offense",
       "format": "percent",
       "skillScoped": true

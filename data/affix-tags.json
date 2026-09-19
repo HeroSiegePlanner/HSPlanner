@@ -22,6 +22,7 @@
   "extra_guardian_chance": { "tags": ["Guardian"], "effect": "none" },
 
   "projectile_skills": { "tags": ["Projectile"], "effect": "rank" },
+  "projectile_damage_increase": { "tags": ["Projectile"], "effect": "damage" },
   "projectile_speed": { "tags": ["Projectile"], "effect": "none" },
 
   "explosion_skills": { "tags": ["Explosion"], "effect": "rank" },

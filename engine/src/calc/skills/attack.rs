@@ -4,11 +4,13 @@ use std::collections::HashMap;
 use super::{
     collect_extra_damage, crit_factors, damage::bonus_source_synergy_pct, damage::element_keys,
     deadly_blow_mult, r_max, r_min, rg, AttackSkillDamageBreakdown, AttrMap, ConditionMap,
-    DamageFormula, ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap, Weapon,
-    CRUSHING_BLOW_DEFAULT,
+    DamageFormula, ExtraSource, ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap,
+    Weapon, CRUSHING_BLOW_DEFAULT,
 };
 
 pub struct AttackSkillInput<'a> {
+    /// Optional cast cadence for persistent attack-damage skills.
+    pub action_rate_override: Option<(f64, f64)>,
     pub skill: &'a Skill,
     pub allocated_rank: f64,
     pub attributes: &'a AttrMap,
@@ -23,6 +25,9 @@ pub struct AttackSkillInput<'a> {
     /// The owning skill's `skillScoped` subtree values.
     pub scoped: &'a StatMap,
     pub projectile_count: u32,
+    /// Aggregate damage adjustment from the owning subtree. Elemental damage
+    /// already consumes its own copy, so this changes only the physical member.
+    pub of_total_damage: f64,
     /// Resolved in `build.rs`; attack skills have no elemental breakdown to land it in.
     pub conversion_flat: f64,
 }
@@ -61,15 +66,23 @@ pub fn compute_attack_skill_damage(
         .get(&s.name)
         .copied()
         .unwrap_or((0.0, 0.0));
-    let eff_min = input.allocated_rank + r_min(all_skills) + r_min(elem_bonus) + item.0;
-    let eff_max = input.allocated_rank + r_max(all_skills) + r_max(elem_bonus) + item.1;
+    let tag_bonus = crate::calc::rank::tag_skills_sum(input.stats, &s.tags);
+    let (eff_min, eff_max) = crate::calc::rank::effective_rank_range_for(
+        s,
+        input.allocated_rank,
+        input.stats,
+        input.item_skill_bonuses,
+    );
 
     let skill_wdp_min = formula_at_clamped_opt(scaling.weapon_damage_pct.as_ref(), eff_min);
     let skill_wdp_max = formula_at_clamped_opt(scaling.weapon_damage_pct.as_ref(), eff_max);
     let skill_flat_min = formula_at_clamped_opt(scaling.flat_physical_min.as_ref(), eff_min);
     let skill_flat_max = formula_at_clamped_opt(scaling.flat_physical_max.as_ref(), eff_max);
-    let skill_arp_min = formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_min);
-    let skill_arp_max = formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_max);
+    let rating_bonus = total_pct(input, "attack_rating_pct");
+    let skill_arp_min =
+        formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_min) + rating_bonus;
+    let skill_arp_max =
+        formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_max) + rating_bonus;
 
     // Unarmed baseline is 2-6 physical for every character.
     let (w_min, w_max) = input
@@ -81,8 +94,8 @@ pub fn compute_attack_skill_damage(
     let add_phys = rg(input.stats, "additive_physical_damage");
     let atk = rg(input.stats, "attack_damage");
     let atk_more = rg(input.stats, "attack_damage_more");
-    // Synergies like Flail Mastery grant attack_damage% per source rank; they
-    // stack additively with the gear/strength attack-damage stat.
+    // Most attack synergies share the attack-damage stage. Skills with an
+    // explicit weapon-bonus model add them to the skill's bonus instead.
     let ((synergy_min, synergy_max), synergy_steps) = bonus_source_synergy_pct(
         s,
         input.attributes,
@@ -93,8 +106,16 @@ pub fn compute_attack_skill_damage(
         true,
     );
 
-    let (extra_mult, extra_sources) =
+    let (mut extra_mult, mut extra_sources) =
         collect_extra_damage(input.stats, input.enemy_conditions, Some("physical"));
+    if input.of_total_damage != 0.0 {
+        extra_sources.push(ExtraSource {
+            stat_key: None,
+            label: "Subtree",
+            pct: input.of_total_damage,
+        });
+        extra_mult *= (1.0 + input.of_total_damage / 100.0).max(0.0);
+    }
 
     let crit = crit_factors(input.stats, false);
 
@@ -107,13 +128,38 @@ pub fn compute_attack_skill_damage(
         + skill_flat_max
         + input.conversion_flat;
 
-    // S8: the skill's own attack damage % is a standalone multiplier on top of
-    // the gear/strength attack-damage modifier, not additive with it.
-    let atk_mult_min = (1.0 + (r_min(atk) + synergy_min) / 100.0) * (1.0 + r_min(atk_more) / 100.0);
-    let atk_mult_max = (1.0 + (r_max(atk) + synergy_max) / 100.0) * (1.0 + r_max(atk_more) / 100.0);
+    use crate::calc::{affix_tags, types::AffixEffect};
+    let tagged = affix_tags::sum_for(AffixEffect::Damage, &s.tags, input.stats);
+    let tagged_more = affix_tags::more_for(AffixEffect::DamageMore, &s.tags, input.stats);
+    let tagged_factor = (
+        (1.0 + tagged.0 / 100.0).max(0.0) * tagged_more.0,
+        (1.0 + tagged.1 / 100.0).max(0.0) * tagged_more.1,
+    );
     let has_wdp = scaling.weapon_damage_pct.is_some();
-    let skill_mult_min = if has_wdp { skill_wdp_min / 100.0 } else { 1.0 };
-    let skill_mult_max = if has_wdp { skill_wdp_max / 100.0 } else { 1.0 };
+    let weapon_bonus_scaling = scaling.weapon_bonus_scaling && has_wdp;
+    let attack_synergy = if weapon_bonus_scaling {
+        (0.0, 0.0)
+    } else {
+        (synergy_min, synergy_max)
+    };
+    let atk_mult_min =
+        (1.0 + (r_min(atk) + attack_synergy.0) / 100.0) * (1.0 + r_min(atk_more) / 100.0);
+    let atk_mult_max =
+        (1.0 + (r_max(atk) + attack_synergy.1) / 100.0) * (1.0 + r_max(atk_more) / 100.0);
+    // The stored percentage includes neutral weapon damage. In this model the
+    // bonus and its synergies receive tag scaling before the neutral 100% returns.
+    let (skill_mult_min, skill_mult_max) = if weapon_bonus_scaling {
+        (
+            (1.0 + (skill_wdp_min - 100.0 + synergy_min) * tagged_factor.0 / 100.0)
+                .max(0.0),
+            (1.0 + (skill_wdp_max - 100.0 + synergy_max) * tagged_factor.1 / 100.0)
+                .max(0.0),
+        )
+    } else if has_wdp {
+        (skill_wdp_min / 100.0, skill_wdp_max / 100.0)
+    } else {
+        (1.0, 1.0)
+    };
 
     // Same crush/deadly stage weapon.rs applies, so a skill swing and a plain
     // swing agree.
@@ -133,15 +179,43 @@ pub fn compute_attack_skill_damage(
         total_pct(input, "deadly_blow_effectiveness"),
     );
 
-    let phys_hit_min =
-        base_min * atk_mult_min * skill_mult_min * crush_armor_mult * deadly_mult * extra_mult;
-    let phys_hit_max =
-        base_max * atk_mult_max * skill_mult_max * crush_armor_mult * deadly_mult * extra_mult;
+    let physical_skill_mult = {
+        let physical = rg(input.stats, "physical_skill_damage");
+        let more = rg(input.stats, "physical_skill_damage_more");
+        let (tagged, tagged_more) = if weapon_bonus_scaling {
+            ((0.0, 0.0), (1.0, 1.0))
+        } else {
+            (tagged, tagged_more)
+        };
+        (
+            (1.0 + (physical.0 + tagged.0) / 100.0).max(0.0)
+                * (1.0 + more.0 / 100.0).max(0.0)
+                * tagged_more.0,
+            (1.0 + (physical.1 + tagged.1) / 100.0).max(0.0)
+                * (1.0 + more.1 / 100.0).max(0.0)
+                * tagged_more.1,
+        )
+    };
+    let phys_hit_min = base_min
+        * atk_mult_min
+        * skill_mult_min
+        * crush_armor_mult
+        * deadly_mult
+        * extra_mult
+        * physical_skill_mult.0;
+    let phys_hit_max = base_max
+        * atk_mult_max
+        * skill_mult_max
+        * crush_armor_mult
+        * deadly_mult
+        * extra_mult
+        * physical_skill_mult.1;
     // Mirrors the spell path: hit stays per-projectile, the average folds the
     // projectile fan-in. The poison breakdown already multiplied its own avg.
     let projectiles = input.projectile_count.max(1);
-    let phys_avg_min = phys_hit_min * crit.avg_mult * projectiles as f64;
-    let phys_avg_max = phys_hit_max * crit.avg_mult * projectiles as f64;
+    let double_damage = super::double_damage_factor(input.stats, input.scoped);
+    let phys_avg_min = phys_hit_min * crit.avg_mult * double_damage.0 * projectiles as f64;
+    let phys_avg_max = phys_hit_max * crit.avg_mult * double_damage.1 * projectiles as f64;
 
     let (poison_hit_min, poison_hit_max, poison_avg_min, poison_avg_max) = input
         .poison_breakdown
@@ -164,6 +238,8 @@ pub fn compute_attack_skill_damage(
     let aps_min = base_aps * (1.0 + r_min(ias) / 100.0) * (1.0 + r_min(ias_more) / 100.0);
     let aps_max = base_aps * (1.0 + r_max(ias) / 100.0) * (1.0 + r_max(ias_more) / 100.0);
 
+    let (aps_min, aps_max) = input.action_rate_override.unwrap_or((aps_min, aps_max));
+
     let dps_min = (combined_avg_min as f64) * aps_min;
     let dps_max = (combined_avg_max as f64) * aps_max;
 
@@ -175,10 +251,11 @@ pub fn compute_attack_skill_damage(
     calculation.push(CalculationStep::new(
         "Effective attack rank",
         format!(
-            "{} allocated + {} all skills + {} element + {} item ranks",
+            "{} allocated + {} all skills + {} element + {} tagged + {} item ranks",
             number(input.allocated_rank),
             range(all_skills),
             range(elem_bonus),
+            range(tag_bonus),
             range(item)
         ),
         (eff_min, eff_max),
@@ -249,19 +326,66 @@ pub fn compute_attack_skill_damage(
     ));
     calculation.push(CalculationStep::new("Physical base", format!("{} weapon × (1 + {}% enhanced / 100) × (1 + {}% more / 100) + {} additive + {} skill flat + {} converted", range((w_min, w_max)), range(ed), range(ed_more), range(add_phys), range((skill_flat_min, skill_flat_max)), number(input.conversion_flat)), (base_min, base_max)));
     calculation.extend(synergy_steps);
+    if weapon_bonus_scaling {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            affix_tags::keys_for(AffixEffect::Damage, &s.tags)
+                .into_iter()
+                .chain(affix_tags::keys_for(AffixEffect::DamageMore, &s.tags)),
+        );
+        calculation.push(CalculationStep::new(
+            "Weapon bonus tag multiplier",
+            format!(
+                "(1 + {}% matching tag damage / 100) × {} matching tag more; scales the weapon bonus before adding the base weapon",
+                range(tagged),
+                range(tagged_more)
+            ),
+            tagged_factor,
+        ));
+    }
+    {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            [
+                "physical_skill_damage",
+                "physical_skill_damage_more",
+                "attack_rating_pct",
+            ],
+        );
+        calculation.push(CalculationStep::new(
+            "Physical skill multiplier",
+            if weapon_bonus_scaling {
+                "(1 + physical skill damage% / 100) × physical more; matching tags already scale the weapon bonus"
+            } else {
+                "(1 + (physical + matching tagged skill damage)% / 100) × physical more × tagged more"
+            },
+            physical_skill_mult,
+        ));
+        calculation.push(CalculationStep::new("Attack rating bonus %", "Skill rank formula + shared and subtree attack-rating bonuses; accuracy is not inferred without enemy evasion", (skill_arp_min, skill_arp_max)));
+    }
+
     calculation.push(CalculationStep::new(
         "Attack damage multiplier",
         format!(
             "(1 + ({} attack + {} synergy)% / 100) × (1 + {}% more / 100)",
             range(atk),
-            range((synergy_min, synergy_max)),
+            range(attack_synergy),
             range(atk_more)
         ),
         (atk_mult_min, atk_mult_max),
     ));
     calculation.push(CalculationStep::new(
         "Skill weapon multiplier",
-        if has_wdp {
+        if weapon_bonus_scaling {
+            format!(
+                "max(0, 1 + ({}% weapon damage − 100 + {}% synergy) × {} matching tag multiplier / 100)",
+                range((skill_wdp_min, skill_wdp_max)),
+                range((synergy_min, synergy_max)),
+                range(tagged_factor)
+            )
+        } else if has_wdp {
             format!(
                 "{}% weapon damage / 100",
                 range((skill_wdp_min, skill_wdp_max))
@@ -300,7 +424,10 @@ pub fn compute_attack_skill_damage(
     }
     calculation.push(CalculationStep::new(
         "Extra damage multiplier",
-        "1 + sum of applicable extra damage % / 100",
+        format!(
+            "(1 + sum of applicable build extra damage % / 100) × max(0, 1 + {}% subtree / 100)",
+            number(input.of_total_damage)
+        ),
         scalar(extra_mult),
     ));
     calculation.push(CalculationStep::new(
@@ -339,12 +466,14 @@ pub fn compute_attack_skill_damage(
         ),
         scalar(crit.avg_mult),
     ));
+    calculation.push(CalculationStep::new("Double damage expectation", "1 + clamp(double damage chance, 0, 100) / 100; one contact, independent of critical and extra damage", double_damage));
     calculation.push(CalculationStep::new(
         "Average physical damage",
         format!(
-            "floor({} unrounded physical hit × {} average crit × {} projectiles)",
+            "floor({} unrounded physical hit × {} average crit × {} double damage expectation × {} projectiles)",
             range((phys_hit_min, phys_hit_max)),
             number(crit.avg_mult),
+            range(double_damage),
             projectiles
         ),
         (phys_avg_min.floor(), phys_avg_max.floor()),
@@ -368,13 +497,21 @@ pub fn compute_attack_skill_damage(
         (combined_avg_min as f64, combined_avg_max as f64),
     ));
     calculation.push(CalculationStep::new(
-        "Attacks per second",
-        format!(
-            "{} base × (1 + {}% increased / 100) × (1 + {}% more / 100)",
-            number(base_aps),
-            range(ias),
-            range(ias_more)
-        ),
+        if input.action_rate_override.is_some() {
+            "Configured actions per second"
+        } else {
+            "Attacks per second"
+        },
+        if input.action_rate_override.is_some() {
+            "Action cadence supplied by the entity, cooldown or persistent-skill model".into()
+        } else {
+            format!(
+                "{} base × (1 + {}% increased / 100) × (1 + {}% more / 100)",
+                number(base_aps),
+                range(ias),
+                range(ias_more)
+            )
+        },
         (aps_min, aps_max),
     ));
     calculation.push(CalculationStep::new(
@@ -445,6 +582,7 @@ mod tests {
             tags: vec!["Attack".into()],
             damage_type: Some("physical".into()),
             damage_formula: None,
+            damage_scaling: Default::default(),
             damage_per_rank: None,
             bonus_sources: Vec::new(),
             attack_kind: Some(crate::calc::skills::AttackKind::Attack),
@@ -485,6 +623,7 @@ mod tests {
             damage_max: 100.0,
         };
         let input = AttackSkillInput {
+            action_rate_override: None,
             skill: s,
             allocated_rank: 1.0,
             attributes: &attrs,
@@ -497,6 +636,7 @@ mod tests {
             poison_breakdown: None,
             scoped,
             projectile_count,
+            of_total_damage: r_max(rg(scoped, "of_total_damage")),
             conversion_flat,
         };
         compute_attack_skill_damage(&input).expect("attack breakdown")
@@ -516,6 +656,64 @@ mod tests {
             conversion_flat,
         )
         .combined_hit_max
+    }
+
+    #[test]
+    fn double_damage_roll_changes_average_not_contact_damage_or_count() {
+        let base = breakdown_for(
+            &skill(),
+            &StatMap::new(),
+            &StatMap::new(),
+            &SkillRanks::new(),
+            3,
+            0.0,
+        );
+        let doubled = breakdown_for(
+            &skill(),
+            &StatMap::new(),
+            &stats(&[("double_damage_chance", 100.0)]),
+            &SkillRanks::new(),
+            3,
+            0.0,
+        );
+        assert_eq!(doubled.physical_hit_max, base.physical_hit_max);
+        assert_eq!(doubled.projectile_count, base.projectile_count);
+        assert_eq!(doubled.physical_avg_max, 2 * base.physical_avg_max);
+        assert_eq!(doubled.attacks_per_second_max, base.attacks_per_second_max);
+    }
+
+    #[test]
+    fn physical_skill_damage_and_matching_tags_apply_to_all_attacks() {
+        let mut s = skill();
+        s.tags.push("Projectile".into());
+        s.tags.push("Ranged".into());
+        let shared = stats(&[
+            ("physical_skill_damage", 40.0),
+            ("physical_skill_damage_more", 20.0),
+            ("ranged_projectile_damage", 10.0),
+            ("spell_damage", 500.0),
+        ]);
+        let result = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
+        // 100 weapon × 1.5 crushing × (1 + (40 + 10)/100) × 1.2.
+        assert_eq!(result.physical_hit_max, 270);
+    }
+
+    #[test]
+    fn attack_rank_and_rating_use_shared_skill_bonuses() {
+        let mut s = skill();
+        s.tags.push("Projectile".into());
+        let shared = stats(&[("projectile_skills", 3.0), ("attack_rating_pct", 25.0)]);
+        let result = breakdown_for(
+            &s,
+            &shared,
+            &stats(&[("attack_rating_pct", 10.0)]),
+            &SkillRanks::new(),
+            1,
+            0.0,
+        );
+        assert_eq!(result.effective_rank_min, 4.0);
+        assert_eq!(result.effective_rank_max, 4.0);
+        assert_eq!(result.attack_rating_pct_max, 35.0);
     }
 
     #[test]
@@ -628,6 +826,204 @@ mod tests {
         let out = breakdown_for(&s2, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
         assert_eq!(out.combined_hit_max, 1350);
     }
+
+    #[test]
+    fn weapon_bonus_scaling_keeps_base_weapon_outside_synergy_and_tags() {
+        let mut s = skill();
+        s.tags.push("Orbital".into());
+        s.attack_scaling = Some(AttackSkillScaling {
+            weapon_bonus_scaling: true,
+            weapon_damage_pct: Some(DamageFormula {
+                base: 175.0,
+                per_level: 15.0,
+            }),
+            ..Default::default()
+        });
+        s.bonus_sources = vec![crate::calc::skills::BonusSource::SkillLevel {
+            source: "test synergy".into(),
+            stat: "attack_damage".into(),
+            value: 3.0,
+        }];
+        for (shared, synergy_rank, expected_skill_mult, expected_hit) in [
+            (stats(&[]), 0.0, 1.9, 285),
+            (stats(&[("orbital_skill_damage", 100.0)]), 0.0, 2.8, 420),
+            (stats(&[]), 10.0, 2.2, 330),
+            (stats(&[("orbital_skill_damage", 100.0)]), 10.0, 3.4, 510),
+            (
+                stats(&[
+                    ("orbital_skill_damage", 100.0),
+                    ("physical_skill_damage", 50.0),
+                ]),
+                0.0,
+                2.8,
+                630,
+            ),
+            (stats(&[("attack_damage", 100.0)]), 10.0, 2.2, 660),
+            (
+                stats(&[("orbital_skill_damage_more", 100.0)]),
+                0.0,
+                2.8,
+                420,
+            ),
+            (stats(&[("spell_damage", 100.0)]), 0.0, 1.9, 285),
+        ] {
+            let ranks = HashMap::from([("test synergy".into(), synergy_rank)]);
+            let out = breakdown_for(&s, &shared, &StatMap::new(), &ranks, 3, 0.0);
+            let skill_mult = out
+                .calculation()
+                .iter()
+                .find(|step| step.label() == "Skill weapon multiplier")
+                .unwrap()
+                .value();
+            assert!((skill_mult.0 - expected_skill_mult).abs() < 1e-9);
+            assert!((skill_mult.1 - expected_skill_mult).abs() < 1e-9);
+            // The usual crushing factor is 1.5; three projectiles change only
+            // the volley average, never this coefficient or individual hit.
+            assert!((out.physical_hit_max - expected_hit).abs() <= 1);
+            assert!((out.physical_avg_max - expected_hit * 3).abs() <= 1);
+            assert_eq!(out.projectile_count, 3);
+        }
+    }
+
+    #[test]
+    fn weapon_bonus_scaling_preserves_the_tag_bonus_range() {
+        let mut s = skill();
+        s.tags.push("Orbital".into());
+        s.attack_scaling.as_mut().unwrap().weapon_bonus_scaling = true;
+        s.attack_scaling.as_mut().unwrap().weapon_damage_pct = Some(DamageFormula {
+            base: 190.0,
+            per_level: 0.0,
+        });
+        let shared = HashMap::from([("orbital_skill_damage".into(), (25.0, 100.0))]);
+        let out = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
+        assert_eq!(out.physical_hit_min, 318); // 100 × (1 + 0.9 × 1.25) × 1.5.
+        assert_eq!(out.physical_hit_max, 420); // 100 × (1 + 0.9 × 2) × 1.5.
+    }
+    #[test]
+    fn physical_of_total_damage_applies_signed_adjustment_before_projectiles() {
+        for (pct, expected_hit) in [
+            (0.0, 150),
+            (100.0, 300),
+            (-50.0, 75),
+            (-100.0, 0),
+            (-150.0, 0),
+        ] {
+            let scoped = stats(&[("of_total_damage", pct)]);
+            let result = breakdown_for(
+                &skill(),
+                &StatMap::new(),
+                &scoped,
+                &SkillRanks::new(),
+                3,
+                0.0,
+            );
+            assert_eq!(result.physical_hit_max, expected_hit, "subtree {pct}%");
+            assert_eq!(result.combined_avg_max, expected_hit * 3, "subtree {pct}%");
+        }
+    }
+
+    #[test]
+    fn ranged_double_damage_changes_each_average_endpoint_independently() {
+        let shared = StatMap::from([("double_damage_chance".into(), (0.0, 100.0))]);
+        let result = breakdown_for(
+            &skill(),
+            &shared,
+            &StatMap::new(),
+            &SkillRanks::new(),
+            3,
+            0.0,
+        );
+        assert_eq!(
+            (result.physical_hit_min, result.physical_hit_max),
+            (150, 150)
+        );
+        assert_eq!(
+            (result.physical_avg_min, result.physical_avg_max),
+            (450, 900)
+        );
+        assert_eq!(result.projectile_count, 3);
+        assert_eq!(
+            result
+                .calculation()
+                .iter()
+                .find(|s| s.label() == "Double damage expectation")
+                .unwrap()
+                .value(),
+            (1.0, 2.0)
+        );
+    }
+
+    #[test]
+    fn hybrid_of_total_damage_applies_once_to_each_damage_member() {
+        let mut skill = skill();
+        skill.damage_type = Some("fire".into());
+        skill.damage_formula = Some(DamageFormula {
+            base: 100.0,
+            per_level: 0.0,
+        });
+        let empty = StatMap::new();
+        let ranks = SkillRanks::new();
+        let by_name = HashMap::new();
+        let conds = ConditionMap::new();
+        let weapon = Weapon {
+            name: "test".into(),
+            damage_min: 100.0,
+            damage_max: 100.0,
+        };
+        for (pct, expected_physical, expected_elemental) in [
+            (0.0, 150, 100),
+            (100.0, 300, 200),
+            (-50.0, 75, 50),
+            (-100.0, 0, 0),
+            (-150.0, 0, 0),
+        ] {
+            let element =
+                crate::calc::skills::compute_skill_damage(&crate::calc::skills::SkillInput {
+                    skill: &skill,
+                    allocated_rank: 1.0,
+                    attributes: &empty,
+                    stats: &empty,
+                    skill_ranks_by_name: &ranks,
+                    item_skill_bonuses: &empty,
+                    enemy_conditions: &conds,
+                    enemy_resistances: &HashMap::new(),
+                    skills_by_name: &by_name,
+                    projectile_count: 3,
+                    of_total_damage: pct,
+                    scoped: &empty,
+                    conversion_flat: 0.0,
+                    conversion_skill_damage_pct: 0.0,
+                })
+                .unwrap();
+            let result = compute_attack_skill_damage(&AttackSkillInput {
+                action_rate_override: Some((1.0, 1.0)),
+                skill: &skill,
+                allocated_rank: 1.0,
+                attributes: &empty,
+                stats: &empty,
+                skill_ranks_by_name: &ranks,
+                skills_by_name: &by_name,
+                item_skill_bonuses: &empty,
+                enemy_conditions: &conds,
+                weapon: Some(&weapon),
+                poison_breakdown: Some(&element),
+                scoped: &empty,
+                projectile_count: 3,
+                of_total_damage: pct,
+                conversion_flat: 0.0,
+            })
+            .unwrap();
+            assert_eq!(result.physical_hit_max, expected_physical, "subtree {pct}%");
+            assert_eq!(result.poison_hit_max, expected_elemental, "subtree {pct}%");
+            assert_eq!(
+                result.combined_avg_max,
+                (expected_physical + expected_elemental) * 3,
+                "subtree {pct}%"
+            );
+            assert_eq!(result.dps_max, result.combined_avg_max as f64);
+        }
+    }
+
     #[test]
     fn explanation_includes_weapon_more_deadly_and_projectile_averaging() {
         let d = breakdown_for(
