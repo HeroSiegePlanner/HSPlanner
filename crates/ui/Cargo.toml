@@ -8,7 +8,7 @@ publish.workspace = true
 gpui-kit.workspace = true
 log.workspace = true
 serde_json.workspace = true
-rust-i18n = "=4.2.1"
+rust-i18n = "=4.2.2"
 unicode-segmentation = "1.13"
 
 sys-locale = "=0.3.2"
