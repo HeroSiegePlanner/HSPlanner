@@ -1,16 +1,8 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
 use rayon::prelude::*;
-use serde::Serialize;
 
 use super::types::{SuggestResult, SuggestStep, TreeGraph};
-
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ProgressPayload {
-    pub current: u32,
-    pub total: u32,
-}
 
 pub struct SearchInput<'a> {
     pub graph: &'a TreeGraph,

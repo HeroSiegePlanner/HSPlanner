@@ -118,7 +118,6 @@ where
     }
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
     let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     compute_build_performance(&perf_deps(
@@ -140,7 +139,6 @@ pub struct RankSlotItemsInput {
 
 // Ranks candidate bases for one slot by combined-DPS midpoint; multi-skill sums
 // avg-hit DPS per active skill and counts proc DPS once (mirrors the frontend).
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn rank_slot_items(input: RankSlotItemsInput) -> HashMap<String, f64> {
     let _scope = crate::calc::season::SeasonScope::enter(input.perf.season.clone());
     let mut out: HashMap<String, f64> = HashMap::with_capacity(input.base_ids.len());
@@ -160,16 +158,6 @@ pub fn rank_slot_items(input: RankSlotItemsInput) -> HashMap<String, f64> {
         out.insert(base_id.clone(), dps);
     }
     out
-}
-
-/// Warm-up progress: `current` of `total` tree nodes parsed. Emitted as
-/// "warmup-progress" so the boot splash can drive an honest 0–15% slice.
-#[derive(Clone, Serialize)]
-#[serde(rename_all = "camelCase")]
-#[cfg(feature = "desktop")]
-pub(crate) struct WarmupProgress {
-    current: u32,
-    total: u32,
 }
 
 /// Warms the data LazyLock and parser caches so the first real calc isn't stuck
@@ -196,25 +184,8 @@ pub fn run_warmup<F: FnMut(u32, u32)>(mut on_progress: F) -> bool {
     true
 }
 
-/// Tauri command: runs the warm-up off the event loop so the webview stays
-/// responsive, emitting "warmup-progress" for the boot splash.
-#[cfg_attr(feature = "desktop", tauri::command)]
-#[cfg(feature = "desktop")]
-pub async fn calc_warmup(app: tauri::AppHandle, season: Option<String>) -> bool {
-    // Scope lives inside the blocking closure so it never crosses an .await.
-    tauri::async_runtime::spawn_blocking(move || {
-        let _scope = crate::calc::season::SeasonScope::enter(season);
-        run_warmup(|current, total| {
-            let _ = app.emit("warmup-progress", WarmupProgress { current, total });
-        })
-    })
-    .await
-    .unwrap_or(false)
-}
-
 /// Returns full stats plus per-stat source breakdown rendered by StatsView and
 /// the tooltips. Reuses `BuildPerformanceInput`; damage/proc fields are unused here.
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
     let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     let stats_input = BuildStatsInput {
@@ -260,7 +231,6 @@ pub enum StatBreakdownKind {
     Attribute,
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
     let _scope = crate::calc::season::SeasonScope::enter(input.deps.season.clone());
     let stats_input = BuildStatsInput {

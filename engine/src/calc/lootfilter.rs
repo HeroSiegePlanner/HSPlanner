@@ -463,17 +463,14 @@ pub struct BuildFilterStats {
     pub unmatched: usize,
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_decode(code: String) -> Option<LootFilter> {
     decode(&code)
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_encode(filter: LootFilter) -> String {
     encode(&filter)
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_build_stats(inventory: Inventory, season: Option<String>) -> BuildFilterStats {
     let _scope = super::season::SeasonScope::enter(season);
     let stats = collect_build_stats(&inventory);
@@ -484,7 +481,6 @@ pub fn lootfilter_build_stats(inventory: Inventory, season: Option<String>) -> B
     }
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn lootfilter_code_for_stats(stat_ids: Vec<i64>, hide_rest: bool) -> String {
     encode(&build_filter_for_stats(&stat_ids, hide_rest))
 }

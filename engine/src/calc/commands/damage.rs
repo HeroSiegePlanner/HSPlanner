@@ -200,7 +200,6 @@ impl From<calc::WeaponDamageBreakdown> for WeaponDamageOutput {
     }
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn compute_skill_damage(input: SkillDamageInput) -> Option<SkillDamageOutput> {
     let skill: calc::Skill = input.skill.into();
     let attributes = ranged_map(normalized_keys(input.attributes));
@@ -348,7 +347,6 @@ impl From<calc::AttackSkillDamageBreakdown> for AttackSkillDamageOutput {
 
 // Standalone per-card preview of an attack skill: weapon physical plus the
 // skill's elemental part, mirroring the attack branch in build.rs.
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn compute_attack_skill_damage(
     input: AttackSkillDamageInput,
 ) -> Option<AttackSkillDamageOutput> {
@@ -446,7 +444,6 @@ mod attack_preview_tests {
     }
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn compute_weapon_damage(input: WeaponDamageInput) -> WeaponDamageOutput {
     let weapon: Option<calc::Weapon> = input.weapon.map(Into::into);
     let stats = ranged_map(normalized_keys(input.stats));

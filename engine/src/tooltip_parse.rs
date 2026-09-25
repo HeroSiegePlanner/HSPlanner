@@ -1188,7 +1188,6 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
     }
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn parse_tooltip_lines(lines: Vec<String>, season: Option<String>) -> TooltipParseResult {
     let _scope = crate::calc::season::SeasonScope::enter(season);
     parse_tooltip(&lines)

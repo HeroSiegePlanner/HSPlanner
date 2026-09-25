@@ -99,7 +99,6 @@ pub fn ocr_image_bytes_controlled(
         .collect())
 }
 
-#[cfg_attr(feature = "desktop", tauri::command)]
 pub fn ocr_tooltip_lines(image_base64: String) -> Result<Vec<String>, String> {
     let bytes = base64::engine::general_purpose::STANDARD
         .decode(image_base64.trim())

@@ -1,14 +1,10 @@
 use std::collections::HashSet;
 
-#[cfg(feature = "desktop")]
-use super::algo::ProgressPayload;
 use super::algo::{suggest_with_oracle, SearchInput};
 use super::types::{SuggestInput, SuggestResult};
 use crate::calc::build::compute_build_performance;
 use crate::calc::commands::{combined_dps_mid, perf_deps, BuildPerformanceInput};
 use crate::calc::season::SeasonScope;
-#[cfg(feature = "desktop")]
-use tauri::Emitter;
 
 // SeasonScope is thread_local and Drop clears it, so the oracle re-enters the
 // scope on every call: rayon workers get the right season, and no outer scope
@@ -103,40 +99,9 @@ fn unsupported_lines_for(added: &[u32], perf: &BuildPerformanceInput) -> Vec<Str
         .collect()
 }
 
-// A panic inside the search must degrade to "no suggestions" instead of
-// re-panicking on the IPC runtime thread.
-#[cfg(feature = "desktop")]
-async fn join_or_default(task: tauri::async_runtime::JoinHandle<SuggestResult>) -> SuggestResult {
-    task.await.unwrap_or_else(|e| {
-        eprintln!("suggest_tree_nodes task panicked: {e}");
-        SuggestResult::default()
-    })
-}
-
-#[cfg(feature = "desktop")]
-#[tauri::command]
-pub async fn suggest_tree_nodes(app: tauri::AppHandle, input: SuggestInput) -> SuggestResult {
-    join_or_default(tauri::async_runtime::spawn_blocking(move || {
-        run_suggest(&input, |current, total| {
-            let _ = app.emit("suggest-progress", ProgressPayload { current, total });
-        })
-    }))
-    .await
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[cfg(feature = "desktop")]
-    #[test]
-    fn panicked_task_returns_default_result() {
-        let result = tauri::async_runtime::block_on(async {
-            let task = tauri::async_runtime::spawn_blocking(|| -> SuggestResult { panic!("boom") });
-            join_or_default(task).await
-        });
-        assert_eq!(result, SuggestResult::default());
-    }
 
     // Wiring guard: the suggester's final_dps must equal a direct recompute of
     // the returned allocation through the same real-calc oracle.

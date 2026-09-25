@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
-#[cfg(feature = "desktop")]
-use tauri::Emitter;
 
 use super::build::{compute_build_performance, BuildPerformance, BuildPerformanceDeps};
 use super::skills as calc;

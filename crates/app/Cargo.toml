@@ -13,7 +13,6 @@ hsplanner-planner.workspace = true
 
 
 hsplanner-build.workspace = true
-hsplanner-engine.workspace = true
 hsplanner-ui.workspace = true
 hsplanner-library.workspace = true
 gpui-kit.workspace = true
