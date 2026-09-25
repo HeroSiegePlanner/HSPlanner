@@ -1,5 +1,7 @@
 ## Feature
 
+- Compared all Incarnation Tree supplementary notes with HS Helper and added The Ripper’s missing dagger requirement. Preserved verified Temporal Echo and Manafury explanations; documented remaining stat-line differences in `docs/incarnation-helper-comparison.md`.
+
 - Separated Fireball and Storm Bolt's rank/flat, generic and own-subtree damage stages, including the generic helper's rounding and total spell damage pool. Fireball's independent damage rolls now affect its average separately from an ordinary hit. Fixed Orbital Fire's 4/8/12 primary counts and fractional extra Storm Bolt casts; secondary and rebound damage no longer inflate primary hits, and calculation details identify secondary DPS that still needs a contact model.
 - Forwarded scoped skill stats through both direct damage command APIs, preserving skill-specific bonuses and hybrid calculation inputs.
 
