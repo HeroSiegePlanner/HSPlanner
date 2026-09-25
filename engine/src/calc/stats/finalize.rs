@@ -37,6 +37,15 @@ pub(crate) fn compute_final_stats(stat_sources: &SourceMap) -> HashMap<String, R
 
 // life/mana × increased × more; replenishes opt out of floor.
 pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
+    // Item-local Enhanced Defense is already baked into each armor base.
+    // Tree Defense bonuses scale the resulting character total once.
+    apply_multiplier(
+        stats,
+        "defense",
+        Some("defense_pct"),
+        Some("defense_pct_more"),
+        true,
+    );
     apply_multiplier(
         stats,
         "life",
@@ -54,13 +63,27 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     apply_multiplier(
         stats,
         "mana_replenish",
-        None,
+        Some("mana_replenish_increased"),
         Some("mana_replenish_more"),
         false,
     );
     apply_multiplier(
         stats,
         "life_replenish",
+        None,
+        Some("life_replenish_more"),
+        false,
+    );
+    apply_multiplier(
+        stats,
+        "mana_replenish_pct",
+        Some("mana_replenish_increased"),
+        Some("mana_replenish_more"),
+        false,
+    );
+    apply_multiplier(
+        stats,
+        "life_replenish_pct",
         None,
         Some("life_replenish_more"),
         false,
@@ -78,6 +101,31 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
             None,
             false,
         );
+    }
+}
+
+// Late item/tree conversions can add raw life or mana, or change their
+// additive percentages. Rebuild the affected final resource from sources;
+// applying a multiplier directly to the already-final total would compound it.
+pub fn refresh_converted_resources(
+    stats: &mut HashMap<String, Ranged>,
+    stat_sources: &SourceMap,
+    touched: &HashSet<String>,
+) {
+    for (base, increased, more) in [
+        ("life", "increased_life", "increased_life_more"),
+        ("mana", "increased_mana", "increased_mana_more"),
+    ] {
+        if ![base, increased, more]
+            .iter()
+            .any(|key| touched.contains(*key))
+        {
+            continue;
+        }
+        if let Some(sources) = stat_sources.get(base) {
+            stats.insert(base.to_string(), sum_contributions(sources));
+            apply_multiplier(stats, base, Some(increased), Some(more), true);
+        }
     }
 }
 
@@ -263,11 +311,40 @@ pub fn apply_item_granted_conversions(
     touched
 }
 
+// Powerfunnel reads the neutral physical attack after weapon Enhanced Damage.
+fn attack_damage_after_weapon_enhanced(
+    inventory: &Inventory,
+    stats: &HashMap<String, Ranged>,
+) -> Ranged {
+    let (weapon_min, weapon_max) = inventory
+        .get("weapon")
+        .and_then(|item| data::get_item(&item.base_id))
+        .and_then(|base| base.damage_min.zip(base.damage_max))
+        .unwrap_or((2.0, 6.0));
+    let stat = |key: &str| stats.get(key).copied().unwrap_or((0.0, 0.0));
+    let ed = stat("enhanced_damage");
+    let ed_more = stat("enhanced_damage_more");
+    let flat = stat("additive_physical_damage");
+    let attack = stat("attack_damage");
+    let attack_more = stat("attack_damage_more");
+    // Same neutral physical stages as the attack calculator, before skill,
+    // crit, enemy and projectile modifiers.
+    (
+        (weapon_min * (1.0 + ed.0 / 100.0) * (1.0 + ed_more.0 / 100.0) + flat.0)
+            * (1.0 + attack.0 / 100.0)
+            * (1.0 + attack_more.0 / 100.0),
+        (weapon_max * (1.0 + ed.1 / 100.0) * (1.0 + ed_more.1 / 100.0) + flat.1)
+            * (1.0 + attack.1 / 100.0)
+            * (1.0 + attack_more.1 / 100.0),
+    )
+}
+
 // Tree conversions can target attributes (re-summed in place) or stats
 // (returned in `touched` for the orchestrator to re-sum).
 #[allow(clippy::too_many_arguments)]
 pub fn apply_tree_conversions(
     tree_conversions: &[(ParsedConversion, String)],
+    inventory: &Inventory,
     attributes: &mut HashMap<String, Ranged>,
     stats: &HashMap<String, Ranged>,
     attr_sources: &mut SourceMap,
@@ -276,18 +353,59 @@ pub fn apply_tree_conversions(
     use crate::calc::tree::parse::ConvertKind;
     let mut touched: HashSet<String> = HashSet::new();
     for (conv, source_label) in tree_conversions.iter() {
-        let source_value: Ranged = match conv.from_kind {
-            ConvertKind::Attribute => attributes
-                .get(&conv.from_key)
-                .copied()
-                .unwrap_or((0.0, 0.0)),
-            ConvertKind::Stat => {
-                let from = stats.get(&conv.from_key).copied().unwrap_or((0.0, 0.0));
-                let from_more = stats
-                    .get(&format!("{}_more", conv.from_key))
+        if conv.to_key == "str_to_unarmed_damage"
+            && inventory
+                .get("weapon")
+                .and_then(|item| data::get_item(&item.base_id))
+                .is_some()
+        {
+            continue;
+        }
+        let source_value: Ranged = if matches!(
+            conv.from_key.as_str(),
+            "sum_resistances" | "overcapped_resistances" | "negative_resistances"
+        ) {
+            // These nodes read all five final elemental resistances, including
+            // individual-element gear and the difficulty penalty. They do not
+            // read just the generic All Resistances affix bucket.
+            let mut combined = stats.clone();
+            combined.extend(stats_combined_map(stats));
+            let mut sum = (0.0, 0.0);
+            for element in crate::calc::skills::ELEMENTS {
+                let key = format!("{element}_resistance");
+                let value = combined.get(&key).copied().unwrap_or_default();
+                let cap =
+                    defense::effective_cap(&key, &combined).unwrap_or(defense::DEFAULT_RES_CAP);
+                let contribution = match conv.from_key.as_str() {
+                    "negative_resistances" => ((-value.1).max(0.0), (-value.0).max(0.0)),
+                    "overcapped_resistances" => {
+                        ((value.0 - cap).max(0.0), (value.1 - cap).max(0.0))
+                    }
+                    _ => value,
+                };
+                sum.0 += contribution.0;
+                sum.1 += contribution.1;
+            }
+            sum
+        } else if conv.from_key == "attack_damage"
+            && conv.to_key == "increased_life"
+            && conv.from_kind == ConvertKind::Stat
+        {
+            attack_damage_after_weapon_enhanced(inventory, stats)
+        } else {
+            match conv.from_kind {
+                ConvertKind::Attribute => attributes
+                    .get(&conv.from_key)
                     .copied()
-                    .unwrap_or((0.0, 0.0));
-                combine_additive_and_more(from, from_more)
+                    .unwrap_or((0.0, 0.0)),
+                ConvertKind::Stat => {
+                    let from = stats.get(&conv.from_key).copied().unwrap_or((0.0, 0.0));
+                    let from_more = stats
+                        .get(&format!("{}_more", conv.from_key))
+                        .copied()
+                        .unwrap_or((0.0, 0.0));
+                    combine_additive_and_more(from, from_more)
+                }
             }
         };
         let add_min = (conv.pct / 100.0) * source_value.0;
@@ -327,5 +445,15 @@ pub fn apply_tree_disables(disables: &HashSet<DisableTarget>, stats: &mut HashMa
     if disables.contains(&DisableTarget::LifeReplenish) {
         stats.insert("life_replenish".to_string(), (0.0, 0.0));
         stats.insert("life_replenish_pct".to_string(), (0.0, 0.0));
+    }
+    if disables.contains(&DisableTarget::Dodge) {
+        for key in ["dodge_chance", "dodge_physical_damage_chance"] {
+            stats.insert(key.to_string(), (0.0, 0.0));
+            stats.insert(format!("{key}_more"), (0.0, 0.0));
+        }
+    }
+    if disables.contains(&DisableTarget::ManaReplenish) {
+        stats.insert("mana_replenish".to_string(), (0.0, 0.0));
+        stats.insert("mana_replenish_pct".to_string(), (0.0, 0.0));
     }
 }

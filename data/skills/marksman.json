@@ -1,6 +1,7 @@
 [
   {
     "id": "trickshot",
+    "weaponRequirement": "ranged",
     "classId": "marksman",
     "name": "Trickshot",
     "kind": "active",
@@ -211,7 +212,7 @@
     "kind": "active",
     "description": "Vault in the direction aimed unleashing arrows towards nearby monsters dealing increased damage.",
     "damageType": "physical",
-    "tags": ["Cast", "Active", "Movement", "Spell", "Strike"],
+    "tags": ["Cast", "Active", "Movement", "Spell", "Strike", "Leap"],
     "movementDuringUse": 0,
     "baseCastRate": 1,
     "maxRank": 20,
@@ -404,6 +405,7 @@
   },
   {
     "id": "multishot",
+    "weaponRequirement": "ranged",
     "classId": "marksman",
     "name": "Multishot",
     "kind": "active",
@@ -609,6 +611,7 @@
   },
   {
     "id": "homing_missile",
+    "weaponRequirement": "ranged",
     "classId": "marksman",
     "name": "Homing Missile",
     "kind": "active",
@@ -661,6 +664,7 @@
   },
   {
     "id": "volatile_shot",
+    "weaponRequirement": "ranged",
     "classId": "marksman",
     "name": "Volatile Shot",
     "kind": "active",
@@ -877,6 +881,7 @@
   },
   {
     "id": "arrow_rain",
+    "weaponRequirement": "ranged",
     "classId": "marksman",
     "name": "Arrow Rain",
     "kind": "active",
@@ -1093,6 +1098,7 @@
   },
   {
     "id": "arrow_rampage",
+    "weaponRequirement": "ranged",
     "classId": "marksman",
     "name": "Arrow Rampage",
     "kind": "active",

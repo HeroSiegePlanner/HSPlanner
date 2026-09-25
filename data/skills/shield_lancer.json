@@ -1,6 +1,7 @@
 [
   {
     "id": "glorious_strike",
+    "weaponRequirement": "melee",
     "classId": "shield_lancer",
     "name": "Glorious Strike",
     "kind": "active",
@@ -657,6 +658,7 @@
   },
   {
     "id": "lance_thrust",
+    "weaponRequirement": "melee",
     "classId": "shield_lancer",
     "name": "Lance Thrust",
     "kind": "active",
@@ -926,6 +928,7 @@
   },
   {
     "id": "shield_slam",
+    "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Shield Slam",
     "kind": "active",
@@ -1403,6 +1406,7 @@
   },
   {
     "id": "shield_wall",
+    "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Shield Wall",
     "kind": "buff",
@@ -1677,6 +1681,7 @@
   },
   {
     "id": "counter",
+    "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Counter",
     "kind": "active",

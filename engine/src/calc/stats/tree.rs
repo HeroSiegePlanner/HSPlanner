@@ -8,6 +8,7 @@ use super::*;
 pub struct TreeAggregation {
     pub conversions: Vec<(ParsedConversion, String)>,
     pub disables: HashSet<DisableTarget>,
+    pub ailments_only: bool,
 }
 
 // A branch's `g` tags gate only the lines whose own text carries no tag; every
@@ -71,7 +72,26 @@ pub(crate) fn apply_node_line_contributions(
         if info.lines.is_empty() {
             continue;
         }
-        for line in info.lines.iter() {
+        // Mechanics such as Agile Wizard's regeneration restriction live in
+        // `note`, not in the numeric tooltip lines.
+        for line in info
+            .lines
+            .iter()
+            .map(String::as_str)
+            .chain(info.note.as_deref())
+        {
+            let lower = line.to_ascii_lowercase();
+            if lower.contains("cannot replenish life from any other sources") {
+                agg.disables.insert(DisableTarget::LifeReplenish);
+            }
+            if lower.contains("no longer replenish mana from any other sources")
+                || lower.contains("mana replenish is disabled")
+            {
+                agg.disables.insert(DisableTarget::ManaReplenish);
+            }
+            if lower.contains("can no longer dodge monster attacks") {
+                agg.disables.insert(DisableTarget::Dodge);
+            }
             if let Some(parsed) = parse_tree_node_mod(line) {
                 if let Some(cond) = parsed.self_condition {
                     let active = player_conditions
@@ -81,6 +101,32 @@ pub(crate) fn apply_node_line_contributions(
                     if !active {
                         continue;
                     }
+                    if cond == crate::calc::tree::parse::SelfConditionKey::FullLife
+                        && player_conditions
+                            .get("life_below_40")
+                            .copied()
+                            .unwrap_or(false)
+                    {
+                        continue;
+                    }
+                }
+                if lower.contains("you can no longer deal damage your self") {
+                    apply_contribution(
+                        attr_sources,
+                        stat_sources,
+                        "self_damage_disabled",
+                        (1.0, 1.0),
+                        format!("{}: {} #{}", label_prefix, info.title, node_id),
+                        SourceType::Tree,
+                        None,
+                    );
+                }
+                if parsed.key == "ailment_damage_all"
+                    && line
+                        .to_ascii_lowercase()
+                        .contains("but you can only deal damage with ailments")
+                {
+                    agg.ailments_only = true;
                 }
                 // node_id embedded so TS resolves the exact allocated node
                 // (multiple nodes share the same display title).
@@ -92,6 +138,82 @@ pub(crate) fn apply_node_line_contributions(
                 } else {
                     format!("{}: {} #{}", label_prefix, info.title, node_id)
                 };
+                let compound: &[(&str, f64)] = match parsed.key.as_str() {
+                    "wizards_wrath" => {
+                        if player_conditions
+                            .get("overheated")
+                            .copied()
+                            .unwrap_or(false)
+                        {
+                            &[("faster_cast_rate_more", -1.0), ("damage", 1.0)]
+                        } else {
+                            &[("faster_cast_rate_more", 1.0)]
+                        }
+                    }
+                    "risky_hunting" => &[
+                        ("increased_attack_speed_more", 1.0),
+                        ("damage", 1.0),
+                        ("physical_damage_reduction", -1.0),
+                        ("all_resistances", -1.0),
+                    ],
+                    "hunters_resilience" => &[
+                        ("increased_attack_speed_more", 1.0),
+                        ("damage", 1.0),
+                        ("physical_damage_reduction", 1.0),
+                        ("all_resistances", 1.0),
+                    ],
+                    "total_damage_dealt_and_taken" => {
+                        if !player_conditions
+                            .get("life_below_40")
+                            .copied()
+                            .unwrap_or(false)
+                        {
+                            continue;
+                        }
+                        &[("damage", 1.0), ("damage_taken_increased", 1.0)]
+                    }
+                    _ => &[],
+                };
+                let stack_cap = match parsed.key.as_str() {
+                    "agitation_movement_speed" if parsed.value > 0.0 => {
+                        // DamageReturnScript adds buff 262 with a fixed cap of 10.
+                        Some(("max_agitation_stacks", 10.0))
+                    }
+                    "wizardry_cast_rate" if parsed.value > 0.0 => {
+                        Some(("max_wizardry_stacks", 50.0))
+                    }
+                    "mage_guard_chance" if parsed.value > 0.0 => {
+                        Some(("max_mage_guard_stacks", 25.0))
+                    }
+                    "damage_dealt_and_taken_amp" => Some(("max_surging_storm_stacks", 10.0)),
+                    _ => None,
+                };
+                if let Some((key, cap)) = stack_cap {
+                    apply_contribution(
+                        attr_sources,
+                        stat_sources,
+                        key,
+                        (cap, cap),
+                        label.clone(),
+                        SourceType::Tree,
+                        None,
+                    );
+                }
+                if !compound.is_empty() {
+                    for &(key, factor) in compound {
+                        let value = parsed.value * factor;
+                        apply_contribution(
+                            attr_sources,
+                            stat_sources,
+                            key,
+                            (value, value),
+                            label.clone(),
+                            SourceType::Tree,
+                            None,
+                        );
+                    }
+                    continue;
+                }
                 apply_contribution(
                     attr_sources,
                     stat_sources,

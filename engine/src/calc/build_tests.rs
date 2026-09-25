@@ -63,6 +63,29 @@ fn perf(
     subskills: &[(&str, u32)],
     enemy: &[(&str, bool)],
 ) -> BuildPerformance {
+    perf_with_tree(class_id, skill_id, rank, subskills, enemy, &[])
+}
+
+fn perf_with_tree(
+    class_id: &str,
+    skill_id: &str,
+    rank: u32,
+    subskills: &[(&str, u32)],
+    enemy: &[(&str, bool)],
+    nodes: &[u32],
+) -> BuildPerformance {
+    perf_with_tree_conditions(class_id, skill_id, rank, subskills, enemy, nodes, &[])
+}
+
+fn perf_with_tree_conditions(
+    class_id: &str,
+    skill_id: &str,
+    rank: u32,
+    subskills: &[(&str, u32)],
+    enemy: &[(&str, bool)],
+    nodes: &[u32],
+    player: &[(&str, bool)],
+) -> BuildPerformance {
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let mut skill_ranks = HashMap::new();
@@ -72,12 +95,20 @@ fn perf(
         .map(|(id, r)| (subskill_key(skill_id, id), *r))
         .collect();
     let active_buffs = HashMap::new();
-    let custom_stats: Vec<CustomStat> = Vec::new();
-    let alloc_tree = HashSet::new();
+    // Formula fixtures intentionally have no equipment. Weapon eligibility is
+    // exercised separately with real inventory in the Wargod regressions.
+    let custom_stats = vec![CustomStat {
+        stat_key: "skill_restrictions_removed".into(),
+        value: "100".into(),
+    }];
+    let alloc_tree = nodes.iter().copied().collect();
     let tree_socketed = HashMap::new();
     let enemy_conditions: HashMap<String, bool> =
         enemy.iter().map(|(k, v)| (k.to_string(), *v)).collect();
-    let player_conditions = HashMap::new();
+    let player_conditions = player
+        .iter()
+        .map(|(key, value)| (key.to_string(), *value))
+        .collect();
     let skill_projectiles = HashMap::new();
     let enemy_resistances = HashMap::new();
     let proc_toggles = HashMap::new();
@@ -101,6 +132,29 @@ fn perf(
     deps.level = 50;
     deps.main_skill_id = Some(skill_id);
     compute_build_performance(&deps)
+}
+
+#[test]
+fn wizards_wrath_changes_real_spell_damage_and_cast_cadence() {
+    let base = perf("pyromancer", "fireball", 10, &[], &[])
+        .avg_hit_dps_max
+        .unwrap();
+    for (overheated, expected_ratio) in [(false, 1.5), (true, 0.75)] {
+        let result = perf_with_tree_conditions(
+            "pyromancer",
+            "fireball",
+            10,
+            &[],
+            &[],
+            &[992],
+            &[("overheated", overheated)],
+        );
+        let ratio = result.avg_hit_dps_max.unwrap() / base;
+        assert!(
+            (ratio - expected_ratio).abs() < 0.01,
+            "overheated={overheated}: {ratio}"
+        );
+    }
 }
 
 // marksman:gunner_drone "Multitude" grants sentry_max_amount 2/rank. Drone
@@ -360,13 +414,18 @@ fn perf_with_stats(
         .map(|(id, r)| (subskill_key(skill_id, id), *r))
         .collect();
     let active_buffs = HashMap::new();
-    let custom_stats: Vec<CustomStat> = custom
+    let mut custom_stats: Vec<CustomStat> = custom
         .iter()
         .map(|(k, v)| CustomStat {
             stat_key: k.to_string(),
             value: v.to_string(),
         })
         .collect();
+    // Isolate numerical formulas from the equipment needed to cast a skill.
+    custom_stats.push(CustomStat {
+        stat_key: "skill_restrictions_removed".into(),
+        value: "100".into(),
+    });
     let alloc_tree = HashSet::new();
     let tree_socketed = HashMap::new();
     let enemy_conditions = HashMap::new();
@@ -857,6 +916,68 @@ fn ailment_dps_adds_on_top_of_hit_dps() {
     );
 }
 
+#[test]
+fn asphyxiating_touch_keeps_ailments_but_suppresses_direct_damage() {
+    let baseline = perf(
+        "demon_slayer",
+        "demons_calling",
+        10,
+        &[("the_fiery_layer_of_hell", 5)],
+        &[],
+    );
+    let baseline_ailment = baseline.ailment_dps_max.expect("baseline burning");
+    for node_id in [312, 1736] {
+        let allocated = HashMap::new();
+        let inventory = HashMap::new();
+        let skill_ranks = HashMap::from([("demons_calling".to_string(), 10)]);
+        let subskill_ranks =
+            HashMap::from([(subskill_key("demons_calling", "the_fiery_layer_of_hell"), 5)]);
+        let active_buffs = HashMap::new();
+        let custom_stats = Vec::new();
+        let tree_nodes = HashSet::from([node_id]);
+        let tree_socketed = HashMap::new();
+        let enemy_conditions = HashMap::new();
+        let player_conditions = HashMap::new();
+        let skill_projectiles = HashMap::new();
+        let enemy_resistances = HashMap::new();
+        let proc_toggles = HashMap::new();
+        let mut deps = empty_deps(
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &subskill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &tree_nodes,
+            &tree_socketed,
+            &enemy_conditions,
+            &player_conditions,
+            &skill_projectiles,
+            &enemy_resistances,
+            &proc_toggles,
+        );
+        deps.class_id = Some("demon_slayer");
+        deps.level = 50;
+        deps.main_skill_id = Some("demons_calling");
+        let result = compute_build_performance(&deps);
+        assert_eq!(result.avg_hit_dps_max, Some(0.0), "node {node_id}");
+        assert_eq!(result.hit_dps_max, Some(0.0), "node {node_id}");
+        assert_eq!(result.proc_dps_max, 0.0, "node {node_id}");
+        assert!(result.damage.is_some() || result.attack_damage.is_some());
+        if let Some(damage) = &result.damage {
+            assert_eq!(damage.final_max, 0, "node {node_id}");
+            assert_eq!(damage.avg_max, 0, "node {node_id}");
+        }
+        if let Some(damage) = &result.attack_damage {
+            assert_eq!(damage.combined_hit_max, 0, "node {node_id}");
+            assert_eq!(damage.combined_avg_max, 0, "node {node_id}");
+        }
+        let ailment = result.ailment_dps_max.expect("burning still deals damage");
+        assert!(ailment > baseline_ailment, "node {node_id}");
+        assert_eq!(result.combined_dps_max, Some(ailment), "node {node_id}");
+    }
+}
+
 // "Heat Combustion" inflicts burning with no amount — dropping amount-less
 // states zeroed the ailment DPS of nodes whose whole point is the ailment.
 #[test]
@@ -921,6 +1042,187 @@ fn verify_subtree_lightning_break_reaches_build_hit() {
         (h_on / h_off - 2.5).abs() < 0.02,
         "150% lightning break should scale the hit 2.5x: {h_off} -> {h_on}"
     );
+}
+
+#[test]
+fn critical_break_node_reaches_real_skill_dps_only_with_matching_break() {
+    let calculate = |nodes: &[u32], active: bool| {
+        perf_with_tree(
+            "stormweaver",
+            "charged_bolts",
+            20,
+            &[("weakening_charge", 5)],
+            &[("lightning_break", active)],
+            nodes,
+        )
+    };
+    let base = calculate(&[], true);
+    let critical = calculate(&[1824], true);
+    let plain = base.damage.as_ref().unwrap();
+    let changed = critical.damage.as_ref().unwrap();
+    assert_eq!(plain.hit_max, changed.hit_max);
+    // 150% Break: (1 + 1.5 × (1 + .15 × .25)) / (1 + 1.5).
+    let expected_ratio = 1.0225;
+    assert!((changed.avg_max as f64 - plain.avg_max as f64 * expected_ratio).abs() < 2.0);
+    assert!(critical.avg_hit_dps_max.unwrap() > base.avg_hit_dps_max.unwrap());
+    assert_eq!(
+        calculate(&[1824], false).avg_hit_dps_max,
+        calculate(&[], false).avg_hit_dps_max
+    );
+    assert_eq!(
+        calculate(&[1782], true).avg_hit_dps_max,
+        base.avg_hit_dps_max
+    );
+    for node in [704, 705, 706, 707, 708, 709, 1972, 1973, 2090] {
+        let combined = calculate(&[node, 1824], true);
+        let damage = combined.damage.as_ref().unwrap();
+        assert_eq!(damage.elemental_break_pct, 5.0);
+        // (1 + .05 universal + 1.5 typed × (1 + .15 × .25)) / 2.5 baseline.
+        assert!((damage.avg_max as f64 - plain.avg_max as f64 * 1.0425).abs() < 2.0);
+        assert!((damage.hit_max as f64 - plain.hit_max as f64 * 1.02).abs() < 2.0);
+        assert_eq!(combined.hits_per_cast, base.hits_per_cast);
+        assert!(combined.avg_hit_dps_max.unwrap() > critical.avg_hit_dps_max.unwrap());
+    }
+}
+
+#[test]
+fn elemental_break_uses_the_owning_skills_damage_types_even_for_hybrid_spells() {
+    let base = perf_with_tree("samurai", "blade_barrier", 20, &[], &[], &[]);
+    let plain = base.damage.as_ref().unwrap();
+    for node in [522, 550] {
+        let on_hit = perf_with_tree("samurai", "blade_barrier", 20, &[], &[], &[node]);
+        let changed = on_hit.damage.as_ref().unwrap();
+        assert_eq!(changed.elemental_break_pct, 20.0);
+        assert!((changed.hit_max as f64 - plain.hit_max as f64 * 1.2).abs() < 2.0);
+        assert_eq!(
+            on_hit.attack_damage.as_ref().unwrap().physical_hit_max,
+            base.attack_damage.as_ref().unwrap().physical_hit_max,
+        );
+        let fireball = perf_with_tree("pyromancer", "fireball", 20, &[], &[], &[node]);
+        assert_eq!(fireball.damage.unwrap().elemental_break_pct, 0.0);
+    }
+    let spell_node = perf_with_tree("samurai", "blade_barrier", 20, &[], &[], &[704]);
+    assert_eq!(spell_node.damage.unwrap().elemental_break_pct, 0.0);
+    let fireball = perf_with_tree("pyromancer", "fireball", 20, &[], &[], &[704]);
+    assert_eq!(fireball.damage.unwrap().elemental_break_pct, 5.0);
+}
+
+#[test]
+fn incarnation_leap_nodes_reach_confirmed_skills_without_affecting_other_movement() {
+    let recipients = [
+        ("amazon", "leaping_ambush"),
+        ("amazon", "storm_dash"),
+        ("demon_slayer", "fast_slices"),
+        ("illusionist", "link_of_sand"),
+        ("jotunn", "freezing_leap"),
+        ("marauder", "crazy_grapple"),
+        ("marksman", "vault"),
+        ("paladin", "ball_lightning"),
+        ("pirate", "grenade_jump"),
+        ("prophet", "leaping_charge"),
+    ];
+    for (class, id) in recipients {
+        let skill = data::get_skills_by_class(class)
+            .iter()
+            .find(|s| s.id == id)
+            .unwrap();
+        assert!(
+            skill
+                .tags
+                .as_deref()
+                .unwrap_or_default()
+                .iter()
+                .any(|tag| tag == "Leap"),
+            "{class}/{id}"
+        );
+    }
+
+    // The six direct elemental spells exercise both flat and percentage nodes.
+    // Link of Sand has no direct damage; its tag must not manufacture a hit.
+    for (class, id) in [
+        ("amazon", "leaping_ambush"),
+        ("amazon", "storm_dash"),
+        ("jotunn", "freezing_leap"),
+        ("marauder", "crazy_grapple"),
+        ("paladin", "ball_lightning"),
+        ("pirate", "grenade_jump"),
+    ] {
+        let base = perf(class, id, 20, &[], &[]);
+        for node in [1887, 1888, 1889, 1891, 1966, 1967, 1968, 1969, 1890, 1970] {
+            let changed = perf_with_tree(class, id, 20, &[], &[], &[node]);
+            assert!(
+                changed.damage.as_ref().unwrap().hit_max > base.damage.as_ref().unwrap().hit_max,
+                "{id}, node {node}: hit"
+            );
+            assert!(
+                changed.avg_hit_dps_max.unwrap() > base.avg_hit_dps_max.unwrap(),
+                "{id}, node {node}: DPS"
+            );
+            assert_eq!(changed.hits_per_cast, base.hits_per_cast);
+        }
+    }
+    for (class, id) in [
+        ("pyromancer", "fireball"),
+        ("pyromancer", "phoenix_flight"),
+        ("illusionist", "link_of_sand"),
+        ("illusionist", "dimensional_displacement"),
+    ] {
+        let base = perf(class, id, 20, &[], &[]);
+        let changed = perf_with_tree(class, id, 20, &[], &[], &[1887, 1890]);
+        assert_eq!(changed.avg_hit_dps_max, base.avg_hit_dps_max, "{id}");
+    }
+    // Arena Master changes Crazy Grapple's movement, but the game calculates
+    // its damage from the same Leap-tagged talent before applying the variant.
+    let arena_ranks = HashMap::from([(subskill_key("crazy_grapple", "arena_master"), 3)]);
+    let grapple = data::get_skills_by_class("marauder")
+        .iter()
+        .find(|skill| skill.id == "crazy_grapple")
+        .unwrap();
+    let tags = super::super::subskill::effective_skill_tags(
+        "crazy_grapple",
+        grapple.tags.as_deref().unwrap(),
+        &arena_ranks,
+    );
+    assert!(!tags.iter().any(|tag| tag == "Movement"));
+    assert!(tags.iter().any(|tag| tag == "Leap"));
+    let arena = perf("marauder", "crazy_grapple", 20, &[("arena_master", 3)], &[]);
+    for node in [1887, 1890] {
+        let changed = perf_with_tree(
+            "marauder",
+            "crazy_grapple",
+            20,
+            &[("arena_master", 3)],
+            &[],
+            &[node],
+        );
+        assert!(
+            changed.damage.as_ref().unwrap().hit_max > arena.damage.as_ref().unwrap().hit_max,
+            "Arena Master, Leap node {node}"
+        );
+        assert_eq!(changed.hits_per_cast, arena.hits_per_cast);
+    }
+
+    // The physical weapon-coefficient branch does not consume the flat pool.
+    for (class, id) in [
+        ("demon_slayer", "fast_slices"),
+        ("marksman", "vault"),
+        ("prophet", "leaping_charge"),
+    ] {
+        let base = perf(class, id, 20, &[], &[]);
+        let changed = perf_with_tree(class, id, 20, &[], &[], &[1887]);
+        assert_eq!(
+            changed.attack_damage.as_ref().unwrap().physical_hit_max,
+            base.attack_damage.as_ref().unwrap().physical_hit_max,
+            "{id}"
+        );
+        assert_eq!(changed.avg_hit_dps_max, base.avg_hit_dps_max, "{id}");
+        let percent = perf_with_tree(class, id, 20, &[], &[], &[1890]);
+        assert!(
+            percent.attack_damage.as_ref().unwrap().physical_hit_max
+                > base.attack_damage.as_ref().unwrap().physical_hit_max,
+            "{id}: percentage bonus"
+        );
+    }
 }
 
 // brutalizing_slash is an attack with no elemental breakdown, so its subtree
@@ -991,29 +1293,15 @@ fn empty_build_produces_no_damage_no_proc() {
 
 #[test]
 fn class_with_active_skill_produces_damage() {
-    let pick = data::data()
-        .skills_by_class
-        .iter()
-        .find_map(|(cid, skills)| {
-            skills.iter().find_map(|s| {
-                if s.kind != SkillKind::Active {
-                    return None;
-                }
-                if s.damage_formula.is_none() && s.damage_per_rank.is_none() {
-                    return None;
-                }
-                Some((cid.clone(), s.id.clone()))
-            })
-        });
-    let Some((class_id, skill_id)) = pick else {
-        eprintln!("no active skill with damage formula/table; skipping");
-        return;
-    };
+    // This empty-inventory smoke test needs a skill without a weapon requirement.
+    // HashMap order could previously choose Buckshot and correctly reject its cast.
+    let class_id = "pyromancer";
+    let skill_id = "fireball";
 
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let mut skill_ranks = HashMap::new();
-    skill_ranks.insert(skill_id.clone(), 10_u32);
+    skill_ranks.insert(skill_id.to_string(), 10_u32);
     let subskill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
     let custom_stats: Vec<CustomStat> = Vec::new();
@@ -1040,9 +1328,9 @@ fn class_with_active_skill_produces_damage() {
         &enemy_resistances,
         &proc_toggles,
     );
-    deps.class_id = Some(&class_id);
+    deps.class_id = Some(class_id);
     deps.level = 50;
-    deps.main_skill_id = Some(&skill_id);
+    deps.main_skill_id = Some(skill_id);
 
     let perf = compute_build_performance(&deps);
     assert!(
@@ -1171,6 +1459,15 @@ fn item_granted_proc_damage_adds_proc_dps() {
     let perf_off = compute_build_performance(&deps);
     assert_eq!(perf_off.proc_dps_min, 0.0);
     assert_eq!(perf_off.proc_dps_max, 0.0);
+
+    let asphyxiating = HashSet::from([312]);
+    deps.allocated_tree_nodes = &asphyxiating;
+    deps.proc_toggles = &proc_toggles;
+    let ailments_only = compute_build_performance(&deps);
+    assert_eq!(ailments_only.proc_dps_min, 0.0);
+    assert_eq!(ailments_only.proc_dps_max, 0.0);
+    assert_eq!(ailments_only.combined_dps_min, None);
+    assert_eq!(ailments_only.combined_dps_max, None);
 }
 
 #[test]
@@ -1703,7 +2000,8 @@ fn nanoblenders_use_duration_and_haste_not_weapon_or_cast_speed() {
         let boosted = perf_with_stats("butcher", "blender", 20, &nodes, &[(key, "100")], 1.0);
         let expected = if key == "skill_haste" { 1.5 } else { 2.0 };
         assert!(
-            (boosted.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9,
+            (boosted.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - expected).abs()
+                < 1e-9,
             "{key}"
         );
     }
@@ -2183,8 +2481,258 @@ fn fireball_critical_burn_is_independent_expected_double_damage() {
     let changed = doubled.damage.as_ref().unwrap();
     assert_eq!(plain.hit_max, changed.hit_max);
     assert_eq!(plain.projectile_count, changed.projectile_count);
-    assert!((changed.avg_max as f64 - 1.3 * plain.avg_max as f64).abs() < 1.3, "separate rounding of base and boosted expectations");
+    assert!(
+        (changed.avg_max as f64 - 1.3 * plain.avg_max as f64).abs() < 1.3,
+        "separate rounding of base and boosted expectations"
+    );
     assert_eq!(base.hits_per_cast, doubled.hits_per_cast);
-    let step = changed.calculation().iter().find(|s| s.label() == "Double damage expectation").unwrap();
+    let step = changed
+        .calculation()
+        .iter()
+        .find(|s| s.label() == "Double damage expectation")
+        .unwrap();
     assert_eq!(step.value(), (1.3, 1.3));
+}
+
+#[path = "amazon_tests.rs"]
+mod amazon;
+
+#[test]
+fn cull_the_weak_requires_bleeding_and_never_executes_bosses() {
+    for (bleeding, boss, expected) in [
+        (false, false, 1.0),
+        (true, false, 1.0 / 0.9),
+        (true, true, 1.0),
+    ] {
+        let p = perf_with_tree(
+            "demonspawn",
+            "spinal_tap",
+            10,
+            &[],
+            &[("bleeding", bleeding), ("is_boss", boss)],
+            &[2130],
+        );
+        assert!((p.execute_mult - expected).abs() < 1e-9);
+    }
+}
+
+#[test]
+fn mechanical_engineering_blocks_player_hits_but_preserves_sentries() {
+    for (class, skill) in [("pyromancer", "fireball"), ("demonspawn", "spinal_tap")] {
+        let base = perf(class, skill, 10, &[], &[]);
+        let blocked = perf_with_tree(class, skill, 10, &[], &[], &[328]);
+        assert!(base.combined_dps_max.unwrap() > 0.0, "{skill}");
+        assert_eq!(blocked.combined_dps_max, Some(0.0), "{skill}");
+        assert_eq!(blocked.avg_hit_dps_max, Some(0.0), "{skill}");
+        assert_eq!(blocked.ailment_dps_max.unwrap_or(0.0), 0.0, "{skill}");
+    }
+    let base = perf("marksman", "gunner_drone", 10, &[], &[]);
+    let sentry = perf_with_tree("marksman", "gunner_drone", 10, &[], &[], &[328]);
+    let ratio = sentry.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap();
+    assert!((ratio - 1.5).abs() < 0.02, "sentry ratio {ratio}");
+}
+
+#[test]
+fn incarnation_conversion_reaches_attack_dps_but_never_flat_spell_damage() {
+    let base = perf("viking", "zeal", 10, &[], &[]);
+    let converted = perf_with_tree("viking", "zeal", 10, &[], &[], &[1097, 1091]);
+    let physical = base.attack_damage.as_ref().unwrap();
+    let mixed = converted.attack_damage.as_ref().unwrap();
+    assert_eq!(mixed.physical_hit_max, physical.physical_hit_max);
+    assert_eq!(mixed.converted_elements.len(), 2);
+    assert!(mixed.combined_hit_max > physical.combined_hit_max);
+    assert!(converted.hit_dps_max.unwrap() > base.hit_dps_max.unwrap());
+    assert!(converted.avg_hit_dps_max.unwrap() > base.avg_hit_dps_max.unwrap());
+    let spell = perf_with_tree("pyromancer", "fireball", 10, &[], &[], &[1097, 1091]);
+    assert_eq!(
+        spell.avg_hit_dps_max,
+        perf("pyromancer", "fireball", 10, &[], &[]).avg_hit_dps_max
+    );
+    let hybrid_base = perf("pyromancer", "inferno_slash", 10, &[], &[]);
+    let hybrid = perf_with_tree("pyromancer", "inferno_slash", 10, &[], &[], &[1097]);
+    assert_eq!(
+        hybrid.damage.as_ref().unwrap().hit_max,
+        hybrid_base.damage.as_ref().unwrap().hit_max
+    );
+    assert_eq!(
+        hybrid.attack_damage.as_ref().unwrap().poison_hit_max,
+        hybrid_base.attack_damage.as_ref().unwrap().poison_hit_max
+    );
+    assert!(hybrid.avg_hit_dps_max.unwrap() > hybrid_base.avg_hit_dps_max.unwrap());
+    let blocked = perf_with_tree("viking", "zeal", 10, &[], &[], &[1097, 328]);
+    assert_eq!(blocked.avg_hit_dps_max, Some(0.0));
+    assert!(blocked
+        .attack_damage
+        .unwrap()
+        .converted_elements
+        .iter()
+        .all(|c| c.hit_max == 0 && c.avg_max == 0));
+}
+
+#[test]
+fn incarnation_area_and_charge_bonuses_reach_real_skills() {
+    let area_base = perf("pyromancer", "fire_nova", 10, &[], &[]);
+    let area = perf_with_tree("pyromancer", "fire_nova", 10, &[], &[], &[1161]);
+    assert!(area.avg_hit_dps_max.unwrap() > area_base.avg_hit_dps_max.unwrap());
+    let charge_base = perf("pyromancer", "phoenix_flight", 10, &[], &[]);
+    let charge = perf_with_tree("pyromancer", "phoenix_flight", 10, &[], &[], &[2046]);
+    assert!(charge.avg_hit_dps_max.unwrap() > charge_base.avg_hit_dps_max.unwrap());
+    let unrelated = perf_with_tree("pyromancer", "fireball", 10, &[], &[], &[2046]);
+    assert_eq!(
+        unrelated.avg_hit_dps_max,
+        perf("pyromancer", "fireball", 10, &[], &[]).avg_hit_dps_max
+    );
+}
+
+#[test]
+fn crowd_control_immunity_damage_requires_an_immune_target() {
+    for (class, skill) in [("pyromancer", "fireball"), ("demonspawn", "spinal_tap")] {
+        let off = perf_with_tree(class, skill, 10, &[], &[], &[1044]);
+        let on = perf_with_tree(class, skill, 10, &[], &[("cc_immune", true)], &[1044]);
+        assert_eq!(
+            off.avg_hit_dps_max,
+            perf(class, skill, 10, &[], &[]).avg_hit_dps_max
+        );
+        let ratio = on.avg_hit_dps_max.unwrap() / off.avg_hit_dps_max.unwrap();
+        assert!((ratio - 1.25).abs() < 0.01, "{skill}: {ratio}");
+    }
+}
+
+#[test]
+fn immunity_shatter_notes_raise_dot_against_nonimmune_targets() {
+    let base = perf_with_tree("pyromancer", "fireball", 10, &[], &[], &[472]);
+    for (nodes, multiplier) in [(&[472, 813][..], 1.25), (&[472, 813, 825][..], 1.5)] {
+        let result = perf_with_tree("pyromancer", "fireball", 10, &[], &[], nodes);
+        assert_eq!(result.avg_hit_dps_max, base.avg_hit_dps_max);
+        assert!(
+            (result.ailment_dps_max.unwrap() / base.ailment_dps_max.unwrap() - multiplier).abs()
+                < 1e-9
+        );
+    }
+}
+
+#[test]
+fn immunity_shatter_nodes_restore_dot_against_full_immunity() {
+    let baseline = perf_with_tree("pyromancer", "fireball", 10, &[], &[], &[472]);
+    let base_dot = baseline.ailment_dps_max.unwrap();
+    assert!(base_dot > 0.0);
+    for (nodes, restored) in [
+        (&[472][..], 0.0),
+        (&[472, 813][..], 0.5),
+        (&[472, 825][..], 0.5),
+        (&[472, 813, 825][..], 1.0),
+    ] {
+        let immune = perf_with_tree(
+            "pyromancer",
+            "fireball",
+            10,
+            &[],
+            &[("dot_immune", true)],
+            nodes,
+        );
+        assert_eq!(immune.avg_hit_dps_max, baseline.avg_hit_dps_max);
+        assert!((immune.ailment_dps_max.unwrap_or(0.0) - base_dot * restored).abs() < 1e-9);
+        assert!(
+            (immune.combined_dps_max.unwrap()
+                - immune.avg_hit_dps_max.unwrap()
+                - base_dot * restored)
+                .abs()
+                < 1e-9
+        );
+        let disabled = perf_with_tree(
+            "pyromancer",
+            "fireball",
+            10,
+            &[],
+            &[("dot_immune", false)],
+            nodes,
+        );
+        let absent = perf_with_tree("pyromancer", "fireball", 10, &[], &[], nodes);
+        assert_eq!(disabled.ailment_dps_max, absent.ailment_dps_max);
+    }
+}
+
+#[test]
+fn wargod_total_damage_penalty_reaches_spell_and_weapon_hits() {
+    for (class, skill) in [("pyromancer", "fireball"), ("viking", "zeal")] {
+        for nodes in [&[][..], &[638, 643][..]] {
+            let baseline = perf_with_tree(class, skill, 20, &[], &[], nodes);
+            let mut with_wargod = nodes.to_vec();
+            with_wargod.push(737);
+            let wargod = perf_with_tree(class, skill, 20, &[], &[], &with_wargod);
+            let hit = |p: &BuildPerformance| {
+                p.attack_damage
+                    .as_ref()
+                    .map(|a| a.combined_hit_max)
+                    .or_else(|| p.damage.as_ref().map(|d| d.hit_max))
+                    .unwrap() as f64
+            };
+            // Final integer rounding can differ by one point; the penalty
+            // multiplies the whole hit even with existing increased damage.
+            assert!(
+                (hit(&wargod) - hit(&baseline) * 0.85).abs() <= 1.0,
+                "{skill}"
+            );
+        }
+    }
+}
+
+#[test]
+fn raging_titan_damage_affects_spells_and_complete_weapon_hits() {
+    for (class, skill) in [("pyromancer", "fireball"), ("viking", "zeal")] {
+        let base = perf_with_tree(class, skill, 10, &[], &[], &[149, 150]);
+        let boosted = perf_with_tree(class, skill, 10, &[], &[], &[149, 150, 155]);
+        // Compare hits: node 155 independently grants Total Attack Speed.
+        let hit = |p: &BuildPerformance| {
+            p.attack_damage
+                .as_ref()
+                .map(|a| a.combined_hit_max)
+                .or_else(|| p.damage.as_ref().map(|d| d.hit_max))
+                .unwrap()
+        };
+        assert!(hit(&boosted) > hit(&base), "{skill}");
+        let delta = boosted.stats.get("damage").copied().unwrap_or_default().0
+            - base.stats.get("damage").copied().unwrap_or_default().0;
+        assert_eq!(delta, 2.0);
+        assert_eq!(
+            boosted.stats.get("enhanced_damage"),
+            base.stats.get("enhanced_damage")
+        );
+    }
+}
+
+#[test]
+fn power_of_weakness_increases_spell_and_weapon_damage() {
+    for (class, skill) in [("pyromancer", "fireball"), ("viking", "zeal")] {
+        // Lost Resistances supplies -7 to each of the five elements.
+        let base = perf_with_tree(class, skill, 20, &[], &[], &[638]);
+        let boosted = perf_with_tree(class, skill, 20, &[], &[], &[638, 643]);
+        assert!(
+            boosted.avg_hit_dps_max.unwrap() > base.avg_hit_dps_max.unwrap(),
+            "{skill}"
+        );
+        assert_eq!(
+            boosted.stats.get("enhanced_damage"),
+            base.stats.get("enhanced_damage")
+        );
+        let extra = boosted.stats.get("damage").copied().unwrap_or_default().0
+            - base.stats.get("damage").copied().unwrap_or_default().0;
+        assert!((extra - 35.0 * 0.04).abs() < 1e-9);
+    }
+}
+
+#[test]
+fn colossus_total_damage_reaches_spells_and_weapon_hits() {
+    for (class, skill) in [("pyromancer", "fireball"), ("viking", "zeal")] {
+        let base = perf(class, skill, 20, &[], &[]);
+        let boosted = perf_with_tree(class, skill, 20, &[], &[], &[579, 580, 581, 582]);
+        // Four 1% per-stack nodes, five stacks including the base capacity.
+        assert_eq!(boosted.stats["damage"], (20.0, 20.0));
+        let ratio = boosted.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap();
+        assert!((ratio - 1.2).abs() < 0.02, "{skill}: {ratio}");
+        assert_eq!(
+            boosted.stats.get("enhanced_damage"),
+            base.stats.get("enhanced_damage")
+        );
+    }
 }

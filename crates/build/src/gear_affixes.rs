@@ -203,6 +203,40 @@ pub fn set_affix_value(item: &mut super::EquippedItem, index: usize, value: f64)
     apply_affix_value(&mut item.affixes[index], &tiers, stars, value)
 }
 
+fn nearest_affix_roll(affix: &Affix, stars: Option<u32>, target: f64) -> Option<(f64, f64)> {
+    use hsplanner_engine::calc::{
+        affix::{affix_star_multiplier, rolled_affix_value_with_stars},
+        star_scaling::stat_star_flat_bonus,
+    };
+    let (min, max) = (affix.value_min?, affix.value_max?);
+    let key = affix.stat_key.as_deref();
+    let raw = (target - stat_star_flat_bonus(key, stars)) / affix_star_multiplier(key, stars);
+    let mut best = None;
+    // Flat rolls round before stars and whole scaled values floor afterward.
+    // Check the adjacent whole bases as well as the fractional Percent inverse.
+    for base in [min, max, raw, raw.floor(), raw.ceil()] {
+        let roll = if min == max {
+            1.
+        } else {
+            ((base - min) / (max - min)).clamp(0., 1.)
+        };
+        let shown = rolled_affix_value_with_stars(affix, roll, stars).abs();
+        let distance = (shown - target).abs();
+        // Equivalent fractional rolls must still tie across overlapping tiers.
+        let distance = if distance <= 8. * f64::EPSILON * target.max(1.) {
+            0.
+        } else {
+            distance
+        };
+        if best.is_none_or(|(_, previous, delta)| {
+            distance < delta || (distance == delta && shown < previous)
+        }) {
+            best = Some((roll, shown, distance));
+        }
+    }
+    best.map(|(roll, _, distance)| (roll, distance))
+}
+
 fn apply_affix_value(
     eq: &mut hsplanner_engine::calc::types::EquippedAffix,
     tiers: &[&Affix],
@@ -215,25 +249,16 @@ fn apply_affix_value(
     let mut best = None;
     let mut distance = f64::INFINITY;
     for &tier in tiers {
-        let Some((lo, hi)) = tier_bounds(tier, stars) else {
+        let Some((roll, delta)) = nearest_affix_roll(tier, stars, value.abs()) else {
             continue;
         };
-        let target = value.abs().clamp(lo, hi);
-        let delta = (target - value.abs()).abs();
         if delta < distance {
-            best = Some((tier, target));
+            best = Some((tier, roll));
             distance = delta;
         }
     }
-    let Some((tier, target)) = best else {
+    let Some((tier, roll)) = best else {
         return false;
-    };
-    let start = hsplanner_engine::calc::affix::rolled_affix_value_with_stars(tier, 0., stars).abs();
-    let end = hsplanner_engine::calc::affix::rolled_affix_value_with_stars(tier, 1., stars).abs();
-    let roll = if start == end {
-        1.
-    } else {
-        ((target - start) / (end - start)).clamp(0., 1.)
     };
     eq.affix_id = tier.id.clone();
     eq.tier = tier.tier;
@@ -246,6 +271,109 @@ fn apply_affix_value(
 mod tier_roll_tests {
     use super::*;
     use hsplanner_engine::calc::{affix::rolled_affix_value_with_stars, types::EquippedAffix};
+
+    #[test]
+    fn starred_strength_editor_preserves_reachable_value_and_lowest_tier() {
+        let mut item = super::super::make_item("base_flask_achemists_flask").unwrap();
+        item.stars = Some(5);
+        item.affixes.push(EquippedAffix {
+            affix_id: "1_5_to_strength_t3_force".into(),
+            tier: 3,
+            roll: 1.,
+            custom_value: Some(999.),
+        });
+        assert!(set_affix_value(&mut item, 0, 15.));
+        let eq = &item.affixes[0];
+        assert_eq!(eq.tier, 3);
+        assert_eq!(eq.custom_value, None);
+        assert_eq!(
+            rolled_affix_value_with_stars(
+                data::get_affix(&eq.affix_id).unwrap(),
+                eq.roll,
+                item.stars
+            ),
+            15.
+        );
+    }
+
+    #[test]
+    fn starred_flat_values_choose_nearest_reachable_and_lower_magnitude_on_ties() {
+        use hsplanner_engine::calc::types::{AffixFormat, AffixSign};
+        for (sign, cases) in [
+            (AffixSign::Plus, [(13.8, 13.), (14., 13.), (14.2, 15.)]),
+            (
+                AffixSign::Minus,
+                [(-15.8, -15.), (-16., -15.), (-16.2, -17.)],
+            ),
+        ] {
+            let affix = Affix {
+                id: "strength".into(),
+                value_min: Some(5.),
+                value_max: Some(15.),
+                stat_key: Some("to_strength".into()),
+                format: AffixFormat::Flat,
+                sign,
+                ..Default::default()
+            };
+            let mut eq = EquippedAffix::default();
+            for (requested, expected) in cases {
+                assert!(apply_affix_value(&mut eq, &[&affix], Some(5), requested));
+                assert_eq!(
+                    rolled_affix_value_with_stars(&affix, eq.roll, Some(5)),
+                    expected
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn starred_percent_values_preserve_fractional_rolls_and_sign() {
+        use hsplanner_engine::calc::types::{AffixFormat, AffixSign};
+        for sign in [AffixSign::Plus, AffixSign::Minus] {
+            let affix = Affix {
+                id: "cast-rate".into(),
+                value_min: Some(5.),
+                value_max: Some(15.),
+                stat_key: Some("faster_cast_rate".into()),
+                format: AffixFormat::Percent,
+                sign,
+                ..Default::default()
+            };
+            let mut eq = EquippedAffix::default();
+            assert!(apply_affix_value(&mut eq, &[&affix], Some(5), 12.5));
+            let expected = if sign == AffixSign::Minus {
+                -12.5
+            } else {
+                12.5
+            };
+            assert!(
+                (rolled_affix_value_with_stars(&affix, eq.roll, Some(5)) - expected).abs() < 1e-10
+            );
+        }
+    }
+
+    #[test]
+    fn fractional_roundoff_does_not_select_a_higher_overlapping_tier() {
+        let low = Affix {
+            id: "low".into(),
+            tier: 1,
+            value_min: Some(0.),
+            value_max: Some(11.),
+            stat_key: Some("faster_cast_rate".into()),
+            format: hsplanner_engine::calc::types::AffixFormat::Percent,
+            ..Default::default()
+        };
+        let high = Affix {
+            id: "high".into(),
+            tier: 2,
+            value_max: Some(1.),
+            ..low.clone()
+        };
+        let mut eq = EquippedAffix::default();
+        assert!(apply_affix_value(&mut eq, &[&low, &high], Some(5), 1.));
+        assert_eq!(eq.tier, 1);
+        assert!((rolled_affix_value_with_stars(&low, eq.roll, Some(5)) - 1.).abs() < 1e-10);
+    }
 
     #[test]
     fn defense_family_changes_tier_and_roll_and_clears_override() {

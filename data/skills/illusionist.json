@@ -262,7 +262,7 @@
     "name": "Link of Sand",
     "kind": "active",
     "description": "Pull yourself into the closest Sand Guardian in the target location temporarily empowering all nearby Sand Guardians arcane damage.",
-    "tags": ["Cast", "Active", "Spell"],
+    "tags": ["Cast", "Active", "Spell", "Leap"],
     "baseCastRate": 1,
     "effectDuration": 8,
     "maxRank": 20,

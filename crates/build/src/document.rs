@@ -163,7 +163,7 @@ impl BuildSnapshot {
                 && (s.contains("melee weapons") || s.contains("swords, maces and axes"))
         });
         let grip_type = |item: &hsplanner_engine::calc::types::ItemBase| {
-            ["Sword", "Mace", "Axe", "Polearm", "Claw"].contains(&item.base_type.as_str())
+            ["Sword", "Mace", "Axe"].contains(&item.base_type.as_str())
         };
         if base.two_handed.unwrap_or(false) || main.is_some_and(|b| b.two_handed.unwrap_or(false)) {
             return base.slot == "weapon" && grip && main.is_none_or(grip_type) && grip_type(base);
@@ -340,6 +340,24 @@ impl BuildSnapshot {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn dot_immunity_survives_save_and_reaches_the_engine() {
+        let old: BuildSnapshot = serde_json::from_value(json!({})).unwrap();
+        assert!(!old.enemy_conditions.contains_key("dot_immune"));
+        let mut snapshot = old;
+        snapshot.enemy_conditions.insert("dot_immune".into(), true);
+        let restored: BuildSnapshot =
+            serde_json::from_value(serde_json::to_value(snapshot).unwrap()).unwrap();
+        assert_eq!(
+            restored
+                .planner_input()
+                .build
+                .enemy_conditions
+                .get("dot_immune"),
+            Some(&true)
+        );
+    }
 
     #[test]
     fn subskill_budget_defaults_for_old_saves_and_caps_imported_values() {

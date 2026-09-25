@@ -1135,6 +1135,7 @@
   },
   {
     "id": "flash_freeze",
+    "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "Flash Freeze",
     "kind": "active",
@@ -1366,7 +1367,7 @@
     "kind": "active",
     "description": "Leap through the air into target location freezing and dealing cold damage to monsters when landing.",
     "damageType": "cold",
-    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect"],
+    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect", "Leap"],
     "movementDuringUse": 85,
     "baseCastRate": 1,
     "maxRank": 20,
@@ -1823,6 +1824,7 @@
   },
   {
     "id": "frost_sunder",
+    "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "Frost Sunder",
     "kind": "active",
@@ -2059,6 +2061,7 @@
   },
   {
     "id": "embodiment_of_aurgelmir",
+    "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "The Embodiment of Aurgelmir",
     "kind": "buff",

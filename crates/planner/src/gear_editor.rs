@@ -8,6 +8,7 @@ use crate::item_tooltip;
 use crate::skill_details::stat_name;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
 use hsplanner_engine::calc::affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars};
+use hsplanner_engine::calc::rank::{item_skill_bonus_override, item_skill_rank_range};
 use hsplanner_engine::calc::types::{ItemBase, ItemSet};
 use hsplanner_ui::controls::{ButtonSize, ButtonTone, command_button, modal_button};
 use hsplanner_ui::scroll::PageScroll;
@@ -2062,33 +2063,6 @@ impl GearView {
         !same_item(self.candidate.as_ref(), inventory.get(&self.slot))
     }
 
-    pub(super) fn request_editor_close(
-        &mut self,
-        window: &mut Window,
-        cx: &mut Context<Self>,
-    ) -> bool {
-        if self.confirming_close {
-            self.keep_editor_open(window, cx);
-            return false;
-        }
-        if !self.editor_dirty(cx) {
-            return true;
-        }
-        self.confirming_close = true;
-        self.confirmation_return_focus = window.focused(cx);
-        window.focus(&self.confirmation_focus, cx);
-        cx.notify();
-        false
-    }
-
-    fn keep_editor_open(&mut self, window: &mut Window, cx: &mut Context<Self>) {
-        self.confirming_close = false;
-        if let Some(focus) = self.confirmation_return_focus.take() {
-            window.focus(&focus, cx);
-        }
-        cx.notify();
-    }
-
     pub(super) fn editor_footer(&self, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
         let dirty = self.editor_dirty(cx);
@@ -2100,7 +2074,7 @@ impl GearView {
                 || tr("gear.empty_slot").to_string(),
                 |base| format!("{} · {}", base.name, rarity_label(&base.rarity)),
             );
-        let footer = div()
+        div()
             .flex_none()
             .flex()
             .items_center()
@@ -2153,18 +2127,12 @@ impl GearView {
                     .flex_none()
                     .gap_2()
                     .child(
-                        editor_button("revert-item", tr("gear.revert"), false, cx).on_click(
-                            cx.listener(|this, _, window, cx| {
-                                this.keep_editor_open(window, cx);
-                                this.revert(cx);
-                            }),
-                        ),
+                        editor_button("revert-item", tr("gear.revert"), false, cx)
+                            .on_click(cx.listener(|this, _, _, cx| this.revert(cx))),
                     )
                     .child(
                         editor_button("cancel-item", tr("gear.cancel"), false, cx).on_click(
                             cx.listener(|this, _, window, cx| {
-                                this.confirming_close = false;
-                                this.confirmation_return_focus = None;
                                 this.editing = false;
                                 this.revert(cx);
                                 window.close_dialog(cx);
@@ -2178,93 +2146,13 @@ impl GearView {
                             .on_click(cx.listener(|this, _, window, cx| {
                                 this.apply(cx);
                                 if this.error.is_none() {
-                                    this.confirming_close = false;
-                                    this.confirmation_return_focus = None;
                                     this.editing = false;
                                     this.revert(cx);
                                     window.close_dialog(cx);
                                 }
                             })),
                     ),
-            );
-        div()
-            .flex_none()
-            .flex()
-            .flex_col()
-            .when(self.confirming_close, |view| {
-                view.child(
-                    div()
-                        .id("unsaved-item-confirmation")
-                        .track_focus(&self.confirmation_focus)
-                        .role(gpui_kit::accesskit::Role::Group)
-                        .aria_label(tr("gear.unsaved_item_changes"))
-                        .flex()
-                        .flex_wrap()
-                        .items_center()
-                        .justify_between()
-                        .gap_3()
-                        .px_5()
-                        .py_3()
-                        .border_t_1()
-                        .border_color(p.accent_hot.opacity(0.3))
-                        .bg(p.accent_hot.opacity(0.08))
-                        .text_size(rems(12. / 13.))
-                        .text_color(p.accent_hot)
-                        .child(tr("gear.unsaved_changes"))
-                        .child(
-                            div()
-                                .flex()
-                                .gap_2()
-                                .child(
-                                    editor_button(
-                                        "keep-editing-item",
-                                        tr("gear.keep_editing"),
-                                        false,
-                                        cx,
-                                    )
-                                    .on_click(cx.listener(
-                                        |this, _, window, cx| this.keep_editor_open(window, cx),
-                                    )),
-                                )
-                                .child(
-                                    editor_button("discard-item", tr("gear.discard"), false, cx)
-                                        .text_color(p.negative)
-                                        .on_click(cx.listener(|this, _, window, cx| {
-                                            this.confirming_close = false;
-                                            this.confirmation_return_focus = None;
-                                            this.editing = false;
-                                            this.revert(cx);
-                                            window.close_dialog(cx);
-                                        })),
-                                )
-                                .child(
-                                    editor_button(
-                                        "save-item-before-close",
-                                        tr("gear.save"),
-                                        true,
-                                        cx,
-                                    )
-                                    .text_color(p.accent_hot)
-                                    .border_color(p.accent_deep)
-                                    .on_click(cx.listener(
-                                        |this, _, window, cx| {
-                                            this.apply(cx);
-                                            if this.error.is_none() {
-                                                this.confirming_close = false;
-                                                this.confirmation_return_focus = None;
-                                                this.editing = false;
-                                                this.revert(cx);
-                                                window.close_dialog(cx);
-                                            } else {
-                                                this.keep_editor_open(window, cx);
-                                            }
-                                        },
-                                    )),
-                                ),
-                        ),
-                )
-            })
-            .child(footer)
+            )
     }
 }
 
@@ -2593,7 +2481,8 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
     if let Some(bonuses) = &base.skill_bonuses {
         for name in item_tooltip::skill_bonus_keys(base) {
             let (min, max) = bonuses[name].as_ranged();
-            if min == max || item.skill_bonus_overrides.get(name) == Some(&0.) {
+            let pinned = item_skill_bonus_override(item, name);
+            if min == max || pinned == Some(0.) {
                 continue;
             }
             entries.push(RollEntry {
@@ -2601,8 +2490,8 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
                 stat: name.clone(),
                 label: trf("gear.skill_bonus", &[("name", (name).to_string())]),
                 format_key: String::new(),
-                bounds: apply_stars_to_ranged_value((min, max), "item_granted_skill_rank", stars),
-                pinned: item.skill_bonus_overrides.get(name).copied(),
+                bounds: item_skill_rank_range(name, (min, max), stars, None),
+                pinned,
                 is_skill: true,
             });
         }
@@ -2659,6 +2548,32 @@ fn editor_button(id: &'static str, label: &'static str, primary: bool, cx: &App)
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn skill_roll_bounds_respect_star_rank_locks_without_collapsing_to_pins() {
+        for (id, skill, expected) in [
+            (
+                "armors_heroic_gabriels_broken_wings",
+                "Fallen God's Bloodlust",
+                (1., 10.),
+            ),
+            ("gloves_satanic_thor_s_battle_gloves", "Holy Aura", (4., 6.)),
+        ] {
+            let base = data::get_item(id).unwrap();
+            let mut item = EquippedItem {
+                base_id: id.into(),
+                stars: Some(5),
+                ..Default::default()
+            };
+            item.skill_bonus_overrides.insert(skill.into(), 4.);
+            let entry = roll_entries(&item, base)
+                .into_iter()
+                .find(|entry| entry.stat == skill)
+                .unwrap();
+            assert_eq!(entry.bounds, expected, "{id}");
+            assert_eq!(entry.pinned, Some(4.), "{id}");
+        }
+    }
 
     #[::core::prelude::v1::test]
     fn runeword_section_requires_an_eligible_base_and_socket_capacity() {

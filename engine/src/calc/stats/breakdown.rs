@@ -46,10 +46,14 @@ pub struct StatBreakdown {
 // keys than the flat base; mirror apply_multipliers_pass calls.
 pub(crate) fn multiplier_keys_for(stat_key: &str) -> (Option<&'static str>, Option<&'static str>) {
     match stat_key {
+        "defense" => (Some("defense_pct"), Some("defense_pct_more")),
         "life" => (Some("increased_life"), Some("increased_life_more")),
         "mana" => (Some("increased_mana"), Some("increased_mana_more")),
-        "mana_replenish" => (None, Some("mana_replenish_more")),
-        "life_replenish" => (None, Some("life_replenish_more")),
+        "mana_replenish" | "mana_replenish_pct" => (
+            Some("mana_replenish_increased"),
+            Some("mana_replenish_more"),
+        ),
+        "life_replenish" | "life_replenish_pct" => (None, Some("life_replenish_more")),
         "life_steal" => (None, Some("life_steal_more")),
         "light_radius" => (Some("light_radius_pct"), None),
         "bleed_duration" => (Some("bleed_duration_pct"), None),
@@ -138,7 +142,16 @@ pub fn compute_stat_breakdown(
     // StatRow; reconstruct only when no final value is supplied.
     let combined_raw: Ranged = if let Some(fv) = final_value {
         fv
-    } else if inc_key_opt.is_some() || matches!(stat_key, "mana_replenish" | "life_replenish") {
+    } else if inc_key_opt.is_some()
+        || matches!(
+            stat_key,
+            "mana_replenish"
+                | "life_replenish"
+                | "mana_replenish_pct"
+                | "life_replenish_pct"
+                | "life_steal"
+        )
+    {
         let min = additive_sum.0 * (1.0 + increased_sum.0 / 100.0) * (1.0 + more_sum.0 / 100.0);
         let max = additive_sum.1 * (1.0 + increased_sum.1 / 100.0) * (1.0 + more_sum.1 / 100.0);
         (min, max)

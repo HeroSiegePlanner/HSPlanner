@@ -50,5 +50,16 @@
   "ranged_projectile_damage_more": { "tags": ["Ranged", "Projectile"], "effect": "damage_more" },
 
   "spell_damage": { "tags": ["Spell"], "effect": "damage" },
-  "spell_damage_more": { "tags": ["Spell"], "effect": "damage_more" }
+  "spell_damage_more": { "tags": ["Spell"], "effect": "damage_more" },
+  "area_skill_damage": {"tags": ["Area of Effect"], "effect": "damage"},
+  "charging_damage": {"tags": ["Charge"], "effect": "damage"},
+  "melee_damage": {"tags": ["Melee"], "effect": "damage"},
+  "melee_projectile_damage": {"tags": ["Melee", "Projectile"], "effect": "damage"},
+  "melee_projectile_crit_damage": {"tags": ["Melee", "Projectile"], "effect": "critical_damage"},
+  "leap_damage": {"tags": ["Leap"], "effect": "damage"},
+  "flat_leap_damage": {"tags": ["Leap"], "effect": "flat_damage"},
+  "struck_skills": {"tags": ["Struck"], "effect": "rank"},
+  "shield_skills": {"tags": ["Shield"], "effect": "rank"},
+  "shield_skill_damage": {"tags": ["Shield"], "effect": "damage"},
+  "aura_skills": {"tags": ["Aura"], "effect": "rank"}
 }

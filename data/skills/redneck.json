@@ -483,6 +483,7 @@
   },
   {
     "id": "tire_fire",
+    "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Tire Fire",
     "kind": "active",
@@ -1193,6 +1194,7 @@
   },
   {
     "id": "chainsaw_slash",
+    "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Chainsaw Slash",
     "kind": "active",
@@ -1476,6 +1478,7 @@
   },
   {
     "id": "chainsaw_massacre",
+    "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Chainsaw Massacre",
     "kind": "active",
@@ -2065,6 +2068,7 @@
   },
   {
     "id": "tree_trunk_triumph",
+    "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Tree Trunk Triumph",
     "kind": "active",

@@ -1,6 +1,7 @@
 [
   {
     "id": "eagle_eye",
+    "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Eagle Eye",
     "kind": "passive",
@@ -18,6 +19,7 @@
   },
   {
     "id": "trigger_finger",
+    "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Trigger Finger",
     "kind": "active",
@@ -261,6 +263,7 @@
   },
   {
     "id": "bullet_hell",
+    "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Bullet Hell",
     "kind": "active",
@@ -488,6 +491,7 @@
   },
   {
     "id": "possessed_bullet",
+    "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Possessed Bullet",
     "kind": "active",
@@ -910,6 +914,7 @@
   },
   {
     "id": "demons_presence",
+    "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Demon's Presence",
     "kind": "buff",
@@ -932,6 +937,7 @@
   },
   {
     "id": "absolute_mayhem",
+    "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Absolute Mayhem",
     "kind": "active",
@@ -1132,12 +1138,13 @@
   },
   {
     "id": "fast_slices",
+    "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Fast Slices",
     "kind": "active",
     "description": "Perform a series of dashing attacks, dealing area of effect physical damage on second attack and stunning monsters around you on the final attack.",
     "damageType": "physical",
-    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike", "Physical"],
+    "tags": ["Attack", "Active", "Melee", "Area of Effect", "Strike", "Physical", "Leap"],
     "movementDuringUse": 85,
     "maxRank": 20,
     "requiresLevel": 1,
@@ -1343,6 +1350,7 @@
   },
   {
     "id": "heart_attack",
+    "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Heart Attack",
     "kind": "passive",
@@ -1596,6 +1604,7 @@
   },
   {
     "id": "slice_of_shadows",
+    "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Slice of Shadows",
     "kind": "active",
@@ -1862,6 +1871,7 @@
   },
   {
     "id": "demon_form",
+    "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Demon Form",
     "kind": "buff",

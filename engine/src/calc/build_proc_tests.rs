@@ -151,13 +151,18 @@ fn target_and_direct_with_performance(
         .map(|(skill, node, rank)| (subskill_key(skill, node), *rank))
         .collect();
     let bools = HashMap::new();
-    let custom = custom
+    let mut custom = custom
         .iter()
         .map(|(key, value)| CustomStat {
             stat_key: (*key).into(),
             value: (*value).into(),
         })
         .collect::<Vec<_>>();
+    // Compare payload formulas independently of cast equipment requirements.
+    custom.push(CustomStat {
+        stat_key: "skill_restrictions_removed".into(),
+        value: "100".into(),
+    });
     let tree = HashSet::new();
     let sockets = HashMap::new();
     let projectiles = projectile_override
@@ -960,4 +965,21 @@ fn elemental_fireball_orbital_count_replaces_base_without_adding_secondary_count
             );
         }
     }
+}
+
+#[test]
+fn amazon_envenom_waves_change_proc_expectation_without_inflating_each_hit() {
+    let (_, base, _) =
+        target_and_direct_with_performance("amazon", "storm_dash", "envenom", &[], &[], None);
+    let (_, waves, _) = target_and_direct_with_performance(
+        "amazon",
+        "storm_dash",
+        "envenom",
+        &[("envenom", "venomwave", 2)],
+        &[],
+        None,
+    );
+    assert_eq!(base.hit_max, waves.hit_max);
+    assert_eq!(waves.avg_max, base.avg_max * 5);
+    assert_eq!(waves.projectile_count, 1);
 }

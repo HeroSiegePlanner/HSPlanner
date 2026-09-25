@@ -1484,6 +1484,7 @@
   },
   {
     "id": "pyro_technician",
+    "weaponRequirement": "melee",
     "classId": "bard",
     "name": "Pyro Technician",
     "kind": "active",
@@ -1824,6 +1825,7 @@
   },
   {
     "id": "headbanger",
+    "weaponRequirement": "melee",
     "classId": "bard",
     "name": "Headbanger",
     "kind": "active",

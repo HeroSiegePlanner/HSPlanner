@@ -969,8 +969,14 @@ impl StatsView {
                 ),
                 (
                     tr("planner.stats.elemental_hit"),
-                    if d.poison_hit_max > 0 {
-                        format_range((d.poison_hit_min as f64, d.poison_hit_max as f64), false)
+                    if d.combined_hit_max > d.physical_hit_max {
+                        format_range(
+                            (
+                                (d.combined_hit_min - d.physical_hit_min) as f64,
+                                (d.combined_hit_max - d.physical_hit_max) as f64,
+                            ),
+                            false,
+                        )
                     } else {
                         "—".into()
                     },

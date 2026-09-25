@@ -3,10 +3,42 @@ use std::collections::HashMap;
 use super::affix::apply_stars_to_ranged_value;
 use super::data::can_star_forge;
 use super::skills::{r_max, r_min, rg, ItemSkillBonuses, Ranged, Skill, StatMap};
-use super::types::{Inventory, ItemBase};
+use super::types::{EquippedItem, Inventory, ItemBase};
 
 pub fn normalize_skill_name(name: &str) -> String {
     name.trim().to_lowercase()
+}
+
+/// Skill pins use the same normalized names as aggregated item bonuses.
+pub fn item_skill_bonus_override(item: &EquippedItem, name: &str) -> Option<f64> {
+    item.skill_bonus_overrides.get(name).copied().or_else(|| {
+        let want = normalize_skill_name(name);
+        item.skill_bonus_overrides
+            .iter()
+            .find_map(|(key, value)| (normalize_skill_name(key) == want).then_some(*value))
+    })
+}
+
+/// Resolve an item's skill rank with its effective stars. A pin is the final
+/// total; unpinned ranks respect the granted skill's star lock.
+pub fn item_skill_rank_range(
+    name: &str,
+    value: Ranged,
+    stars: Option<u32>,
+    override_value: Option<f64>,
+) -> Ranged {
+    if let Some(pinned) = override_value {
+        return (pinned.round(), pinned.round());
+    }
+    let locked = super::data::get_item_granted_skill_by_name(name)
+        .is_some_and(|skill| skill.star_rank_locked);
+    let scaled = apply_stars_to_ranged_value(
+        value,
+        "item_granted_skill_rank",
+        if locked { None } else { stars },
+    );
+    // Star scaling already floors; round fractional unstarred fallback data.
+    (r_min(scaled).round(), r_max(scaled).round())
 }
 
 /// Item data names the roll, not a skill: "+X to Random Skill" only lands once
@@ -95,32 +127,12 @@ pub fn aggregate_item_skill_bonuses(
             } else {
                 skill_name.as_str()
             };
-            // implicit_overrides contract: a pin is the final total — no range, no star scaling.
-            let override_val = item
-                .skill_bonus_overrides
-                .get(skill_name)
-                .copied()
-                .or_else(|| {
-                    let want = normalize_skill_name(skill_name);
-                    item.skill_bonus_overrides
-                        .iter()
-                        .find_map(|(k, v)| (normalize_skill_name(k) == want).then_some(*v))
-                });
-            let (min, max) = if let Some(ov) = override_val {
-                let pinned = ov.round();
-                (pinned, pinned)
-            } else {
-                let locked = super::data::get_item_granted_skill_by_name(skill_name)
-                    .is_some_and(|g| g.star_rank_locked);
-                let scaled = apply_stars_to_ranged_value(
-                    val.as_ranged(),
-                    "item_granted_skill_rank",
-                    if locked { None } else { stars },
-                );
-                // No-op on the hot starred path (already floored); rounds away
-                // fractional item-data fallback values.
-                (r_min(scaled).round(), r_max(scaled).round())
-            };
+            let (min, max) = item_skill_rank_range(
+                skill_name,
+                val.as_ranged(),
+                stars,
+                item_skill_bonus_override(item, skill_name),
+            );
             let key = normalize_skill_name(target);
             let cur = out.entry(key).or_insert((0.0, 0.0));
             cur.0 += min;

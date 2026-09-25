@@ -428,6 +428,7 @@
   },
   {
     "id": "inferno_slash",
+    "weaponRequirement": "melee",
     "classId": "pyromancer",
     "name": "Inferno Slash",
     "kind": "active",
@@ -659,6 +660,7 @@
   },
   {
     "id": "searing_chains",
+    "weaponRequirement": "melee",
     "classId": "pyromancer",
     "name": "Searing Chains",
     "kind": "active",

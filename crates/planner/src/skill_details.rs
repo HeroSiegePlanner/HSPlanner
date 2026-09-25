@@ -427,6 +427,7 @@ fn tag_translation_key(tag: &str) -> Option<&'static str> {
         "Melee" => "planner.skills.tag_melee",
         "Ranged" => "planner.skills.tag_ranged",
         "Movement" => "planner.skills.tag_movement",
+        "Leap" => "planner.skills.tag_leap",
         "Orbital" => "planner.skills.tag_orbital",
         "Chain Lightning" => "planner.skills.tag_chain_lightning",
         "Chaining" => "planner.skills.tag_chaining",

@@ -20,6 +20,7 @@ use hsplanner_engine::calc::{
     custom_stat::parse_custom_stat_value,
     data,
     planner::PlannerPerformance,
+    rank::{item_skill_bonus_override, item_skill_rank_range},
     types::{CustomStat, SkillKind},
 };
 use hsplanner_ui::i18n::{Locale, tr, trf};
@@ -1070,6 +1071,21 @@ impl ConfigView {
                                     &mut snapshot.player_conditions
                                 }
                                 .insert(key.into(), *checked);
+                                if !enemy && *checked {
+                                    match key {
+                                        "full_life" => {
+                                            snapshot
+                                                .player_conditions
+                                                .insert("life_below_40".into(), false);
+                                        }
+                                        "life_below_40" => {
+                                            snapshot
+                                                .player_conditions
+                                                .insert("full_life".into(), false);
+                                        }
+                                        _ => {}
+                                    }
+                                }
                             })
                         })),
                 ),
@@ -1239,25 +1255,22 @@ impl ConfigView {
                 continue;
             };
             for (name, rank) in data::skill_bonus_entries(base, item) {
-                let Some(granted) =
-                    data::get_item_granted_skill_by_name(name).filter(|skill| skill.aura)
+                let Some(_) = data::get_item_granted_skill_by_name(name).filter(|skill| skill.aura)
                 else {
                     continue;
                 };
                 let key = name.trim().to_lowercase();
-                let stars = if !granted.star_rank_locked && data::can_star_forge(slot, &base.rarity)
-                {
+                let stars = if data::can_star_forge(slot, &base.rarity) {
                     item.stars
                 } else {
                     None
                 };
-                let bonus = hsplanner_engine::calc::star_scaling::stat_star_flat_bonus(
-                    Some("item_granted_skill_rank"),
+                let level = item_skill_rank_range(
+                    name,
+                    rank.as_ranged(),
                     stars,
-                )
-                .floor();
-                let rank = rank.as_ranged();
-                let level = (rank.0.round() + bonus, rank.1.round() + bonus);
+                    item_skill_bonus_override(item, name),
+                );
                 merc_auras
                     .entry(key)
                     .or_insert((name.clone(), base.name.clone(), level));
@@ -2187,6 +2200,8 @@ fn group_heading(id: &'static str, title: &str, subtitle: &str, cx: &App) -> Div
 }
 
 const ENEMY_CONDITIONS: &[(&str, &str, &str)] = &[
+    ("cc_immune", "planner.condition.cc_immune", ""),
+    ("dot_immune", "planner.condition.dot_immune", ""),
     ("burning", "planner.condition.burning", "fire"),
     ("poisoned", "planner.condition.poisoned", "poison"),
     ("frozenbite", "planner.condition.frostbitten", "cold"),
@@ -2211,6 +2226,14 @@ const ENEMY_CONDITIONS: &[(&str, &str, &str)] = &[
     ("is_boss", "planner.condition.boss", ""),
 ];
 const PLAYER_CONDITIONS: &[(&str, &str, &str)] = &[
+    ("overheated", "planner.condition.overheated", ""),
+    (
+        "flask_regeneration",
+        "planner.condition.flask_regeneration",
+        "",
+    ),
+    ("phasing", "planner.condition.phasing", ""),
+    ("full_life", "planner.condition.full_life", ""),
     ("crit_chance_below_40", "planner.condition.crit_below", ""),
     ("life_below_40", "planner.condition.life_below", ""),
 ];

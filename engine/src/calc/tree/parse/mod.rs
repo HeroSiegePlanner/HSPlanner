@@ -19,6 +19,9 @@ pub(crate) use rules::RULES;
 pub enum SelfConditionKey {
     CritChanceBelow40,
     LifeBelow40,
+    FullLife,
+    Phasing,
+    FlaskRegeneration,
 }
 
 impl SelfConditionKey {
@@ -26,6 +29,9 @@ impl SelfConditionKey {
         match self {
             SelfConditionKey::CritChanceBelow40 => "crit_chance_below_40",
             SelfConditionKey::LifeBelow40 => "life_below_40",
+            SelfConditionKey::FullLife => "full_life",
+            SelfConditionKey::Phasing => "phasing",
+            SelfConditionKey::FlaskRegeneration => "flask_regeneration",
         }
     }
 
@@ -33,6 +39,9 @@ impl SelfConditionKey {
         match self {
             SelfConditionKey::CritChanceBelow40 => "Critical Strike Chance is below 40% (auto)",
             SelfConditionKey::LifeBelow40 => "Current Life is below 40% of Maximum",
+            SelfConditionKey::FullLife => "At full Life",
+            SelfConditionKey::Phasing => "Phasing through monsters",
+            SelfConditionKey::FlaskRegeneration => "Regenerating from a flask",
         }
     }
 }
@@ -40,11 +49,16 @@ impl SelfConditionKey {
 pub const SELF_CONDITION_KEYS: &[SelfConditionKey] = &[
     SelfConditionKey::CritChanceBelow40,
     SelfConditionKey::LifeBelow40,
+    SelfConditionKey::FullLife,
+    SelfConditionKey::Phasing,
+    SelfConditionKey::FlaskRegeneration,
 ];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DisableTarget {
     LifeReplenish,
+    ManaReplenish,
+    Dodge,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -113,7 +127,7 @@ pub(crate) static CONVERSION_TARGET_STATS: LazyLock<HashMap<&'static str, &'stat
             ("maximum mana", "mana"),
             ("physical damage", "additive_physical_damage"),
             ("attack damage", "attack_damage"),
-            ("ranged physical damage", "ranged_physical_per_500_mana"),
+            ("ranged physical damage", "flat_ranged_physical_damage"),
             ("increased life", "increased_life"),
             ("increased damage", "enhanced_damage"),
         ]
@@ -125,6 +139,7 @@ pub(crate) static CONVERSION_TARGET_STATS: LazyLock<HashMap<&'static str, &'stat
 
 static SELF_CONDITION_SUFFIXES: LazyLock<Vec<(Regex, SelfConditionKey)>> = LazyLock::new(|| {
     vec![
+        (Regex::new(r"(?i)\s+when\s+at\s+Full\s+Life$").unwrap(), SelfConditionKey::FullLife),
         (
             Regex::new(r"(?i)\s+when\s+critical\s+strike\s+chance\s+is\s+below\s+40%$").unwrap(),
             SelfConditionKey::CritChanceBelow40,

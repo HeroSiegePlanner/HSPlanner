@@ -1,6 +1,7 @@
 [
   {
     "id": "vengeance",
+    "weaponRequirement": "melee",
     "classId": "paladin",
     "name": "Vengeance",
     "kind": "active",
@@ -245,6 +246,7 @@
   },
   {
     "id": "divine_storm",
+    "weaponRequirement": "melee",
     "classId": "paladin",
     "name": "Divine Storm",
     "kind": "active",
@@ -706,7 +708,7 @@
     "kind": "active",
     "description": "Turn into a ball of lightning and dash towards to the target location, dealing lightning damage to nearby monsters upon landing.",
     "damageType": "lightning",
-    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect"],
+    "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect", "Leap"],
     "movementDuringUse": 85,
     "baseCastRate": 1,
     "effectDuration": 3,
@@ -913,6 +915,7 @@
   },
   {
     "id": "lightning_fury",
+    "weaponRequirement": "melee",
     "classId": "paladin",
     "name": "Lightning Fury",
     "kind": "active",

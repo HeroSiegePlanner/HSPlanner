@@ -13,6 +13,7 @@ fn additive_elemental_breakdown(stats: &StatMap) -> (f64, f64, Vec<ExtraSource>)
     let mut min_sum = 0.0;
     let mut max_sum = 0.0;
     let mut sources: Vec<ExtraSource> = Vec::new();
+    let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(stats);
     for elem in ELEMENTS {
         let v = rg(stats, &format!("additive_{elem}_damage"));
         let lo = r_min(v);
@@ -20,6 +21,8 @@ fn additive_elemental_breakdown(stats: &StatMap) -> (f64, f64, Vec<ExtraSource>)
         if lo == 0.0 && hi == 0.0 {
             continue;
         }
+        let lo = (lo + bound_flat.0) * bound_multiplier.0;
+        let hi = (hi + bound_flat.1) * bound_multiplier.1;
         min_sum += lo;
         max_sum += hi;
         sources.push(ExtraSource {
@@ -63,8 +66,12 @@ pub fn compute_weapon_damage(
     let add_phys = rg(stats, "additive_physical_damage");
     let atk = rg(stats, "attack_damage");
 
-    let weapon_min = w_min * (1.0 + r_min(ed) / 100.0) * (1.0 + r_min(ed_more) / 100.0);
-    let weapon_max = w_max * (1.0 + r_max(ed) / 100.0) * (1.0 + r_max(ed_more) / 100.0);
+    let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(stats);
+    let weapon_min =
+        w_min * (1.0 + r_min(ed) / 100.0) * (1.0 + r_min(ed_more) / 100.0) + bound_flat.0;
+    let weapon_max =
+        w_max * (1.0 + r_max(ed) / 100.0) * (1.0 + r_max(ed_more) / 100.0) + bound_flat.1;
+
     let add_phys_min = r_min(add_phys);
     let add_phys_max = r_max(add_phys);
 
@@ -75,8 +82,10 @@ pub fn compute_weapon_damage(
 
     // base_phys = weapon * (1 + Skill%) + AddPhys; AddElem joins later at
     // "(phys_eff + AddElem)" and AddPhys returns outside the Skill% multiplier.
-    let base_phys_min = weapon_min * (1.0 + skill_min / 100.0) + add_phys_min;
-    let base_phys_max = weapon_max * (1.0 + skill_max / 100.0) + add_phys_max;
+    let base_phys_min =
+        (weapon_min * (1.0 + skill_min / 100.0) + add_phys_min) * bound_multiplier.0;
+    let base_phys_max =
+        (weapon_max * (1.0 + skill_max / 100.0) + add_phys_max) * bound_multiplier.1;
 
     // Crit: averaged via (1 + crit% * chance% / 10000)
     let crit_chance = r_max(rg(stats, "crit_chance"));
@@ -220,6 +229,39 @@ mod tests {
 
     fn no_res() -> HashMap<String, f64> {
         HashMap::new()
+    }
+
+    #[test]
+    fn basic_weapon_damage_bounds_follow_enhanced_damage() {
+        let shared = stats(&[
+            ("enhanced_damage", 100.0),
+            ("minimum_damage_flat", 8.0),
+            ("maximum_damage_flat", 32.0),
+            ("minimum_damage_pct", 50.0),
+            ("maximum_damage_pct", 100.0),
+            ("crushing_blow_modifier", 1.0),
+        ]);
+        let d = compute_weapon_damage(
+            Some(&weapon(100.0, 100.0)),
+            &shared,
+            &ConditionMap::new(),
+            &no_res(),
+            None,
+        );
+        assert_eq!(d.hit_min, 312);
+        assert_eq!(d.hit_max, 464);
+        let mut hybrid = shared;
+        hybrid.insert("additive_physical_damage".into(), (100.0, 100.0));
+        hybrid.insert("additive_fire_damage".into(), (20.0, 20.0));
+        let d = compute_weapon_damage(
+            Some(&weapon(100.0, 100.0)),
+            &hybrid,
+            &ConditionMap::new(),
+            &no_res(),
+            None,
+        );
+        assert_eq!(d.hit_min, 504); // (200 + 8 + 100)*1.5 + (20 + 8)*1.5
+        assert_eq!(d.hit_max, 768); // (200 + 32 + 100)*2 + (20 + 32)*2
     }
 
     #[test]

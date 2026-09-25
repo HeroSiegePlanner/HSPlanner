@@ -1,6 +1,7 @@
 [
   {
     "id": "sand_carver",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Sand Carver",
     "kind": "active",
@@ -410,6 +411,7 @@
   },
   {
     "id": "sand_tremors",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Sand Tremors",
     "kind": "active",
@@ -1124,6 +1126,7 @@
   },
   {
     "id": "blade_strike",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Blade Strike",
     "kind": "active",
@@ -1337,6 +1340,7 @@
   },
   {
     "id": "eye_of_ra",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Eye of Ra",
     "kind": "active",
@@ -1552,6 +1556,7 @@
   },
   {
     "id": "flying_scimitar",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Flying Scimitar",
     "kind": "active",
@@ -1774,6 +1779,7 @@
   },
   {
     "id": "chainslice",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Chainslice",
     "kind": "active",
@@ -1983,6 +1989,7 @@
   },
   {
     "id": "rupture",
+    "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Rupture",
     "kind": "active",

@@ -111,13 +111,17 @@ fn capped(stars: Option<u32>) -> u32 {
 }
 
 pub fn stat_star_percent_multiplier(stat_key: Option<&str>, stars: Option<u32>) -> f64 {
+    1.0 + stat_star_percent_bonus(stat_key, stars) / 100.0
+}
+
+pub fn stat_star_percent_bonus(stat_key: Option<&str>, stars: Option<u32>) -> f64 {
     let s = capped(stars);
     if s == 0 {
-        return 1.0;
+        return 0.0;
     }
     match get_star_scale_config(stat_key) {
-        StarScaleConfig::Percent { per_star } => 1.0 + (s as f64 * per_star) / 100.0,
-        _ => 1.0,
+        StarScaleConfig::Percent { per_star } => s as f64 * per_star,
+        _ => 0.0,
     }
 }
 

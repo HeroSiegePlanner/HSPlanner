@@ -116,9 +116,9 @@ fn stats_combined_only_emits_keys_with_more_twin() {
 #[test]
 fn stats_combined_more_without_base_uses_zero_additive() {
     let mut stats: HashMap<String, Ranged> = HashMap::new();
-    stats.insert("mana_replenish_more".into(), (25.0, 30.0));
+    stats.insert("spell_damage_more".into(), (25.0, 30.0));
     let out = stats_combined_map(&stats);
-    assert_eq!(out.get("mana_replenish"), Some(&(25.0, 30.0)));
+    assert_eq!(out.get("spell_damage"), Some(&(25.0, 30.0)));
 }
 
 #[test]

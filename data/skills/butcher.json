@@ -1,6 +1,7 @@
 [
   {
     "id": "slicing_throw",
+    "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Slicing Throw",
     "kind": "active",
@@ -226,6 +227,7 @@
   },
   {
     "id": "furious_strike",
+    "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Furious Strike",
     "kind": "active",
@@ -572,6 +574,7 @@
   },
   {
     "id": "chain_rip",
+    "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Chain Rip",
     "kind": "active",
@@ -785,6 +788,7 @@
   },
   {
     "id": "brutalizing_slash",
+    "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Brutalizing Slash",
     "kind": "active",
@@ -1470,6 +1474,7 @@
   },
   {
     "id": "submerged_knives",
+    "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Submerged Knives",
     "kind": "active",
@@ -1696,6 +1701,7 @@
   },
   {
     "id": "blender",
+    "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Blender",
     "kind": "active",

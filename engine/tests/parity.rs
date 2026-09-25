@@ -62,6 +62,7 @@ fn parity_with_ts_fixtures() {
             }
         }
         correct_archived_cost_cadence(input_v, archived_expected, &mut expected);
+        correct_archived_weapon_requirements(&entry.name, input_v, &mut expected);
 
         let input: app_lib::calc::commands::BuildPerformanceInput =
             match serde_json::from_value(input_v.clone()) {
@@ -166,6 +167,54 @@ fn correct_archived_cost_cadence(input: &Value, archived: &Value, expected: &mut
         cost["unsustainable"] = serde_json::json!(mana_min > regen_max);
         cost["uptimeMin"] = serde_json::json!((regen_min / mana_max * 100.0).min(100.0));
         cost["uptimeMax"] = serde_json::json!((regen_max / mana_min * 100.0).min(100.0));
+    }
+}
+
+// The archived planner allowed every weapon/skill combination. These five
+// named snapshots have either no weapon or a Flask. Correct only the unavailable
+// Amazon casts; all per-use costs and other outputs keep their old expectations.
+// Independent coverage: build_requirement_tests tests all 75 requirements with
+// valid/invalid equipment and the actual Wargod node.
+fn correct_archived_weapon_requirements(name: &str, input: &Value, expected: &mut Value) {
+    let (blocked, reason): (&[&str], &str) = match name {
+        "class_only_lvl_1"
+        | "class_leveled_50"
+        | "class_with_custom_stat"
+        | "class_with_stars_5" => {
+            assert!(input["inventory"]["weapon"].is_null());
+            (
+                &["caustic_spearhead", "death_from_above", "rebound"],
+                "Requires a ranged main-hand weapon",
+            )
+        }
+        "class_with_one_item" => {
+            assert_eq!(
+                input["inventory"]["weapon"]["baseId"],
+                "base_flask_achemists_flask"
+            );
+            (&["noxious_strike"], "Requires a melee main-hand weapon")
+        }
+        _ => return,
+    };
+    assert_eq!(input["classId"], "amazon");
+    for id in blocked {
+        let cost = &mut expected["skillCosts"][*id];
+        assert!(cost.is_object());
+        cost["unavailableReason"] = serde_json::json!(reason);
+        for field in [
+            "castRateMin",
+            "castRateMax",
+            "manaPerSecMin",
+            "manaPerSecMax",
+            "uptimeMin",
+            "uptimeMax",
+        ] {
+            cost[field] = serde_json::json!(0.0);
+        }
+        cost["netMin"] = cost["manaRegenMin"].clone();
+        cost["netMax"] = cost["manaRegenMax"].clone();
+        cost["sustainable"] = serde_json::json!(false);
+        cost["unsustainable"] = serde_json::json!(false);
     }
 }
 

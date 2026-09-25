@@ -128,7 +128,17 @@ pub fn apply_inventory(
         // User-added overrides for keys not in base.implicit; ED handled above.
         for (stat_key, &value) in item.implicit_overrides.iter() {
             if let Some(implicit) = base.implicit.as_ref() {
-                if implicit.contains_key(stat_key) {
+                if implicit.contains_key(stat_key)
+                    || implicit.keys().any(|raw_key| {
+                        resolved_stat_key(
+                            raw_key,
+                            item.random_skill_element.as_deref(),
+                            item.all_skills_class_id.as_deref(),
+                        )
+                        .as_deref()
+                            == Some(stat_key.as_str())
+                    })
+                {
                     continue;
                 }
             }
@@ -264,7 +274,6 @@ pub fn apply_inventory(
                         .rainbow_sockets
                         .as_ref()
                         .is_some_and(|r| r.contains(&(i as u32 + 1)));
-                let mult = if is_rainbow { RAINBOW_MULTIPLIER } else { 1.0 };
                 let transform = base.socket_transforms.as_ref().and_then(|m| m.get(id));
                 let effective_stats: &std::collections::HashMap<String, f64> =
                     transform.unwrap_or(source_stats);
@@ -279,7 +288,7 @@ pub fn apply_inventory(
                     s
                 };
                 for (stat_key, &raw_value) in effective_stats.iter() {
-                    let v = raw_value * mult;
+                    let v = socket_stat_value(raw_value, is_rainbow);
                     apply_contribution(
                         attr_sources,
                         stat_sources,

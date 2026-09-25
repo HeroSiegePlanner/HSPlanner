@@ -1852,6 +1852,7 @@
   },
   {
     "id": "wounding_paw",
+    "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Wounding Paw",
     "kind": "active",
@@ -2117,6 +2118,7 @@
   },
   {
     "id": "leaping_charge",
+    "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Leaping Charge",
     "kind": "active",
@@ -2126,7 +2128,8 @@
       "Cast",
       "Active",
       "Melee",
-      "Movement"
+      "Movement",
+      "Leap"
     ],
     "movementDuringUse": 65,
     "range": 280,
@@ -2810,6 +2813,7 @@
   },
   {
     "id": "maelstrom_of_frost",
+    "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Maelstrom of Frost",
     "kind": "active",

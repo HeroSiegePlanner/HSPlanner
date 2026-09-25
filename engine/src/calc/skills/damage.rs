@@ -2,9 +2,9 @@ use super::calculation::{number, range, scalar, stat_inputs, CalculationStep};
 use std::collections::HashMap;
 
 use super::{
-    collect_extra_damage, crit_factors, r_max, r_min, rg, AttrMap, BonusSource, ConditionMap,
-    ExtraSource, ItemSkillBonuses, Ranged, ResistMap, Skill, SkillDamageBreakdown, SkillRanks,
-    StatMap, ELEMENTS,
+    collect_extra_damage, r_max, r_min, rg, AttrMap, BonusSource, ConditionMap, ExtraSource,
+    ItemSkillBonuses, Ranged, ResistMap, Skill, SkillDamageBreakdown, SkillRanks, StatMap,
+    ELEMENTS,
 };
 use crate::calc::affix_tags;
 use crate::calc::types::{AffixEffect, DamageScaling};
@@ -143,6 +143,7 @@ pub(super) fn bonus_source_synergy_pct(
     skills_by_name: &HashMap<String, Skill>,
     item_skill_bonuses: &ItemSkillBonuses,
     for_attack: bool,
+    repeated_rank: Option<f64>,
 ) -> (Ranged, Vec<CalculationStep>) {
     let mut trace = Vec::new();
     let mut synergy_min = 0.0;
@@ -175,6 +176,22 @@ pub(super) fn bonus_source_synergy_pct(
                 synergy_max += r_max(v) * value;
             }
             BonusSource::SkillLevel { source, value, .. } => {
+                // LoadTalentDamage's repeat branch uses the repeated cast's
+                // level for each skill synergy, even an unlearned source.
+                if let Some(rank) = repeated_rank {
+                    trace.push(CalculationStep::new(
+                        format!("Synergy · {source}"),
+                        format!(
+                            "{} repeated-cast rank × {}% per rank",
+                            number(rank),
+                            number(*value)
+                        ),
+                        scalar(rank * value),
+                    ));
+                    synergy_min += rank * value;
+                    synergy_max += rank * value;
+                    continue;
+                }
                 let br = *skill_ranks_by_name.get(source).unwrap_or(&0.0);
                 if br <= 0.0 {
                     continue;
@@ -242,7 +259,7 @@ pub struct SkillInput<'a> {
 }
 
 pub fn compute_skill_damage(input: &SkillInput<'_>) -> Option<SkillDamageBreakdown> {
-    compute_skill_damage_with_rank(input, None)
+    compute_skill_damage_with_rank(input, None, false)
 }
 
 /// A triggered cast's explicit level replaces the effective rank in the game;
@@ -251,12 +268,23 @@ pub(crate) fn compute_skill_damage_at_rank(
     input: &SkillInput<'_>,
     effective_rank: f64,
 ) -> Option<SkillDamageBreakdown> {
-    compute_skill_damage_with_rank(input, Some(effective_rank))
+    compute_skill_damage_with_rank(input, Some(effective_rank), false)
+}
+
+/// Temporal Echo passes an explicit effective level and the game's repeat flag.
+/// See temporal-echo-evidence.md: repeats replace skill-synergy levels and do
+/// not enter the on-cast branch that generates additional multicast casts.
+pub(crate) fn compute_repeated_skill_damage_at_rank(
+    input: &SkillInput<'_>,
+    effective_rank: f64,
+) -> Option<SkillDamageBreakdown> {
+    compute_skill_damage_with_rank(input, Some(effective_rank), true)
 }
 
 fn compute_skill_damage_with_rank(
     input: &SkillInput<'_>,
     fixed_rank: Option<f64>,
+    repeated: bool,
 ) -> Option<SkillDamageBreakdown> {
     let s = input.skill;
     if input.allocated_rank == 0.0 {
@@ -348,6 +376,9 @@ fn compute_skill_damage_with_rank(
         flat_min += r_min(v);
         flat_max += r_max(v);
     }
+    let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(input.stats);
+    flat_min += bound_flat.0;
+    flat_max += bound_flat.1;
     let tag_flat = affix_tags::sum_for(AffixEffect::FlatDamage, &s.tags, input.stats);
     flat_min += tag_flat.0;
     flat_max += tag_flat.1;
@@ -362,6 +393,7 @@ fn compute_skill_damage_with_rank(
         input.skills_by_name,
         input.item_skill_bonuses,
         false,
+        fixed_rank.filter(|_| repeated),
     );
 
     let magic = if is_elemental {
@@ -452,6 +484,15 @@ fn compute_skill_damage_with_rank(
         });
         extra_mult *= (1.0 + input.of_total_damage / 100.0).max(0.0);
     }
+    if super::self_damage_disabled(input.stats, &s.tags) {
+        extra_mult = 0.0;
+        extra_sources.push(ExtraSource {
+            stat_key: Some("self_damage_disabled"),
+            label: "Mechanical Engineering: self damage disabled",
+            pct: -100.0,
+        });
+    }
+
     let extra_pct = (extra_mult * (total_mult.0 + total_mult.1) * 0.5 - 1.0) * 100.0;
 
     // Crit belongs to the weapon swing the attack path computes; an attack's
@@ -465,7 +506,7 @@ fn compute_skill_damage_with_rank(
         1.0
     };
     let crit = {
-        let base = crit_factors(input.stats, is_spell);
+        let base = super::crit_factors_with_tags(input.stats, is_spell, &s.tags);
         super::CritFactors {
             chance: if crit_portion > 0.0 { base.chance } else { 0.0 },
             damage_pct: if crit_portion > 0.0 {
@@ -501,13 +542,21 @@ fn compute_skill_damage_with_rank(
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
     let resistance_mult = 1.0 - eff_res_pct / 100.0;
 
+    // LoadAllModifiers selects stat235 when the owning skill's damage types
+    // include physical, otherwise stat236. Spell tags do not decide this:
+    // Blade Barrier is a Spell with physical + arcane damage.
+    let elemental_break_source = if s.attack_scaling.is_some()
+        || s.damage_type.as_deref() == Some("physical")
+    {
+        "elemental_break_on_strike"
+    } else {
+        "elemental_break_on_spell"
+    };
     let elemental_break_pct = if is_elemental {
-        let base = r_max(rg(input.stats, "elemental_break"));
-        let on = if is_spell {
-            r_max(rg(input.stats, "elemental_break_on_spell"))
-        } else {
-            r_max(rg(input.stats, "elemental_break_on_strike"))
-        };
+        let base = r_max(rg(input.stats, "elemental_break"))
+            + r_max(rg(input.scoped, "elemental_break"));
+        let on = r_max(rg(input.stats, elemental_break_source))
+            + r_max(rg(input.scoped, elemental_break_source));
         (base + on).max(0.0)
     } else {
         0.0
@@ -529,7 +578,16 @@ fn compute_skill_damage_with_rank(
         }
         _ => 0.0,
     };
-    let element_break_mult = 1.0 + element_break_pct / 100.0;
+    // CalculateEndDamage adds the universal and matching typed Break fractions
+    // before multiplying damage. The two bonuses do not amplify each other.
+    let combined_break_mult = 1.0 + (elemental_break_pct + element_break_pct) / 100.0;
+    let (critical_break_average, critical_break_step) = super::critical_break_average_multiplier(
+        s.damage_type.as_deref().unwrap_or_default(),
+        element_break_pct,
+        elemental_break_pct,
+        input.stats,
+        input.scoped,
+    );
 
     let damage_taken_pct = r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0);
     let damage_taken_mult = 1.0 + damage_taken_pct / 100.0;
@@ -551,7 +609,18 @@ fn compute_skill_damage_with_rank(
         + (base_max - unscaled_base + flat_max)
             * (1.0 + synergy_max / 100.0)
             * (1.0 + skill_dmg_max / 100.0);
-    let subtree = rg(input.scoped, "subtree_damage");
+    let common_subtree = rg(input.scoped, "subtree_damage");
+    let elemental_subtree = rg(input.scoped, "elemental_subtree_damage");
+    let movement_conversion = rg(input.scoped, "subtree_damage_per_movement_speed");
+    let movement_speed = rg(input.stats, "movement_speed");
+    let subtree = (
+        common_subtree.0
+            + elemental_subtree.0
+            + movement_conversion.0 * movement_speed.0.max(0.0) / 100.0,
+        common_subtree.1
+            + elemental_subtree.1
+            + movement_conversion.1 * movement_speed.1.max(0.0) / 100.0,
+    );
     let subtree_mult = (
         (1.0 + subtree.0 / 100.0).max(0.0),
         (1.0 + subtree.1 / 100.0).max(0.0),
@@ -570,14 +639,39 @@ fn compute_skill_damage_with_rank(
             value
         }
     };
-    let before_subtree = (
-        generic_damage(scaled_min, skill_more_min, total_mult.0, spell_damage.0),
-        generic_damage(scaled_max, skill_more_max, total_mult.1, spell_damage.1),
+    let generic_rounded = (
+        generic_damage(
+            scaled_min * bound_multiplier.0,
+            skill_more_min,
+            total_mult.0,
+            spell_damage.0,
+        ),
+        generic_damage(
+            scaled_max * bound_multiplier.1,
+            skill_more_max,
+            total_mult.1,
+            spell_damage.1,
+        ),
     );
+
+    // Movement transformations retain this fraction of the helper result;
+    // their value is not a percentage subtracted from 100 (YYC Amazon166/177).
+    let retained = input
+        .scoped
+        .get("retained_damage_percent")
+        .copied()
+        .unwrap_or((100.0, 100.0));
+    let before_subtree = if input.scoped.contains_key("retained_damage_percent") {
+        (
+            generic_rounded.0 * retained.0.max(0.0) / 100.0,
+            generic_rounded.1 * retained.1.max(0.0) / 100.0,
+        )
+    } else {
+        generic_rounded
+    };
     let target_mult = extra_mult
         * damage_taken_mult
-        * elemental_break_mult
-        * element_break_mult
+        * combined_break_mult
         * resistance_mult;
     let cast_hit = |value: f64| {
         if staged_elemental {
@@ -592,13 +686,14 @@ fn compute_skill_damage_with_rank(
     // by their independent cast rolls during aggregation. They affect the
     // expectation, not every ordinary hit. Do not multiply them by S again.
     let proc_subtree = rg(input.scoped, "subtree_damage_on_proc");
+    let third_attack = rg(input.scoped, "third_attack_subtree_damage");
     let expected_subtree_mult = (
-        (1.0 + (subtree.0 + proc_subtree.0) / 100.0).max(0.0),
-        (1.0 + (subtree.1 + proc_subtree.1) / 100.0).max(0.0),
+        (1.0 + (subtree.0 + proc_subtree.0 + third_attack.0 / 3.0) / 100.0).max(0.0),
+        (1.0 + (subtree.1 + proc_subtree.1 + third_attack.1 / 3.0) / 100.0).max(0.0),
     );
     let expected_hit = (
-        before_subtree.0 * expected_subtree_mult.0 * target_mult,
-        before_subtree.1 * expected_subtree_mult.1 * target_mult,
+        before_subtree.0 * expected_subtree_mult.0 * target_mult * critical_break_average.0,
+        before_subtree.1 * expected_subtree_mult.1 * target_mult * critical_break_average.1,
     );
 
     let crit_min_f = hit_min * crit.on_crit_mult;
@@ -612,7 +707,7 @@ fn compute_skill_damage_with_rank(
     };
     // Multicast re-casts the spell itself. A sentry/summon/guardian skill only
     // spawns its entity, and the game never multicasts that.
-    let multicast_chance = if affix_tags::is_entity(&s.tags) {
+    let multicast_chance = if repeated || affix_tags::is_entity(&s.tags) {
         0.0
     } else {
         (shared_multicast + r_max(rg(input.scoped, "multicast_chance"))).max(0.0)
@@ -627,6 +722,11 @@ fn compute_skill_damage_with_rank(
         projectiles as f64 + extra_projectiles.1.max(0.0),
     );
     let double_damage = super::double_damage_factor(input.stats, input.scoped);
+    let elemental_double = rg(input.scoped, "elemental_double_damage_chance");
+    let double_damage = (
+        double_damage.0 * (1.0 + elemental_double.0.clamp(0.0, 100.0) / 100.0),
+        double_damage.1 * (1.0 + elemental_double.1.clamp(0.0, 100.0) / 100.0),
+    );
     let avg_min_f =
         expected_hit.0 * crit.avg_mult * double_damage.0 * multicast_mult * expected_projectiles.0;
     let avg_max_f =
@@ -667,6 +767,24 @@ fn compute_skill_damage_with_rank(
         base_formula,
         (base_min, base_max),
     ));
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        [
+            "minimum_damage_flat",
+            "maximum_damage_flat",
+            "minimum_damage_pct",
+            "maximum_damage_pct",
+        ],
+    );
+    if bound_flat != (0.0, 0.0) || bound_multiplier != (1.0, 1.0) {
+        calculation.push(CalculationStep::new(
+            "Minimum/maximum damage bonuses",
+            format!("{} flat added to the matching bound in this component's damage type; {} bound multipliers apply before final damage stages", range(bound_flat), range(bound_multiplier)),
+            (scaled_min * bound_multiplier.0, scaled_max * bound_multiplier.1),
+        ));
+    }
+
     stat_inputs(&mut calculation, input.stats, ["flat_skill_damage"]);
     if is_elemental {
         stat_inputs(
@@ -787,12 +905,19 @@ fn compute_skill_damage_with_rank(
         calculation.push(CalculationStep::new(
             "Damage after generic helper rounding",
             format!("ceil(damage after generic bonuses × more × total); if spell damage {}% is positive, multiply by it and floor first", range(spell_damage)),
+            generic_rounded,
+        ));
+    }
+    if input.scoped.contains_key("retained_damage_percent") {
+        calculation.push(CalculationStep::new(
+            "Damage retained by transformation",
+            format!("{} generic damage × {}% retained / 100, before the own-subtree multiplier and cast rounding", range(generic_rounded), range(retained)),
             before_subtree,
         ));
     }
     calculation.push(CalculationStep::new(
         "Expected own subtree damage multiplier",
-        format!("max(0, 1 + ({}% guaranteed + {}% chance-weighted bonuses) / 100); independent rolls add within the same pool", range(subtree), range(proc_subtree)),
+        format!("max(0, 1 + ({}% guaranteed + {}% chance-weighted bonuses + {}% every-third-attack bonus / 3) / 100)", range(subtree), range(proc_subtree), range(third_attack)),
         expected_subtree_mult,
     ));
     for source in &extra_sources {
@@ -826,29 +951,31 @@ fn compute_skill_damage_with_rank(
         input.stats,
         [
             "elemental_break",
-            if is_spell {
-                "elemental_break_on_spell"
-            } else {
-                "elemental_break_on_strike"
-            },
+            elemental_break_source,
         ],
     );
     calculation.push(CalculationStep::new(
-        "Elemental break multiplier",
+        "Elemental Break %",
         format!(
-            "1 + {}% / 100 (elemental hits only)",
+            "{}% contribution to the combined Break multiplier (elemental hits only)",
             number(elemental_break_pct)
         ),
-        scalar(elemental_break_mult),
+        scalar(elemental_break_pct),
     ));
     calculation.push(CalculationStep::new(
-        "Element resistance break multiplier",
+        "Element resistance Break %",
         format!(
-            "1 + {}% / 100; requires matching enemy condition",
+            "{}% contribution to the combined Break multiplier; requires matching enemy condition",
             number(element_break_pct)
         ),
-        scalar(element_break_mult),
+        scalar(element_break_pct),
     ));
+    calculation.push(CalculationStep::new(
+        "Combined Break multiplier",
+        format!("1 + ({}% Elemental Break + {}% matching typed Break) / 100; the two Break bonuses add", number(elemental_break_pct), number(element_break_pct)),
+        scalar(combined_break_mult),
+    ));
+    calculation.extend(critical_break_step);
     calculation.push(CalculationStep::new(
         "Effective enemy resistance %",
         format!(
@@ -939,7 +1066,7 @@ fn compute_skill_damage_with_rank(
     calculation.push(CalculationStep::new(
         "Multicast multiplier",
         format!(
-            "1 + {}% / 100; entity-spawning skills cannot multicast",
+            "1 + {}% / 100; repeats and entity-spawning skills cannot multicast",
             number(multicast_chance)
         ),
         scalar(multicast_mult),
@@ -958,10 +1085,10 @@ fn compute_skill_damage_with_rank(
         ),
         expected_projectiles,
     ));
-    calculation.push(CalculationStep::new("Double damage expectation", "1 + clamp(double damage chance, 0, 100) / 100; one contact, independent of critical and extra damage", double_damage));
+    calculation.push(CalculationStep::new("Double damage expectation", "(1 + clamp(double damage chance, 0, 100) / 100) × (1 + clamp(element-only double damage chance, 0, 100) / 100); independent of critical hits", double_damage));
     calculation.push(CalculationStep::new(
         "Expected damage before critical hits",
-        format!("{} generic damage × {} expected subtree × {} target modifiers; proc expectations are averaged before the final floor", range(before_subtree), range(expected_subtree_mult), number(target_mult)),
+        format!("{} generic damage × {} expected subtree × {} target modifiers × {} Critical Break adjustment; proc expectations are averaged before the final floor", range(before_subtree), range(expected_subtree_mult), number(target_mult), range(critical_break_average)),
         expected_hit,
     ));
     calculation.push(CalculationStep::new(
@@ -1078,6 +1205,66 @@ mod tests {
         compute_skill_damage(&input).expect("breakdown").hit_max
     }
 
+    #[test]
+    fn repeated_cast_uses_explicit_rank_for_unlearned_synergy_without_multicast() {
+        let mut skill = plain_skill();
+        skill.tags = vec!["Spell".into()];
+        skill.damage_formula = Some(super::super::DamageFormula {
+            base: 4.0,
+            per_level: 18.0,
+        });
+        skill.bonus_sources = vec![
+            BonusSource::SkillLevel {
+                source: "unlearned".into(),
+                stat: "fire_skill_damage".into(),
+                value: 15.0,
+            },
+            BonusSource::AttributePoint {
+                source: "Intelligence".into(),
+                stat: "fire_skill_damage".into(),
+                value: 10.0,
+            },
+        ];
+        let attrs = AttrMap::from([("Intelligence".into(), (2.0, 2.0))]);
+        let stats = StatMap::from([
+            ("all_skills".into(), (100.0, 100.0)),
+            ("multicast_chance".into(), (100.0, 100.0)),
+        ]);
+        let scoped = StatMap::from([("multicast_chance".into(), (100.0, 100.0))]);
+        let input = SkillInput {
+            skill: &skill,
+            allocated_rank: 2.0,
+            attributes: &attrs,
+            stats: &stats,
+            skill_ranks_by_name: &SkillRanks::new(),
+            item_skill_bonuses: &ItemSkillBonuses::new(),
+            enemy_conditions: &ConditionMap::new(),
+            enemy_resistances: &ResistMap::new(),
+            skills_by_name: &HashMap::new(),
+            projectile_count: 1,
+            of_total_damage: 0.0,
+            scoped: &scoped,
+            conversion_flat: 0.0,
+            conversion_skill_damage_pct: 0.0,
+        };
+        let echo = compute_repeated_skill_damage_at_rank(&input, 3.0).unwrap();
+        assert_eq!(
+            (echo.effective_rank_min, echo.effective_rank_max),
+            (3.0, 3.0)
+        );
+        assert_eq!(echo.base_max, 58.0);
+        assert_eq!(echo.synergy_max_pct, 65.0); // 3 × 15 + 2 × 10
+        assert_eq!(echo.multicast_multiplier, 1.0);
+        assert_eq!(echo.avg_max, 95); // floor(58 × 1.65)
+
+        let ordinary = compute_skill_damage_at_rank(&input, 3.0).unwrap();
+        assert_eq!(
+            ordinary.synergy_max_pct, 20.0,
+            "ordinary explicit-rank procs retain their own synergy semantics"
+        );
+        assert_eq!(ordinary.multicast_multiplier, 3.0);
+    }
+
     struct Case {
         damage_type: &'static str,
         tags: Vec<String>,
@@ -1152,6 +1339,49 @@ mod tests {
             ..Default::default()
         });
         assert_eq!(on.hit_max, 200);
+    }
+
+    #[test]
+    fn critical_break_changes_only_the_matching_break_average() {
+        for element in ELEMENTS {
+            let key = format!("{element}_break");
+            let mut case = Case {
+                damage_type: element,
+                stats: stats(&[
+                    (&key, 100.0),
+                    (&format!("{element}_break_crit_chance"), 15.0),
+                    (&format!("{element}_break_crit_damage"), 25.0),
+                ]),
+                ..Default::default()
+            };
+            let off = breakdown(&case);
+            assert_eq!((off.hit_max, off.avg_max), (100, 100));
+            case.conditions.insert(key, true);
+            let on = breakdown(&case);
+            // 100 base + 100 Break + 100 Break × 15% chance × 25% damage.
+            assert_eq!((on.hit_max, on.avg_max), (200, 203));
+            case.stats.insert("elemental_break".into(), (50.0, 50.0));
+            let both = breakdown(&case);
+            // Universal Break does not gain typed Critical Break's bonus.
+            assert_eq!((both.hit_max, both.avg_max), (250, 253));
+            case.stats.remove("elemental_break");
+            case.stats
+                .insert("spell_crit_chance".into(), (100.0, 100.0));
+            case.stats
+                .insert("spell_crit_damage".into(), (100.0, 100.0));
+            let ordinary_crit = breakdown(&case);
+            assert_eq!(ordinary_crit.hit_max, 200);
+            assert!(ordinary_crit.avg_max > on.avg_max);
+            case.stats.remove(&format!("{element}_break_crit_chance"));
+            case.scoped
+                .insert(format!("{element}_break_crit_chance"), (100.0, 150.0));
+            let always = breakdown(&case);
+            // Independent ordinary crit and Critical Break multiply once.
+            assert_eq!(always.avg_max, (225.0 * always.crit_multiplier_avg) as i64);
+            case.damage_type = "physical";
+            let physical = breakdown(&case);
+            assert_eq!(physical.hit_max, 100);
+        }
     }
 
     #[test]
@@ -1371,10 +1601,10 @@ mod tests {
         assert_eq!(more, (1.0, 1.0));
     }
 
-    // `fire_break` and `elemental_break` are separate stages — neither may leak
-    // into the other's slot. 100 base x 1.5 x 1.5 = 225.
+    // LoadMonsterBreaks returns separate fractions; CalculateEndDamage adds
+    // them before multiplying damage. 100 base × (1 + .5 + .5) = 200.
     #[test]
-    fn verify_element_break_and_elemental_break_multiply_without_reuse() {
+    fn element_break_and_elemental_break_add_before_multiplying_damage() {
         let both = breakdown(&Case {
             damage_type: "fire",
             stats: stats(&[("elemental_break", 50.0), ("fire_break", 50.0)]),
@@ -1382,7 +1612,7 @@ mod tests {
             ..Default::default()
         });
         assert_eq!(both.elemental_break_pct, 50.0);
-        assert_eq!(both.hit_max, 225);
+        assert_eq!(both.hit_max, 200);
         let elemental_only = breakdown(&Case {
             damage_type: "fire",
             stats: stats(&[("elemental_break", 50.0)]),

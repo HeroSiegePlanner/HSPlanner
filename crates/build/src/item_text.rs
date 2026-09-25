@@ -1,6 +1,8 @@
 //! Human-readable item editing. Parsing never mutates the caller's draft.
 use crate::gear;
-use hsplanner_engine::calc::{affix::apply_stars_to_ranged_value, data, types::*};
+use hsplanner_engine::calc::{
+    affix::apply_stars_to_ranged_value, data, rank::item_skill_rank_range, types::*,
+};
 use regex::Regex;
 use std::{
     collections::{BTreeMap, HashMap, HashSet},
@@ -116,15 +118,11 @@ fn displayed(
     let stars = data::can_star_forge(&base.slot, &base.rarity)
         .then_some(item.stars)
         .flatten();
-    apply_stars_to_ranged_value(
-        value.as_ranged(),
-        if skill {
-            "item_granted_skill_rank"
-        } else {
-            key
-        },
-        stars,
-    )
+    if skill {
+        item_skill_rank_range(key, value.as_ranged(), stars, None)
+    } else {
+        apply_stars_to_ranged_value(value.as_ranged(), key, stars)
+    }
 }
 fn modifier_text(eq: &EquippedAffix, forged: bool) -> String {
     let def = if forged {
@@ -712,6 +710,28 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn starred_skill_text_preserves_locked_ranks_and_unpinned_ranges() {
+        for (id, line) in [
+            (
+                "armors_heroic_gabriels_broken_wings",
+                "+[1-10] to Fallen God's Bloodlust",
+            ),
+            ("gloves_satanic_thor_s_battle_gloves", "+[4-6] to Holy Aura"),
+        ] {
+            let mut item = gear::make_item(id).unwrap();
+            item.stars = Some(5);
+            let text = serialize(&item).unwrap();
+            assert!(text.lines().any(|shown| shown == line), "{id}: {text}");
+            let result = parse(&text, &item);
+            let parsed = result
+                .item
+                .unwrap_or_else(|| panic!("{:?}", result.diagnostics));
+            assert!(parsed.skill_bonus_overrides.is_empty(), "{id}");
+        }
+    }
+
     #[test]
     fn every_base_item_text_is_valid_and_preserves_unpinned_stats() {
         let mut bases: Vec<_> = data::data().items.values().collect();

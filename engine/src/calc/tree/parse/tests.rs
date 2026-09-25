@@ -80,12 +80,13 @@ fn classify_null_rule_conversion_line_is_meta() {
 }
 
 #[test]
-fn classify_conversion_line_is_meta() {
+fn classify_attack_conversion_keeps_the_percentage_for_the_hit_stage() {
     match classify_tree_node_line("20% of Physical Damage converted to Fire") {
-        TreeLineClass::Meta(ParsedMeta::Convert(c)) => {
-            assert_eq!(c.pct, 20.0);
+        TreeLineClass::Stat(c) => {
+            assert_eq!(c.key, "physical_to_fire");
+            assert_eq!(c.value, 20.0);
         }
-        _ => panic!("expected Meta(Convert)"),
+        other => panic!("expected percentage modifier, got {other:?}"),
     }
 }
 
@@ -223,7 +224,7 @@ fn self_condition_key_string_and_label() {
         SelfConditionKey::CritChanceBelow40.label(),
         "Critical Strike Chance is below 40% (auto)"
     );
-    assert_eq!(SELF_CONDITION_KEYS.len(), 2);
+    assert_eq!(SELF_CONDITION_KEYS.len(), 5);
 }
 
 // ---- dispatchers ----
@@ -350,10 +351,12 @@ fn rule_weapon_conditional_lines_use_dedicated_keys() {
     );
     assert_mod(
         "+8 to Maximum Damage when wielding a shield",
-        "attack_damage_with_shield",
+        "max_damage_flat_with_shield",
         8.0,
     );
-    assert_mod("+8 to Maximum Damage", "attack_damage", 8.0);
+    assert_mod("+8 to Maximum Damage", "maximum_damage_flat", 8.0);
+    assert_mod("+8 to Minimum Damage", "minimum_damage_flat", 8.0);
+    assert_mod("+8 to Minimum Damage when wielding a shield", "min_damage_flat_with_shield", 8.0);
     assert_mod(
         "+15% Damage Mitigation when using a Shield",
         "damage_mitigation_with_shield",
@@ -509,7 +512,7 @@ fn conversion_target_stats_has_expected_keys() {
         CONVERSION_TARGET_STATS
             .get("ranged physical damage")
             .copied(),
-        Some("ranged_physical_per_500_mana")
+        Some("flat_ranged_physical_damage")
     );
     assert_eq!(CONVERSION_TARGET_STATS.get("unknown stat"), None);
 }
@@ -677,12 +680,9 @@ fn meta_element_conversion() {
         ConvertKind::Stat,
         20.0,
     );
-    assert_convert(
+    assert_mod(
         "30% of Physical Damage converted to fire",
-        "additive_physical_damage",
-        ConvertKind::Stat,
         "physical_to_fire",
-        ConvertKind::Stat,
         30.0,
     );
 }
@@ -729,4 +729,75 @@ fn meta_unmatched_returns_none() {
         None
     );
     assert_eq!(parse_tree_node_meta(""), None);
+}
+
+#[test]
+fn incarnation_missing_tagged_lines_preserve_flat_percent_and_penalties() {
+    for (line, key, value) in [
+        (
+            "+8% Increased Melee Projectile Damage",
+            "melee_projectile_damage",
+            8.0,
+        ),
+        (
+            "-25% Increased Melee Projectile Damage",
+            "melee_projectile_damage",
+            -25.0,
+        ),
+        (
+            "+30% Increased Melee Projectile Critical Damage",
+            "melee_projectile_crit_damage",
+            30.0,
+        ),
+        (
+            "+12 Increased Damage with Leap skills",
+            "flat_leap_damage",
+            12.0,
+        ),
+        (
+            "+15% Increased Damage with Leap skills",
+            "leap_damage",
+            15.0,
+        ),
+        ("+10 to Level of Struck Skills", "struck_skills", 10.0),
+    ] {
+        assert_mod(line, key, value);
+    }
+}
+
+#[test]
+fn ordinary_melee_damage_does_not_require_a_shield() {
+    let plain = parse_tree_node_mod("+20% Increased Melee Damage").unwrap();
+    let shield = parse_tree_node_mod("+20% Increased Melee Damage when using a Shield").unwrap();
+    assert_eq!(plain.key, "melee_damage");
+    assert_eq!(shield.key, "damage_with_shield");
+}
+
+#[test]
+fn enhanced_damage_preserves_melee_and_ranged_scope() {
+    for (line, key, value) in [
+        (
+            "+4% to Melee Enhanced Damage",
+            "enhanced_damage_melee_pct",
+            4.0,
+        ),
+        (
+            "+30% to Ranged Enhanced Damage",
+            "enhanced_damage_ranged_pct",
+            30.0,
+        ),
+        (
+            "+8% Increased Total Melee Enhanced Damage",
+            "enhanced_damage_melee_more",
+            8.0,
+        ),
+        (
+            "+8% Increased Total Ranged Enhanced Damage",
+            "enhanced_damage_ranged_more",
+            8.0,
+        ),
+        ("+10% to Enhanced Damage", "enhanced_damage", 10.0),
+    ] {
+        assert_mod(line, key, value);
+    }
 }

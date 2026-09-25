@@ -2,6 +2,38 @@ use super::super::*;
 
 pub(super) fn rules() -> Vec<ParseRule> {
     vec![
+        ParseRule {
+            test: Regex::new(r"(?i)^([+\-\d.]+)%\s+of\s+Physical\s+Damage\s+converted\s+to\s+(arcane|cold|fire|lightning|poison)$").unwrap(),
+            build: |m| Some(ParsedMod {
+                key: format!("physical_to_{}", m[2].to_ascii_lowercase()),
+                value: num(&m[1]),
+                self_condition: None,
+            }),
+        },
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Projectile\s+Damage$",
+            "melee_projectile_damage"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Projectile\s+Critical\s+Damage$",
+            "melee_projectile_crit_damage"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Damage\s+with\s+Leap\s+skills$",
+            "leap_damage"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+Increased\s+Damage\s+with\s+Leap\s+skills$",
+            "flat_leap_damage"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+to\s+Level\s+of\s+Struck\s+Skills$",
+            "struck_skills"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Struck\s+Skill\s+effectiveness$",
+            "struck_skill_effectiveness"
+        ),
         // ---- S10 incarnation tree phrasing variants ----
         // Mechanics the engine already tracks, worded differently by the
         // S10 incarnation tree data.
@@ -39,6 +71,22 @@ pub(super) fn rules() -> Vec<ParseRule> {
         // Per-element break family; lightning_break is consumed by the damage
         // formula, the other elements aggregate under the same naming scheme.
         ParseRule {
+            test: Regex::new(r"(?i)^([+\-\d.]+)%\s+Chance\s+for\s+Critical\s+(Arcane|Cold|Fire|Lightning|Poison)\s+Break(?:\s+on\s+hit)?$").unwrap(),
+            build: |m| Some(ParsedMod {
+                key: format!("{}_break_crit_chance", m[2].to_ascii_lowercase()),
+                value: num(&m[1]),
+                self_condition: None,
+            }),
+        },
+        ParseRule {
+            test: Regex::new(r"(?i)^([+\-\d.]+)%\s+Critical\s+(Arcane|Cold|Fire|Lightning|Poison)\s+Break\s+Damage$").unwrap(),
+            build: |m| Some(ParsedMod {
+                key: format!("{}_break_crit_damage", m[2].to_ascii_lowercase()),
+                value: num(&m[1]),
+                self_condition: None,
+            }),
+        },
+        ParseRule {
             test: Regex::new(
                 r"(?i)^([+\-\d.]+)%\s+Increased\s+(Arcane|Cold|Fire|Lightning|Poison)\s+Break$",
             )
@@ -58,7 +106,7 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Cap\s+on\s+All\s+Resistances$",
-            "max_all_resistances"
+            "max_all_resistances_cap"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)(?:\s*s)?\s+to\s+Spell\s+Duration$",

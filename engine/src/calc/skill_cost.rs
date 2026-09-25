@@ -21,6 +21,9 @@ pub struct EntityRate {
 #[derive(Debug, Clone, Default, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SkillCost {
+    /// A selected skill can retain its preview cost while being unusable with
+    /// the current equipment. It generates no casts or resource expenditure.
+    pub unavailable_reason: Option<String>,
     pub eff_rank_min: f64,
     pub eff_rank_max: f64,
     pub base_mana_min: Option<f64>,
@@ -166,8 +169,11 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
         (a, b) => (a.or(b), a.or(b)),
     };
     let mcr = rg(stats, "mana_cost_reduction");
-    let cost_min = base_mana_min.map(|c| (c * (1.0 - mcr.1 / 100.0)).max(0.0));
-    let cost_max = base_mana_max.map(|c| (c * (1.0 - mcr.0 / 100.0)).max(0.0));
+    let increased = rg(stats, "increased_manacost");
+    let cost_min =
+        base_mana_min.map(|c| (c * (1.0 + increased.0 / 100.0) * (1.0 - mcr.1 / 100.0)).max(0.0));
+    let cost_max =
+        base_mana_max.map(|c| (c * (1.0 + increased.1 / 100.0) * (1.0 - mcr.0 / 100.0)).max(0.0));
     // "+X% of Your Mana Costs are taken from life instead" splits every cast.
     let paid = rg(stats, "mana_cost_paid_in_life");
     let pct_min = paid.0.clamp(0.0, 100.0);
@@ -196,7 +202,13 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
 
     let mana_per_sec_min = mana_min.zip(cast_rate_min).map(|(m, r)| m * r);
     let mana_per_sec_max = mana_max.zip(cast_rate_max).map(|(m, r)| m * r);
-    let regen = rg(stats, "mana_replenish");
+    let flat_regen = rg(stats, "mana_replenish");
+    let mana = rg(stats, "mana");
+    let pct_regen = rg(stats, "mana_replenish_pct");
+    let regen = (
+        flat_regen.0 + mana.0 * pct_regen.0 / 100.0,
+        flat_regen.1 + mana.1 * pct_regen.1 / 100.0,
+    );
     let uptime = |per_sec: f64, regen: f64| {
         if per_sec <= 0.0 {
             100.0
@@ -205,6 +217,7 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
         }
     };
     SkillCost {
+        unavailable_reason: None,
         eff_rank_min: rank_min,
         eff_rank_max: rank_max,
         base_mana_min,
@@ -279,6 +292,24 @@ mod tests {
 
     fn close(a: f64, b: f64) -> bool {
         (a - b).abs() < 1e-9
+    }
+
+    #[test]
+    fn manahunger_cost_and_percentage_mana_recovery_reach_sustain() {
+        let s = thunder_fury();
+        let result = cost(
+            &s,
+            1.0,
+            &stats(&[
+                ("increased_manacost", 350.0),
+                ("mana", 2000.0),
+                ("mana_replenish", 3.0),
+                ("mana_replenish_pct", 1.0),
+            ]),
+        );
+        assert_eq!(result.mana_max, Some(49.5));
+        assert_eq!(result.mana_regen_min, 23.0);
+        assert!(result.unsustainable);
     }
 
     #[test]

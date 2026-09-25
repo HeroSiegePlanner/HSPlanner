@@ -31,6 +31,7 @@
   },
   {
     "id": "noxious_strike",
+    "weaponRequirement": "melee",
     "classId": "amazon",
     "name": "Noxious Strike",
     "kind": "active",
@@ -61,8 +62,8 @@
       }
     ],
     "damageFormula": {
-      "base": 11,
-      "perLevel": 15
+      "base": 10.5,
+      "perLevel": 14
     },
     "manaCostFormula": {
       "base": 4,
@@ -71,13 +72,14 @@
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": {
-        "base": 85,
+        "base": 185,
         "perLevel": 35
       },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 5
-      }
+      },
+      "weaponBonusScaling": true
     },
     "bonusSources": [
       {
@@ -120,8 +122,8 @@
         "description": "Increases damage dealt by noxious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 8 }
         }
       },
       {
@@ -160,9 +162,10 @@
         "description": "Increases projectile count on your third attack.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
-        }
+          "base": { "secondary_projectile_count": 0 },
+          "perRank": { "secondary_projectile_count": 1 }
+        },
+        "calculationNote": "Projectiles occur on every third attack. Their extra target contacts are excluded until overlap is known."
       },
       {
         "id": "noxian_slash",
@@ -171,9 +174,10 @@
         "description": "Increases the damage and area of effect of your third attack.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "poison_skill_damage": 4, "area_of_effect": 15 }
-        }
+          "base": { "third_attack_subtree_damage": 0, "secondary_area_of_effect": 0 },
+          "perRank": { "third_attack_subtree_damage": 4, "secondary_area_of_effect": 15 }
+        },
+        "calculationNote": "Damage bonus applies on every third attack; average damage weights it by one third."
       },
       {
         "id": "corrosive_reach",
@@ -182,8 +186,8 @@
         "description": "Increased attack damage and attack range while wielding a polearm.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "poison_skill_damage": 4, "skill_range": 10 }
+          "base": { "skill_range": 0, "weapon_subtree_damage": 0 },
+          "perRank": { "skill_range": 10, "weapon_subtree_damage": 4 }
         }
       },
       {
@@ -193,9 +197,10 @@
         "description": "Killing a monster with noxious strike grants you a burst of movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
-        }
+          "base": { "secondary_movement_speed": 0 },
+          "perRank": { "secondary_movement_speed": 15 }
+        },
+        "calculationNote": "Movement speed is a temporary on-kill burst; uptime is not modeled."
       },
       {
         "id": "glimmering_venom",
@@ -204,8 +209,8 @@
         "description": "Increases poison damage dealt by noxious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 10 }
+          "base": { "elemental_subtree_damage": 0 },
+          "perRank": { "elemental_subtree_damage": 10 }
         }
       },
       {
@@ -237,10 +242,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "of_total_damage": 100 },
-            "perRank": { "of_total_damage": 0 }
+            "base": { "secondary_damage_percent": 100 },
+            "perRank": { "secondary_damage_percent": 0 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "spinning_speartips",
@@ -249,9 +255,10 @@
         "description": "Throw multiple spears on your third attack in an arc. The spears start spinning when hitting the ground dealing area of effect damage for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
-        }
+          "base": { "secondary_projectile_count": 0 },
+          "perRank": { "secondary_projectile_count": 2 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "explosive_toxins",
@@ -278,8 +285,8 @@
         "description": "Increases damage dealt by noxious strike and inflicts stacking elemental break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "elemental_break": 0 },
-          "perRank": { "poison_skill_damage": 40, "elemental_break": 35 }
+          "base": { "elemental_break": 0, "subtree_damage": 0 },
+          "perRank": { "elemental_break": 35, "subtree_damage": 40 }
         },
         "proc": {
           "trigger": "on_hit",
@@ -299,11 +306,13 @@
         "description": "Perform additional spin attacks after the third one.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
-        }
+          "base": { "secondary_projectile_count": 0 },
+          "perRank": { "secondary_projectile_count": 1 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "leaping_ambush",
@@ -317,7 +326,8 @@
       "Active",
       "Spell",
       "Movement",
-      "Poison"
+      "Poison",
+      "Leap"
     ],
     "movementDuringUse": 0,
     "maxRank": 20,
@@ -337,7 +347,7 @@
     "baseCastRate": 1,
     "damageFormula": {
       "base": 0,
-      "perLevel": 37
+      "perLevel": 28
     },
     "manaCostFormula": {
       "base": 5,
@@ -395,8 +405,8 @@
         "description": "Increases damage dealt by leaping ambush.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 8 }
         }
       },
       {
@@ -409,10 +419,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 20 }
+            "base": { "secondary_damage_percent": 0 },
+            "perRank": { "secondary_damage_percent": 20 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "landing_blast",
@@ -513,11 +524,8 @@
         "description": "Unleash a burst of poison from the ground on hit dealing increased damage and inflicting poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "increased_poisoned_damage": 0 },
-          "perRank": {
-            "poison_skill_damage": 35,
-            "increased_poisoned_damage": 25
-          }
+          "base": { "secondary_damage_increased": 0, "secondary_poisoned_damage": 0 },
+          "perRank": { "secondary_damage_increased": 35, "secondary_poisoned_damage": 25 }
         },
         "proc": {
           "trigger": "on_hit",
@@ -525,7 +533,8 @@
           "appliesStates": [
             { "state": "poisoned", "amount": { "base": 0, "perRank": 25 } }
           ]
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "master_of_agility",
@@ -534,8 +543,8 @@
         "description": "Leaping ambush can now be casted through terrain with decreased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": -30 }
+          "base": { "retained_damage_percent": 0 },
+          "perRank": { "retained_damage_percent": 30 }
         }
       },
       {
@@ -545,9 +554,10 @@
         "description": "Throw multiple piercing spears around you upon landing dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "poison_skill_damage": 30, "projectile_count": 5 }
-        }
+          "base": { "secondary_damage_increased": 0, "secondary_projectile_count": 0 },
+          "perRank": { "secondary_damage_increased": 30, "secondary_projectile_count": 5 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "ground_stomper",
@@ -556,22 +566,17 @@
         "description": "When landing, stomp the ground multiple times with increased area of effect radius and dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "poison_skill_damage": 0,
-            "area_of_effect": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "poison_skill_damage": 40,
-            "area_of_effect": 33,
-            "projectile_count": 1
-          }
-        }
+          "base": { "area_of_effect": 0, "subtree_damage": 0, "wave_count": 0 },
+          "perRank": { "area_of_effect": 33, "subtree_damage": 40, "wave_count": 1 }
+        },
+        "calculationNote": "Wave count is separate from simultaneous projectiles; the contact estimate assumes one target contact per wave."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "caustic_spearhead",
+    "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Caustic Spearhead",
     "kind": "active",
@@ -602,8 +607,8 @@
       }
     ],
     "damageFormula": {
-      "base": 1,
-      "perLevel": 13
+      "base": 0,
+      "perLevel": 12.5
     },
     "manaCostFormula": {
       "base": 4,
@@ -612,13 +617,14 @@
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": {
-        "base": 88,
+        "base": 186,
         "perLevel": 30
       },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 5
-      }
+      },
+      "weaponBonusScaling": true
     },
     "bonusSources": [
       {
@@ -690,8 +696,8 @@
         "description": "Increases damage dealt by caustic spearhead.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 8 }
         }
       },
       {
@@ -701,9 +707,10 @@
         "description": "Inflicts the target with stacks of venom on hit increasing damage dealt by poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
-        }
+          "base": { "secondary_damage_increased": 0 },
+          "perRank": { "secondary_damage_increased": 8 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "splintering_arrows",
@@ -715,10 +722,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "poison_skill_damage": 0 },
-            "perRank": { "poison_skill_damage": 15 }
+            "base": { "secondary_damage_increased": 0 },
+            "perRank": { "secondary_damage_increased": 15 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "tribal_hunters_aim",
@@ -771,10 +779,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 15 }
+            "base": { "secondary_damage_percent": 0 },
+            "perRank": { "secondary_damage_percent": 15 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "erupting_spearheads",
@@ -786,10 +795,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-            "perRank": { "poison_skill_damage": 15, "area_of_effect": 15 }
+            "base": { "secondary_damage_increased": 0, "secondary_area_of_effect": 0 },
+            "perRank": { "secondary_damage_increased": 15, "secondary_area_of_effect": 15 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "caustic_arc",
@@ -798,9 +808,17 @@
         "description": "Split spearheads into multiple arrows in a circle around the target on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
-        }
+          "base": { "secondary_projectile_count": 0, "subtree_damage": 0 },
+          "perRank": { "secondary_projectile_count": 2, "subtree_damage": 15 }
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": {
+            "base": 0,
+            "perRank": 8
+          }
+        },
+        "calculationNote": "Primary damage gains 15% per rank; the arc has 2 projectiles per rank and an 8% per-rank trigger chance. Secondary arc DPS is not modeled."
       },
       {
         "id": "caustic_rampage",
@@ -810,11 +828,7 @@
         "maxRank": 3,
         "effects": {
           "base": { "projectile_count": 0, "crit_chance": 0, "crit_damage": 0 },
-          "perRank": {
-            "projectile_count": 1,
-            "crit_chance": 10,
-            "crit_damage": 35
-          }
+          "perRank": { "projectile_count": 1, "crit_chance": 10, "crit_damage": 35 }
         }
       },
       {
@@ -824,14 +838,8 @@
         "description": "Caustic spearhead leaves spores behind seeking nearby monsters and exploding on hit dealing additional damage and inflicting poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "splash_of_total_damage": 0,
-            "increased_poisoned_damage": 0
-          },
-          "perRank": {
-            "splash_of_total_damage": 10,
-            "increased_poisoned_damage": 40
-          }
+          "base": { "splash_of_total_damage": 0, "increased_poisoned_damage": 0 },
+          "perRank": { "splash_of_total_damage": 10, "increased_poisoned_damage": 40 }
         },
         "proc": {
           "trigger": "on_hit",
@@ -848,11 +856,13 @@
         "description": "Whenever a monster reaches maximum stacks of venom it unleashes a burst of poison dealing the full damage of venom consuming it.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 30 }
-        }
+          "base": { "secondary_damage_increased": 0 },
+          "perRank": { "secondary_damage_increased": 30 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "jungle_camouflage",
@@ -947,8 +957,8 @@
       "col": 1
     },
     "damageFormula": {
-      "base": 1,
-      "perLevel": 23
+      "base": 0,
+      "perLevel": 15.5
     },
     "proc": {
       "chance": 20,
@@ -980,10 +990,12 @@
         "value": 7.75,
         "per": "attribute_point"
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "death_from_above",
+    "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Death from Above",
     "kind": "active",
@@ -1009,8 +1021,8 @@
     ],
     "baseCastRate": 1,
     "damageFormula": {
-      "base": 1,
-      "perLevel": 32
+      "base": 0,
+      "perLevel": 22
     },
     "manaCostFormula": {
       "base": 5,
@@ -1057,8 +1069,8 @@
         "description": "Increases cast rate when using death from above.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": { "increased_attack_speed": 0 },
+          "perRank": { "increased_attack_speed": 6 }
         }
       },
       {
@@ -1068,8 +1080,8 @@
         "description": "Increases falling speed and damage dealt by death from above.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_speed": 0 },
-          "perRank": { "poison_skill_damage": 10, "projectile_speed": 20 }
+          "base": { "projectile_speed": 0, "subtree_damage": 0 },
+          "perRank": { "projectile_speed": 20, "subtree_damage": 10 }
         }
       },
       {
@@ -1079,9 +1091,10 @@
         "description": "Increases damage dealt by death from above to monsters at maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 75 }
-        }
+          "base": { "conditional_full_life_damage": 0 },
+          "perRank": { "conditional_full_life_damage": 75 }
+        },
+        "calculationNote": "Bonus applies only to enemies at maximum life. Excluded from sustained DPS."
       },
       {
         "id": "spearhandlers_intellect",
@@ -1101,8 +1114,8 @@
         "description": "Death from above deals additional damage based on your bonus movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_movement_speed": 0 },
-          "perRank": { "conversion_movement_speed": 10 }
+          "base": { "subtree_damage_per_movement_speed": 0 },
+          "perRank": { "subtree_damage_per_movement_speed": 10 }
         }
       },
       {
@@ -1123,9 +1136,10 @@
         "description": "If there are no nearby enemies, death from above covers a larger area with increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "poison_skill_damage": 15, "area_of_effect": 15 }
-        }
+          "base": { "area_of_effect": 0, "conditional_isolated_damage": 0 },
+          "perRank": { "area_of_effect": 15, "conditional_isolated_damage": 15 }
+        },
+        "calculationNote": "Damage bonus requires no enemies within 260 game units. Excluded without a distance model; area bonus is retained."
       },
       {
         "id": "critical_arrowfall",
@@ -1145,9 +1159,10 @@
         "description": "Increase your maximum life and mana on hit for a short period.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_life": 0, "increased_mana": 0 },
-          "perRank": { "increased_life": 0.5, "increased_mana": 0.5 }
-        }
+          "base": { "secondary_life_per_stack": 0, "secondary_mana_per_stack": 0 },
+          "perRank": { "secondary_life_per_stack": 0.5, "secondary_mana_per_stack": 0.5 }
+        },
+        "calculationNote": "Temporary on-hit life/mana stacks are not permanent base stats; stack uptime is not modeled."
       },
       {
         "id": "dual_spearshower",
@@ -1159,10 +1174,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "of_total_damage": 100 },
-            "perRank": { "of_total_damage": 0 }
+            "base": { "secondary_damage_percent": 100 },
+            "perRank": { "secondary_damage_percent": 0 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "spear_delivery",
@@ -1182,8 +1198,8 @@
         "description": "Summon an ancient device periodically firing death from above on nearby targets based on your cooldown recovery.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 40 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 40 }
         }
       },
       {
@@ -1196,10 +1212,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 8 },
           "effects": {
-            "base": { "poison_skill_damage": 0 },
-            "perRank": { "poison_skill_damage": 50 }
+            "base": { "secondary_damage_increased": 0 },
+            "perRank": { "secondary_damage_increased": 50 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "storm_of_spears",
@@ -1208,12 +1225,14 @@
         "description": "Multiple waves of spears rain down over time in a larger area that slowly follows the closest enemy. Death from above now has a small cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "projectile_count": 0 },
-          "perRank": { "area_of_effect": 35, "projectile_count": 4 }
-        }
+          "base": { "area_of_effect": 0, "wave_count": 0 },
+          "perRank": { "area_of_effect": 35, "wave_count": 4 }
+        },
+        "calculationNote": "Wave count is separate from simultaneous projectiles; the contact estimate assumes one target contact per wave."
       }
     ],
-    "usesAttackSpeed": true
+    "usesAttackSpeed": true,
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "envenom",
@@ -1235,7 +1254,7 @@
       "row": 4,
       "col": 0
     },
-    "damageFormula": { "base": 1, "perLevel": 24 },
+    "damageFormula": { "base": 0, "perLevel": 24 },
     "passiveStats": {
       "base": {
         "extra_damage_poisoned": 50
@@ -1317,8 +1336,8 @@
         "description": "Increases damage dealt by envenom.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 8 }
         }
       },
       {
@@ -1331,10 +1350,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "poison_skill_damage": 0 },
-            "perRank": { "poison_skill_damage": 35 }
+            "base": { "secondary_damage_increased": 0 },
+            "perRank": { "secondary_damage_increased": 35 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "toxic_reach",
@@ -1420,14 +1440,8 @@
         "description": "Increases poisoned damage and the tick frequency of poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_poisoned_damage": 0,
-            "increased_poisoned_frequency": 0
-          },
-          "perRank": {
-            "increased_poisoned_damage": 25,
-            "increased_poisoned_frequency": 15
-          }
+          "base": { "increased_poisoned_damage": 0, "increased_poisoned_frequency": 0 },
+          "perRank": { "increased_poisoned_damage": 25, "increased_poisoned_frequency": 15 }
         },
         "proc": {
           "trigger": "on_hit",
@@ -1444,8 +1458,8 @@
         "description": "Unleash a poisonous nova instead with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 35, "projectile_count": 5 }
+          "base": { "projectile_count": 0, "retained_damage_percent": 0 },
+          "perRank": { "projectile_count": 5, "retained_damage_percent": 35 }
         }
       },
       {
@@ -1455,11 +1469,13 @@
         "description": "Unleash waves of fissures from targets dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
-        }
+          "base": { "wave_count": 0 },
+          "perRank": { "wave_count": 2 }
+        },
+        "calculationNote": "Wave count is separate from simultaneous projectiles; the contact estimate assumes one target contact per wave."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "astropes_gift",
@@ -1494,7 +1510,7 @@
     ],
     "damageFormula": {
       "base": 10,
-      "perLevel": 9
+      "perLevel": 8
     },
     "manaCostFormula": {
       "base": 5,
@@ -1503,13 +1519,14 @@
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": {
-        "base": 0,
+        "base": 100,
         "perLevel": 28
       },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 5
-      }
+      },
+      "weaponBonusScaling": true
     },
     "bonusSources": [
       {
@@ -1563,8 +1580,8 @@
         "description": "Increases damage dealt by astrope’s gift.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 10 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 10 }
         }
       },
       {
@@ -1598,10 +1615,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 4 },
           "effects": {
-            "base": { "of_total_damage": 100 },
-            "perRank": { "of_total_damage": 0 }
+            "base": { "secondary_damage_percent": 100 },
+            "perRank": { "secondary_damage_percent": 0 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "rapid_momentum",
@@ -1610,9 +1628,10 @@
         "description": "Grants you a stacking attack speed buff on hit. All stacks are lost if you miss.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 1.5 }
-        }
+          "base": { "secondary_attack_speed_per_stack": 0 },
+          "perRank": { "secondary_attack_speed_per_stack": 1.5 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "powerstasis",
@@ -1620,7 +1639,11 @@
         "name": "Powerstasis",
         "description": "Lightning bolts have a chance to deal double damage.",
         "maxRank": 5,
-        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 } }
+        "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 5 },
+          "effects": {
+            "base": { "elemental_double_damage_chance": 100 },
+            "perRank": { "elemental_double_damage_chance": 0 }
+          } }
       },
       {
         "id": "ending_fate",
@@ -1680,9 +1703,10 @@
         "description": "Lightning strikes now unleash an AoE pulse with increased area of effect radius and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 75, "area_of_effect": 25 }
-        }
+          "base": { "secondary_damage_percent": 0, "secondary_area_of_effect": 0 },
+          "perRank": { "secondary_damage_percent": 75, "secondary_area_of_effect": 25 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "thundering_storm",
@@ -1691,9 +1715,10 @@
         "description": "Summons a thundering storm dealing area of effect damage for a short period instead of a lightning bolt.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 45 }
-        }
+          "base": { "secondary_damage_increased": 0 },
+          "perRank": { "secondary_damage_increased": 45 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "critical_thunderbolt",
@@ -1702,9 +1727,10 @@
         "description": "Lightning bolts can critically hit dealing increased critical strike damage when using polearms or throwing weapons.",
         "maxRank": 3,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 10, "crit_damage": 100 }
-        }
+          "base": { "secondary_crit_chance": 0, "secondary_crit_damage": 0 },
+          "perRank": { "secondary_crit_chance": 10, "secondary_crit_damage": 100 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "eye_of_storm",
@@ -1713,11 +1739,13 @@
         "description": "Summon a storm following you and rapidly shrinking. Hitting a monster causes the storm to grow in size.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 15 }
-        }
+          "base": { "secondary_frequency": 0 },
+          "perRank": { "secondary_frequency": 15 }
+        },
+        "calculationNote": "Reduces the separate Eye of Storm pulse interval from 0.5s by 15% per rank; does not increase player cast speed. Pulse overlap is not modeled."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "feint",
@@ -1783,6 +1811,7 @@
   },
   {
     "id": "rebound",
+    "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Rebound",
     "kind": "active",
@@ -1815,7 +1844,7 @@
     ],
     "damageFormula": {
       "base": 0,
-      "perLevel": 10
+      "perLevel": 7.45
     },
     "manaCostFormula": {
       "base": 4,
@@ -1824,13 +1853,14 @@
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": {
-        "base": 0,
+        "base": 100,
         "perLevel": 17
       },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 2.5
-      }
+      },
+      "weaponBonusScaling": true
     },
     "bonusSources": [
       {
@@ -1884,8 +1914,8 @@
         "description": "Increases the damage dealt by rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 8 }
         }
       },
       {
@@ -1909,10 +1939,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 4 },
           "effects": {
-            "base": { "of_total_damage": 100 },
-            "perRank": { "of_total_damage": 0 }
+            "base": { "secondary_damage_percent": 100 },
+            "perRank": { "secondary_damage_percent": 0 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "multi_rebound",
@@ -1924,10 +1955,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "projectile_count": 0, "lightning_skill_damage": 0 },
-            "perRank": { "projectile_count": 1, "lightning_skill_damage": -7 }
+            "base": { "secondary_projectile_count": 0, "secondary_damage_modifier": 0 },
+            "perRank": { "secondary_projectile_count": 1, "secondary_damage_modifier": -7 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "accurate_spearshot",
@@ -1947,9 +1979,10 @@
         "description": "Rebound gains additional crit damage on each bounce.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0, "crit_chance": 0 },
-          "perRank": { "crit_damage": 25, "crit_chance": 5 }
-        }
+          "base": { "secondary_crit_damage_per_bounce": 0, "secondary_crit_chance_per_bounce": 0 },
+          "perRank": { "secondary_crit_damage_per_bounce": 25, "secondary_crit_chance_per_bounce": 5 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "penetrating_rebound",
@@ -2004,10 +2037,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 10 },
           "effects": {
-            "base": { "lightning_skill_damage": 0 },
-            "perRank": { "lightning_skill_damage": 65 }
+            "base": { "secondary_damage_increased": 0 },
+            "perRank": { "secondary_damage_increased": 65 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "rebomb",
@@ -2016,9 +2050,10 @@
         "description": "Rebound now increases its damage and size with every bounce and explodes at the end dealing damage on a large radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "lightning_skill_damage": 8, "area_of_effect": 8 }
-        }
+          "base": { "secondary_damage_increase_per_bounce": 0, "secondary_area_of_effect_per_bounce": 0 },
+          "perRank": { "secondary_damage_increase_per_bounce": 8, "secondary_area_of_effect_per_bounce": 8 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "orbital_rebound",
@@ -2027,9 +2062,10 @@
         "description": "When hitting an enemy spawn the rebound projectile orbiting you until it hits a monster.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 100 }
-        }
+          "base": { "secondary_damage_increased": 0 },
+          "perRank": { "secondary_damage_increased": 100 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "kickback_projectile",
@@ -2038,11 +2074,13 @@
         "description": "Rebound projectiles now return to you instead of expiring dealing increased damage to monsters on its path.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 40 }
-        }
+          "base": { "secondary_damage_increased": 0 },
+          "perRank": { "secondary_damage_increased": 40 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "spearnage",
@@ -2077,8 +2115,8 @@
       }
     ],
     "damageFormula": {
-      "base": 1,
-      "perLevel": 16
+      "base": 0,
+      "perLevel": 15
     },
     "manaCostFormula": {
       "base": 5,
@@ -2136,8 +2174,8 @@
         "description": "Increases the physical damage dealt by spearnage.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 10 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 10 }
         }
       },
       {
@@ -2169,8 +2207,8 @@
         "description": "Increases lightning damage dealt by spearnage.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 12 }
+          "base": { "elemental_subtree_damage": 0 },
+          "perRank": { "elemental_subtree_damage": 12 }
         }
       },
       {
@@ -2180,9 +2218,10 @@
         "description": "Spears grow in size and gain increased damage while traveling.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "lightning_skill_damage": 4, "projectile_size": 8 }
-        }
+          "base": { "secondary_travel_damage_increase": 0, "secondary_travel_projectile_size": 0 },
+          "perRank": { "secondary_travel_damage_increase": 4, "secondary_travel_projectile_size": 8 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "pointy_ends",
@@ -2253,8 +2292,8 @@
         "description": "Rapidly throw spears around you for a short duration dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 35 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 35 }
         }
       },
       {
@@ -2267,10 +2306,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 5 },
           "effects": {
-            "base": { "lightning_skill_damage": 0 },
-            "perRank": { "lightning_skill_damage": 70 }
+            "base": { "secondary_damage_increased": 0 },
+            "perRank": { "secondary_damage_increased": 70 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "boomerang_spears",
@@ -2279,8 +2319,8 @@
         "description": "Spears now return to you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 40 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 40 }
         }
       },
       {
@@ -2293,12 +2333,14 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 15 },
           "effects": {
-            "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
-            "perRank": { "lightning_skill_damage": 60, "area_of_effect": 30 }
+            "base": { "secondary_damage_increased": 0, "secondary_area_of_effect": 0 },
+            "perRank": { "secondary_damage_increased": 60, "secondary_area_of_effect": 30 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "storm_dash",
@@ -2313,7 +2355,8 @@
       "Spell",
       "Movement",
       "Chaining",
-      "Lightning"
+      "Lightning",
+      "Leap"
     ],
     "movementDuringUse": 0,
     "maxRank": 20,
@@ -2332,8 +2375,8 @@
     ],
     "baseCastRate": 1,
     "damageFormula": {
-      "base": 1,
-      "perLevel": 16
+      "base": 0,
+      "perLevel": 12.5
     },
     "manaCostFormula": {
       "base": 5,
@@ -2380,9 +2423,10 @@
         "description": "Increases the frequency of chain lightnings.",
         "maxRank": 8,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6.25 }
-        }
+          "base": { "secondary_frequency": 0 },
+          "perRank": { "secondary_frequency": 6.25 }
+        },
+        "calculationNote": "This changes effect frequency, not player cast speed. Effect contact timing is not yet modeled."
       },
       {
         "id": "zapping_force",
@@ -2391,8 +2435,8 @@
         "description": "Increases damage dealt by storm dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": { "subtree_damage": 0 },
+          "perRank": { "subtree_damage": 8 }
         }
       },
       {
@@ -2416,10 +2460,11 @@
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
-            "base": { "of_total_damage": 50 },
-            "perRank": { "of_total_damage": 0 }
+            "base": { "secondary_damage_percent": 50 },
+            "perRank": { "secondary_damage_percent": 0 }
           }
-        }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "hopping_surge",
@@ -2484,8 +2529,8 @@
         "description": "You can now travel through terrain but the damage of storm dash is reduced.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": -15 }
+          "base": { "retained_damage_percent": 0 },
+          "perRank": { "retained_damage_percent": 15 }
         }
       },
       {
@@ -2517,9 +2562,10 @@
         "description": "Landing on monsters summons lightning bolts orbiting around you continuously zapping nearby monsters with chain lightning. Storm dash now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
-        }
+          "base": { "secondary_projectile_count": 0, "cooldown_added": 2 },
+          "perRank": { "secondary_projectile_count": 2, "cooldown_added": 0 }
+        },
+        "calculationNote": "Adds 2 seconds to cooldown. Orb contacts are not included in primary DPS; their orbit coverage is not yet verified."
       },
       {
         "id": "storm_gates",
@@ -2550,7 +2596,9 @@
           ]
         }
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat",
+    "baseCooldown": 0.25
   },
   {
     "id": "thunder_fury",
@@ -2585,7 +2633,7 @@
     ],
     "damageFormula": {
       "base": 0,
-      "perLevel": 19
+      "perLevel": 12.5
     },
     "manaCostFormula": {
       "base": 4,
@@ -2639,8 +2687,8 @@
         "description": "Increases lightning damage dealt by thunder fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": { "elemental_subtree_damage": 0 },
+          "perRank": { "elemental_subtree_damage": 8 }
         }
       },
       {
@@ -2738,9 +2786,10 @@
         "description": "Stunned targets unleash an exploding lightning pulse on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 30 }
-        }
+          "base": { "secondary_damage_percent": 0 },
+          "perRank": { "secondary_damage_percent": 30 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "thunders_reach",
@@ -2760,9 +2809,10 @@
         "description": "Thunder bolts unleash an arc of additional bolts behind the target on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 2, "lightning_skill_damage": 0 },
-          "perRank": { "projectile_count": 2, "lightning_skill_damage": 25 }
-        }
+          "base": { "elemental_subtree_damage": 0, "secondary_projectile_count": 2 },
+          "perRank": { "elemental_subtree_damage": 25, "secondary_projectile_count": 2 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "leaping_thunder",
@@ -2771,8 +2821,8 @@
         "description": "Release chain lightning on hit with an increased number of bounces.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 2, "lightning_skill_damage": 0 },
-          "perRank": { "projectile_bounces": 1, "lightning_skill_damage": 30 }
+          "base": { "projectile_bounces": 2, "elemental_subtree_damage": 0 },
+          "perRank": { "projectile_bounces": 1, "elemental_subtree_damage": 30 }
         }
       },
       {
@@ -2782,9 +2832,10 @@
         "description": "Thunder bolts pull targets to the initial point of impact followed by a surge of lightning dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "lightning_skill_damage": 45, "skill_range": 35 }
-        }
+          "base": { "secondary_damage_increased": 0, "secondary_vacuum_range": 0 },
+          "perRank": { "secondary_damage_increased": 45, "secondary_vacuum_range": 35 }
+        },
+        "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "electric_essence",
@@ -2808,7 +2859,8 @@
           ]
         }
       }
-    ]
+    ],
+    "damageScaling": "rankAndFlat"
   },
   {
     "id": "thunder_goddesses_chosen",

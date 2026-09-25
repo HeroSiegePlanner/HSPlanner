@@ -69,12 +69,40 @@
   },
   "stackTypes": [
     {
+      "key": "ramping_pulse", "name": "Ramping Pulse", "maxStat": "ramping_pulse_max_stacks",
+      "perStack": { "ramping_pulse_radius": 5 }, "perStackStats": {}
+    },
+    {
+      "key": "agitation", "name": "Agitation", "maxStat": "max_agitation_stacks",
+      "perStack": {}, "perStackStats": { "agitation_movement_speed": "movement_speed" }
+    },
+    {
+      "key": "combat_mitigation", "name": "Combat Mitigation", "maxStat": "max_combat_mitigation_stacks",
+      "perStack": {}, "perStackStats": { "damage_mitigation_when_struck": "damage_mitigation" }
+    },
+    {
+      "key": "colossus", "name": "Colossus", "maxStat": "max_colossus_stacks",
+      "perStack": {}, "perStackStats": { "colossus_damage": "damage", "life_replenish_per_colossus_stack": "life_replenish_more" }
+    },
+    {
+      "key": "wizardry", "name": "Wizardry", "maxStat": "max_wizardry_stacks",
+      "perStack": {}, "perStackStats": { "wizardry_cast_rate": "faster_cast_rate" }
+    },
+    {
+      "key": "mage_guard", "name": "Mage Guard", "maxStat": "max_mage_guard_stacks",
+      "perStack": {}, "perStackStats": { "mage_guard_damage_reduction": "physical_damage_reduction" }
+    },
+    {
+      "key": "surging_storm", "name": "Surging Storm", "maxStat": "max_surging_storm_stacks",
+      "perStack": {}, "perStackStats": { "damage_dealt_and_taken_amp": "damage" }
+    },
+    {
       "key": "rage",
       "name": "Rage",
       "maxStat": "max_rage_stacks",
       "perStack": { "increased_attack_speed": 5 },
       "perStackStats": {
-        "damage_per_rage_stack": "enhanced_damage",
+        "damage_per_rage_stack": "damage",
         "ranged_damage_per_rage_stack": "ranged_projectile_damage"
       }
     }
@@ -2408,6 +2436,42 @@
       "format": "flat"
     },
     {
+      "key": "minimum_damage_flat",
+      "name": "Added Minimum Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "maximum_damage_flat",
+      "name": "Added Maximum Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "minimum_damage_pct",
+      "name": "Increased Minimum Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "maximum_damage_pct",
+      "name": "Increased Maximum Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "min_damage_flat_with_shield",
+      "name": "Added Minimum Damage when wielding a Shield",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "max_damage_flat_with_shield",
+      "name": "Added Maximum Damage when wielding a Shield",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
       "key": "min_damage_with_shield",
       "name": "Increased Minimum Damage when wielding a Shield",
       "category": "offense",
@@ -2972,6 +3036,12 @@
       "format": "flat"
     },
     {
+      "key": "ramping_pulse_radius",
+      "name": "Ramping Pulse Radius Bonus",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "energy_added_ranged_physical",
       "name": "Energy Added as Ranged Physical Damage",
       "category": "offense",
@@ -3071,6 +3141,18 @@
       "key": "extra_damage_close_combat",
       "name": "Damage Modifier from Close Combat",
       "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "defense_pct",
+      "name": "Increased Defense",
+      "category": "defense",
+      "format": "percent"
+    },
+    {
+      "key": "defense_pct_more",
+      "name": "Total Increased Defense",
+      "category": "defense",
       "format": "percent"
     },
     {
@@ -3373,7 +3455,7 @@
       "key": "follower_relic_damage",
       "name": "Follower Relic Damage",
       "category": "base",
-      "format": "flat"
+      "format": "percent"
     },
     {
       "key": "skill_relic_damage",
@@ -3748,6 +3830,66 @@
       "category": "offense",
       "format": "percent",
       "description": "Increased damage of explosion skills."
+    },
+    {
+      "key": "fire_break_crit_chance",
+      "name": "Chance for Critical Fire Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "fire_break_crit_damage",
+      "name": "Critical Fire Break Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cold_break_crit_chance",
+      "name": "Chance for Critical Cold Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "cold_break_crit_damage",
+      "name": "Critical Cold Break Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "lightning_break_crit_chance",
+      "name": "Chance for Critical Lightning Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "lightning_break_crit_damage",
+      "name": "Critical Lightning Break Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "poison_break_crit_chance",
+      "name": "Chance for Critical Poison Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "poison_break_crit_damage",
+      "name": "Critical Poison Break Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "arcane_break_crit_chance",
+      "name": "Chance for Critical Arcane Break",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "arcane_break_crit_damage",
+      "name": "Critical Arcane Break Damage",
+      "category": "offense",
+      "format": "percent"
     },
     {
       "key": "fire_break",
@@ -4309,7 +4451,197 @@
       "name": "to All Skills (Bard)",
       "category": "base",
       "format": "flat"
-    }
+    },
+    {
+      "key": "elemental_subtree_damage",
+      "name": "Elemental Skill Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "weapon_subtree_damage",
+      "name": "Weapon Bonus Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "retained_damage_percent",
+      "name": "Damage Retained",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_frequency",
+      "name": "Secondary Effect Frequency",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_poisoned_damage",
+      "name": "Secondary Poisoned Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "conditional_full_life_damage",
+      "name": "Damage to Enemies at Full Life",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "conditional_isolated_damage",
+      "name": "Damage with No Nearby Enemies",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_life_per_stack",
+      "name": "Life per Hit Stack",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_mana_per_stack",
+      "name": "Mana per Hit Stack",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_movement_speed",
+      "name": "Movement Speed after a Kill",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_area_of_effect",
+      "name": "Secondary Area of Effect",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_attack_speed_per_stack",
+      "name": "Attack Speed per Hit Stack",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_crit_chance",
+      "name": "Secondary Crit Chance",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_crit_damage",
+      "name": "Secondary Crit Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_damage_modifier",
+      "name": "Secondary Damage Modifier",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_crit_damage_per_bounce",
+      "name": "Secondary Critical Damage per Bounce",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_crit_chance_per_bounce",
+      "name": "Secondary Critical Chance per Bounce",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_damage_increase_per_bounce",
+      "name": "Secondary Damage per Bounce",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_area_of_effect_per_bounce",
+      "name": "Secondary Area of Effect per Bounce",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_travel_damage_increase",
+      "name": "Secondary Damage during Travel",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_travel_projectile_size",
+      "name": "Secondary Projectile Size during Travel",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_vacuum_range",
+      "name": "Pull Radius",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "subtree_damage_per_movement_speed",
+      "name": "Skill Damage from Movement Speed",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "third_attack_subtree_damage",
+      "name": "Damage on Every Third Attack",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "elemental_double_damage_chance",
+      "name": "Chance to Double Elemental Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {"key": "self_damage_disabled", "name": "Cannot Deal Damage Yourself", "category": "offense", "format": "flat"},
+    {"key": "flat_ranged_physical_damage", "name": "Added Ranged Physical Damage", "category": "offense", "format": "flat"},
+    {"key": "area_skill_damage", "name": "Area of Effect Skill Damage", "category": "offense", "format": "percent"},
+    {"key": "charging_damage", "name": "Charge Skill Damage", "category": "offense", "format": "percent"},
+    {"key": "quillboar_chance", "name": "Chance to Release Quillboar Spikes when Struck", "category": "offense", "format": "percent"},
+    {"key": "mana_replenish_increased", "name": "Increased Mana Replenish", "category": "defense", "format": "percent"},
+    {"key": "life_replenish_interval", "name": "Life Replenish Interval (seconds)", "category": "defense", "format": "flat"},
+    {"key": "mana_replenish_interval", "name": "Mana Replenish Interval (seconds)", "category": "defense", "format": "flat"},
+    {"key": "melee_damage", "name": "Melee Damage", "category": "offense", "format": "percent"},
+    {"key": "melee_projectile_damage", "name": "Melee Projectile Damage", "category": "offense", "format": "percent"},
+    {"key": "melee_projectile_crit_damage", "name": "Melee Projectile Critical Damage", "category": "offense", "format": "percent"},
+    {"key": "leap_damage", "name": "Leap Skill Damage", "category": "offense", "format": "percent"},
+    {"key": "flat_leap_damage", "name": "Flat Leap Skill Damage", "category": "offense", "format": "flat"},
+    {"key": "struck_skills", "name": "Level of Struck Skills", "category": "offense", "format": "flat"},
+    {"key": "struck_skill_effectiveness", "name": "Struck Skill Effectiveness", "category": "offense", "format": "percent"}
   ],
   "slots": [
     { "key": "helmet", "name": "Helmet", "group": "armor" },

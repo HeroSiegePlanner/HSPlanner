@@ -57,6 +57,7 @@ fn subskill_stats_reach_only_their_own_skill() {
         Some(&enemy),
         &mut attrs,
         &mut stats,
+        "",
     );
     assert!(
         !stats.contains_key("lightning_skill_damage"),
@@ -72,6 +73,7 @@ fn subskill_stats_reach_only_their_own_skill() {
         Some(&enemy),
         &mut attrs,
         &mut stats,
+        "",
     );
     assert!(
         stats.contains_key("lightning_skill_damage"),
@@ -93,6 +95,7 @@ fn skill_scoped_subskill_stats_bypass_the_shared_map() {
         Some(&enemy),
         &mut attrs,
         &mut stats,
+        "",
     );
     assert!(!stats.contains_key("of_total_damage"));
     assert_eq!(
@@ -119,6 +122,7 @@ fn side_skill_overrides_swap_the_main_skill_subtree() {
         Some(&enemy),
         &mut attrs,
         &mut sources,
+        "",
     );
     let main_bonus = subtree["charged_bolts"].shared["lightning_skill_damage"];
     let surge_bonus = subtree["lightning_surge"].shared["lightning_skill_damage"];
@@ -1030,4 +1034,54 @@ fn set_sail_blessing_adds_cold_skill_damage_when_toggled() {
         on.stats.get("mana_replenish_pct").copied(),
         Some((45.0, 65.0)),
     );
+}
+
+#[test]
+fn amazon_weapon_gates_allow_only_matching_weapons() {
+    for (skill, node, weapon, key, amount) in [
+        (
+            "noxious_strike",
+            "corrosive_reach",
+            "Polearm",
+            "weapon_subtree_damage",
+            12.0,
+        ),
+        (
+            "rebound",
+            "marksmanship",
+            "Bow",
+            "increased_attack_speed",
+            18.0,
+        ),
+        (
+            "astropes_gift",
+            "master_of_javelin",
+            "Throwing",
+            "projectile_count",
+            3.0,
+        ),
+    ] {
+        let ranks = HashMap::from([(format!("{skill}:{node}"), 3)]);
+        for equipped in [weapon, "Wand"] {
+            let mut attrs = HashMap::new();
+            let mut stats = HashMap::new();
+            let result = apply_subskill_aggregation(
+                Some("amazon"),
+                Some(skill),
+                &ranks,
+                None,
+                &mut attrs,
+                &mut stats,
+                equipped,
+            );
+            let got = result[skill]
+                .scoped
+                .get(key)
+                .or_else(|| result[skill].shared.get(key))
+                .copied()
+                .unwrap_or((0.0, 0.0));
+            let expected = if equipped == weapon { amount } else { 0.0 };
+            assert_eq!(got, (expected, expected), "{skill}/{equipped}");
+        }
+    }
 }

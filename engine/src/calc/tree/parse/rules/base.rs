@@ -547,7 +547,7 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+(Total\s+)?(?:to\s+)?Mana\s+Replenish$",
-            "mana_replenish",
+            "mana_replenish_increased",
             "mana_replenish_more"
         ),
         mod_rule!(
@@ -629,8 +629,16 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "enhanced_damage_more"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+to\s+(?:Melee\s+|Ranged\s+)?Enhanced\s+Damage$",
+            r"(?i)^([+\-\d.]+)%\s+to\s+Enhanced\s+Damage$",
             "enhanced_damage"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+to\s+Melee\s+Enhanced\s+Damage$",
+            "enhanced_damage_melee_pct"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)%\s+to\s+Ranged\s+Enhanced\s+Damage$",
+            "enhanced_damage_ranged_pct"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+to\s+Faster\s+Cast\s+Rate$",
@@ -671,23 +679,30 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "armor_break_on_strike"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)\s+to\s+(?:Maximum|Minimum)\s+Damage$",
-            "attack_damage"
+            r"(?i)^([+\-\d.]+)\s+to\s+Minimum\s+Damage$",
+            "minimum_damage_flat"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)\s+to\s+(?:Maximum|Minimum)\s+Damage\s+when\s+wielding\s+a\s+shield$",
-            "attack_damage_with_shield"
+            r"(?i)^([+\-\d.]+)\s+to\s+Minimum\s+Damage\s+when\s+wielding\s+a\s+shield$",
+            "min_damage_flat_with_shield"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+to\s+Maximum\s+Damage$",
+            "maximum_damage_flat"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+to\s+Maximum\s+Damage\s+when\s+wielding\s+a\s+shield$",
+            "max_damage_flat_with_shield"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%?\s+Increased\s+(Total\s+)?Physical\s+Damage$",
             "enhanced_damage",
             "enhanced_damage_more"
         ),
-        // Both branches intentionally map to `enhanced_defense` (TS parity).
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Defense$",
-            "enhanced_defense",
-            "enhanced_defense"
+            "defense_pct",
+            "defense_pct_more"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+(Total\s+)?Ranged\s+Projectile\s+Damage$",
@@ -990,16 +1005,17 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "damage_dual_wield_more"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Damage(?:\s+when\s+using\s+a\s+Shield)?$",
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Damage\s+when\s+using\s+a\s+Shield$",
             "damage_with_shield"
         ),
+        mod_rule!(r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Damage$", "melee_damage"),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Damage\s+to\s+Monsters\s+far\s+away\s+from\s+you$",
             "damage_far"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Damage\s+dealt\s+to\s+monsters\s+at\s+long\s+range\s+but\s+deal\s+less\s+damage\s+to\s+monsters\s+close\s+to\s+you$",
-            "damage_far"
+            "melee_damage"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Ranged\s+Projectile\s+Damage\s+to\s+monsters\s+close\s+to\s+you\s+but\s+deal\s+less\s+damage\s+to\s+monsters\s+far\s+away$",
@@ -1254,9 +1270,9 @@ pub(super) fn rules() -> Vec<ParseRule> {
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Life\s+Regeneration\s+from\s+Flasks$",
             "life_regen_flask"
         ),
-        mod_rule!(
+        cond_rule!(
             r"(?i)^([+\-\d.]+)%\s+Reduced\s+damage\s+taken\s+while\s+flask\s+regeneration$",
-            "flask_damage_reduction"
+            "all_damage_taken_reduced_pct", SelfConditionKey::FlaskRegeneration
         ),
         ParseRule {
             test: Regex::new(
@@ -1282,7 +1298,7 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+of\s+Maximum\s+Mana\s+regenerated\s+per\s+second$",
-            "mana_regen_per_second"
+            "mana_replenish_pct"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Damage\s+Mitigation\s+for\s+a\s+short\s+duration\s+when\s+struck$",
@@ -1290,7 +1306,7 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+damage\s+dealt\s+by\s+Area\s+of\s+Effect\s+skills$",
-            "area_of_effect"
+            "area_skill_damage"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+(?:Increased\s+Crushing\s+Blow\s+Chance|Chance\s+for\s+a\s+Crushing\s+Blow)$",
@@ -1410,12 +1426,13 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Chance\s+to\s+unleash\s+piercing\s+spikes\s+outwards\s+when\s+struck$",
-            "damage_return_more"
+            "quillboar_chance"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+Total\s+Damage\s+Dealt(?:\s+and\s+Damage\s+Taken)?$",
+            r"(?i)^([+\-\d.]+)%\s+Total\s+Damage\s+Dealt\s+and\s+Damage\s+Taken$",
             "total_damage_dealt_and_taken"
         ),
+        mod_rule!(r"(?i)^([+\-\d.]+)%\s+Total\s+Damage\s+Dealt$", "damage"),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Damage\s+and\s+Increased\s+Damage\s+Taken$",
             "damage_dealt_and_taken_amp"
@@ -1602,9 +1619,9 @@ pub(super) fn rules() -> Vec<ParseRule> {
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Jump\s+Power$",
             "jumping_power"
         ),
-        mod_rule!(
+        cond_rule!(
             r"(?i)^([+\-\d.]+)%\s+to\s+Damage\s+Mitigation\s+when\s+phasing\s+through\s+monsters$",
-            "damage_mitigation"
+            "damage_mitigation", SelfConditionKey::Phasing
         ),
         null_rule!(r"(?i)^(?:\+0\s+)?Path\s+to\s+any\s+Black\s+Hole$"),
         mod_rule!(
@@ -1662,10 +1679,13 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "summon_chain_void_blast",
             1.0
         ),
-        fixed_rule!(
-            r"(?i)^(?:[+\-\d.]+s\s+)?Life\s+replenish\s+now\s+happens\s+every\s+\d+\s+seconds\s+with\s+increased\s+power$",
-            "life_replenish_more",
-            0.0
+        mod_rule!(
+            r"(?i)^(?:[+\-\d.]+s\s+)?Life\s+replenish\s+now\s+happens\s+every\s+([\d.]+)\s+seconds\s+with\s+increased\s+power$",
+            "life_replenish_interval"
+        ),
+        mod_rule!(
+            r"(?i)^Your\s+mana\s+replenish\s+now\s+happens\s+every\s+([\d.]+)\s+seconds\s+with\s+increased\s+power$",
+            "mana_replenish_interval"
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Life\s+Replenish$",
@@ -1688,11 +1708,17 @@ pub(super) fn rules() -> Vec<ParseRule> {
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+Increased\s+Total\s+Damage\s+and\s+Decreased\s+Cast\s+Rate\s+from\s+over\s+heat$",
-            "enhanced_damage_more"
+            "wizards_wrath"
         ),
-        mod_rule!(
-            r"(?i)^([+\-\d.]+)%\s+Increased\s+Attack\s+Speed\s+&\s+Damage\s+and\s+(?:In|De)creased\s+Damage\s+Reduction\s+&\s+All\s+Resistances$",
-            "increased_attack_speed"
+        cond_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Attack\s+Speed\s+&\s+Damage\s+and\s+Decreased\s+Damage\s+Reduction\s+&\s+All\s+Resistances$",
+            "risky_hunting",
+            SelfConditionKey::FullLife
+        ),
+        cond_rule!(
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Attack\s+Speed\s+&\s+Damage\s+and\s+Increased\s+Damage\s+Reduction\s+&\s+All\s+Resistances$",
+            "hunters_resilience",
+            SelfConditionKey::LifeBelow40
         ),
         mod_rule!(
             r"(?i)^([+\-\d.]+)%\s+When\s+at\s+full\s+Life\s+gain\s+increased\s+total\s+Attack\s+Speed\s+and\s+Damage\s+Dealt\s+but\s+also\s+decreased\s+Damage\s+Reduction\s+and\s+All\s+Resistances$",

@@ -711,6 +711,7 @@
   },
   {
     "id": "seismic_slam",
+    "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Seismic Slam",
     "kind": "active",
@@ -1213,6 +1214,7 @@
   },
   {
     "id": "zeal",
+    "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Zeal",
     "kind": "active",
@@ -1462,6 +1464,7 @@
   },
   {
     "id": "ymirs_champion",
+    "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Ymir's Champion",
     "kind": "active",
@@ -1696,6 +1699,7 @@
   },
   {
     "id": "whirlwind",
+    "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Whirlwind",
     "kind": "active",
@@ -1938,6 +1942,7 @@
   },
   {
     "id": "shockwave",
+    "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Shockwave",
     "kind": "active",
@@ -2189,6 +2194,7 @@
   },
   {
     "id": "berserk",
+    "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Berserk",
     "kind": "active",

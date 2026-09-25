@@ -234,6 +234,7 @@
   },
   {
     "id": "surgical_blood_letting",
+    "weaponRequirement": "melee",
     "classId": "plague_doctor",
     "name": "Surgical Blood Letting",
     "kind": "active",

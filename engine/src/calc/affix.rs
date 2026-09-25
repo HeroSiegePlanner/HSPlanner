@@ -1,6 +1,7 @@
 use super::skills::Ranged;
 use super::star_scaling::{
-    is_stat_star_immune, stat_star_flat_bonus, stat_star_percent_multiplier,
+    is_stat_star_immune, stat_star_flat_bonus, stat_star_percent_bonus,
+    stat_star_percent_multiplier,
 };
 pub use super::types::{Affix, AffixFormat, AffixSign};
 
@@ -49,9 +50,11 @@ pub fn affix_star_multiplier(stat_key: Option<&str>, stars: Option<u32>) -> f64 
     stat_star_percent_multiplier(stat_key, stars)
 }
 
-// GetStatUpgrades rounding: a star-scaled value is floored only if it started whole.
-fn star_scaled(base: f64, mult: f64, flat: f64) -> f64 {
-    let scaled = base * mult + flat;
+// CreateItemCheckGenerationCases (0x14070d1a6): floor only whole starting values.
+// Its percent helpers (0x14070d5a0 / 0x14070d640) add base * bonus * 0.01
+// to the base; preserving that order avoids losing whole points to float error.
+fn star_scaled(base: f64, percent: f64, flat: f64) -> f64 {
+    let scaled = base + (base * percent) * 0.01 + flat;
     if base.fract() == 0.0 {
         scaled.floor()
     } else {
@@ -62,7 +65,7 @@ fn star_scaled(base: f64, mult: f64, flat: f64) -> f64 {
 pub fn rolled_affix_value_with_stars(affix: &Affix, roll: f64, stars: Option<u32>) -> f64 {
     let base = rolled_affix_value(affix, roll);
     let stat_key = affix.stat_key.as_deref();
-    let mult = affix_star_multiplier(stat_key, stars);
+    let percent = stat_star_percent_bonus(stat_key, stars);
     let flat = stat_star_flat_bonus(stat_key, stars);
     if base == 0.0 && flat == 0.0 {
         return 0.0;
@@ -71,14 +74,13 @@ pub fn rolled_affix_value_with_stars(affix: &Affix, roll: f64, stars: Option<u32
         AffixSign::Minus => -1.0,
         AffixSign::Plus => 1.0,
     };
-    let stars_active = stars.unwrap_or(0) > 0 && (mult != 1.0 || flat != 0.0);
+    let stars_active = percent != 0.0 || flat != 0.0;
     if stars_active {
-        return star_scaled(base, mult, flat * direction);
+        return star_scaled(base, percent, flat * direction);
     }
-    let scaled = base * mult + flat * direction;
     match affix.format {
-        AffixFormat::Flat => scaled.round(),
-        AffixFormat::Percent => scaled,
+        AffixFormat::Flat => base.round(),
+        AffixFormat::Percent => base,
     }
 }
 
@@ -88,12 +90,15 @@ pub fn apply_stars_to_ranged_value(value: Ranged, stat_key: &str, stars: Option<
         return value;
     }
     let flat = stat_star_flat_bonus(Some(stat_key), Some(s));
-    let mult = stat_star_percent_multiplier(Some(stat_key), Some(s));
-    if mult == 1.0 && flat == 0.0 {
+    let percent = stat_star_percent_bonus(Some(stat_key), Some(s));
+    if percent == 0.0 && flat == 0.0 {
         return value;
     }
     let (min, max) = value;
-    (star_scaled(min, mult, flat), star_scaled(max, mult, flat))
+    (
+        star_scaled(min, percent, flat),
+        star_scaled(max, percent, flat),
+    )
 }
 
 #[cfg(test)]
@@ -301,6 +306,46 @@ mod tests {
     }
 
     // ---- apply_stars_to_ranged_value ----
+
+    #[test]
+    fn summon_and_sentry_star_bonuses_add_ranks_instead_of_percentages() {
+        // GetStatUpgrades IDs 331/335/337 set the flat flag and a 0.2 step
+        // at 0x14397261a / 0x14397271d / 0x1439727a0.
+        for key in ["summon_skills", "sentry_skills", "sentry_max_amount"] {
+            assert_eq!(
+                apply_stars_to_ranged_value((1., 3.), key, Some(4)),
+                (1., 3.),
+                "{key}"
+            );
+            assert_eq!(
+                apply_stars_to_ranged_value((1., 3.), key, Some(5)),
+                (2., 4.),
+                "{key}"
+            );
+        }
+    }
+
+    #[test]
+    fn percent_stars_preserve_whole_results_at_float_boundaries() {
+        // CreateItemCheckGenerationCases uses base + (base * bonus) * 0.01
+        // before flooring. Folding that into a multiplier can lose a point.
+        for (key, base, stars, expected) in [
+            ("magic_find", 100., 5, 115.),
+            ("life", 25., 4, 29.),
+            ("increased_strength", 45., 4, 63.),
+        ] {
+            assert_eq!(
+                apply_stars_to_ranged_value((base, base), key, Some(stars)),
+                (expected, expected)
+            );
+            let a = aff(AffixSign::Plus, AffixFormat::Flat, base, base, key);
+            assert_eq!(rolled_affix_value_with_stars(&a, 1., Some(stars)), expected);
+        }
+        assert_eq!(
+            apply_stars_to_ranged_value((12.5, 12.5), "magic_find", Some(5)),
+            (14.375, 14.375)
+        );
+    }
 
     #[test]
     fn apply_stars_zero_returns_input() {

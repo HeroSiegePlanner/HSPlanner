@@ -23,6 +23,15 @@ use super::types::{CustomStat, Inventory, SkillKind, SocketType, StatDef, TreeSo
 
 pub const RAINBOW_MULTIPLIER: f64 = 1.5;
 
+/// Rainbow bonuses are floored per socket, before equal stats are combined.
+pub fn socket_stat_value(value: f64, rainbow: bool) -> f64 {
+    if rainbow {
+        (value * RAINBOW_MULTIPLIER).floor()
+    } else {
+        value
+    }
+}
+
 // ---------- top-level types ----------
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
@@ -100,6 +109,8 @@ pub type SourceMap = HashMap<String, Vec<SourceContribution>>;
 #[derive(Debug, Clone, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ComputedStats {
+    #[serde(skip)]
+    pub ailments_only: bool,
     pub attributes: HashMap<String, Ranged>,
     pub stats: HashMap<String, Ranged>,
     pub attribute_sources: SourceMap,
@@ -244,6 +255,10 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .get("weapon")
         .and_then(|item| data::get_item(&item.base_id));
     let kind = weapon_base.map(weapon_kind_of).unwrap_or_default();
+    // StatEnhancedDamage selects ranged IDs for types 13..16 (bow, gun,
+    // flask, throwing); every other type follows its melee/default branch.
+    let ranged_weapon = matches!(kind.as_str(), "Bow" | "Gun" | "Throwing" | "Flask");
+    let melee_weapon = !ranged_weapon;
     let two_handed = weapon_base.is_some_and(|base| base.two_handed == Some(true));
     let two_handed_melee = two_handed
         && matches!(
@@ -255,7 +270,55 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         .get("offhand")
         .and_then(|item| data::get_item(&item.base_id))
         .is_some_and(|base| base.base_type == "Shield");
+    let dual_axes = kind == "Axe"
+        && input
+            .inventory
+            .get("offhand")
+            .and_then(|item| data::get_item(&item.base_id))
+            .is_some_and(|base| base.slot == "weapon" && weapon_kind_of(base) == "Axe");
     let weapon_folds = [
+        (
+            melee_weapon,
+            "enhanced_damage_melee_pct",
+            "enhanced_damage",
+            "While using a Melee Weapon",
+        ),
+        (
+            melee_weapon,
+            "enhanced_damage_melee_more",
+            "enhanced_damage_more",
+            "While using a Melee Weapon",
+        ),
+        (
+            ranged_weapon,
+            "enhanced_damage_ranged_pct",
+            "enhanced_damage",
+            "While using a Ranged Weapon",
+        ),
+        (
+            ranged_weapon,
+            "enhanced_damage_ranged_more",
+            "enhanced_damage_more",
+            "While using a Ranged Weapon",
+        ),
+        (
+            dual_axes,
+            "damage_to_terrain_flat_with_axes",
+            "additive_physical_damage",
+            "While dual wielding Axes",
+        ),
+        (
+            dual_axes,
+            "attack_radius_dual_axes",
+            "attack_radius",
+            "While dual wielding Axes",
+        ),
+        (
+            weapon_base.is_none(),
+            "damage_unarmed",
+            "attack_damage",
+            "While Unarmed",
+        ),
         (
             kind == "Dagger",
             "physical_damage_with_dagger",
@@ -312,9 +375,45 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         ),
         (
             has_shield,
-            "attack_damage_with_shield",
-            "attack_damage",
+            "min_damage_flat_with_shield",
+            "minimum_damage_flat",
             "While using a Shield",
+        ),
+        (
+            has_shield,
+            "min_damage_with_shield",
+            "minimum_damage_pct",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "max_damage_flat_with_shield",
+            "maximum_damage_flat",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "max_damage_with_shield",
+            "maximum_damage_pct",
+            "While using a Shield",
+        ),
+        (
+            has_shield,
+            "damage_with_shield",
+            "melee_damage",
+            "While using a Shield",
+        ),
+        (
+            kind == "Staff" || kind == "Cane",
+            "two_handed_damage_reduction",
+            "physical_damage_reduction",
+            "While wielding a Staff or Cane",
+        ),
+        (
+            kind == "Staff" || kind == "Cane",
+            "block_chance_physical_two_handed",
+            "block_chance",
+            "While wielding a Staff or Cane",
         ),
         (
             has_shield,
@@ -490,6 +589,21 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 11. Stats per attribute (e.g. strength → enhanced_damage)
     apply_stats_per_attribute(input.class_id, &attr_sources, &mut stat_sources);
+    if weapon_base.is_none()
+        && tree_agg
+            .conversions
+            .iter()
+            .any(|(conv, _)| conv.to_key == "str_to_unarmed_damage")
+    {
+        for key in ["enhanced_damage", "attack_damage"] {
+            if let Some(sources) = stat_sources.get_mut(key) {
+                sources.retain(|source| {
+                    !(source.source_type == SourceType::Attribute
+                        && source.label == "From Strength")
+                });
+            }
+        }
+    }
 
     // 12. Subskill aggregation (gates skill-scoped stats out)
     let subtree = apply_subskill_aggregation(
@@ -499,6 +613,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         Some(input.enemy_conditions),
         &mut attr_sources,
         &mut stat_sources,
+        &kind,
     );
 
     // 13. Compute attribute totals
@@ -506,6 +621,8 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 14. Attribute-divided stats (e.g. vitality/8 → life_replenish)
     apply_attribute_divided_stats(&attributes, &mut stat_sources);
+    apply_strength_to_life(&attributes, &mut stat_sources);
+    apply_charge_attribute_damage(&attributes, &mut stat_sources);
 
     // 15. Item-granted skill bonuses → passive stats; ranks reused in step 19.
     let item_granted_ranks = apply_item_granted_passive_stats(
@@ -542,11 +659,22 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 20. Tree conversions (can target attributes or stats)
     let touched_tree = apply_tree_conversions(
         &tree_agg.conversions,
+        input.inventory,
         &mut attributes,
         &stats,
         &mut attr_sources,
         &mut stat_sources,
     );
+
+    // Converted life/mana percentages and flats must reach the final totals
+    // before "per Mana" notes read them.
+    for k in touched_item.iter().chain(touched_tree.iter()) {
+        if let Some(list) = stat_sources.get(k) {
+            stats.insert(k.clone(), sum_contributions(list));
+        }
+    }
+    let converted_resources: HashSet<String> = touched_item.union(&touched_tree).cloned().collect();
+    refresh_converted_resources(&mut stats, &stat_sources, &converted_resources);
 
     // 20b. "per N Mana" lines read the finalized mana total.
     let touched_mana = apply_per_mana_stats(&stats, &mut stat_sources);
@@ -554,13 +682,8 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 20c. "per point in Light Radius" lines read the finalized light radius.
     let touched_light = apply_per_light_radius_stats(&stats, &mut stat_sources);
 
-    // 21. Re-sum touched stat keys after conversions injected new sources.
-    for k in touched_item
-        .iter()
-        .chain(touched_tree.iter())
-        .chain(touched_mana.iter())
-        .chain(touched_light.iter())
-    {
+    // 21. Re-sum the remaining late contributions.
+    for k in touched_mana.iter().chain(touched_light.iter()) {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }
@@ -625,6 +748,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     );
 
     ComputedStats {
+        ailments_only: tree_agg.ailments_only,
         attributes,
         stats,
         attribute_sources: attr_sources,
@@ -678,13 +802,33 @@ fn skill_costs_for(
                 } else {
                     std::borrow::Cow::Borrowed(merged)
                 };
-            let cost = skill_cost::compute_skill_cost(&SkillCostInput {
+            let mut cost = skill_cost::compute_skill_cost(&SkillCostInput {
                 skill: s,
                 eff_rank: (allocated + bonus.0, allocated + bonus.1),
                 stats: &per_skill,
                 tags: &tags,
                 entity_rates: input.entity_rates,
             });
+            if let Some(reason) = super::skills::requirements::unmet_requirement(
+                s,
+                input.inventory,
+                input.subskill_ranks,
+                merged
+                    .get("skill_restrictions_removed")
+                    .is_some_and(|v| v.1 > 0.0),
+            ) {
+                cost.unavailable_reason = Some(reason.to_string());
+                cost.cast_rate_min = Some(0.0);
+                cost.cast_rate_max = Some(0.0);
+                cost.mana_per_sec_min = Some(0.0);
+                cost.mana_per_sec_max = Some(0.0);
+                cost.net_min = Some(cost.mana_regen_min);
+                cost.net_max = Some(cost.mana_regen_max);
+                cost.uptime_min = Some(0.0);
+                cost.uptime_max = Some(0.0);
+                cost.sustainable = false;
+                cost.unsustainable = false;
+            }
             (s.id.clone(), cost)
         })
         .collect()

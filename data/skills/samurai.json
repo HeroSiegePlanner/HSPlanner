@@ -1,6 +1,7 @@
 [
   {
     "id": "battle_glance",
+    "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Battle Glance",
     "kind": "active",
@@ -512,6 +513,7 @@
   },
   {
     "id": "quickslash",
+    "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Quickslash",
     "kind": "active",
@@ -1049,6 +1051,7 @@
   },
   {
     "id": "explosive_kunai",
+    "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Explosive Kunai",
     "kind": "active",
@@ -1415,6 +1418,7 @@
   },
   {
     "id": "blade_barrier",
+    "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Blade Barrier",
     "kind": "active",
@@ -2036,6 +2040,7 @@
   },
   {
     "id": "omnislash",
+    "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Omnislash",
     "kind": "active",
@@ -2629,6 +2634,7 @@
   },
   {
     "id": "empires_slash",
+    "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Empires Slash",
     "kind": "active",

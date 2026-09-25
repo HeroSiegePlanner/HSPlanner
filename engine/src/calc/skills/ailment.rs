@@ -90,7 +90,46 @@ pub fn ailment_dps(
     scoped: &StatMap,
     apply_chances: &HashMap<String, f64>,
 ) -> f64 {
-    ailment_calculation(hit_avg, hits_per_second, stats, scoped, apply_chances).0
+    ailment_calculation(hit_avg, hits_per_second, stats, scoped, apply_chances, false).0
+}
+
+/// Same-skill sources share application chances and replace the active ailment.
+/// This preserves the existing one-second uptime estimate. Contact-rate weighting
+/// estimates the latest source; it does not simulate the echo's arrival timeline.
+pub(crate) fn replacing_ailment_calculation(
+    sources: &[(f64, f64)],
+    stats: &StatMap,
+    scoped: &StatMap,
+    apply_chances: &HashMap<String, f64>,
+    target_dot_immune: bool,
+) -> (f64, Vec<CalculationStep>) {
+    let (weighted_hit, contacts) = sources
+        .iter()
+        .filter(|(hit, rate)| *hit > 0.0 && *rate > 0.0)
+        .fold((0.0, 0.0), |(damage, rate), (hit, next_rate)| {
+            (damage + hit * next_rate, rate + next_rate)
+        });
+    let hit = if contacts > 0.0 {
+        weighted_hit / contacts
+    } else {
+        0.0
+    };
+    let (dps, mut steps) = ailment_calculation(
+        hit,
+        contacts,
+        stats,
+        scoped,
+        apply_chances,
+        target_dot_immune,
+    );
+    if contacts > 0.0 {
+        steps.insert(0, CalculationStep::new(
+            "Replacing ailment source estimate",
+            format!("Latest application replaces the previous one; shared uptime uses {} total contacts/s. Source damage is weighted by contact rate ({} / {}); exact arrival order is not simulated", number(contacts), number(weighted_hit), number(contacts)),
+            scalar(hit),
+        ));
+    }
+    (dps, steps)
 }
 
 pub(crate) fn ailment_calculation(
@@ -99,6 +138,7 @@ pub(crate) fn ailment_calculation(
     stats: &StatMap,
     scoped: &StatMap,
     apply_chances: &HashMap<String, f64>,
+    target_dot_immune: bool,
 ) -> (f64, Vec<CalculationStep>) {
     let mut trace = Vec::new();
     if hit_avg <= 0.0 || hits_per_second <= 0.0 {
@@ -107,8 +147,9 @@ pub(crate) fn ailment_calculation(
     let hits = hits_per_second;
     let all_damage = total_pct(stats, scoped, "ailment_damage_all");
     let all_frequency = total_pct(stats, scoped, "increased_ailment_frequency");
+    let skill_damage_added = total_pct(stats, scoped, "skill_damage_to_ailments") / 100.0;
 
-    let total = AILMENTS
+    let total: f64 = AILMENTS
         .iter()
         .map(|a| {
             let fraction = base_fraction(a.state);
@@ -131,13 +172,43 @@ pub(crate) fn ailment_calculation(
                 .map(|k| total_pct(stats, scoped, k))
                 .unwrap_or(0.0)
                 + all_frequency;
-            let contribution = hit_avg * fraction * (1.0 + damage_pct / 100.0) * (1.0 + frequency_pct / 100.0) * uptime;
+            let contribution = hit_avg * (fraction + skill_damage_added) * (1.0 + damage_pct / 100.0) * (1.0 + frequency_pct / 100.0) * uptime;
             trace.push(CalculationStep::new(format!("{} uptime", a.state), format!("1 − (1 − clamp({}% stat + {}% subtree, 0, 100) / 100)^({} hits/s)", number(from_stat), number(from_procs), number(hits_per_second)), scalar(uptime)));
-            trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × {} base fraction × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
+            trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × ({} base fraction + {} skill damage added) × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(skill_damage_added), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
             contribution
         })
         .sum();
-    (total, trace)
+    // ProjectileCollision00Skills subtracts shatter from full DoT immunity
+    // before multiplying by (1 - immunity). See dot-shatter-evidence.md.
+    // The note's half-value bonus belongs only to non-immune targets.
+    let shatter = total_pct(stats, scoped, "monster_dot_immunity_shattered").max(0.0);
+    let target_multiplier = if target_dot_immune {
+        shatter / 100.0
+    } else {
+        1.0 + shatter / 200.0
+    };
+    if target_dot_immune {
+        trace.push(CalculationStep::new(
+            "DoT against an immune target",
+            format!(
+                "{} ailment DPS × max(0, 1 − (100% immunity − {}% immunity shatter) / 100)",
+                number(total),
+                number(shatter)
+            ),
+            scalar(total * target_multiplier),
+        ));
+    } else if shatter > 0.0 {
+        trace.push(CalculationStep::new(
+            "DoT against a non-immune target",
+            format!(
+                "{} ailment DPS × (1 + {}% immunity shatter / 2 / 100)",
+                number(total),
+                number(shatter)
+            ),
+            scalar(total * target_multiplier),
+        ));
+    }
+    (total * target_multiplier, trace)
 }
 
 #[cfg(test)]
@@ -153,6 +224,50 @@ mod tests {
 
     fn chances(pairs: &[(&str, f64)]) -> HashMap<String, f64> {
         pairs.iter().map(|(k, v)| (k.to_string(), *v)).collect()
+    }
+
+    #[test]
+    fn replacing_sources_share_uptime_and_never_sum_two_active_ailments() {
+        let empty = StatMap::new();
+        for ailment in AILMENTS {
+            for chance in [25.0, 100.0] {
+                let apply = chances(&[(ailment.state, chance)]);
+                let (actual, _) = replacing_ailment_calculation(
+                    &[(100.0, 6.0), (240.0, 1.0)],
+                    &empty,
+                    &empty,
+                    &apply,
+                    false,
+                );
+                let expected = ailment_dps(120.0, 7.0, &empty, &empty, &apply);
+                assert!((actual - expected).abs() < 1e-10, "{}", ailment.state);
+                let (same, _) = replacing_ailment_calculation(
+                    &[(100.0, 6.0), (100.0, 1.0)],
+                    &empty,
+                    &empty,
+                    &apply,
+                    false,
+                );
+                assert_eq!(same, ailment_dps(100.0, 7.0, &empty, &empty, &apply));
+                let (disabled, _) = replacing_ailment_calculation(
+                    &[(100.0, 6.0), (240.0, 0.0)],
+                    &empty,
+                    &empty,
+                    &apply,
+                    false,
+                );
+                assert_eq!(disabled, ailment_dps(100.0, 6.0, &empty, &empty, &apply));
+                let shatter = stats(&[("monster_dot_immunity_shattered", 50.0)]);
+                let (immune, _) = replacing_ailment_calculation(
+                    &[(100.0, 6.0), (240.0, 1.0)],
+                    &shatter,
+                    &empty,
+                    &apply,
+                    true,
+                );
+                assert!((immune - expected * 0.5).abs() < 1e-10);
+            }
+        }
     }
 
     #[test]
@@ -203,11 +318,56 @@ mod tests {
     }
 
     #[test]
+    fn full_dot_immunity_uses_shatter_without_the_nonimmune_bonus() {
+        let empty = StatMap::new();
+        for ailment in AILMENTS {
+            let apply = chances(&[(ailment.state, 100.0)]);
+            let damage = stats(&[(ailment.damage_key, 100.0)]);
+            let baseline = ailment_dps(1000.0, 1.0, &damage, &empty, &apply);
+            assert!(baseline > 0.0, "{}", ailment.state);
+            for (shatter, expected) in [
+                (0.0, 0.0),
+                (25.0, 0.25),
+                (50.0, 0.5),
+                (100.0, 1.0),
+                (150.0, 1.5),
+            ] {
+                let scoped = stats(&[("monster_dot_immunity_shattered", shatter)]);
+                let (dps, trace) = ailment_calculation(1000.0, 1.0, &damage, &scoped, &apply, true);
+                assert!(
+                    (dps - baseline * expected).abs() < 1e-9,
+                    "{} / {shatter}: {dps}",
+                    ailment.state
+                );
+                assert!(trace
+                    .iter()
+                    .any(|step| step.label() == "DoT against an immune target"));
+            }
+        }
+    }
+
+    #[test]
     fn burning_dps_is_the_configured_fraction_of_the_hit() {
         let empty = StatMap::new();
         // burning fraction 0.2, 100% apply chance, no damage bonuses.
         let dps = ailment_dps(1000.0, 1.0, &empty, &empty, &chances(&[("burning", 100.0)]));
         assert!((dps - 200.0).abs() < 1e-9, "expected 200, got {dps}");
+    }
+
+    #[test]
+    fn skill_damage_added_to_ailments_stacks_with_increased_ailment_damage() {
+        let s = stats(&[
+            ("skill_damage_to_ailments", 140.0),
+            ("ailment_damage_all", 25.0),
+        ]);
+        let dps = ailment_dps(
+            1000.0,
+            1.0,
+            &s,
+            &StatMap::new(),
+            &chances(&[("burning", 100.0)]),
+        );
+        assert!((dps - 2000.0).abs() < 1e-9, "expected 2000, got {dps}");
     }
 
     #[test]

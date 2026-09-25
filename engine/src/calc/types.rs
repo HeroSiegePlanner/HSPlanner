@@ -360,6 +360,7 @@ pub enum AffixEffect {
     Damage,
     DamageMore,
     FlatDamage,
+    CriticalDamage,
     AttackSpeed,
     MaxAmount,
     None,
@@ -608,6 +609,9 @@ pub struct SubskillNodeSpec {
     pub name: String,
     #[serde(default)]
     pub description: Option<String>,
+    /// Calculation assumptions/unsupported secondary behavior shown in details.
+    #[serde(default)]
+    pub calculation_note: Option<String>,
     #[serde(default)]
     pub icon: Option<String>,
     #[serde(default)]
@@ -618,6 +622,16 @@ pub struct SubskillNodeSpec {
     pub proc: Option<SubskillProcSpec>,
     #[serde(default)]
     pub requires_subskill: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, Default, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub enum SkillWeaponRequirement {
+    #[default]
+    None,
+    Melee,
+    Ranged,
+    Shield,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -638,6 +652,8 @@ pub struct SkillSpec {
     pub requires_level: Option<u32>,
     #[serde(default)]
     pub requires_skill: Option<String>,
+    #[serde(default)]
+    pub weapon_requirement: SkillWeaponRequirement,
     #[serde(default)]
     pub ranks: Vec<SkillRankSpec>,
     #[serde(default)]

@@ -429,6 +429,30 @@ mod tests {
     }
 
     #[test]
+    fn every_black_hole_provides_a_direct_path_to_the_other_three() {
+        let graph = Graph::load();
+        let holes: Vec<_> = [412, 413, 414, 415]
+            .into_iter()
+            .map(|id| graph.nodes.iter().position(|node| node.id == id).unwrap())
+            .collect();
+        for &from in &holes {
+            for &to in &holes {
+                if from == to {
+                    continue;
+                }
+                assert_eq!(graph.path_to(&HashSet::from([from]), to), [from, to]);
+                let current = graph.ordered_toggle(&[], from);
+                if !current.contains(&(graph.nodes[to].id as u32)) {
+                    let next = graph.ordered_toggle(&current, to);
+                    assert!(next.starts_with(&current));
+                    assert_eq!(next.len(), current.len() + 1);
+                    assert_eq!(next.last(), Some(&(graph.nodes[to].id as u32)));
+                }
+            }
+        }
+    }
+
+    #[test]
     fn removing_an_allocated_root_cleans_up_its_orphaned_path() {
         let graph = Graph::load();
         let target = graph.nodes.len() - 1;

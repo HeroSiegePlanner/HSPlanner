@@ -50,6 +50,24 @@ fn fireball(
 }
 
 #[test]
+fn movement_transformation_retains_fraction_before_subtree_and_rounding() {
+    for (retained, expected) in [(15.0, 4), (30.0, 9), (60.0, 19), (90.0, 29)] {
+        let d = fireball(
+            DamageScaling::RankAndFlat,
+            0.0,
+            &[],
+            &[
+                ("retained_damage_percent", (retained, retained)),
+                ("subtree_damage", (40.0, 40.0)),
+                ("elemental_subtree_damage", (10.0, 10.0)),
+            ],
+        );
+        // ceil(4 + 18) * retained * (1 + .40 + .10), floored once at cast.
+        assert_eq!(d.hit_max, expected);
+    }
+}
+
+#[test]
 fn verified_elemental_base_is_added_after_rank_flat_synergy_and_generic_bonuses() {
     // Independent runtime vectors: A + (L*r + F)*(1+Y)*(1+G), then own S.
     for (synergy, generic, flat, subtree, expected) in [
@@ -207,4 +225,40 @@ fn positive_spell_damage_multiplies_and_floors_the_complete_generic_value() {
         &[],
     );
     assert_eq!((negative.hit_min, negative.hit_max), (22, 22));
+}
+
+#[test]
+fn damage_bounds_retain_the_spell_element_and_scale_the_named_bound_only() {
+    for scaling in [DamageScaling::Full, DamageScaling::RankAndFlat] {
+        let base = fireball(scaling, 0.0, &[], &[]);
+        let maximum = fireball(scaling, 0.0, &[("maximum_damage_flat", (8.0, 8.0))], &[]);
+        assert_eq!(maximum.hit_min, base.hit_min);
+        assert_eq!(maximum.hit_max, base.hit_max + 8);
+        assert_eq!(maximum.flat_min, 0.0);
+        assert_eq!(maximum.flat_max, 8.0);
+        let both = fireball(
+            scaling,
+            0.0,
+            &[
+                ("minimum_damage_flat", (8.0, 8.0)),
+                ("maximum_damage_flat", (32.0, 32.0)),
+                ("minimum_damage_pct", (50.0, 50.0)),
+                ("maximum_damage_pct", (100.0, 100.0)),
+            ],
+            &[],
+        );
+        assert_eq!(both.hit_min, 45); // (22 + 8) * 1.5
+        assert_eq!(both.hit_max, 108); // (22 + 32) * 2
+        let fire_bonus = fireball(
+            scaling,
+            0.0,
+            &[
+                ("maximum_damage_flat", (8.0, 8.0)),
+                ("fire_skill_damage", (100.0, 100.0)),
+            ],
+            &[],
+        );
+        let fire_base = fireball(scaling, 0.0, &[("fire_skill_damage", (100.0, 100.0))], &[]);
+        assert_eq!(fire_bonus.hit_max - fire_base.hit_max, 16);
+    }
 }

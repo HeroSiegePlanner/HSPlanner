@@ -114,16 +114,8 @@ pub fn apply_skill_ranks(
             }
         }
 
-        // Buffing Aura Effectiveness scales the active aura's buff output.
         if skill.kind == SkillKind::Aura {
-            let buff_eff = sum_ranged_from_map(stat_sources, "buffing_aura_effectiveness");
-            if buff_eff.0 != 0.0 || buff_eff.1 != 0.0 {
-                let mult_min = 1.0 + buff_eff.0 / 100.0;
-                let mult_max = 1.0 + buff_eff.1 / 100.0;
-                for value in combined.values_mut() {
-                    *value = (value.0 * mult_min, value.1 * mult_max);
-                }
-            }
+            apply_aura_effectiveness(&mut combined, stat_sources);
         }
 
         let rank_label = if eff_min == eff_max {
@@ -150,6 +142,23 @@ pub fn apply_skill_ranks(
                 push_source(stat_sources, key, contrib);
             }
         }
+    }
+}
+
+// Effectiveness scales the aura's contribution, not the character's complete
+// damage. Mixed auras use the matching effectiveness for each output stat.
+pub(super) fn apply_aura_effectiveness(values: &mut HashMap<String, Ranged>, sources: &SourceMap) {
+    let damaging = sum_ranged_from_map(sources, "damaging_aura_effectiveness");
+    let buffing = sum_ranged_from_map(sources, "buffing_aura_effectiveness");
+    for (key, value) in values.iter_mut() {
+        let damage_output = matches!(key.as_str(), "damage" | "attack_damage" | "enhanced_damage")
+            || key.ends_with("_skill_damage")
+            || (key.starts_with("additive_") && key.ends_with("_damage"));
+        let effect = if damage_output { damaging } else { buffing };
+        *value = (
+            value.0 * (1.0 + effect.0 / 100.0).max(0.0),
+            value.1 * (1.0 + effect.1 / 100.0).max(0.0),
+        );
     }
 }
 

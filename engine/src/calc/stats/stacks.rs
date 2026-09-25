@@ -8,6 +8,43 @@ pub fn apply_stack_effects(
     stat_sources: &mut SourceMap,
 ) {
     for def in data::game_config().stack_types.iter() {
+        // Buff 279 has a fixed 5% payload; its chance enables the effect but
+        // does not scale the payload. Extra capacity cannot enable it alone.
+        if def.key == "ramping_pulse"
+            && stat_sources
+                .get("ramping_pulse_chance")
+                .map(|s| sum_contributions(s).1)
+                .unwrap_or(0.0)
+                <= 0.0
+        {
+            continue;
+        }
+        let activation = match def.key.as_str() {
+            "colossus" => Some("colossus_damage"),
+            "combat_mitigation" => Some("damage_mitigation_when_struck"),
+            _ => None,
+        };
+        if let Some(rate) = activation {
+            // PlayerTakeDamage creates buffs 253/252 only for positive rates
+            // and passes 1 + their extra capacity as the cap. See audit evidence.
+            if stat_sources
+                .get(rate)
+                .map(|s| sum_contributions(s).1)
+                .unwrap_or(0.0)
+                <= 0.0
+            {
+                continue;
+            }
+            apply_contribution(
+                attr_sources,
+                stat_sources,
+                &def.max_stat,
+                (1.0, 1.0),
+                format!("{} base stack", def.name),
+                SourceType::Tree,
+                None,
+            );
+        }
         let max = sum_ranged_from_map(stat_sources, &def.max_stat).1;
         if max <= 0.0 {
             continue;
@@ -47,6 +84,17 @@ pub fn apply_stack_effects(
                 SourceType::Tree,
                 None,
             );
+            if rate_key == "damage_dealt_and_taken_amp" {
+                apply_contribution(
+                    attr_sources,
+                    stat_sources,
+                    "damage_taken_increased",
+                    (rate.0 * count, rate.1 * count),
+                    label.clone(),
+                    SourceType::Tree,
+                    None,
+                );
+            }
         }
     }
 }
@@ -88,7 +136,7 @@ mod tests {
             stats.get("increased_attack_speed").copied(),
             Some((30.0, 30.0))
         );
-        assert_eq!(stats.get("enhanced_damage").copied(), Some((6.0, 6.0)));
+        assert_eq!(stats.get("damage").copied(), Some((6.0, 6.0)));
     }
 
     #[test]
@@ -98,7 +146,7 @@ mod tests {
             stats.get("increased_attack_speed").copied(),
             Some((10.0, 10.0))
         );
-        assert_eq!(stats.get("enhanced_damage").copied(), Some((2.0, 2.0)));
+        assert_eq!(stats.get("damage").copied(), Some((2.0, 2.0)));
     }
 
     #[test]
@@ -119,6 +167,6 @@ mod tests {
         let mut attrs = SourceMap::new();
         let mut stats = sources(&[("damage_per_rage_stack", 1.0)]);
         apply_stack_effects(&HashMap::new(), &mut attrs, &mut stats);
-        assert!(!stats.contains_key("enhanced_damage"));
+        assert!(!stats.contains_key("damage"));
     }
 }

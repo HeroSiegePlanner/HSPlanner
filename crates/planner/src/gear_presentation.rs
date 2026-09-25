@@ -103,8 +103,6 @@ impl GearView {
         self.show_all_affixes = false;
         self.error = None;
         self.editing = true;
-        self.confirming_close = false;
-        self.confirmation_return_focus = None;
         self.search
             .update(cx, |input, cx| input.set_value("", window, cx));
         self.revert(cx);
@@ -136,7 +134,6 @@ impl GearView {
         let mercenary = self.mercenary;
         window.open_dialog(cx, move |dialog, window, cx| {
             let on_close = weak.clone();
-            let cancel = weak.clone();
             let palette = cx.global::<TooltipTheme>();
             let view = owner.read(cx);
             let picker_width = uses_item_picker_width(view.choosing, &view.picker);
@@ -202,16 +199,11 @@ impl GearView {
                 // Focused buttons keep their native Enter activation. An Enter
                 // bubbling from search or the dialog itself must not discard a draft.
                 .on_ok(|_, _, _| false)
-                .on_cancel(move |_, window, cx| {
-                    cancel
-                        .update(cx, |owner, cx| owner.request_editor_close(window, cx))
-                        .unwrap_or(true)
-                })
+                // The close icon and Escape discard the draft, like Cancel.
+                .on_cancel(|_, _, _| true)
                 .on_close(move |_, _, cx| {
                     let _ = on_close.update(cx, |owner, cx| {
                         owner.editing = false;
-                        owner.confirming_close = false;
-                        owner.confirmation_return_focus = None;
                         owner.error = None;
                         owner.revert(cx);
                     });

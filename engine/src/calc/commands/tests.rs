@@ -100,28 +100,12 @@ fn s10_incarnation_node_lines_parse_coverage() {
     let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     // ponytail: unmodeled S10 mechanics — drop an entry once the engine learns it.
     const EXEMPT_PATTERNS: &[&str] = &[
-        "+# to Level of Struck Skills",
-        "+## Increased Damage with Leap skills",
-        "+## to Level of Struck Skills",
         "+#### Lightning Damage dealt by odin",
         "+###% Living Carcass Explosion Damage",
         "+##% Arcana Destruction Damage",
         "+##% Avalanche of Boulders Damage",
-        "+##% Chance for Critical Arcane Break on hit",
-        "+##% Chance for Critical Cold Break on hit",
-        "+##% Chance for Critical Fire Break",
-        "+##% Chance for Critical Lightning Break on hit",
-        "+##% Chance for Critical Poison Break",
         "+##% Chance on hit to unleash multiple piercing daggers flying in a cone dealing damage.",
-        "+##% Critical Arcane Break Damage",
-        "+##% Critical Cold Break Damage",
-        "+##% Critical Fire Break Damage",
-        "+##% Critical Lightning Break Damage",
-        "+##% Critical Poison Break Damage",
         "+##% Heart of Fire Damage",
-        "+##% Increased Damage with Leap skills",
-        "+##% Increased Melee Projectile Critical Damage",
-        "+##% Increased Struck Skill effectiveness",
         "+##% Storm Turbulence Damage",
         "+##% Vile Pustules Damage",
         "+##% Wallbanger Damage",
@@ -131,8 +115,6 @@ fn s10_incarnation_node_lines_parse_coverage() {
         "+#% Chance to unleash Heart of Fire on hit",
         "+#% Chance to unleash Storm Turbulence on hit",
         "+#% Chance to unleash Vile Pustules on hit",
-        "+#% Increased Melee Projectile Damage",
-        "-##% Increased Melee Projectile Damage",
     ];
 
     let map = classify_tree_nodes_impl();

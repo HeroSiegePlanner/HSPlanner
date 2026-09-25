@@ -157,7 +157,11 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
 /// proc repeats the whole volley (`extra_volleys_pct`, already chance-weighted).
 fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> u32 {
     let transformed_count = subtree_stat("primary_projectile_count") as u32;
-    let base = if transformed_count > 0 { transformed_count } else { base };
+    let base = if transformed_count > 0 {
+        transformed_count
+    } else {
+        base
+    };
     let boosted = base + subtree_stat("projectile_count") as u32;
     let cap = subtree_stat("single_target_hit_cap") as u32;
     let capped = if cap > 0 { boosted.min(cap) } else { boosted };
@@ -264,6 +268,35 @@ struct ProcContext<'a> {
     empty_scoped: &'a StatMap,
 }
 
+fn append_subskill_notes(
+    skill: &SkillSpec,
+    ranks: &HashMap<String, u32>,
+    steps: &mut Vec<CalculationStep>,
+) {
+    for node in skill.subskills.as_deref().unwrap_or(&[]) {
+        if ranks
+            .get(&subskill_key(&skill.id, &node.id))
+            .copied()
+            .unwrap_or(0)
+            > 0
+        {
+            if let Some(note) = node.calculation_note.as_deref() {
+                steps.push(CalculationStep::new(
+                    format!("Model note · {}", node.name),
+                    note,
+                    (0.0, 0.0),
+                ));
+            }
+        }
+    }
+    if matches!(skill.id.as_str(), "envenom" | "toxic_remains") {
+        steps.push(CalculationStep::new("Amazon proc estimate", "The configured trigger and target-contact coverage have not yet been verified in the executable. Proc DPS remains provisional.", (0.0, 0.0)));
+    }
+    if skill.id == "spearnage" {
+        steps.push(CalculationStep::new("Spearnage physical estimate", "The elemental damage formula is verified. The physical base/bonus composition and repeated spear contacts still require verification; combined DPS remains provisional.", (0.0, 0.0)));
+    }
+}
+
 /// Item proc rows shown in the Config view.
 pub fn item_cast_toggle_key(base_id: &str, target_name_norm: &str) -> String {
     format!("cast:{base_id}:{target_name_norm}")
@@ -359,6 +392,15 @@ fn proc_target_damage(
         None => compute_skill_damage(&input),
     }?;
     let mut context_steps = Vec::new();
+    if !foreign {
+        append_subskill_notes(target_spec, ctx.deps.subskill_ranks, &mut context_steps);
+    }
+    if target_spec.class_id == "amazon" && subtree_stat("wave_count") > 0.0 {
+        let waves = 1.0 + subtree_stat("wave_count");
+        damage.avg_min = (damage.avg_min as f64 * waves).floor() as i64;
+        damage.avg_max = (damage.avg_max as f64 * waves).floor() as i64;
+        context_steps.push(CalculationStep::new("Amazon proc wave contact estimate", "Assumes one target contact per wave; each hit keeps its own damage, while expected proc damage counts all waves", (waves, waves)));
+    }
     scoped_inputs(&mut context_steps, scoped);
     context_steps.extend(conversion_steps);
     damage.calculation.splice(0..0, context_steps);
@@ -412,7 +454,19 @@ pub(crate) fn performance_from_stats(
             .filter(|s| s.kind == SkillKind::Active)
             .find(|s| s.id == mid)
     });
+    let unavailable_reason = active_skill.and_then(|s| {
+        super::skills::requirements::unmet_requirement(
+            s,
+            deps.inventory,
+            deps.subskill_ranks,
+            computed
+                .stats
+                .get("skill_restrictions_removed")
+                .is_some_and(|v| v.1 > 0.0),
+        )
+    });
     let active_rank = active_skill
+        .filter(|_| unavailable_reason.is_none())
         .and_then(|s| deps.skill_ranks.get(&s.id).copied())
         .unwrap_or(0);
 
@@ -441,19 +495,45 @@ pub(crate) fn performance_from_stats(
     let subtree_stat = |key: &str| -> f64 { r_max(rg(main_scoped, key)).max(0.0) };
     let active_of_total_damage = r_max(rg(main_scoped, "of_total_damage"));
     let mut calculation = Vec::new();
+    if let Some(reason) = unavailable_reason {
+        calculation.push(CalculationStep::new(
+            "Skill unavailable",
+            reason,
+            (0.0, 0.0),
+        ));
+    }
+    if let Some(skill) = active_skill.filter(|_| active_rank > 0) {
+        append_subskill_notes(skill, deps.subskill_ranks, &mut calculation);
+    }
     scoped_inputs(&mut calculation, main_scoped);
     // A verified secondary coefficient is not an extra primary hit. Until the
     // collision/lifetime audit supplies its contact model, expose its exclusion
     // instead of silently treating its percentage as primary increased damage.
     if let Some(skill) = active_skill.filter(|_| active_rank > 0) {
         let pending: &[&str] = match skill.id.as_str() {
-            "fireball" => &["mark_of_doom", "splitfire", "path_of_destruction", "fireflies"],
-            "storm_bolt" => &["unleash_discharge", "storm_breeds_storm", "bouncing_charge", "storm_claw", "magnetize"],
+            "fireball" => &[
+                "mark_of_doom",
+                "splitfire",
+                "path_of_destruction",
+                "fireflies",
+            ],
+            "storm_bolt" => &[
+                "unleash_discharge",
+                "storm_breeds_storm",
+                "bouncing_charge",
+                "storm_claw",
+                "magnetize",
+            ],
             _ => &[],
         };
         for node in skill.subskills.as_deref().unwrap_or(&[]) {
             if pending.contains(&node.id.as_str())
-                && deps.subskill_ranks.get(&subskill_key(&skill.id, &node.id)).copied().unwrap_or(0) > 0
+                && deps
+                    .subskill_ranks
+                    .get(&subskill_key(&skill.id, &node.id))
+                    .copied()
+                    .unwrap_or(0)
+                    > 0
             {
                 calculation.push(CalculationStep::new(
                     format!("Secondary DPS not yet modeled · {}", node.name),
@@ -473,8 +553,8 @@ pub(crate) fn performance_from_stats(
         .unwrap_or(0)
         .min(3);
     let is_blender = active_skill.is_some_and(|s| s.id == "blender");
-    let circle_of_slugs = active_skill.is_some_and(|s| s.id == "buckshot")
-        && subtree_stat("wave_count") > 0.0;
+    let circle_of_slugs =
+        active_skill.is_some_and(|s| s.id == "buckshot") && subtree_stat("wave_count") > 0.0;
     let nanoblenders = is_blender && nano_rank > 0;
     let blender_cast_rate = is_blender.then(|| {
         let haste = rg(&computed.stats, "skill_haste");
@@ -564,7 +644,8 @@ pub(crate) fn performance_from_stats(
 
     calculation.extend(conversion_steps);
 
-    let damage: Option<SkillDamageBreakdown> = match (active_calc_skill, active_rank > 0) {
+    let mut echo_damage = None;
+    let mut damage: Option<SkillDamageBreakdown> = match (active_calc_skill, active_rank > 0) {
         (Some(calc_skill), true) => {
             let input = SkillInput {
                 skill: calc_skill,
@@ -582,14 +663,54 @@ pub(crate) fn performance_from_stats(
                 conversion_flat: conversions.flat,
                 conversion_skill_damage_pct: conversions.skill_damage_pct,
             };
-            compute_skill_damage(&input)
+            let damage = compute_skill_damage(&input);
+            let echo_stat = rg(&computed.stats, "temporal_echo_damage");
+            let echo_max = echo_stat.0.abs().max(echo_stat.1.abs());
+            let echo_min = if echo_stat.0 <= 0.0 && echo_stat.1 >= 0.0 {
+                0.0
+            } else {
+                echo_stat.0.abs().min(echo_stat.1.abs())
+            };
+            if echo_max > 0.0 && calc_skill.tags.iter().any(|tag| tag == "Spell") {
+                if is_attack_skill || super::affix_tags::is_entity(&calc_skill.tags) {
+                    calculation.push(CalculationStep::new(
+                        "Temporal Echo not yet modeled",
+                        "Every sixth qualifying use creates a repeat; weapon-based Spell attacks and entity deployment still require verification",
+                        scalar(0.0),
+                    ));
+                } else if let Some(primary) = damage.as_ref() {
+                    let ranks = (
+                        (primary.effective_rank_min * (1.0 + echo_min / 100.0))
+                            .floor()
+                            .max(1.0),
+                        (primary.effective_rank_max * (1.0 + echo_max / 100.0))
+                            .floor()
+                            .max(1.0),
+                    );
+                    echo_damage = super::skills::damage::compute_repeated_skill_damage_at_rank(
+                        &input, ranks.0,
+                    )
+                    .zip(
+                        super::skills::damage::compute_repeated_skill_damage_at_rank(
+                            &input, ranks.1,
+                        ),
+                    )
+                    .map(|(min, max)| (min, max, echo_min > 0.0));
+                    calculation.push(CalculationStep::new(
+                        "Temporal Echo effective rank",
+                        format!("max(1, floor({} effective skill rank × (1 + {}% absolute Echo stat / 100))); rank bonuses are not added again", range((primary.effective_rank_min, primary.effective_rank_max)), range((echo_min, echo_max))),
+                        ranks,
+                    ));
+                }
+            }
+            damage
         }
         _ => None,
     };
 
     // Attack-kind skills reuse the elemental `damage` breakdown above and layer
     // weapon physical + attacks-per-second on top.
-    let attack_damage: Option<AttackSkillDamageBreakdown> =
+    let mut attack_damage: Option<AttackSkillDamageBreakdown> =
         match (active_calc_skill, active_rank > 0, is_attack_skill) {
             (Some(calc_skill), true, true) => {
                 let input = AttackSkillInput {
@@ -612,6 +733,7 @@ pub(crate) fn performance_from_stats(
                     item_skill_bonuses,
                     enemy_conditions: deps.enemy_conditions,
                     weapon: weapon_for_attack.as_ref(),
+                    enemy_resistances: deps.enemy_resistances,
                     poison_breakdown: damage.as_ref(),
                     scoped: main_scoped,
                     projectile_count: effective_projectiles.unwrap_or(1),
@@ -633,7 +755,9 @@ pub(crate) fn performance_from_stats(
     let entity_kind = super::affix_tags::entity_tag_for(entity_tags);
     let is_entity = entity_kind.is_some();
     // Explosive Kunai is thrown at weapon attack speed; FCR never touches it.
-    let (eff_cast_min, eff_cast_max) = if let Some(kind) = entity_kind {
+    let (eff_cast_min, eff_cast_max) = if unavailable_reason.is_some() {
+        (Some(0.0), Some(0.0))
+    } else if let Some(kind) = entity_kind {
         // The entity swings on its own cadence; player FCR / attack speed stay out of it.
         let swing =
             super::skill_cost::entity_rate(kind, entity_tags, &computed.stats, deps.entity_rates);
@@ -683,8 +807,8 @@ pub(crate) fn performance_from_stats(
             base_rate_min.map(|r| (r * (1.0 + rate_bonus.0 / 100.0)).max(0.0)),
             base_rate.map(|r| (r * (1.0 + rate_bonus.1 / 100.0)).max(0.0)),
         );
-        let cooldown = active_skill
-            .and_then(|s| super::skill_cost::effective_cooldown(s, main_scoped));
+        let cooldown =
+            active_skill.and_then(|s| super::skill_cost::effective_cooldown(s, main_scoped));
         let effective_rate = if let Some(cooldown) = cooldown {
             let haste = stat("skill_haste");
             let gate = super::skill_cost::cooldown_rate(active_skill.unwrap(), cooldown, haste);
@@ -773,6 +897,17 @@ pub(crate) fn performance_from_stats(
         let waves = 1.0 + subtree_stat("wave_count");
         (hits_min, hits_max) = (waves, waves);
     }
+    if active_skill.is_some_and(|s| {
+        s.class_id == "amazon"
+            && matches!(
+                s.id.as_str(),
+                "death_from_above" | "leaping_ambush" | "envenom"
+            )
+    }) {
+        let waves = 1.0 + subtree_stat("wave_count");
+        (hits_min, hits_max) = (waves, waves);
+        calculation.push(CalculationStep::new("Amazon wave contact estimate", "Assumes one contact with the target per wave. Repeated overlaps and travel coverage are not additional guaranteed hits; Death from Above's 0.25s re-hit interval is not a 4 casts/s rate.", (waves, waves)));
+    }
 
     let multicast = damage
         .as_ref()
@@ -783,11 +918,11 @@ pub(crate) fn performance_from_stats(
         if let Some(ad) = attack_damage.as_ref() {
             (
                 Some(
-                    (ad.physical_hit_min as f64 + ad.poison_hit_min as f64 * multicast)
+                    (ad.combined_hit_min as f64 + ad.poison_hit_min as f64 * (multicast - 1.0))
                         * ad.attacks_per_second_min,
                 ),
                 Some(
-                    (ad.physical_hit_max as f64 + ad.poison_hit_max as f64 * multicast)
+                    (ad.combined_hit_max as f64 + ad.poison_hit_max as f64 * (multicast - 1.0))
                         * ad.attacks_per_second_max,
                 ),
                 Some(ad.combined_avg_min as f64 * ad.attacks_per_second_min),
@@ -834,7 +969,12 @@ pub(crate) fn performance_from_stats(
         active_skill
             .filter(|_| active_rank > 0)
             .and_then(|skill| computed.skill_costs.get(&skill.id))
-            .map(|cost| (cost.cast_rate_min.unwrap_or(0.0), cost.cast_rate_max.unwrap_or(0.0)))
+            .map(|cost| {
+                (
+                    cost.cast_rate_min.unwrap_or(0.0),
+                    cost.cast_rate_max.unwrap_or(0.0),
+                )
+            })
             .unwrap_or((0.0, 0.0))
     } else {
         modeled_actions
@@ -888,6 +1028,41 @@ pub(crate) fn performance_from_stats(
     };
     let mut proc_dps_min: f64 = 0.0;
     let mut proc_dps_max: f64 = 0.0;
+    if let Some((min, max, min_enabled)) = echo_damage.as_ref() {
+        let rate = (
+            if *min_enabled {
+                player_actions.0 / 6.0
+            } else {
+                0.0
+            },
+            player_actions.1 / 6.0,
+        );
+        let dps = (
+            min.avg_min as f64 * rate.0 * hits_min,
+            max.avg_max as f64 * rate.1 * hits_max,
+        );
+        for (bound, echo) in [("minimum", min), ("maximum", max)] {
+            for step in echo.calculation() {
+                calculation.push(CalculationStep::new(
+                    format!("Temporal Echo {bound} · {}", step.label()),
+                    step.expression(),
+                    step.value(),
+                ));
+            }
+        }
+        calculation.push(CalculationStep::new(
+            "Temporal Echo direct DPS",
+            format!("{} average repeated-cast damage × {} player uses/s / 6 × {} contacts/cast; projectiles already included, no additional mana or multicast; long-run cadence", range((min.avg_min as f64, max.avg_max as f64)), range(player_actions), range((hits_min, hits_max))),
+            dps,
+        ));
+        calculation.push(CalculationStep::new(
+            "Temporal Echo secondary effects not yet modeled",
+            "Echo-triggered on-hit procs and secondary objects still require verification; ailments share the replacement model below",
+            scalar(0.0),
+        ));
+        proc_dps_min += dps.0;
+        proc_dps_max += dps.1;
+    }
     if let Some(spec) = active_skill.filter(|_| is_blender && active_rank > 0) {
         let cadence = blender_cast_rate.unwrap_or((0.0, 0.0));
         let blades = effective_projectiles.unwrap_or(1).max(1) as f64;
@@ -1079,6 +1254,9 @@ pub(crate) fn performance_from_stats(
         // selected class skill's subtree. Build this context only when needed.
         let mut granted_computed = None;
         for granted in data::item_granted_skills().iter() {
+            if super::skills::self_damage_disabled(&computed.stats, &[]) {
+                continue;
+            }
             let Some(proc_damage) = granted.proc_damage.as_ref() else {
                 continue;
             };
@@ -1146,26 +1324,100 @@ pub(crate) fn performance_from_stats(
     // Volley averages include projectiles and repeated casts; ailments use
     // one contact's mean damage and the same individual-contact rate as procs.
     let ailment_contacts_per_action = projectiles * multicast;
-    let (ailment_min, ailment_min_steps) = ailment::ailment_calculation(
+    let target_dot_immune = deps.enemy_conditions.get("dot_immune") == Some(&true);
+    let mut ailment_sources_min = vec![(
         hit_avg_min / ailment_contacts_per_action,
         modeled_contacts.0,
-        &computed.stats,
-        main_scoped,
-        &apply_chances,
-    );
-    let (ailment_max, ailment_max_steps) = ailment::ailment_calculation(
+    )];
+    let mut ailment_sources_max = vec![(
         hit_avg_max / ailment_contacts_per_action,
         modeled_contacts.1,
-        &computed.stats,
-        main_scoped,
-        &apply_chances,
-    );
+    )];
+    if let Some((min, max, min_enabled)) = echo_damage.as_ref() {
+        // Repeats do not multicast. Their volley average includes projectiles;
+        // divide it once to recover one contact's damage for the shared ailment.
+        ailment_sources_min.push((
+            min.avg_min as f64 / expected_projectiles.0,
+            if *min_enabled {
+                player_actions.0 / 6.0 * hits_min * expected_projectiles.0
+            } else {
+                0.0
+            },
+        ));
+        ailment_sources_max.push((
+            max.avg_max as f64 / expected_projectiles.1,
+            player_actions.1 / 6.0 * hits_max * expected_projectiles.1,
+        ));
+    }
+    let calculate_ailments = |sources: &[(f64, f64)]| {
+        if echo_damage.is_some() {
+            ailment::replacing_ailment_calculation(
+                sources,
+                &computed.stats,
+                main_scoped,
+                &apply_chances,
+                target_dot_immune,
+            )
+        } else {
+            ailment::ailment_calculation(
+                sources[0].0,
+                sources[0].1,
+                &computed.stats,
+                main_scoped,
+                &apply_chances,
+                target_dot_immune,
+            )
+        }
+    };
+    let (ailment_min, ailment_min_steps) = calculate_ailments(&ailment_sources_min);
+    let (ailment_max, ailment_max_steps) = calculate_ailments(&ailment_sources_max);
+
     let ailment_dps_min = (ailment_min > 0.0).then_some(ailment_min);
     let ailment_dps_max = (ailment_max > 0.0).then_some(ailment_max);
 
+    // Retain the raw hit as the source for inflicted ailments, then suppress
+    // every non-ailment damage channel exposed by this performance result.
+    let (hit_dps_min, hit_dps_max, avg_hit_dps_min, avg_hit_dps_max, proc_dps_min, proc_dps_max) =
+        if computed.ailments_only {
+            calculation.push(CalculationStep::new(
+                "Asphyxiating Touch",
+                "Only ailments deal damage; hit and proc DPS are zero",
+                scalar(0.0),
+            ));
+            (
+                hit_dps_min.map(|_| 0.0),
+                hit_dps_max.map(|_| 0.0),
+                avg_hit_dps_min.map(|_| 0.0),
+                avg_hit_dps_max.map(|_| 0.0),
+                0.0,
+                0.0,
+            )
+        } else {
+            (
+                hit_dps_min,
+                hit_dps_max,
+                avg_hit_dps_min,
+                avg_hit_dps_max,
+                proc_dps_min,
+                proc_dps_max,
+            )
+        };
+
     // Execution shortens the kill by the bottom `t%` of the life bar, so the
     // effective DPS rises by 1/(1 - t). Bosses cannot be executed.
-    let execute_below = subtree_stat("execute_below").clamp(0.0, EXECUTE_MAX_PCT);
+    let bleeding_execute = if deps
+        .enemy_conditions
+        .get("bleeding")
+        .copied()
+        .unwrap_or(false)
+    {
+        stat("execution_threshold").1
+    } else {
+        0.0
+    };
+    let execute_below = subtree_stat("execute_below")
+        .max(bleeding_execute)
+        .clamp(0.0, EXECUTE_MAX_PCT);
     let is_boss = deps
         .enemy_conditions
         .get("is_boss")
@@ -1277,6 +1529,43 @@ pub(crate) fn performance_from_stats(
         ));
     }
 
+    // Skill breakdowns also feed the visible hit-damage rows. Mask only the
+    // final damage figures after their raw values have seeded ailment DPS.
+    if computed.ailments_only {
+        if let Some(d) = damage.as_mut() {
+            d.hit_min = 0;
+            d.hit_max = 0;
+            d.crit_min = 0;
+            d.crit_max = 0;
+            d.final_min = 0;
+            d.final_max = 0;
+            d.avg_min = 0;
+            d.avg_max = 0;
+        }
+        if let Some(d) = attack_damage.as_mut() {
+            d.physical_hit_min = 0;
+            d.physical_hit_max = 0;
+            d.physical_avg_min = 0;
+            d.physical_avg_max = 0;
+            d.poison_hit_min = 0;
+            d.poison_hit_max = 0;
+            d.poison_avg_min = 0;
+            d.poison_avg_max = 0;
+            for element in &mut d.converted_elements {
+                element.hit_min = 0;
+                element.hit_max = 0;
+                element.avg_min = 0;
+                element.avg_max = 0;
+            }
+            d.combined_hit_min = 0;
+            d.combined_hit_max = 0;
+            d.combined_avg_min = 0;
+            d.combined_avg_max = 0;
+            d.dps_min = 0.0;
+            d.dps_max = 0.0;
+        }
+    }
+
     BuildPerformance {
         calculation,
         calculation_sources: computed.stat_sources,
@@ -1328,3 +1617,11 @@ mod cadence_tests;
 #[cfg(test)]
 #[path = "build_proc_tests.rs"]
 mod proc_tests;
+
+#[cfg(test)]
+#[path = "build_requirement_tests.rs"]
+mod requirement_tests;
+
+#[cfg(test)]
+#[path = "build_echo_tests.rs"]
+mod echo_tests;

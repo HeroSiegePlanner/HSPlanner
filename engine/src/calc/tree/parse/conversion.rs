@@ -72,7 +72,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
             .unwrap(),
             build: |m| {
                 Some(ParsedConversion {
-                    from_key: "all_resistances".to_string(),
+                    from_key: "sum_resistances".to_string(),
                     from_kind: ConvertKind::Stat,
                     to_key: "life".to_string(),
                     to_kind: ConvertKind::Stat,
@@ -87,7 +87,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
             .unwrap(),
             build: |m| {
                 Some(ParsedConversion {
-                    from_key: "all_resistances".to_string(),
+                    from_key: "overcapped_resistances".to_string(),
                     from_kind: ConvertKind::Stat,
                     to_key: "life".to_string(),
                     to_kind: ConvertKind::Stat,
@@ -117,7 +117,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
             .unwrap(),
             build: |m| {
                 Some(ParsedConversion {
-                    from_key: "all_resistances".to_string(),
+                    from_key: "negative_resistances".to_string(),
                     from_kind: ConvertKind::Stat,
                     to_key: "increased_life".to_string(),
                     to_kind: ConvertKind::Stat,
@@ -132,9 +132,9 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
             .unwrap(),
             build: |m| {
                 Some(ParsedConversion {
-                    from_key: "all_resistances".to_string(),
+                    from_key: "negative_resistances".to_string(),
                     from_kind: ConvertKind::Stat,
-                    to_key: "enhanced_damage".to_string(),
+                    to_key: "damage".to_string(),
                     to_kind: ConvertKind::Stat,
                     pct: num(&m[1]),
                 })
@@ -209,7 +209,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
                 Some(ParsedConversion {
                     from_key: "energy".to_string(),
                     from_kind: ConvertKind::Attribute,
-                    to_key: "ranged_physical_per_500_mana".to_string(),
+                    to_key: "flat_ranged_physical_damage".to_string(),
                     to_kind: ConvertKind::Stat,
                     pct: num(&m[1]),
                 })
@@ -224,7 +224,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
                 Some(ParsedConversion {
                     from_key: "area_of_effect".to_string(),
                     from_kind: ConvertKind::Stat,
-                    to_key: "spell_aoe_damage".to_string(),
+                    to_key: "area_skill_damage".to_string(),
                     to_kind: ConvertKind::Stat,
                     pct: num(&m[1]),
                 })
@@ -285,22 +285,6 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
                     from_key: "additive_physical_damage".to_string(),
                     from_kind: ConvertKind::Stat,
                     to_key: "physical_to_arrow_damage".to_string(),
-                    to_kind: ConvertKind::Stat,
-                    pct: num(&m[1]),
-                })
-            },
-        },
-        ConversionRule {
-            test: Regex::new(
-                r"(?i)^([+\-\d.]+)%\s+of\s+Physical\s+Damage\s+converted\s+to\s+(arcane|cold|fire|lightning|poison)$",
-            )
-            .unwrap(),
-            build: |m| {
-                let element = m[2].to_ascii_lowercase();
-                Some(ParsedConversion {
-                    from_key: "additive_physical_damage".to_string(),
-                    from_kind: ConvertKind::Stat,
-                    to_key: format!("physical_to_{}", element),
                     to_kind: ConvertKind::Stat,
                     pct: num(&m[1]),
                 })

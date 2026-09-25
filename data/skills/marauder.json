@@ -211,6 +211,7 @@
   },
   {
     "id": "heavy_ball",
+    "weaponRequirement": "melee",
     "classId": "marauder",
     "name": "Heavy Ball",
     "kind": "active",
@@ -648,7 +649,7 @@
     "kind": "active",
     "description": "Throw a massive spike ball into target location dealing area of effect fire damage and dragging yourself towards it through the air.",
     "damageType": "fire",
-    "tags": ["Cast", "Active", "Spell", "Movement"],
+    "tags": ["Cast", "Active", "Spell", "Movement", "Leap"],
     "movementDuringUse": 0,
     "baseCastRate": 1,
     "maxRank": 20,
@@ -1151,6 +1152,7 @@
   },
   {
     "id": "serrated_chains",
+    "weaponRequirement": "melee",
     "classId": "marauder",
     "name": "Serrated Chains",
     "kind": "active",

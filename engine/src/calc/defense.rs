@@ -58,7 +58,13 @@ pub fn effective_cap(key: &str, stats: &Stats) -> Option<f64> {
         .iter()
         .find(|d| d.key == key)?
         .cap?;
-    Some(base + stat_pct(stats, &format!("max_{key}")))
+    let raised = base + stat_pct(stats, &format!("max_{key}"));
+    if key.ends_with("_resistance") || key == "all_resistances" {
+        if let Some(cap) = stats.get("max_all_resistances_cap") {
+            return Some(raised.min(cap.1));
+        }
+    }
+    Some(raised)
 }
 
 fn capitalize(s: &str) -> String {
@@ -112,15 +118,12 @@ fn multiplier_for(
             stat_pct(stats, "magic_damage_reduction"),
             false,
         );
-        apply(
-            "Magic damage taken reduced".to_string(),
-            stat_pct(stats, "magic_damage_taken_reduced"),
-            false,
-        );
     }
+    // Flat reductions require an incoming hit size. EHP has no such input;
+    // treating e.g. 225 flat reduction as 225% would falsely report immunity.
     apply(
-        "Damage taken reduced".to_string(),
-        stat_pct(stats, "damage_taken_reduced"),
+        "Damage mitigation".to_string(),
+        stat_pct(stats, "damage_mitigation").clamp(0.0, 100.0),
         false,
     );
     apply(
@@ -128,6 +131,28 @@ fn multiplier_for(
         stat_pct(stats, "all_damage_taken_reduced_pct"),
         false,
     );
+    apply(
+        "Damage taken increased".to_string(),
+        -stat_pct(stats, "damage_taken_increased"),
+        false,
+    );
+    // EHP starts with full resource pools. Diversion can spend only the mana
+    // available before life runs out; it is not unlimited damage reduction.
+    let share = (stat_pct(stats, "damage_drained_from_mana") / 100.0).clamp(0.0, 1.0);
+    let life = stat_pct(stats, "life").max(0.0);
+    let mana = stat_pct(stats, "mana").max(0.0);
+    if share > 0.0 && life > 0.0 && mana > 0.0 {
+        let usable_mana = if share == 1.0 {
+            mana
+        } else {
+            mana.min(life * share / (1.0 - share))
+        };
+        apply(
+            "Damage absorbed by available mana".to_string(),
+            100.0 * usable_mana / (life + usable_mana),
+            false,
+        );
+    }
     (multiplier, layers)
 }
 
@@ -207,6 +232,26 @@ pub fn derive_defense_insights(stats: &Stats) -> Vec<DefenseInsight> {
 mod tests {
     use super::*;
 
+    #[test]
+    fn mana_diversion_is_limited_by_both_mana_pool_and_damage_share() {
+        for (mana, share, expected) in [
+            (0.0, 25.0, 1000.0),
+            (100.0, 25.0, 1100.0),
+            (1000.0, 25.0, 1000.0 / 0.75),
+            (100.0, 100.0, 1100.0),
+            (1000.0, 0.0, 1000.0),
+        ] {
+            let result = compute_ehp(&stats(&[
+                ("life", 1000.0),
+                ("mana", mana),
+                ("damage_drained_from_mana", share),
+                ("fire_resistance", 50.0),
+            ]));
+            assert!((entry(&result, "physical").ehp.unwrap() - expected).abs() < 1e-8);
+            assert!((entry(&result, "fire").ehp.unwrap() - 2.0 * expected).abs() < 1e-8);
+        }
+    }
+
     fn stats(pairs: &[(&str, f64)]) -> Stats {
         pairs
             .iter()
@@ -224,6 +269,16 @@ mod tests {
 
     fn close(a: f64, b: f64) -> bool {
         (a - b).abs() < 1e-6
+    }
+
+    #[test]
+    fn flat_reductions_do_not_claim_percentage_immunity() {
+        let result = compute_ehp(&stats(&[
+            ("life", 1000.0),
+            ("magic_damage_taken_reduced", 225.0),
+            ("damage_taken_reduced", 100.0),
+        ]));
+        assert!(result.entries.iter().all(|entry| entry.ehp == Some(1000.0)));
     }
 
     #[test]
@@ -246,7 +301,7 @@ mod tests {
         let result = compute_ehp(&stats(&[
             ("life", 1000.0),
             ("physical_damage_reduction", 30.0),
-            ("damage_taken_reduced", 10.0),
+            ("damage_mitigation", 10.0),
             ("all_damage_taken_reduced_pct", 20.0),
         ]));
         let physical = entry(&result, "physical");

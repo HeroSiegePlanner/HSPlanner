@@ -7,6 +7,7 @@ use super::{
     build::BuildPerformance,
     commands::{calc_build_performance, calc_build_stats, BuildPerformanceInput},
     data,
+    rank::{item_skill_bonus_override, item_skill_rank_range},
     skills::Ranged,
     stats::{ComputedStats, SourceContribution, SourceType},
     types::Inventory,
@@ -93,8 +94,7 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
             continue;
         };
         for (name, rank) in data::skill_bonus_entries(base, item) {
-            let Some(granted) =
-                data::get_item_granted_skill_by_name(name).filter(|skill| skill.aura)
+            let Some(_) = data::get_item_granted_skill_by_name(name).filter(|skill| skill.aura)
             else {
                 continue;
             };
@@ -106,21 +106,23 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
             {
                 continue;
             }
-            let stars = if !granted.star_rank_locked && data::can_star_forge(slot, &base.rarity) {
+            let stars = if data::can_star_forge(slot, &base.rarity) {
                 item.stars
             } else {
                 None
             };
-            let bonus =
-                super::star_scaling::stat_star_flat_bonus(Some("item_granted_skill_rank"), stars)
-                    .floor();
-            let rank = rank.as_ranged();
+            let rank = item_skill_rank_range(
+                name,
+                rank.as_ranged(),
+                stars,
+                item_skill_bonus_override(item, name),
+            );
             let entry = build
                 .granted_skill_ranks
                 .entry(name.clone())
                 .or_insert((0., 0.));
-            entry.0 = entry.0.max(rank.0.round() + bonus);
-            entry.1 = entry.1.max(rank.1.round() + bonus);
+            entry.0 = entry.0.max(rank.0);
+            entry.1 = entry.1.max(rank.1);
         }
     }
     build.main_skill_id = input
@@ -338,6 +340,41 @@ pub fn dps_mid(performance: &PlannerPerformance) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn mercenary_aura_uses_final_pinned_rank_including_zero() {
+        let mut input = PlannerInput::default();
+        let base = data::get_item("gloves_satanic_thor_s_battle_gloves").unwrap();
+        input.merc_inventory.insert(
+            "gloves".into(),
+            super::super::types::EquippedItem {
+                base_id: base.id.clone(),
+                stars: Some(5),
+                ..Default::default()
+            },
+        );
+        assert_eq!(
+            prepare_input(&input).granted_skill_ranks["Holy Aura"],
+            (4., 6.)
+        );
+        for pin in [4., 0.] {
+            input
+                .merc_inventory
+                .get_mut("gloves")
+                .unwrap()
+                .skill_bonus_overrides
+                .insert("  HOLY AURA  ".into(), pin);
+            assert_eq!(
+                prepare_input(&input).granted_skill_ranks["Holy Aura"],
+                (pin, pin)
+            );
+        }
+        input.merc_disabled_auras.insert("holy aura".into(), true);
+        assert!(!prepare_input(&input)
+            .granted_skill_ranks
+            .contains_key("Holy Aura"));
+    }
+
     #[test]
     fn multiple_skills_keep_execute_and_count_shared_procs_once() {
         let a = BuildPerformance {

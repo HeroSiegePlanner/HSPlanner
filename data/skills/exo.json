@@ -1,6 +1,7 @@
 [
   {
     "id": "scorching_whip",
+    "weaponRequirement": "melee",
     "classId": "exo",
     "name": "Scorching Whip",
     "kind": "active",

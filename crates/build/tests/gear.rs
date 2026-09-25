@@ -113,6 +113,96 @@ fn losing_grip_removes_the_offhand_and_gear_preview_uses_the_same_rule() {
 }
 
 #[test]
+fn hercules_grip_only_allows_its_three_weapon_families() {
+    let weapon = |family: &str, two_handed: bool| {
+        data::data()
+            .items
+            .values()
+            .filter(|base| {
+                base.slot == "weapon"
+                    && base.base_type == family
+                    && base.two_handed.unwrap_or(false) == two_handed
+            })
+            .min_by_key(|base| &base.id)
+            .unwrap()
+    };
+    for main_family in ["Sword", "Mace", "Axe"] {
+        for off_family in ["Sword", "Mace", "Axe"] {
+            for (main_two, off_two) in [(true, true), (true, false), (false, true)] {
+                let mut snapshot = BuildSnapshot {
+                    allocated_tree_nodes: vec![731],
+                    ..Default::default()
+                };
+                let main = weapon(main_family, main_two);
+                let off = weapon(off_family, off_two);
+                gear::commit(
+                    &mut snapshot,
+                    "weapon",
+                    Some(gear::make_item(&main.id).unwrap()),
+                    false,
+                    true,
+                )
+                .unwrap();
+                assert!(gear::accepts(&snapshot, "offhand", off, false));
+            }
+        }
+    }
+    let sword = weapon("Sword", true);
+    for other in [weapon("Claw", false), weapon("Polearm", true)] {
+        for (main, off) in [(sword, other), (other, sword)] {
+            let mut snapshot = BuildSnapshot {
+                allocated_tree_nodes: vec![731],
+                ..Default::default()
+            };
+            gear::commit(
+                &mut snapshot,
+                "weapon",
+                Some(gear::make_item(&main.id).unwrap()),
+                false,
+                true,
+            )
+            .unwrap();
+            assert!(
+                !gear::accepts(&snapshot, "offhand", off, false),
+                "{} + {}",
+                main.base_type,
+                off.base_type
+            );
+            assert!(
+                gear::commit(
+                    &mut snapshot,
+                    "offhand",
+                    Some(gear::make_item(&off.id).unwrap()),
+                    false,
+                    true,
+                )
+                .is_err()
+            );
+        }
+    }
+}
+
+#[test]
+fn master_of_wands_enables_the_offhand_and_losing_it_removes_the_wand() {
+    let wand = data::data()
+        .items
+        .values()
+        .filter(|base| base.base_type == "Wand" && !base.two_handed.unwrap_or(false))
+        .min_by_key(|base| &base.id)
+        .unwrap();
+    let mut snapshot = BuildSnapshot::default();
+    let item = gear::make_item(&wand.id).unwrap();
+    gear::commit(&mut snapshot, "weapon", Some(item.clone()), false, true).unwrap();
+    assert!(!gear::accepts(&snapshot, "offhand", wand, false));
+    snapshot.set_tree_nodes(&[1275]);
+    assert!(gear::accepts(&snapshot, "offhand", wand, false));
+    gear::commit(&mut snapshot, "offhand", Some(item), false, true).unwrap();
+    snapshot.set_tree_nodes(&[]);
+    assert!(snapshot.inventory.contains_key("weapon"));
+    assert!(!snapshot.inventory.contains_key("offhand"));
+}
+
+#[test]
 fn stash_copies_are_independent_deduplicated_and_bounded() {
     let base = data::data()
         .items

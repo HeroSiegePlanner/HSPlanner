@@ -10,7 +10,8 @@ use gpui_kit::{prelude::*, *};
 use hsplanner_engine::calc::{
     affix::{apply_stars_to_ranged_value, rolled_affix_value_with_stars},
     data,
-    stats::RAINBOW_MULTIPLIER,
+    rank::{item_skill_bonus_override, item_skill_rank_range},
+    stats::socket_stat_value,
     types::{Affix, AffixFormat, AffixSign, EquippedAffix, EquippedItem, ItemBase, SocketType},
 };
 use hsplanner_ui::i18n::{tr, trf};
@@ -462,22 +463,30 @@ pub(crate) fn build_model(
 
     let overrides = equipped.map(|item| &item.implicit_overrides);
     let mut implicit_values: Vec<(String, Ranged, bool)> = Vec::new();
+    let mut implicit_override_keys = HashSet::new();
     if let Some(implicit) = &base.implicit {
         for key in implicit_keys(base) {
-            if let Some(custom) = overrides.and_then(|o| o.get(key)) {
-                if *custom != 0. {
-                    implicit_values.push((key.clone(), (*custom, *custom), true));
-                }
-                continue;
-            }
             let stat_key = if key == RANDOM_ELEMENT_KEY {
                 equipped
                     .and_then(|item| item.random_skill_element.as_deref())
                     .map(|element| format!("{element}_skills"))
                     .unwrap_or_else(|| key.clone())
+            } else if key == ALL_SKILLS_CLASS_KEY {
+                equipped
+                    .and_then(|item| item.all_skills_class_id.as_deref())
+                    .map(|class| format!("all_skills_{class}"))
+                    .unwrap_or_else(|| key.clone())
             } else {
                 key.clone()
             };
+            implicit_override_keys.insert(key.clone());
+            implicit_override_keys.insert(stat_key.clone());
+            if let Some(custom) = overrides.and_then(|o| o.get(key).or_else(|| o.get(&stat_key))) {
+                if *custom != 0. {
+                    implicit_values.push((key.clone(), (*custom, *custom), true));
+                }
+                continue;
+            }
             let value = implicit[key].as_ranged();
             let shown = if scale_implicit {
                 apply_stars_to_ranged_value(value, &stat_key, stars)
@@ -492,7 +501,7 @@ pub(crate) fn build_model(
     if let Some(overrides) = overrides {
         let mut extra: Vec<(&String, &f64)> = overrides
             .iter()
-            .filter(|(key, _)| base.implicit.as_ref().is_none_or(|i| !i.contains_key(*key)))
+            .filter(|(key, _)| !implicit_override_keys.contains(*key))
             .collect();
         extra.sort_by(|a, b| a.0.cmp(b.0));
         for (key, value) in extra {
@@ -542,22 +551,13 @@ pub(crate) fn build_model(
             if granted_names.contains(&name.trim().to_lowercase()) {
                 continue;
             }
-            let custom = equipped.and_then(|i| i.skill_bonus_overrides.get(name).copied());
+            let custom = equipped.and_then(|i| item_skill_bonus_override(i, name));
             let label = if name == RANDOM_SKILL_NAME {
                 random_skill_label(equipped.and_then(|i| i.random_skill_id.as_deref()))
             } else {
                 name.clone()
             };
-            let star_locked = data::get_item_granted_skill_by_name(name)
-                .is_some_and(|skill| skill.star_rank_locked);
-            let shown = match custom {
-                Some(value) => (value, value),
-                None => apply_stars_to_ranged_value(
-                    value.as_ranged(),
-                    "item_granted_skill_rank",
-                    if star_locked { None } else { stars },
-                ),
-            };
+            let shown = item_skill_rank_range(name, value.as_ranged(), stars, custom);
             if is_zero(shown) {
                 continue;
             }
@@ -1078,14 +1078,12 @@ fn granted_skill_entries(
         let Some(skill) = data::get_item_granted_skill_by_name(name) else {
             continue;
         };
-        let (min, max) = match equipped.and_then(|i| i.skill_bonus_overrides.get(name)) {
-            Some(value) => (*value, *value),
-            None => apply_stars_to_ranged_value(
-                value.as_ranged(),
-                "item_granted_skill_rank",
-                if skill.star_rank_locked { None } else { stars },
-            ),
-        };
+        let (min, max) = item_skill_rank_range(
+            name,
+            value.as_ranged(),
+            stars,
+            equipped.and_then(|i| item_skill_bonus_override(i, name)),
+        );
         let (rank_min, rank_max) = (min.round(), max.round());
         if rank_max <= 0. {
             continue;
@@ -1248,7 +1246,6 @@ fn socket_groups(item: &EquippedItem, base: &ItemBase) -> Vec<SocketGroup> {
             .as_ref()
             .is_some_and(|slots| slots.contains(&(index as u32 + 1)))
             || item.socket_types.get(index) == Some(&SocketType::Rainbow);
-        let multiplier = if rainbow { RAINBOW_MULTIPLIER } else { 1. };
         let source = base
             .socket_transforms
             .as_ref()
@@ -1259,7 +1256,7 @@ fn socket_groups(item: &EquippedItem, base: &ItemBase) -> Vec<SocketGroup> {
             .or_insert_with(|| (name.clone(), 0, BTreeMap::new()));
         group.1 += 1;
         for (key, value) in source {
-            *group.2.entry(key.clone()).or_default() += value * multiplier;
+            *group.2.entry(key.clone()).or_default() += socket_stat_value(*value, rainbow);
         }
     }
     groups
@@ -1827,6 +1824,102 @@ pub(crate) fn equipped_ids(inventory: &hsplanner_engine::calc::types::Inventory)
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn granted_skill_tooltip_uses_normalized_final_pin() {
+        let base = data::get_item("gloves_satanic_thor_s_battle_gloves").unwrap();
+        let mut item = EquippedItem {
+            base_id: base.id.clone(),
+            stars: Some(5),
+            ..Default::default()
+        };
+        for pin in [4., 0.] {
+            item.skill_bonus_overrides
+                .insert("  HOLY AURA  ".into(), pin);
+            let entries = granted_skill_entries(base, Some(&item), item.stars);
+            let aura = entries
+                .iter()
+                .find(|(skill, _, _)| skill.name == "Holy Aura");
+            if pin == 0. {
+                assert!(aura.is_none());
+            } else {
+                assert_eq!(aura.unwrap().1, "4");
+            }
+        }
+    }
+
+    #[::core::prelude::v1::test]
+    fn resolved_implicit_pin_has_the_same_tooltip_as_its_raw_key() {
+        let base = data::get_item("s10_phantoms_step").unwrap();
+        let lines = |key: &str| {
+            let item = EquippedItem {
+                base_id: base.id.clone(),
+                stars: Some(5),
+                random_skill_element: Some("fire".into()),
+                implicit_overrides: HashMap::from([(key.into(), 4.)]),
+                ..Default::default()
+            };
+            build_model(base, Some(&item), &[])
+                .sections
+                .into_iter()
+                .flat_map(|s| s.lines)
+                .filter_map(|line| match line {
+                    Line::Text { text, .. } => Some(text),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(lines("random_skill_element"), lines("fire_skills"));
+    }
+
+    #[::core::prelude::v1::test]
+    fn rainbow_socket_groups_sum_individually_floored_bonuses() {
+        for (base_id, socket_id, socket_types, count, expected) in [
+            (
+                "body_armor_angelic_st_jupe_s_plate_of_command",
+                "rune_ist",
+                vec![SocketType::Rainbow; 6],
+                6,
+                132.,
+            ),
+            (
+                "charm_heroic_tablet_of_awakening",
+                "rune_ist",
+                vec![],
+                4,
+                81.,
+            ),
+            (
+                "body_armor_heroic_gem_king_s_garb",
+                "gem_pristine_topaz",
+                vec![SocketType::Rainbow; 6],
+                6,
+                132.,
+            ),
+        ] {
+            let base = data::get_item(base_id).unwrap();
+            let item = EquippedItem {
+                base_id: base_id.into(),
+                socket_count: count,
+                socketed: vec![Some(socket_id.into()); count as usize],
+                socket_types,
+                ..Default::default()
+            };
+            let groups = socket_groups(&item, base);
+            assert_eq!(groups.len(), 1);
+            assert_eq!(groups[0].1, count);
+            assert_eq!(
+                groups[0]
+                    .2
+                    .iter()
+                    .find(|(key, _)| key == "magic_find")
+                    .unwrap()
+                    .1,
+                expected,
+                "{base_id}"
+            );
+        }
+    }
 
     #[::core::prelude::v1::test]
     fn auroras_might_shows_lunar_aura_in_granted_skill_effects() {

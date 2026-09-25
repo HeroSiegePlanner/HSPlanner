@@ -19,7 +19,11 @@ impl Build {
             main: Some(skill),
             ranks: [(skill.to_string(), 10)].into_iter().collect(),
             subs: HashMap::new(),
-            stats: Vec::new(),
+            // Cadence fixtures isolate speed/cooldown formulas without gear.
+            stats: vec![CustomStat {
+                stat_key: "skill_restrictions_removed".into(),
+                value: "100".into(),
+            }],
             rates: HashMap::new(),
             procs: HashMap::new(),
             projectiles: HashMap::new(),

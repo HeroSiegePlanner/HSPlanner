@@ -412,6 +412,7 @@ pub fn apply_subskill_aggregation(
     enemy_conditions: Option<&HashMap<String, bool>>,
     attr_sources: &mut SourceMap,
     stat_sources: &mut SourceMap,
+    weapon_kind: &str,
 ) -> HashMap<String, SubtreeAgg> {
     let mut out: HashMap<String, SubtreeAgg> = HashMap::new();
     let Some(class_id) = class_id else {
@@ -421,7 +422,19 @@ pub fn apply_subskill_aggregation(
         if skill.subskills.as_ref().is_none_or(|s| s.is_empty()) {
             continue;
         }
-        let owner = skill_spec_to_subskill_owner(skill);
+        let mut owner = skill_spec_to_subskill_owner(skill);
+        // These Amazon nodes explicitly require the equipped weapon class.
+        // Dropping the whole node also gates its range/count alongside damage.
+        if class_id == "amazon" {
+            owner
+                .subskills
+                .retain(|node| match (skill.id.as_str(), node.id.as_str()) {
+                    ("noxious_strike", "corrosive_reach") => weapon_kind == "Polearm",
+                    ("rebound", "marksmanship") => weapon_kind == "Bow",
+                    ("astropes_gift", "master_of_javelin") => weapon_kind == "Throwing",
+                    _ => true,
+                });
+        }
         let agg = crate::calc::subskill::aggregate_subskill_stats(
             &owner,
             subskill_ranks,
@@ -549,6 +562,38 @@ pub fn apply_attribute_divided_stats(
     }
 }
 
+// The historical rate key says "replenish", but the incarnation line grants
+// Maximum Life. Each allocated node pays one life per complete 5 Strength.
+pub fn apply_strength_to_life(attributes: &HashMap<String, Ranged>, stat_sources: &mut SourceMap) {
+    let Some(&strength) = attributes.get("strength") else {
+        return;
+    };
+    let steps = (
+        (strength.0.max(0.0) / 5.0).floor(),
+        (strength.1.max(0.0) / 5.0).floor(),
+    );
+    let rates = stat_sources
+        .get("life_replenish_flat_strength")
+        .cloned()
+        .unwrap_or_default();
+    for rate in rates {
+        let value = (steps.0 * rate.value.0, steps.1 * rate.value.1);
+        if is_zero(value) {
+            continue;
+        }
+        push_source(
+            stat_sources,
+            "life",
+            SourceContribution {
+                label: format!("{} (per 5 Strength)", rate.label),
+                source_type: rate.source_type,
+                value,
+                forge: None,
+            },
+        );
+    }
+}
+
 // Pushes passive stats, returns the ranks map. `extra_ranks` carries externally
 // granted skills; same-skill ranks do not stack — the higher level wins.
 pub fn apply_item_granted_passive_stats(
@@ -599,6 +644,9 @@ pub fn apply_item_granted_passive_stats(
                 let max = existing.1 + v * rank_max;
                 out.insert(k.clone(), (min, max));
             }
+        }
+        if granted.aura {
+            super::skills::apply_aura_effectiveness(&mut out, stat_sources);
         }
         let rank_label = if rank_min == rank_max {
             format!("{rank_min}")
@@ -811,6 +859,34 @@ pub fn apply_stats_based_on_level(
             SourceContribution {
                 label: label.to_string(),
                 source_type: SourceType::Item,
+                value: bonus,
+                forge: None,
+            },
+        );
+    }
+}
+
+pub fn apply_charge_attribute_damage(
+    attributes: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+) {
+    for attribute in ["strength", "vitality"] {
+        let rate_key = format!("charging_damage_per_{attribute}");
+        let rate = stat_sources
+            .get(&rate_key)
+            .map(|sources| sum_contributions(sources))
+            .unwrap_or_default();
+        let value = attributes.get(attribute).copied().unwrap_or_default();
+        let bonus = (rate.0 * value.0, rate.1 * value.1);
+        if is_zero(bonus) {
+            continue;
+        }
+        push_source(
+            stat_sources,
+            "charging_damage",
+            SourceContribution {
+                label: format!("Charge Damage (per {})", stat_name(attribute)),
+                source_type: SourceType::Tree,
                 value: bonus,
                 forge: None,
             },

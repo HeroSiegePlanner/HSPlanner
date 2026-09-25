@@ -8,6 +8,7 @@ pub mod calculation;
 pub mod conversion;
 pub mod damage;
 pub mod weapon;
+pub mod requirements;
 
 pub use attack::{compute_attack_skill_damage, AttackSkillInput};
 pub use damage::{compute_skill_damage, SkillInput};
@@ -21,6 +22,20 @@ pub type ResistMap = HashMap<String, f64>;
 pub type ItemSkillBonuses = HashMap<String, (f64, f64)>;
 pub type SkillRanks = HashMap<String, f64>;
 
+/// Flat and percentage bonuses affect the named damage bound, retaining each
+/// component's damage type. Equipment conditions are resolved by stat aggregation.
+pub(crate) fn damage_bound_bonuses(stats: &StatMap) -> (Ranged, Ranged) {
+    let flat = (
+        rg(stats, "minimum_damage_flat").0,
+        rg(stats, "maximum_damage_flat").1,
+    );
+    let multiplier = (
+        (1.0 + rg(stats, "minimum_damage_pct").0 / 100.0).max(0.0),
+        (1.0 + rg(stats, "maximum_damage_pct").1 / 100.0).max(0.0),
+    );
+    (flat, multiplier)
+}
+
 pub const ELEMENTS: [&str; 5] = ["fire", "cold", "lightning", "poison", "arcane"];
 
 pub(crate) const CRUSHING_BLOW_DEFAULT: f64 = 1.5;
@@ -33,9 +48,56 @@ pub(crate) fn deadly_blow_mult(chance_pct: f64, effect_pct: f64) -> f64 {
     1.0 + chance * (DEADLY_BLOW_ON_PROC_MULT * (1.0 + effect_pct / 100.0) - 1.0)
 }
 
+/// LoadMonsterBreaks rolls independently of an ordinary critical hit. Only
+/// the matching Break contribution gains critical damage. See
+/// `../critical-break-evidence.md`; the caller supplies the condition-gated Break.
+pub(crate) fn critical_break_average_multiplier(
+    element: &str,
+    break_pct: f64,
+    elemental_break_pct: f64,
+    stats: &StatMap,
+    scoped: &StatMap,
+) -> (Ranged, Option<calculation::CalculationStep>) {
+    if !ELEMENTS.contains(&element) || break_pct <= 0.0 {
+        return ((1.0, 1.0), None);
+    }
+    let chance_key = format!("{element}_break_crit_chance");
+    let damage_key = format!("{element}_break_crit_damage");
+    let shared_chance = rg(stats, &chance_key);
+    let scoped_chance = rg(scoped, &chance_key);
+    let shared_damage = rg(stats, &damage_key);
+    let scoped_damage = rg(scoped, &damage_key);
+    // irandom(99) < chance: an integer roll, including fractional thresholds.
+    let chance = (
+        (shared_chance.0 + scoped_chance.0).ceil().clamp(0.0, 100.0) / 100.0,
+        (shared_chance.1 + scoped_chance.1).ceil().clamp(0.0, 100.0) / 100.0,
+    );
+    let damage = (
+        shared_damage.0 + scoped_damage.0,
+        shared_damage.1 + scoped_damage.1,
+    );
+    let ordinary = 1.0 + (elemental_break_pct + break_pct) / 100.0;
+    let expected = (
+        ordinary + break_pct / 100.0 * chance.0 * damage.0 / 100.0,
+        ordinary + break_pct / 100.0 * chance.1 * damage.1 / 100.0,
+    );
+    let ratio = (expected.0 / ordinary, expected.1 / ordinary);
+    let step = (ratio != (1.0, 1.0)).then(|| calculation::CalculationStep::new(
+        format!("Critical {element} Break average adjustment"),
+        format!(
+            "[1 + {}% Elemental Break / 100 + {}% typed Break / 100 × (1 + {} chance × {}% Critical Break damage / 100)] / {}; independent of ordinary critical hits, average damage only",
+            calculation::number(elemental_break_pct), calculation::number(break_pct), calculation::range(chance),
+            calculation::range(damage), calculation::number(ordinary),
+        ),
+        ratio,
+    ));
+    (ratio, step)
+}
+
 // (stat key, label, counts as an ailment for the generic ailment bonuses). The
 // gating condition is derived from the stat key by `conditions::condition_key_for`.
 pub const EXTRA_DAMAGE_CONDITIONS: &[(&str, &str, bool)] = &[
+    ("damage_to_cc_immune", "Crowd Control Immune", false),
     ("extra_damage_stunned", "Stunned", true),
     ("extra_damage_bleeding", "Bleeding", true),
     ("extra_damage_frozen", "Frozen", true),
@@ -188,6 +250,8 @@ pub struct SkillDamageBreakdown {
     pub multicast_multiplier: f64,
     pub projectile_count: u32,
     pub elemental_break_pct: f64,
+    /// Standalone universal Break factor, retained for API compatibility.
+    /// The hit combines its percentage additively with the matching typed Break.
     pub elemental_break_multiplier: f64,
     pub enemy_resistance_pct: f64,
     pub resistance_ignored_pct: f64,
@@ -199,6 +263,17 @@ pub struct SkillDamageBreakdown {
     pub crit_max: i64,
     pub final_min: i64,
     pub final_max: i64,
+    pub avg_min: i64,
+    pub avg_max: i64,
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ConvertedAttackDamage {
+    pub element: String,
+    pub conversion_pct: Ranged,
+    pub hit_min: i64,
+    pub hit_max: i64,
     pub avg_min: i64,
     pub avg_max: i64,
 }
@@ -242,6 +317,7 @@ pub struct AttackSkillDamageBreakdown {
     pub poison_hit_max: i64,
     pub poison_avg_min: i64,
     pub poison_avg_max: i64,
+    pub converted_elements: Vec<ConvertedAttackDamage>,
     pub combined_hit_min: i64,
     pub combined_hit_max: i64,
     pub combined_avg_min: i64,
@@ -395,7 +471,11 @@ pub(crate) struct CritFactors {
     pub avg_mult: f64,
 }
 
-pub(crate) fn crit_factors(stats: &StatMap, is_spell: bool) -> CritFactors {
+pub(crate) fn crit_factors_with_tags(
+    stats: &StatMap,
+    is_spell: bool,
+    tags: &[String],
+) -> CritFactors {
     let chance = r_max(rg(
         stats,
         if is_spell {
@@ -411,7 +491,12 @@ pub(crate) fn crit_factors(stats: &StatMap, is_spell: bool) -> CritFactors {
         } else {
             "crit_damage"
         },
-    ));
+    )) + crate::calc::affix_tags::sum_for(
+        crate::calc::types::AffixEffect::CriticalDamage,
+        tags,
+        stats,
+    )
+    .1;
     let damage_more = if is_spell {
         0.0
     } else {
@@ -630,4 +715,9 @@ mod tests {
         assert!((mult - 1.5).abs() < 1e-9, "expected 1.5, got {mult}");
         assert_eq!(sources.len(), 1);
     }
+}
+
+/// Mechanical Engineering preserves damage dealt by separate entities.
+pub(crate) fn self_damage_disabled(stats: &StatMap, tags: &[String]) -> bool {
+    rg(stats, "self_damage_disabled").1 > 0.0 && !crate::calc::affix_tags::is_entity(tags)
 }

@@ -186,6 +186,13 @@ pub fn stats_combined_map(stats: &HashMap<String, Ranged>) -> HashMap<String, Ra
             continue;
         };
         let additive = stats.get(base_key).copied().unwrap_or((0.0, 0.0));
+        // These rates already include their multipliers in the finalization
+        // pass. Recombining them as percentages both double-scales recovery
+        // and can revive recovery that a tree restriction disabled.
+        if matches!(base_key, "life_replenish" | "mana_replenish" | "life_steal") {
+            out.insert(base_key.to_string(), additive);
+            continue;
+        }
         out.insert(
             base_key.to_string(),
             combine_additive_and_more(additive, *more),

@@ -48,6 +48,7 @@ fn empty_input<'a>(
 }
 
 mod engine;
+mod incarnation;
 mod orchestrator;
 mod pipeline;
 mod units;

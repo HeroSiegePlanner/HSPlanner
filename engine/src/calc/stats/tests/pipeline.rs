@@ -38,38 +38,15 @@ fn apply_tree_contributions_skips_jewelry_nodes() {
 
 #[test]
 fn apply_tree_contributions_pushes_parseable_mod_line() {
-    // Find any non-jewelry node whose first line parses successfully.
-    let jewelry = data::tree_jewelry_ids();
-    let pick = data::tree_nodes().iter().find_map(|(id_str, info)| {
-        if info.kind == "jewelry" || info.lines.is_empty() {
-            return None;
-        }
-        let id: u32 = id_str.parse().ok()?;
-        if jewelry.contains(&id) {
-            return None;
-        }
-        for line in &info.lines {
-            if parse_tree_node_mod(line).is_some() {
-                return Some(id);
-            }
-        }
-        None
-    });
-    let Some(node_id) = pick else {
-        eprintln!("no parseable tree node found in data; skipping");
-        return;
-    };
+    // Use an unconditional node. HashMap iteration can otherwise choose a
+    // conditional bonus that correctly contributes nothing in this scenario.
     let mut alloc = HashSet::new();
-    alloc.insert(node_id);
+    alloc.insert(0); // Strength root: +25 life, +5 Strength.
     let mut attrs: SourceMap = HashMap::new();
     let mut stats: SourceMap = HashMap::new();
     apply_tree_contributions(&alloc, &HashMap::new(), &mut attrs, &mut stats);
-    let total_sources = attrs.values().map(|v| v.len()).sum::<usize>()
-        + stats.values().map(|v| v.len()).sum::<usize>();
-    assert!(
-        total_sources >= 1,
-        "expected at least one contribution from a parseable tree node"
-    );
+    assert_eq!(sum_contributions(&attrs["strength"]), (5.0, 5.0));
+    assert_eq!(sum_contributions(&stats["life"]), (25.0, 25.0));
 }
 
 #[test]

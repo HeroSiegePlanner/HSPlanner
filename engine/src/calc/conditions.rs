@@ -5,6 +5,7 @@ pub type ConditionMap = HashMap<String, bool>;
 // Stat-key suffix -> enemy-condition key stored by the UI. Most specific first:
 // `shadow_burning` must win over `burning`, `deep_frozen` over `frozen`.
 const SUFFIX_TO_CONDITION: &[(&str, &str)] = &[
+    ("cc_immune", "cc_immune"),
     ("shadow_burning", "shadow_burn"),
     ("serrated_chains", "serrated_chains"),
     ("lightning_break", "lightning_break"),

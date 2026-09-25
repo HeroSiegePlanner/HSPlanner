@@ -2,6 +2,70 @@ use super::super::*;
 use crate::calc::types::{EquippedAffix, EquippedItem};
 
 #[test]
+fn rainbow_sockets_floor_each_bonus_before_summing() {
+    for (base_id, socket_id, types, count, expected) in [
+        (
+            "body_armor_angelic_st_jupe_s_plate_of_command",
+            "rune_ist",
+            vec![SocketType::Rainbow; 6],
+            6,
+            132.,
+        ),
+        (
+            "body_armor_angelic_st_jupe_s_plate_of_command",
+            "rune_ist",
+            vec![SocketType::Normal; 6],
+            6,
+            90.,
+        ),
+        (
+            "body_armor_angelic_st_jupe_s_plate_of_command",
+            "rune_ist",
+            vec![SocketType::Rainbow, SocketType::Normal],
+            2,
+            37.,
+        ),
+        (
+            "charm_heroic_tablet_of_awakening",
+            "rune_ist",
+            vec![],
+            4,
+            81.,
+        ),
+        (
+            "body_armor_heroic_gem_king_s_garb",
+            "gem_pristine_topaz",
+            vec![SocketType::Rainbow; 6],
+            6,
+            132.,
+        ),
+    ] {
+        let inventory = Inventory::from([(
+            "body".into(),
+            EquippedItem {
+                base_id: base_id.into(),
+                socket_count: count,
+                socketed: vec![Some(socket_id.into()); count as usize],
+                socket_types: types,
+                ..Default::default()
+            },
+        )]);
+        let mut attrs = SourceMap::new();
+        let mut stats = SourceMap::new();
+        apply_inventory(&inventory, &mut attrs, &mut stats);
+        let socket_total: f64 = stats["magic_find"]
+            .iter()
+            .filter(|source| source.source_type == SourceType::Socket)
+            .map(|source| {
+                assert_eq!(source.value.0, source.value.1);
+                source.value.0
+            })
+            .sum();
+        assert_eq!(socket_total, expected, "{base_id}: {socket_id}");
+    }
+}
+
+#[test]
 fn auroras_might_grants_lunar_aura_and_preserves_rune_bonuses() {
     let inventory = Inventory::from([(
         "weapon".into(),
@@ -244,26 +308,12 @@ fn apply_skill_ranks_passive_pushes_when_allocated() {
 
 #[test]
 fn buffing_aura_effectiveness_scales_active_aura_passive() {
-    // Pick a real aura skill that contributes passive stats.
-    let pick = data::data()
-        .skills_by_class
+    let class_id = "plague_doctor";
+    let aura = data::get_skills_by_class(class_id)
         .iter()
-        .find_map(|(class_id, skills)| {
-            skills
-                .iter()
-                .find(|s| {
-                    s.kind == SkillKind::Aura
-                        && s.passive_stats.as_ref().is_some_and(|p| {
-                            p.base.as_ref().is_some_and(|b| !b.is_empty())
-                                || p.per_rank.as_ref().is_some_and(|m| !m.is_empty())
-                        })
-                })
-                .map(|s| (class_id.clone(), s.clone()))
-        });
-    let Some((class_id, aura)) = pick else {
-        eprintln!("no aura with passive_stats in data; skipping");
-        return;
-    };
+        .find(|skill| skill.id == "lifeblood_aura")
+        .unwrap()
+        .clone();
 
     let mut ranks = HashMap::new();
     ranks.insert(aura.id.clone(), 5_u32);
@@ -708,6 +758,50 @@ fn all_skills_class_lands_on_the_picked_class() {
     assert!(picked.iter().any(|c| c.value == (1.0, 3.0)));
     assert!(!stats.contains_key("all_skills"));
     assert!(!stats.contains_key("all_skills_class"));
+}
+
+#[test]
+fn resolved_implicit_pins_replace_the_roll_once_even_with_stars() {
+    for (base_id, slot, raw_key, resolved_key) in [
+        (
+            "s10_phantoms_step",
+            "boots",
+            "random_skill_element",
+            "fire_skills",
+        ),
+        (
+            "charm_heroic_torch_of_shadow",
+            "charm_1",
+            "all_skills_class",
+            "all_skills_jotunn",
+        ),
+    ] {
+        for overrides in [
+            HashMap::from([(raw_key.into(), 4.)]),
+            HashMap::from([(resolved_key.into(), 4.)]),
+            HashMap::from([(raw_key.into(), 4.), (resolved_key.into(), 7.)]),
+        ] {
+            let inv = Inventory::from([(
+                slot.into(),
+                EquippedItem {
+                    base_id: base_id.into(),
+                    stars: Some(5),
+                    random_skill_element: Some("fire".into()),
+                    all_skills_class_id: Some("jotunn".into()),
+                    implicit_overrides: overrides,
+                    ..Default::default()
+                },
+            )]);
+            let mut attrs = SourceMap::new();
+            let mut stats = SourceMap::new();
+            apply_inventory(&inv, &mut attrs, &mut stats);
+            assert_eq!(
+                sum_ranged_from_map(&stats, resolved_key),
+                (4., 4.),
+                "{base_id}"
+            );
+        }
+    }
 }
 
 #[test]
