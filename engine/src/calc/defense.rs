@@ -8,6 +8,13 @@ use super::data;
 use super::skills::{r_max, Ranged, ELEMENTS};
 
 pub const DEFAULT_RES_CAP: f64 = 75.0;
+pub const RES_HARD_CAP: f64 = 90.0;
+/// StatPhysical/MagicDamageReduction cap the player at 75% (raised by `max_*`).
+pub const DAMAGE_REDUCTION_CAP: f64 = 75.0;
+
+fn capped_reduction(stats: &Stats, key: &str) -> f64 {
+    stat_pct(stats, key).min(DAMAGE_REDUCTION_CAP + stat_pct(stats, &format!("max_{key}")))
+}
 const INSIGHT_MIN_GAIN_PCT: f64 = 2.0;
 const INSIGHT_MAX_COUNT: usize = 3;
 pub const DAMAGE_TYPES: [&str; 6] = ["physical", "fire", "cold", "lightning", "poison", "arcane"];
@@ -60,9 +67,12 @@ pub fn effective_cap(key: &str, stats: &Stats) -> Option<f64> {
         .cap?;
     let raised = base + stat_pct(stats, &format!("max_{key}"));
     if key.ends_with("_resistance") || key == "all_resistances" {
+        // StatFireResist & co.: min(base + max, 90) — 90 is a hard ceiling.
+        let raised = raised.min(RES_HARD_CAP);
         if let Some(cap) = stats.get("max_all_resistances_cap") {
             return Some(raised.min(cap.1));
         }
+        return Some(raised);
     }
     Some(raised)
 }
@@ -101,7 +111,7 @@ fn multiplier_for(
     if damage_type == "physical" {
         apply(
             "Physical damage reduction".to_string(),
-            stat_pct(stats, "physical_damage_reduction"),
+            capped_reduction(stats, "physical_damage_reduction"),
             false,
         );
     } else {
@@ -115,7 +125,7 @@ fn multiplier_for(
         );
         apply(
             "Magic damage reduction".to_string(),
-            stat_pct(stats, "magic_damage_reduction"),
+            capped_reduction(stats, "magic_damage_reduction"),
             false,
         );
     }
@@ -404,8 +414,8 @@ mod tests {
     }
 
     #[test]
-    fn immunity_gains_sort_stably() {
-        let insights = derive_defense_insights(&stats(&[
+    fn max_resistance_stops_at_ninety() {
+        let s = stats(&[
             ("life", 1000.0),
             ("fire_resistance", 0.0),
             ("max_fire_resistance", 25.0),
@@ -414,11 +424,20 @@ mod tests {
             ("lightning_resistance", 75.0),
             ("poison_resistance", 75.0),
             ("arcane_resistance", 75.0),
-        ]));
+        ]);
+        // 75 base + 25 max would be 100; the game clamps the cap to 90.
+        assert_eq!(effective_cap("fire_resistance", &s), Some(90.0));
+        let insights = derive_defense_insights(&s);
         assert_eq!(insights.len(), 2);
-        assert!(insights.iter().all(|i| i.gain_pct.is_none()));
-        assert!(insights.iter().all(|i| i.text.contains("immunity")));
-        assert!(insights[0].text.contains("fire"));
-        assert!(insights[1].text.contains("cold"));
+        assert!(insights.iter().all(|i| !i.text.contains("immunity")));
+        assert!(insights.iter().all(|i| i.gain_pct.is_some()));
+    }
+
+    #[test]
+    fn damage_reduction_caps_at_seventy_five() {
+        let s = stats(&[("physical_damage_reduction", 90.0)]);
+        assert_eq!(capped_reduction(&s, "physical_damage_reduction"), 75.0);
+        let raised = stats(&[("physical_damage_reduction", 90.0), ("max_physical_damage_reduction", 5.0)]);
+        assert_eq!(capped_reduction(&raised, "physical_damage_reduction"), 80.0);
     }
 }
