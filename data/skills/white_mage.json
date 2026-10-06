@@ -36,6 +36,7 @@
   },
   {
     "id": "shadow_bolt",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "white_mage",
     "name": "Shadow Bolt",
@@ -589,6 +590,7 @@
   },
   {
     "id": "restless_spirits",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "white_mage",
     "name": "Restless Spirits",
@@ -1345,6 +1347,7 @@
   },
   {
     "id": "malediction",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "white_mage",
     "name": "Malediction",
@@ -1400,6 +1403,7 @@
   },
   {
     "id": "black_mass",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "white_mage",
     "name": "Black Mass",
@@ -2633,6 +2637,7 @@
   },
   {
     "id": "mana_orb",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "white_mage",
     "name": "Mana Orb",

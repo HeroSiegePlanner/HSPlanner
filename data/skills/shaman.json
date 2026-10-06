@@ -1,6 +1,7 @@
 [
   {
     "id": "tectonic_boulder",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "shaman",
     "name": "Tectonic Boulder",
@@ -205,6 +206,7 @@
   },
   {
     "id": "twisters",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "shaman",
     "name": "Twisters",
@@ -420,6 +422,7 @@
   },
   {
     "id": "rock_fragments",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "shaman",
     "name": "Rock Fragments",
@@ -848,6 +851,7 @@
   },
   {
     "id": "meteor_storm",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "shaman",
     "name": "Meteor Storm",
@@ -1062,6 +1066,7 @@
   },
   {
     "id": "tornado",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "shaman",
     "name": "Tornado",

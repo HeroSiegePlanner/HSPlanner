@@ -1205,6 +1205,7 @@
   },
   {
     "id": "holy_bolt",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Bolt",
@@ -1663,6 +1664,7 @@
   },
   {
     "id": "holy_hammer",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Hammer",

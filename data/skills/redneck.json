@@ -1,6 +1,7 @@
 [
   {
     "id": "moonshine_molotov",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "redneck",
     "name": "Moonshine Molotov",
@@ -247,6 +248,7 @@
   },
   {
     "id": "pipe_bombs",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "redneck",
     "name": "Pipe Bombs",
@@ -485,6 +487,7 @@
   },
   {
     "id": "tire_fire",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "redneck",

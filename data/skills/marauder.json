@@ -1,6 +1,7 @@
 [
   {
     "id": "bouncing_grenade",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "marauder",
     "name": "Bouncing Grenade",
@@ -948,6 +949,7 @@
   },
   {
     "id": "bombardment",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "marauder",
     "name": "Bombardment",
@@ -1644,6 +1646,7 @@
   },
   {
     "id": "chain_trap",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "marauder",
     "name": "Chain Trap",

@@ -1,6 +1,7 @@
 [
   {
     "id": "charged_bolts",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Charged Bolts",
@@ -258,6 +259,7 @@
   },
   {
     "id": "lightning_surge",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Lightning Surge",
@@ -1418,6 +1420,7 @@
   },
   {
     "id": "storm_bolt",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Storm Bolt",

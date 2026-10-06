@@ -1,5 +1,7 @@
 ## Feature
 
+- Spell projectile counts now include Extra Spell Projectiles % and Additional Spell Projectile for the 44 skills that use the game's ReturnExtraSpellProjectiles (e.g. Frozen Boulder, Orb of Frost, Charged Bolts): floor(count × (1 + %/100)), then the flat bonus.
+
 - Strength now grants 1% Attack Damage per point (the game's StatAttackDamage), instead of Enhanced Damage. Unarmed Wargod still removes it.
 
 - Defensive caps follow the game's Stat scripts: maximum resistance stops at 90% even with +max resistance, physical and magic damage reduction cap at 75% (raised by +max reduction), and weapon-panel critical chance caps at 95%.

@@ -160,7 +160,23 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
 /// Hits one target takes from a volley. A fan or arc lands only a couple of
 /// its projectiles on a single enemy (`single_target_hit_cap`), and a wave
 /// proc repeats the whole volley (`extra_volleys_pct`, already chance-weighted).
-fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> u32 {
+/// ReturnExtraSpellProjectiles: floor(n × (1 + pct/100)) when pct > 0, then + flat.
+fn extra_spell_projectiles(count: u32, stats: &StatMap) -> u32 {
+    let pct = r_max(rg(stats, "extra_spell_projectiles_pct"));
+    let flat = r_max(rg(stats, "additional_spell_projectile"));
+    let scaled = if pct > 0.0 {
+        (count as f64 * (1.0 + pct / 100.0)).floor()
+    } else {
+        count as f64
+    };
+    (scaled + flat).max(0.0) as u32
+}
+
+fn effective_projectile_count(
+    base: u32,
+    subtree_stat: &dyn Fn(&str) -> f64,
+    spell_extra: Option<&StatMap>,
+) -> u32 {
     let transformed_count = subtree_stat("primary_projectile_count") as u32;
     let base = if transformed_count > 0 {
         transformed_count
@@ -168,6 +184,7 @@ fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> 
         base
     };
     let boosted = base + subtree_stat("projectile_count") as u32;
+    let boosted = spell_extra.map_or(boosted, |stats| extra_spell_projectiles(boosted, stats));
     let cap = subtree_stat("single_target_hit_cap") as u32;
     let capped = if cap > 0 { boosted.min(cap) } else { boosted };
     // ponytail: whole hits; go f64 if a 1-projectile skill ever takes a wave node
@@ -423,6 +440,9 @@ fn proc_target_damage(
                 .copied()
                 .unwrap_or_else(|| target_spec.base_projectiles.unwrap_or(1)),
             &subtree_stat,
+            target_spec
+                .uses_extra_spell_projectiles
+                .then_some(&computed.stats),
         ),
         of_total_damage: r_max(rg(scoped, "of_total_damage")),
         scoped,
@@ -691,8 +711,12 @@ pub(crate) fn performance_from_stats(
             ));
             return 1;
         }
-        let count = effective_projectile_count(base, &subtree_stat);
-        calculation.push(CalculationStep::new("Effective projectiles", format!("round(({} base + {} subtree, capped at {} when nonzero) × (1 + {}% extra volleys / 100)); damage uses at least 1", base, number(subtree_stat("projectile_count")), number(subtree_stat("single_target_hit_cap")), number(subtree_stat("extra_volleys_pct"))), scalar(count.max(1) as f64)));
+        let count = effective_projectile_count(
+            base,
+            &subtree_stat,
+            s.uses_extra_spell_projectiles.then_some(&computed.stats),
+        );
+        calculation.push(CalculationStep::new("Effective projectiles", format!("round(({} base + {} subtree{}, capped at {} when nonzero) × (1 + {}% extra volleys / 100)); damage uses at least 1", base, number(subtree_stat("projectile_count")), if s.uses_extra_spell_projectiles { format!(", then floor(n × (1 + {}% extra spell projectiles)) + {} additional", number(r_max(rg(&computed.stats, "extra_spell_projectiles_pct"))), number(r_max(rg(&computed.stats, "additional_spell_projectile")))) } else { String::new() }, number(subtree_stat("single_target_hit_cap")), number(subtree_stat("extra_volleys_pct"))), scalar(count.max(1) as f64)));
         count
     });
 

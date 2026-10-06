@@ -2101,6 +2101,7 @@
   },
   {
     "id": "comet",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Comet",
@@ -2307,6 +2308,7 @@
   },
   {
     "id": "armageddon",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Armageddon",

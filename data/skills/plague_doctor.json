@@ -598,6 +598,7 @@
   },
   {
     "id": "toxic_flask",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Toxic Flask",
@@ -1047,6 +1048,7 @@
   },
   {
     "id": "plague_of_rats",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Plague of Rats",
@@ -1515,6 +1517,7 @@
   },
   {
     "id": "jar_of_leeches",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Jar of Leeches",

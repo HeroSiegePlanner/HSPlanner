@@ -218,6 +218,7 @@
   },
   {
     "id": "solar_flare",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "exo",
     "name": "Solar Flare",
@@ -1016,6 +1017,7 @@
   },
   {
     "id": "tsunami",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "exo",
     "name": "Tsunami",

@@ -1057,6 +1057,7 @@
   },
   {
     "id": "explosive_kunai",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "samurai",

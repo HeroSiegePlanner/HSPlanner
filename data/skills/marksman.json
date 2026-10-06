@@ -1348,6 +1348,7 @@
   },
   {
     "id": "frag_grenade",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "marksman",
     "name": "Frag Grenade",
@@ -1753,6 +1754,7 @@
   },
   {
     "id": "landmine",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "marksman",
     "name": "Landmine",

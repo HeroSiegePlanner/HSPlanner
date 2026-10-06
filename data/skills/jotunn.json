@@ -1,6 +1,7 @@
 [
   {
     "id": "frozen_boulder",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "jotunn",
     "name": "Frozen Boulder",
@@ -471,6 +472,7 @@
   },
   {
     "id": "orb_of_frost",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "jotunn",
     "name": "Orb of Frost",
@@ -924,6 +926,7 @@
   },
   {
     "id": "blizzard",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "jotunn",
     "name": "Blizzard",

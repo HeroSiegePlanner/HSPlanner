@@ -670,6 +670,7 @@
   },
   {
     "id": "sand_gush",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "nomad",
     "name": "Sand Gush",
@@ -930,6 +931,7 @@
   },
   {
     "id": "sand_vortex",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "nomad",
     "name": "Sand Vortex",

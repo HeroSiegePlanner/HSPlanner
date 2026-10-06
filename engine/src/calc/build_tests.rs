@@ -1800,11 +1800,11 @@ fn effective_projectile_count_caps_then_repeats_volleys() {
             _ => 0.0,
         }
     };
-    assert_eq!(effective_projectile_count(4, &stats(0.0, 0.0)), 10);
-    assert_eq!(effective_projectile_count(4, &stats(2.0, 0.0)), 2);
+    assert_eq!(effective_projectile_count(4, &stats(0.0, 0.0), None), 10);
+    assert_eq!(effective_projectile_count(4, &stats(2.0, 0.0), None), 2);
     // 10 projectiles, 45% chance of 3 extra waves: 10 * 2.35 = 23.5 -> 24.
-    assert_eq!(effective_projectile_count(4, &stats(0.0, 135.0)), 24);
-    assert_eq!(effective_projectile_count(4, &stats(2.0, 135.0)), 5);
+    assert_eq!(effective_projectile_count(4, &stats(0.0, 135.0), None), 24);
+    assert_eq!(effective_projectile_count(4, &stats(2.0, 135.0), None), 5);
 }
 
 // jotunn:frozen_boulder "Boulder Barrage": 5 boulders in an arc, but only 2
@@ -2737,4 +2737,21 @@ fn colossus_total_damage_reaches_spells_and_weapon_hits() {
             base.stats.get("enhanced_damage")
         );
     }
+}
+
+// ReturnExtraSpellProjectiles: floor(n × (1 + pct/100)) only when pct > 0, then + flat.
+#[test]
+fn extra_spell_projectiles_floor_the_percentage_then_add_flat() {
+    let stats = |pct: f64, flat: f64| -> StatMap {
+        HashMap::from([
+            ("extra_spell_projectiles_pct".to_string(), (pct, pct)),
+            ("additional_spell_projectile".to_string(), (flat, flat)),
+        ])
+    };
+    assert_eq!(super::extra_spell_projectiles(3, &stats(0.0, 0.0)), 3);
+    assert_eq!(super::extra_spell_projectiles(3, &stats(50.0, 0.0)), 4);
+    assert_eq!(super::extra_spell_projectiles(3, &stats(50.0, 2.0)), 6);
+    let no_subtree = |_: &str| 0.0;
+    assert_eq!(super::effective_projectile_count(3, &no_subtree, Some(&stats(50.0, 1.0))), 5);
+    assert_eq!(super::effective_projectile_count(3, &no_subtree, None), 3);
 }

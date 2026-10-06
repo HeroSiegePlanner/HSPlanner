@@ -1,6 +1,7 @@
 [
   {
     "id": "bone_fragments",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Bone Fragments",
@@ -974,6 +975,7 @@
   },
   {
     "id": "bone_barrage",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Bone Barrage",
@@ -1172,6 +1174,7 @@
   },
   {
     "id": "blood_bolts",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Blood Bolts",

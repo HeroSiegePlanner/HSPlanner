@@ -1,6 +1,7 @@
 [
   {
     "id": "bone_shred",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "necromancer",
     "name": "Bone Shred",
@@ -660,6 +661,7 @@
   },
   {
     "id": "bone_spear",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "necromancer",
     "name": "Bone Spear",
@@ -1309,6 +1311,7 @@
   },
   {
     "id": "poison_nova",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "necromancer",
     "name": "Poison Nova",
