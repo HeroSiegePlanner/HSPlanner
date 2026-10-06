@@ -467,6 +467,16 @@ pub enum DamageScaling {
 pub struct ManaCostFormulaSpec {
     pub base: f64,
     pub per_level: f64,
+    #[serde(default)]
+    pub rank_indexing: ManaCostRankIndexing,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, Default, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub enum ManaCostRankIndexing {
+    #[default]
+    FirstRankBase,
+    FullRank,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -497,6 +507,8 @@ pub struct AttackSkillScalingSpec {
     #[serde(default)]
     pub weapon_bonus_scaling: bool,
     #[serde(default)]
+    pub weapon_subtree_scales_full_hit: bool,
+    #[serde(default)]
     pub weapon_damage_pct: Option<DamageFormulaSpec>,
     #[serde(default)]
     pub flat_physical_min: Option<DamageFormulaSpec>,
@@ -504,6 +516,10 @@ pub struct AttackSkillScalingSpec {
     pub flat_physical_max: Option<DamageFormulaSpec>,
     #[serde(default)]
     pub attack_rating_pct: Option<DamageFormulaSpec>,
+    #[serde(default)]
+    pub critical_chance: Option<DamageFormulaSpec>,
+    #[serde(default)]
+    pub critical_damage: Option<DamageFormulaSpec>,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -529,6 +545,14 @@ pub struct SkillProcSpec {
     pub trigger: String,
     #[serde(default)]
     pub target: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TriggeredBuffSpec {
+    pub trigger: String,
+    pub chance: f64,
+    pub duration: f64,
 }
 
 /// Damage object the skill spawns, from the Hero Siege hit model. `lifetime` is
@@ -619,6 +643,8 @@ pub struct SubskillNodeSpec {
     #[serde(default)]
     pub effects: Option<SubskillEffectSpec>,
     #[serde(default)]
+    pub triggered_buff: Option<TriggeredBuffSpec>,
+    #[serde(default)]
     pub proc: Option<SubskillProcSpec>,
     #[serde(default)]
     pub requires_subskill: Option<String>,
@@ -638,6 +664,8 @@ pub enum SkillWeaponRequirement {
 #[serde(rename_all = "camelCase")]
 pub struct SkillSpec {
     pub id: String,
+    #[serde(default)]
+    pub activation_kind: Option<SkillActivationKind>,
     #[serde(default)]
     pub class_id: String,
     #[serde(default)]
@@ -689,6 +717,8 @@ pub struct SkillSpec {
     #[serde(default)]
     pub passive_stats: Option<PassiveStatsSpec>,
     #[serde(default)]
+    pub triggered_buff: Option<TriggeredBuffSpec>,
+    #[serde(default)]
     pub proc: Option<SkillProcSpec>,
     #[serde(default)]
     pub hit_model: Option<HitModelSpec>,
@@ -702,6 +732,24 @@ pub struct SkillSpec {
     pub attack_kind: Option<AttackKindSpec>,
     #[serde(default)]
     pub attack_scaling: Option<AttackSkillScalingSpec>,
+}
+
+impl SkillSpec {
+    pub fn has_buff_toggle(&self) -> bool {
+        self.kind == SkillKind::Buff
+            || self.triggered_buff.is_some()
+            || self
+                .tags
+                .as_ref()
+                .is_some_and(|tags| tags.iter().any(|tag| tag == "Buff"))
+    }
+}
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum SkillActivationKind {
+    Cast,
+    Attack,
+    Other,
 }
 
 // ---------- game config ----------

@@ -1,6 +1,7 @@
 [
   {
     "id": "scorching_whip",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "exo",
     "name": "Scorching Whip",
@@ -217,6 +218,7 @@
   },
   {
     "id": "solar_flare",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Solar Flare",
     "kind": "active",
@@ -232,7 +234,7 @@
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 7.84, "perLevel": 9.16 },
-    "manaCostFormula": { "base": 5, "perLevel": 1.075 },
+    "manaCostFormula": { "base": 3.95, "perLevel": 1.05, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Solar Burst", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Solar Form", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
@@ -436,6 +438,7 @@
   },
   {
     "id": "whiplash",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Whiplash",
     "kind": "passive",
@@ -453,6 +456,7 @@
   },
   {
     "id": "solar_dash",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Solar Dash",
     "kind": "active",
@@ -668,6 +672,7 @@
   },
   {
     "id": "shine_bright",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Shine Bright",
     "kind": "passive",
@@ -685,6 +690,7 @@
   },
   {
     "id": "solar_form",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Solar Form",
     "kind": "buff",
@@ -715,6 +721,7 @@
   },
   {
     "id": "blinding_light",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Blinding Light",
     "kind": "passive",
@@ -732,6 +739,7 @@
   },
   {
     "id": "solar_burst",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Solar Burst",
     "kind": "passive",
@@ -754,6 +762,7 @@
   },
   {
     "id": "supernova",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Supernova",
     "kind": "active",
@@ -982,6 +991,7 @@
   },
   {
     "id": "collision",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Collision",
     "kind": "active",
@@ -1006,6 +1016,7 @@
   },
   {
     "id": "tsunami",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Tsunami",
     "kind": "active",
@@ -1220,6 +1231,7 @@
   },
   {
     "id": "dark_side_of_the_moon",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Dark Side of the Moon",
     "kind": "aura",
@@ -1237,6 +1249,7 @@
   },
   {
     "id": "asteroid",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Asteroid",
     "kind": "active",
@@ -1252,7 +1265,7 @@
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 0.11, "perLevel": 15.89 },
-    "manaCostFormula": { "base": 5, "perLevel": 1.075 },
+    "manaCostFormula": { "base": 3.95, "perLevel": 1.05, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Collision", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Tsunami", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
@@ -1455,6 +1468,7 @@
   },
   {
     "id": "lunar_form",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Lunar Form",
     "kind": "buff",
@@ -1478,6 +1492,7 @@
   },
   {
     "id": "lunar_orbit",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Lunar Orbit",
     "kind": "active",
@@ -1690,6 +1705,7 @@
   },
   {
     "id": "moonlight",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Moonlight",
     "kind": "passive",
@@ -1707,6 +1723,7 @@
   },
   {
     "id": "blood_moon",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Blood Moon",
     "kind": "buff",
@@ -1729,6 +1746,7 @@
   },
   {
     "id": "black_hole",
+    "activationKind": "cast",
     "classId": "exo",
     "name": "Black Hole",
     "kind": "active",

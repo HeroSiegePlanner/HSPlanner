@@ -63,6 +63,7 @@ fn parity_with_ts_fixtures() {
         }
         correct_archived_cost_cadence(input_v, archived_expected, &mut expected);
         correct_archived_weapon_requirements(&entry.name, input_v, &mut expected);
+        correct_archived_raw_mana_cost(&entry.name, input_v, archived_expected, &mut expected);
 
         let input: app_lib::calc::commands::BuildPerformanceInput =
             match serde_json::from_value(input_v.clone()) {
@@ -104,6 +105,28 @@ fn parity_with_ts_fixtures() {
              diverged from TS, or the fixture is stale (re-run the dump).",
             diffs.len()
         );
+    }
+}
+
+fn correct_archived_raw_mana_cost(
+    name: &str,
+    input: &Value,
+    archived: &Value,
+    expected: &mut Value,
+) {
+    let fields: &[&str] = match name {
+        "class_only_lvl_1" | "class_leveled_50" | "class_with_one_item" => {
+            &["baseManaMin", "baseManaMax"]
+        }
+        "class_with_stars_5" => &["baseManaMin"],
+        _ => return,
+    };
+    assert_eq!(input["classId"], "amazon");
+    for id in ["caustic_spearhead", "rebound", "thunder_fury"] {
+        for field in fields {
+            assert_eq!(archived["skillCosts"][id][*field], 4.0);
+            expected["skillCosts"][id][*field] = serde_json::json!(4.25);
+        }
     }
 }
 

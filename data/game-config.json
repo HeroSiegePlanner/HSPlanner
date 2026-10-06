@@ -448,6 +448,20 @@
       "format": "percent"
     },
     {
+      "key": "skill_attack_rating_multiplier_pct",
+      "name": "Intrinsic Skill Attack Rating Multiplier",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_melee_size_offset_per_100_strength",
+      "name": "Skill Melee Size Offset per 100 Strength",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
       "key": "additive_physical_damage",
       "name": "Additive Physical Damage",
       "category": "offense",
@@ -494,6 +508,41 @@
       "name": "Critical Strike Damage",
       "category": "offense",
       "format": "percent"
+    },
+    {
+      "key": "skill_crit_chance",
+      "name": "Skill Critical Strike Chance",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_crit_damage",
+      "name": "Skill Critical Strike Damage",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_extra_damage_bleeding",
+      "name": "Skill Damage to Bleeding Targets",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_crit_damage_multiplier_pct",
+      "name": "Intrinsic Skill Critical Damage Multiplier",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_crit_damage_multiplier_per_100_vitality",
+      "name": "Intrinsic Skill Critical Damage per 100 Vitality",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
     },
     {
       "key": "life_steal",
@@ -1491,6 +1540,27 @@
       "skillScoped": true
     },
     {
+      "key": "secondary_damage_per_captured_enemy",
+      "name": "Explosion Damage per Captured Enemy",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_size_per_captured_enemy",
+      "name": "Explosion Size per Captured Enemy",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "secondary_range_increased",
+      "name": "Secondary Hook Range",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
       "key": "discharge_damage",
       "name": "Discharge Damage",
       "category": "offense",
@@ -1631,6 +1701,13 @@
       "name": "Stun & Freeze Immunity",
       "category": "defense",
       "format": "percent"
+    },
+    {
+      "key": "melee_attack_size_offset",
+      "name": "Melee Attack Size Offset",
+      "category": "offense",
+      "format": "percent",
+      "description": "Adds to the size of eligible melee attacks. Separate from generic area and melee projectile size."
     },
     {
       "key": "melee_projectile_size",
@@ -4607,8 +4684,29 @@
       "skillScoped": true
     },
     {
+      "key": "subtree_damage_per_100_dexterity",
+      "name": "Skill Damage per 100 Dexterity",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
       "key": "subtree_damage_per_movement_speed",
       "name": "Skill Damage from Movement Speed",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "daisy_size_scaling",
+      "name": "Daisy Size Scaling",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "third_attack_skill_crit_damage",
+      "name": "Critical Damage on Every Third Attack",
       "category": "offense",
       "format": "percent",
       "skillScoped": true
@@ -4641,7 +4739,10 @@
     {"key": "leap_damage", "name": "Leap Skill Damage", "category": "offense", "format": "percent"},
     {"key": "flat_leap_damage", "name": "Flat Leap Skill Damage", "category": "offense", "format": "flat"},
     {"key": "struck_skills", "name": "Level of Struck Skills", "category": "offense", "format": "flat"},
-    {"key": "struck_skill_effectiveness", "name": "Struck Skill Effectiveness", "category": "offense", "format": "percent"}
+    {"key": "struck_skill_effectiveness", "name": "Struck Skill Effectiveness", "category": "offense", "format": "percent"},
+    {"key": "phasing", "name": "Phasing", "category": "defense", "format": "flat"},
+    {"key": "skill_life_recovery_from_max_life_pct", "name": "Skill Life Recovery from Maximum Life", "category": "defense", "format": "percent", "skillScoped": true},
+    {"key": "skill_mana_recovery_from_max_mana_pct", "name": "Skill Mana Recovery from Maximum Mana", "category": "defense", "format": "percent", "skillScoped": true}
   ],
   "slots": [
     { "key": "helmet", "name": "Helmet", "group": "armor" },

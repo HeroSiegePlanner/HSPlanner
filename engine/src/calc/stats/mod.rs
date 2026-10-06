@@ -202,6 +202,25 @@ fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
 // Single pass of the full stat-aggregation pipeline; compute_build_stats
 // wraps it with an automatic crit-below-40 re-run when needed.
 pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
+    let mut triggered_buff_sources = SourceMap::new();
+    apply_triggered_subskill_buffs(
+        input.class_id,
+        input.skill_ranks,
+        input.subskill_ranks,
+        input.active_buffs,
+        &mut triggered_buff_sources,
+    );
+    let player_conditions = if sum_ranged_from_map(&triggered_buff_sources, "phasing").0 > 0.0 {
+        let mut conditions = input.player_conditions.clone();
+        conditions.insert("phasing".into(), true);
+        std::borrow::Cow::Owned(conditions)
+    } else {
+        std::borrow::Cow::Borrowed(input.player_conditions)
+    };
+    let input = &BuildStatsInput {
+        player_conditions: &player_conditions,
+        ..*input
+    };
     let mut attr_sources: SourceMap = HashMap::new();
     let mut stat_sources: SourceMap = HashMap::new();
 
@@ -572,10 +591,15 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         input.skill_ranks,
         input.active_aura_id,
         input.active_buffs,
+        input.stack_counts,
         input.inventory,
         &mut attr_sources,
         &mut stat_sources,
     );
+
+    for (key, sources) in triggered_buff_sources {
+        stat_sources.entry(key).or_default().extend(sources);
+    }
 
     // 8b. Light radius folded into increased all attributes %, before the
     // attribute passes read that key.
@@ -647,6 +671,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 18. Multiplier pass (life/mana/replenishes)
     apply_multipliers_pass(&mut stats);
+    finalize_melee_attack_size_offset(&mut stats);
+    finalize_extra_damage_bleeding(&stat_sources, &mut stats);
+    finalize_extra_damage_stunned(&stat_sources, &mut stats);
 
     // 19. Item-granted skill conversions
     let touched_item = apply_item_granted_conversions(

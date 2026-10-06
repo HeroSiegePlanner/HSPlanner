@@ -448,6 +448,8 @@
       {
         "trigger": "on_attack",
         "chance": 40,
+        "target": "Breath of Fire",
+        "castLevel": 125,
         "description": "cast Breath of Fire Level 125",
         "details": "Breathe burning flames dealing fire damage and inflicting burning on hit."
       }

@@ -1,6 +1,7 @@
 [
   {
     "id": "blazing_trail",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Blazing Trail",
     "kind": "active",
@@ -204,6 +205,7 @@
   },
   {
     "id": "fire_enchant",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Fire Enchant",
     "kind": "buff",
@@ -233,6 +235,7 @@
   },
   {
     "id": "phoenix_flight",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Phoenix Flight",
     "kind": "active",
@@ -247,7 +250,7 @@
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 14 }],
     "damageFormula": { "base": -0.5, "perLevel": 31 },
-    "manaCostFormula": { "base": 14, "perLevel": 2 },
+    "manaCostFormula": { "base": 12, "perLevel": 1.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Fire Nova", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -428,6 +431,7 @@
   },
   {
     "id": "inferno_slash",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "pyromancer",
     "name": "Inferno Slash",
@@ -660,6 +664,7 @@
   },
   {
     "id": "searing_chains",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "pyromancer",
     "name": "Searing Chains",
@@ -692,6 +697,7 @@
   },
   {
     "id": "ignite",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Ignite",
     "kind": "passive",
@@ -713,6 +719,7 @@
   },
   {
     "id": "fire_shield",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Fire Shield",
     "kind": "buff",
@@ -743,6 +750,7 @@
   },
   {
     "id": "fiery_presence",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Fiery Presence",
     "kind": "passive",
@@ -760,6 +768,7 @@
   },
   {
     "id": "avatar_of_fire",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Avatar of Fire",
     "kind": "buff",
@@ -782,6 +791,7 @@
   },
   {
     "id": "breath_of_fire",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Breath of Fire",
     "kind": "active",
@@ -1010,6 +1020,7 @@
   },
   {
     "id": "fireball",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Fireball",
     "kind": "active",
@@ -1234,6 +1245,7 @@
   },
   {
     "id": "scorching_aura",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Scorching Aura",
     "kind": "aura",
@@ -1441,6 +1453,7 @@
   },
   {
     "id": "hydra",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Hydra",
     "kind": "active",
@@ -1642,6 +1655,7 @@
   },
   {
     "id": "volcano",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Volcano",
     "kind": "active",
@@ -1842,6 +1856,7 @@
   },
   {
     "id": "meteor",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Meteor",
     "kind": "active",
@@ -1867,6 +1882,7 @@
   },
   {
     "id": "fire_nova",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Fire Nova",
     "kind": "active",
@@ -2085,6 +2101,7 @@
   },
   {
     "id": "comet",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Comet",
     "kind": "active",
@@ -2290,6 +2307,7 @@
   },
   {
     "id": "armageddon",
+    "activationKind": "cast",
     "classId": "pyromancer",
     "name": "Armageddon",
     "kind": "active",

@@ -1,6 +1,7 @@
 [
   {
     "id": "bone_shred",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Bone Shred",
     "kind": "active",
@@ -204,6 +205,7 @@
   },
   {
     "id": "meat_shield",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Meat Shield",
     "kind": "buff",
@@ -225,6 +227,7 @@
   },
   {
     "id": "meat_bomb",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Meat Bomb",
     "kind": "active",
@@ -436,6 +439,7 @@
   },
   {
     "id": "poison_breath",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Poison Breath",
     "kind": "active",
@@ -452,7 +456,7 @@
     "hitModel": { "object": "Necromancer_Poison_Breath_Create", "tickFrequency": 0.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "damageFormula": { "base": 20, "perLevel": 9.5 },
-    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "manaCostFormula": { "base": 4.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Bone Shred", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Poison Nova", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
@@ -656,6 +660,7 @@
   },
   {
     "id": "bone_spear",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Bone Spear",
     "kind": "active",
@@ -858,6 +863,7 @@
   },
   {
     "id": "corpse_explosion",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Corpse Explosion",
     "kind": "active",
@@ -1077,6 +1083,7 @@
   },
   {
     "id": "bone_spirit",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Bone Spirit",
     "kind": "active",
@@ -1279,6 +1286,7 @@
   },
   {
     "id": "cursed_ground",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Cursed Ground",
     "kind": "active",
@@ -1301,6 +1309,7 @@
   },
   {
     "id": "poison_nova",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Poison Nova",
     "kind": "active",
@@ -1509,6 +1518,7 @@
   },
   {
     "id": "amplify_damage",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Amplify Damage",
     "kind": "active",
@@ -1530,6 +1540,7 @@
   },
   {
     "id": "raise_skeleton",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Raise Skeleton",
     "kind": "active",
@@ -1752,6 +1763,7 @@
   },
   {
     "id": "summon_mastery",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Summon Mastery",
     "kind": "passive",
@@ -1769,6 +1781,7 @@
   },
   {
     "id": "raise_skeleton_mage",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Raise Skeleton Mage",
     "kind": "active",
@@ -1964,6 +1977,7 @@
   },
   {
     "id": "life_tap",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Life Tap",
     "kind": "active",
@@ -1985,6 +1999,7 @@
   },
   {
     "id": "summon_frenzy",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Summon Frenzy",
     "kind": "buff",
@@ -2007,6 +2022,7 @@
   },
   {
     "id": "summon_resistances",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Summon Resistances",
     "kind": "passive",
@@ -2024,6 +2040,7 @@
   },
   {
     "id": "summon_damned_legion",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Summon Damned Legion",
     "kind": "active",
@@ -2233,6 +2250,7 @@
   },
   {
     "id": "summon_vengeful_spirit",
+    "activationKind": "cast",
     "classId": "necromancer",
     "name": "Summon Vengeful Spirit",
     "kind": "active",

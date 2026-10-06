@@ -149,10 +149,13 @@ impl From<SkillDto> for calc::Skill {
             }),
             attack_scaling: v.attack_scaling.map(|s| calc::AttackSkillScaling {
                 weapon_bonus_scaling: s.weapon_bonus_scaling,
+                weapon_subtree_scales_full_hit: s.weapon_subtree_scales_full_hit,
                 weapon_damage_pct: s.weapon_damage_pct.map(to_formula),
                 flat_physical_min: s.flat_physical_min.map(to_formula),
                 flat_physical_max: s.flat_physical_max.map(to_formula),
                 attack_rating_pct: s.attack_rating_pct.map(to_formula),
+                critical_chance: s.critical_chance.map(to_formula),
+                critical_damage: s.critical_damage.map(to_formula),
             }),
         }
     }

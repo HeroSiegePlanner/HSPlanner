@@ -1,6 +1,7 @@
 [
   {
     "id": "slaying_riffs",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Slaying Riffs",
     "kind": "active",
@@ -251,6 +252,7 @@
   },
   {
     "id": "insane_riff",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Insane Riff",
     "kind": "passive",
@@ -281,6 +283,7 @@
   },
   {
     "id": "visceral_growl",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Visceral Growl",
     "kind": "active",
@@ -545,6 +548,7 @@
   },
   {
     "id": "amping_up",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Amping Up",
     "kind": "passive",
@@ -576,6 +580,7 @@
   },
   {
     "id": "sacrilegious_symphony",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Sacrilegious Symphony",
     "kind": "active",
@@ -813,6 +818,7 @@
   },
   {
     "id": "satans_melody",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Satan's Melody",
     "kind": "buff",
@@ -856,6 +862,7 @@
   },
   {
     "id": "sounds_of_silence",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Sounds of Silence",
     "kind": "passive",
@@ -886,6 +893,7 @@
   },
   {
     "id": "high_db",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "High dB",
     "kind": "passive",
@@ -917,6 +925,7 @@
   },
   {
     "id": "progenies_of_the_great_cataclysm",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Progenies of the Great Cataclysm",
     "kind": "active",
@@ -1189,6 +1198,7 @@
   },
   {
     "id": "crowd_dive",
+    "activationKind": "attack",
     "classId": "bard",
     "name": "Crowd Dive",
     "kind": "active",
@@ -1453,6 +1463,7 @@
   },
   {
     "id": "crowd_pummeler",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Crowd Pummeler",
     "kind": "passive",
@@ -1484,6 +1495,7 @@
   },
   {
     "id": "pyro_technician",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "bard",
     "name": "Pyro Technician",
@@ -1519,8 +1531,9 @@
       "perLevel": 28
     },
     "manaCostFormula": {
-      "base": 6,
-      "perLevel": 1
+      "base": 4.75,
+      "perLevel": 1.175,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": {
@@ -1760,6 +1773,7 @@
   },
   {
     "id": "adrenaline_momentum",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Adrenaline Momentum",
     "kind": "passive",
@@ -1793,6 +1807,7 @@
   },
   {
     "id": "antisocial_pit_fighter",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Antisocial Pit Fighter",
     "kind": "passive",
@@ -1825,6 +1840,7 @@
   },
   {
     "id": "headbanger",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "bard",
     "name": "Headbanger",
@@ -2104,6 +2120,7 @@
   },
   {
     "id": "craving_for_another_killing",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Craving For Another Killing",
     "kind": "buff",
@@ -2149,6 +2166,7 @@
   },
   {
     "id": "craving_for_attention",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Craving For Attention",
     "kind": "passive",
@@ -2180,6 +2198,7 @@
   },
   {
     "id": "moshpit_massacre",
+    "activationKind": "cast",
     "classId": "bard",
     "name": "Moshpit Massacre",
     "kind": "active",

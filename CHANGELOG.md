@@ -2,18 +2,105 @@
 
 - Fixed the main window opening partly off-screen at 125% display scaling on Windows, which hid the title bar and close button. The app now starts maximized and restores to a size that fits the monitor's work area.
 
+- Hellsent, Killing Spree and Rage Trance now require their explicit active temporary buffs instead of granting permanent subtree stats. Hellsent enables phasing conditions; Rage Trance adds separately to physical and magic reduction. Configuration, summaries, saves, share codes and skill loadouts retain each buff's own state.
+
+- The Real Monster now keeps its life and mana recovery on Chain Rip instead of increasing passive regeneration. Calculation details show nominal life recovery and the gradual mana-recovery portion, with blocking, resource caps and unresolved contact totals stated separately.
+
+- Prey on the Weak now requires its explicit active five-second buff and benefits all skills against stunned targets. Configuration and the character summary include the buff, its saved/loadout state is preserved, and the unsupported permanent critical-damage bonus was removed.
+
+- Corrected With 2 Hands to retain a separate attack-time repeat chance instead of increasing the primary hit. For the Weak now reports its fractional Strength-dependent melee size offset separately from generic range and damage.
+
+- Corrected Bucthering Skill and Sharp Edges to multiply only their own skill's intrinsic attack-rating bonus. Bucthering Skill's critical chance now enters its local attack pool, preserving global stats and other attacks.
+
+- Corrected Concussive Blow and Hookstorm to retain their damage and size/range coefficients for separate effects. Their bonuses no longer increase the primary Hook or Chain Swing hit; calculation details show the verified payload formulas and the remaining contact-model limits.
+
+- Added Fuel to Fire's consumed-at-cast count beside its buff toggle. Each consumed object scales only that buff's damage bonus by 1%; the saved profile and complete share code retain the count.
+
+- Corrected Enraged Mania's size recipient: its additive melee attack size offset now stays separate from generic area and floors after aggregation. Attack speed and existing area-based conversions retain their own behavior.
+
+- Awakening Fury now contributes only while its learned four-second buff is active, with its attack-hit trigger shown in configuration. Hunger for Blood now applies only against bleeding targets; its global bonus is floored after aggregation, while three verified Butcher subtree bonuses retain their local fractional values.
+
+- Corrected Holy Form recovery to scale existing regeneration and life per hit in the MORE pool, with its separate flat regeneration bonus. Insatiable Hunger now uses the executable's actual form values and overrides ordinary forms only when its stored damage value is positive; form-dependent passives share that condition.
+
+- Corrected five Butcher subtree critical bonuses to add only to their own attack after global critical scaling. One Swift Strike, Skullsplitter and Obsidian Blades no longer pass through the global critical multiplier; Immaculate Butcher and Entry Frenzy now reach their physical hits.
+
+- Fixed Butcher's conditional primary damage: Blade Uppercut changes Furious Strike's weapon bonus on its successful attack roll, while Meet Daisy applies its damage and local critical bonus together on every third Brutalizing Slash attack. Daisy's life-dependent size is shown separately in calculation details.
+
+- Ending Fate's regeneration now requires its learned, active six-second buff. The configuration view includes its existing-buff toggle and kill chance; the unsupported permanent attack-damage bonus was removed. Its explosion contacts remain under audit.
+
+- Corrected the seven other Butcher primary attacks' weapon coefficients and removed unsupported flat damage. Twenty verified subtree bonuses now enter their own additive pool at the appropriate weapon stage; Precision Equals Power scales Brutalizing Slash's weapon bonus from Dexterity instead of adding flat damage. Conditional and secondary effects remain under audit.
+
+- Fixed Sacrilegious Scorn and Spiritual Duality granting both benefits without a form. Their Holy and Unholy benefits now require the matching active form; active Insatiable Hunger enables both without duplicating either bonus.
+
+- Fixed increased mana cost and mana-cost reduction combining as separate multipliers. They now share the verified signed pool, preserve fractional reduction, floor increased cost and apply the game's subtraction order before final rounding.
+
 - Added a reusable Ghidra headless helper for static Hero Siege decompilation by function name or address, with executable fingerprint checks and local analysis projects.
+
+- Corrected 47 active skills' raw mana coefficients and full-rank indexing from the executable. Costs retain fractional values through modifiers and round once at the end; skill previews show the rounded neutral cost.
+
+- Fixed physical and hybrid triggered skills losing weapon damage. Proc targets now use their own attack calculation and explicit cast rank; Warbringer correctly triggers rank-8 Trigger Finger on qualifying attacks without triggering itself.
+
+- Corrected Blade Strike's primary hit to 100% weapon damage without invented flat damage. Its intrinsic critical damage scales with rank, while Blade's Edge and Giant Slayer multiply only that local bonus; neither changes global critical damage or ordinary hit damage. Restored the intrinsic critical bonuses in the skill preview.
+
+- Fixed Blade Master applying a shared Attack Rating bonus. Its 10% per rank now multiplies only Blade Strike's intrinsic attack-rating bonus, preserving other skills and effective-rank ranges.
 
 - Corrected three Defense affix families that were all contributing flat Defense: Ignore Target Defense no longer scales with stars, Increased Defense uses its 3% per-star rule, and Defense vs Missiles stays separate. Corrected the Increased Defense crystal's stat target as well.
 
 - Fixed selected implicit roll pins in the item editor: resolved class pins now match calculation and tooltip values, raw pins retain precedence, and resetting a roll clears both forms.
 
+- Fixed Ferocious Swipe's critical chance entering global character stats. Its verified 5 points per rank now apply only to Blade Strike alongside that skill's intrinsic chance, preserving ordinary hits and effective-rank ranges.
+
+- Fixed Blade Strike's intrinsic critical chance leaking into other skills. Its 50-point bonus now applies only to its own attack, after global stat scaling and before the game's 95% cap; preserved effective-rank ranges and direct damage API parity.
+
+- Added executable-backed activation metadata for all 432 class skills and separated global on-cast/on-attack proc eligibility from damage type and tags. Enabled Dragon Knight's Helmet's previously ignored rank-125 Breath of Fire proc for qualifying attacks; preserved owner-scoped subskill triggers and player recast cadence for summoned entities.
+
 - Removed the unused Tauri integration and dependency from the GPUI engine, along with an unused direct engine dependency in the native app. Pruned the Cargo lockfile to the active workspace dependency graph.
 
 - Compared all Incarnation Tree supplementary notes with HS Helper and added The Ripper’s missing dagger requirement. Preserved verified Temporal Echo and Manafury explanations; documented remaining stat-line differences in `docs/incarnation-helper-comparison.md`.
 
+- Fixed shield minimum/maximum damage nodes1504–1513: flat bonuses no longer become Attack Damage percentages, minimum and maximum stay separate, and shield-gated flat/percentage bonuses reach spells and weapon damage in their own damage type. Added localized stats and conversion regressions.
+- Temporal Echo now contributes to the shared ailment replacement estimate: the latest application replaces the prior one rather than adding a second simultaneous DoT. Uses Echo's own rank and cadence without repeated multicast/projectile damage; calculation details disclose the contact-rate approximation.
+
+- Clarified Manafury (1327) per the confirmed game behavior: only Mana Replenish is disabled; other mana recovery remains available. Corrected the node note and added a regression preserving leech, on-kill/on-hit recovery and mana recoup. Recorded the user-deferred Incarnation mechanics separately from verified work.
+
+- Restored the game's Leap tag on ten skills, including Storm Dash, Fast Slices, Vault and Link of Sand, so Incarnation Leap bonuses can reach their intended damage. Fixed flat Leap damage incorrectly increasing weapon physical damage; added real-node regressions, translated tags and executable evidence.
+
+- Fixed Elemental Break stacking: universal and matching elemental Break now add before multiplying damage, including converted weapon damage and Critical Break averages. Hybrid spells such as Blade Barrier correctly use the on-hit bonus when their damage includes a physical component; added executable evidence and real-node regressions.
+
+- Fixed all five Incarnation Critical Break nodes (1768/1782/1796/1810/1824): their previously ignored chance and damage now affect the matching active Break contribution in average damage, including physical-to-element conversion. Preserved ordinary hit values and independent critical/projectile multipliers; added localized stats and executable evidence.
+
+- Fixed Death Over Time (813/825) against fully DoT-immune targets using the supplied executable: one node restores 50% ailment damage, two restore 100%. Added a saved, localized enemy condition for 100% DoT immunity; ordinary hit damage and the separate non-immune bonus are preserved.
+
+- Corrected Temporal Echo’s note to every sixth qualifying spell, following the supplied executable and user confirmation. Added direct Echo DPS for ordinary spells using its own effective rank and repeated-cast synergies, with no extra mana or recursive multicast. Entity/weapon casts and secondary effects remain explicitly under audit.
+
+- Fixed Wargod (737): the planner now enforces 75 skill weapon requirements and Wargod removes those restrictions while retaining its total damage penalty. Invalid casts produce no DPS, mana expenditure or proc trigger contacts. Includes Wand classification, Zeal/Berserk subskill exceptions and Shield Slam's extra melee requirement, verified against the supplied game executable. Fixed the metadata extractor's missing int64 assignment helper.
+
+- Restricted Hercules Grip's two-handed dual wielding to the Sword, Mace and Axe families named in its note; Claw and Polearm combinations were incorrectly accepted. Added coverage for wand permission, both dual-wield speed penalties and Black Hole allocation shortcuts.
+
+- Added configurable Ramping Pulse stacks and their verified radius bonus (5% per stack, ten stacks from node 1160). The bonus is reported separately from global radius used by damage conversions; per-skill size and radius scaling remains under audit.
+
+- Fixed Agitation (608) to grant movement speed per configured stack, up to the game's verified ten-stack limit; it previously had no effect on movement speed.
+
+- Matched Colossus and Combat Mitigation stacks to the supplied game executable: each active mechanic has one base stack of capacity, Colossus grants total damage per stack, and Combat Mitigation now reaches EHP with a configurable stack count. Citadel recovery uses the corrected Colossus limit.
+
+- Fixed Incarnation aura effectiveness: damage bonuses from Holy Aura (including Pearlescent Dream), class auras and externally granted auras use Damaging Aura Effectiveness; other aura bonuses use Buffing Aura Effectiveness. Mixed auras scale each output separately. Power of Weakness now increases generic damage, including spells, rather than weapon Enhanced Damage.
+
+- Fixed Raging Titan to increase generic damage per Rage stack and the omitted half-value DoT bonus from immunity-shatter nodes against non-immune targets.
+
+- Fixed Incarnation physical-to-element conversions (1080–1109): they add elemental damage from the physical skill hit, apply elemental bonuses and target resistance, preserve physical damage and stack beyond 100%. Converted components now reach attack DPS, calculation details and the elemental hit display; ordinary spells remain unaffected.
+
+- Fixed another set of Incarnation Tree calculations: resistance conversions and the 50% resistance cap, full/low-life and phasing conditions, regeneration restrictions and multipliers, combat stack counts, unarmed/dual-axe/shield/staff bonuses, flat ranged physical damage from Energy, Charge attribute scaling, global Defense bonuses, weapon-scoped Melee/Ranged Enhanced Damage, mana-limited Mind Over Matter EHP, Wizard’s Wrath overheat states, AoE radius conversion and melee projectile damage, increased mana costs, bleeding execution and Mechanical Engineering's self-damage restriction. Added regression coverage, localized controls/stat labels and an audit checkpoint documenting unresolved mechanics; the full-tree audit remains in progress.
+- Fixed incarnation tree conversions that add life or mana after the multiplier pass. Vital Power now increases final Maximum Life, converted mana feeds mana-threshold notes, and Strength To Life grants Maximum Life for each complete 5 Strength per allocated node. Powerfunneled Lifespan now converts physical attack damage after the weapon's Enhanced Damage. Asphyxiating Touch now removes hit and proc DPS while retaining hits as the source of ailments and adds 140% skill damage to their base damage.
+- Fixed rainbow sockets to floor each amplified stat before aggregation, including transformed socket bonuses and tooltip totals (six Ist runes now grant 132% Magic Find). Fixed starred affix value editing, locked item-skill rank ranges, pinned mercenary aura ranks and duplicate resolved implicit overrides. Matched the game's star-scaling operation order to prevent floating-point loss of whole stat points.
+- Corrected star upgrades for Summon Skills, Sentry Skills and maximum Sentries to add flat ranks/counts instead of percentages.
 - Fixed random elemental skill affixes to receive the same star upgrades as the selected skill element; the placeholder stat previously skipped scaling in calculations and item tooltips.
 - Fixed item text export to apply star upgrades to the selected random elemental skill bonus, matching the tooltip and calculations. Raw and resolved implicit overrides now export once with the same precedence, including zero-value suppression.
+
+- Fixed the gear picker close button so it dismisses an unsaved selection like Cancel.
+
+- Removed the skill metadata evidence tests that depended on missing reference JSON files.
+
+- Corrected Amazon's elemental coefficients, verified weapon bonus formulas, own-subtree damage pools and movement transformations. Added weapon requirements, elemental-only Powerstasis averages, third-attack weighting, Storm Orbs cooldown and an explicit one-contact-per-wave estimate. Secondary payloads no longer inflate primary damage; calculation details identify effects and proc/physical models that still need verification. The full class audit remains in progress.
 
 - Separated Fireball and Storm Bolt's rank/flat, generic and own-subtree damage stages, including the generic helper's rounding and total spell damage pool. Fireball's independent damage rolls now affect its average separately from an ordinary hit. Fixed Orbital Fire's 4/8/12 primary counts and fractional extra Storm Bolt casts; secondary and rebound damage no longer inflate primary hits, and calculation details identify secondary DPS that still needs a contact model.
 - Forwarded scoped skill stats through both direct damage command APIs, preserving skill-specific bonuses and hybrid calculation inputs.

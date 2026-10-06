@@ -508,6 +508,7 @@ fn class_damage_aura_uses_damaging_effectiveness_only_while_active() {
             &ranks,
             active.then_some("high_voltage_aura"),
             &HashMap::new(),
+            &HashMap::new(),
             &Inventory::new(),
             &mut attrs,
             &mut stats,
@@ -1103,13 +1104,8 @@ fn ramping_pulse_counts_radius_stacks_without_inflating_damage_conversions() {
 fn agitation_scales_movement_speed_with_up_to_ten_stacks() {
     let base = audit_build(&[71, 74], &[], &[]);
     for count in [0, 1, 4, 10, 99] {
-        let result = audit_build_with_conditions(
-            &[71, 74, 608],
-            &[],
-            &[],
-            &[],
-            &[("agitation", count)],
-        );
+        let result =
+            audit_build_with_conditions(&[71, 74, 608], &[], &[], &[], &[("agitation", count)]);
         assert_eq!(result.stats["max_agitation_stacks"], (10.0, 10.0));
         let extra = 10.0 * f64::from(count.min(10));
         // Agitation joins increased movement speed before the existing +5%
@@ -1126,7 +1122,10 @@ fn agitation_scales_movement_speed_with_up_to_ten_stacks() {
         (100.0, 100.0)
     );
     let inactive = audit_build_with_conditions(&[71, 74], &[], &[], &[], &[("agitation", 10)]);
-    assert_eq!(inactive.stats["movement_speed"], base.stats["movement_speed"]);
+    assert_eq!(
+        inactive.stats["movement_speed"],
+        base.stats["movement_speed"]
+    );
 }
 
 #[test]

@@ -1,6 +1,7 @@
 [
   {
     "id": "bouncing_grenade",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Bouncing Grenade",
     "kind": "active",
@@ -211,6 +212,7 @@
   },
   {
     "id": "heavy_ball",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "marauder",
     "name": "Heavy Ball",
@@ -435,6 +437,7 @@
   },
   {
     "id": "the_big_boom",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "The Big Bo-oM",
     "kind": "active",
@@ -644,6 +647,7 @@
   },
   {
     "id": "crazy_grapple",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Crazy Grapple",
     "kind": "active",
@@ -859,6 +863,7 @@
   },
   {
     "id": "unstable_bomb",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Unstable Bomb",
     "kind": "passive",
@@ -884,6 +889,7 @@
   },
   {
     "id": "wrecking_ball",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Wrecking Ball",
     "kind": "passive",
@@ -901,6 +907,7 @@
   },
   {
     "id": "force_overwhelming",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Force Overwhelming",
     "kind": "buff",
@@ -923,6 +930,7 @@
   },
   {
     "id": "flail_mastery",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Flail Mastery",
     "kind": "passive",
@@ -940,6 +948,7 @@
   },
   {
     "id": "bombardment",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Bombardment",
     "kind": "active",
@@ -1152,6 +1161,7 @@
   },
   {
     "id": "serrated_chains",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "marauder",
     "name": "Serrated Chains",
@@ -1166,7 +1176,7 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 20, "perLevel": 25 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
@@ -1368,6 +1378,7 @@
   },
   {
     "id": "rend_flesh",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Rend Flesh",
     "kind": "passive",
@@ -1385,6 +1396,7 @@
   },
   {
     "id": "titanium_chains",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Titanium Chains",
     "kind": "passive",
@@ -1409,6 +1421,7 @@
   },
   {
     "id": "retiarius_net",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Retiarius Net",
     "kind": "active",
@@ -1613,6 +1626,7 @@
   },
   {
     "id": "resilient_gladiator",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Resilient Gladiator",
     "kind": "passive",
@@ -1630,6 +1644,7 @@
   },
   {
     "id": "chain_trap",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Chain Trap",
     "kind": "active",
@@ -1844,6 +1859,7 @@
   },
   {
     "id": "annihilation",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Annihilation",
     "kind": "active",
@@ -2050,6 +2066,7 @@
   },
   {
     "id": "master_trap_maker",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Master Trap Maker",
     "kind": "passive",
@@ -2067,6 +2084,7 @@
   },
   {
     "id": "madness_control",
+    "activationKind": "cast",
     "classId": "marauder",
     "name": "Madness Control",
     "kind": "active",

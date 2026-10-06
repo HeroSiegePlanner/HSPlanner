@@ -1,6 +1,7 @@
 [
   {
     "id": "tectonic_boulder",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Tectonic Boulder",
     "kind": "active",
@@ -204,6 +205,7 @@
   },
   {
     "id": "twisters",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Twisters",
     "kind": "active",
@@ -418,6 +420,7 @@
   },
   {
     "id": "rock_fragments",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Rock Fragments",
     "kind": "active",
@@ -627,6 +630,7 @@
   },
   {
     "id": "earth_bind",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Earth Bind",
     "kind": "active",
@@ -844,6 +848,7 @@
   },
   {
     "id": "meteor_storm",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Meteor Storm",
     "kind": "active",
@@ -1057,6 +1062,7 @@
   },
   {
     "id": "tornado",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Tornado",
     "kind": "active",
@@ -1269,6 +1275,7 @@
   },
   {
     "id": "earths_grace",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Earth's Grace",
     "kind": "passive",
@@ -1286,6 +1293,7 @@
   },
   {
     "id": "natures_prophet",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Nature's Prophet",
     "kind": "passive",
@@ -1303,6 +1311,7 @@
   },
   {
     "id": "fissures",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Fissures",
     "kind": "active",
@@ -1519,6 +1528,7 @@
   },
   {
     "id": "earth_totem",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Earth Totem",
     "kind": "active",
@@ -1720,6 +1730,7 @@
   },
   {
     "id": "spiritual_guide",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Spiritual Guide",
     "kind": "passive",
@@ -1737,6 +1748,7 @@
   },
   {
     "id": "fractal_mind",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Fractal Mind",
     "kind": "passive",
@@ -1754,6 +1766,7 @@
   },
   {
     "id": "spirit_wolves",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Spirit Wolves",
     "kind": "active",
@@ -1967,6 +1980,7 @@
   },
   {
     "id": "storm_totem",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Storm Totem",
     "kind": "active",
@@ -2179,6 +2193,7 @@
   },
   {
     "id": "scent_of_the_wolf",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Scent of the Wolf",
     "kind": "passive",
@@ -2196,6 +2211,7 @@
   },
   {
     "id": "fire_totem",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Fire Totem",
     "kind": "active",
@@ -2435,6 +2451,7 @@
   },
   {
     "id": "astral_intellect",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Astral Intellect",
     "kind": "active",
@@ -2456,6 +2473,7 @@
   },
   {
     "id": "chaos_totem",
+    "activationKind": "cast",
     "classId": "shaman",
     "name": "Chaos Totem",
     "kind": "active",

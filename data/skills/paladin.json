@@ -1,6 +1,7 @@
 [
   {
     "id": "vengeance",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "paladin",
     "name": "Vengeance",
@@ -217,6 +218,7 @@
   },
   {
     "id": "thunder_shield",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Thunder Shield",
     "kind": "buff",
@@ -246,6 +248,7 @@
   },
   {
     "id": "divine_storm",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "paladin",
     "name": "Divine Storm",
@@ -477,6 +480,7 @@
   },
   {
     "id": "fanaticism_aura",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Fanaticism Aura",
     "kind": "aura",
@@ -494,6 +498,7 @@
   },
   {
     "id": "holy_shock_aura",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Shock Aura",
     "kind": "aura",
@@ -703,6 +708,7 @@
   },
   {
     "id": "ball_lightning",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Ball Lightning",
     "kind": "active",
@@ -915,6 +921,7 @@
   },
   {
     "id": "lightning_fury",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "paladin",
     "name": "Lightning Fury",
@@ -930,7 +937,7 @@
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
     "damageFormula": { "base": 1, "perLevel": 113 },
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.6, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 0, "perLevel": 18 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
@@ -1139,6 +1146,7 @@
   },
   {
     "id": "eye_of_the_storm",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Eye of the Storm",
     "kind": "passive",
@@ -1156,6 +1164,7 @@
   },
   {
     "id": "thors_fury",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Thor's Fury",
     "kind": "buff",
@@ -1178,6 +1187,7 @@
   },
   {
     "id": "divine_wisdom",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Divine Wisdom",
     "kind": "passive",
@@ -1195,6 +1205,7 @@
   },
   {
     "id": "holy_bolt",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Bolt",
     "kind": "active",
@@ -1414,6 +1425,7 @@
   },
   {
     "id": "lights_embrace",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Light's Embrace",
     "kind": "passive",
@@ -1431,6 +1443,7 @@
   },
   {
     "id": "holy_retribution",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Retribution",
     "kind": "passive",
@@ -1448,6 +1461,7 @@
   },
   {
     "id": "holy_nova",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Nova",
     "kind": "active",
@@ -1649,6 +1663,7 @@
   },
   {
     "id": "holy_hammer",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Hammer",
     "kind": "active",
@@ -1858,6 +1873,7 @@
   },
   {
     "id": "holy_aura",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Holy Aura",
     "kind": "aura",
@@ -1875,6 +1891,7 @@
   },
   {
     "id": "fist_of_the_heavens",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "Fist of the Heavens",
     "kind": "active",
@@ -2093,6 +2110,7 @@
   },
   {
     "id": "the_venerated_one",
+    "activationKind": "cast",
     "classId": "paladin",
     "name": "The Venerated One",
     "kind": "buff",

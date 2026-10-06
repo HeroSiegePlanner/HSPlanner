@@ -21,6 +21,7 @@ use hsplanner_engine::calc::{
     data,
     planner::PlannerPerformance,
     rank::{item_skill_bonus_override, item_skill_rank_range},
+    subskill::subskill_key,
     types::{CustomStat, SkillKind},
 };
 use hsplanner_ui::i18n::{Locale, tr, trf};
@@ -77,6 +78,7 @@ enum NumberField {
     Kills,
     Entity(String),
     Stack(String),
+    BuffCastCount(String),
     Projectile(String),
 }
 
@@ -102,7 +104,9 @@ impl ConfigDocument {
                 NumberField::SubskillPoints => {
                     self.skills != next.skills || self.class != next.class
                 }
-                NumberField::Projectile(_) => self.class != next.class,
+                NumberField::Projectile(_) | NumberField::BuffCastCount(_) => {
+                    self.class != next.class
+                }
                 _ => false,
             }
     }
@@ -377,6 +381,9 @@ impl ConfigView {
                 .iter()
                 .map(|skill| NumberField::Projectile(skill.id.clone())),
         );
+        if snapshot.class_id.as_deref() == Some("butcher") {
+            fields.push(NumberField::BuffCastCount("fuel_to_fire".into()));
+        }
         self.numbers.retain(|field, _| fields.contains(field));
         self.number_drafts.retain(|field, _| fields.contains(field));
         self.number_subscriptions
@@ -508,6 +515,14 @@ impl ConfigView {
                     snapshot.stack_counts.remove(key);
                 }
             }
+            NumberField::BuffCastCount(skill) => {
+                let key = format!("{skill}_consumed_objects");
+                if let Some(value) = value {
+                    snapshot.stack_counts.insert(key, value.max(0.) as u32);
+                } else {
+                    snapshot.stack_counts.remove(&key);
+                }
+            }
             NumberField::Projectile(key) => {
                 if let Some(value) = value {
                     snapshot
@@ -551,7 +566,16 @@ impl ConfigView {
             NumberField::Level | NumberField::SubskillPoints => (54., 30.),
             NumberField::Resistance(_) => (49., 23.),
             NumberField::Projectile(_) | NumberField::Stack(_) => (45., 23.),
-            NumberField::Kills | NumberField::Entity(_) => (65., 27.),
+            NumberField::Kills | NumberField::Entity(_) | NumberField::BuffCastCount(_) => {
+                (65., 27.)
+            }
+        };
+        let disabled = if let NumberField::BuffCastCount(skill) = &field {
+            let snapshot = self.session.read(cx).snapshot();
+            snapshot.skill_ranks.get(skill).copied().unwrap_or(0) == 0
+                || !snapshot.active_buffs.get(skill).copied().unwrap_or(false)
+        } else {
+            false
         };
         div().w(rems(width / 13.)).flex_shrink_0().when_some(
             self.numbers.get(&field),
@@ -559,6 +583,7 @@ impl ConfigView {
                 view.child(
                     Input::new(input)
                         .small()
+                        .disabled(disabled)
                         .planner_style(cx)
                         .map(|input| Styled::h(input, rems(height / 13.)))
                         .line_height(relative(1.5))
@@ -1190,13 +1215,9 @@ impl ConfigView {
         let skills = data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""));
         let buffs = skills
             .iter()
-            .filter(|s| {
-                s.kind == SkillKind::Buff
-                    || s.tags
-                        .as_ref()
-                        .is_some_and(|tags| tags.iter().any(|tag| tag == "Buff"))
-            })
+            .filter(|s| s.has_buff_toggle())
             .collect::<Vec<_>>();
+        let subskill_buffs = crate::skills::triggered_subskill_buffs(skills).collect::<Vec<_>>();
         let mut card = panel_with_trailing(
             "config-buffs",
             tr("planner.config.active_buffs"),
@@ -1211,14 +1232,20 @@ impl ConfigView {
                             .copied()
                             .unwrap_or(false)
                     })
-                    .count(),
-                Some(buffs.len()),
+                    .count()
+                    + subskill_buffs
+                        .iter()
+                        .filter(|(skill, node)| {
+                            crate::skills::subskill_buff_is_active(snapshot, skill, node)
+                        })
+                        .count(),
+                Some(buffs.len() + subskill_buffs.len()),
                 cx,
             ),
             cx,
         )
         .child(help(tr("planner.config.buffs_help"), cx));
-        if buffs.is_empty() {
+        if buffs.is_empty() && subskill_buffs.is_empty() {
             return card.child(empty(tr("planner.config.no_buffs"), cx));
         }
         for skill in buffs {
@@ -1226,23 +1253,117 @@ impl ConfigView {
             let checked = snapshot.active_buffs.get(&key).copied().unwrap_or(false);
             let learned = snapshot.skill_ranks.get(&key).copied().unwrap_or(0) > 0;
             card = card.child(
-                tile(checked, cx).mb_2().child(
-                    Checkbox::new(SharedString::from(format!("config-buff-{key}")))
-                        .accessibility_label(skill.name.clone())
-                        .child(skill_caption(skill, 32.))
-                        .checked(checked)
-                        .disabled(!learned)
-                        .on_click(cx.listener(move |this, checked: &bool, _, cx| {
-                            this.edit(cx, |snapshot| {
-                                snapshot.active_buffs.insert(key.clone(), *checked);
-                            })
-                        })),
-                ),
+                tile(checked, cx)
+                    .mb_2()
+                    .child(
+                        Checkbox::new(SharedString::from(format!("config-buff-{key}")))
+                            .accessibility_label(skill.name.clone())
+                            .child(skill_caption(skill, 32.))
+                            .checked(checked)
+                            .disabled(!learned)
+                            .on_click(cx.listener(move |this, checked: &bool, _, cx| {
+                                this.edit(cx, |snapshot| {
+                                    snapshot.active_buffs.insert(key.clone(), *checked);
+                                })
+                            })),
+                    )
+                    .when_some(skill.triggered_buff.as_ref(), |row, buff| {
+                        let trigger = tr(&format!("item.{}", buff.trigger));
+                        row.child(help(
+                            &trf(
+                                "planner.config.triggered_buff_summary",
+                                &[
+                                    ("chance", buff.chance.to_string()),
+                                    ("trigger", trigger.to_owned()),
+                                    ("duration", buff.duration.to_string()),
+                                ],
+                            ),
+                            cx,
+                        ))
+                    })
+                    .when(skill.id == "fuel_to_fire", |row| {
+                        row.child(
+                            div()
+                                .mt_2()
+                                .pl_6()
+                                .flex()
+                                .items_center()
+                                .justify_between()
+                                .gap_2()
+                                .child(label(
+                                    "fuel-to-fire-consumed-label",
+                                    tr("planner.config.fuel_consumed_count"),
+                                    cx.global::<TooltipTheme>().muted,
+                                ))
+                                .child(self.number(
+                                    NumberField::BuffCastCount(skill.id.clone()),
+                                    tr("planner.config.fuel_consumed_count"),
+                                    cx,
+                                )),
+                        )
+                        .child(
+                            div()
+                                .mt_1()
+                                .pl_6()
+                                .text_size(rems(12. / 13.))
+                                .line_height(relative(1.625))
+                                .text_color(cx.global::<TooltipTheme>().muted)
+                                .child(tr("planner.config.fuel_consumed_help")),
+                        )
+                    }),
+            );
+        }
+        for (skill, node) in subskill_buffs {
+            let key = subskill_key(&skill.id, &node.id);
+            let learned = crate::skills::subskill_buff_is_learned(snapshot, skill, node);
+            let checked = crate::skills::subskill_buff_is_active(snapshot, skill, node);
+            let duration = node.triggered_buff.as_ref().unwrap().duration;
+            card = card.child(
+                tile(checked, cx)
+                    .mb_2()
+                    .child(
+                        Checkbox::new(SharedString::from(format!("config-buff-{key}")))
+                            .accessibility_label(node.name.clone())
+                            .child(
+                                div()
+                                    .min_w_0()
+                                    .flex()
+                                    .items_center()
+                                    .gap_2()
+                                    .child(div().size(rems(32. / 13.)).flex_shrink_0().when_some(
+                                        crate::skills::subskill_icon(skill, node),
+                                        |view, image| {
+                                            view.child(
+                                                img(image)
+                                                    .size_full()
+                                                    .object_fit(ObjectFit::Contain),
+                                            )
+                                        },
+                                    ))
+                                    .child(div().min_w_0().child(node.name.clone())),
+                            )
+                            .checked(checked)
+                            .disabled(!learned)
+                            .on_click(cx.listener(move |this, checked: &bool, _, cx| {
+                                this.edit(cx, |snapshot| {
+                                    snapshot.active_buffs.insert(key.clone(), *checked);
+                                })
+                            })),
+                    )
+                    .when_some(node.description.as_ref(), |row, description| {
+                        row.child(help(description, cx))
+                    })
+                    .child(help(
+                        &crate::skills::triggered_subskill_buff_help(duration),
+                        cx,
+                    ))
+                    .when_some(node.calculation_note.as_ref(), |row, note| {
+                        row.child(help(note, cx))
+                    }),
             );
         }
         card
     }
-
     fn aura(&self, cx: &Context<Self>) -> Div {
         let snapshot = self.session.read(cx).snapshot();
         let skills = data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""))
@@ -1973,6 +2094,12 @@ fn number_text(
             })
             .map(|value| value.to_string())
             .unwrap_or_default(),
+        NumberField::BuffCastCount(skill) => snapshot
+            .stack_counts
+            .get(&format!("{skill}_consumed_objects"))
+            .copied()
+            .unwrap_or(0)
+            .to_string(),
         NumberField::Projectile(key) => snapshot
             .skill_projectiles
             .get(key)
@@ -2325,7 +2452,19 @@ mod tests {
         session.edit(|draft| draft.snapshot.set_class("stormweaver"));
         let class = ConfigDocument::from_draft(session.draft());
         assert!(skills.number_changed(&class, &NumberField::Projectile("charged_bolts".into())));
+        assert!(skills.number_changed(&class, &NumberField::BuffCastCount("fuel_to_fire".into())));
         assert!(!skills.number_changed(&class, &NumberField::Level));
+    }
+
+    #[::core::prelude::v1::test]
+    fn buff_cast_count_defaults_to_zero_and_keeps_saved_value() {
+        let field = NumberField::BuffCastCount("fuel_to_fire".into());
+        let mut snapshot = BuildSnapshot::default();
+        assert_eq!(number_text(&snapshot, &field, None), "0");
+        snapshot
+            .stack_counts
+            .insert("fuel_to_fire_consumed_objects".into(), 5);
+        assert_eq!(number_text(&snapshot, &field, None), "5");
     }
 
     #[::core::prelude::v1::test]

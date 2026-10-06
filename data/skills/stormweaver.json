@@ -1,6 +1,7 @@
 [
   {
     "id": "charged_bolts",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Charged Bolts",
     "kind": "active",
@@ -241,6 +242,7 @@
   },
   {
     "id": "pulsing_charge",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Pulsing Charge",
     "kind": "passive",
@@ -256,6 +258,7 @@
   },
   {
     "id": "lightning_surge",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Lightning Surge",
     "kind": "active",
@@ -506,6 +509,7 @@
   },
   {
     "id": "chain_lightning",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Chain Lightning",
     "kind": "passive",
@@ -525,6 +529,7 @@
   },
   {
     "id": "gateway",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Gateway",
     "kind": "active",
@@ -543,6 +548,7 @@
   },
   {
     "id": "static_shock",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Static Shock",
     "kind": "active",
@@ -776,6 +782,7 @@
   },
   {
     "id": "storm_cloud",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Storm Cloud",
     "kind": "active",
@@ -1000,6 +1007,7 @@
   },
   {
     "id": "symphony_of_thunder",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Symphony of Thunder",
     "kind": "active",
@@ -1025,6 +1033,7 @@
   },
   {
     "id": "manafiend",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Manafiend",
     "kind": "passive",
@@ -1044,6 +1053,7 @@
   },
   {
     "id": "wave_length",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Wave Length",
     "kind": "passive",
@@ -1063,6 +1073,7 @@
   },
   {
     "id": "electric_cells",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Electric Cells",
     "kind": "passive",
@@ -1082,6 +1093,7 @@
   },
   {
     "id": "the_battery_within",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "The Battery Within",
     "kind": "passive",
@@ -1109,6 +1121,7 @@
   },
   {
     "id": "hyper_charged",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Hyper Charged",
     "kind": "passive",
@@ -1128,6 +1141,7 @@
   },
   {
     "id": "apocalyptic_thunder",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Apocalyptic Thunder",
     "kind": "active",
@@ -1359,6 +1373,7 @@
   },
   {
     "id": "aftershock",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Aftershock",
     "kind": "passive",
@@ -1383,6 +1398,7 @@
   },
   {
     "id": "loaded_pulse",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Loaded Pulse",
     "kind": "passive",
@@ -1402,6 +1418,7 @@
   },
   {
     "id": "storm_bolt",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "Storm Bolt",
     "kind": "active",
@@ -1631,6 +1648,7 @@
   },
   {
     "id": "high_voltage_aura",
+    "activationKind": "cast",
     "classId": "stormweaver",
     "name": "High Voltage Aura",
     "kind": "aura",

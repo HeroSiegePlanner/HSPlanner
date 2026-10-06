@@ -35,6 +35,51 @@ pub(crate) fn compute_final_stats(stat_sources: &SourceMap) -> HashMap<String, R
     stats
 }
 
+pub(super) fn finalize_melee_attack_size_offset(stats: &mut HashMap<String, Ranged>) {
+    if let Some(value) = stats.get_mut("melee_attack_size_offset") {
+        *value = (value.0.floor(), value.1.floor());
+    }
+}
+
+pub(super) fn finalize_extra_damage_bleeding(
+    sources: &SourceMap,
+    stats: &mut HashMap<String, Ranged>,
+) {
+    finalize_global_extra_damage(sources, stats, "extra_damage_bleeding");
+}
+
+pub(super) fn finalize_extra_damage_stunned(
+    sources: &SourceMap,
+    stats: &mut HashMap<String, Ranged>,
+) {
+    finalize_global_extra_damage(sources, stats, "extra_damage_stunned");
+}
+
+fn finalize_global_extra_damage(
+    sources: &SourceMap,
+    stats: &mut HashMap<String, Ranged>,
+    key: &str,
+) {
+    let Some(contributions) = sources.get(key) else {
+        return;
+    };
+    let mut global = (0.0_f64, 0.0_f64);
+    let mut local = (0.0_f64, 0.0_f64);
+    for contribution in contributions {
+        let total = if contribution.source_type == SourceType::Subskill {
+            &mut local
+        } else {
+            &mut global
+        };
+        total.0 += contribution.value.0;
+        total.1 += contribution.value.1;
+    }
+    stats.insert(
+        key.into(),
+        (global.0.floor() + local.0, global.1.floor() + local.1),
+    );
+}
+
 // life/mana × increased × more; replenishes opt out of floor.
 pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     // Item-local Enhanced Defense is already baked into each armor base.

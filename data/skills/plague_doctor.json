@@ -1,6 +1,7 @@
 [
   {
     "id": "miasma",
+    "activationKind": "attack",
     "classId": "plague_doctor",
     "name": "Miasma",
     "kind": "active",
@@ -14,7 +15,7 @@
     "hitModel": { "object": "Plague_Doctor_Miasma_Create", "tickFrequency": 0.5, "lifetime": 1.25 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 83.72, "perLevel": 45.08 },
       "flatPhysicalMin": { "base": 3, "perLevel": 1 },
@@ -234,6 +235,7 @@
   },
   {
     "id": "surgical_blood_letting",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "plague_doctor",
     "name": "Surgical Blood Letting",
@@ -463,6 +465,7 @@
   },
   {
     "id": "booster_shot",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Booster Shot",
     "kind": "buff",
@@ -481,6 +484,7 @@
   },
   {
     "id": "malpractice",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Malpractice",
     "kind": "passive",
@@ -498,6 +502,7 @@
   },
   {
     "id": "blood_sustenance",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Blood Sustenance",
     "kind": "passive",
@@ -515,6 +520,7 @@
   },
   {
     "id": "lifeblood_aura",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Lifeblood Aura",
     "kind": "aura",
@@ -533,6 +539,7 @@
   },
   {
     "id": "crow_masks_presence",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Crow Mask's Presence",
     "kind": "passive",
@@ -550,6 +557,7 @@
   },
   {
     "id": "devout_doctor",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Devout Doctor",
     "kind": "passive",
@@ -568,6 +576,7 @@
   },
   {
     "id": "defunct_surgeon",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Defunct Surgeon",
     "kind": "buff",
@@ -589,6 +598,7 @@
   },
   {
     "id": "toxic_flask",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Toxic Flask",
     "kind": "active",
@@ -808,6 +818,7 @@
   },
   {
     "id": "crematus",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Crematus",
     "kind": "active",
@@ -1036,6 +1047,7 @@
   },
   {
     "id": "plague_of_rats",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Plague of Rats",
     "kind": "active",
@@ -1249,6 +1261,7 @@
   },
   {
     "id": "oops",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Oops",
     "kind": "passive",
@@ -1268,6 +1281,7 @@
   },
   {
     "id": "exploding_mice",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Exploding Mice",
     "kind": "passive",
@@ -1286,6 +1300,7 @@
   },
   {
     "id": "plague_master",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Plague Master",
     "kind": "active",
@@ -1500,6 +1515,7 @@
   },
   {
     "id": "jar_of_leeches",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Jar of Leeches",
     "kind": "active",
@@ -1698,6 +1714,7 @@
   },
   {
     "id": "chant_of_weakness",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Chant of Weakness",
     "kind": "passive",
@@ -1716,6 +1733,7 @@
   },
   {
     "id": "randy_the_rancid_rat",
+    "activationKind": "cast",
     "classId": "plague_doctor",
     "name": "Randy the Rancid Rat",
     "kind": "active",

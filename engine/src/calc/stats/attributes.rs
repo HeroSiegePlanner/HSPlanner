@@ -357,10 +357,14 @@ pub(crate) fn skill_spec_to_subskill_owner(
             list.iter()
                 .map(|sub| SubskillNode {
                     id: sub.id.clone(),
-                    effects: sub.effects.as_ref().map(|e| SubskillEffect {
-                        base: e.base.clone().unwrap_or_default(),
-                        per_rank: e.per_rank.clone().unwrap_or_default(),
-                    }),
+                    effects: sub
+                        .effects
+                        .as_ref()
+                        .filter(|_| sub.triggered_buff.is_none())
+                        .map(|e| SubskillEffect {
+                            base: e.base.clone().unwrap_or_default(),
+                            per_rank: e.per_rank.clone().unwrap_or_default(),
+                        }),
                     proc: sub.proc.as_ref().map(|p| SubskillProc {
                         trigger: p.trigger.clone(),
                         chance_base: p.chance.base.unwrap_or(0.0),

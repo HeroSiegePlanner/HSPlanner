@@ -2,10 +2,10 @@ use super::calculation::{number, range, scalar, stat_inputs, CalculationStep};
 use std::collections::HashMap;
 
 use super::{
-    collect_extra_damage, damage::bonus_source_synergy_pct, damage::element_keys, deadly_blow_mult,
-    r_max, r_min, rg, AttackSkillDamageBreakdown, AttrMap, ConditionMap, DamageFormula,
-    ExtraSource, ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap, Weapon,
-    CRUSHING_BLOW_DEFAULT,
+    collect_extra_damage_with_scoped, damage::bonus_source_synergy_pct, damage::element_keys,
+    deadly_blow_mult, r_max, r_min, rg, AttackSkillDamageBreakdown, AttrMap, ConditionMap,
+    DamageFormula, ExtraSource, ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap,
+    Weapon, CRUSHING_BLOW_DEFAULT,
 };
 
 pub struct AttackSkillInput<'a> {
@@ -100,11 +100,15 @@ fn converted_attack_elements(
         } else {
             0.0
         };
-        let target_mult =
-            resistance_mult * (1.0 + (elemental_break + element_break) / 100.0);
-        let (critical_break_average, critical_break_step) = super::critical_break_average_multiplier(
-            element, element_break, elemental_break, input.stats, input.scoped,
-        );
+        let target_mult = resistance_mult * (1.0 + (elemental_break + element_break) / 100.0);
+        let (critical_break_average, critical_break_step) =
+            super::critical_break_average_multiplier(
+                element,
+                element_break,
+                elemental_break,
+                input.stats,
+                input.scoped,
+            );
         let scale = (
             pct.0 / 100.0 * element_multiplier.0 * target_mult,
             pct.1 / 100.0 * element_multiplier.1 * target_mult,
@@ -153,6 +157,20 @@ fn converted_attack_elements(
 pub fn compute_attack_skill_damage(
     input: &AttackSkillInput<'_>,
 ) -> Option<AttackSkillDamageBreakdown> {
+    compute_attack_skill_damage_with_rank(input, None)
+}
+
+pub(crate) fn compute_attack_skill_damage_at_rank(
+    input: &AttackSkillInput<'_>,
+    effective_rank: f64,
+) -> Option<AttackSkillDamageBreakdown> {
+    compute_attack_skill_damage_with_rank(input, Some(effective_rank))
+}
+
+fn compute_attack_skill_damage_with_rank(
+    input: &AttackSkillInput<'_>,
+    fixed_rank: Option<f64>,
+) -> Option<AttackSkillDamageBreakdown> {
     let s = input.skill;
     if input.allocated_rank == 0.0 {
         return None;
@@ -172,22 +190,27 @@ pub fn compute_attack_skill_damage(
         .copied()
         .unwrap_or((0.0, 0.0));
     let tag_bonus = crate::calc::rank::tag_skills_sum(input.stats, &s.tags);
-    let (eff_min, eff_max) = crate::calc::rank::effective_rank_range_for(
-        s,
-        input.allocated_rank,
-        input.stats,
-        input.item_skill_bonuses,
-    );
+    let (eff_min, eff_max) = fixed_rank.map(|rank| (rank, rank)).unwrap_or_else(|| {
+        crate::calc::rank::effective_rank_range_for(
+            s,
+            input.allocated_rank,
+            input.stats,
+            input.item_skill_bonuses,
+        )
+    });
 
     let skill_wdp_min = formula_at_clamped_opt(scaling.weapon_damage_pct.as_ref(), eff_min);
     let skill_wdp_max = formula_at_clamped_opt(scaling.weapon_damage_pct.as_ref(), eff_max);
     let skill_flat_min = formula_at_clamped_opt(scaling.flat_physical_min.as_ref(), eff_min);
     let skill_flat_max = formula_at_clamped_opt(scaling.flat_physical_max.as_ref(), eff_max);
     let rating_bonus = total_pct(input, "attack_rating_pct");
-    let skill_arp_min =
-        formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_min) + rating_bonus;
-    let skill_arp_max =
-        formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_max) + rating_bonus;
+    let rating_multiplier = rg(input.scoped, "skill_attack_rating_multiplier_pct");
+    let skill_arp_min = formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_min)
+        * (1.0 + rating_multiplier.0 / 100.0)
+        + rating_bonus;
+    let skill_arp_max = formula_at_clamped_opt(scaling.attack_rating_pct.as_ref(), eff_max)
+        * (1.0 + rating_multiplier.1 / 100.0)
+        + rating_bonus;
 
     // Unarmed baseline is 2-6 physical for every character.
     let (mut w_min, mut w_max) = input
@@ -222,8 +245,13 @@ pub fn compute_attack_skill_damage(
         None,
     );
 
-    let (mut extra_mult, mut extra_sources) =
-        collect_extra_damage(input.stats, input.enemy_conditions, Some("physical"));
+    let (mut extra_mult, mut extra_sources) = collect_extra_damage_with_scoped(
+        input.stats,
+        input.scoped,
+        input.enemy_conditions,
+        Some("physical"),
+    );
+
     if input.of_total_damage != 0.0 {
         extra_sources.push(ExtraSource {
             stat_key: None,
@@ -242,20 +270,46 @@ pub fn compute_attack_skill_damage(
         });
     }
 
-    let crit = super::crit_factors_with_tags(input.stats, false, &s.tags);
+    let global_crit = super::crit_factors_with_tags(input.stats, false, &s.tags);
+    let subtree_crit_chance = rg(input.scoped, "skill_crit_chance");
+    let skill_crit_chance = (
+        formula_at_clamped_opt(scaling.critical_chance.as_ref(), eff_min) + subtree_crit_chance.0,
+        formula_at_clamped_opt(scaling.critical_chance.as_ref(), eff_max) + subtree_crit_chance.1,
+    );
+    let critical_damage_bonus = rg(input.scoped, "skill_crit_damage_multiplier_pct");
+    let critical_damage_per_vitality = rg(
+        input.scoped,
+        "skill_crit_damage_multiplier_per_100_vitality",
+    );
+    let vitality = rg(input.attributes, "vitality");
+    let critical_damage_multiplier = (
+        1.0 + critical_damage_bonus.0 / 100.0
+            + vitality.0 * critical_damage_per_vitality.0 / 10000.0,
+        1.0 + critical_damage_bonus.1 / 100.0
+            + vitality.1 * critical_damage_per_vitality.1 / 10000.0,
+    );
+    let subtree_crit_damage = rg(input.scoped, "skill_crit_damage");
+    let skill_crit_damage = (
+        formula_at_clamped_opt(scaling.critical_damage.as_ref(), eff_min)
+            * critical_damage_multiplier.0
+            + subtree_crit_damage.0,
+        formula_at_clamped_opt(scaling.critical_damage.as_ref(), eff_max)
+            * critical_damage_multiplier.1
+            + subtree_crit_damage.1,
+    );
+    let crit_min = global_crit.with_skill_bonuses(skill_crit_chance.0, skill_crit_damage.0);
+    let crit = global_crit.with_skill_bonuses(skill_crit_chance.1, skill_crit_damage.1);
     // LoadTalentDamage's physical weapon-coefficient branch ignores its flat
     // pool, including Leap stat437. See ../leap-evidence.md. Other tagged flat
     // sources retain their existing behavior pending their own source audit.
-    let tagged_flat = crate::calc::affix_tags::keys_for(
-        crate::calc::types::AffixEffect::FlatDamage,
-        &s.tags,
-    )
-    .into_iter()
-    .filter(|key| *key != "flat_leap_damage")
-    .fold((0.0, 0.0), |total, key| {
-        let value = rg(input.stats, key);
-        (total.0 + value.0, total.1 + value.1)
-    });
+    let tagged_flat =
+        crate::calc::affix_tags::keys_for(crate::calc::types::AffixEffect::FlatDamage, &s.tags)
+            .into_iter()
+            .filter(|key| *key != "flat_leap_damage")
+            .fold((0.0, 0.0), |total, key| {
+                let value = rg(input.stats, key);
+                (total.0 + value.0, total.1 + value.1)
+            });
 
     let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(input.stats);
     let base_min = w_min * (1.0 + r_min(ed) / 100.0) * (1.0 + r_min(ed_more) / 100.0)
@@ -284,13 +338,17 @@ pub fn compute_attack_skill_damage(
     );
     let has_wdp = scaling.weapon_damage_pct.is_some();
     let weapon_bonus_scaling = scaling.weapon_bonus_scaling && has_wdp;
-    // Amazon's own subtree scales the added weapon coefficient, before the
-    // neutral weapon hit returns. Element-only bonuses never enter this pool.
     let subtree = rg(input.scoped, "subtree_damage");
     let weapon_subtree = rg(input.scoped, "weapon_subtree_damage");
+    let subtree_per_dexterity = rg(input.scoped, "subtree_damage_per_100_dexterity");
+    let dexterity = rg(input.attributes, "dexterity");
+    let dexterity_subtree = (
+        (dexterity.0 * 0.01) * (subtree_per_dexterity.0 * 0.01),
+        (dexterity.1 * 0.01) * (subtree_per_dexterity.1 * 0.01),
+    );
     let subtree_factor = (
-        (1.0 + (subtree.0 + weapon_subtree.0) / 100.0).max(0.0),
-        (1.0 + (subtree.1 + weapon_subtree.1) / 100.0).max(0.0),
+        (1.0 + (subtree.0 + weapon_subtree.0) / 100.0 + dexterity_subtree.0).max(0.0),
+        (1.0 + (subtree.1 + weapon_subtree.1) / 100.0 + dexterity_subtree.1).max(0.0),
     );
     let attack_synergy = if weapon_bonus_scaling {
         (0.0, 0.0)
@@ -303,14 +361,28 @@ pub fn compute_attack_skill_damage(
         (1.0 + (r_max(atk) + attack_synergy.1) / 100.0) * (1.0 + r_max(atk_more) / 100.0);
     // The stored percentage includes neutral weapon damage. In this model the
     // bonus and its synergies receive tag scaling before the neutral 100% returns.
+    let weapon_multiplier = |wdp: f64, synergy: f64, tag: f64, subtree: f64| {
+        let bonus = (wdp - 100.0 + synergy) * tag / 100.0;
+        if scaling.weapon_subtree_scales_full_hit {
+            ((1.0 + bonus) * subtree).max(0.0)
+        } else {
+            (1.0 + (wdp - 100.0 + synergy) * tag * subtree / 100.0).max(0.0)
+        }
+    };
     let (skill_mult_min, skill_mult_max) = if weapon_bonus_scaling {
         (
-            (1.0 + (skill_wdp_min - 100.0 + synergy_min) * tagged_factor.0 * subtree_factor.0
-                / 100.0)
-                .max(0.0),
-            (1.0 + (skill_wdp_max - 100.0 + synergy_max) * tagged_factor.1 * subtree_factor.1
-                / 100.0)
-                .max(0.0),
+            weapon_multiplier(
+                skill_wdp_min,
+                synergy_min,
+                tagged_factor.0,
+                subtree_factor.0,
+            ),
+            weapon_multiplier(
+                skill_wdp_max,
+                synergy_max,
+                tagged_factor.1,
+                subtree_factor.1,
+            ),
         )
     } else if has_wdp {
         (skill_wdp_min / 100.0, skill_wdp_max / 100.0)
@@ -318,18 +390,39 @@ pub fn compute_attack_skill_damage(
         (1.0, 1.0)
     };
     let third_attack = rg(input.scoped, "third_attack_subtree_damage");
+    let proc_subtree = rg(input.scoped, "subtree_damage_on_proc");
     let expected_skill_mult = if weapon_bonus_scaling {
         (
-            (1.0 + (skill_wdp_min - 100.0 + synergy_min)
-                * tagged_factor.0
-                * (subtree_factor.0 + third_attack.0 / 300.0)
-                / 100.0)
-                .max(0.0),
-            (1.0 + (skill_wdp_max - 100.0 + synergy_max)
-                * tagged_factor.1
-                * (subtree_factor.1 + third_attack.1 / 300.0)
-                / 100.0)
-                .max(0.0),
+            weapon_multiplier(
+                skill_wdp_min,
+                synergy_min,
+                tagged_factor.0,
+                subtree_factor.0 + proc_subtree.0 / 100.0 + third_attack.0 / 300.0,
+            ),
+            weapon_multiplier(
+                skill_wdp_max,
+                synergy_max,
+                tagged_factor.1,
+                subtree_factor.1 + proc_subtree.1 / 100.0 + third_attack.1 / 300.0,
+            ),
+        )
+    } else {
+        (skill_mult_min, skill_mult_max)
+    };
+    let third_skill_mult = if weapon_bonus_scaling {
+        (
+            weapon_multiplier(
+                skill_wdp_min,
+                synergy_min,
+                tagged_factor.0,
+                subtree_factor.0 + (proc_subtree.0 + third_attack.0) / 100.0,
+            ),
+            weapon_multiplier(
+                skill_wdp_max,
+                synergy_max,
+                tagged_factor.1,
+                subtree_factor.1 + (proc_subtree.1 + third_attack.1) / 100.0,
+            ),
         )
     } else {
         (skill_mult_min, skill_mult_max)
@@ -405,12 +498,34 @@ pub fn compute_attack_skill_damage(
             * extra_mult
             * physical_skill_mult.1,
     );
-    let phys_avg_min = physical_expected.0
-        * crit.avg_mult
+    let third_crit_damage = rg(input.scoped, "third_attack_skill_crit_damage");
+    let third_crit_extra = (
+        base_min
+            * atk_mult_min
+            * third_skill_mult.0
+            * crush_armor_mult
+            * deadly_mult
+            * extra_mult
+            * physical_skill_mult.0
+            * (crit_min.chance.clamp(0.0, 95.0) / 100.0)
+            * third_crit_damage.0
+            / 300.0,
+        base_max
+            * atk_mult_max
+            * third_skill_mult.1
+            * crush_armor_mult
+            * deadly_mult
+            * extra_mult
+            * physical_skill_mult.1
+            * (crit.chance.clamp(0.0, 95.0) / 100.0)
+            * third_crit_damage.1
+            / 300.0,
+    );
+
+    let phys_avg_min = (physical_expected.0 * crit_min.avg_mult + third_crit_extra.0)
         * double_damage.0
         * (projectiles as f64 + extra_projectiles.0.max(0.0));
-    let phys_avg_max = physical_expected.1
-        * crit.avg_mult
+    let phys_avg_max = (physical_expected.1 * crit.avg_mult + third_crit_extra.1)
         * double_damage.1
         * (projectiles as f64 + extra_projectiles.1.max(0.0));
 
@@ -458,14 +573,20 @@ pub fn compute_attack_skill_damage(
     }
     calculation.push(CalculationStep::new(
         "Effective attack rank",
-        format!(
-            "{} allocated + {} all skills + {} element + {} tagged + {} item ranks",
-            number(input.allocated_rank),
-            range(all_skills),
-            range(elem_bonus),
-            range(tag_bonus),
-            range(item)
-        ),
+        match fixed_rank {
+            Some(rank) => format!(
+                "{} explicit triggered rank; all/element/tag/item skill ranks are not added again",
+                number(rank),
+            ),
+            None => format!(
+                "{} allocated + {} all skills + {} element + {} tagged + {} item ranks",
+                number(input.allocated_rank),
+                range(all_skills),
+                range(elem_bonus),
+                range(tag_bonus),
+                range(item)
+            ),
+        },
         (eff_min, eff_max),
     ));
     calculation.push(CalculationStep::new(
@@ -536,9 +657,7 @@ pub fn compute_attack_skill_damage(
         "Conversion applies to physical only when no elemental member consumes it",
         scalar(input.conversion_flat),
     ));
-    if s.tags.iter().any(|tag| tag == "Leap")
-        && rg(input.stats, "flat_leap_damage") != (0.0, 0.0)
-    {
+    if s.tags.iter().any(|tag| tag == "Leap") && rg(input.stats, "flat_leap_damage") != (0.0, 0.0) {
         calculation.push(CalculationStep::new(
             "Flat Leap damage on the weapon component",
             "The physical weapon coefficient does not consume flat Leap damage",
@@ -584,7 +703,7 @@ pub fn compute_attack_skill_damage(
             },
             physical_skill_mult,
         ));
-        calculation.push(CalculationStep::new("Attack rating bonus %", "Skill rank formula + shared and subtree attack-rating bonuses; accuracy is not inferred without enemy evasion", (skill_arp_min, skill_arp_max)));
+        calculation.push(CalculationStep::new("Attack rating bonus %", format!("Skill rank formula × (1 + {}% intrinsic skill multiplier / 100) + shared and subtree attack-rating bonuses; accuracy is not inferred without enemy evasion", range(rating_multiplier)), (skill_arp_min, skill_arp_max)));
     }
 
     calculation.push(CalculationStep::new(
@@ -597,9 +716,28 @@ pub fn compute_attack_skill_damage(
         ),
         (atk_mult_min, atk_mult_max),
     ));
+    if subtree_per_dexterity != (0.0, 0.0) {
+        calculation.push(CalculationStep::new(
+            "Skill damage from Dexterity",
+            format!(
+                "{} Dexterity / 100 × {}% per 100 Dexterity / 100; added to the own subtree multiplier",
+                range(dexterity),
+                range(subtree_per_dexterity)
+            ),
+            dexterity_subtree,
+        ));
+    }
     calculation.push(CalculationStep::new(
         "Skill weapon multiplier",
-        if weapon_bonus_scaling {
+        if weapon_bonus_scaling && scaling.weapon_subtree_scales_full_hit {
+            format!(
+                "max(0, (1 + ({}% weapon damage − 100 + {}% synergy) × {} matching tag multiplier / 100) × {} own subtree multiplier)",
+                range((skill_wdp_min, skill_wdp_max)),
+                range((synergy_min, synergy_max)),
+                range(tagged_factor),
+                range(subtree_factor)
+            )
+        } else if weapon_bonus_scaling {
             format!(
                 "max(0, 1 + ({}% weapon damage − 100 + {}% synergy) × {} matching tag multiplier × {} own subtree multiplier / 100)",
                 range((skill_wdp_min, skill_wdp_max)),
@@ -672,32 +810,108 @@ pub fn compute_attack_skill_damage(
     ));
     calculation.push(CalculationStep::new(
         "Critical damage multiplier",
-        format!(
-            "(1 + {}% critical damage / 100) × (1 + {}% more / 100)",
-            number(crit.damage_pct),
-            number(r_max(rg(input.stats, "crit_damage_more")))
-        ),
-        scalar(crit.on_crit_mult),
+        if scaling.critical_damage.is_some() || subtree_crit_damage != (0.0, 0.0) {
+            format!(
+                "{} global critical multiplier + {}% from this skill / 100; intrinsic critical damage uses {}× from its subtree, then adds {} local critical points",
+                number(global_crit.on_crit_mult),
+                range(skill_crit_damage),
+                range(critical_damage_multiplier),
+                range(subtree_crit_damage)
+            )
+        } else {
+            format!(
+                "(1 + {}% critical damage / 100) × (1 + {}% more / 100)",
+                number(crit.damage_pct),
+                number(r_max(rg(input.stats, "crit_damage_more")))
+            )
+        },
+        (crit_min.on_crit_mult, crit.on_crit_mult),
     ));
+    if scaling.critical_chance.is_some() || subtree_crit_chance != (0.0, 0.0) {
+        calculation.push(CalculationStep::new(
+            "Skill critical chance",
+            format!(
+                "{}% global + {}% from this skill, after global stat scaling; capped at 95% for the critical roll",
+                number(global_crit.chance),
+                range(skill_crit_chance),
+            ),
+            (crit_min.chance, crit.chance),
+        ));
+    }
     calculation.push(CalculationStep::new(
         "Average critical multiplier",
         format!(
             "1 + clamp({}%, 0, 95) / 100 × ({} critical multiplier − 1)",
-            number(crit.chance),
-            number(crit.on_crit_mult)
+            range((crit_min.chance, crit.chance)),
+            range((crit_min.on_crit_mult, crit.on_crit_mult))
         ),
-        scalar(crit.avg_mult),
+        (crit_min.avg_mult, crit.avg_mult),
     ));
     calculation.push(CalculationStep::new("Double damage expectation", "1 + clamp(double damage chance, 0, 100) / 100; one contact, independent of critical and extra damage", double_damage));
-    if third_attack != (0.0, 0.0) {
-        calculation.push(CalculationStep::new("Expected weapon multiplier", format!("Own subtree gains {}% / 3 on average from the third attack; neutral weapon damage stays outside the bonus", range(third_attack)), expected_skill_mult));
+    if third_attack != (0.0, 0.0) || proc_subtree != (0.0, 0.0) {
+        calculation.push(CalculationStep::new("Expected weapon multiplier", format!("Own subtree gains {}% chance-weighted damage and {}% / 3 from every third attack, at this skill's weapon stage; long-run average", range(proc_subtree), range(third_attack)), expected_skill_mult));
+    }
+    if third_crit_damage != (0.0, 0.0) {
+        calculation.push(CalculationStep::new(
+            "Third attack critical contribution",
+            format!("Third attack uses {} weapon multiplier × critical chance × {} local critical damage / 100 / 3; damage and critical bonuses stay on the same hit, outside global critical more", range(third_skill_mult), range(third_crit_damage)),
+            third_crit_extra,
+        ));
+    }
+    let daisy_size = rg(input.scoped, "daisy_size_scaling");
+    if daisy_size != (0.0, 0.0) {
+        calculation.push(CalculationStep::new(
+            "Daisy size on every third attack",
+            format!("0.75 + (1 + missing life / maximum life) × {} / 100; scale from full life to the zero-life limit for Daisy only, without adding target contacts", range(daisy_size)),
+            (0.75 + daisy_size.0 / 100.0, 0.75 + 2.0 * daisy_size.1 / 100.0),
+        ));
+    }
+    let melee_size_from_strength = rg(input.scoped, "skill_melee_size_offset_per_100_strength");
+    if melee_size_from_strength != (0.0, 0.0) {
+        let strength = rg(input.attributes, "strength");
+        calculation.push(CalculationStep::new(
+            "Local melee size offset from Strength",
+            format!("{} Strength × {}% per 100 Strength / 10000; additive scale offset for eligible melee projectiles, separate from generic range and target contacts", range(strength), range(melee_size_from_strength)),
+            (
+                (strength.0 * 0.01) * (melee_size_from_strength.0 * 0.01),
+                (strength.1 * 0.01) * (melee_size_from_strength.1 * 0.01),
+            ),
+        ));
+    }
+    let life_recovery = rg(input.scoped, "skill_life_recovery_from_max_life_pct");
+    if life_recovery != (0.0, 0.0) {
+        let life = rg(input.stats, "life");
+        calculation.push(CalculationStep::new(
+            "Life recovery before blocking and caps",
+            format!("floor({} maximum life × ({}% × 0.01)) with no recovery block, before limiting recovery to missing life; a positive recovery-block scalar reduces this floored amount before a second floor, and a block of 100 or more prevents recovery. No passive-regeneration modifiers or contact count; no recovery rate", range(life), range(life_recovery)),
+            ((life.0 * (life_recovery.0 * 0.01)).floor(), (life.1 * (life_recovery.1 * 0.01)).floor()),
+        ));
+    }
+    let mana_recovery = rg(input.scoped, "skill_mana_recovery_from_max_mana_pct");
+    if mana_recovery != (0.0, 0.0) {
+        let mana = rg(input.stats, "mana");
+        let amount = (
+            (mana.0 * (mana_recovery.0 * 0.01)).floor(),
+            (mana.1 * (mana_recovery.1 * 0.01)).floor(),
+        );
+        calculation.push(CalculationStep::new(
+            "Mana recovery controller base amount",
+            format!("floor({} maximum mana × ({}% × 0.01)); controller input before limiting each delivered portion to missing mana, without passive-regeneration modifiers or contact count", range(mana), range(mana_recovery)),
+            amount,
+        ));
+        calculation.push(CalculationStep::new(
+            "Mana recovery controller portion",
+            format!("{} controller base amount / 8; nominal two-second controller requires no existing mana controller. Exact tick count, delivered total and recovery per second remain unverified", range(amount)),
+            (amount.0 / 8.0, amount.1 / 8.0),
+        ));
     }
     calculation.push(CalculationStep::new(
         "Average physical damage",
         format!(
-            "floor({} expected physical hit × {} average crit × {} double damage expectation × ({} ordinary + {} expected additional projectiles))",
+            "floor(({} expected physical hit × {} average crit + {} third-attack critical contribution) × {} double damage expectation × ({} ordinary + {} expected additional projectiles))",
             range(physical_expected),
-            number(crit.avg_mult),
+            range((crit_min.avg_mult, crit.avg_mult)),
+            range(third_crit_extra),
             range(double_damage),
             projectiles,
             range(extra_projectiles)
@@ -878,6 +1092,155 @@ mod tests {
     }
 
     #[test]
+    fn intrinsic_critical_chance_is_local_and_capped_after_global_chance() {
+        let mut s = skill();
+        s.attack_scaling.as_mut().unwrap().critical_chance = Some(DamageFormula {
+            base: 50.0,
+            per_level: 0.0,
+        });
+        for (global, expected_chance, expected_average) in [(20., 70., 1.7), (70., 120., 1.95)] {
+            let shared = stats(&[("crit_chance", global), ("crit_damage", 100.)]);
+            let plain = breakdown_for(
+                &skill(),
+                &shared,
+                &StatMap::new(),
+                &SkillRanks::new(),
+                1,
+                0.,
+            );
+            let blade = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.);
+            assert_eq!(blade.crit_chance, expected_chance);
+            assert!((blade.crit_multiplier_avg - expected_average).abs() < 1e-12);
+            assert_eq!(blade.physical_hit_min, plain.physical_hit_min);
+            assert_eq!(blade.physical_hit_max, plain.physical_hit_max);
+            assert_eq!(plain.crit_chance, global);
+            assert_eq!(shared["crit_chance"], (global, global));
+        }
+    }
+
+    #[test]
+    fn intrinsic_critical_chance_uses_both_effective_rank_endpoints() {
+        let mut s = skill();
+        s.attack_scaling.as_mut().unwrap().critical_chance = Some(DamageFormula {
+            base: 10.0,
+            per_level: 10.0,
+        });
+        let mut shared = stats(&[("crit_chance", 20.), ("crit_damage", 100.)]);
+        shared.insert("all_skills".into(), (0., 2.));
+        let damage = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.);
+        assert_eq!(
+            (damage.effective_rank_min, damage.effective_rank_max),
+            (1., 3.)
+        );
+        assert_eq!(
+            damage.physical_avg_min,
+            (damage.physical_hit_min as f64 * 1.4).floor() as i64
+        );
+        assert_eq!(
+            damage.physical_avg_max,
+            (damage.physical_hit_max as f64 * 1.6).floor() as i64
+        );
+        let step = damage
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Average critical multiplier")
+            .unwrap();
+        assert!((step.value().0 - 1.4).abs() < 1e-12);
+        assert!((step.value().1 - 1.6).abs() < 1e-12);
+
+        let scoped = StatMap::from([("skill_crit_chance".into(), (5., 25.))]);
+        let local = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!(local.physical_hit_min, damage.physical_hit_min);
+        assert_eq!(local.physical_hit_max, damage.physical_hit_max);
+        let step = local
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Average critical multiplier")
+            .unwrap();
+        assert!((step.value().0 - 1.45).abs() < 1e-12);
+        assert!((step.value().1 - 1.85).abs() < 1e-12);
+    }
+
+    #[test]
+    fn local_critical_damage_adds_after_global_and_intrinsic_multipliers() {
+        let mut s = skill();
+        s.attack_scaling.as_mut().unwrap().critical_damage = Some(DamageFormula {
+            base: 10.,
+            per_level: 0.,
+        });
+        let shared = stats(&[
+            ("crit_chance", 50.),
+            ("crit_damage", 100.),
+            ("crit_damage_more", 50.),
+        ]);
+        let scoped = StatMap::from([
+            ("skill_crit_damage_multiplier_pct".into(), (100., 100.)),
+            ("skill_crit_damage".into(), (30., 90.)),
+        ]);
+        let out = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (150, 150));
+        assert_eq!((out.physical_avg_min, out.physical_avg_max), (337, 382));
+        let step = out
+            .calculation()
+            .iter()
+            .find(|step| step.label() == "Critical damage multiplier")
+            .unwrap();
+        assert!((step.value().0 - 3.5).abs() < 1e-9);
+        assert!((step.value().1 - 4.1).abs() < 1e-9);
+        assert_eq!(out.crit_damage_pct, 210.);
+        assert_eq!(shared["crit_damage"], (100., 100.));
+    }
+
+    #[test]
+    fn intrinsic_critical_damage_uses_rank_range_after_global_multipliers() {
+        let mut blade = skill();
+        let scaling = blade.attack_scaling.as_mut().unwrap();
+        scaling.critical_chance = Some(DamageFormula {
+            base: 50.,
+            per_level: 0.,
+        });
+        scaling.critical_damage = Some(DamageFormula {
+            base: 67.5,
+            per_level: 22.5,
+        });
+        let mut shared = stats(&[
+            ("crit_chance", 20.),
+            ("crit_damage", 100.),
+            ("crit_damage_more", 50.),
+        ]);
+        shared.insert("all_skills".into(), (0., 2.));
+        let ordinary = breakdown_for(
+            &skill(),
+            &shared,
+            &StatMap::new(),
+            &SkillRanks::new(),
+            1,
+            0.,
+        );
+        let damage = breakdown_for(&blade, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.);
+        let expected = (1. + 0.7 * (3.9 - 1.), 1. + 0.7 * (4.35 - 1.));
+        assert_eq!(damage.physical_hit_min, ordinary.physical_hit_min);
+        assert_eq!(damage.physical_hit_max, ordinary.physical_hit_max);
+        assert_eq!(
+            damage.physical_avg_min,
+            (damage.physical_hit_min as f64 * expected.0).floor() as i64
+        );
+        assert_eq!(
+            damage.physical_avg_max,
+            (damage.physical_hit_max as f64 * expected.1).floor() as i64
+        );
+        assert_eq!(shared["crit_damage"], (100., 100.));
+        let step = damage
+            .calculation()
+            .iter()
+            .find(|s| s.label() == "Critical damage multiplier")
+            .unwrap();
+        assert!((step.value().0 - 3.9).abs() < 1e-12);
+        assert!((step.value().1 - 4.35).abs() < 1e-12);
+        assert_eq!(ordinary.crit_damage_pct, 100.);
+    }
+
+    #[test]
     fn conversion_uses_the_skill_hit_and_destination_bonus_without_consuming_physical() {
         let mut s = skill();
         s.attack_scaling
@@ -981,8 +1344,12 @@ mod tests {
         critical_stats.insert("fire_break_crit_chance".into(), (15.0, 100.0));
         critical_stats.insert("fire_break_crit_damage".into(), (25.0, 25.0));
         let (critical, _) = converted_attack_elements(
-            &AttackSkillInput { stats: &critical_stats, ..input },
-            (300.0, 300.0), (900.0, 900.0),
+            &AttackSkillInput {
+                stats: &critical_stats,
+                ..input
+            },
+            (300.0, 300.0),
+            (900.0, 900.0),
         );
         let critical_fire = critical.iter().find(|c| c.element == "fire").unwrap();
         assert_eq!((critical_fire.hit_min, critical_fire.hit_max), (270, 270));
@@ -1141,6 +1508,39 @@ mod tests {
     }
 
     #[test]
+    fn intrinsic_attack_rating_multiplier_uses_rank_endpoints_only() {
+        let mut s = skill();
+        s.attack_scaling.as_mut().unwrap().attack_rating_pct = Some(DamageFormula {
+            base: 10.,
+            per_level: 10.,
+        });
+        let mut shared = stats(&[("attack_rating_pct", 25.)]);
+        shared.insert("all_skills".into(), (0., 2.));
+        let scoped = StatMap::from([
+            ("attack_rating_pct".into(), (10., 10.)),
+            ("skill_attack_rating_multiplier_pct".into(), (10., 50.)),
+        ]);
+        let plain = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.);
+        let local = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!(
+            (local.effective_rank_min, local.effective_rank_max),
+            (1., 3.)
+        );
+        assert_eq!(
+            (local.attack_rating_pct_min, local.attack_rating_pct_max),
+            (57., 95.)
+        );
+        assert_eq!(local.physical_hit_min, plain.physical_hit_min);
+        assert_eq!(local.physical_avg_max, plain.physical_avg_max);
+        s.attack_scaling.as_mut().unwrap().attack_rating_pct = None;
+        let absent = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!(
+            (absent.attack_rating_pct_min, absent.attack_rating_pct_max),
+            (35., 35.)
+        );
+    }
+
+    #[test]
     fn crushing_blow_default_matches_the_weapon_panel() {
         // weapon 100 * crushing 1.5 = 150, the same stage weapon.rs applies.
         assert_eq!(hit_max(&StatMap::new(), &StatMap::new()), 150);
@@ -1275,6 +1675,77 @@ mod tests {
         let out = breakdown_for(&s, &StatMap::new(), &extra, &SkillRanks::new(), 1, 0.0);
         assert_eq!(out.physical_hit_max, 330);
         assert_eq!(out.physical_avg_max, 412);
+    }
+
+    #[test]
+    fn third_attack_damage_and_local_critical_bonus_remain_correlated() {
+        let mut s = skill();
+        s.attack_scaling = Some(AttackSkillScaling {
+            weapon_bonus_scaling: true,
+            weapon_damage_pct: Some(DamageFormula {
+                base: 200.,
+                per_level: 0.,
+            }),
+            ..Default::default()
+        });
+        let shared = stats(&[
+            ("crit_chance", 50.),
+            ("crit_damage", 100.),
+            ("crit_damage_more", 50.),
+        ]);
+        let scoped = StatMap::from([
+            ("third_attack_subtree_damage".into(), (50., 100.)),
+            ("third_attack_skill_crit_damage".into(), (100., 200.)),
+        ]);
+        let out = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (300, 300));
+        assert_eq!((out.physical_avg_min, out.physical_avg_max), (712, 850));
+        assert_eq!(out.crit_damage_pct, 100.);
+        let mut no_crit = shared.clone();
+        no_crit.insert("crit_chance".into(), (0., 0.));
+        let out = breakdown_for(&s, &no_crit, &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!((out.physical_avg_min, out.physical_avg_max), (325, 350));
+    }
+
+    #[test]
+    fn chance_weighted_subtree_damage_changes_only_expected_weapon_bonus() {
+        let mut s = skill();
+        s.attack_scaling = Some(AttackSkillScaling {
+            weapon_bonus_scaling: true,
+            weapon_damage_pct: Some(DamageFormula {
+                base: 200.,
+                per_level: 0.,
+            }),
+            ..Default::default()
+        });
+        let scoped = stats(&[("subtree_damage", 50.), ("subtree_damage_on_proc", 20.)]);
+        let out = breakdown_for(&s, &StatMap::new(), &scoped, &SkillRanks::new(), 1, 0.);
+        assert_eq!(out.physical_hit_max, 375);
+        assert_eq!(out.physical_avg_max, 405);
+    }
+    #[test]
+    fn whole_hit_subtree_retains_neutral_weapon_damage_and_both_bounds() {
+        let mut s = skill();
+        s.tags.push("Orbital".into());
+        s.attack_scaling = Some(AttackSkillScaling {
+            weapon_bonus_scaling: true,
+            weapon_subtree_scales_full_hit: true,
+            weapon_damage_pct: Some(DamageFormula {
+                base: 200.0,
+                per_level: 0.0,
+            }),
+            ..Default::default()
+        });
+        let shared = stats(&[("orbital_skill_damage", 100.0)]);
+        let scoped = StatMap::from([("subtree_damage".into(), (0.0, 50.0))]);
+        let whole = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.0);
+        assert_eq!((whole.physical_hit_min, whole.physical_hit_max), (450, 675));
+        s.attack_scaling
+            .as_mut()
+            .unwrap()
+            .weapon_subtree_scales_full_hit = false;
+        let bonus = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.0);
+        assert_eq!((bonus.physical_hit_min, bonus.physical_hit_max), (450, 600));
     }
 
     #[test]

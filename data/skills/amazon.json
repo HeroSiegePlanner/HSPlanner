@@ -1,6 +1,7 @@
 [
   {
     "id": "master_poisoner",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Master Poisoner",
     "kind": "passive",
@@ -31,6 +32,7 @@
   },
   {
     "id": "noxious_strike",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "amazon",
     "name": "Noxious Strike",
@@ -316,6 +318,7 @@
   },
   {
     "id": "leaping_ambush",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Leaping Ambush",
     "kind": "active",
@@ -576,6 +579,7 @@
   },
   {
     "id": "caustic_spearhead",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Caustic Spearhead",
@@ -603,7 +607,7 @@
     "ranks": [
       {
         "rank": 1,
-        "manaCost": 1
+        "manaCost": 4
       }
     ],
     "damageFormula": {
@@ -611,8 +615,9 @@
       "perLevel": 12.5
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "attackKind": "attack",
     "attackScaling": {
@@ -866,6 +871,7 @@
   },
   {
     "id": "jungle_camouflage",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Jungle Camouflage",
     "kind": "buff",
@@ -908,6 +914,7 @@
   },
   {
     "id": "thrill_of_the_hunt",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Thrill of the Hunt",
     "kind": "passive",
@@ -938,6 +945,7 @@
   },
   {
     "id": "toxic_remains",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Toxic Remains",
     "kind": "passive",
@@ -995,6 +1003,7 @@
   },
   {
     "id": "death_from_above",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Death from Above",
@@ -1236,6 +1245,7 @@
   },
   {
     "id": "envenom",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Envenom",
     "kind": "passive",
@@ -1479,6 +1489,7 @@
   },
   {
     "id": "astropes_gift",
+    "activationKind": "attack",
     "classId": "amazon",
     "name": "Astrope's Gift",
     "kind": "active",
@@ -1749,6 +1760,7 @@
   },
   {
     "id": "feint",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Feint",
     "kind": "passive",
@@ -1779,6 +1791,7 @@
   },
   {
     "id": "chooser_of_the_slain",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Chooser of the Slain",
     "kind": "passive",
@@ -1811,6 +1824,7 @@
   },
   {
     "id": "rebound",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Rebound",
@@ -1847,8 +1861,9 @@
       "perLevel": 7.45
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "attackKind": "attack",
     "attackScaling": {
@@ -2084,6 +2099,7 @@
   },
   {
     "id": "spearnage",
+    "activationKind": "attack",
     "classId": "amazon",
     "name": "Spearnage",
     "kind": "active",
@@ -2344,6 +2360,7 @@
   },
   {
     "id": "storm_dash",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Storm Dash",
     "kind": "active",
@@ -2602,6 +2619,7 @@
   },
   {
     "id": "thunder_fury",
+    "activationKind": "attack",
     "classId": "amazon",
     "name": "Thunder Fury",
     "kind": "active",
@@ -2636,8 +2654,9 @@
       "perLevel": 12.5
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "attackKind": "attack",
     "attackScaling": {
@@ -2864,6 +2883,7 @@
   },
   {
     "id": "thunder_goddesses_chosen",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Thunder Goddesses Chosen",
     "kind": "passive",
@@ -2896,6 +2916,7 @@
   },
   {
     "id": "astropes_battle_maiden",
+    "activationKind": "cast",
     "classId": "amazon",
     "name": "Astrope's Battle Maiden",
     "kind": "buff",

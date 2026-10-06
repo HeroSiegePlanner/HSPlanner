@@ -1,6 +1,7 @@
 [
   {
     "id": "weapon_master",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Weapon Master",
     "kind": "passive",
@@ -33,6 +34,7 @@
   },
   {
     "id": "charge",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Charge",
     "kind": "active",
@@ -59,8 +61,9 @@
       "perLevel": 21.75
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "baseCastRate": 1,
     "baseCooldown": 5,
@@ -264,6 +267,7 @@
   },
   {
     "id": "stoneskin",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Stoneskin",
     "kind": "passive",
@@ -294,6 +298,7 @@
   },
   {
     "id": "devastating_charge",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Devastating Charge",
     "kind": "passive",
@@ -327,6 +332,7 @@
   },
   {
     "id": "norse_resistance",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Norse Resistance",
     "kind": "passive",
@@ -357,6 +363,7 @@
   },
   {
     "id": "defensive_shout",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Defensive Shout",
     "kind": "buff",
@@ -395,6 +402,7 @@
   },
   {
     "id": "odins_fury",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Odin's Fury",
     "kind": "active",
@@ -641,6 +649,7 @@
   },
   {
     "id": "battle_agility",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Battle Agility",
     "kind": "passive",
@@ -671,6 +680,7 @@
   },
   {
     "id": "combat_orders",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Combat Orders",
     "kind": "buff",
@@ -711,6 +721,7 @@
   },
   {
     "id": "seismic_slam",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Seismic Slam",
@@ -737,8 +748,9 @@
     "effectDuration": 2,
     "movementDuringUse": 65,
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": {
@@ -954,6 +966,7 @@
   },
   {
     "id": "brute_force",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Brute Force",
     "kind": "passive",
@@ -986,6 +999,7 @@
   },
   {
     "id": "throw",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Throw!",
     "kind": "active",
@@ -1214,6 +1228,7 @@
   },
   {
     "id": "zeal",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Zeal",
@@ -1239,8 +1254,9 @@
     "attackKind": "attack",
     "movementDuringUse": 65,
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": { "base": 75, "perLevel": 30 },
@@ -1464,6 +1480,7 @@
   },
   {
     "id": "ymirs_champion",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Ymir's Champion",
@@ -1494,8 +1511,9 @@
       "perLevel": 18
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": { "base": 8, "perLevel": 23.5 },
@@ -1699,6 +1717,7 @@
   },
   {
     "id": "whirlwind",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Whirlwind",
@@ -1724,8 +1743,9 @@
     "attackKind": "attack",
     "movementDuringUse": 65,
     "manaCostFormula": {
-      "base": 5,
-      "perLevel": 1
+      "base": 4.15,
+      "perLevel": 0.9,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": { "base": 50, "perLevel": 40 },
@@ -1942,6 +1962,7 @@
   },
   {
     "id": "shockwave",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Shockwave",
@@ -2194,6 +2215,7 @@
   },
   {
     "id": "berserk",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Berserk",
@@ -2219,8 +2241,9 @@
     "attackKind": "attack",
     "movementDuringUse": 65,
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.4,
+      "perLevel": 0.65,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": { "base": 2, "perLevel": 3.5 },
@@ -2443,6 +2466,7 @@
   },
   {
     "id": "demolishing_winds",
+    "activationKind": "cast",
     "classId": "viking",
     "name": "Demolishing Winds",
     "kind": "passive",

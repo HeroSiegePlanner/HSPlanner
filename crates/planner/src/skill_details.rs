@@ -5,7 +5,7 @@ use hsplanner_engine::calc::{
     commands::{SubskillAggregationInput, subskill_aggregation},
     data,
     passive::{
-        ManaCostFormula, PassiveSkill, PassiveStats, SkillRank, mana_cost_at_rank,
+        ManaCostFormula, PassiveSkill, PassiveStats, SkillRank, mana_cost_at_effective_rank,
         passive_stats_at_rank,
     },
     planner::PlannerPerformance,
@@ -751,6 +751,7 @@ fn passive_skill(skill: &SkillSpec) -> PassiveSkill {
         mana_cost_formula: skill.mana_cost_formula.map(|f| ManaCostFormula {
             base: f.base,
             per_level: f.per_level,
+            rank_indexing: f.rank_indexing,
         }),
         ranks: skill
             .ranks
@@ -819,7 +820,7 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
     let at = |rank: f64| passive_stats_at_rank(&passive, rank.round() as u32);
     let (passive_min, passive_max) = (at(cur_min), at(cur_max));
     let passive_next = next.map(|(a, b)| (at(a), at(b)));
-    let mana = |rank: f64| mana_cost_at_rank(&passive, rank.round() as u32);
+    let mana = |rank: f64| mana_cost_at_effective_rank(&passive, rank);
     let base_min = base_damage(skill, cur_min);
     let base_max = base_damage(skill, cur_max);
     let has_properties = skill.base_cast_rate.is_some()
@@ -897,6 +898,8 @@ pub(crate) fn stats_block(details: &DetailsContext, cx: &App) -> Option<Div> {
                 tr("planner.common.attack_rating"),
                 scaling.attack_rating_pct,
             ),
+            (tr("planner.stat.crit_chance"), scaling.critical_chance),
+            (tr("planner.stat.crit_damage"), scaling.critical_damage),
         ] {
             let Some(f) = f else { continue };
             let pct = |a: f64, b: f64| {

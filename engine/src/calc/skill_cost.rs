@@ -60,11 +60,16 @@ pub struct SkillCostInput<'a> {
 }
 
 pub fn mana_cost_at_rank(skill: &SkillSpec, rank: u32) -> Option<f64> {
+    raw_mana_cost_at_effective_rank(skill, rank as f64).map(f64::round_ties_even)
+}
+
+fn raw_mana_cost_at_effective_rank(skill: &SkillSpec, rank: f64) -> Option<f64> {
     let passive = PassiveSkill {
         passive_stats: None,
         mana_cost_formula: skill.mana_cost_formula.as_ref().map(|f| ManaCostFormula {
             base: f.base,
             per_level: f.per_level,
+            rank_indexing: f.rank_indexing,
         }),
         ranks: skill
             .ranks
@@ -75,7 +80,7 @@ pub fn mana_cost_at_rank(skill: &SkillSpec, rank: u32) -> Option<f64> {
             })
             .collect(),
     };
-    passive::mana_cost_at_rank(&passive, rank)
+    passive::raw_mana_cost_at_effective_rank(&passive, rank)
 }
 
 /// Entities swing on their own cadence: the config knob scaled by their own
@@ -163,17 +168,15 @@ pub fn cast_rate(skill: &SkillSpec, stats: &StatMap) -> (Option<f64>, Ranged) {
 pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
     let stats = input.stats;
     let (rank_min, rank_max) = input.eff_rank;
-    let cost_at = |rank: f64| mana_cost_at_rank(input.skill, rank.max(1.0) as u32);
+    let cost_at = |rank: f64| raw_mana_cost_at_effective_rank(input.skill, rank);
     let (base_mana_min, base_mana_max) = match (cost_at(rank_min), cost_at(rank_max)) {
         (Some(a), Some(b)) => (Some(a.min(b)), Some(a.max(b))),
         (a, b) => (a.or(b), a.or(b)),
     };
     let mcr = rg(stats, "mana_cost_reduction");
     let increased = rg(stats, "increased_manacost");
-    let cost_min =
-        base_mana_min.map(|c| (c * (1.0 + increased.0 / 100.0) * (1.0 - mcr.1 / 100.0)).max(0.0));
-    let cost_max =
-        base_mana_max.map(|c| (c * (1.0 + increased.1 / 100.0) * (1.0 - mcr.0 / 100.0)).max(0.0));
+    let cost_min = base_mana_min.map(|c| modified_mana_cost(c, mcr.1, increased.0));
+    let cost_max = base_mana_max.map(|c| modified_mana_cost(c, mcr.0, increased.1));
     // "+X% of Your Mana Costs are taken from life instead" splits every cast.
     let paid = rg(stats, "mana_cost_paid_in_life");
     let pct_min = paid.0.clamp(0.0, 100.0);
@@ -245,6 +248,13 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
     }
 }
 
+fn modified_mana_cost(base: f64, reduction: f64, increased: f64) -> f64 {
+    let reduction = reduction - increased.floor().max(0.0);
+    (base - base * (reduction * 0.01))
+        .max(0.0)
+        .round_ties_even()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -258,7 +268,11 @@ mod tests {
     }
 
     fn formula(base: f64, per_level: f64) -> Option<ManaCostFormulaSpec> {
-        Some(ManaCostFormulaSpec { base, per_level })
+        Some(ManaCostFormulaSpec {
+            base,
+            per_level,
+            ..Default::default()
+        })
     }
 
     fn rank_row(rank: u32, mana_cost: f64) -> SkillRankSpec {
@@ -307,13 +321,95 @@ mod tests {
                 ("mana_replenish_pct", 1.0),
             ]),
         );
-        assert_eq!(result.mana_max, Some(49.5));
+        assert_eq!(result.mana_max, Some(50.0));
         assert_eq!(result.mana_regen_min, 23.0);
         assert!(result.unsustainable);
     }
 
     #[test]
-    fn formula_cost_is_floored_and_rank_clamped() {
+    fn increased_cost_and_reduction_share_the_same_signed_pool() {
+        let skill = SkillSpec {
+            mana_cost_formula: formula(100.0, 0.0),
+            ..thunder_fury()
+        };
+        let result = cost(
+            &skill,
+            1.0,
+            &stats(&[("increased_manacost", 350.0), ("mana_cost_reduction", 40.0)]),
+        );
+        assert_eq!(result.mana_min, Some(410.0));
+        assert_eq!(result.mana_max, Some(410.0));
+        assert_eq!(result.mana_per_sec_max, Some(820.0));
+        assert_eq!(result.mcr_max, 40.0);
+
+        let uncapped = cost(
+            &skill,
+            1.0,
+            &stats(&[("increased_manacost", 50.0), ("mana_cost_reduction", 120.0)]),
+        );
+        assert_eq!(uncapped.mana_max, Some(30.0));
+        assert_eq!(uncapped.mcr_max, 120.0);
+    }
+
+    #[test]
+    fn increased_cost_floors_but_reduction_keeps_fractions() {
+        let skill = SkillSpec {
+            mana_cost_formula: formula(1000.0, 0.0),
+            ..thunder_fury()
+        };
+        let result = cost(
+            &skill,
+            1.0,
+            &stats(&[("increased_manacost", 2.9), ("mana_cost_reduction", 2.5)]),
+        );
+        assert_eq!(result.mana_max, Some(995.0));
+        let negative_increase = cost(
+            &skill,
+            1.0,
+            &stats(&[
+                ("increased_manacost", -100.8),
+                ("mana_cost_reduction", -0.5),
+            ]),
+        );
+        assert_eq!(negative_increase.mana_max, Some(1005.0));
+    }
+
+    #[test]
+    fn signed_mana_pool_preserves_rank_and_modifier_ranges() {
+        let skill = SkillSpec {
+            mana_cost_formula: formula(10.25, 0.5),
+            ..thunder_fury()
+        };
+        let bonuses = StatMap::from([
+            ("mana_cost_reduction".into(), (10.0, 40.0)),
+            ("increased_manacost".into(), (10.9, 50.9)),
+        ]);
+        let result = compute_skill_cost(&SkillCostInput {
+            skill: &skill,
+            eff_rank: (1.5, 3.5),
+            stats: &bonuses,
+            tags: &[],
+            entity_rates: &HashMap::new(),
+        });
+        assert_eq!(
+            (result.base_mana_min, result.base_mana_max),
+            (Some(10.5), Some(11.5))
+        );
+        assert_eq!((result.mana_min, result.mana_max), (Some(7.0), Some(16.0)));
+    }
+
+    #[test]
+    fn reduction_keeps_runtime_subtraction_order_at_half_ties() {
+        let skill = SkillSpec {
+            mana_cost_formula: formula(5.0, 0.0),
+            ..thunder_fury()
+        };
+        let result = cost(&skill, 1.0, &stats(&[("mana_cost_reduction", 70.0)]));
+        assert_eq!(result.mana_max, Some(1.0));
+    }
+
+    #[test]
+    fn formula_cost_preserves_precision_and_rank_clamp() {
         let s = SkillSpec {
             mana_cost_formula: formula(12.0, 2.0),
             ranks: vec![rank_row(1, 12.0)],
@@ -326,8 +422,106 @@ mod tests {
             mana_cost_formula: formula(5.0, 0.5),
             ..Default::default()
         };
-        assert_eq!(mana_cost_at_rank(&frac, 2), Some(5.0));
+        assert_eq!(raw_mana_cost_at_effective_rank(&frac, 2.0), Some(5.5));
+        assert_eq!(mana_cost_at_rank(&frac, 2), Some(6.0));
         assert_eq!(mana_cost_at_rank(&frac, 3), Some(6.0));
+    }
+
+    #[test]
+    fn runtime_cost_rounds_only_after_modifiers_with_even_ties() {
+        use crate::calc::types::ManaCostRankIndexing;
+        let blade = SkillSpec {
+            mana_cost_formula: Some(ManaCostFormulaSpec {
+                base: 3.5,
+                per_level: 0.75,
+                rank_indexing: ManaCostRankIndexing::FullRank,
+            }),
+            ..thunder_fury()
+        };
+        assert_eq!(raw_mana_cost_at_effective_rank(&blade, 1.0), Some(4.25));
+        assert_eq!(mana_cost_at_rank(&blade, 1), Some(4.0));
+        assert_eq!(cost(&blade, 1.0, &stats(&[])).mana_max, Some(4.0));
+        let reduced = cost(&blade, 1.0, &stats(&[("mana_cost_reduction", 40.0)]));
+        assert_eq!(reduced.base_mana_max, Some(4.25));
+        assert_eq!(reduced.mana_max, Some(3.0));
+        assert_eq!(reduced.mana_per_sec_max, Some(6.0));
+        let increased = cost(&blade, 1.0, &stats(&[("increased_manacost", 100.0)]));
+        assert_eq!(increased.mana_max, Some(8.0));
+        assert_eq!(cost(&blade, 4.0, &stats(&[])).mana_max, Some(6.0));
+        assert_eq!(cost(&blade, 8.0, &stats(&[])).mana_max, Some(10.0));
+    }
+
+    #[test]
+    fn blade_strike_data_preserves_its_raw_constructor_cost() {
+        use crate::calc::types::ManaCostRankIndexing;
+        let blade = crate::calc::data::get_skills_by_class("nomad")
+            .iter()
+            .find(|skill| skill.id == "blade_strike")
+            .expect("Blade Strike metadata");
+        let raw = blade.mana_cost_formula.expect("constructor mana pair");
+        assert_eq!((raw.base, raw.per_level), (3.5, 0.75));
+        assert_eq!(raw.rank_indexing, ManaCostRankIndexing::FullRank);
+        let result = cost(blade, 1.0, &stats(&[("mana_cost_reduction", 40.0)]));
+        assert_eq!(result.base_mana_max, Some(4.25));
+        assert_eq!(result.mana_max, Some(3.0));
+    }
+
+    #[test]
+    fn amazon_raw_costs_round_only_after_modifiers() {
+        let skills = crate::calc::data::get_skills_by_class("amazon");
+        for id in ["caustic_spearhead", "rebound", "thunder_fury"] {
+            let skill = skills.iter().find(|skill| skill.id == id).unwrap();
+            let neutral = cost(skill, 1.0, &stats(&[]));
+            assert_eq!(neutral.base_mana_min, Some(4.25));
+            assert_eq!(neutral.base_mana_max, Some(4.25));
+            assert_eq!(neutral.mana_max, Some(4.0));
+            assert_eq!(cost(skill, 2.0, &stats(&[])).base_mana_max, Some(5.0));
+            let reduced = cost(skill, 1.0, &stats(&[("mana_cost_reduction", 40.0)]));
+            assert_eq!(reduced.mana_max, Some(3.0));
+        }
+    }
+
+    #[test]
+    fn cost_preserves_rank_and_modifier_ranges_until_final_round() {
+        let skill = SkillSpec {
+            mana_cost_formula: formula(10.25, 0.5),
+            ..thunder_fury()
+        };
+        let bonuses = StatMap::from([("mana_cost_reduction".into(), (10.0, 40.0))]);
+        let result = compute_skill_cost(&SkillCostInput {
+            skill: &skill,
+            eff_rank: (1.5, 3.5),
+            stats: &bonuses,
+            tags: &[],
+            entity_rates: &HashMap::new(),
+        });
+        assert_eq!(
+            (result.base_mana_min, result.base_mana_max),
+            (Some(10.5), Some(11.5))
+        );
+        assert_eq!((result.mana_min, result.mana_max), (Some(6.0), Some(10.0)));
+    }
+
+    #[test]
+    fn raw_rank_indexing_keeps_constructor_arithmetic_order() {
+        use crate::calc::types::ManaCostRankIndexing;
+        let raw = SkillSpec {
+            mana_cost_formula: Some(ManaCostFormulaSpec {
+                base: 3.95,
+                per_level: 1.05,
+                rank_indexing: ManaCostRankIndexing::FullRank,
+            }),
+            ..thunder_fury()
+        };
+        let normalized = SkillSpec {
+            mana_cost_formula: formula(5.0, 1.05),
+            ..thunder_fury()
+        };
+        assert_eq!(cost(&raw, 31.0, &stats(&[])).mana_max, Some(37.0));
+        assert_eq!(cost(&normalized, 31.0, &stats(&[])).mana_max, Some(36.0));
+        let legacy: ManaCostFormulaSpec =
+            serde_json::from_str(r#"{"base":5,"perLevel":1.05}"#).unwrap();
+        assert_eq!(legacy.rank_indexing, ManaCostRankIndexing::FirstRankBase);
     }
 
     #[test]

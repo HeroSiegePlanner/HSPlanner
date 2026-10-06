@@ -51,4 +51,5 @@ mod engine;
 mod incarnation;
 mod orchestrator;
 mod pipeline;
+mod triggered_subskill_buffs;
 mod units;

@@ -3,7 +3,8 @@ use crate::TreeView;
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
-    build::BuildPerformance, data, defense, planner::PlannerPerformance, types::SkillSpec,
+    build::BuildPerformance, data, defense, planner::PlannerPerformance, subskill::subskill_key,
+    types::SkillSpec,
 };
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
@@ -831,26 +832,7 @@ impl CharacterView {
                 });
             }
         }
-        let buffs = skills
-            .iter()
-            .filter(|skill| {
-                snapshot
-                    .active_buffs
-                    .get(&skill.id)
-                    .copied()
-                    .unwrap_or(false)
-            })
-            .map(|skill| {
-                LoadoutEntry::skill(
-                    skill,
-                    tr("planner.common.buff"),
-                    skill
-                        .effect_duration
-                        .map(|duration| format!("{}s", decimal(duration)))
-                        .unwrap_or_default(),
-                )
-            })
-            .collect::<Vec<_>>();
+        let buffs = active_buff_entries(snapshot, skills);
         let mut procs = Vec::new();
         for skill in skills {
             if let Some(proc) = &skill.proc
@@ -1158,6 +1140,81 @@ impl LoadoutEntry {
             icon: crate::skills::skill_icon(&skill.class_id, &skill.id),
             sub: sub.into(),
             detail,
+        }
+    }
+}
+
+fn active_buff_entries(snapshot: &BuildSnapshot, skills: &[SkillSpec]) -> Vec<LoadoutEntry> {
+    let mut entries = skills
+        .iter()
+        .filter(|skill| {
+            snapshot
+                .active_buffs
+                .get(&skill.id)
+                .copied()
+                .unwrap_or(false)
+        })
+        .map(|skill| {
+            LoadoutEntry::skill(
+                skill,
+                tr("planner.common.buff"),
+                skill
+                    .effect_duration
+                    .map(|duration| format!("{}s", decimal(duration)))
+                    .unwrap_or_default(),
+            )
+        })
+        .collect::<Vec<_>>();
+    entries.extend(
+        crate::skills::triggered_subskill_buffs(skills)
+            .filter(|(skill, node)| crate::skills::subskill_buff_is_active(snapshot, skill, node))
+            .map(|(skill, node)| LoadoutEntry {
+                id: subskill_key(&skill.id, &node.id),
+                name: node.name.clone(),
+                icon: crate::skills::subskill_icon(skill, node),
+                sub: skill.name.clone(),
+                detail: format!(
+                    "{}s",
+                    decimal(node.triggered_buff.as_ref().unwrap().duration)
+                ),
+            }),
+    );
+    entries
+}
+
+#[cfg(test)]
+mod buff_tests {
+    use super::*;
+
+    #[::core::prelude::v1::test]
+    fn butcher_subskill_buffs_summary_uses_node_identity_duration_and_learned_state() {
+        let skills = data::get_skills_by_class("butcher");
+        for (parent, id, name, duration) in [
+            ("chain_rip", "prey_on_the_weak", "Prey on the Weak", "5s"),
+            ("butchers_hook", "hellsent", "Hellsent", "1.75s"),
+            ("chain_swing", "killing_spree", "Killing Spree", "5s"),
+            ("chain_rip", "rage_trance", "Rage Trance", "3s"),
+        ] {
+            let key = subskill_key(parent, id);
+            let mut snapshot = BuildSnapshot::default();
+            snapshot.skill_ranks.insert(parent.into(), 1);
+            snapshot.subskill_ranks.insert(key.clone(), 1);
+            assert!(active_buff_entries(&snapshot, skills).is_empty());
+            snapshot.active_buffs.insert(key.clone(), true);
+            let entries = active_buff_entries(&snapshot, skills);
+            assert_eq!(entries.len(), 1, "{key}");
+            assert_eq!(entries[0].id, key);
+            assert_eq!(entries[0].name, name);
+            assert_eq!(
+                entries[0].sub,
+                skills.iter().find(|skill| skill.id == parent).unwrap().name
+            );
+            assert_eq!(entries[0].detail, duration);
+            snapshot.skill_ranks.clear();
+            assert!(active_buff_entries(&snapshot, skills).is_empty());
+            snapshot.skill_ranks.insert(parent.into(), 1);
+            snapshot.subskill_ranks.clear();
+            assert!(active_buff_entries(&snapshot, skills).is_empty());
         }
     }
 }

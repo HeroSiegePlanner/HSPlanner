@@ -10180,6 +10180,8 @@
       {
         "trigger": "on_attack",
         "chance": 25,
+        "target": "Trigger Finger",
+        "castLevel": 8,
         "description": "cast Trigger Finger Level 8",
         "details": "Fire a burst shot dealing physical damage."
       }

@@ -1,6 +1,7 @@
 [
   {
     "id": "battle_glance",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Battle Glance",
@@ -46,8 +47,9 @@
       }
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "movementDuringUse": 65,
     "bonusSources": [
@@ -258,6 +260,7 @@
   },
   {
     "id": "shuriken_throw",
+    "activationKind": "attack",
     "classId": "samurai",
     "name": "Shuriken Throw",
     "kind": "active",
@@ -513,6 +516,7 @@
   },
   {
     "id": "quickslash",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Quickslash",
@@ -758,6 +762,7 @@
   },
   {
     "id": "evasion",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Evasion",
     "kind": "passive",
@@ -788,6 +793,7 @@
   },
   {
     "id": "smoke_bomb",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Smoke Bomb",
     "kind": "active",
@@ -1051,6 +1057,7 @@
   },
   {
     "id": "explosive_kunai",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Explosive Kunai",
@@ -1304,6 +1311,7 @@
   },
   {
     "id": "warriors_spirit",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Warriors Spirit",
     "kind": "passive",
@@ -1336,6 +1344,7 @@
   },
   {
     "id": "bushido",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Bushido",
     "kind": "buff",
@@ -1375,6 +1384,7 @@
   },
   {
     "id": "live_by_the_sword",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Live by the Sword",
     "kind": "buff",
@@ -1418,6 +1428,7 @@
   },
   {
     "id": "blade_barrier",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Blade Barrier",
@@ -1682,6 +1693,7 @@
   },
   {
     "id": "exploding_bolas",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Exploding Bolas",
     "kind": "active",
@@ -1924,6 +1936,7 @@
   },
   {
     "id": "fan_of_knives",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Fan of Knives",
     "kind": "passive",
@@ -1997,6 +2010,7 @@
   },
   {
     "id": "for_honor",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "For Honor",
     "kind": "buff",
@@ -2040,6 +2054,7 @@
   },
   {
     "id": "omnislash",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Omnislash",
@@ -2088,8 +2103,9 @@
       }
     },
     "manaCostFormula": {
-      "base": 5,
-      "perLevel": 1
+      "base": 4.25,
+      "perLevel": 0.95,
+      "rankIndexing": "fullRank"
     },
     "movementDuringUse": 65,
     "bonusSources": [
@@ -2295,6 +2311,7 @@
   },
   {
     "id": "burst_of_speed",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Burst of Speed",
     "kind": "passive",
@@ -2325,6 +2342,7 @@
   },
   {
     "id": "shadow_step",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Shadow Step",
     "kind": "active",
@@ -2602,6 +2620,7 @@
   },
   {
     "id": "way_of_the_warrior",
+    "activationKind": "cast",
     "classId": "samurai",
     "name": "Way of the Warrior",
     "kind": "passive",
@@ -2634,6 +2653,7 @@
   },
   {
     "id": "empires_slash",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "samurai",
     "name": "Empires Slash",
@@ -2684,8 +2704,9 @@
       }
     },
     "manaCostFormula": {
-      "base": 14,
-      "perLevel": 2
+      "base": 12.25,
+      "perLevel": 1.75,
+      "rankIndexing": "fullRank"
     },
     "movementDuringUse": 65,
     "bonusSources": [

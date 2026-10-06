@@ -1,6 +1,7 @@
 [
   {
     "id": "buckshot",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Buckshot",
@@ -274,6 +275,7 @@
   },
   {
     "id": "grenade_jump",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Grenade Jump",
     "kind": "active",
@@ -339,6 +341,7 @@
   },
   {
     "id": "explosive_barrel",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Explosive Barrel",
     "kind": "passive",
@@ -595,6 +598,7 @@
   },
   {
     "id": "cannonball",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Cannonball",
@@ -635,8 +639,9 @@
       "attackRatingPct": { "base": 0, "perLevel": 3.5 }
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "bonusSources": [
       {
@@ -853,6 +858,7 @@
   },
   {
     "id": "explosive_bullets",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Explosive Bullets",
@@ -905,8 +911,9 @@
       }
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "bonusSources": [
       {
@@ -1134,6 +1141,7 @@
   },
   {
     "id": "powder_trail",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Powder Trail",
     "kind": "active",
@@ -1384,6 +1392,7 @@
   },
   {
     "id": "bomb_barrage",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Bomb Barrage",
     "kind": "active",
@@ -1630,6 +1639,7 @@
   },
   {
     "id": "kneecap",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Kneecap",
     "kind": "passive",
@@ -1662,6 +1672,7 @@
   },
   {
     "id": "rapid_fire",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Rapid Fire",
     "kind": "buff",
@@ -1705,6 +1716,7 @@
   },
   {
     "id": "torrent",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Torrent",
     "kind": "active",
@@ -1942,6 +1954,7 @@
   },
   {
     "id": "freezing_chain_shot",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Freezing Chain Shot",
@@ -1981,8 +1994,9 @@
       "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "bonusSources": [
       {
@@ -2194,6 +2208,7 @@
   },
   {
     "id": "frozen_lead",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Frozen Lead",
     "kind": "passive",
@@ -2224,6 +2239,7 @@
   },
   {
     "id": "parrot",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Parrot",
     "kind": "active",
@@ -2451,6 +2467,7 @@
   },
   {
     "id": "set_sail",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Set Sail",
     "kind": "buff",
@@ -2494,6 +2511,7 @@
   },
   {
     "id": "remiges",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Remiges",
     "kind": "passive",
@@ -2526,6 +2544,7 @@
   },
   {
     "id": "anchor_swing",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Anchor Swing",
     "kind": "active",
@@ -2759,6 +2778,7 @@
   },
   {
     "id": "treasure_hunter",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Treasure Hunter",
     "kind": "active",
@@ -2798,6 +2818,7 @@
   },
   {
     "id": "land_ahoy",
+    "activationKind": "cast",
     "classId": "pirate",
     "name": "Land Ahoy!",
     "kind": "active",

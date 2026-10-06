@@ -19,7 +19,9 @@ use super::stats::{
     combine_additive_and_more, compute_build_stats, BuildStatsInput, ComputedStats,
 };
 use super::subskill::subskill_key;
-use super::types::{CustomStat, Inventory, SkillKind, SkillSpec, TreeSocketContent};
+use super::types::{
+    CustomStat, Inventory, SkillActivationKind, SkillKind, SkillSpec, TreeSocketContent,
+};
 
 /// A build can never execute the whole life bar; 90% keeps the multiplier finite.
 const EXECUTE_MAX_PCT: f64 = 90.0;
@@ -144,10 +146,13 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
         }),
         attack_scaling: spec.attack_scaling.map(|s| AttackSkillScaling {
             weapon_bonus_scaling: s.weapon_bonus_scaling,
+            weapon_subtree_scales_full_hit: s.weapon_subtree_scales_full_hit,
             weapon_damage_pct: s.weapon_damage_pct.map(to_formula),
             flat_physical_min: s.flat_physical_min.map(to_formula),
             flat_physical_max: s.flat_physical_max.map(to_formula),
             attack_rating_pct: s.attack_rating_pct.map(to_formula),
+            critical_chance: s.critical_chance.map(to_formula),
+            critical_damage: s.critical_damage.map(to_formula),
         }),
     }
 }
@@ -232,6 +237,21 @@ fn proc_trigger_rate(trigger: &str, actions: Ranged, contacts: Ranged, kills: f6
     }
 }
 
+fn global_proc_trigger_rate(
+    trigger: &str,
+    activation: Option<SkillActivationKind>,
+    actions: Ranged,
+    contacts: Ranged,
+    kills: f64,
+) -> Ranged {
+    let eligible_actions = match (trigger, activation) {
+        ("on_cast", Some(SkillActivationKind::Cast))
+        | ("on_attack", Some(SkillActivationKind::Attack)) => actions,
+        _ => (0.0, 0.0),
+    };
+    proc_trigger_rate(trigger, eligible_actions, contacts, kills)
+}
+
 fn proc_trigger_assumption(trigger: &str) -> &'static str {
     match trigger {
         "on_hit" | "on_cast" | "on_attack" | "on_kill" => "",
@@ -302,11 +322,39 @@ pub fn item_cast_toggle_key(base_id: &str, target_name_norm: &str) -> String {
     format!("cast:{base_id}:{target_name_norm}")
 }
 
+enum ProcTargetDamage {
+    Elemental(SkillDamageBreakdown),
+    Attack(AttackSkillDamageBreakdown),
+}
+
+impl ProcTargetDamage {
+    fn avg_min(&self) -> i64 {
+        match self {
+            Self::Elemental(damage) => damage.avg_min,
+            Self::Attack(damage) => damage.combined_avg_min,
+        }
+    }
+
+    fn avg_max(&self) -> i64 {
+        match self {
+            Self::Elemental(damage) => damage.avg_max,
+            Self::Attack(damage) => damage.combined_avg_max,
+        }
+    }
+
+    fn calculation(&self) -> &[CalculationStep] {
+        match self {
+            Self::Elemental(damage) => damage.calculation(),
+            Self::Attack(damage) => damage.calculation(),
+        }
+    }
+}
+
 fn proc_target_damage(
     ctx: &ProcContext<'_>,
     target_name_norm: &str,
     rank_override: Option<f64>,
-) -> Option<SkillDamageBreakdown> {
+) -> Option<ProcTargetDamage> {
     let target_spec = ctx
         .all_class_skills
         .iter()
@@ -390,12 +438,15 @@ fn proc_target_damage(
     let mut damage = match rank_override {
         Some(rank) => super::skills::damage::compute_skill_damage_at_rank(&input, rank),
         None => compute_skill_damage(&input),
-    }?;
+    };
     let mut context_steps = Vec::new();
     if !foreign {
         append_subskill_notes(target_spec, ctx.deps.subskill_ranks, &mut context_steps);
     }
-    if target_spec.class_id == "amazon" && subtree_stat("wave_count") > 0.0 {
+    if let Some(damage) = damage
+        .as_mut()
+        .filter(|_| target_spec.class_id == "amazon" && subtree_stat("wave_count") > 0.0)
+    {
         let waves = 1.0 + subtree_stat("wave_count");
         damage.avg_min = (damage.avg_min as f64 * waves).floor() as i64;
         damage.avg_max = (damage.avg_max as f64 * waves).floor() as i64;
@@ -403,8 +454,56 @@ fn proc_target_damage(
     }
     scoped_inputs(&mut context_steps, scoped);
     context_steps.extend(conversion_steps);
+    if target_calc.attack_kind == Some(AttackKind::Attack) {
+        let weapon = ctx
+            .deps
+            .inventory
+            .get("weapon")
+            .and_then(|equipped| data::get_item(&equipped.base_id))
+            .and_then(|base| {
+                Some(Weapon {
+                    name: base.name.clone(),
+                    damage_min: base.damage_min?,
+                    damage_max: base.damage_max?,
+                })
+            });
+        let attack_input = AttackSkillInput {
+            action_rate_override: Some((1.0, 1.0)),
+            skill: &target_calc,
+            allocated_rank: rank,
+            attributes: &computed.attributes,
+            stats: &computed.stats,
+            skill_ranks_by_name: ctx.skill_ranks_by_name,
+            skills_by_name: ctx.skills_by_name,
+            item_skill_bonuses: &computed.item_skill_bonuses,
+            enemy_conditions: ctx.deps.enemy_conditions,
+            enemy_resistances: ctx.deps.enemy_resistances,
+            weapon: weapon.as_ref(),
+            poison_breakdown: damage.as_ref(),
+            scoped,
+            projectile_count: input.projectile_count,
+            of_total_damage: input.of_total_damage,
+            conversion_flat: if damage.is_some() {
+                0.0
+            } else {
+                conversions.flat
+            },
+        };
+        let mut attack = match rank_override {
+            Some(rank) => {
+                super::skills::attack::compute_attack_skill_damage_at_rank(&attack_input, rank)
+            }
+            None => compute_attack_skill_damage(&attack_input),
+        }?;
+        if let Some(damage) = damage {
+            context_steps.extend(damage.calculation);
+        }
+        attack.calculation.splice(0..0, context_steps);
+        return Some(ProcTargetDamage::Attack(attack));
+    }
+    let mut damage = damage?;
     damage.calculation.splice(0..0, context_steps);
-    Some(damage)
+    Some(ProcTargetDamage::Elemental(damage))
 }
 
 fn compute_stats_for_skill(
@@ -1081,6 +1180,11 @@ pub(crate) fn performance_from_stats(
             &mut calculation,
         );
     }
+    let proc_activation = match active_skill {
+        Some(skill) => skill.activation_kind,
+        None if deps.main_skill_id.is_none() => Some(SkillActivationKind::Attack),
+        None => None,
+    };
     for proc_skill in all_class_skills.iter() {
         let Some(proc) = proc_skill.proc.as_ref() else {
             continue;
@@ -1101,8 +1205,9 @@ pub(crate) fn performance_from_stats(
         let Some(target_dmg) = proc_target_damage(&ctx, &target_name, None) else {
             continue;
         };
-        let rate = proc_trigger_rate(
+        let rate = global_proc_trigger_rate(
             &proc.trigger,
+            proc_activation,
             player_actions,
             proc_contacts,
             deps.kills_per_sec,
@@ -1123,15 +1228,15 @@ pub(crate) fn performance_from_stats(
                 range(rate),
                 proc_trigger_assumption(&proc.trigger),
                 number(proc.chance),
-                range((target_dmg.avg_min as f64, target_dmg.avg_max as f64))
+                range((target_dmg.avg_min() as f64, target_dmg.avg_max() as f64))
             ),
             (
-                factor.0 * target_dmg.avg_min as f64,
-                factor.1 * target_dmg.avg_max as f64,
+                factor.0 * target_dmg.avg_min() as f64,
+                factor.1 * target_dmg.avg_max() as f64,
             ),
         ));
-        proc_dps_min += factor.0 * target_dmg.avg_min as f64;
-        proc_dps_max += factor.1 * target_dmg.avg_max as f64;
+        proc_dps_min += factor.0 * target_dmg.avg_min() as f64;
+        proc_dps_max += factor.1 * target_dmg.avg_max() as f64;
     }
 
     for owner_skill in all_class_skills.iter() {
@@ -1190,15 +1295,15 @@ pub(crate) fn performance_from_stats(
                     range(rate),
                     proc_trigger_assumption(&sub_proc.trigger),
                     number(chance),
-                    range((target_dmg.avg_min as f64, target_dmg.avg_max as f64))
+                    range((target_dmg.avg_min() as f64, target_dmg.avg_max() as f64))
                 ),
                 (
-                    factor.0 * target_dmg.avg_min as f64,
-                    factor.1 * target_dmg.avg_max as f64,
+                    factor.0 * target_dmg.avg_min() as f64,
+                    factor.1 * target_dmg.avg_max() as f64,
                 ),
             ));
-            proc_dps_min += factor.0 * target_dmg.avg_min as f64;
-            proc_dps_max += factor.1 * target_dmg.avg_max as f64;
+            proc_dps_min += factor.0 * target_dmg.avg_min() as f64;
+            proc_dps_max += factor.1 * target_dmg.avg_max() as f64;
         }
     }
 
@@ -1220,12 +1325,18 @@ pub(crate) fn performance_from_stats(
             if !deps.proc_toggles.get(&toggle_key).copied().unwrap_or(false) {
                 continue;
             }
+            if proc.trigger == "on_attack"
+                && active_skill.is_some_and(|skill| normalize_skill_name(&skill.name) == target_name)
+            {
+                continue;
+            }
             let Some(target_dmg) = proc_target_damage(&ctx, &target_name, Some(level as f64))
             else {
                 continue;
             };
-            let rate = proc_trigger_rate(
+            let rate = global_proc_trigger_rate(
                 &proc.trigger,
+                proc_activation,
                 player_actions,
                 proc_contacts,
                 deps.kills_per_sec,
@@ -1242,9 +1353,9 @@ pub(crate) fn performance_from_stats(
                     step.value(),
                 ));
             }
-            calculation.push(CalculationStep::new(format!("Item proc · {} / {}", base.name, target), format!("min({} triggers/s{} × {}% / 100, 1 / {}s cooldown) × {} target average damage at rank {}", range(rate), proc_trigger_assumption(&proc.trigger), number(proc.chance), number(ITEM_PROC_ICD_SECS), range((target_dmg.avg_min as f64, target_dmg.avg_max as f64)), level), (factor.0 * target_dmg.avg_min as f64, factor.1 * target_dmg.avg_max as f64)));
-            proc_dps_min += factor.0 * target_dmg.avg_min as f64;
-            proc_dps_max += factor.1 * target_dmg.avg_max as f64;
+            calculation.push(CalculationStep::new(format!("Item proc · {} / {}", base.name, target), format!("min({} triggers/s{} × {}% / 100, 1 / {}s cooldown) × {} target average damage at rank {}", range(rate), proc_trigger_assumption(&proc.trigger), number(proc.chance), number(ITEM_PROC_ICD_SECS), range((target_dmg.avg_min() as f64, target_dmg.avg_max() as f64)), level), (factor.0 * target_dmg.avg_min() as f64, factor.1 * target_dmg.avg_max() as f64)));
+            proc_dps_min += factor.0 * target_dmg.avg_min() as f64;
+            proc_dps_max += factor.1 * target_dmg.avg_max() as f64;
         }
     }
 
@@ -1625,3 +1736,7 @@ mod requirement_tests;
 #[cfg(test)]
 #[path = "build_echo_tests.rs"]
 mod echo_tests;
+
+#[cfg(test)]
+#[path = "proc_target_tests.rs"]
+mod proc_target_tests;

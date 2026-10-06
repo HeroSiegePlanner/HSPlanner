@@ -1,6 +1,7 @@
 [
   {
     "id": "summon_raven",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Summon Raven",
     "kind": "active",
@@ -250,6 +251,7 @@
   },
   {
     "id": "thorned_roots",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Thorned Roots",
     "kind": "active",
@@ -491,6 +493,7 @@
   },
   {
     "id": "carrion_worm",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Carrion Worm",
     "kind": "active",
@@ -748,6 +751,7 @@
   },
   {
     "id": "blessed_nature",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Blessed Nature",
     "kind": "passive",
@@ -779,6 +783,7 @@
   },
   {
     "id": "thorned_branch",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Thorned Branch",
     "kind": "active",
@@ -1048,6 +1053,7 @@
   },
   {
     "id": "summon_ent_colossus",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Summon Ent Colossus",
     "kind": "active",
@@ -1292,6 +1298,7 @@
   },
   {
     "id": "deep_rooted",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Deep Rooted",
     "kind": "passive",
@@ -1322,6 +1329,7 @@
   },
   {
     "id": "summon_ent",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Summon Ent",
     "kind": "active",
@@ -1594,6 +1602,7 @@
   },
   {
     "id": "summon_spirit_of_the_forest",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Summon Spirit of The Forest",
     "kind": "active",
@@ -1825,6 +1834,7 @@
   },
   {
     "id": "skinwalker",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Skinwalker",
     "kind": "passive",
@@ -1852,6 +1862,7 @@
   },
   {
     "id": "wounding_paw",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Wounding Paw",
@@ -2118,6 +2129,7 @@
   },
   {
     "id": "leaping_charge",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Leaping Charge",
@@ -2346,6 +2358,7 @@
   },
   {
     "id": "storm_hawk",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Storm Hawk",
     "kind": "active",
@@ -2587,6 +2600,7 @@
   },
   {
     "id": "spirit_of_the_ent",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Spirit of the Ent",
     "kind": "active",
@@ -2813,6 +2827,7 @@
   },
   {
     "id": "maelstrom_of_frost",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Maelstrom of Frost",
@@ -2850,8 +2865,9 @@
       "perLevel": 16
     },
     "manaCostFormula": {
-      "base": 10,
-      "perLevel": 2
+      "base": 8,
+      "perLevel": 1.75,
+      "rankIndexing": "fullRank"
     },
     "attackScaling": {
       "weaponDamagePct": {
@@ -3099,6 +3115,7 @@
   },
   {
     "id": "swamps_essence",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Swamp's Essence",
     "kind": "passive",
@@ -3129,6 +3146,7 @@
   },
   {
     "id": "manadwelling",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Manadwelling",
     "kind": "passive",
@@ -3162,6 +3180,7 @@
   },
   {
     "id": "spirit_of_the_wendigo",
+    "activationKind": "cast",
     "classId": "prophet",
     "name": "Spirit of The Wendigo",
     "kind": "active",

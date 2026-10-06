@@ -1,6 +1,7 @@
 [
   {
     "id": "eagle_eye",
+    "activationKind": "cast",
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Eagle Eye",
@@ -19,6 +20,7 @@
   },
   {
     "id": "trigger_finger",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Trigger Finger",
@@ -246,6 +248,7 @@
   },
   {
     "id": "execute",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Execute",
     "kind": "passive",
@@ -263,6 +266,7 @@
   },
   {
     "id": "bullet_hell",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Bullet Hell",
@@ -474,6 +478,7 @@
   },
   {
     "id": "concentration_aura",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Concentration Aura",
     "kind": "aura",
@@ -491,6 +496,7 @@
   },
   {
     "id": "possessed_bullet",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Possessed Bullet",
@@ -504,7 +510,7 @@
     "tree": "Gunslinger",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": { "base": 10, "perLevel": 6 },
@@ -700,6 +706,7 @@
   },
   {
     "id": "shredder_trap",
+    "activationKind": "attack",
     "classId": "demon_slayer",
     "name": "Shredder Trap",
     "kind": "active",
@@ -914,6 +921,7 @@
   },
   {
     "id": "demons_presence",
+    "activationKind": "cast",
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Demon's Presence",
@@ -937,6 +945,7 @@
   },
   {
     "id": "absolute_mayhem",
+    "activationKind": "attack",
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Absolute Mayhem",
@@ -1138,6 +1147,7 @@
   },
   {
     "id": "fast_slices",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Fast Slices",
@@ -1151,7 +1161,7 @@
     "tree": "Executioner",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": { "base": 100, "perLevel": 25 },
@@ -1350,6 +1360,7 @@
   },
   {
     "id": "heart_attack",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Heart Attack",
@@ -1368,6 +1379,7 @@
   },
   {
     "id": "demons_calling",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Demon's Calling",
     "kind": "active",
@@ -1587,6 +1599,7 @@
   },
   {
     "id": "sword_handler",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Sword Handler",
     "kind": "passive",
@@ -1604,6 +1617,7 @@
   },
   {
     "id": "slice_of_shadows",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Slice of Shadows",
@@ -1617,7 +1631,7 @@
     "tree": "Executioner",
     "position": { "row": 2, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackKind": "attack",
     "attackScaling": {
       "weaponDamagePct": { "base": 24, "perLevel": 18 },
@@ -1813,6 +1827,7 @@
   },
   {
     "id": "shadow_anomalies",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Shadow Anomalies",
     "kind": "passive",
@@ -1830,6 +1845,7 @@
   },
   {
     "id": "soul_leech",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Soul Leech",
     "kind": "active",
@@ -1854,6 +1870,7 @@
   },
   {
     "id": "demons_shield",
+    "activationKind": "cast",
     "classId": "demon_slayer",
     "name": "Demon's Shield",
     "kind": "passive",
@@ -1871,6 +1888,7 @@
   },
   {
     "id": "demon_form",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Demon Form",

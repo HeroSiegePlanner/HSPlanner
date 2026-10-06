@@ -2,9 +2,9 @@ use super::calculation::{number, range, scalar, stat_inputs, CalculationStep};
 use std::collections::HashMap;
 
 use super::{
-    collect_extra_damage, r_max, r_min, rg, AttrMap, BonusSource, ConditionMap, ExtraSource,
-    ItemSkillBonuses, Ranged, ResistMap, Skill, SkillDamageBreakdown, SkillRanks, StatMap,
-    ELEMENTS,
+    collect_extra_damage_with_scoped, r_max, r_min, rg, AttrMap, BonusSource, ConditionMap,
+    ExtraSource, ItemSkillBonuses, Ranged, ResistMap, Skill, SkillDamageBreakdown, SkillRanks,
+    StatMap, ELEMENTS,
 };
 use crate::calc::affix_tags;
 use crate::calc::types::{AffixEffect, DamageScaling};
@@ -444,8 +444,9 @@ fn compute_skill_damage_with_rank(
     let skill_more_max =
         (1.0 + r_max(magic_more) / 100.0) * (1.0 + r_max(elem_more) / 100.0) * arch_more.1;
 
-    let (mut extra_mult, mut extra_sources) = collect_extra_damage(
+    let (mut extra_mult, mut extra_sources) = collect_extra_damage_with_scoped(
         input.stats,
+        input.scoped,
         input.enemy_conditions,
         s.damage_type.as_deref(),
     );

@@ -1,6 +1,7 @@
 [
   {
     "id": "sand_guardians",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Sand Guardians",
     "kind": "active",
@@ -222,6 +223,7 @@
   },
   {
     "id": "call_for_war",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Call For War",
     "kind": "active",
@@ -241,6 +243,7 @@
   },
   {
     "id": "piercing_sand",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Piercing Sand",
     "kind": "passive",
@@ -258,6 +261,7 @@
   },
   {
     "id": "link_of_sand",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Link of Sand",
     "kind": "active",
@@ -278,6 +282,7 @@
   },
   {
     "id": "circle_of_guardians",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Circle of Guardians",
     "kind": "active",
@@ -290,7 +295,7 @@
     "tree": "Sand Manipulator",
     "position": { "row": 2, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 14 }],
-    "manaCostFormula": { "base": 14, "perLevel": 2 },
+    "manaCostFormula": { "base": 12.5, "perLevel": 1.5, "rankIndexing": "fullRank" },
     "passiveStats": {
       "base": { "arcane_skill_damage": 10 },
       "perRank": { "arcane_skill_damage": 1 }
@@ -481,6 +486,7 @@
   },
   {
     "id": "dissipation",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Dissipation",
     "kind": "passive",
@@ -502,6 +508,7 @@
   },
   {
     "id": "cheapshot",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Cheapshot",
     "kind": "passive",
@@ -519,6 +526,7 @@
   },
   {
     "id": "spirit_link",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Spirit Link",
     "kind": "passive",
@@ -537,6 +545,7 @@
   },
   {
     "id": "combat_order",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Combat Order",
     "kind": "passive",
@@ -554,6 +563,7 @@
   },
   {
     "id": "age_proliferation",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Age Proliferation",
     "kind": "active",
@@ -793,6 +803,7 @@
   },
   {
     "id": "gravitation_slam",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Gravitation Slam",
     "kind": "active",
@@ -1010,6 +1021,7 @@
   },
   {
     "id": "split_reality",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Split Reality",
     "kind": "active",
@@ -1037,6 +1049,7 @@
   },
   {
     "id": "time_deceleration",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Time Deceleration",
     "kind": "active",
@@ -1065,6 +1078,7 @@
   },
   {
     "id": "dimensional_displacement",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Dimensional Displacement",
     "kind": "active",
@@ -1085,6 +1099,7 @@
   },
   {
     "id": "sands_of_time",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Sands of Time",
     "kind": "active",
@@ -1106,6 +1121,7 @@
   },
   {
     "id": "expansive_mind",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Expansive Mind",
     "kind": "passive",
@@ -1123,6 +1139,7 @@
   },
   {
     "id": "precognition",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Precognition",
     "kind": "passive",
@@ -1140,6 +1157,7 @@
   },
   {
     "id": "temporal_heroes",
+    "activationKind": "cast",
     "classId": "illusionist",
     "name": "Temporal Heroes",
     "kind": "active",

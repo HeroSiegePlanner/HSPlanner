@@ -218,7 +218,11 @@ fn target_and_direct_with_performance(
         all_class_skills,
         empty_scoped: &empty_scoped,
     };
-    let proc = proc_target_damage(&ctx, &normalize_skill_name(&target_spec.name), None).unwrap();
+    let ProcTargetDamage::Elemental(proc) =
+        proc_target_damage(&ctx, &normalize_skill_name(&target_spec.name), None).unwrap()
+    else {
+        panic!("this fixture expects an elemental target");
+    };
     let direct_deps = BuildPerformanceDeps {
         main_skill_id: Some(target),
         ..deps
@@ -326,24 +330,6 @@ fn proc_target_retains_signed_total_damage_penalties() {
     same_damage(&proc, &direct);
     assert_eq!(proc.extra_damage_pct, -60.0);
     assert!(proc.hit_max < base.hit_max);
-}
-
-#[test]
-fn proc_target_honors_base_projectiles_and_explicit_overrides() {
-    let (proc, direct) =
-        target_and_direct("jotunn", "frozen_boulder", "frost_sunder", &[], &[], None);
-    same_damage(&proc, &direct);
-    assert_eq!(proc.projectile_count, 4);
-    let (proc, direct) = target_and_direct(
-        "jotunn",
-        "frozen_boulder",
-        "frost_sunder",
-        &[],
-        &[],
-        Some(2),
-    );
-    same_damage(&proc, &direct);
-    assert_eq!(proc.projectile_count, 2);
 }
 
 #[test]

@@ -24,6 +24,7 @@ use hsplanner_engine::calc::{
     data,
     performance_diff::compare_planner,
     planner::{self, PlannerPerformance},
+    subskill::subskill_key,
     types::{AppliedStateValue, SkillKind, SkillSpec, SubskillEffectSpec, SubskillNodeSpec},
 };
 use hsplanner_ui::{
@@ -88,6 +89,64 @@ fn tree_columns(skills: &[&SkillSpec]) -> u32 {
 }
 pub(crate) fn skill_icon(class: &str, id: &str) -> Option<Arc<Image>> {
     ICONS.get(format!("{class}/{id}").as_str()).cloned()
+}
+pub(crate) fn subskill_icon(skill: &SkillSpec, node: &SubskillNodeSpec) -> Option<Arc<Image>> {
+    let key = format!(
+        "{}/{}_{}_subskill_{}",
+        skill.class_id, skill.class_id, skill.id, node.position_index
+    );
+    ICONS.get(key.as_str()).cloned().or_else(|| {
+        (node.position_index == 0)
+            .then(|| skill_icon(&skill.class_id, &skill.id))
+            .flatten()
+    })
+}
+
+pub(crate) fn triggered_subskill_buffs(
+    skills: &[SkillSpec],
+) -> impl Iterator<Item = (&SkillSpec, &SubskillNodeSpec)> {
+    skills.iter().flat_map(|skill| {
+        skill
+            .subskills
+            .iter()
+            .flatten()
+            .filter(|node| node.triggered_buff.is_some())
+            .map(move |node| (skill, node))
+    })
+}
+
+pub(crate) fn subskill_buff_is_learned(
+    snapshot: &BuildSnapshot,
+    skill: &SkillSpec,
+    node: &SubskillNodeSpec,
+) -> bool {
+    snapshot.skill_ranks.get(&skill.id).copied().unwrap_or(0) > 0
+        && snapshot
+            .subskill_ranks
+            .get(&subskill_key(&skill.id, &node.id))
+            .copied()
+            .unwrap_or(0)
+            > 0
+}
+
+pub(crate) fn subskill_buff_is_active(
+    snapshot: &BuildSnapshot,
+    skill: &SkillSpec,
+    node: &SubskillNodeSpec,
+) -> bool {
+    subskill_buff_is_learned(snapshot, skill, node)
+        && snapshot
+            .active_buffs
+            .get(&subskill_key(&skill.id, &node.id))
+            .copied()
+            .unwrap_or(false)
+}
+
+pub(crate) fn triggered_subskill_buff_help(duration: f64) -> String {
+    trf(
+        "planner.config.triggered_subskill_buff_help",
+        &[("duration", duration.to_string())],
+    )
 }
 fn skill_image(skill: &SkillSpec, size: Rems) -> Div {
     let icon = ICONS.get(format!("{}/{}", skill.class_id, skill.id).as_str());
@@ -1327,15 +1386,7 @@ impl SubtreeView {
         });
     }
     fn node_image(&self, node: &SubskillNodeSpec) -> Option<Arc<Image>> {
-        let key = format!(
-            "{}/{}_{}_subskill_{}",
-            self.skill.class_id, self.skill.class_id, self.skill.id, node.position_index
-        );
-        ICONS.get(key.as_str()).cloned().or_else(|| {
-            (node.position_index == 0)
-                .then(|| skill_icon(&self.skill.class_id, &self.skill.id))
-                .flatten()
-        })
+        subskill_icon(&self.skill, node)
     }
     fn tile(
         &self,
@@ -2022,6 +2073,19 @@ impl Render for SubskillTooltip {
                 ),
             );
         }
+        if let Some(buff) = &self.node.triggered_buff {
+            panel = panel.child(
+                Self::section(cx).child(
+                    div()
+                        .text_size(units(12.))
+                        .text_color(p.muted)
+                        .child(triggered_subskill_buff_help(buff.duration))
+                        .when_some(self.node.calculation_note.as_ref(), |text, note| {
+                            text.child(div().mt_1().child(note.clone()))
+                        }),
+                ),
+            );
+        }
         if let Some(tags) = data::data()
             .subskill_tags
             .get(&self.skill.id)
@@ -2204,6 +2268,47 @@ impl Render for SubskillTooltip {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn butcher_subskill_buffs_default_off_and_require_learned_parent_and_node() {
+        let skills = data::get_skills_by_class("butcher");
+        for (parent, id, trigger, duration) in [
+            ("chain_rip", "prey_on_the_weak", "on_hit", 5.),
+            ("butchers_hook", "hellsent", "on_cast", 1.75),
+            ("chain_swing", "killing_spree", "on_skill_complete", 5.),
+            ("chain_rip", "rage_trance", "on_cast", 3.),
+        ] {
+            let (skill, node) = triggered_subskill_buffs(skills)
+                .find(|(skill, node)| skill.id == parent && node.id == id)
+                .unwrap_or_else(|| panic!("missing triggered buff {parent}:{id}"));
+            let key = subskill_key(&skill.id, &node.id);
+            let buff = node.triggered_buff.as_ref().unwrap();
+            assert_eq!(buff.duration, duration, "{key}");
+            assert_eq!(buff.trigger, trigger, "{key}");
+            let mut snapshot = BuildSnapshot::default();
+            assert!(!subskill_buff_is_learned(&snapshot, skill, node));
+            assert!(!subskill_buff_is_active(&snapshot, skill, node));
+            snapshot.skill_ranks.insert(skill.id.clone(), 1);
+            snapshot.subskill_ranks.insert(key.clone(), 1);
+            assert!(subskill_buff_is_learned(&snapshot, skill, node));
+            assert!(!subskill_buff_is_active(&snapshot, skill, node));
+
+            snapshot.active_buffs.insert(node.id.clone(), true);
+            assert!(!subskill_buff_is_active(&snapshot, skill, node));
+            snapshot.active_buffs.insert(key.clone(), true);
+            assert!(subskill_buff_is_active(&snapshot, skill, node));
+            snapshot.skill_ranks.insert(skill.id.clone(), 0);
+            assert!(!subskill_buff_is_learned(&snapshot, skill, node));
+            assert!(!subskill_buff_is_active(&snapshot, skill, node));
+            snapshot.skill_ranks.insert(skill.id.clone(), 1);
+            snapshot.subskill_ranks.insert(key.clone(), 0);
+            assert!(!subskill_buff_is_learned(&snapshot, skill, node));
+            assert!(!subskill_buff_is_active(&snapshot, skill, node));
+            assert!(snapshot.active_buffs[&key]);
+            snapshot.subskill_ranks.insert(key, 1);
+            assert!(subskill_buff_is_active(&snapshot, skill, node));
+        }
+    }
 
     #[::core::prelude::v1::test]
     fn allocation_modifiers_respect_the_remaining_budget() {

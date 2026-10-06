@@ -1,6 +1,7 @@
 [
   {
     "id": "sand_carver",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Sand Carver",
@@ -217,6 +218,7 @@
   },
   {
     "id": "cloud_of_sand",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Cloud of Sand",
     "kind": "active",
@@ -411,6 +413,7 @@
   },
   {
     "id": "sand_tremors",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Sand Tremors",
@@ -425,7 +428,7 @@
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.25, "perLevel": 0.55, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 46.5, "perLevel": 16.5 },
       "flatPhysicalMin": { "base": 3, "perLevel": 0 },
@@ -631,6 +634,7 @@
   },
   {
     "id": "sand_entombment",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Sand Entombment",
     "kind": "passive",
@@ -648,6 +652,7 @@
   },
   {
     "id": "mystic_sand",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Mystic Sand",
     "kind": "passive",
@@ -665,6 +670,7 @@
   },
   {
     "id": "sand_gush",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Sand Gush",
     "kind": "active",
@@ -680,7 +686,7 @@
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "damageFormula": { "base": 1, "perLevel": 16 },
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Sand Entombment", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Sand Vortex", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -879,6 +885,7 @@
   },
   {
     "id": "dissipating_tornado",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Dissipating Tornado",
     "kind": "active",
@@ -905,6 +912,7 @@
   },
   {
     "id": "oasis_aura",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Oasis Aura",
     "kind": "aura",
@@ -922,6 +930,7 @@
   },
   {
     "id": "sand_vortex",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Sand Vortex",
     "kind": "active",
@@ -1126,6 +1135,7 @@
   },
   {
     "id": "blade_strike",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Blade Strike",
@@ -1140,16 +1150,14 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 67.5, "perLevel": 22.5 },
-      "flatPhysicalMin": { "base": 2, "perLevel": 1 },
-      "flatPhysicalMax": { "base": 10, "perLevel": 1 },
-      "attackRatingPct": { "base": 0, "perLevel": 5 }
-    },
-    "passiveStats": {
-      "base": { "crit_chance": 50 },
-      "perRank": {}
+      "weaponDamagePct": { "base": 100, "perLevel": 0 },
+      "flatPhysicalMin": { "base": 0, "perLevel": 0 },
+      "flatPhysicalMax": { "base": 0, "perLevel": 0 },
+      "attackRatingPct": { "base": 0, "perLevel": 5 },
+      "criticalChance": { "base": 50, "perLevel": 0 },
+      "criticalDamage": { "base": 67.5, "perLevel": 22.5 }
     },
     "subskills": [
       {
@@ -1166,8 +1174,8 @@
         "description": "Increases critical strike chance when using blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0 },
-          "perRank": { "crit_chance": 5 }
+          "base": { "skill_crit_chance": 0 },
+          "perRank": { "skill_crit_chance": 5 }
         }
       },
       {
@@ -1177,8 +1185,8 @@
         "description": "Increases critical strike damage when using blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 5 }
+          "base": { "skill_crit_damage_multiplier_pct": 0 },
+          "perRank": { "skill_crit_damage_multiplier_pct": 5 }
         }
       },
       {
@@ -1199,8 +1207,8 @@
         "description": "Increases attack rating when using blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": { "skill_attack_rating_multiplier_pct": 0 },
+          "perRank": { "skill_attack_rating_multiplier_pct": 10 }
         }
       },
       {
@@ -1332,14 +1340,15 @@
         "description": "Critical strike damage by blade strike is increased based on your vitality.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_vitality": 0 },
-          "perRank": { "conversion_vitality": 3 }
+          "base": { "skill_crit_damage_multiplier_per_100_vitality": 0 },
+          "perRank": { "skill_crit_damage_multiplier_per_100_vitality": 3 }
         }
       }
     ]
   },
   {
     "id": "eye_of_ra",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Eye of Ra",
@@ -1556,6 +1565,7 @@
   },
   {
     "id": "flying_scimitar",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Flying Scimitar",
@@ -1762,6 +1772,7 @@
   },
   {
     "id": "healing_sunrays",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Healing Sunrays",
     "kind": "passive",
@@ -1779,6 +1790,7 @@
   },
   {
     "id": "chainslice",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Chainslice",
@@ -1793,7 +1805,7 @@
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 133, "perLevel": 25 },
       "flatPhysicalMin": { "base": 5, "perLevel": 0 },
@@ -1989,6 +2001,7 @@
   },
   {
     "id": "rupture",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Rupture",
@@ -2003,7 +2016,7 @@
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 77.5, "perLevel": 22.5 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
@@ -2018,6 +2031,7 @@
   },
   {
     "id": "scimitar_charge",
+    "activationKind": "attack",
     "classId": "nomad",
     "name": "Scimitar Charge",
     "kind": "active",
@@ -2221,6 +2235,7 @@
   },
   {
     "id": "hemorrhage",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Hemorrhage",
     "kind": "passive",
@@ -2238,6 +2253,7 @@
   },
   {
     "id": "phantom_blade",
+    "activationKind": "cast",
     "classId": "nomad",
     "name": "Phantom Blade",
     "kind": "active",

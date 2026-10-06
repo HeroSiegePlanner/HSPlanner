@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use super::types::ManaCostRankIndexing;
+
 #[derive(Debug, Clone, Default)]
 pub struct PassiveStats {
     pub base: HashMap<String, f64>,
@@ -10,6 +12,7 @@ pub struct PassiveStats {
 pub struct ManaCostFormula {
     pub base: f64,
     pub per_level: f64,
+    pub rank_indexing: ManaCostRankIndexing,
 }
 
 #[derive(Debug, Clone)]
@@ -55,11 +58,23 @@ pub fn passive_stats_at_rank(skill: &PassiveSkill, rank: u32) -> HashMap<String,
 }
 
 pub fn mana_cost_at_rank(skill: &PassiveSkill, rank: u32) -> Option<f64> {
-    let r = rank.max(1);
+    mana_cost_at_effective_rank(skill, rank as f64)
+}
+
+pub fn mana_cost_at_effective_rank(skill: &PassiveSkill, rank: f64) -> Option<f64> {
+    raw_mana_cost_at_effective_rank(skill, rank).map(f64::round_ties_even)
+}
+
+pub(crate) fn raw_mana_cost_at_effective_rank(skill: &PassiveSkill, rank: f64) -> Option<f64> {
+    let r = rank.max(1.0);
     if let Some(f) = skill.mana_cost_formula {
-        return Some((f.base + f.per_level * ((r as f64) - 1.0)).floor());
+        let factor = match f.rank_indexing {
+            ManaCostRankIndexing::FirstRankBase => r - 1.0,
+            ManaCostRankIndexing::FullRank => r,
+        };
+        return Some(f.base + f.per_level * factor);
     }
-    if let Some(exact) = skill.ranks.iter().find(|sr| sr.rank == r) {
+    if let Some(exact) = skill.ranks.iter().find(|sr| sr.rank == r as u32) {
         if let Some(mc) = exact.mana_cost {
             return Some(mc);
         }
@@ -175,18 +190,35 @@ mod tests {
     }
 
     #[test]
-    fn mana_cost_formula_floors_result() {
-        // base=10, per_level=2.5, rank=3 → 10 + 2.5*2 = 15.0 → floor = 15.
+    fn mana_cost_formula_preserves_precision_before_modifiers() {
         let skill = PassiveSkill {
             mana_cost_formula: Some(ManaCostFormula {
                 base: 10.0,
                 per_level: 2.5,
+                rank_indexing: ManaCostRankIndexing::FirstRankBase,
             }),
             ..Default::default()
         };
         assert_eq!(mana_cost_at_rank(&skill, 3), Some(15.0));
-        // base=10, per_level=2.5, rank=2 → 12.5 → floor = 12.
+        assert_eq!(raw_mana_cost_at_effective_rank(&skill, 2.0), Some(12.5));
         assert_eq!(mana_cost_at_rank(&skill, 2), Some(12.0));
+    }
+
+    #[test]
+    fn public_mana_preview_rounds_neutral_constructor_cost_with_even_ties() {
+        let skill = PassiveSkill {
+            mana_cost_formula: Some(ManaCostFormula {
+                base: 3.5,
+                per_level: 0.75,
+                rank_indexing: ManaCostRankIndexing::FullRank,
+            }),
+            ..Default::default()
+        };
+        assert_eq!(raw_mana_cost_at_effective_rank(&skill, 1.0), Some(4.25));
+        assert_eq!(mana_cost_at_rank(&skill, 1), Some(4.0));
+        assert_eq!(mana_cost_at_effective_rank(&skill, 1.0), Some(4.0));
+        assert_eq!(mana_cost_at_effective_rank(&skill, 4.0), Some(6.0));
+        assert_eq!(mana_cost_at_effective_rank(&skill, 8.0), Some(10.0));
     }
 
     #[test]
@@ -195,6 +227,7 @@ mod tests {
             mana_cost_formula: Some(ManaCostFormula {
                 base: 5.0,
                 per_level: 3.0,
+                rank_indexing: ManaCostRankIndexing::FirstRankBase,
             }),
             ..Default::default()
         };
@@ -253,6 +286,7 @@ mod tests {
             mana_cost_formula: Some(ManaCostFormula {
                 base: 100.0,
                 per_level: 0.0,
+                rank_indexing: ManaCostRankIndexing::FirstRankBase,
             }),
             ranks: vec![SkillRank {
                 rank: 1,

@@ -1,6 +1,7 @@
 [
   {
     "id": "glorious_strike",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "shield_lancer",
     "name": "Glorious Strike",
@@ -211,6 +212,7 @@
   },
   {
     "id": "battle_charge",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Battle Charge",
     "kind": "active",
@@ -419,6 +421,7 @@
   },
   {
     "id": "commending_banner",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Commending Banner",
     "kind": "buff",
@@ -438,6 +441,7 @@
   },
   {
     "id": "parry",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Parry",
     "kind": "passive",
@@ -455,6 +459,7 @@
   },
   {
     "id": "crushing_lance",
+    "activationKind": "attack",
     "classId": "shield_lancer",
     "name": "Crushing Lance",
     "kind": "active",
@@ -469,7 +474,7 @@
     "position": { "row": 2, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 60, "perLevel": 24 },
       "flatPhysicalMin": { "base": 2, "perLevel": 1 },
@@ -658,6 +663,7 @@
   },
   {
     "id": "lance_thrust",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "shield_lancer",
     "name": "Lance Thrust",
@@ -673,7 +679,7 @@
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.25, "perLevel": 0.65, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 57, "perLevel": 25 },
       "flatPhysicalMin": { "base": 2, "perLevel": 1 },
@@ -862,6 +868,7 @@
   },
   {
     "id": "lance_throw",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Lance Throw",
     "kind": "passive",
@@ -889,6 +896,7 @@
   },
   {
     "id": "armor_crush",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Armor Crush",
     "kind": "passive",
@@ -906,6 +914,7 @@
   },
   {
     "id": "glory",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Glory",
     "kind": "buff",
@@ -928,6 +937,7 @@
   },
   {
     "id": "shield_slam",
+    "activationKind": "attack",
     "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Shield Slam",
@@ -943,7 +953,7 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 160, "perLevel": 40 },
       "flatPhysicalMin": { "base": 6, "perLevel": 0 },
@@ -1138,6 +1148,7 @@
   },
   {
     "id": "taunt",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Taunt",
     "kind": "active",
@@ -1158,6 +1169,7 @@
   },
   {
     "id": "honed_defenses",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Honed Defenses",
     "kind": "active",
@@ -1389,6 +1401,7 @@
   },
   {
     "id": "knights_resilience",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Knight's Resilience",
     "kind": "passive",
@@ -1406,6 +1419,7 @@
   },
   {
     "id": "shield_wall",
+    "activationKind": "cast",
     "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Shield Wall",
@@ -1647,6 +1661,7 @@
   },
   {
     "id": "damage_reflect",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Damage Reflect",
     "kind": "passive",
@@ -1664,6 +1679,7 @@
   },
   {
     "id": "knights_vigor",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Knight's Vigor",
     "kind": "passive",
@@ -1681,6 +1697,7 @@
   },
   {
     "id": "counter",
+    "activationKind": "cast",
     "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Counter",
@@ -1912,6 +1929,7 @@
   },
   {
     "id": "last_stand",
+    "activationKind": "cast",
     "classId": "shield_lancer",
     "name": "Last Stand",
     "kind": "buff",

@@ -1,6 +1,7 @@
 [
   {
     "id": "frozen_boulder",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Frozen Boulder",
     "kind": "active",
@@ -201,6 +202,7 @@
   },
   {
     "id": "breath_of_ice",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Breath of Ice",
     "kind": "active",
@@ -417,6 +419,7 @@
   },
   {
     "id": "icicles",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Icicles",
     "kind": "passive",
@@ -438,6 +441,7 @@
   },
   {
     "id": "frozen_hide",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Frozen Hide",
     "kind": "buff",
@@ -467,6 +471,7 @@
   },
   {
     "id": "orb_of_frost",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Orb of Frost",
     "kind": "active",
@@ -668,6 +673,7 @@
   },
   {
     "id": "power_of_the_ancients",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Power of the Ancients",
     "kind": "passive",
@@ -685,6 +691,7 @@
   },
   {
     "id": "avatar_of_frost",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Avatar of Frost",
     "kind": "passive",
@@ -702,6 +709,7 @@
   },
   {
     "id": "portal_of_ice",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Portal of Ice",
     "kind": "active",
@@ -916,6 +924,7 @@
   },
   {
     "id": "blizzard",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Blizzard",
     "kind": "active",
@@ -1135,6 +1144,7 @@
   },
   {
     "id": "flash_freeze",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "Flash Freeze",
@@ -1151,7 +1161,7 @@
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
     "damageFormula": { "base": 0, "perLevel": 9.5 },
-    "manaCostFormula": { "base": 4, "perLevel": 1.125 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 0, "perLevel": 20 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
@@ -1341,6 +1351,7 @@
   },
   {
     "id": "glacial_tremors",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Glacial Tremors",
     "kind": "passive",
@@ -1362,6 +1373,7 @@
   },
   {
     "id": "freezing_leap",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Freezing Leap",
     "kind": "active",
@@ -1581,6 +1593,7 @@
   },
   {
     "id": "permafrost",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Permafrost",
     "kind": "passive",
@@ -1599,6 +1612,7 @@
   },
   {
     "id": "avalanche",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Avalanche",
     "kind": "active",
@@ -1807,6 +1821,7 @@
   },
   {
     "id": "absolute_zero",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Absolute Zero",
     "kind": "passive",
@@ -1824,6 +1839,7 @@
   },
   {
     "id": "frost_sunder",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "Frost Sunder",
@@ -1840,7 +1856,7 @@
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
     "damageFormula": { "base": 0, "perLevel": 10.5 },
-    "manaCostFormula": { "base": 5, "perLevel": 1.125 },
+    "manaCostFormula": { "base": 4.5, "perLevel": 0.85, "rankIndexing": "fullRank" },
     "attackScaling": {
       "weaponDamagePct": { "base": 0, "perLevel": 28 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
@@ -2044,6 +2060,7 @@
   },
   {
     "id": "glacial_armor",
+    "activationKind": "cast",
     "classId": "jotunn",
     "name": "Glacial Armor",
     "kind": "passive",
@@ -2061,6 +2078,7 @@
   },
   {
     "id": "embodiment_of_aurgelmir",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "The Embodiment of Aurgelmir",

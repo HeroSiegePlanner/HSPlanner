@@ -25,6 +25,128 @@ fn transfer(library: Library) -> MigrationExport {
 }
 
 #[test]
+fn cast_consumed_count_survives_native_save_and_complete_share_code() {
+    let mut session = Session::new(WorkspaceState::default());
+    session.new_build("Fuel snapshot").unwrap();
+    session.edit(|draft| {
+        draft.snapshot.set_class("butcher");
+        draft.snapshot.skill_ranks.insert("fuel_to_fire".into(), 1);
+        draft
+            .snapshot
+            .active_buffs
+            .insert("fuel_to_fire".into(), true);
+        draft
+            .snapshot
+            .stack_counts
+            .insert("fuel_to_fire_consumed_objects".into(), 5);
+    });
+    session.save_build().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    write_atomic(temp.path(), session.state()).unwrap();
+    let restored = Session::new(load(temp.path()).unwrap());
+    let code = codec::encode_loadouts(
+        restored.snapshot(),
+        &restored.draft().notes,
+        &restored.draft().loadouts,
+    )
+    .unwrap();
+    let (snapshot, _, _) = codec::decode_loadouts(&code).unwrap();
+    assert_eq!(snapshot.stack_counts["fuel_to_fire_consumed_objects"], 5);
+    assert_eq!(snapshot.skill_ranks["fuel_to_fire"], 1);
+    assert!(snapshot.active_buffs["fuel_to_fire"]);
+}
+
+#[test]
+fn butcher_subskill_buffs_survive_native_save_share_and_skill_loadout_switch() {
+    use hsplanner_build::loadout::LoadoutKind;
+    use hsplanner_engine::calc::{data, subskill::subskill_key};
+
+    let skills = data::get_skills_by_class("butcher");
+    let buffs: Vec<_> = [
+        ("chain_rip", "prey_on_the_weak"),
+        ("butchers_hook", "hellsent"),
+        ("chain_swing", "killing_spree"),
+        ("chain_rip", "rage_trance"),
+    ]
+    .into_iter()
+    .map(|(parent, id)| {
+        let skill = skills.iter().find(|skill| skill.id == parent).unwrap();
+        let node = skill
+            .subskills
+            .as_ref()
+            .unwrap()
+            .iter()
+            .find(|node| node.id == id)
+            .unwrap();
+        assert!(node.triggered_buff.is_some(), "{parent}:{id}");
+        (parent, subskill_key(parent, id))
+    })
+    .collect();
+    let mut session = Session::new(WorkspaceState::default());
+    session.new_build("Temporary Butcher buffs").unwrap();
+    session.edit(|draft| {
+        draft.snapshot.set_class("butcher");
+        for (parent, key) in &buffs {
+            draft.snapshot.skill_ranks.insert((*parent).into(), 1);
+            draft.snapshot.subskill_ranks.insert(key.clone(), 1);
+            draft.snapshot.active_buffs.insert(key.clone(), true);
+        }
+    });
+    session
+        .add_loadout(LoadoutKind::Skills, "Buff inactive")
+        .unwrap();
+    let inactive = session
+        .draft()
+        .loadouts
+        .active_id(LoadoutKind::Skills)
+        .to_owned();
+    session.edit(|draft| {
+        for (_, key) in &buffs {
+            draft.snapshot.active_buffs.insert(key.clone(), false);
+        }
+    });
+    session
+        .switch_loadout(LoadoutKind::Skills, "default")
+        .unwrap();
+    for (_, key) in &buffs {
+        assert!(session.snapshot().active_buffs[key], "{key}");
+    }
+    session.save_build().unwrap();
+
+    let temp = tempfile::tempdir().unwrap();
+    write_atomic(temp.path(), session.state()).unwrap();
+    let restored = Session::new(load(temp.path()).unwrap());
+    for (_, key) in &buffs {
+        assert!(restored.snapshot().active_buffs[key], "{key}");
+    }
+    let code = codec::encode_loadouts(
+        restored.snapshot(),
+        &restored.draft().notes,
+        &restored.draft().loadouts,
+    )
+    .unwrap();
+    let mut imported = Session::new(WorkspaceState::default());
+    imported.import_code(&code).unwrap();
+    for (parent, key) in &buffs {
+        assert!(imported.snapshot().active_buffs[key], "{key}");
+        assert_eq!(imported.snapshot().skill_ranks[*parent], 1);
+        assert_eq!(imported.snapshot().subskill_ranks[key], 1);
+    }
+    imported
+        .switch_loadout(LoadoutKind::Skills, &inactive)
+        .unwrap();
+    for (_, key) in &buffs {
+        assert!(!imported.snapshot().active_buffs[key], "{key}");
+    }
+    imported
+        .switch_loadout(LoadoutKind::Skills, "default")
+        .unwrap();
+    for (_, key) in &buffs {
+        assert!(imported.snapshot().active_buffs[key], "{key}");
+    }
+}
+
+#[test]
 fn legacy_transfer_is_ignored_even_after_empty_first_launch() {
     let temp = tempfile::tempdir().unwrap();
     let directory = temp.path().join("gpui");

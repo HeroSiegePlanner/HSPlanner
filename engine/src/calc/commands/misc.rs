@@ -18,6 +18,8 @@ pub struct PassiveStatsDto {
 pub struct ManaCostFormulaDto {
     pub base: f64,
     pub per_level: f64,
+    #[serde(default)]
+    pub rank_indexing: crate::calc::types::ManaCostRankIndexing,
 }
 
 #[derive(Deserialize)]
@@ -51,6 +53,7 @@ impl From<PassiveSkillDto> for crate::calc::passive::PassiveSkill {
                 .map(|f| crate::calc::passive::ManaCostFormula {
                     base: f.base,
                     per_level: f.per_level,
+                    rank_indexing: f.rank_indexing,
                 }),
             ranks: v
                 .ranks
@@ -73,8 +76,7 @@ pub fn passive_stats_at_rank(skill: PassiveSkillDto, rank: f64) -> HashMap<Strin
 }
 
 pub fn mana_cost_at_rank(skill: PassiveSkillDto, rank: f64) -> Option<f64> {
-    let r = if rank <= 0.0 { 1 } else { rank as u32 };
-    crate::calc::passive::mana_cost_at_rank(&skill.into(), r)
+    crate::calc::passive::mana_cost_at_effective_rank(&skill.into(), rank)
 }
 
 // ---------- parse_custom_stats ----------

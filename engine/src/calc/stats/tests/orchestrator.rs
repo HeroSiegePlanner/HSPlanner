@@ -3,6 +3,136 @@ use super::empty_input;
 use crate::calc::types::EquippedItem;
 
 #[test]
+fn fuel_count_reaches_the_pipeline_and_mania_keeps_area_conversions_unchanged() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let buffs = HashMap::from([("fuel_to_fire".into(), true)]);
+    let tree = HashSet::from([381, 1141]);
+    let sockets = HashMap::new();
+    let conditions = HashMap::new();
+    let subskills = HashMap::new();
+    let custom = vec![
+        CustomStat {
+            stat_key: "area_of_effect".into(),
+            value: "32".into(),
+        },
+        CustomStat {
+            stat_key: "melee_attack_size_offset".into(),
+            value: "0.5".into(),
+        },
+        CustomStat {
+            stat_key: "melee_attack_size_offset".into(),
+            value: "0.75".into(),
+        },
+        CustomStat {
+            stat_key: "melee_projectile_size".into(),
+            value: "0.5-0.75".into(),
+        },
+    ];
+    let evaluate = |fuel, mania, count| {
+        let ranks = HashMap::from([
+            ("fuel_to_fire".into(), fuel),
+            ("enraged_mania".into(), mania),
+        ]);
+        let counts = HashMap::from([("fuel_to_fire_consumed_objects".into(), count)]);
+        let mut input = empty_input(
+            &allocated,
+            &inventory,
+            &ranks,
+            &buffs,
+            &custom,
+            &tree,
+            &sockets,
+            &conditions,
+            &subskills,
+            &conditions,
+        );
+        input.class_id = Some("butcher");
+        input.stack_counts = &counts;
+        compute_build_stats(&input)
+    };
+    let baseline = evaluate(0, 0, 0);
+    for count in [0, 5] {
+        let with_fuel = evaluate(1, 0, count);
+        assert_eq!(
+            with_fuel.stats["damage"].0
+                - baseline.stats.get("damage").copied().unwrap_or_default().0,
+            if count == 0 { 20.0 } else { 21.0 }
+        );
+    }
+    assert!(
+        baseline.stats["area_skill_damage"].0 > 0.0,
+        "conversion must be exercised"
+    );
+    assert_eq!(baseline.stats["melee_attack_size_offset"], (1.0, 1.0));
+    assert_eq!(baseline.stats["melee_projectile_size"], (0.5, 0.75));
+    for (rank, size, attack_speed) in [(1, 9.0, 0.5), (3, 11.0, 1.5)] {
+        let mania = evaluate(0, rank, 0);
+        for key in [
+            "area_of_effect",
+            "area_skill_damage",
+            "melee_projectile_size",
+        ] {
+            assert_eq!(mania.stats.get(key), baseline.stats.get(key), "{key}");
+        }
+        assert_eq!(mania.stats["melee_attack_size_offset"], (size, size));
+        assert_eq!(
+            mania.stats["increased_attack_speed"].0
+                - baseline
+                    .stats
+                    .get("increased_attack_speed")
+                    .copied()
+                    .unwrap_or_default()
+                    .0,
+            attack_speed
+        );
+    }
+}
+
+#[test]
+fn hunger_for_blood_floors_the_aggregated_global_bleeding_bonus() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let buffs = HashMap::new();
+    let tree = HashSet::new();
+    let sockets = HashMap::new();
+    let conditions = HashMap::new();
+    let subskills = HashMap::new();
+    for (rank, other_source, expected) in [
+        (1, 0.0, 1.0),
+        (2, 0.0, 2.0),
+        (3, 0.0, 3.0),
+        (4, 0.0, 5.0),
+        (1, 0.75, 2.0),
+    ] {
+        let ranks = HashMap::from([("hunger_for_blood".into(), rank)]);
+        let custom = vec![CustomStat {
+            stat_key: "extra_damage_bleeding".into(),
+            value: other_source.to_string(),
+        }];
+        let mut input = empty_input(
+            &allocated,
+            &inventory,
+            &ranks,
+            &buffs,
+            &custom,
+            &tree,
+            &sockets,
+            &conditions,
+            &subskills,
+            &conditions,
+        );
+        input.class_id = Some("butcher");
+        let result = compute_build_stats(&input);
+        assert_eq!(
+            result.stats.get("extra_damage_bleeding").copied(),
+            Some((expected, expected)),
+            "rank={rank}, other_source={other_source}"
+        );
+    }
+}
+
+#[test]
 fn compute_build_stats_with_empty_input_does_not_panic() {
     let allocated = HashMap::new();
     let inventory = HashMap::new();
@@ -38,6 +168,53 @@ fn compute_build_stats_with_empty_input_does_not_panic() {
         !result.attributes.is_empty(),
         "attributes should be seeded from defaults"
     );
+}
+
+#[test]
+fn blade_strike_base_crit_never_enters_global_stats() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let buffs = HashMap::new();
+    let custom = vec![CustomStat {
+        stat_key: "crit_chance".into(),
+        value: "10".into(),
+    }];
+    let tree = HashSet::new();
+    let sockets = HashMap::new();
+    let conditions = HashMap::new();
+    let subskills = HashMap::new();
+    let global_crit = |main, blade_rank| {
+        let ranks = HashMap::from([
+            ("flying_scimitar".into(), 10),
+            ("blade_strike".into(), blade_rank),
+        ]);
+        let mut input = empty_input(
+            &allocated,
+            &inventory,
+            &ranks,
+            &buffs,
+            &custom,
+            &tree,
+            &sockets,
+            &conditions,
+            &subskills,
+            &conditions,
+        );
+        input.class_id = Some("nomad");
+        input.main_skill_id = Some(main);
+        input.level = 50;
+        compute_build_stats(&input).stats["crit_chance"]
+    };
+    let baseline = global_crit("flying_scimitar", 0);
+    for main in ["flying_scimitar", "blade_strike"] {
+        for rank in [1, 5, 20] {
+            assert_eq!(
+                global_crit(main, rank),
+                baseline,
+                "Blade Strike rank {rank} must keep its own critical bonus out of global stats for {main}"
+            );
+        }
+    }
 }
 
 #[test]

@@ -342,6 +342,7 @@ fn apply_skill_ranks_no_class_id_is_noop() {
         None,
         &HashMap::new(),
         &HashMap::new(),
+        &HashMap::new(),
         &mut attrs,
         &mut stats,
     );
@@ -357,6 +358,7 @@ fn apply_skill_ranks_with_unknown_class_is_noop() {
         Some("nonexistent_class"),
         &HashMap::new(),
         None,
+        &HashMap::new(),
         &HashMap::new(),
         &HashMap::new(),
         &mut attrs,

@@ -1,6 +1,7 @@
 [
   {
     "id": "bone_fragments",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Bone Fragments",
     "kind": "active",
@@ -209,6 +210,7 @@
   },
   {
     "id": "impale",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Impale",
     "kind": "active",
@@ -451,6 +453,7 @@
   },
   {
     "id": "bone_storm",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Bone Storm",
     "kind": "active",
@@ -467,7 +470,7 @@
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 18 }],
     "damageFormula": { "base": 0.6, "perLevel": 6.7 },
-    "manaCostFormula": { "base": 18, "perLevel": 2.48 },
+    "manaCostFormula": { "base": 15, "perLevel": 2.5, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Cartilage Build Up", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -666,6 +669,7 @@
   },
   {
     "id": "ossification",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Ossification",
     "kind": "passive",
@@ -683,6 +687,7 @@
   },
   {
     "id": "cartilage_build_up",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Cartilage Build Up",
     "kind": "passive",
@@ -705,6 +710,7 @@
   },
   {
     "id": "single_out",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Single Out",
     "kind": "passive",
@@ -722,6 +728,7 @@
   },
   {
     "id": "spinal_tap",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Spinal Tap",
     "kind": "active",
@@ -949,6 +956,7 @@
   },
   {
     "id": "ominous_presence",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Ominous Presence",
     "kind": "aura",
@@ -966,6 +974,7 @@
   },
   {
     "id": "bone_barrage",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Bone Barrage",
     "kind": "active",
@@ -1163,6 +1172,7 @@
   },
   {
     "id": "blood_bolts",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Blood Bolts",
     "kind": "active",
@@ -1367,6 +1377,7 @@
   },
   {
     "id": "manapool_aura",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Manapool Aura",
     "kind": "aura",
@@ -1384,6 +1395,7 @@
   },
   {
     "id": "gut_spread",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Gut Spread",
     "kind": "passive",
@@ -1401,6 +1413,7 @@
   },
   {
     "id": "mana_shield",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Mana Shield",
     "kind": "buff",
@@ -1422,6 +1435,7 @@
   },
   {
     "id": "demonic_presence",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Demonic Presence",
     "kind": "passive",
@@ -1439,6 +1453,7 @@
   },
   {
     "id": "mana_devour",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Mana Devour",
     "kind": "active",
@@ -1459,6 +1474,7 @@
   },
   {
     "id": "blood_surge",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Blood Surge",
     "kind": "active",
@@ -1666,6 +1682,7 @@
   },
   {
     "id": "blood_demons",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Blood Demons",
     "kind": "passive",
@@ -1688,6 +1705,7 @@
   },
   {
     "id": "blood_tendrils",
+    "activationKind": "cast",
     "classId": "demonspawn",
     "name": "Blood Tendrils",
     "kind": "passive",

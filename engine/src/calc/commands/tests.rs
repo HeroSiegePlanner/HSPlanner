@@ -181,6 +181,51 @@ mod projectile_dto_tests {
 mod sourced_damage_dto_tests {
     use super::*;
 
+    #[test]
+    fn standalone_attack_preserves_whole_hit_subtree_stage() {
+        let input = serde_json::json!({
+            "skill": {
+                "name": "Whole hit subtree", "damageType": "physical", "attackKind": "attack",
+                "tags": ["Orbital"],
+                "attackScaling": {
+                    "weaponBonusScaling": true, "weaponSubtreeScalesFullHit": true,
+                    "weaponDamagePct": { "base": 200, "perLevel": 0 }
+                }
+            },
+            "allocatedRank": 1,
+            "stats": { "orbital_skill_damage": 100 },
+            "scopedStats": { "subtree_damage": [0, 50] },
+            "weapon": { "name": "Test", "damageMin": 100, "damageMax": 100 }
+        });
+        let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (450, 675));
+    }
+
+    #[test]
+    fn standalone_attack_preserves_intrinsic_critical_chance_and_damage() {
+        let input = serde_json::json!({
+            "skill": {
+                "name": "Local critical bonus",
+                "damageType": "physical",
+                "attackKind": "attack",
+                "attackScaling": {
+                    "weaponDamagePct": { "base": 100, "perLevel": 0 },
+                    "criticalChance": { "base": 50, "perLevel": 0 },
+                    "criticalDamage": { "base": 67.5, "perLevel": 22.5 }
+                }
+            },
+            "allocatedRank": 1,
+            "stats": { "crit_chance": 20, "crit_damage": 100 },
+            "weapon": { "name": "Test", "damageMin": 100, "damageMax": 100 }
+        });
+        let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
+        assert_eq!(out.crit_chance, 70.);
+        assert!((out.crit_multiplier_avg - 2.33).abs() < 1e-12);
+        assert_eq!(out.crit_damage_pct, 190.);
+        assert_eq!(out.physical_hit_max, 150);
+        assert_eq!(out.physical_avg_max, 349);
+    }
+
     fn staged_input() -> serde_json::Value {
         serde_json::json!({
             "skill": {

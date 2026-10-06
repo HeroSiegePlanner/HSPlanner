@@ -192,10 +192,13 @@ pub enum AttackKind {
 #[derive(Debug, Clone, Default)]
 pub struct AttackSkillScaling {
     pub weapon_bonus_scaling: bool,
+    pub weapon_subtree_scales_full_hit: bool,
     pub weapon_damage_pct: Option<DamageFormula>,
     pub flat_physical_min: Option<DamageFormula>,
     pub flat_physical_max: Option<DamageFormula>,
     pub attack_rating_pct: Option<DamageFormula>,
+    pub critical_chance: Option<DamageFormula>,
+    pub critical_damage: Option<DamageFormula>,
 }
 
 #[derive(Debug, Clone)]
@@ -433,6 +436,26 @@ pub(crate) fn collect_extra_damage(
     (1.0 + sum_pct / 100.0, sources)
 }
 
+pub(crate) fn collect_extra_damage_with_scoped(
+    stats: &StatMap,
+    scoped: &StatMap,
+    enemy_conditions: &ConditionMap,
+    damage_type: Option<&str>,
+) -> (f64, Vec<ExtraSource>) {
+    let (mut factor, mut sources) = collect_extra_damage(stats, enemy_conditions, damage_type);
+    if is_condition_active("extra_damage_bleeding", Some(enemy_conditions)) {
+        let mut local_pct = 0.0;
+        push_source(
+            scoped,
+            "skill_extra_damage_bleeding",
+            "Bleeding (skill)",
+            &mut local_pct,
+            &mut sources,
+        );
+        factor += local_pct / 100.0;
+    }
+    (factor, sources)
+}
 fn push_source(
     stats: &StatMap,
     stat_key: &'static str,
@@ -464,11 +487,23 @@ pub(crate) fn double_damage_factor(stats: &StatMap, scoped: &StatMap) -> Ranged 
     )
 }
 
+#[derive(Clone, Copy)]
 pub(crate) struct CritFactors {
     pub chance: f64,
     pub damage_pct: f64,
     pub on_crit_mult: f64,
     pub avg_mult: f64,
+}
+
+impl CritFactors {
+    pub(crate) fn with_skill_bonuses(mut self, chance_bonus: f64, damage_bonus: f64) -> Self {
+        self.chance += chance_bonus;
+        self.damage_pct += damage_bonus;
+        self.on_crit_mult += damage_bonus / 100.0;
+        let chance = self.chance.clamp(0.0, 95.0) / 100.0;
+        self.avg_mult = 1.0 - chance + chance * self.on_crit_mult;
+        self
+    }
 }
 
 pub(crate) fn crit_factors_with_tags(
@@ -577,6 +612,29 @@ mod tests {
         }
     }
 
+    #[test]
+    fn scoped_bleeding_damage_adds_to_the_target_pool_without_floor_or_type_gate() {
+        let stats = merge(&[stat("damage", 50.), stat("extra_damage_bleeding", 2.)]);
+        let scoped = stat("skill_extra_damage_bleeding", 17.5);
+        for damage_type in [None, Some("physical"), Some("fire"), Some("poison")] {
+            let (off, sources) =
+                collect_extra_damage_with_scoped(&stats, &scoped, &cond(&[]), damage_type);
+            assert_eq!(off, 1.5);
+            assert_eq!(sources.len(), 1);
+            let (on, sources) = collect_extra_damage_with_scoped(
+                &stats,
+                &scoped,
+                &cond(&["bleeding"]),
+                damage_type,
+            );
+            assert!((on - 1.695).abs() < 1e-9);
+            assert_eq!(sources.last().unwrap().pct, 17.5);
+            assert_eq!(
+                sources.last().unwrap().stat_key,
+                Some("skill_extra_damage_bleeding")
+            );
+        }
+    }
     #[test]
     fn returns_unit_multiplier_when_no_ailment_active() {
         let stats = stat("extra_damage_bleeding", 50.0);

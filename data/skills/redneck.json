@@ -1,6 +1,7 @@
 [
   {
     "id": "moonshine_molotov",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Moonshine Molotov",
     "kind": "active",
@@ -246,6 +247,7 @@
   },
   {
     "id": "pipe_bombs",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Pipe Bombs",
     "kind": "active",
@@ -483,6 +485,7 @@
   },
   {
     "id": "tire_fire",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Tire Fire",
@@ -505,8 +508,9 @@
     "damageType": "fire",
     "damageFormula": { "base": 0, "perLevel": 14 },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "baseCastRate": 1,
     "range": 320,
@@ -717,6 +721,7 @@
   },
   {
     "id": "oil_spill",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Oil Spill",
     "kind": "active",
@@ -759,6 +764,7 @@
   },
   {
     "id": "combustible_oil",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Combustible Oil",
     "kind": "passive",
@@ -789,6 +795,7 @@
   },
   {
     "id": "hillbilly_rage",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Hillbilly Rage",
     "kind": "buff",
@@ -828,6 +835,7 @@
   },
   {
     "id": "spontaneous_combustion",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Spontaneous Combustion",
     "kind": "passive",
@@ -890,6 +898,7 @@
   },
   {
     "id": "moonshine_madness",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Moonshine Madness",
     "kind": "passive",
@@ -924,6 +933,7 @@
   },
   {
     "id": "pickup_raid",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Pickup Raid",
     "kind": "active",
@@ -1164,6 +1174,7 @@
   },
   {
     "id": "durable_wear",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Durable Wear",
     "kind": "passive",
@@ -1194,6 +1205,7 @@
   },
   {
     "id": "chainsaw_slash",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Chainsaw Slash",
@@ -1226,8 +1238,9 @@
       "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "manaCostFormula": {
-      "base": 4,
-      "perLevel": 1
+      "base": 3.5,
+      "perLevel": 0.75,
+      "rankIndexing": "fullRank"
     },
     "movementDuringUse": 65,
     "bonusSources": [
@@ -1446,6 +1459,7 @@
   },
   {
     "id": "loggers_endurance",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Loggers Endurance",
     "kind": "passive",
@@ -1478,6 +1492,7 @@
   },
   {
     "id": "chainsaw_massacre",
+    "activationKind": "cast",
     "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Chainsaw Massacre",
@@ -1712,6 +1727,7 @@
   },
   {
     "id": "experienced_logger",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Experienced Logger",
     "kind": "passive",
@@ -1744,6 +1760,7 @@
   },
   {
     "id": "revved_up",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Revved Up",
     "kind": "buff",
@@ -1785,6 +1802,7 @@
   },
   {
     "id": "rogue_chainsaw",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Rogue Chainsaw",
     "kind": "active",
@@ -2036,6 +2054,7 @@
   },
   {
     "id": "chainsaw_mastery",
+    "activationKind": "cast",
     "classId": "redneck",
     "name": "Chainsaw Mastery",
     "kind": "passive",
@@ -2068,6 +2087,7 @@
   },
   {
     "id": "tree_trunk_triumph",
+    "activationKind": "attack",
     "weaponRequirement": "melee",
     "classId": "redneck",
     "name": "Tree Trunk Triumph",
