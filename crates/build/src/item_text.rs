@@ -104,6 +104,21 @@ fn description_key(text: &str) -> String {
         .join(" ")
         .to_lowercase()
 }
+pub fn resolved_implicit_key(item: &EquippedItem, key: &str) -> String {
+    match key {
+        "random_skill_element" => item
+            .random_skill_element
+            .as_ref()
+            .map(|element| format!("{element}_skills")),
+        "all_skills_class" => item
+            .all_skills_class_id
+            .as_ref()
+            .map(|class| format!("all_skills_{class}")),
+        _ => None,
+    }
+    .unwrap_or_else(|| key.to_string())
+}
+
 fn displayed(
     base: &ItemBase,
     item: &EquippedItem,
@@ -121,7 +136,7 @@ fn displayed(
     if skill {
         item_skill_rank_range(key, value.as_ranged(), stars, None)
     } else {
-        apply_stars_to_ranged_value(value.as_ranged(), key, stars)
+        apply_stars_to_ranged_value(value.as_ranged(), &resolved_implicit_key(item, key), stars)
     }
 }
 fn modifier_text(eq: &EquippedAffix, forged: bool) -> String {
@@ -188,12 +203,26 @@ pub fn serialize(item: &EquippedItem) -> Result<String, String> {
         keys.sort();
         keys.dedup();
         for key in keys {
-            // Zero overrides suppress an authored mod; don't resurrect its line.
-            if overrides.get(&key) == Some(&0.) {
+            if !skill
+                && !base_stats.is_some_and(|stats| stats.contains_key(&key))
+                && base_stats.is_some_and(|stats| {
+                    stats
+                        .keys()
+                        .any(|raw| resolved_implicit_key(item, raw) == key)
+                })
+            {
                 continue;
             }
-            let shown = overrides
-                .get(&key)
+            let pin = overrides.get(&key).or_else(|| {
+                (!skill)
+                    .then(|| overrides.get(&resolved_implicit_key(item, &key)))
+                    .flatten()
+            });
+            // Zero overrides suppress an authored mod; don't resurrect its line.
+            if pin == Some(&0.) {
+                continue;
+            }
+            let shown = pin
                 .map(|v| (*v, *v))
                 .unwrap_or_else(|| displayed(base, item, &key, base_stats.unwrap()[&key], skill));
             let label = if skill {
@@ -204,11 +233,7 @@ pub fn serialize(item: &EquippedItem) -> Result<String, String> {
             lines.push(format!(
                 "{} {label}{}",
                 value_text(shown, !skill && percent(&key)),
-                if overrides.contains_key(&key) {
-                    " [custom]"
-                } else {
-                    ""
-                }
+                if pin.is_some() { " [custom]" } else { "" }
             ));
         }
     }
@@ -710,6 +735,90 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn resolved_implicit_text_uses_star_scaling_and_pin_precedence() {
+        for (id, raw, resolved, expected) in [
+            (
+                "bow_angelic_st_amitiel_s_truth",
+                "random_skill_element",
+                "fire_skills",
+                (7., 7.),
+            ),
+            (
+                "belt_satanic_cingulum_of_shifting_destiny",
+                "all_skills_class",
+                "all_skills_viking",
+                (2., 3.),
+            ),
+        ] {
+            let mut item = gear::make_item(id).unwrap();
+            item.stars = Some(5);
+            item.random_skill_element = Some("fire".into());
+            item.all_skills_class_id = Some("viking".into());
+            let base = data::get_item(id).unwrap();
+            assert_eq!(
+                displayed(
+                    base,
+                    &item,
+                    raw,
+                    base.implicit.as_ref().unwrap()[raw],
+                    false
+                ),
+                expected
+            );
+            let text = serialize(&item).unwrap();
+            assert!(text.lines().any(|line| line
+                == format!("{} {}", value_text(expected, percent(raw)), stat_label(raw))));
+            let result = parse(&text, &item);
+            let parsed = result
+                .item
+                .unwrap_or_else(|| panic!("{:?}", result.diagnostics));
+            assert!(parsed.implicit_overrides.is_empty(), "{text}");
+            for (raw_pin, resolved_pin, shown) in [
+                (Some(4.), None, Some(4.)),
+                (None, Some(9.), Some(9.)),
+                (Some(4.), Some(9.), Some(4.)),
+                (Some(0.), Some(9.), None),
+                (None, Some(0.), None),
+            ] {
+                item.implicit_overrides.clear();
+                if let Some(value) = raw_pin {
+                    item.implicit_overrides.insert(raw.into(), value);
+                }
+                if let Some(value) = resolved_pin {
+                    item.implicit_overrides.insert(resolved.into(), value);
+                }
+                let text = serialize(&item).unwrap();
+                let label = stat_label(raw);
+                let lines: Vec<_> = text.lines().filter(|line| line.contains(&label)).collect();
+                if let Some(value) = shown {
+                    assert_eq!(
+                        lines,
+                        vec![
+                            format!(
+                                "{} {label} [custom]",
+                                value_text((value, value), percent(raw))
+                            )
+                            .as_str()
+                        ],
+                        "{text}"
+                    );
+                } else {
+                    assert!(lines.is_empty(), "{text}");
+                }
+                assert!(
+                    !text.contains(&format!("{} [custom]", stat_label(resolved))),
+                    "{text}"
+                );
+                let result = parse(&text, &item);
+                let parsed = result
+                    .item
+                    .unwrap_or_else(|| panic!("{:?}", result.diagnostics));
+                assert_eq!(serialize(&parsed).unwrap(), text);
+            }
+        }
+    }
 
     #[test]
     fn starred_skill_text_preserves_locked_ranks_and_unpinned_ranges() {

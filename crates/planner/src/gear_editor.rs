@@ -754,14 +754,9 @@ impl GearView {
     }
 
     fn unpin_roll(&mut self, entry: &RollEntry, window: &mut Window, cx: &mut Context<Self>) {
-        let stat = entry.stat.clone();
-        let is_skill = entry.is_skill;
+        let reset = entry.clone();
         self.edit(cx, move |item| {
-            if is_skill {
-                item.skill_bonus_overrides.remove(&stat);
-            } else {
-                item.implicit_overrides.remove(&stat);
-            }
+            reset.clear_pin(item);
         });
         self.set_slider(&entry.key, entry.bounds.1, window, cx);
     }
@@ -2447,6 +2442,20 @@ struct RollEntry {
     is_skill: bool,
 }
 
+impl RollEntry {
+    fn clear_pin(&self, item: &mut EquippedItem) {
+        if self.is_skill {
+            item.skill_bonus_overrides.remove(&self.stat);
+        } else {
+            let resolved = resolved_implicit_key(item, &self.stat);
+            item.implicit_overrides.remove(&self.stat);
+            item.implicit_overrides.remove(&resolved);
+        }
+    }
+}
+
+use hsplanner_build::item_text::resolved_implicit_key;
+
 // Ranged implicits and skill bonuses the user can pin; runeword items get no star scaling.
 fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
     let stars = data::can_star_forge(&base.slot, &base.rarity)
@@ -2461,10 +2470,13 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
     if let Some(implicit) = &base.implicit {
         for key in item_tooltip::implicit_keys(base) {
             let (min, max) = implicit[key].as_ranged();
-            if key == "random_skill_element"
-                || min == max
-                || item.implicit_overrides.get(key) == Some(&0.)
-            {
+            let resolved = resolved_implicit_key(item, key);
+            let pinned = item
+                .implicit_overrides
+                .get(key)
+                .or_else(|| item.implicit_overrides.get(&resolved))
+                .copied();
+            if key == "random_skill_element" || min == max || pinned == Some(0.) {
                 continue;
             }
             entries.push(RollEntry {
@@ -2472,8 +2484,8 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
                 stat: key.clone(),
                 label: stat_name(key),
                 format_key: key.clone(),
-                bounds: apply_stars_to_ranged_value((min, max), key, implicit_stars),
-                pinned: item.implicit_overrides.get(key).copied(),
+                bounds: apply_stars_to_ranged_value((min, max), &resolved, implicit_stars),
+                pinned,
                 is_skill: false,
             });
         }
@@ -2548,6 +2560,73 @@ fn editor_button(id: &'static str, label: &'static str, primary: bool, cx: &App)
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn selected_class_roll_pins_follow_raw_key_precedence() {
+        let id = "belt_satanic_cingulum_of_shifting_destiny";
+        let base = data::get_item(id).unwrap();
+        let mut item = EquippedItem {
+            base_id: id.into(),
+            stars: Some(5),
+            all_skills_class_id: Some("viking".into()),
+            ..Default::default()
+        };
+        item.implicit_overrides
+            .insert("all_skills_viking".into(), 9.);
+        let entry = roll_entries(&item, base)
+            .into_iter()
+            .find(|entry| entry.stat == "all_skills_class")
+            .unwrap();
+        assert_eq!(entry.bounds, (2., 3.));
+        assert_eq!(entry.pinned, Some(9.));
+
+        item.implicit_overrides
+            .insert("all_skills_class".into(), 4.);
+        assert_eq!(
+            roll_entries(&item, base)
+                .iter()
+                .find(|entry| entry.stat == "all_skills_class")
+                .unwrap()
+                .pinned,
+            Some(4.)
+        );
+        item.implicit_overrides
+            .insert("all_skills_viking".into(), 0.);
+        assert_eq!(
+            roll_entries(&item, base)
+                .iter()
+                .find(|entry| entry.stat == "all_skills_class")
+                .unwrap()
+                .pinned,
+            Some(4.)
+        );
+        item.implicit_overrides
+            .insert("all_skills_viking".into(), 9.);
+        entry.clear_pin(&mut item);
+        assert!(!item.implicit_overrides.contains_key("all_skills_class"));
+        assert!(!item.implicit_overrides.contains_key("all_skills_viking"));
+        assert_eq!(
+            roll_entries(&item, base)
+                .iter()
+                .find(|entry| entry.stat == "all_skills_class")
+                .unwrap()
+                .pinned,
+            None
+        );
+        for key in ["all_skills_class", "all_skills_viking"] {
+            item.implicit_overrides.clear();
+            if key == "all_skills_class" {
+                item.implicit_overrides
+                    .insert("all_skills_viking".into(), 9.);
+            }
+            item.implicit_overrides.insert(key.into(), 0.);
+            assert!(
+                !roll_entries(&item, base)
+                    .iter()
+                    .any(|entry| entry.stat == "all_skills_class")
+            );
+        }
+    }
 
     #[::core::prelude::v1::test]
     fn skill_roll_bounds_respect_star_rank_locks_without_collapsing_to_pins() {

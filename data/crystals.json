@@ -880,7 +880,7 @@
     "tier": 1,
     "name": "Increased Defense",
     "description": "+[10-20]% Increased Defense",
-    "statKey": "defense",
+    "statKey": "defense_pct",
     "sign": "+",
     "format": "percent",
     "valueMin": 10,

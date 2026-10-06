@@ -4,9 +4,16 @@
 
 - Added a reusable Ghidra headless helper for static Hero Siege decompilation by function name or address, with executable fingerprint checks and local analysis projects.
 
+- Corrected three Defense affix families that were all contributing flat Defense: Ignore Target Defense no longer scales with stars, Increased Defense uses its 3% per-star rule, and Defense vs Missiles stays separate. Corrected the Increased Defense crystal's stat target as well.
+
+- Fixed selected implicit roll pins in the item editor: resolved class pins now match calculation and tooltip values, raw pins retain precedence, and resetting a roll clears both forms.
+
 - Removed the unused Tauri integration and dependency from the GPUI engine, along with an unused direct engine dependency in the native app. Pruned the Cargo lockfile to the active workspace dependency graph.
 
 - Compared all Incarnation Tree supplementary notes with HS Helper and added The Ripper’s missing dagger requirement. Preserved verified Temporal Echo and Manafury explanations; documented remaining stat-line differences in `docs/incarnation-helper-comparison.md`.
+
+- Fixed random elemental skill affixes to receive the same star upgrades as the selected skill element; the placeholder stat previously skipped scaling in calculations and item tooltips.
+- Fixed item text export to apply star upgrades to the selected random elemental skill bonus, matching the tooltip and calculations. Raw and resolved implicit overrides now export once with the same precedence, including zero-value suppression.
 
 - Separated Fireball and Storm Bolt's rank/flat, generic and own-subtree damage stages, including the generic helper's rounding and total spell damage pool. Fireball's independent damage rolls now affect its average separately from an ordinary hit. Fixed Orbital Fire's 4/8/12 primary counts and fractional extra Storm Bolt casts; secondary and rebound damage no longer inflate primary hits, and calculation details identify secondary DPS that still needs a contact model.
 - Forwarded scoped skill stats through both direct damage command APIs, preserving skill-specific bonuses and hybrid calculation inputs.
