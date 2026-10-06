@@ -380,7 +380,7 @@
         "description": "Throw additional shurikens with increased mana cost.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
+          "base": { "projectile_count": 0, "skill_mana_cost_more": 50 },
           "perRank": { "projectile_count": 1 }
         }
       },

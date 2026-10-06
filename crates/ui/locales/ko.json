@@ -1071,6 +1071,8 @@
   "planner.stat.cooldown_recovery_after_kill_chance": "처치 후 재사용 대기시간 회복 확률",
   "planner.stat.corpse_count": "시체 수",
   "planner.stat.crit_chance": "치명타 확률",
+  "planner.stat.skill_attack_speed_more": "스킬 공격 속도 배율",
+  "planner.stat.skill_mana_cost_more": "스킬 마나 소모 배율",
   "planner.stat.skill_crit_chance": "스킬 치명타 확률",
   "planner.stat.skill_crit_damage": "스킬 치명타 피해",
   "planner.stat.skill_extra_damage_bleeding": "출혈 대상에 대한 스킬 피해",

@@ -507,6 +507,13 @@
       "format": "percent"
     },
     {
+      "key": "skill_mana_cost_more",
+      "name": "Skill Mana Cost Multiplier",
+      "category": "base",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
       "key": "skill_attack_speed_more",
       "name": "Skill Attack Speed Multiplier",
       "category": "offense",

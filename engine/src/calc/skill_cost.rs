@@ -197,6 +197,11 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
         (Some(a), Some(b)) => (Some(a.min(b)), Some(a.max(b))),
         (a, b) => (a.or(b), a.or(b)),
     };
+    // LoadManaCost scales abilityManaCost and its per-level part before any
+    // reduction (Shuriken Throw ×1.5 while Twin Shurikens has a rank).
+    let cost_more = rg(stats, "skill_mana_cost_more");
+    let base_mana_min = base_mana_min.map(|c| c * (1.0 + cost_more.0 / 100.0));
+    let base_mana_max = base_mana_max.map(|c| c * (1.0 + cost_more.1 / 100.0));
     let mcr = rg(stats, "mana_cost_reduction");
     let increased = rg(stats, "increased_manacost");
     let cost_min = base_mana_min.map(|c| modified_mana_cost(c, mcr.1, increased.0));
@@ -571,6 +576,14 @@ mod tests {
         assert!(!c.sustainable);
         assert!(c.unsustainable);
         assert_eq!(c.uptime_min, Some(0.0));
+    }
+
+    #[test]
+    fn skill_mana_cost_more_scales_raw_cost_before_reductions() {
+        let skill = thunder_fury();
+        let plain = cost(&skill, 5.0, &stats(&[]));
+        let twin = cost(&skill, 5.0, &stats(&[("skill_mana_cost_more", 50.0)]));
+        assert!(close(twin.base_mana_max.unwrap(), plain.base_mana_max.unwrap() * 1.5));
     }
 
     #[test]

@@ -1,5 +1,7 @@
 ## Feature
 
+- Shuriken Throw's mana cost is multiplied by 1.5 while Twin Shurikens has a rank, before mana cost reduction, as in the game's LoadManaCost.
+
 - Enemy-side damage follows CalculateEndDamage: subtree "enemy damage taken" (enemy buff 13, e.g. Weakening Blast) joins the elemental break sum instead of multiplying separately and no longer affects physical hits; the low-life bonus is a separate multiplier for physical damage only; resistance penetration is no longer clamped at 100%.
 
 - Skill critical strikes now use the pool of the hit's damage type, as the game does: physical skills crit on attack critical chance/damage and elemental skills on spell critical chance/damage, regardless of the Spell tag. Attacks keep attack crit on their converted elemental share.

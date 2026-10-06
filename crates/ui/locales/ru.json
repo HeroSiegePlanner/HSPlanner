@@ -1071,6 +1071,8 @@
   "planner.stat.cooldown_recovery_after_kill_chance": "Шанс восстановления перезарядок после убийства",
   "planner.stat.corpse_count": "Количество трупов",
   "planner.stat.crit_chance": "Шанс критического удара",
+  "planner.stat.skill_attack_speed_more": "Множитель скорости атаки умения",
+  "planner.stat.skill_mana_cost_more": "Множитель затрат маны умения",
   "planner.stat.skill_crit_chance": "Шанс критического удара умения",
   "planner.stat.skill_crit_damage": "Критический урон умения",
   "planner.stat.skill_extra_damage_bleeding": "Урон умения по кровоточащим целям",
