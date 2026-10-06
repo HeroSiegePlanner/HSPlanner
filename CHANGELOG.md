@@ -1,5 +1,7 @@
 ## Feature
 
+- Skill critical strikes now use the pool of the hit's damage type, as the game does: physical skills crit on attack critical chance/damage and elemental skills on spell critical chance/damage, regardless of the Spell tag. Attacks keep attack crit on their converted elemental share.
+
 - Spell projectile counts now include Extra Spell Projectiles % and Additional Spell Projectile for the 44 skills that use the game's ReturnExtraSpellProjectiles (e.g. Frozen Boulder, Orb of Frost, Charged Bolts): floor(count × (1 + %/100)), then the flat bonus.
 
 - Strength now grants 1% Attack Damage per point (the game's StatAttackDamage), instead of Enhanced Damage. Unarmed Wargod still removes it.

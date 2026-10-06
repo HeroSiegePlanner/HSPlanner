@@ -506,8 +506,17 @@ fn compute_skill_damage_with_rank(
     } else {
         1.0
     };
+    // CalculateEndDamage crits each damage type on its own stats: physical uses
+    // attack crit, every element uses spell crit, whatever the skill's tags. An
+    // attack's elemental member crits before conversion, on attack crit.
+    let spell_crit = match s.damage_type.as_deref() {
+        _ if s.attack_kind == Some(super::AttackKind::Attack) => false,
+        Some("physical") => false,
+        Some(_) => true,
+        None => is_spell,
+    };
     let crit = {
-        let base = super::crit_factors_with_tags(input.stats, is_spell, &s.tags);
+        let base = super::crit_factors_with_tags(input.stats, spell_crit, &s.tags);
         super::CritFactors {
             chance: if crit_portion > 0.0 { base.chance } else { 0.0 },
             damage_pct: if crit_portion > 0.0 {
@@ -1544,6 +1553,26 @@ mod tests {
             converted.crit_multiplier_avg
         );
         assert_eq!(converted.crit_chance, 100.0);
+    }
+
+    #[test]
+    fn crit_pool_follows_damage_type_not_spell_tag() {
+        let pools = stats(&[
+            ("crit_chance", 50.0),
+            ("crit_damage", 100.0),
+            ("spell_crit_chance", 10.0),
+            ("spell_crit_damage", 200.0),
+        ]);
+        let case = |damage_type: &'static str, tags_: &[&str]| Case {
+            damage_type,
+            tags: tags(tags_),
+            stats: pools.clone(),
+            ..Default::default()
+        };
+        let fire_nonspell = breakdown(&case("fire", &["Cast", "Projectile"]));
+        assert_eq!(fire_nonspell.crit_chance, 10.0);
+        let physical_spell = breakdown(&case("physical", &["Spell", "Projectile"]));
+        assert_eq!(physical_spell.crit_chance, 50.0);
     }
 
     #[test]
