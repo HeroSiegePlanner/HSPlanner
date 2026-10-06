@@ -221,10 +221,12 @@ fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
             &enemy_conditions,
         );
         let result = compute_build_stats(&input);
-        let ed = result.stats["enhanced_damage"].0;
+        let ed = result.stats.get("enhanced_damage").map_or(0.0, |v| v.0);
+        // Strength now feeds the Attack Damage stage that Powerfunnel also reads.
+        let atk = result.stats.get("attack_damage").map_or(0.0, |v| v.0);
         let expected = (
-            weapon_min * (1.0 + ed / 100.0) * 0.075,
-            weapon_max * (1.0 + ed / 100.0) * 0.075,
+            weapon_min * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
+            weapon_max * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
         );
         let actual = result
             .stats
@@ -649,26 +651,11 @@ fn unarmed_wargod_adds_strength_to_weapon_and_disables_strength_damage_only_unar
         unarmed.stats["str_to_unarmed_damage"].0,
         unarmed.attributes["strength"].0 * 0.2
     );
-    assert_eq!(
-        unarmed
-            .stats
-            .get("enhanced_damage")
-            .copied()
-            .unwrap_or_default(),
-        (0.0, 0.0)
-    );
+    // Strength feeds Attack Damage (StatAttackDamage); unarmed Wargod drops it.
     assert_eq!(unarmed.stats["attack_damage"].0, 10.0);
     let armed = audit_build(&[391], &[("weapon", "base_melee_giant_axe")], &custom);
     assert!(!armed.stats.contains_key("str_to_unarmed_damage"));
-    assert!(armed.stats["enhanced_damage"].0 > 0.0);
-    assert_eq!(
-        armed
-            .stats
-            .get("attack_damage")
-            .copied()
-            .unwrap_or_default(),
-        (0.0, 0.0)
-    );
+    assert!(armed.stats["attack_damage"].0 > unarmed.stats["attack_damage"].0);
 }
 
 #[test]

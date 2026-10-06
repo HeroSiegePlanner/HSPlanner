@@ -111,14 +111,14 @@ fn parity_with_ts_fixtures() {
 }
 
 // The TS archive used tooltip attribute rates (5 life/Vit, 4 mana/Energy,
-// 0.125 crit damage/Dex, regen Vit/8 and Energy/6 floored). The executable's
-// Stat scripts use 6.5, 4.5, 0.1, 0.125·Vit and 0.175·Energy. Only fields that
+// 0.125 crit damage/Dex, regen Vit/8 and Energy/6 floored, Strength → Enhanced
+// Damage). The executable's Stat scripts use 6.5, 4.5, 0.1, 0.125·Vit,
+// 0.175·Energy and Strength → Attack Damage. Only fields that
 // derive from those totals are re-baselined; damage and all other rows stay archived.
 fn rebaseline_attribute_conversions(actual: &Value, expected: &mut Value) {
-    for key in ["crit_damage", "life", "mana", "life_replenish", "mana_replenish"] {
-        if !actual["stats"][key].is_null() {
-            expected["stats"][key] = actual["stats"][key].clone();
-        }
+    // Strength feeds Attack Damage (StatAttackDamage), not Enhanced Damage.
+    for key in ["crit_damage", "life", "mana", "life_replenish", "mana_replenish", "attack_damage", "enhanced_damage"] {
+        expected["stats"][key] = actual["stats"][key].clone();
     }
     if let Some(entries) = actual["ehp"]["entries"].as_array() {
         for (i, entry) in entries.iter().enumerate() {

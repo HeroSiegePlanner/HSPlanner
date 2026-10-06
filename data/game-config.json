@@ -56,7 +56,7 @@
     "vitality": 10
   },
   "defaultStatsPerAttribute": {
-    "strength": { "enhanced_damage": 1 },
+    "strength": { "attack_damage": 1 },
     "dexterity": { "attack_rating": 8, "crit_damage": 0.1 },
     "intelligence": {},
     "energy": { "mana": 4.5, "mana_replenish": 0.175 },

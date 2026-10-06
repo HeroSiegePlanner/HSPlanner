@@ -2669,10 +2669,10 @@ fn wargod_total_damage_penalty_reaches_spell_and_weapon_hits() {
                     .or_else(|| p.damage.as_ref().map(|d| d.hit_max))
                     .unwrap() as f64
             };
-            // Final integer rounding can differ by one point; the penalty
-            // multiplies the whole hit even with existing increased damage.
+            // Each floored hit component rounds separately (two for a combined
+            // attack); the penalty multiplies the whole hit even with existing bonuses.
             assert!(
-                (hit(&wargod) - hit(&baseline) * 0.85).abs() <= 1.0,
+                (hit(&wargod) - hit(&baseline) * 0.85).abs() <= 2.0,
                 "{skill}"
             );
         }
