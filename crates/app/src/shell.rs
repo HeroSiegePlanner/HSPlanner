@@ -705,13 +705,20 @@ pub fn run(
                     (width.is_finite() && height.is_finite() && width >= 960. && height >= 600.)
                         .then_some(size(px(width), px(height)))
                 });
-            let bounds =
-                Bounds::centered(None, review_size.unwrap_or(size(px(1440.), px(960.))), cx);
+            let desired = review_size.unwrap_or(size(px(1440.), px(960.)));
+            let bounds = match cx.primary_display() {
+                Some(display) => fit_window(display.visible_bounds(), desired),
+                None => Bounds::centered(None, desired, cx),
+            };
             let lock_review_size =
                 review_size.is_some() && std::env::var_os("HSPLANNER_REVIEW_LOCK_SIZE").is_some();
             cx.open_window(
                 WindowOptions {
-                    window_bounds: Some(WindowBounds::Windowed(bounds)),
+                    window_bounds: Some(if review_size.is_some() {
+                        WindowBounds::Windowed(bounds)
+                    } else {
+                        WindowBounds::Maximized(bounds)
+                    }),
                     window_min_size: Some(size(px(960.), px(600.))),
                     is_resizable: !lock_review_size,
                     titlebar: Some(TitlebarOptions {
@@ -745,4 +752,36 @@ pub fn run(
             .expect("open HSPlanner window");
             cx.activate(true);
         });
+}
+
+const WINDOW_FIT_RATIO: f32 = 0.9;
+
+fn fit_window(work_area: Bounds<Pixels>, desired: Size<Pixels>) -> Bounds<Pixels> {
+    let limit = size(
+        work_area.size.width * WINDOW_FIT_RATIO,
+        work_area.size.height * WINDOW_FIT_RATIO,
+    );
+    Bounds::centered_at(work_area.center(), desired.min(&limit))
+}
+
+#[cfg(test)]
+mod window_fit_tests {
+    use super::fit_window;
+    use gpui_kit::{Bounds, point, px, size};
+
+    #[test]
+    fn fit_window_keeps_caption_on_screen_at_125_percent_scale() {
+        let work_area = Bounds::new(point(px(0.), px(0.)), size(px(1536.), px(824.)));
+        let bounds = fit_window(work_area, size(px(1440.), px(960.)));
+        assert!(bounds.origin.y >= px(32.));
+        assert!(bounds.bottom() <= work_area.bottom());
+        assert!(bounds.size.width < px(1440.));
+    }
+
+    #[test]
+    fn fit_window_keeps_desired_size_on_large_displays() {
+        let work_area = Bounds::new(point(px(0.), px(0.)), size(px(2560.), px(1400.)));
+        let bounds = fit_window(work_area, size(px(1440.), px(960.)));
+        assert_eq!(bounds.size, size(px(1440.), px(960.)));
+    }
 }
