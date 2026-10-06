@@ -1,5 +1,7 @@
 ## Feature
 
+- Enemy-side damage follows CalculateEndDamage: subtree "enemy damage taken" (enemy buff 13, e.g. Weakening Blast) joins the elemental break sum instead of multiplying separately and no longer affects physical hits; the low-life bonus is a separate multiplier for physical damage only; resistance penetration is no longer clamped at 100%.
+
 - Skill critical strikes now use the pool of the hit's damage type, as the game does: physical skills crit on attack critical chance/damage and elemental skills on spell critical chance/damage, regardless of the Spell tag. Attacks keep attack crit on their converted elemental share.
 
 - Spell projectile counts now include Extra Spell Projectiles % and Additional Spell Projectile for the 44 skills that use the game's ReturnExtraSpellProjectiles (e.g. Frozen Boulder, Orb of Frost, Charged Bolts): floor(count × (1 + %/100)), then the flat bonus.

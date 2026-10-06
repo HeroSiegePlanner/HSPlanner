@@ -548,7 +548,8 @@ fn compute_skill_damage_with_rank(
             r_max(rg(input.stats, k.ignore_res)) + implicit
         })
         .unwrap_or(0.0);
-    let ignore_res_pct = raw_ignore.clamp(0.0, 100.0);
+    // LoadMonsterResistance: Res·(1 − Pen) with no clamp on either side.
+    let ignore_res_pct = raw_ignore;
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
     let resistance_mult = 1.0 - eff_res_pct / 100.0;
 
@@ -590,7 +591,16 @@ fn compute_skill_damage_with_rank(
     };
     // CalculateEndDamage adds the universal and matching typed Break fractions
     // before multiplying damage. The two bonuses do not amplify each other.
-    let combined_break_mult = 1.0 + (elemental_break_pct + element_break_pct) / 100.0;
+    // Weakening Blast-style projEffect[986] lands as enemy buff 13, the same
+    // generic elemental break K term; physical hits never read it.
+    let damage_taken_pct = if is_elemental {
+        r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0)
+    } else {
+        0.0
+    };
+    let damage_taken_mult = 1.0;
+    let combined_break_mult =
+        1.0 + (elemental_break_pct + element_break_pct + damage_taken_pct) / 100.0;
     let (critical_break_average, critical_break_step) = super::critical_break_average_multiplier(
         s.damage_type.as_deref().unwrap_or_default(),
         element_break_pct,
@@ -599,8 +609,6 @@ fn compute_skill_damage_with_rank(
         input.scoped,
     );
 
-    let damage_taken_pct = r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0);
-    let damage_taken_mult = 1.0 + damage_taken_pct / 100.0;
 
     // The runtime elemental path adds the intercept after the rank/flat
     // term's synergy and generic modifiers. Only verified metadata opts in.
@@ -949,12 +957,12 @@ fn compute_skill_damage_with_rank(
         scalar(extra_mult),
     ));
     calculation.push(CalculationStep::new(
-        "Enemy damage taken multiplier",
+        "Enemy damage taken (break total)",
         format!(
-            "1 + {}% / 100 from this skill's subtree",
+            "{}% from this skill's subtree joins the elemental break sum (enemy buff 13); physical hits ignore it",
             number(damage_taken_pct)
         ),
-        scalar(damage_taken_mult),
+        scalar(1.0 + damage_taken_pct / 100.0),
     ));
     stat_inputs(
         &mut calculation,
@@ -1804,7 +1812,7 @@ mod tests {
     }
 
     #[test]
-    fn aggregated_ignore_all_counts_once_in_elemental_damage_and_caps_at_100() {
+    fn aggregated_ignore_all_counts_once_in_elemental_damage_without_cap() {
         use crate::calc::stats::{
             apply_stat_fan_outs, compute_final_stats, push_source, SourceContribution, SourceMap,
             SourceType,
@@ -1833,8 +1841,9 @@ mod tests {
                 });
                 let expected = match damage_type {
                     "physical" => 0.,
-                    "cold" => (all + 20.).min(100.),
-                    _ => all.min(100.),
+                    // LoadMonsterResistance does not clamp penetration.
+                    "cold" => all + 20.,
+                    _ => all,
                 };
                 assert_eq!(result.resistance_ignored_pct, expected, "{damage_type}");
             }

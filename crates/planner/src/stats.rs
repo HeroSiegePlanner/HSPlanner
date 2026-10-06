@@ -261,7 +261,7 @@ fn calculation_overview(step: &CalculationStep) -> Option<(&'static str, &'stati
         "Crushing blow + armor break" => (tr("planner.calculation.crushing_armor"), "×"),
         "Deadly blow multiplier" => (tr("planner.calculation.deadly"), "×"),
         "Extra damage multiplier" => (tr("planner.calculation.extra_damage"), "×"),
-        "Enemy damage taken multiplier" => (tr("planner.calculation.vulnerability"), "×"),
+        "Enemy damage taken (break total)" => (tr("planner.calculation.vulnerability"), "×"),
         "Elemental break multiplier" => (tr("planner.calculation.elemental_break"), "×"),
         "Element resistance break multiplier" => (tr("planner.calculation.resistance_break"), "×"),
         "Resistance multiplier" => (tr("planner.calculation.enemy_resistance"), "×"),
