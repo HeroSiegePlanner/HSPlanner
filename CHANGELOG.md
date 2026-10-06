@@ -2,6 +2,8 @@
 
 - Fixed the main window opening partly off-screen at 125% display scaling on Windows, which hid the title bar and close button. The app now starts maximized and restores to a size that fits the monitor's work area.
 
+- Added a reusable Ghidra headless helper for static Hero Siege decompilation by function name or address, with executable fingerprint checks and local analysis projects.
+
 - Removed the unused Tauri integration and dependency from the GPUI engine, along with an unused direct engine dependency in the native app. Pruned the Cargo lockfile to the active workspace dependency graph.
 
 - Compared all Incarnation Tree supplementary notes with HS Helper and added The Ripper’s missing dagger requirement. Preserved verified Temporal Echo and Manafury explanations; documented remaining stat-line differences in `docs/incarnation-helper-comparison.md`.
