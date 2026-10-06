@@ -804,7 +804,8 @@ fn tree_defense_scales_equipped_armor_and_feeds_hulking_colossus() {
     let defense = (base.stats["defense"].0 * 1.13).floor();
     assert_eq!(result.stats["defense"].0, defense);
     assert_eq!(result.stats["defense_pct"], (13.0, 13.0));
-    assert!((result.stats["life"].0 - (base.stats["life"].0 + defense * 0.025)).abs() < 1e-8);
+    // Stat totals are floored like the game's ReturnSpecificStat.
+    assert_eq!(result.stats["life"].0, (base.stats["life"].0 + defense * 0.025).floor());
     let breakdown = compute_stat_breakdown(&result.stat_sources, "defense", None);
     assert!((breakdown.combined.0 - base.stats["defense"].0 * 1.13).abs() < 1e-8);
 }

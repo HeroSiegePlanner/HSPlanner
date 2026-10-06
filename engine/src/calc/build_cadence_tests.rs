@@ -655,7 +655,12 @@ fn blade_critical_subtree_scales_local_damage_without_global_or_flat_leaks() {
                 * (1. + edge as f64 * 5. / 100. + vitality * giant as f64 * 3. / 10000.);
             close(actual, global + intrinsic / 100.);
         }
-        assert!(attack.physical_avg_max > plain.physical_avg_max);
+        // Giant Slayer alone moves the 5% crit average by less than one integer step.
+        if edge > 0 {
+            assert!(attack.physical_avg_max > plain.physical_avg_max);
+        } else {
+            assert!(attack.physical_avg_max >= plain.physical_avg_max);
+        }
 
         build.main = Some("flying_scimitar");
         build.ranks.insert("flying_scimitar".into(), 10);

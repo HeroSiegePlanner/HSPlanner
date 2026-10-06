@@ -219,6 +219,10 @@ pub fn apply_multiplier(
         .and_then(|k| stats.get(k).copied())
         .unwrap_or((0.0, 0.0));
     if is_zero(pct) && is_zero(more) {
+        // Game floors every stat total (ReturnSpecificStat), with or without % bonuses.
+        if floor {
+            stats.insert(flat_key.to_string(), (flat.0.floor(), flat.1.floor()));
+        }
         return;
     }
     let raw_min = flat.0 * (1.0 + pct.0 / 100.0) * (1.0 + more.0 / 100.0);

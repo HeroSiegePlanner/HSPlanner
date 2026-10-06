@@ -57,16 +57,13 @@
   },
   "defaultStatsPerAttribute": {
     "strength": { "enhanced_damage": 1 },
-    "dexterity": { "attack_rating": 8, "crit_damage": 0.125 },
+    "dexterity": { "attack_rating": 8, "crit_damage": 0.1 },
     "intelligence": {},
-    "energy": { "mana": 4 },
-    "vitality": { "life": 5 },
+    "energy": { "mana": 4.5, "mana_replenish": 0.175 },
+    "vitality": { "life": 6.5, "life_replenish": 0.125 },
     "armor": { "defense": 5 }
   },
-  "attributeDividedStats": {
-    "energy": { "mana_replenish": 6 },
-    "vitality": { "life_replenish": 8 }
-  },
+  "attributeDividedStats": {},
   "stackTypes": [
     {
       "key": "ramping_pulse", "name": "Ramping Pulse", "maxStat": "ramping_pulse_max_stacks",

@@ -1,5 +1,7 @@
 ## Feature
 
+- Attribute conversions now follow the game's Stat scripts: 6.5 life per Vitality, 4.5 mana per Energy and 0.1% critical damage per Dexterity. Life and mana replenish gain 0.125 per Vitality and 0.175 per Energy without per-attribute flooring. Life, mana and other floored stat totals are now floored even without percentage bonuses, as the game does.
+
 - Fixed the main window opening partly off-screen at 125% display scaling on Windows, which hid the title bar and close button. The app now starts maximized and restores to a size that fits the monitor's work area.
 
 - Hellsent, Killing Spree and Rage Trance now require their explicit active temporary buffs instead of granting permanent subtree stats. Hellsent enables phasing conditions; Rage Trance adds separately to physical and magic reduction. Configuration, summaries, saves, share codes and skill loadouts retain each buff's own state.
