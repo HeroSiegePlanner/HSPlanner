@@ -65,7 +65,7 @@
       "perLevel": 0.75,
       "rankIndexing": "fullRank"
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 5,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -384,7 +384,7 @@
       "row": 2,
       "col": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 100,
     "movementDuringUse": 85,
     "manaCostFormula": {
@@ -432,7 +432,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 2,
     "range": 320,
     "movementDuringUse": 85,
@@ -701,7 +701,7 @@
       "row": 4,
       "col": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 100,
     "movementDuringUse": 85,
     "manaCostFormula": {
@@ -1026,7 +1026,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 3,
     "movementDuringUse": 85,
     "bonusSources": [

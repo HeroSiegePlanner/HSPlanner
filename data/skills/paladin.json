@@ -45,8 +45,8 @@
         "description": "Increases attack speed when using vengeance.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 15 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 15 }
         }
       },
       {
@@ -226,7 +226,7 @@
     "damageType": "lightning",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 30,
     "maxRank": 20,
     "requiresLevel": 1,
@@ -407,8 +407,8 @@
         "description": "Increases attack speed when using divine storm.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -716,7 +716,7 @@
     "damageType": "lightning",
     "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect", "Leap"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 3,
     "maxRank": 20,
     "requiresLevel": 16,
@@ -1057,8 +1057,8 @@
         "description": "Increases attack speed when using lightning fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -1171,7 +1171,7 @@
     "description": "Temporarily increases your attack speed and lightning skill damage.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,
@@ -1214,7 +1214,7 @@
     "tags": ["Cast", "Active", "Spell", "Projectile"],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Lionheart",
@@ -1470,7 +1470,7 @@
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 16,
     "tree": "Lionheart",
@@ -1672,7 +1672,7 @@
     "tags": ["Cast", "Active", "Spell", "Orbital"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 4.5,
     "maxRank": 20,
     "requiresLevel": 16,
@@ -1900,7 +1900,7 @@
     "tags": ["Cast", "Active", "Spell", "Projectile"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 24,
     "tree": "Lionheart",
@@ -2117,7 +2117,7 @@
     "description": "Temporarily increases your cast rate and mana replenish.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,

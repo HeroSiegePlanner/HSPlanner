@@ -194,8 +194,8 @@
         "description": "Increases the attack speed of buckshot while wielding a gun.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -303,7 +303,7 @@
     },
     "damageType": "fire",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 3,
     "damageFormula": {
       "base": 6.5,
       "perLevel": 9.5
@@ -1167,7 +1167,7 @@
     },
     "damageType": "fire",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.3,
     "baseCooldown": 2.5,
     "damageFormula": {
       "base": 0.5,
@@ -1418,7 +1418,7 @@
     },
     "damageType": "fire",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 8,
     "range": 330,
     "damageFormula": {
@@ -1696,7 +1696,7 @@
       "col": 0
     },
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 60,
     "effectDuration": 25,
     "manaCostFormula": {
@@ -1743,7 +1743,7 @@
     },
     "damageType": "cold",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 240,
     "damageFormula": {
       "base": 12,
@@ -2068,8 +2068,8 @@
         "description": "Gain additional attacks per second while wielding a bow.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -2265,7 +2265,7 @@
     },
     "damageType": "cold",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 0,
       "perLevel": 10
@@ -2491,7 +2491,7 @@
       "col": 1
     },
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "manaCostFormula": {
@@ -2570,7 +2570,7 @@
     },
     "damageType": "cold",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 2,
     "range": 360,
     "damageFormula": { "base": 0, "perLevel": 22 },
@@ -2802,7 +2802,7 @@
       "col": 2
     },
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2844,7 +2844,7 @@
     },
     "damageType": "cold",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 6,
     "damageFormula": {
       "base": 0.5,

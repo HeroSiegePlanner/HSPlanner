@@ -16,7 +16,7 @@
     ],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Metal Guitarist",
@@ -297,7 +297,7 @@
     ],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Metal Guitarist",
@@ -1634,8 +1634,8 @@
         "description": "Increases attack speed when using pyro technician.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 5 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 5 }
         }
       },
       {
@@ -1948,8 +1948,8 @@
         "description": "Increases attack speed when using headbanger.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 10 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 10 }
         }
       },
       {
@@ -2083,7 +2083,7 @@
         "description": "Knock monsters back when headbanging causing them to take increased damage when hitting terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "increased_attack_speed": 0 },
+          "base": { "physical_skill_damage": 0, "skill_attack_speed_more": 0 },
           "perRank": {
             "physical_skill_damage": 100,
             "increased_attack_speed": 15

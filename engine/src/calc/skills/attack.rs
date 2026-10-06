@@ -555,11 +555,7 @@ fn compute_attack_skill_damage_with_rank(
     let combined_avg_min = phys_avg_min_i + poison_avg_min + converted_avg.0;
     let combined_avg_max = phys_avg_max_i + poison_avg_max + converted_avg.1;
 
-    let ias = rg(input.stats, "increased_attack_speed");
-    let ias_more = rg(input.stats, "increased_attack_speed_more");
-    let base_aps = r_max(rg(input.stats, "attacks_per_second"));
-    let aps_min = base_aps * (1.0 + r_min(ias) / 100.0) * (1.0 + r_min(ias_more) / 100.0);
-    let aps_max = base_aps * (1.0 + r_max(ias) / 100.0) * (1.0 + r_max(ias_more) / 100.0);
+    let (aps_min, aps_max) = super::attacks_per_second(input.stats);
 
     let (aps_min, aps_max) = input.action_rate_override.unwrap_or((aps_min, aps_max));
 
@@ -949,10 +945,10 @@ fn compute_attack_skill_damage_with_rank(
             "Action cadence supplied by the entity, cooldown or persistent-skill model".into()
         } else {
             format!(
-                "{} base × (1 + {}% increased / 100) × (1 + {}% more / 100)",
-                number(base_aps),
-                range(ias),
-                range(ias_more)
+                "{} base + min(base, 0.75) × {}% increased / 100, × (1 + {}% more / 100)",
+                number(r_max(rg(input.stats, "attacks_per_second"))),
+                range(rg(input.stats, "increased_attack_speed")),
+                range(rg(input.stats, "increased_attack_speed_more"))
             )
         },
         (aps_min, aps_max),

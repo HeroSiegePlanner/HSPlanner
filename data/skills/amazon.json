@@ -347,7 +347,7 @@
         "manaCost": 5
       }
     ],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 0,
       "perLevel": 28
@@ -1078,8 +1078,8 @@
         "description": "Increases cast rate when using death from above.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -2027,8 +2027,8 @@
         "description": "Increases attack speed when using a bow with rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -2940,7 +2940,7 @@
         "manaCost": 10
       }
     ],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "movementDuringUse": 85,

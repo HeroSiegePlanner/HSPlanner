@@ -358,8 +358,8 @@
         "description": "Increases attack speed when using furious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 10 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 10 }
         }
       },
       {
@@ -567,7 +567,7 @@
     "description": "Awaken the full potential of both holy and unholy to gain both benefits for a short period of time with increased effectiveness.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 100,
-    "baseCastRate": 1,
+    "baseCastRate": 6,
     "baseCooldown": 50,
     "effectDuration": 25,
     "maxRank": 20,
@@ -881,8 +881,8 @@
         "description": "Increases attack speed when using brutalizing slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 7.5 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 7.5 }
         }
       },
       {
@@ -1039,7 +1039,7 @@
     "kind": "buff",
     "description": "Increase your damage dealt for a short period of time. Every corpse close to you will be siphoned for additional damage.",
     "tags": ["Cast", "Active", "Buff"],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 50,
     "movementDuringUse": 65,
     "effectDuration": 12,
@@ -1296,7 +1296,7 @@
     "damageType": "physical",
     "tags": ["Cast", "Active", "Spell", "Movement", "Strike"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 1,
     "maxRank": 20,
     "requiresLevel": 16,

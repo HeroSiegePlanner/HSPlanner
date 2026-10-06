@@ -117,8 +117,8 @@
         "description": "Increases attack speed when using sand carver.",
         "maxRank": 6,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 8 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 8 }
         }
       },
       {
@@ -226,7 +226,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Projectile", "Movement", "Blink"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 2.5,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Wanderer",
@@ -679,7 +679,7 @@
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.8,
     "maxRank": 20,
     "requiresLevel": 16,
     "tree": "Wanderer",
@@ -893,7 +893,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 2,
     "baseCooldown": 12,
     "effectDuration": 3,
     "maxRank": 20,
@@ -938,7 +938,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 2,
     "baseCooldown": 5,
     "maxRank": 20,
     "requiresLevel": 30,
@@ -2261,7 +2261,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Sentry", "Strike"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.85,
     "effectDuration": 5,
     "maxRank": 20,
     "requiresLevel": 30,

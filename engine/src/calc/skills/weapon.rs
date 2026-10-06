@@ -138,11 +138,7 @@ pub fn compute_weapon_damage(
     let ow_min = open_wounds_damage(base_phys_min, crush_armor_mult, status_mult, projectiles);
     let ow_max = open_wounds_damage(base_phys_max, crush_armor_mult, status_mult, projectiles);
 
-    let ias = rg(stats, "increased_attack_speed");
-    let ias_more = rg(stats, "increased_attack_speed_more");
-    let base_aps = r_max(rg(stats, "attacks_per_second"));
-    let aps_min = base_aps * (1.0 + r_min(ias) / 100.0) * (1.0 + r_min(ias_more) / 100.0);
-    let aps_max = base_aps * (1.0 + r_max(ias) / 100.0) * (1.0 + r_max(ias_more) / 100.0);
+    let (aps_min, aps_max) = super::attacks_per_second(stats);
 
     let enemy_phys_res_pct = enemy_resistances.get("physical").copied().unwrap_or(0.0);
     let phys_resistance_ignored_pct = r_max(rg(stats, "ignore_physical_res")).clamp(0.0, 100.0);

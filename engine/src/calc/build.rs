@@ -16,7 +16,7 @@ use super::skills::{
     StatMap, Weapon,
 };
 use super::stats::{
-    combine_additive_and_more, compute_build_stats, BuildStatsInput, ComputedStats,
+    compute_build_stats, BuildStatsInput, ComputedStats,
 };
 use super::subskill::subskill_key;
 use super::types::{
@@ -213,16 +213,10 @@ fn attack_action_rate_override(
         return Some(gate);
     }
     let base = rg(stats, "attacks_per_second");
-    let speed = combine_additive_and_more(
-        rg(stats, "increased_attack_speed"),
-        rg(stats, "increased_attack_speed_more"),
-    );
-    Some((
-        gate.0
-            .min(base.0.max(0.0) * (1.0 + speed.0 / 100.0).max(0.0)),
-        gate.1
-            .min(base.1.max(0.0) * (1.0 + speed.1 / 100.0).max(0.0)),
-    ))
+    let ias = rg(stats, "increased_attack_speed");
+    let more = rg(stats, "increased_attack_speed_more");
+    let rate = |b: f64, i: f64, m: f64| (super::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0);
+    Some((gate.0.min(rate(base.0, ias.0, more.0)), gate.1.min(rate(base.1, ias.1, more.1))))
 }
 
 /// Trigger cadence is independent of the damage dealt by the triggered skill.
@@ -874,13 +868,7 @@ pub(crate) fn performance_from_stats(
         (Some(swing.min), Some(swing.max))
     } else {
         let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
-            (
-                Some(r_max(stat("attacks_per_second"))),
-                combine_additive_and_more(
-                    stat("increased_attack_speed"),
-                    stat("increased_attack_speed_more"),
-                ),
-            )
+            (Some(r_max(stat("attacks_per_second"))), stat("increased_attack_speed"))
         } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
             // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
             (
@@ -892,19 +880,35 @@ pub(crate) fn performance_from_stats(
                 (stat("skill_haste").0 * 0.5, stat("skill_haste").1 * 0.5),
             )
         } else {
-            (
-                active_skill.and_then(|s| s.base_cast_rate),
-                combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
-            )
+            (active_skill.and_then(|s| s.base_cast_rate), stat("faster_cast_rate"))
         };
         let base_rate_min = if active_skill.is_some_and(|s| s.uses_attack_speed) {
             Some(stat("attacks_per_second").0)
         } else {
             base_rate
         };
+        // Game rates: attacks add IAS on ≤0.75 APS, casts add FCR/100 to
+        // abilityCastSpeed, haste scales the cooldown rate; "more" multiplies after.
+        let scale = |r: f64, bonus: f64, more: f64| -> f64 {
+            let rate = match active_skill {
+                Some(s) if s.uses_attack_speed => super::skills::attack_rate(r, bonus),
+                Some(s) if s.uses_skill_haste => r * (1.0 + bonus / 100.0),
+                _ => r + bonus / 100.0,
+            };
+            (rate * (1.0 + more / 100.0)).max(0.0)
+        };
+        let more = match active_skill {
+            Some(s) if s.uses_attack_speed => {
+                let mut merged = computed.stats.clone();
+                merged.insert("skill_attack_speed_more".into(), rg(main_scoped, "skill_attack_speed_more"));
+                super::skills::attack_speed_more(&merged)
+            }
+            Some(s) if s.uses_skill_haste => (0.0, 0.0),
+            _ => stat("faster_cast_rate_more"),
+        };
         let animation_rate = (
-            base_rate_min.map(|r| (r * (1.0 + rate_bonus.0 / 100.0)).max(0.0)),
-            base_rate.map(|r| (r * (1.0 + rate_bonus.1 / 100.0)).max(0.0)),
+            base_rate_min.map(|r| scale(r, rate_bonus.0, more.0)),
+            base_rate.map(|r| scale(r, rate_bonus.1, more.1)),
         );
         let cooldown =
             active_skill.and_then(|s| super::skill_cost::effective_cooldown(s, main_scoped));
@@ -1088,15 +1092,8 @@ pub(crate) fn performance_from_stats(
     // With no selected skill, on-hit item/passive procs can still accompany
     // basic weapon attacks. An unlearned selected skill supplies no contacts.
     let proc_contacts = if active_skill.is_none() && deps.main_skill_id.is_none() {
-        let speed = combine_additive_and_more(
-            stat("increased_attack_speed"),
-            stat("increased_attack_speed_more"),
-        );
-        let base = stat("attacks_per_second");
-        (
-            base.0.max(0.0) * (1.0 + speed.0 / 100.0).max(0.0),
-            base.1.max(0.0) * (1.0 + speed.1 / 100.0).max(0.0),
-        )
+        let aps = super::skills::attacks_per_second(&computed.stats);
+        (aps.0.max(0.0), aps.1.max(0.0))
     } else {
         modeled_contacts
     };

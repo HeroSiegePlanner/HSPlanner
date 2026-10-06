@@ -453,12 +453,12 @@
         "effects": {
           "base": {
             "physical_skill_damage": 0,
-            "increased_attack_speed": 35,
+            "skill_attack_speed_more": 35,
             "projectile_count": 1
           },
           "perRank": {
             "physical_skill_damage": 15,
-            "increased_attack_speed": 15,
+            "skill_attack_speed_more": 15,
             "projectile_count": 1
           }
         }
@@ -933,7 +933,7 @@
     "tree": "Gunslinger",
     "position": { "row": 3, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 60,
     "effectDuration": 25,
     "movementDuringUse": 85,
@@ -1394,7 +1394,7 @@
     "tree": "Executioner",
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": { "base": 0.5, "perLevel": 10.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
@@ -1858,7 +1858,7 @@
     "tree": "Executioner",
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": { "base": 0.5, "perLevel": 11.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
@@ -1900,7 +1900,7 @@
     "tree": "Executioner",
     "position": { "row": 4, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 40,
     "effectDuration": 25,
     "movementDuringUse": 85,

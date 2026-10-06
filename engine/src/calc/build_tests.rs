@@ -139,7 +139,8 @@ fn wizards_wrath_changes_real_spell_damage_and_cast_cadence() {
     let base = perf("pyromancer", "fireball", 10, &[], &[])
         .avg_hit_dps_max
         .unwrap();
-    for (overheated, expected_ratio) in [(false, 1.5), (true, 0.75)] {
+    // Tree "total cast rate" folds into FCR (+50% → +0.5 casts/s on 1.75 base).
+    for (overheated, expected_ratio) in [(false, 2.25 / 1.75), (true, 1.25 / 1.75 * 1.5)] {
         let result = perf_with_tree_conditions(
             "pyromancer",
             "fireball",
@@ -833,7 +834,8 @@ fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
     let base = perf("exo", "scorching_whip", 20, &[], &[]);
     let base_dps = base.hit_dps_max.expect("Scorching Whip DPS");
     let base_mana = base.skill_costs["scorching_whip"].mana_per_sec_max.unwrap();
-    for (stat, multiplier) in [("increased_attack_speed", 2.0), ("faster_cast_rate", 1.0)] {
+    // 1.5 APS + 0.75 × 100% IAS = 2.25 (×1.5); FCR does not touch attack skills.
+    for (stat, multiplier) in [("increased_attack_speed", 1.5), ("faster_cast_rate", 1.0)] {
         let fast = perf_with_stats("exo", "scorching_whip", 20, &[], &[(stat, "100")], 1.0);
         assert_eq!(
             fast.damage.as_ref().unwrap().final_max,
@@ -1538,10 +1540,10 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
     let (Some(dps), Some(damage)) = (trail.avg_hit_dps_max, trail.damage.as_ref()) else {
         panic!("expected dps for blazing_trail");
     };
-    // baseCastRate 1/s, no FCR: the whole DPS is damage x hits.
+    // abilityCastSpeed 2/s, no FCR: DPS is damage × 6 hits × 2 casts.
     assert!(
-        (dps / damage.avg_max as f64 - 6.0).abs() < 1e-9,
-        "6 hits per cast should be 6x the hit damage, got x{}",
+        (dps / damage.avg_max as f64 - 12.0).abs() < 1e-9,
+        "6 hits per cast at 2 casts/s should be 12x the hit damage, got x{}",
         dps / damage.avg_max as f64
     );
 

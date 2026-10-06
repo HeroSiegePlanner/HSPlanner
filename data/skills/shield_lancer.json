@@ -138,8 +138,8 @@
         "description": "Increases attack speed when using glorious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -220,7 +220,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Movement"],
     "movementDuringUse": 0,
-    "baseCastRate": 1,
+    "baseCastRate": 2,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Champion",
@@ -564,8 +564,8 @@
         "description": "Increases attack speed when using crushing lance.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 6 }
         }
       },
       {
@@ -921,7 +921,7 @@
     "description": "Gain increased attack damage and magic skill damage for a short period.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,
@@ -1155,7 +1155,7 @@
     "description": "Taunt monsters to attack you. Additional points increase the monster amount and duration.",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Knight",
@@ -1177,7 +1177,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 65,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Knight",
@@ -1428,7 +1428,7 @@
     "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Shield", "Orbital"],
     "movementDuringUse": 65,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 25,
     "maxRank": 20,
     "requiresLevel": 16,
@@ -1707,7 +1707,7 @@
     "tags": ["Cast", "Active", "Spell", "Shield", "Projectile"],
     "movementDuringUse": 100,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 15,
     "effectDuration": 6,
     "maxRank": 20,
@@ -1936,7 +1936,7 @@
     "description": "Restore yourself to full life and temporarily gain increased magic skill damage and physical damage reduction.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,

@@ -58,7 +58,7 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.875,
     "damageFormula": {
       "base": 6,
       "perLevel": 14
@@ -342,7 +342,7 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 420,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 0,
       "perLevel": 13.5
@@ -610,7 +610,7 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 0,
       "perLevel": 13
@@ -1108,7 +1108,7 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 3,
     "effectDuration": 5,
     "damageFormula": {
@@ -1422,7 +1422,7 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 14,
     "damageFormula": {
       "base": 0,
@@ -1667,7 +1667,7 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 240,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 6,
       "perLevel": 6.5
@@ -1927,7 +1927,7 @@
       "Spell"
     ],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1967,7 +1967,7 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 1,
       "perLevel": 11
@@ -2266,7 +2266,7 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "damageFormula": {
       "base": 0,
       "perLevel": 12
@@ -2505,7 +2505,7 @@
       "Buff"
     ],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 300,
     "effectDuration": 1.5,
     "manaCostFormula": {
@@ -2610,7 +2610,7 @@
       "Area of Effect"
     ],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 14,
     "effectDuration": 8,
     "manaCostFormula": {
@@ -2653,7 +2653,7 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 6,
     "damageFormula": {
       "base": 0,

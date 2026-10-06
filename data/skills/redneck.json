@@ -30,7 +30,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 240,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -275,7 +275,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 340,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -512,7 +512,7 @@
       "perLevel": 0.75,
       "rankIndexing": "fullRank"
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 320,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -747,7 +747,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 1,
     "effectDuration": 5,
     "movementDuringUse": 85,
@@ -820,7 +820,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 60,
     "effectDuration": 35,
     "movementDuringUse": 85,
@@ -964,7 +964,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 8,
     "effectDuration": 4,
     "movementDuringUse": 85,
@@ -1348,8 +1348,8 @@
         "description": "Increases chainsaw slash attack speed while wielding a chainsaw.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 10 }
+          "base": { "skill_attack_speed_more": 0 },
+          "perRank": { "skill_attack_speed_more": 10 }
         }
       },
       {
@@ -1785,7 +1785,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "movementDuringUse": 85,
@@ -1852,7 +1852,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "movementDuringUse": 65,
     "bonusSources": [
       {

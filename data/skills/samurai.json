@@ -820,7 +820,7 @@
     },
     "damageType": "arcane",
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.65,
     "damageFormula": {
       "base": 0.5,
       "perLevel": 27.5
@@ -1367,7 +1367,7 @@
       "row": 3,
       "col": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 2.5,
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1407,7 +1407,7 @@
       "row": 4,
       "col": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "manaCostFormula": {
@@ -1456,7 +1456,7 @@
       "col": 0
     },
     "damageType": "arcane",
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 8,
     "effectDuration": 6,
     "damageFormula": {
@@ -1721,7 +1721,7 @@
     },
     "damageType": "arcane",
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 3,
     "damageFormula": {
       "base": 0,
@@ -2033,7 +2033,7 @@
       "row": 1,
       "col": 2
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "manaCostFormula": {
@@ -2371,7 +2371,7 @@
     },
     "damageType": "arcane",
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 1.25,
     "effectDuration": 2,
     "damageFormula": {

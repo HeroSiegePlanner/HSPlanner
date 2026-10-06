@@ -82,6 +82,7 @@ fn parity_with_ts_fixtures() {
             serde_json::to_value(&actual).expect("BuildPerformance must be JSON-serialisable");
 
         rebaseline_attribute_conversions(&actual_json, &mut expected);
+        rebaseline_cast_speed(input_v, &actual_json, &mut expected);
         if let Some(diff) = compare_value("", &actual_json, &expected) {
             diffs.push(format!("scenario '{}': {diff}", entry.name));
         }
@@ -132,6 +133,39 @@ fn rebaseline_attribute_conversions(actual: &Value, expected: &mut Value) {
             if !expected["skillCosts"][id].is_null() {
                 expected["skillCosts"][id][field] = cost[field].clone();
             }
+        }
+    }
+}
+
+// Casts now start from each skill's abilityCastSpeed (mostly 1.75/s, TS used 1)
+// and add FCR/100. Rate rows follow the new base; DPS rows are the archived
+// value scaled by the main skill's rate ratio, so per-hit damage stays checked.
+fn rebaseline_cast_speed(input: &Value, actual: &Value, expected: &mut Value) {
+    let Some(costs) = actual["skillCosts"].as_object() else {
+        return;
+    };
+    let main = input["mainSkillId"].as_str().unwrap_or("");
+    let ratio = |field: &str| -> Option<f64> {
+        let new = costs.get(main)?[field].as_f64()?;
+        let old = expected["skillCosts"][main][field].as_f64()?;
+        (old > 0.0).then_some(new / old)
+    };
+    let (ratio_min, ratio_max) = (ratio("castRateMin"), ratio("castRateMax"));
+    for (id, cost) in costs {
+        if expected["skillCosts"][id].is_null() {
+            continue;
+        }
+        for field in ["baseRate", "castRateMin", "castRateMax", "manaPerSecMin", "manaPerSecMax"] {
+            expected["skillCosts"][id][field] = cost[field].clone();
+        }
+    }
+    for (field, ratio) in [
+        ("hitDpsMin", ratio_min), ("hitDpsMax", ratio_max),
+        ("avgHitDpsMin", ratio_min), ("avgHitDpsMax", ratio_max),
+        ("combinedDpsMin", ratio_min), ("combinedDpsMax", ratio_max),
+    ] {
+        if let (Some(r), Some(v)) = (ratio, expected[field].as_f64()) {
+            expected[field] = serde_json::json!(v * r);
         }
     }
 }

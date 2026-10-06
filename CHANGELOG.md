@@ -1,5 +1,7 @@
 ## Feature
 
+- Attack and cast speed now follow the game's formulas. Increased attack speed adds to the weapon rate on at most 0.75 attacks per second (diminishing above 400%, power 0.85), and faster cast rate adds FCR/100 casts per second to each skill's own cast speed (mostly 1.75, diminishing above 350%, power 0.75). Attack-path subtree speed bonuses (e.g. Sun Gods Chosen, Marksmanship) multiply that skill's final attack rate instead of adding to attack speed.
+
 - Attribute conversions now follow the game's Stat scripts: 6.5 life per Vitality, 4.5 mana per Energy and 0.1% critical damage per Dexterity. Life and mana replenish gain 0.125 per Vitality and 0.175 per Energy without per-attribute flooring. Life, mana and other floored stat totals are now floored even without percentage bonuses, as the game does.
 
 - Fixed the main window opening partly off-screen at 125% display scaling on Windows, which hid the title bar and close button. The app now starts maximized and restores to a size that fits the monitor's work area.

@@ -15,7 +15,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 6, "perLevel": 12 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 320,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -219,7 +219,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 5, "perLevel": 11 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 320,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -434,7 +434,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 0, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 320,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -644,7 +644,7 @@
     "damageType": "poison",
     "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 5,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -862,7 +862,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 0, "perLevel": 13 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 240,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -1076,7 +1076,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 0, "perLevel": 15.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "range": 320,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -1326,7 +1326,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 1, "perLevel": 24 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "movementDuringUse": 85,
     "bonusSources": [
       { "source": "Meteor Storm", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1542,7 +1542,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 7, "perLevel": 12 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 15,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -1780,7 +1780,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 0, "perLevel": 5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 120,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -1994,7 +1994,7 @@
     "damageType": "lightning",
     "damageFormula": { "base": 1, "perLevel": 13 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 15,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -2225,7 +2225,7 @@
     "damageType": "fire",
     "damageFormula": { "base": 0, "perLevel": 11 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 15,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -2463,7 +2463,7 @@
     "tree": "Chieftain",
     "position": { "row": 3, "col": 2 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 2,
     "baseCooldown": 6,
     "movementDuringUse": 85,
     "passiveStats": {
@@ -2487,7 +2487,7 @@
     "damageType": "arcane",
     "damageFormula": { "base": 1, "perLevel": 23 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 30,
     "movementDuringUse": 85,
     "bonusSources": [

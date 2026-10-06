@@ -940,9 +940,10 @@ fn on_cast_subproc_tracks_cast_speed_but_not_lifetime_ticks() {
     build.enable_subproc("lightning_surge", "lightning_strikes_twice", 5);
     let base = build.run();
     let target = base.damage.as_ref().unwrap().avg_max as f64;
-    close(base.proc_dps_max, target * 0.20);
+    // Lightning Surge casts 1.75/s; +100% FCR adds one cast per second.
+    close(base.proc_dps_max, target * 0.20 * 1.75);
     build.stat("faster_cast_rate", "100");
-    close(build.run().proc_dps_max, base.proc_dps_max * 2.0);
+    close(build.run().proc_dps_max, base.proc_dps_max * 2.75 / 1.75);
 }
 
 #[test]
@@ -956,11 +957,11 @@ fn on_hit_subproc_counts_projectiles_and_repeated_contacts() {
         .iter()
         .find(|s| s.label() == "Proc trigger contacts per second")
         .unwrap();
-    close(trace.value().1, 6.0);
+    close(trace.value().1, 6.0 * 1.75);
     build.projectiles.insert("lightning_surge".into(), 3);
     close(build.run().proc_dps_max, base.proc_dps_max * 3.0);
     build.stat("faster_cast_rate", "100");
-    close(build.run().proc_dps_max, base.proc_dps_max * 6.0);
+    close(build.run().proc_dps_max, base.proc_dps_max * 3.0 * 2.75 / 1.75);
 }
 
 #[test]

@@ -165,6 +165,30 @@ pub fn cast_rate(skill: &SkillSpec, stats: &StatMap) -> (Option<f64>, Ranged) {
     (skill.base_cast_rate, rg(stats, "faster_cast_rate"))
 }
 
+/// Applies the speed stat returned by `cast_rate`: weapon attacks add IAS on at most
+/// 0.75 APS, casts add FCR/100 to abilityCastSpeed, haste scales the cooldown rate.
+pub fn scaled_rate(skill: &SkillSpec, base: f64, speed: f64, more: f64) -> f64 {
+    let rate = if uses_weapon_rate(skill) {
+        crate::calc::skills::attack_rate(base, speed)
+    } else if skill.uses_skill_haste {
+        base * (1.0 + speed / 100.0)
+    } else {
+        base + speed / 100.0
+    };
+    (rate * (1.0 + more / 100.0)).max(0.0)
+}
+
+/// The "more" multiplier that applies on top of `scaled_rate` for this skill.
+pub fn rate_more(skill: &SkillSpec, stats: &StatMap) -> Ranged {
+    if uses_weapon_rate(skill) {
+        crate::calc::skills::attack_speed_more(stats)
+    } else if skill.uses_skill_haste {
+        (0.0, 0.0)
+    } else {
+        rg(stats, "faster_cast_rate_more")
+    }
+}
+
 pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
     let stats = input.stats;
     let (rank_min, rank_max) = input.eff_rank;
@@ -193,8 +217,9 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
     } else {
         base_rate
     };
-    let mut cast_rate_min = base_rate_min.map(|r| r * (1.0 + speed.0 / 100.0).max(0.0));
-    let mut cast_rate_max = base_rate.map(|r| r * (1.0 + speed.1 / 100.0).max(0.0));
+    let more = rate_more(input.skill, stats);
+    let mut cast_rate_min = base_rate_min.map(|r| scaled_rate(input.skill, r, speed.0, more.0));
+    let mut cast_rate_max = base_rate.map(|r| scaled_rate(input.skill, r, speed.1, more.1));
     if let Some(cooldown) = effective_cooldown(input.skill, stats) {
         let (cap_min, cap_max) = cooldown_rate(input.skill, cooldown, rg(stats, "skill_haste"));
         cast_rate_min = Some(cast_rate_min.map_or(cap_min, |rate| rate.min(cap_min)));
@@ -564,8 +589,9 @@ mod tests {
                 ("faster_cast_rate", 999.0),
             ]),
         );
-        assert!(close(c.cast_rate_min.unwrap(), 2.0));
-        assert!(close(c.cast_rate_max.unwrap(), 2.0));
+        // 1.25 APS + min(1.25, 0.75) × 60% IAS; FCR is ignored.
+        assert!(close(c.cast_rate_min.unwrap(), 1.7));
+        assert!(close(c.cast_rate_max.unwrap(), 1.7));
         assert!(cost(&kunai, 5.0, &stats(&[])).cast_rate_min.is_none());
     }
 
@@ -617,10 +643,9 @@ mod tests {
         );
 
         bonuses.insert("attacks_per_second".into(), (0.05, 0.08));
-        // The caller already folds speed-more into the base stat; retain it
-        // once while preserving both endpoints of the weapon's rate.
+        // Global speed-more is folded into the base stat before this point;
+        // the weapon's two endpoints are preserved. IAS adds on min(APS, 0.75).
         bonuses.insert("increased_attack_speed".into(), (100.0, 200.0));
-        bonuses.insert("increased_attack_speed_more".into(), (100.0, 100.0));
         let slow_weapon = cost(buckshot, 1.0, &bonuses);
         assert!(close(slow_weapon.cast_rate_min.unwrap(), 0.1));
         assert!(close(slow_weapon.cast_rate_max.unwrap(), 0.24));

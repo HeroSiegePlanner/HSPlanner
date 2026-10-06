@@ -373,6 +373,31 @@ pub struct WeaponDamageBreakdown {
 }
 
 #[inline]
+/// StatAttackSpeedMainHand: IAS adds to the weapon rate, scaled by at most 0.75 APS.
+pub fn attack_rate(base_aps: f64, ias_pct: f64) -> f64 {
+    base_aps + base_aps.min(0.75) * ias_pct / 100.0
+}
+
+/// Global "more" attack speed times the skill's own subtree multiplier; the game's
+/// TalentUseSetSpeed multiplies the weapon rate by (1 + Σ subtree bonuses).
+pub fn attack_speed_more(stats: &HashMap<String, Ranged>) -> Ranged {
+    let global = rg(stats, "increased_attack_speed_more");
+    let skill = rg(stats, "skill_attack_speed_more");
+    let combine = |g: f64, s: f64| ((1.0 + g / 100.0) * (1.0 + s / 100.0) - 1.0) * 100.0;
+    (combine(global.0, skill.0), combine(global.1, skill.1))
+}
+
+/// Weapon attacks per second (min, max) with the game's additive IAS.
+pub fn attacks_per_second(stats: &HashMap<String, Ranged>) -> Ranged {
+    let ias = rg(stats, "increased_attack_speed");
+    let more = attack_speed_more(stats);
+    let base = r_max(rg(stats, "attacks_per_second"));
+    (
+        attack_rate(base, r_min(ias)) * (1.0 + r_min(more) / 100.0),
+        attack_rate(base, r_max(ias)) * (1.0 + r_max(more) / 100.0),
+    )
+}
+
 pub fn rg(map: &HashMap<String, Ranged>, k: &str) -> Ranged {
     *map.get(k).unwrap_or(&(0.0, 0.0))
 }

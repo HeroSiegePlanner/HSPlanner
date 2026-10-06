@@ -1227,7 +1227,7 @@ fn amazon_weapon_gates_allow_only_matching_weapons() {
             "rebound",
             "marksmanship",
             "Bow",
-            "increased_attack_speed",
+            "skill_attack_speed_more",
             18.0,
         ),
         (
