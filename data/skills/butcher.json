@@ -128,8 +128,8 @@
         "description": "Reduced the cooldown of slicing throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 7 }
         }
       },
       {
@@ -720,8 +720,8 @@
         "description": "Decreases the cooldown of chain rip.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 7 }
         }
       },
       {
@@ -1235,8 +1235,8 @@
         "description": "Decreases the cooldown of butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 7 }
         }
       },
       {
@@ -1632,8 +1632,8 @@
         "description": "Reduces the cooldown of submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 7 }
         }
       },
       {
@@ -1899,12 +1899,12 @@
           "base": {
             "physical_skill_damage": 0,
             "skill_range": 0,
-            "skill_haste": 0
+            "cooldown_reduction_pct": 0
           },
           "perRank": {
             "physical_skill_damage": 50,
             "skill_range": 30,
-            "skill_haste": 25
+            "cooldown_reduction_pct": 25
           }
         }
       },

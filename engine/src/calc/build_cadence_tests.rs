@@ -930,7 +930,7 @@ fn cooldown_attack_uses_metadata_and_haste_instead_of_weapon_speed() {
         .insert(subskill_key("omnislash", "no_hesitation"), 5);
     close(
         build.run().attack_damage.unwrap().attacks_per_second_max,
-        1.175 / cooldown,
+        1.0 / (cooldown * 0.65), // No Hesitation rank 5: 35% cooldown reduction.
     );
 }
 

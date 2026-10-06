@@ -2413,8 +2413,8 @@
         "description": "Decreases the cooldown of armageddon.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 6 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 6 }
         }
       },
       {

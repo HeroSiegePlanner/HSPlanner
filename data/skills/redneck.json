@@ -1074,8 +1074,8 @@
         "description": "Decreases the cooldown of pickup raid.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 7 }
         }
       },
       {

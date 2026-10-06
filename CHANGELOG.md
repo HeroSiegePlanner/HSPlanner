@@ -1,5 +1,7 @@
 ## Feature
 
+- Subtree cooldown reductions (e.g. Timeless Tundra, Ephemeral Flurry, Blenderang) now reduce the cooldown itself as the game's GetTalentCooldown does (base × (1 − reduction%)), instead of acting as skill haste. Negative subtree cooldown changes are kept, and a reduced cooldown under 0.5 s from a longer base becomes 0.51 s.
+
 - Shuriken Throw's mana cost is multiplied by 1.5 while Twin Shurikens has a rank, before mana cost reduction, as in the game's LoadManaCost.
 
 - Enemy-side damage follows CalculateEndDamage: subtree "enemy damage taken" (enemy buff 13, e.g. Weakening Blast) joins the elemental break sum instead of multiplying separately and no longer affects physical hits; the low-life bonus is a separate multiplier for physical damage only; resistance penetration is no longer clamped at 100%.

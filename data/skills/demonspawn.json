@@ -603,8 +603,8 @@
         "description": "Decreases the cooldown of bone storm.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 5 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 5 }
         }
       },
       {
@@ -1014,8 +1014,8 @@
         "description": "Decreases the cooldown of bone barrage.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 5 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 5 }
         }
       },
       {

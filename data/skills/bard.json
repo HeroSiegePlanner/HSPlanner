@@ -736,8 +736,8 @@
         "description": "Decreases the cooldown of sacrilegious Symphony",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 10 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 10 }
         }
       },
       {
@@ -1052,8 +1052,8 @@
         "description": "Decreases the cooldown of progenies of the great cataclysm.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 7 }
         }
       },
       {
@@ -1325,8 +1325,8 @@
         "description": "Decreases cooldown of crowd diver",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 8 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 8 }
         }
       },
       {

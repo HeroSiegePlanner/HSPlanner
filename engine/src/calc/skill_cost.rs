@@ -116,7 +116,14 @@ pub fn entity_rate(
 /// At <= 0.5s the runtime replaces this with action-speed timing. Keep that
 /// base in the sum before checking the threshold (e.g. Circle: 0.25 + 5).
 pub fn effective_cooldown(skill: &SkillSpec, stats: &StatMap) -> Option<f64> {
-    let cooldown = skill.base_cooldown.unwrap_or(0.0) + r_max(rg(stats, "cooldown_added")).max(0.0);
+    // GetTalentCooldown: cd = base − base·reduction% + added, then a raw result
+    // under 0.5s from a base above 0.5s becomes 0.51s.
+    let base = skill.base_cooldown.unwrap_or(0.0);
+    let reduction = r_max(rg(stats, "cooldown_reduction_pct"));
+    let mut cooldown = base - base * reduction / 100.0 + r_max(rg(stats, "cooldown_added"));
+    if cooldown < 0.5 && base > 0.5 {
+        cooldown = 0.51;
+    }
     (cooldown > 0.5).then_some(cooldown)
 }
 
@@ -576,6 +583,23 @@ mod tests {
         assert!(!c.sustainable);
         assert!(c.unsustainable);
         assert_eq!(c.uptime_min, Some(0.0));
+    }
+
+    #[test]
+    fn cooldown_reduction_and_point_five_one_floor_follow_get_talent_cooldown() {
+        let skill = SkillSpec {
+            base_cooldown: Some(4.0),
+            ..Default::default()
+        };
+        let cd = |pairs: &[(&str, f64)]| effective_cooldown(&skill, &stats(pairs));
+        assert_eq!(cd(&[("cooldown_reduction_pct", 25.0)]), Some(3.0));
+        // A negative subtree addition is kept, then an under-0.5 result becomes 0.51.
+        assert_eq!(cd(&[("cooldown_added", -3.8)]), Some(0.51));
+        let short = SkillSpec {
+            base_cooldown: Some(0.5),
+            ..Default::default()
+        };
+        assert_eq!(effective_cooldown(&short, &stats(&[])), None);
     }
 
     #[test]

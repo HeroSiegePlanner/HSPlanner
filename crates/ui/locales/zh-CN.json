@@ -1073,6 +1073,7 @@
   "planner.stat.crit_chance": "暴击率",
   "planner.stat.skill_attack_speed_more": "技能攻击速度倍率",
   "planner.stat.skill_mana_cost_more": "技能法力消耗倍率",
+  "planner.stat.cooldown_reduction_pct": "技能冷却缩减",
   "planner.stat.skill_crit_chance": "技能暴击率",
   "planner.stat.skill_crit_damage": "技能暴击伤害",
   "planner.stat.skill_extra_damage_bleeding": "对流血目标的技能伤害",

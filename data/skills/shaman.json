@@ -693,8 +693,8 @@
         "description": "Decreases the cooldown of earth bind.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 8 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 8 }
         }
       },
       {
@@ -1388,8 +1388,8 @@
         "description": "Decreases cooldown of fissures.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 5 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 5 }
         }
       },
       {
@@ -2527,8 +2527,8 @@
         "description": "Decreases the cooldown of chaos totem.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 5 }
+          "base": { "cooldown_reduction_pct": 0 },
+          "perRank": { "cooldown_reduction_pct": 5 }
         }
       },
       {

@@ -1525,8 +1525,8 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
         panic!("expected dps for orb_of_frost");
     };
     assert!(
-        (tundra_dps / base_dps - 1.25).abs() < 1e-9,
-        "Timeless Tundra's 50 skill haste gives 1.25x, got x{}",
+        (tundra_dps / base_dps - 2.0).abs() < 1e-9,
+        "Timeless Tundra's 50% cooldown reduction halves the cooldown (2x), got x{}",
         tundra_dps / base_dps
     );
 }
@@ -1884,8 +1884,8 @@ fn single_entity_note_pins_the_count_and_scales_with_max_amount() {
     );
 }
 
-// jotunn:avalanche has a 3 s cooldown; skill haste (Ephemeral Flurry +35%)
-// must scale its cast rate, which only the cooldown-gated path does.
+// jotunn:avalanche has a 3 s cooldown; Ephemeral Flurry's 35% reduction is
+// GetTalentCooldown's base·(1 − 0.35), which only the cooldown-gated path sees.
 #[test]
 fn avalanche_is_cooldown_gated_and_scales_with_skill_haste() {
     let base = perf("jotunn", "avalanche", 10, &[], &[]);
@@ -1894,8 +1894,8 @@ fn avalanche_is_cooldown_gated_and_scales_with_skill_haste() {
         panic!("expected dps for avalanche");
     };
     assert!(
-        (fast / slow - 1.175).abs() < 1e-9,
-        "35 skill haste gives 1 + 35 × 0.005 = 1.175x, got x{}",
+        (fast / slow - 1.0 / 0.65).abs() < 1e-9,
+        "35% cooldown reduction gives 1 / 0.65 = 1.538x, got x{}",
         fast / slow
     );
 }
@@ -2216,7 +2216,7 @@ fn blenderang_haste_and_hybrid_orbit_are_accounted_for() {
             .as_ref()
             .unwrap()
             .attacks_per_second_max,
-        0.171875 // (1 + 75 × 0.005) / 8 seconds.
+        0.5 // Blenderang rank 3: 8 s − 8 × 75% = 2 s.
     );
     let hybrid = perf(
         "butcher",
