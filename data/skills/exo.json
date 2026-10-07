@@ -1763,7 +1763,7 @@
     "requiresLevel": 30,
     "tree": "Lunar Prophet",
     "position": { "row": 4, "col": 1 },
-    "hitModel": { "object": "Exo_Black_Hole_Create", "tickFrequency": 0.5, "lifetime": 1 },
+    "hitModel": { "object": "Exo_Black_Hole_Create", "tickFrequency": 0.4, "lifetime": 4.5 },
     "ranks": [{ "rank": 1, "manaCost": 13 }],
     "damageFormula": { "base": 0.42, "perLevel": 15.58 },
     "manaCostFormula": { "base": 13, "perLevel": 1.125 },
