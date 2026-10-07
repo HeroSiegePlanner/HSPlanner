@@ -780,13 +780,22 @@ fn mind_over_matter_adds_only_the_mana_available_for_damage_diversion() {
 
 #[test]
 fn tree_defense_scales_equipped_armor_and_feeds_hulking_colossus() {
-    let armor = data::data()
+    // Deterministic armor without its own % life, so the conversion is not scaled.
+    let mut armors: Vec<_> = data::data()
         .items
         .values()
-        .find(|item| item.defense_min.is_some_and(|value| value > 0.0) && item.slot != "weapon")
+        .filter(|item| item.defense_min.is_some_and(|value| value > 0.0) && item.slot != "weapon")
+        .collect();
+    armors.sort_by(|a, b| a.id.cmp(&b.id));
+    let (armor, base) = armors
+        .into_iter()
+        .find_map(|armor| {
+            let inventory = [(armor.slot.as_str(), armor.id.as_str())];
+            let base = audit_build(&[], &inventory, &[("defense", 1000.0)]);
+            (!base.stats.contains_key("increased_life")).then_some((armor, base))
+        })
         .unwrap();
     let inventory = [(armor.slot.as_str(), armor.id.as_str())];
-    let base = audit_build(&[], &inventory, &[("defense", 1000.0)]);
     let result = audit_build(&[56, 58], &inventory, &[("defense", 1000.0)]);
     let defense = (base.stats["defense"].0 * 1.13).floor();
     assert_eq!(result.stats["defense"].0, defense);

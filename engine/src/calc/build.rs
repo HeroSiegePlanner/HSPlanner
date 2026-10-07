@@ -672,8 +672,10 @@ pub(crate) fn performance_from_stats(
     let blender_cast_rate = is_blender.then(|| {
         let haste = rg(&computed.stats, "skill_haste");
         let scoped = rg(main_scoped, "skill_haste");
+        // GetTalentCooldown: Blenderang lowers the 8 s base through cooldown_reduction_pct.
         let cooldown = active_skill
-            .and_then(|s| s.base_cooldown)
+            .and_then(|s| super::skill_cost::effective_cooldown(s, main_scoped))
+            .or_else(|| active_skill.and_then(|s| s.base_cooldown))
             .unwrap_or(8.0)
             .max(0.001);
         super::skill_cost::cooldown_rate(
