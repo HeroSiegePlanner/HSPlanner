@@ -1,5 +1,7 @@
 ## Feature
 
+- Soul Spurn now hits each enemy once per cast. Its area has no damage tick: the 0.1 s timer it was modelled with is the Purgatory life-drain timer, and ticks every 1.25 s exist only while the Purgatory node keeps the area alive.
+
 - Subtree cooldown reductions (e.g. Timeless Tundra, Ephemeral Flurry, Blenderang) now reduce the cooldown itself as the game's GetTalentCooldown does (base × (1 − reduction%)), instead of acting as skill haste. Negative subtree cooldown changes are kept, and a reduced cooldown under 0.5 s from a longer base becomes 0.51 s.
 
 - Shuriken Throw's mana cost is multiplied by 1.5 while Twin Shurikens has a rank, before mana cost reduction, as in the game's LoadManaCost.

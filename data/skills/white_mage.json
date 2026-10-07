@@ -328,7 +328,7 @@
     "description": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana.",
     "maxRank": 20,
     "requiresLevel": 8,
-    "hitModel": { "object": "White_Mage_Soul_Spurn_AOE_Create", "tickFrequency": 0.1, "lifetime": 1 },
+    "hitModel": { "object": "White_Mage_Soul_Spurn_AOE_Create" },
     "ranks": [
       {
         "rank": 1,
