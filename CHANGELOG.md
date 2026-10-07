@@ -2,7 +2,7 @@
 
 - Black Hole lasts its 4.5 s duration (Mass Density extends it) and ticks every 0.4 s, as in the game, instead of 1 s at 0.5 s ticks. In the game Time != Space shortens that tick (to at least 0.1 s).
 
-- Sand Vortex ticks every 0.33 s for 1.32 s as in the game (Lasting Whirlpool still extends the lifetime), instead of every 0.25 s for 5 s. The skill script replaces the vortex's default 0.25 s tick with max(0.33 s × (1 − Accelerated Sand %), 0.1 s).
+- Sand Vortex ticks every 0.33 s for 4 s as in the game (Lasting Whirlpool extends the lifetime), instead of every 0.25 s for 5 s. The skill script replaces the vortex's default 0.25 s tick with 0.33 s; Accelerated Sand shortens the tick and cuts the lifetime to a third.
 
 - Soul Spurn now hits each enemy once per cast. Its area has no damage tick: the 0.1 s timer it was modelled with is the Purgatory life-drain timer, and ticks every 1.25 s exist only while the Purgatory node keeps the area alive.
 
