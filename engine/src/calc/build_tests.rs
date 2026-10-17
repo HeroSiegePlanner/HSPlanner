@@ -139,8 +139,13 @@ fn wizards_wrath_changes_real_spell_damage_and_cast_cadence() {
     let base = perf("pyromancer", "fireball", 10, &[], &[])
         .avg_hit_dps_max
         .unwrap();
-    // Tree "total cast rate" folds into FCR (+50% → +0.5 casts/s on 1.75 base).
-    for (overheated, expected_ratio) in [(false, 2.25 / 1.75), (true, 1.25 / 1.75 * 1.5)] {
+    // Tree "total cast rate" folds into FCR (+50% → +0.5 on the 1.75 base); casts
+    // per second follow the use animation, 60 / (ceil(72 / S) + 1) (METODA 37).
+    let lock = crate::calc::skills::animation_lock_rate;
+    for (overheated, expected_ratio) in [
+        (false, lock(2.25) / lock(1.75)),
+        (true, lock(1.25) / lock(1.75) * 1.5),
+    ] {
         let result = perf_with_tree_conditions(
             "pyromancer",
             "fireball",
@@ -706,10 +711,11 @@ fn subskill_tag_change_enables_archetype_damage() {
     let (Some(b), Some(f)) = (node.avg_hit_dps_max, node_stat.avg_hit_dps_max) else {
         panic!("expected dps");
     };
-    // Nanodrones itself grants arcane_skill_damage 15, sharing the additive
-    // pool with explosion_damage: (100+15+40)/(100+15).
+    // Nanodrones' own +15 % is the skill's LSSD, a separate x(1 + LSSD)
+    // factor (dps_cards), so explosion_damage alone fills the additive pool:
+    // (100+40)/100, up to the integer floors of the small rank-10 drone hit.
     assert!(
-        (f / b - 155.0 / 115.0).abs() < 1e-9,
+        (f / b - 140.0 / 100.0).abs() < 0.01,
         "with Nanodrones explosion_damage 40% should join the additive pool, got x{}",
         f / b
     );
@@ -801,10 +807,12 @@ fn attack_speed_skill_rates_off_attacks_per_second() {
     let p = perf("samurai", "explosive_kunai", 20, &[], &[]);
     let damage = p.damage.as_ref().expect("kunai damage");
     let dps = p.hit_dps_max.expect("kunai hit dps");
-    // 1.5 base attacks/s from game-config, no IAS on a bare build.
+    // 1.5 base attack speed from game-config, no IAS on a bare build; the use
+    // animation allows 60 / (ceil(72 / 1.5) + 1) = 60/49 throws/s (METODA 37),
+    // and a kunai aimed through the dummy lands 2 hits (dps_cards).
     assert!(
-        (dps - damage.final_max as f64 * 1.5).abs() < 1e-6,
-        "expected hit dps at 1.5 throws/s, got {dps}"
+        (dps - damage.final_max as f64 * 60.0 / 49.0 * 2.0).abs() < 1e-6,
+        "expected hit dps at 60/49 throws/s × 2 hits, got {dps}"
     );
 }
 
@@ -815,13 +823,14 @@ fn scorching_whip_deals_spell_damage_at_every_learned_rank() {
         let p = perf("exo", "scorching_whip", rank, &[], &[]);
         let damage = p.damage.as_ref().expect("Scorching Whip damage");
         assert!(damage.final_min > 0, "rank {rank}");
-        assert!((damage.base_min - (5.2 + 10.0 * rank as f64)).abs() < 1e-9);
+        // LoadTalentDamage V1 = 5 + 10·L (game natives).
+        assert!((damage.base_min - (5.0 + 10.0 * rank as f64)).abs() < 1e-9);
         assert!(
             p.attack_damage.is_none(),
             "the whip has no weapon damage component"
         );
         assert!(p.hit_dps_min.is_some_and(|dps| dps > 0.0), "rank {rank}");
-        assert_eq!(p.skill_costs["scorching_whip"].cast_rate_min, Some(1.5));
+        assert_eq!(p.skill_costs["scorching_whip"].cast_rate_min, Some(60.0 / 49.0));
     }
     let unlearned = perf("exo", "scorching_whip", 0, &[], &[]);
     assert!(unlearned.damage.is_none());
@@ -834,8 +843,9 @@ fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
     let base = perf("exo", "scorching_whip", 20, &[], &[]);
     let base_dps = base.hit_dps_max.expect("Scorching Whip DPS");
     let base_mana = base.skill_costs["scorching_whip"].mana_per_sec_max.unwrap();
-    // 1.5 APS + 0.75 × 100% IAS = 2.25 (×1.5); FCR does not touch attack skills.
-    for (stat, multiplier) in [("increased_attack_speed", 1.5), ("faster_cast_rate", 1.0)] {
+    // 1.5 APS + 0.75 × 100% IAS = 2.25; the use animation turns speeds 1.5 and
+    // 2.25 into 60/49 and 60/33 uses/s (×49/33). FCR does not touch attack skills.
+    for (stat, multiplier) in [("increased_attack_speed", 49.0 / 33.0), ("faster_cast_rate", 1.0)] {
         let fast = perf_with_stats("exo", "scorching_whip", 20, &[], &[(stat, "100")], 1.0);
         assert_eq!(
             fast.damage.as_ref().unwrap().final_max,
@@ -846,7 +856,7 @@ fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
             "{stat}"
         );
         let cost = &fast.skill_costs["scorching_whip"];
-        assert_eq!(cost.cast_rate_max, Some(1.5 * multiplier), "{stat}");
+        assert!((cost.cast_rate_max.unwrap() - 60.0 / 49.0 * multiplier).abs() < 1e-9, "{stat}");
         assert!(
             (cost.mana_per_sec_max.unwrap() - base_mana * multiplier).abs() < 1e-9,
             "{stat}"
@@ -883,7 +893,7 @@ fn scorching_whip_uses_equipped_weapon_speed_and_its_subtree_bonus() {
                 ..Default::default()
             };
             let p = calc_build_performance(input);
-            let rate = base_rate * multiplier;
+            let rate = crate::calc::skills::animation_lock_rate(base_rate * multiplier);
             let dps = p.hit_dps_max.expect("Scorching Whip DPS");
             assert!(
                 (dps - p.damage.as_ref().unwrap().final_max as f64 * rate).abs() < 1e-9,
@@ -1139,15 +1149,16 @@ fn incarnation_leap_nodes_reach_confirmed_skills_without_affecting_other_movemen
         );
     }
 
-    // The six direct elemental spells exercise both flat and percentage nodes.
+    // The direct elemental spells exercise both flat and percentage nodes.
     // Link of Sand has no direct damage; its tag must not manufacture a hit.
+    // Grenade Jump lands no hit on a dummy 160 px away (dps_cards), so it has
+    // no DPS for the nodes to raise.
     for (class, id) in [
         ("amazon", "leaping_ambush"),
         ("amazon", "storm_dash"),
         ("jotunn", "freezing_leap"),
         ("marauder", "crazy_grapple"),
         ("paladin", "ball_lightning"),
-        ("pirate", "grenade_jump"),
     ] {
         let base = perf(class, id, 20, &[], &[]);
         for node in [1887, 1888, 1889, 1891, 1966, 1967, 1968, 1969, 1890, 1970] {
@@ -1501,10 +1512,12 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
         panic!("expected dps for orb_of_frost");
     };
 
+    // DPS = hit × hits on the dummy per cast (dps_cards hit model) × casts/s.
+    let hits = base.hits_per_cast.map_or(1.0, |h| h.1);
     assert!(
-        (base_dps / hit - 1.0 / 1.75).abs() < 1e-9,
+        (base_dps / (hit * hits) - 1.0 / 1.75).abs() < 1e-9,
         "base rate should be one cast per 1.75 s cooldown, got {}",
-        base_dps / hit
+        base_dps / (hit * hits)
     );
     assert_eq!(fcr_dps, base_dps, "faster cast rate must not touch the orb");
     assert!(
@@ -1531,41 +1544,49 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     );
 }
 
-// Blazing Trail's fire lives 2.5 s and re-arms every 0.5 s, so one cast lands
-// floor(2.5 / 0.5) + 1 = 6 hits on a target that stays in it.
+// Black Hole lives 4.5 s and re-arms every 0.4 s; the dummy hit model (dps_cards,
+// rule 20 tick_hits) gives 11 hits per cast, and DPS is hit × 11 × uses/s.
 #[test]
 fn hit_model_multiplies_dps_by_hits_per_cast() {
-    let trail = perf("pyromancer", "blazing_trail", 10, &[], &[]);
-    assert_eq!(trail.hits_per_cast, Some((6.0, 6.0)));
-    let (Some(dps), Some(damage)) = (trail.avg_hit_dps_max, trail.damage.as_ref()) else {
-        panic!("expected dps for blazing_trail");
+    let hole = perf("exo", "black_hole", 10, &[], &[]);
+    assert_eq!(hole.hits_per_cast, Some((11.0, 11.0)));
+    let (Some(dps), Some(damage)) = (hole.avg_hit_dps_max, hole.damage.as_ref()) else {
+        panic!("expected dps for black_hole");
     };
-    // abilityCastSpeed 2/s, no FCR: DPS is damage × 6 hits × 2 casts.
+    let rate = hole
+        .calculation()
+        .iter()
+        .find(|s| s.label() == "Game use rate")
+        .expect("game use rate step")
+        .value()
+        .1;
     assert!(
-        (dps / damage.avg_max as f64 - 12.0).abs() < 1e-9,
-        "6 hits per cast at 2 casts/s should be 12x the hit damage, got x{}",
+        (dps / damage.avg_max as f64 - 11.0 * rate).abs() < 1e-9,
+        "11 hits per cast at {rate} casts/s, got x{}",
         dps / damage.avg_max as f64
     );
 
     let fireball = perf("pyromancer", "fireball", 10, &[], &[]);
     assert_eq!(
-        fireball.hits_per_cast, None,
-        "a skill without a hit model hits once"
+        fireball.hits_per_cast,
+        Some((1.0, 1.0)),
+        "the dummy model gives Fireball one hit per cast"
     );
 }
 
-// Timed Fire adds 10% Skill Duration per rank: 2.5 s -> 3.75 s buys two more ticks.
+// +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s: rule 20 gives
+// 17 map clears worth of hits instead of 11, and the dummy model scales with it.
 #[test]
 fn skill_duration_buys_extra_ticks() {
-    let base = perf("pyromancer", "blazing_trail", 10, &[], &[]);
-    let longer = perf("pyromancer", "blazing_trail", 10, &[("timed_fire", 5)], &[]);
-    assert_eq!(longer.hits_per_cast, Some((8.0, 8.0)));
+    let base = perf("exo", "black_hole", 10, &[], &[]);
+    let longer = perf_with_stats("exo", "black_hole", 10, &[], &[("skill_duration", "50")], 1.0);
+    assert_eq!(longer.hits_per_cast, Some((17.0, 17.0)));
     let (Some(base_dps), Some(long_dps)) = (base.avg_hit_dps_max, longer.avg_hit_dps_max) else {
-        panic!("expected dps for blazing_trail");
+        panic!("expected dps for black_hole");
     };
     assert!(
-        (long_dps / base_dps - 8.0 / 6.0).abs() < 1e-9,
-        "8 hits over 6 should be 1.33x, got x{}",
+        (long_dps / base_dps - 17.0 / 11.0).abs() < 1e-9,
+        "17 hits over 11, got x{}",
         long_dps / base_dps
     );
 }
@@ -1701,18 +1722,17 @@ fn frost_sunder_onslaught_lands_on_top_of_the_cold_pool() {
         deps.class_id = Some("jotunn");
         deps.level = 50;
         deps.main_skill_id = Some("frost_sunder");
-        compute_build_performance(&deps)
-            .attack_damage
-            .map(|a| a.poison_avg_max as f64)
-            .unwrap_or(0.0)
+        compute_build_performance(&deps).avg_hit_dps_max.unwrap_or(0.0)
     };
 
-    // Rank 3 is 3 x 75% of total damage on top of the hit.
+    // dps_cards p11: each of the 4 in-zone icicle hits spawns an explosion of
+    // 75r % of the hit, i.e. +3r main hits on the 5-hit base: (5 + 9) / 5 at
+    // rank 3, independent of the cold pool.
     for pool in [0.0, 500.0] {
         let ratio = cold_avg(3, pool) / cold_avg(0, pool);
         assert!(
-            (ratio - 3.25).abs() < 0.02,
-            "onslaught must be worth 3.25x with a {pool}% cold pool, got {ratio:.3}"
+            (ratio - 2.8).abs() < 0.02,
+            "onslaught must be worth 2.8x with a {pool}% cold pool, got {ratio:.3}"
         );
     }
 }

@@ -2,6 +2,8 @@
   {
     "id": "summon_raven",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one melee attack of one Prophet_Raven_obj; ravens are permanent summons, N = 3 + p1 + p5 + p12 + RSS360 of them): the attack is a Hitbox_Summon_obj = 1 hit of D = floor(LTD(418,V1)*M) + floor(RSS357%*life), V1 = 10*L (poison) = 1.0 main hit. Action interval attackCooldown 1.5 s/(1 + p3.s9%) / (1 + AS/100) (the 0.9 s attack animation is shorter, so the cooldown decides; engine side). perExtraProjectile 0: no projectile mechanism (extra ravens are N, not projectiles). p11 wasp salvos (2 + r shots per attack), p14 orbit ravens (different model: ring k at 80*(k+1) px, 3 hits per 3.0 s on ring 0, min(N-3, 4) per 3.42 s on ring 1 = the 160 px ring), p7 screech, p9 bleed are subskill effects."},
     "classId": "prophet",
     "name": "Summon Raven",
     "kind": "active",
@@ -74,78 +76,79 @@
       {
         "id": "power_of_the_flock",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3, 4, 5], "per": "use", "note": "already modelled by planner summon_max_amount; N += 1/r extra ravens; each raven = 1 main hit per attack cadence, counted per entity-action use (base 1 = one raven). Base N = 3"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Power of the Flock",
         "description": "Increases the maximum amount of ravens you can summon.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "cadaver_pecking",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r (summon M)"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Cadaver Pecking",
         "description": "Increases the damage dealt by ravens.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "frenzied_bird",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [10, 20, 30, 40, 50], "note": "attackCooldown /= (1+0.1r): cadence x(1+0.1r)"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Frenzied Bird",
         "description": "Increases the attack speed of ravens.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 10 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 10}
         }
       },
       {
         "id": "raven_eye",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "maxDistance 600*(1+25%r): range only; no damage"}], "confidence": "C", "note": "card table p4 (C)", "plannerFix": "planner poison_skill_damage 25r has no effect in the game; Raven Eye is range (skill_range 20r is the only real change)"},
         "name": "Raven Eye",
         "description": "Increases the detection range of ravens and its initial charge damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "poison_skill_damage": 25, "skill_range": 20 }
+          "base": {"poison_skill_damage": 0, "skill_range": 0},
+          "perRank": {"poison_skill_damage": 25, "skill_range": 20}
         }
       },
       {
         "id": "master_of_ravens",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3, 4, 5], "per": "use", "note": "already modelled by planner summon_max_amount; N += 1/r extra ravens (same convention as p1)"}, {"kind": "damage_pct", "byRank": [-30, -30, -30, -30, -30], "note": "LSSD -30% flat from 1 point"}], "confidence": "C", "note": "card table p5 (C)"},
         "name": "Master of Ravens",
         "description": "Increases the maximum amount of ravens you can summon but decreases the damage dealt.",
         "maxRank": 5,
         "effects": {
-          "base": {
-            "summon_max_amount": 0,
-            "poison_skill_damage": -30
-          },
-          "perRank": {
-            "summon_max_amount": 1,
-            "poison_skill_damage": 0
-          }
+          "base": {"summon_max_amount": 0, "subtree_damage": -30},
+          "perRank": {"summon_max_amount": 1, "subtree_damage": 0}
         }
       },
       {
         "id": "ravens_flight",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [5, 10, 15, 20, 25], "note": "LSSD +5%/r; movement +15%/r and orbit speed (p14) are not hit changes"}], "confidence": "C", "note": "card table p6 (C)"},
         "name": "Ravens Flight",
         "description": "Increases the movement speed and damage dealt by ravens.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "summon_movement_speed": 0 },
-          "perRank": { "poison_skill_damage": 5, "summon_movement_speed": 15 }
+          "base": {"summon_movement_speed": 0, "subtree_damage": 0},
+          "perRank": {"summon_movement_speed": 15, "subtree_damage": 5}
         }
       },
       {
         "id": "battle_screech",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.112, 0.192, 0.288, 0.4], "per": "hit", "note": "screech object with chance 4r% per attack, damage D*(1+0.2r): expected extra = 0.04r*(1+0.2r) per base hit"}], "confidence": "C", "note": "card table p7 (C)", "plannerFix": "planner adds area_of_effect 15r which the card does not give; proc chance 4r and poison 20r match the card's chance and 0.2r damage ratio"},
         "name": "Battle Screech",
         "description": "Chance on attack to unleash a battle screech dealing area of effect damage in a cone in front of the raven.",
         "maxRank": 5,
@@ -161,17 +164,19 @@
       {
         "id": "wounding_advantage",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "wounds_ripped_open", "note": "[177] extra vs bleeding x(1+0.15r); only while dummy bleeds (from p9 here; p13 gives 0 on dummy)"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Wounding Advantage",
         "description": "Increases damage dealt to monsters inflicted by bleed.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "wounds_ripped_open",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.75, 3.0, 6.75, 12.0, 18.75], "note": "bleed DoT [22] = floor(D*0.25r) with chance 3r% per attack: expected bleed per attack = 0.03r*0.25r of D (% of D shown); bleed ticks, refreshed every 1.5 s"}], "confidence": "C", "note": "card table p9 (C)", "plannerFix": "planner models a poison_skill_damage 25r proc; the game applies a physical bleed DoT floor(D*0.25r) (buff 3)"},
         "name": "Wounds Ripped Open",
         "description": "Chance on hit to cause bleeding, converting all other damage over time ailments to bleeding.",
         "maxRank": 5,
@@ -188,45 +193,49 @@
       {
         "id": "summon_the_flock",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 269 [15r,15r] for 10 s: raven movement only in SummonBuffs; cooldown +20 s has no dummy effect (ravens are permanent)"}], "confidence": "C", "note": "card table p10 (C/I)", "plannerFix": "planner poison_skill_damage 15r has no read in the game; the buff is movement speed for ravens"},
         "name": "Summon The Flock",
         "description": "Summons all ravens at once with increased movement speed and damage for a short duration. Summon Raven now has a cooldown.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "movement_speed": 0 },
-          "perRank": { "poison_skill_damage": 15, "movement_speed": 15 }
+          "base": {"poison_skill_damage": 0, "movement_speed": 0},
+          "perRank": {"poison_skill_damage": 15, "movement_speed": 15}
         }
       },
       {
         "id": "honey_stinger",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [3, 4, 5], "note": "wasp (rangedSummon, isWasp) burstShot = 2+r salvos per attack (alarm[1] = 1 + 9i), each wasp a separate Prophet_Raven_Wasp_Projectile_obj (projType 1, 5.2 px/frame, life 90 frames, mask 11x11, multiShot 1 = no spread) created 16 px from the raven; R4: attackDirection = point_direction(raven -> nearest enemy) (SAS L13) = exactly the dummy centre, the raven fires from <= attackRangeMin 180 px (distance_to_object, SummonStepSeekTarget L47), i.e. from beside the player, so every wasp hits (rule 33): x(2+r) hits per raven attack. LSSD +10%/r is in the damage_pct below"}, {"kind": "damage_pct", "byRank": [10, 20, 30], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card R4 418#0 (C): the wasps always hit the dummy; supersedes the 'may not fire at 160 px' caveat", "plannerFix": "planner has projectile_count 2+r with poison 10r; the wasp salvo count is in the card as x(2+r) hits; attackRangeMin 180 px is not modelled"},
         "name": "Honey Stinger",
         "description": "Ravens turn into wasps firing multiple projectiles per attack.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 2, "poison_skill_damage": 0 },
-          "perRank": { "projectile_count": 1, "poison_skill_damage": 10 }
+          "base": {"projectile_count": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 10}
         }
       },
       {
         "id": "flock_of_feathers",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "byRank": [4, 8, 12], "per": "use", "note": "already modelled by planner summon_max_amount; N += 4/r extra ravens (same convention as p1)"}], "confidence": "C", "note": "card table p12 (C)"},
         "name": "Flock of Feathers",
         "description": "Summon an increased amount of ravens.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 4 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 4}
         }
       },
       {
         "id": "rupturing_pull",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Resztki F (rule 43): ProjectileCollision24Prophet L24-L25 (0x14529e1b0) calls collision_circle_list(self.x, self.y, 240, Enemy_Parent_obj, prec = true, notme = true, list, ordered = true) with self = the HIT dummy, so the dummy is excluded and the list is empty; the bleed floor(d5*0.75r) 5 s goes to the NEAREST OTHER enemy (list[0]) -> 0 on a lone dummy (the R4 reading 6r % * ~0.8 per attack is void; the distance condition dist >= floor(sprite_width*0.25) is irrelevant). Works only with >= 2 enemies"}], "confidence": "I", "note": "card Resztki F: args/centre/notme C in asm, GameMaker notme semantics (caller excluded) I", "plannerFix": "planner adds bleeding 75r and a 6r% proc on every hit; the game applies the bleed only at distance > sprite_width/4 from the raven"},
         "name": "Rupturing Pull",
         "description": "Chance on attack to pull nearby monsters towards the raven inflicting bleeding.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 75 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -239,12 +248,13 @@
       {
         "id": "tempest_of_ravens",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "transformation: raven melee replaced by an orbit ring (Prophet_Raven_Orbit_obj, radius 80*(k+1) px, no summoner M). Dummy at 160 px is on ring 1 (band 92-228 px): hits per 3.42 s = min(N-3, 4) where N-3 = extra ravens from p1/p5/p12 (0 at base, so 0 here; 4 max at N>=7). Dependent on other subskills, not representable per rank; ring 0 (80 px) would give 3 hits per 3.0 s"}, {"kind": "other", "note": "cadence 3.42 s per orbit turn on ring 1; dependence on N as above"}], "confidence": "I", "note": "card table p14 (C structure, I hits; cooldown +10 s has no DPS effect)", "plannerFix": "planner poison 75r + generic summon model; the game is an orbit ring with hits = min(N-3,4) per 3.42 s around the player, no summoner M"},
         "name": "Tempest of Ravens",
         "description": "Ravens now orbit you dealing increased damage on hit. Summon Raven now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 75 }
+          "base": {"poison_skill_damage": 0},
+          "perRank": {"poison_skill_damage": 75}
         }
       }
     ]
@@ -252,6 +262,8 @@
   {
     "id": "thorned_roots",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, MAIN = aim through the dummy centre (x, y) (rule 38; direction taken from (x_g, y_g+6), segments are created at host + lengthdir(64, angle) with the player y without +6, Resztki B+D), dummy at 160 px: 1 path of 6 Prophet_Roots_obj segments (numb = ceil(5*(1+p8)) = 5 -> 6 segments), each single-hit (no tick). R4 SCALE CORRECTION: the class script sets image_xscale = image_yscale = 0.75*(1 + p6% [+ p12.s10%]) after creation (0.75 @0x1468905db from 0x14f187b60; scale stores @0x146893296/0x1468932d2) and direction = image_angle = path direction (@0x14689334a/0x146893386), so the 1.25 of Create_0 and the old 91 px spacing are void: spacing floor(133*0.75*0.55) = 54 px, first segment 64 px (asm 0x146892d42, 0x14f1898f8 = 64.0), centres 64/118/172/226/280/334 px, mask = filled ellipse 89x67 (origin [66, 46], semi-axes 44.5 x 33.5 times scale) with the long axis along the path; dummy Mask_Circle_24x_spr, pixel test 0x14b5a9310. Dummy at (160, 0): segments at 118 px (overlap ~3 px, margin holds for a +-3 px dummy shift) and 172 px both hit = 2 hits of d5 = floor(LTD(V1)*(1+LSSD)*m), V1 = 12*L (poison) = 2.0 main hits (Resztki B+D: confirmed, C inputs @asm, own simulation; pixel overlap +-1 px I). Variant cursor (x, y-24) (direction 8.53 deg, segment 172 px only): 1 hit. The poison [0] = 50 % of the hit per tick is a DoT and not counted. perExtraProjectile 0: no extra-projectile mechanism in the base (the path count 1 + p11.s9 comes only from p11 Nature's Path, 14 deg spacing: main 3/3/3 at r = 1/2/3 with aim from y+6, axis 0 deg would give 4/2/4, variant cursor (x, y-24) 2/3/3; p6 size r = 0..5: 2/2/2/1/1/1 (variant 1/2/1/1/1/1); p12 Gigathorn = 13 hits (12 roots in a 48 px ring around the landing point ~178 px away + the Gigathorn in flight), cooldown +3 s; p14 +1 hit per segment are subskill effects). Cast period: the animation lock of rule 37, (ceil(72/S)+1)/60 s = 43 frames at S = 1.75 (engine side)."},
     "classId": "prophet",
     "name": "Thorned Roots",
     "kind": "active",
@@ -278,10 +290,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 13
-    },
+    "damageFormula": { "base": 0, "perLevel": 12 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -323,56 +332,61 @@
       {
         "id": "strangulating_branches",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [8, 16, 24, 32, 40], "note": "poison tick frequency +8%/r ([1] = 8/r): DoT x1/(1-reduce) per %"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Strangulating Branches",
         "description": "Increases poisoned frequency by thorned roots.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_frequency": 0 },
-          "perRank": { "increased_poisoned_frequency": 8 }
+          "base": {"increased_poisoned_frequency": 0},
+          "perRank": {"increased_poisoned_frequency": 8}
         }
       },
       {
         "id": "painful_thorns",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r, applies to hit and poison"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Painful Thorns",
         "description": "Increases damage dealt by thorned roots.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "toxic_amplification",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "[181] extra vs poisoned x(1+0.15r); roots poison the dummy on every hit, so active from the 2nd cast"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Toxic Amplification",
         "description": "Increases damage dealt to monsters inflicted by poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 15 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 15}
         }
       },
       {
         "id": "thorned_wrath",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [5.7, 11.4, 17.1, 22.9, 28.6], "note": "castRate = 1.75 + FCR + 0.10r (TalentUseSetSpeed); ratio (1.75+0.1r)/1.75 - 1 in %"}], "confidence": "C", "note": "card table p4 (C); planner faster_cast_rate 10r is the same +0.10r/rank on castRate"},
         "name": "Thorned Wrath",
         "description": "Increases faster cast rate when using thorned roots.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "poison_ivy",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 94 on the target; Poison Ivy object spawns only when the target dies (ProjectileKill24Prophet)"}], "confidence": "C", "note": "card table p5 (C)", "plannerFix": "planner adds increased poisoned damage 25r and a poisoned proc on the dummy; the game effect is an on-kill object only"},
         "name": "Poison Ivy",
         "description": "Chance on monster kill to summon a poison ivy which shoots pores at nearby monsters inflicting poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 25 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -385,23 +399,25 @@
       {
         "id": "magnitude_of_roots",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0, 1.0, 0.5, 0.5, 0.5], "note": "segment scale 0.75*(1+0.15r) and spacing floor(133*scale*0.55) change the overlap with the dummy: main (aim through centre) hits r = 0..5: 2/2/2/1/1/1 -> relative to base 2: x1, x1, x0.5, x0.5, x0.5 for r1..r5 (not monotonic; variant cursor (x, y-24): 1/2/1/1/1/1; Resztki B+D)"}], "confidence": "I", "note": "card Resztki B+D / Po R4 (a) / R4 417#0: p6 r = 0..5 -> 2/2/2/1/1/1 (I)"},
         "name": "Magnitude of Roots",
         "description": "Increases the size and area of effect radius of thorned roots",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "venomous_strangulation",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.062, 1.221, 1.443, 1.704, 1.986], "note": "poison break x(1+0.25r) on the hit (not on DoT) after a roll with chance 4r% per cast, lasting 5 s; byRank = steady-state expected multiplier with 6.98 casts per 5 s (R4 cast period 43 frames = 0.717 s, p4=0): 1 + 0.25r*(1-(1-0.04r)^6.98). Value assumes no stacking of the break (old value used 8.75 casts at 1/1.75 s)"}], "confidence": "I", "note": "card table p7 (mechanism C, steady-state value derived I); recomputed for the R4 cast period 43 frames"},
         "name": "Venomous Strangulation",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 25 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -415,17 +431,19 @@
       {
         "id": "extended_roots",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "C", "note": "card table p8: numb = ceil(5*(1+0.2r)); longer line, no extra segment reaches a dummy at 160 px"},
         "name": "Extended Roots",
         "description": "Increases the duration of thorned roots.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "asphyxiating_grasp",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "one roll per cast, chance 4r%: m=2 (double damage and poison of the cast); expected x(1+0.04r)"}], "confidence": "C", "note": "card table p9 (C)", "plannerFix": "planner has the proc (chance 4r) without any effect; the game doubles the whole cast's damage on success"},
         "name": "Asphyxiating Grasp",
         "description": "Chance on hit to deal double damage.",
         "maxRank": 5,
@@ -434,59 +452,61 @@
       {
         "id": "rooted_essence",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -8%/r, reduced movement diminish 10%/r"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Rooted Essence",
         "description": "Decreases mana cost and movement diminish when using thorned roots.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0, "reduced_movement_diminish": 0 },
-          "perRank": {
-            "mana_cost_reduction": 8,
-            "reduced_movement_diminish": 10
-          }
+          "base": {"mana_cost_reduction": 0, "reduced_movement_diminish": 0},
+          "perRank": {"mana_cost_reduction": 8, "reduced_movement_diminish": 10}
         }
       },
       {
         "id": "natures_path",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "1+r root paths, 14 deg apart (planner trail_count 1/r)"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "explicit hits per use, MAIN (aim through the centre, direction from y+6, Resztki B+D, C): total 3/3/3 for r = 1/2/3 (n = 2/3/4 paths; n=2: -4.85 deg -> 2 segments, 9.15 deg -> 1; n=3: -11.85 deg -> 1, 2.15 deg -> 2, 16.15 deg -> 0; n=4: -4.85 -> 2, 9.15 -> 1); extra = total - 2 (base hits) = 1/1/1. Axis exactly 0 deg would give 4/2/4 (extra 2/0/2); variant cursor (x, y-24) 2/3/3 (extra 0/1/1)"}], "confidence": "C", "note": "card Resztki B+D (p11 3/3/3 at axis 2.15 deg, C; stable for aim offset 5-9 px), supersedes Po R4 4/2/4 and R4 2/3/3"},
         "name": "Nature´s Path",
         "description": "Unleash an additional trail of roots.",
         "maxRank": 3,
         "effects": {
-          "base": { "trail_count": 0, "poison_skill_damage": 0 },
-          "perRank": { "trail_count": 1, "poison_skill_damage": 15 }
+          "base": {"trail_count": 0, "subtree_damage": 0},
+          "perRank": {"trail_count": 1, "subtree_damage": 15}
         }
       },
       {
         "id": "gigathorn",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD +50%/r"}, {"kind": "set_hits", "byRank": [13, 13, 13], "note": "transformation: no root line; a Gigathorn (3.75 px/frame, zSpeed 3.5, g 0.2, start 32 px, 39 moves) lands ~178 px away and 12 Prophet_Roots_obj ring at 48 px from the landing point (Destroy_0 0x14960ee00, roots inherit the scale and numb = 5). R4: p12.s10 = 20r+80 (base 80) -> scale of the Gigathorn and ring roots 0.75*(1 + p6 + 0.8 + 0.2r) = 1.5/1.65/1.8; a dummy <= 31 px from the landing point (dummy 19.3 px away at the axis 2.15 deg, 18-19 px at 160 px) is in range of ALL 12 roots (also after a <= 8 px shift, I) + 1 hit of the Gigathorn in flight (PDP damage[5], image_angle = direction, mask 26x112 oriented, rule 29) = 13 per cast; hits are in main-hit units, base of this planner entry is now 2. Older '8-12 of 12' was wrong"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown +3 s; period = max(3 s, T_cast lock); without the lock-floor 3 s/(1+0.005h) of the card (h unexplained)"}], "confidence": "I", "note": "card R4 417#0 + Po R4 (c) + Resztki B+D (13 unchanged; 12 roots + Gigathorn); old entry had 12 (the +1 was only a remark)", "plannerFix": "planner models Gigathorn as projectile_size 80+20r and poison 50r; the game replaces the root line by a 12-root ring (+3 s cooldown)"},
         "name": "Gigathorn",
         "description": "Unleash a massive thorn that sends roots in all directions on hit. Thorned Roots now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_size": 80 },
-          "perRank": { "poison_skill_damage": 50, "projectile_size": 20 }
+          "base": {"projectile_size": 80, "cooldown_added": 3, "subtree_damage": 0},
+          "perRank": {"projectile_size": 20, "cooldown_added": 0, "subtree_damage": 50}
         }
       },
       {
         "id": "poison_roots",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1, 2, 3], "note": "stacks +1/r ([2] = 1/r): DoT x(1+r) under steady refresh"}], "confidence": "C", "note": "card table p13 (C)"},
         "name": "Poison Roots",
         "description": "Increases the stacks of poisoned thorned roots can apply on monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "max_skill_stacks": 0 },
-          "perRank": { "max_skill_stacks": 1 }
+          "base": {"max_skill_stacks": 0},
+          "perRank": {"max_skill_stacks": 1}
         }
       },
       {
         "id": "hungering_hive_mind",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.6, 2.2, 2.8], "per": "hit", "note": "one explosion per hitting segment with d5*(1+0.6r) (raw [151] = 1 consumed per segment): +(1+0.6r) main-hit units per BASE HIT (2 hitting segments in the R4 base -> 2 explosions per cast, scales with p6/p11 hit changes)"}], "confidence": "I", "note": "card table p14 (R4: 1-2 hitting segments, see base) (C mechanism, value I)", "plannerFix": "planner scales segment damage (poison_skill_damage 60r) and size; the game adds an extra explosion of d5*(1+0.6r) per hitting segment"},
         "name": "Hungering Hive Mind",
         "description": "Roots travel towards the next closest target after each hit unleashing an area of effect pulse.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "poison_skill_damage": 60, "projectile_size": 15 }
+          "base": {"poison_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"poison_skill_damage": 60, "projectile_size": 15}
         }
       }
     ]
@@ -494,6 +514,8 @@
   {
     "id": "carrion_worm",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of the permanent Prophet_Worm_obj; the cast only creates/replaces the worm, so the cooldown 8 s is irrelevant for the dummy): the worm stops when position_meeting(dummy) holds (6-12 px from the dummy centre), plays Prophet_Worm_Attack_spr and at image_index >= 5 (frame ~19 of the attack) makes 1 Explosion_Item_obj (r 32 px, active after 4 frames) with d5 = floor(D*(1 + b)), D = floor(LTD(V1)*(1+LSSD)), V1 = 16.5*L (poison), b = 0 in the base = 1 hit (1.0 main hit). The action rate is NOT a standard attackCooldown: the cycle is T = 3.51 s for a dummy at 160 px (R4: Player_Ability_Parent_obj_Step_1 0x1490fbe20 L12 is Begin Step, speed = deltaSpeed before Step_0; R3 gave 3.46 s as the mean of the two frame orders), T ~ 0.625 + 2.5*(maxCd + (D-19)/(60*v)) s, maxCd = max(0.75*(1-0.15*p1), 0.2) s, v = 6.5 px/frame; D = 60/100/250 px: 2.86/3.10/4.10 s (C logic, +-0.05 s I) - the engine's entity-rate model should use this period (1 hit per T). Resztki E: the worm is created at player + lengthdir(tupm[6], tupm[7]) = 30 px from the dummy centre (R4 assumed ~24); the cycle simulation was not re-run (only the first route changes, I). perExtraProjectile 0. p9 echo (5 %*r), p6 (x(1 + 0.35r) at 4r %), p8 linked chain (+1 hit at 4r %), p11 aura, p13 branches (R4 sim: hits per second, see the subskill entries) are subskill effects."},
     "classId": "prophet",
     "name": "Carrion Worm",
     "kind": "active",
@@ -522,10 +544,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 18
-    },
+    "damageFormula": { "base": 0, "perLevel": 16.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -567,34 +586,37 @@
       {
         "id": "empowered_nervous_system",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [7.7, 18.6, 34.5, 66.4, 127.9], "note": "maxCooldown 0.75 s*(1-0.15r) shortens only the underground wait; whole worm cycle T from sim (R4) 3.51/3.26/2.96/2.61/2.11/1.54 s (r0..r5); value = T(r0)/T(r)-1 in % (R3: 3.46/3.21/2.92/2.60/2.15/1.58)"}], "confidence": "I", "note": "card R4 section 'Inne poprawki' (T sim 3.51/3.26/2.96/2.61/2.11/1.54) + table row p1 (C/I)", "plannerFix": "p1 is a cycle (cadence) effect of the worm (T 3.46 s -> 1.58 s at r5), not summon_attack_speed 15%/r"},
         "name": "Empowered Nervous System",
         "description": "Increases the carrion worm´s attack frequency.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 15 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 15}
         }
       },
       {
         "id": "lingering_mass",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Lingering Mass",
         "description": "Increases damage dealt by carrion worm.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "wormtoxins",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [40, 80, 120, 160, 200], "note": "source of poison: [0] = floor(D*40%*r) per explosion (poison base as % of D, percent value shown); DoT ticks 5 s, stacks, ceil([0]*(1+pe[8]+pe[12])) per tick; continuous while worm hits every T<5 s"}], "confidence": "C", "note": "card table p3 (C)", "plannerFix": "p3 is the poison SOURCE (base poison 0.4r*D per explosion), not an increase of poisoned-target damage (increased_poisoned_damage 40r)"},
         "name": "Wormtoxins",
         "description": "Increases poisoned damage inflicted by carrion worm.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 40 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -607,28 +629,31 @@
       {
         "id": "inflammatory_touch",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "wormtoxins", "note": "[181] extra vs poisoned x(1+0.15r); only while dummy is poisoned (needs p3 or other poison source)"}], "confidence": "C", "note": "card table p4 (C)"},
         "name": "Inflammatory Touch",
         "description": "Deal increased damage to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 15 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 15}
         }
       },
       {
         "id": "worm_steroids",
         "positionIndex": 5,
+        "dummy": {"effects": [], "confidence": "C", "note": "card table p5 (size only)"},
         "name": "Worm Steroids",
         "description": "Increases the size of the carrion worm.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 18 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 18}
         }
       },
       {
         "id": "burrowing_monstrosity",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.014, 1.056, 1.126, 1.224, 1.35], "note": "expected x(1+0.04r*0.35r) per hit: proc chance 4r% -> explosion x(1+0.35r)"}], "confidence": "C", "note": "card table p6; planner proc chance 4r / 35r matches"},
         "name": "Burrowing Monstrosity",
         "description": "Chance on hit to knock monsters up stunning and dealing additional damage.",
         "maxRank": 5,
@@ -645,6 +670,7 @@
       {
         "id": "parasitic_aftershock",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 93 on hit, explosion only on kill (ProjectileKill24Prophet); 0 on a non-dying dummy"}], "confidence": "C", "note": "card table p7 (C)", "plannerFix": "planner proc adds poison 25r on the dummy, but the game effect fires only when the target dies"},
         "name": "Parasitic Aftershock",
         "description": "Monsters hit by the carrion worm have a chance to explode when killed dealing increased damage on a large radius.",
         "maxRank": 5,
@@ -660,6 +686,7 @@
       {
         "id": "linked_nervous_systems",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "chance 4r% per worm hit -> Prophet_Worm_Linked_obj with d5 (1 hit on a lone dummy, rule 15); poison part ignored; expected extra hits per base hit = 0.04r"}], "confidence": "I", "note": "card table p8 (I)", "plannerFix": "planner has no linked chain hit; it models only a poison-skill proc (chance 4r, 20r poison)"},
         "name": "Linked Nervous Systems",
         "description": "Chance to unleash a toxic chain inflicting poisoned on hit.",
         "maxRank": 5,
@@ -676,6 +703,7 @@
       {
         "id": "pulsating_touch",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "hit", "note": "echo explosion 0.25 s after attack (worm still at dummy) with ~d5, chance 5r% per attack: 0.05r extra hits per base hit"}], "confidence": "C", "note": "card table p9 (C); planner proc chance 5r, 100% of damage matches"},
         "name": "Pulsating Touch",
         "description": "Chance for carrion worm´s attacks to echo an additional time.",
         "maxRank": 5,
@@ -691,50 +719,55 @@
       {
         "id": "lingering_worm",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [5.4, 9.2, 13.2, 13.2, 13.2], "note": "wormSpeed 6.5*(1+20%r): cycle T (R4) 3.33/3.10/3.10 s for r1/r3/r5 (p1=0), T0 3.51 s. r2 and r4 are linear interpolations of T (3.215 and 3.10; not simulated); attackSize (echo only) has no dummy effect with p9=0"}], "confidence": "I", "note": "card R4 section 'Inne poprawki' (p10 r1/3/5 = 3.33/3.10/3.10); r2/r4 interpolated (I)"},
         "name": "Lingering Worm",
         "description": "Increases the movement speed and attack radius of the carrion worm.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0, "area_of_effect": 0 },
-          "perRank": { "movement_speed": 20, "area_of_effect": 12.5 }
+          "base": {"movement_speed": 0, "area_of_effect": 0},
+          "perRank": {"movement_speed": 20, "area_of_effect": 12.5}
         }
       },
       {
         "id": "parasitic_aura",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.11, 5.9, 14.71], "per": "use", "note": "R4 sim (worm_sim.py): impulse every 45*(1-0.225r) frames (35/25/15), aura lives 16 frames, circle r 50 px, 1 hit per impulse when the worm is <= 62 px from the dummy centre in one of the frames: 46.5 % of impulses reach it -> 0.80/1.12/1.86 hits/s, each floor(D*0.75r) = +0.60/+1.68/+4.19 D/s; per worm attack (use) = D/s * T (3.51 s), main-hit units. This is a time-based source (per second), encoded at the base cycle T = 3.51 s; sensitivity +-8 % (animation +-1 frame), +-25 % (D = 150-170 px); RSS543 (item stat 259) = 0 without gear"}], "confidence": "I", "note": "card R4 table p11 + 416#2 (logic C, numbers I from worm_sim.py)", "plannerFix": "planner models splash_of_total_damage 75r and faster_cast_rate 22.5r; the card gives an impulse series (0.75r*D each) and the cast-speed part is not in the card"},
         "name": "Parasitic Aura",
         "description": "Deal a portion of the damage to all nearby monsters slowing them.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "splash_of_total_damage": 75, "faster_cast_rate": 22.5 }
+          "base": {"splash_of_total_damage": 0, "faster_cast_rate": 0},
+          "perRank": {"splash_of_total_damage": 75, "faster_cast_rate": 22.5}
         }
       },
       {
         "id": "earthworm",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD +50%/r; size +(75+25r)% has no DPS effect in the card"}], "confidence": "C", "note": "card table p12 (C)"},
         "name": "Earthworm",
         "description": "Increases the size and damage of the carrion worm.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_size": 75 },
-          "perRank": { "poison_skill_damage": 50, "projectile_size": 25 }
+          "base": {"projectile_size": 75, "subtree_damage": 0},
+          "perRank": {"projectile_size": 25, "subtree_damage": 50}
         }
       },
       {
         "id": "conjured_branches",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [7.53, 10.08, 9.93], "per": "use", "note": "R4 sim: n = 3+r branches (4/5/6), orbit R = 48+8n = 80/88/96 px, 4 deg/frame, image_angle += 12 deg/frame from 0 (oriented 26x112 mask), map cleared every 90 frames; hits only when the worm surfaces halfway (x ~ 40-80 px from the player): 1.59/1.69/1.38 hits/s, each floor(D*(1+0.35r)) = +2.15/+2.87/+2.83 D/s; per worm attack (use) = D/s * T (3.51 s), main-hit units. Time-based source encoded at the base cycle; sensitivity +-8 % (animation), +-25 % (D = 150-170 px); stun 2 s has no DPS effect"}], "confidence": "I", "note": "card R4 table p13 + 416#2 (logic C, numbers I from worm_sim.py)", "plannerFix": "planner poison_skill_damage 35r + projectile_count 3+r is not the orbit model (count per rotation, multiplier 1+0.35r on each branch)"},
         "name": "Conjured Branches",
         "description": "Thorned Branches orbit around the carrion worm dealing damage to monsters stunning them on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_count": 3 },
-          "perRank": { "poison_skill_damage": 35, "projectile_count": 1 }
+          "base": {"poison_skill_damage": 0, "projectile_count": 3},
+          "perRank": {"poison_skill_damage": 35, "projectile_count": 1}
         }
       },
       {
         "id": "devouring_worm",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "searches corpses (320 px) -> explosion and buff 274; no corpse near a lone dummy"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner gives life replenish and increased life on hit; the game effect is corpse-based and gives no DPS on a dummy"},
         "name": "Devouring Worm",
         "description": "Carrion worm devours nearby corpses unleashing a large explosion dealing damage and providing you with increased life and life replenish for a short duration stacking up to 10.",
         "maxRank": 3,
@@ -784,6 +817,8 @@
   {
     "id": "thorned_branch",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.96, "confidence": "C", "note": "Per cast, dummy on the aim line at 160 px: n = 1 + RSS311 (+p11) Prophet_Branch_obj in a 15 deg fan; the branch starts 12 px from the player (0x1468a2a00, 12.0 @0x14f1895d0), flies 3.75 px/frame for 45 steps (lands at ~181 px, so the dummy at 160 px is in range), spins 12 deg/frame (-0.05/frame to 2) and clears its hit map every 360 deg of rotation (frame ~33), collision cadence 3 frames after contact (rule 18). R4: image_angle starts at 0 (the class script writes only direction, L498), so the spin is deterministic; simulation with the oriented rectangle (mask 26x112, origin [13, 56]) gives hits at frames 23 and 37-38 -> H = 2 hits per branch at BOTH cursors (the earlier 1.86-2.0 with a random phase and the AABB variant are void; Resztki B+D confirmed C, inputs @asm) (hits d5 = floor(LTD(V1)*(1+LSSD)*m), V1 = 15*L, poison). perExtraProjectile = mean of (H(n)-2)/(n-1) over the card's p11 table n = 4/5/6 -> 6/5/6 hits (main, aim through the centre): (1.33 + 0.75 + 0.80)/3 = 0.96 (old 1.0). A branch at angle psi from the dummy direction gets H = 2 for psi <= 15 deg, 1.5-2.0 at 22.5, 0.6-1.6 at 25, 0 from 30 deg (older table). Variant cursor (x, y-24): p11 5/6/5 with aim from y (4/5/4 with aim from y+6). Poison [0] (50 % per tick) is a DoT. p4 splinters (+1 hit d5*(1+0.3r) at 4r % per cast), p5 bounce, p12 fork (0 extra), p13 growth hitbox (+1 hit per proc), p14 falling branches (P(hit) 0.92) are subskill effects. Cast period: animation lock of rule 37, 43 frames at S = 1.75 (engine side)."},
     "classId": "prophet",
     "name": "Thorned Branch",
     "kind": "active",
@@ -811,10 +846,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 20
-    },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -856,45 +888,49 @@
       {
         "id": "sharper_thorns",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Sharper Thorns",
         "description": "Increases the damage dealt by thorned branch",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "conjurer_of_branches",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [7.1, 14.3, 21.4, 28.6, 35.7], "note": "castRate = 1.75 + 0.125r + FCR (TalentUseSetSpeed); ratio (1.75+0.125r)/1.75 - 1 in %"}], "confidence": "C", "note": "card table p2 (C); planner faster_cast_rate 12.5r matches"},
         "name": "Conjurer of Branches",
         "description": "Increases faster cast rate when using thorned branch.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 12.5 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 12.5}
         }
       },
       {
         "id": "critically_sharp_thorns",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "spell crit chance +4%/r; spell crit damage +30%/r ([1003])"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Critically Sharp Thorns",
         "description": "Chance to critically hit with thorned branch dealing increased critical spell damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 30}
         }
       },
       {
         "id": "thorned_splinters",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.052, 0.128, 0.228, 0.352, 0.5], "per": "use", "note": "per cast: chance 4r% (p4.s11, once per cast, L439) -> pack of 7 splinters with one shared singleHitPackId = 1 hit of floor(d5*(1+0.3r)) (R4: Branch_Destroy_0 L28 @0x14956dc0c-0x14956dd23 reads damage[5]*(1+thornedSplinters), thornedSplinters = 0.3r; the lifter had replaced the variable name). Expected 0.04r*(1+0.3r)"}, {"kind": "dot", "byRank": [30, 60, 90, 120, 150], "note": "poison x(1+0.3r) on the proc: the card gives +30%/r on the poison part of the splinter proc (I)"}], "confidence": "C", "note": "card R4 421#2 (C): splinter = floor(d5*(1+0.3r)); chance once per cast", "plannerFix": "planner models increased poisoned damage 30r and a poisoned proc; the game adds a splinter pack hit with chance 4r per cast"},
         "name": "Thorned Splinters",
         "description": "Chance for the branch to break when expiring unleashing splinters in all directions inflicting poisoned and dealing additional damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 30 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -911,6 +947,7 @@
       {
         "id": "bouncing_branch",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.002, 1.008, 1.018, 1.032, 1.05], "note": "[899] on hit: chance 4r%, the next hit d5 += floor(d5*0.1r) after the branch reset; averaged over the 2 hits of a branch: x(1+0.002r^2)"}], "confidence": "I", "note": "card table p5 (C mechanism, I value)", "plannerFix": "planner models a 4r% proc with poison 10r; the game only increases the second hit of a branch by 0.1r with chance 4r%"},
         "name": "Bouncing Branch",
         "description": "Chance on hit to change trajectory and gaining increased damage.",
         "maxRank": 5,
@@ -926,6 +963,7 @@
       {
         "id": "concussive_branchblow",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "chance 4r% once per cast: m=2 (double damage and poison); expected x(1+0.04r); stun 3 s has no DPS effect"}], "confidence": "C", "note": "card table p6 (C)", "plannerFix": "planner has only a stun proc; the game doubles the cast damage with chance 4r% (stun is no DPS)"},
         "name": "Concussive Branchblow",
         "description": "Chance on hit to deal double damage and stun the target for a short duration.",
         "maxRank": 5,
@@ -938,12 +976,13 @@
       {
         "id": "venom_infusion",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.074, 1.265, 1.531, 1.844, 2.184], "note": "poison break x(1+0.30r) on the hits (not DoT) after a roll with chance 4r% per cast, lasting 5 s; steady state with 6.98 casts per 5 s (R4 cast period 43 frames): 1 + 0.30r*(1-(1-0.04r)^6.98); no stacking assumed (old value used 8.75 casts)"}], "confidence": "I", "note": "card table p7 (mechanism C, value I); recomputed for the R4 cast period 43 frames"},
         "name": "Venom Infusion",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 30 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -957,12 +996,13 @@
       {
         "id": "amplified_venoms",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "poison [0] x(1+0.15r): DoT only"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Amplified Venoms",
         "description": "Increases the poisoned damage inflicted by thorned branch.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 15 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -975,42 +1015,47 @@
       {
         "id": "infecting_the_wounds",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "[181] extra vs poisoned x(1+0.15r); the branch poisons on every hit (V2 50%), so active from the 2nd hit"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Infecting the Wounds",
         "description": "Deal increased damage to targets inflicted by poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 15 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 15}
         }
       },
       {
         "id": "wooden_equilibrium",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -8%/r, reduced movement diminish 10%/r"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Wooden Equilibrium",
         "description": "Reduces mana cost and movement diminish when using thorned branch",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0, "reduced_movement_diminish": 0 },
-          "perRank": {
-            "mana_cost_reduction": 8,
-            "reduced_movement_diminish": 10
-          }
+          "base": {"mana_cost_reduction": 0, "reduced_movement_diminish": 0},
+          "perRank": {"mana_cost_reduction": 8, "reduced_movement_diminish": 10}
         }
       },
       {
         "id": "branched_multitude",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [3, 4, 5], "note": "extra branches 2+r (n = 3+r branches in the fan, 15 deg apart)"}, {"kind": "extra_hits", "byRank": [4, 3, 4], "per": "use", "replacesProjectileHits": true, "note": "explicit total hits per cast at dummy 160 px, MAIN = aim through the centre (rule 38): r1/r2/r3 (n = 4/5/6) = 6/5/6 (Po R4 (a), Resztki B+D confirmed C, inputs @asm, oriented rectangle, image_angle from 0, rule 18); extra = total - 2 (base hits) = 4/3/4. Variant cursor (x, y-24): 5/6/5 (aim from y) or 4/5/4 (aim from y+6)"}], "confidence": "C", "note": "card Po R4 (a) + Resztki B+D (6/5/6 confirmed C); supersedes the Runda 3 ranges 6.9-7.9/6.0 (AABB, random phase)", "plannerFix": "planner poison 15r with projectile_count 2+r; the game's fan hit count is non-monotonic in rank (7.4 / 6.0 / 7.4 at 160 px) because of the mask orientation, so projectile count alone is wrong"},
         "name": "Branched Multitude",
         "description": "Throw multiple branches in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_count": 2 },
-          "perRank": { "poison_skill_damage": 15, "projectile_count": 1 }
+          "base": {"projectile_count": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 15}
         }
       },
       {
         "id": "forking_branches",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}, {"kind": "zero_on_dummy", "note": "proc chance 12+4r% spawns 2 new branches with the dummy already in their map; they fly away, 0 extra hits on a lone dummy"}], "confidence": "C", "note": "card table p12 (C/I)", "plannerFix": "planner models a 25r poison proc; the game applies LSSD 25%/r to all damage and the proc only spawns branches that cannot hit the dummy again"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 25}
+        },
         "name": "Forking Branches",
         "description": "Thorned branch forks each time it hits a monster.",
         "maxRank": 3,
@@ -1026,6 +1071,7 @@
       {
         "id": "growth_of_death",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.198, 0.552, 1.062], "per": "hit", "note": "R4 421#0: Growth_obj is created at the position of the HIT enemy (the dummy) with direction = point_direction(dummy -> nth_nearest(2) = dummy) = 0; its Hitbox_obj 70x36 (origin left-middle) at image_angle 0 sits on the dummy centre -> 1 hit d5*(1+0.65r) per proc, chance 12r % per branch hit: 0.12r*(1+0.65r) per BASE HIT (2 hits per branch -> twice per branch). Geometry factor 1 (was assumed 0.5)"}], "confidence": "C", "note": "card R4 421#0 (C): +1 hit per proc, geometry factor 1"},
         "name": "Growth of Death",
         "description": "Each time you hit a monster with thorned branch, there is a chance a tree is grown which then falls on the nearest monster.",
         "maxRank": 3,
@@ -1041,12 +1087,13 @@
       {
         "id": "falling_branches",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.38, 1.84, 2.3], "per": "use", "note": "R4 421#0 + Resztki D: drops at 79.5 and 147 px of flight (Hitbox_obj 70x36 origin [0, 17], image_angle = irandom(360) inherited from Falling_Branch_obj Create_0); P(hit) per branch main (through the centre, axis 2.15 deg) = 0.114 + 0.806 = 0.92 (own pixel sim at axis 0 deg: 0.116 + 0.842 = 0.96; old card 0.99 was ~3 % high), each hit d5*(1+0.5r): value = 0.92*(1+0.5r) PER BRANCH (with p11 multiply by n, not representable). Variant cursor (x, y-24) with aim from y+6: 0.028 + 0.399 = 0.43"}], "confidence": "I", "note": "card R4 421#0 + Resztki D (P(hit) 0.92 main, 0.43 variant); numbers from a random-angle pixel sim (I)", "plannerFix": "planner adds poison 50r and area 20r to the skill; the game adds separate landing hits d5*(1+0.5r) (no area)"},
         "name": "Falling Branches",
         "description": "While traveling summon falling branches on its path dealing area of effect damage upon landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "poison_skill_damage": 50, "area_of_effect": 20 }
+          "base": {"poison_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"poison_skill_damage": 50, "area_of_effect": 20}
         }
       }
     ]
@@ -1054,6 +1101,8 @@
   {
     "id": "summon_ent_colossus",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one melee attack of the single Prophet_Ent_Colossus_obj, minionType 44, scale 2, permanent, reach 62 px): Hitbox_Summon_obj = 1 hit of D = floor(ceil(X + X*(p12 ..)%)), X = LTD(424,V1)*M + RSS357%*life, V1 = 30*L (poison) = 1.0 main hit. Action interval attackCooldown 1.1 s/(1 + AS/100) (animation 0.62 s; engine side). perExtraProjectile 0. p5 scorched bark, p6 shockwave (4 %*r), p11 branchsmash (12 %*r), p10 orbiting branches (the planner marks them as projectile_count), p13 roots are subskill effects."},
     "classId": "prophet",
     "name": "Summon Ent Colossus",
     "kind": "active",
@@ -1126,56 +1175,61 @@
       {
         "id": "carrying_weight",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r (summon M)"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Carrying Weight",
         "description": "Increases the damage dealt by ent colossus.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "colossal_bark_smash",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "spell crit chance +4%/r ([1004]); spell crit damage +35%/r ([1003])"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Colossal Bark Smash",
         "description": "Chance for ent colossus to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 35 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 35}
         }
       },
       {
         "id": "ancient_bark",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "damage reduction 10%/r"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Ancient Bark",
         "description": "Increases ent colossus damage reduction from all sources.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 10 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 10}
         }
       },
       {
         "id": "executing_branches",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute [140] = 3/r; 0 on a full-HP dummy"}], "confidence": "C", "note": "card table p4 (C)"},
         "name": "Executing Branches",
         "description": "Execute targets below a threshold.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 3 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 3}
         }
       },
       {
         "id": "scorched_bark",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1.6, 6.4, 14.4, 25.6, 40.0], "note": "chance 4r% per attack -> burn floor(D*0.4r); expected burn per attack = 0.04r*0.4r of D (% of D shown)"}], "confidence": "C", "note": "card table p5 (C); planner proc chance 4r and burning 40r match"},
         "name": "Scorched Bark",
         "description": "Chance on attack for ent colossus to unleash a powerful fiery smash knocking monsters back on a large radius inflicting burning.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 40 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1188,6 +1242,7 @@
       {
         "id": "loaded_branch",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.12, 0.21, 0.32, 0.45], "per": "hit", "note": "chance 4r% per attack -> Colossus_Shockwave object with D*(1+0.25r) at the target: expected 0.04r*(1+0.25r) per base hit (I, shockwave contact assumed)"}], "confidence": "I", "note": "card table p6 (C chance, I hit)", "plannerFix": "planner models a poison 25r proc plus stun; the game adds a shockwave hit D*(1+0.25r) with chance 4r%"},
         "name": "Loaded Branch",
         "description": "Chance on attack to unleash a shockwave dealing damage and stunning monsters on hit.",
         "maxRank": 5,
@@ -1204,17 +1259,19 @@
       {
         "id": "ancient_vitality",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "Colossus life +10%/r"}], "confidence": "C", "note": "card table p7 (C)"},
         "name": "Ancient Vitality",
         "description": "Increases the maximum life of ent colossus.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 10 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 10}
         }
       },
       {
         "id": "unleash_the_roots",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.006, 0.012, 0.018, 0.024, 0.03], "per": "hit", "note": "R4 424#2 (C): SummonAttackScript L770-L772: on an attack chance r % -> TalentUseClass(417, Colossus, ..., attack direction) = a Thorned Roots cast from the Colossus (segments from 64 px toward the dummy; the dummy is ~80-90 px from the Colossus) -> 1-2 hits of d5(417), midpoint 1.5. Value per base hit = 0.01r * 1.5 * d5(417)/D(Colossus), ratio taken as the rank-20 V1 ratio 12L/30L = 0.4 (LSSD of 417 and M of the Colossus not included). Needs rank >= 1 in Thorned Roots"}], "confidence": "I", "note": "card R4 424#2 (C structure, hit count 1-2 and ratio I)", "plannerFix": "planner has a bare proc (chance 1r) with no effect; the game casts Thorned Roots"},
         "name": "Unleash The Roots",
         "description": "Chance on attack for ent colossus to cast Thorned Roots (Prophet Skill).",
         "maxRank": 5,
@@ -1223,6 +1280,7 @@
       {
         "id": "aged_tree_bark",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "damage avoid chance 4%/r (defensive)"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Aged Tree Bark",
         "description": "Chance for ent colossus to block all incoming damage.",
         "maxRank": 5,
@@ -1231,23 +1289,25 @@
       {
         "id": "center_of_the_forest",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.733, 1.467, 2.2, 2.933, 3.667], "per": "use", "note": "R4 424#3 (C logic, I distance): r Prophet_Ent_Colossus_Branch_obj on an orbit R = 48+8r px around the Colossus (4 deg/frame, image_angle += 12/frame, mask 26x112 oriented, map cleared every 90 frames = 1.5 s); the Colossus stands ~74-100 px from the dummy (attackRangeMin 62), outside the orbit, but a branch (reach 56+12 px) passes the dummy once per orbit and the 12 deg/frame spin sweeps every angle during the pass -> 1 hit per branch per revolution = r hits per 1.5 s, each ~D (damage[5] like the attack, modifier class: only pe[60], pe[61], no crit). Per Colossus attack (cadence 1.1 s at AS 0) = r*1.1/1.5 main-hit units. Time-based source (per second r/1.5 D/s, independent of the attack cadence/AS): DPS p10 ~ r*D/1.5 s (r = 5: +367 % vs the attack 1/1.1 s)"}], "confidence": "I", "note": "card R4 424#3 (C logic, I distance of the Colossus)"},
         "name": "Center of the Forest",
         "description": "Rotating branches orbit the ent colossus dealing damage and rooting monsters in place on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "scorched_branchsmash",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.36, 0.63], "per": "hit", "note": "chance 12r% per attack -> Branchsmash object on the target with D*(1+0.25r): expected 0.12r*(1+0.25r) per base hit"}, {"kind": "dot", "byRank": [0.12, 0.576, 1.512], "note": "burn 0.8r of the object's damage on the same proc: expected burn per attack = 0.12r*(1+0.25r)*0.8r of D (fraction of D, I)"}], "confidence": "C", "note": "card table p11 (C); planner proc chance 12r, poison 25r, burning 80r match"},
         "name": "Scorched Branchsmash",
         "description": "Chance when attacking to smash the ground unleashing burning fissures knocking monsters in air and inflicting burning.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 80 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 80}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1264,34 +1324,37 @@
       {
         "id": "colossal_canopy",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1727, 1.3768, 1.6123], "note": "R4 424#0 (C): Alarm_0 L64-L74/L130: Lc' = LTD(2)*(1 + LSS1 + p7%)*(1 + p12.s10%) (Colossus life V2 = 850 + 350L, p12.s10 = 10r) and D = floor(ceil(X*(1 + p12.s9*0.01*Lc'/500))), X = LTD(1)*M + RSS357%*Lc' -> +r % damage per 500 Colossus life. Evaluated at skill level 20, no synergy and no p7: Lc' = 7850*(1+0.1r) = 8635/9420/10205, multiplier 1 + r*0.01*Lc'/500 (card example r = 3: x1.61). The multiplier grows with Colossus life from gear/p7/skill level (not representable as a constant)"}], "confidence": "C", "note": "card R4 424#0 (C formula; numbers at L20, no p7, no synergy)"},
         "name": "Colossal Canopy",
         "description": "Increases ent colossus damage based on its life. Ent colossus gains increased life.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_summon_life": 0, "summon_life": 0 },
-          "perRank": { "conversion_summon_life": 1, "summon_life": 10 }
+          "base": {"conversion_summon_life": 0, "summon_life": 0},
+          "perRank": {"conversion_summon_life": 1, "summon_life": 10}
         }
       },
       {
         "id": "blood_hungry_roots",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 0.94, 1.69], "per": "use", "note": "root impulse every 1.25*(1-0.125r) s on the n-th nearest enemy with damage floor(D*0.4r): per 1.1 s Ent attack, impulses = 1.1/(1.25*(1-0.125r)) and value = impulses*0.4r; assumes the dummy is hit by each impulse (I)"}, {"kind": "utility", "note": "attack speed x not used here"}], "confidence": "I", "note": "card table p13 (C structure, I hits)", "plannerFix": "planner models poison_skill_damage 40r and summon attack speed 12.5r; the game is a periodic root impulse with damage 0.4r*D, its cadence is 1.25*(1-0.125r) s"},
         "name": "Blood Hungry Roots",
         "description": "Ent colossus constantly sends roots towards nearby monsters dealing damage and rooting them for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "summon_attack_speed": 0 },
-          "perRank": { "poison_skill_damage": 40, "summon_attack_speed": 12.5 }
+          "base": {"poison_skill_damage": 0, "summon_attack_speed": 0},
+          "perRank": {"poison_skill_damage": 40, "summon_attack_speed": 12.5}
         }
       },
       {
         "id": "trunk_crusher",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "R4 424#1 (C): the variable trunkCrusher (id 0x1506e4148) has only two references in the whole exe, Create_0 (0x14957ca02) and Alarm_0 (0x149580832), and is never read -> no effect (0)"}], "confidence": "C", "note": "card R4 424#1 (C)", "plannerFix": "planner applies poison_skill_damage 75r; the card found no reader for trunkCrusher, so the game effect is not confirmed"},
         "name": "Trunk Crusher",
         "description": "Ent Colossus throws a huge tree trunk with each attack dealing increased damage and knocking monsters back on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 75 }
+          "base": {"poison_skill_damage": 0},
+          "perRank": {"poison_skill_damage": 75}
         }
       }
     ]
@@ -1330,6 +1393,8 @@
   {
     "id": "summon_ent",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one melee attack of one Prophet_Ent_obj, minionType 42, permanent; N = 3 + p1 + p11.s9 + RSS360 of them): Hitbox_Summon_obj = 1 hit of D = floor(LTD(420,V1)*M) + floor(RSS357%*life), V1 = 9*L (poison) = 1.0 main hit. Action interval attackCooldown 1.1 s*(1 - p11.s10%)/(1 + AS/100) (attack animation 0.6 s < 1.1 s; engine side). perExtraProjectile 0: no projectile mechanism. p7 (bark smash proc 4 %*r), p14 fiery pulse (12 %*r), p12 charge (every 4 s +1 hit), p13 link beams are subskill effects."},
     "classId": "prophet",
     "name": "Summon Ent",
     "kind": "active",
@@ -1402,78 +1467,85 @@
       {
         "id": "power_of_the_forest",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3], "per": "use", "note": "already modelled by planner summon_max_amount; N += 1/r extra Ents (base N = 3); one melee hit per Ent attack cadence"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Power of the Forest",
         "description": "Increases the maximum amount of ents you can summon.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "shielding_bark",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "damage reduction 8%/r"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Shielding Bark",
         "description": "Increases the ent´s damage reduction from all sources.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 8 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 8}
         }
       },
       {
         "id": "elders_branches",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r (summon M)"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Elder´s Branches",
         "description": "Increases the damage dealt by the ent.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "aging_branch",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "Ent life +8%/r (also feeds RSS357 life part of damage)"}], "confidence": "C", "note": "card table p4 (C)"},
         "name": "Aging Branch",
         "description": "Increases the maximum life of the ent.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 8 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 8}
         }
       },
       {
         "id": "blood_hungering_bark",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD +15%/r"}, {"kind": "utility", "note": "Ent life -6%/r"}], "confidence": "C", "note": "card table p5 (C)"},
         "name": "Blood Hungering Bark",
         "description": "Increases damage dealt by the ent but also decreases its maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "summon_life": 0 },
-          "perRank": { "poison_skill_damage": 15, "summon_life": -6 }
+          "base": {"summon_life": 0, "subtree_damage": 0},
+          "perRank": {"summon_life": -6, "subtree_damage": 15}
         }
       },
       {
         "id": "quicker_roots",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "Ent movement +15/r"}], "confidence": "C", "note": "card table p6 (C)"},
         "name": "Quicker Roots",
         "description": "Increases the movement speed of the ent.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_movement_speed": 0 },
-          "perRank": { "summon_movement_speed": 15 }
+          "base": {"summon_movement_speed": 0},
+          "perRank": {"summon_movement_speed": 15}
         }
       },
       {
         "id": "poisoning_bark_smash",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.006, 1.024, 1.054, 1.096, 1.15], "note": "proc chance 4r% per attack: attack x(1+0.15r); expected x(1+0.04r*0.15r)"}, {"kind": "dot", "byRank": [1.2, 4.8, 10.8, 19.2, 30.0], "note": "poison [0]=floor(D*0.3r) on the same proc: expected poison per attack = 0.04r*0.3r of D (% of D shown)"}], "confidence": "C", "note": "card table p7 (C)", "plannerFix": "planner proc chance 3r and poison 15r with poisoned 30r; the game uses chance 4r, +0.15r attack damage and poison floor(D*0.3r)"},
         "name": "Poisoning Bark Smash",
         "description": "Chance on hit to inflict poisoned and dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 30 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1490,28 +1562,31 @@
       {
         "id": "canopy_growth",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "Ent scale 1+15%/r and life +4%/r: size and life only"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Canopy Growth",
         "description": "Increases the size and life of the ent.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0, "summon_life": 0 },
-          "perRank": { "projectile_size": 15, "summon_life": 4 }
+          "base": {"projectile_size": 0, "summon_life": 0},
+          "perRank": {"projectile_size": 15, "summon_life": 4}
         }
       },
       {
         "id": "penetrating_branches",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute_below 1/r ([140]); no effect on a full-HP dummy"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Penetrating Branches",
         "description": "Ents execute targets below a threshold.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1}
         }
       },
       {
         "id": "throwing_branches",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0167, 0.0333, 0.05, 0.0667, 0.0833], "per": "hit", "note": "R4 420#0 (C): SummonAttackScript L719-L721: on an Ent attack chance r % (irandom(99) < r) and effective level of talent 421 > 0 -> TalentUseClass(421, Ent, ..., attack direction) = an extra Thorned Branch cast from the Ent position; the branch starts 12 px further and the Ent stands <= 50 px from the dummy, so it is in rod range from the first frames: 1 hit (map cleared only at frame ~33 when the branch is ~136 px further) of d5(421). Value per base hit = 0.01r * d5(421)/D(Ent); ratio taken as the rank-20 V1 ratio 15L/9L = 1.667 (LSSD of 421 and M of the Ent are not included, the real ratio depends on gear and on the rank of 421). Needs rank >= 1 in Thorned Branch"}], "confidence": "I", "note": "card R4 420#0 (C structure, ratio I)", "plannerFix": "planner has a bare proc (chance 1r) with no effect; the game re-casts a branch skill, adding its hits"},
         "name": "Throwing Branches",
         "description": "Chance on attack for ents to cast Thorned Branch (Prophet Skill).",
         "maxRank": 5,
@@ -1520,53 +1595,37 @@
       {
         "id": "saplings",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 4, 5], "per": "use", "note": "already modelled by planner summon_max_amount; N += 2+r extra Ents (p11.s9 = 2+r), same convention as p1"}, {"kind": "cast_speed_pct", "byRank": [33.3, 100.0, 300.0], "note": "Ent attack cooldown x(1-0.25r): cadence = 1/(1-0.25r)-1 in %; r=3 gives x4 (card formula, C)"}], "confidence": "C", "note": "card table p11 (C); summon count 2+r matches planner summon_max_amount", "plannerFix": "planner summon_attack_speed 25r is additive; the card gives cooldown x(1-0.25r), i.e. 33%/100%/300% speed"},
         "name": "Saplings",
         "description": "Summon increased amount of smaller ent saplings that gain increased attack speed and movement speed. Summon Ent now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "summon_max_amount": 2,
-            "summon_attack_speed": 0,
-            "movement_speed": 0
-          },
-          "perRank": {
-            "summon_max_amount": 1,
-            "summon_attack_speed": 25,
-            "movement_speed": 20
-          }
+          "base": {"summon_max_amount": 2, "summon_attack_speed": 0, "movement_speed": 0},
+          "perRank": {"summon_max_amount": 1, "summon_attack_speed": 25, "movement_speed": 20}
         }
       },
       {
         "id": "charging_forest",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "R4 420#1 (C): the charge starts only when 96 < dist(Ent, nearest enemy) < 600 (Prophet_Ent_obj_Step_0 L12, constants 0x4058.. and 0x4082c..); the Ent fights in melee (attackRangeMin 16, centre distance ~30-50 px), so after the first charge at summon (dummy 160 px from the Ent) there are none in the steady state: 0. The single charge hits for D*(1+1.5r) (Ent_Charge_obj mask r = 106 px * scale >= 1.25 covers the dummy) once at summon"}], "confidence": "C", "note": "card R4 420#1 (C): steady state 0, one-time D*(1+1.5r) at summon", "plannerFix": "planner models 150r as a damage multiplier on the Ent; the game adds a separate charge object once per 4 s with D*(1+1.5r)"},
         "name": "Charging Forest",
         "description": "Ents charge towards nearest monsters if far away from target unleashing a strong area of effect pulse on hit dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "poison_skill_damage": 0,
-            "skill_range": 0,
-            "area_of_effect": 0
-          },
-          "perRank": {
-            "poison_skill_damage": 150,
-            "skill_range": 35,
-            "area_of_effect": 25
-          }
+          "base": {"poison_skill_damage": 0, "skill_range": 0, "area_of_effect": 0},
+          "perRank": {"poison_skill_damage": 150, "skill_range": 35, "area_of_effect": 25}
         }
       },
       {
         "id": "link_of_nature",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "R4 420#2 (C): the beam is created once per pair (Ent_i -> Ent_{i-1}, the first Ent -> player) in Prophet_Ent_obj_Alarm_0 L140-L217; Prophet_Ent_Link_obj is singleHit with no tick_frequency and no reference to singleHitListClear (asm scan 0x14958e0e0-0x14958febe), so the map is never cleared: <= 1 hit per beam for the whole life of the Ents -> 0 in the steady state (Ent_0 -> player ends on the Ent >= 30 px from the dummy; Ent-Ent pairs near the dummy I)"}], "confidence": "C", "note": "card R4 420#2 (C): steady state 0", "plannerFix": "planner uses proc chance 100 on the dummy; the game is a geometry-dependent beam hit at creation"},
         "name": "Link of Nature",
         "description": "Ents are tethered to each other by a chain which inflicts poisoned and deals damage to monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "increased_poisoned_damage": 0 },
-          "perRank": {
-            "poison_skill_damage": 45,
-            "increased_poisoned_damage": 75
-          }
+          "base": {"poison_skill_damage": 0, "increased_poisoned_damage": 0},
+          "perRank": {"poison_skill_damage": 45, "increased_poisoned_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1579,12 +1638,13 @@
       {
         "id": "flaming_branch",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.156, 0.384, 0.684], "per": "hit", "note": "chance 12r% per attack -> fiery pulse D*(1+0.3r): expected extra = 0.12r*(1+0.3r) per base hit"}, {"kind": "dot", "byRank": [0.156, 0.768, 2.052], "note": "burn [18] = pulse*r on the same proc: expected burn per attack = 0.12r*(1+0.3r)*r of D (fraction of D, I)"}], "confidence": "C", "note": "card table p14 (C); planner chance 12r, burn 100r and pulse 30r match"},
         "name": "Flaming Branch",
         "description": "Ents have a chance on attack to unleash a fiery pulse knocking monsters back dealing damage and inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 100 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 100}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1603,6 +1663,8 @@
   {
     "id": "summon_spirit_of_the_forest",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one shot of the single Prophet_Spirit_obj, ranged summon, minionType 43, life 120 s, range 340 px): the shot is a Summon_Chain_Lightning_obj, on a lone dummy it hits exactly once (rule 15/23, N0) = 1 hit of D = floor(LTD(422,V1)*M) + L357, V1 = 7*L (poison), M = 1 + summon stats + LSSD + RSS354% (no LSSD contributions) = 1.0 main hit. Action interval attackCooldown 1.25 s/(1 + AS/100) (engine side). The spirit's real value is the aura (buffs 282-294 every 1 s, 5 s duration; p5 +r All Skills, p7, p8, p11, p14 stat buffs), which is not a hit. perExtraProjectile 0."},
     "classId": "prophet",
     "name": "Summon Spirit of The Forest",
     "kind": "active",
@@ -1685,149 +1747,169 @@
       {
         "id": "vitality_of_wilderness",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 283: player life +150/r"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Vitality of Wilderness",
         "description": "Adds maximum life to you and your party members (Flat)",
         "maxRank": 5,
-        "effects": { "base": { "life": 0 }, "perRank": { "life": 150 } }
+        "effects": {
+          "base": {"life": 0},
+          "perRank": {"life": 150}
+        }
       },
       {
         "id": "longer_lasting_harmony",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [50, 100, 150, 200, 250], "note": "spirit lifetime x(1+50%r) (destroyTimer from abilityDuration 120 s); uptime already ~100% with no cooldown, so no DPS change expected"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Longer Lasting Harmony",
         "description": "Increases the duration of spirit of the forest",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 50 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 50}
         }
       },
       {
         "id": "defense_of_wilderness",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 284: player enhanced defense +4/r"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Defense of Wilderness",
         "description": "Increases the defense of you and your party members",
         "maxRank": 5,
         "effects": {
-          "base": { "enhanced_defense": 0 },
-          "perRank": { "enhanced_defense": 4 }
+          "base": {"enhanced_defense": 0},
+          "perRank": {"enhanced_defense": 4}
         }
       },
       {
         "id": "recuperating_mantra",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 285: life and mana regeneration +25%/r"}], "confidence": "C", "note": "card table p4 (C)"},
         "name": "Recuperating Mantra",
         "description": "Increases the life and mana replenish for you and your party members.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 25, "mana_replenish_pct": 25 }
+          "base": {"life_replenish_pct": 0, "mana_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 25, "mana_replenish_pct": 25}
         }
       },
       {
         "id": "prayer_of_nature",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "aura 286: +r to All Skills, i.e. the spirit's own level L -> L+r (V1 = 7*L, damage ratio (L+r)/L) and levels of all other skills; the ratio depends on L, not representable as a fixed value (C mechanism)"}], "confidence": "C", "note": "card table p5 (C)"},
         "name": "Prayer of Nature",
         "description": "Increases all skills for you and your party members.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_skills": 0 },
-          "perRank": { "all_skills": 1 }
+          "base": {"all_skills": 0},
+          "perRank": {"all_skills": 1}
         }
       },
       {
         "id": "manawell_of_wilderness",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 287: mana +150/r"}], "confidence": "C", "note": "card table p6 (C)"},
         "name": "Manawell of Wilderness",
         "description": "Adds maximum mana to you and your party members (Flat)",
         "maxRank": 5,
-        "effects": { "base": { "mana": 0 }, "perRank": { "mana": 150 } }
+        "effects": {
+          "base": {"mana": 0},
+          "perRank": {"mana": 150}
+        }
       },
       {
         "id": "essence_of_danger",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 288: player attack speed +10%/r and FCR +10/r; affects the player's own attacks/casts, not the spirit's shots"}], "confidence": "C", "note": "card table p7 (C)"},
         "name": "Essence of Danger",
         "description": "Increases attack speed and faster cast rate for you and your party members.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0, "faster_cast_rate": 0 },
-          "perRank": { "increased_attack_speed": 10, "faster_cast_rate": 10 }
+          "base": {"increased_attack_speed": 0, "faster_cast_rate": 0},
+          "perRank": {"increased_attack_speed": 10, "faster_cast_rate": 10}
         }
       },
       {
         "id": "blessing_of_wilderness",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 289: player attack damage +8/r and magic skill damage +12/r (card order: first value attack damage, I); player stats, not this summon's hits"}], "confidence": "I", "note": "card table p8 (C structure, I order)", "plannerFix": "planner maps magic_skill_damage 8r and attack_damage 12r; the card's buff list gives attack damage 8r and magic skill damage 12r (order I)"},
         "name": "Blessing of Wilderness",
         "description": "Increases magic skill damage and attack damage for you and your party.",
         "maxRank": 5,
         "effects": {
-          "base": { "magic_skill_damage": 0, "attack_damage": 0 },
-          "perRank": { "magic_skill_damage": 8, "attack_damage": 12 }
+          "base": {"magic_skill_damage": 0, "attack_damage": 0},
+          "perRank": {"magic_skill_damage": 8, "attack_damage": 12}
         }
       },
       {
         "id": "purified_terrain",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 290: player movement +12.5/r"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Purified Terrain",
         "description": "Increases the movement speed for you and your party members.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 12.5 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 12.5}
         }
       },
       {
         "id": "oaks_heart",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "aura 291: damage return 250/r; the dummy does not attack, so 0"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Oak´s Heart",
         "description": "Increases damage return for you and your party members.",
         "maxRank": 5,
         "effects": {
-          "base": { "damage_return": 0 },
-          "perRank": { "damage_return": 250 }
+          "base": {"damage_return": 0},
+          "perRank": {"damage_return": 250}
         }
       },
       {
         "id": "cursed_spirit",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 292: player ailment damage +15%/r (DoT of the player, not the spirit's shot)"}], "confidence": "C", "note": "card table p11 (C)"},
         "name": "Cursed Spirit",
         "description": "Increases ailment damage for you and your party members.",
         "maxRank": 3,
         "effects": {
-          "base": { "ailment_damage_all": 0 },
-          "perRank": { "ailment_damage_all": 15 }
+          "base": {"ailment_damage_all": 0},
+          "perRank": {"ailment_damage_all": 15}
         }
       },
       {
         "id": "forests_blessing",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "utility", "note": "spirit buff 282 +5/r and vitality x(1+5%r): life only"}], "confidence": "C", "note": "card table p12 (C)"},
         "name": "Forest´s Blessing",
         "description": "Increases the amount of life spirit of the forest provides to you and your party.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_life": 0 },
-          "perRank": { "increased_life": 5 }
+          "base": {"increased_life": 0},
+          "perRank": {"increased_life": 5}
         }
       },
       {
         "id": "mystic_voodoo",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "R4 422#0: buff 293 (value floor(D*1.0r)) has no reader: SetupBuffs L1160-L1165 gives only the name and tal_damage, constant 0x125 is not loaded by any Stat* function, attackClasses or PlayerTakeDamage (scan of mov edx/r8d,0x125: only Prophet_Spirit_obj_Step_0 BuffAdd and SetupBuffs) -> no damage effect (0)"}], "confidence": "I", "note": "card R4 422#0 (C scan, I for dynamic ids)", "plannerFix": "planner models poison_skill_damage 100r; the game gives an aura buff 293 whose effect is unknown"},
         "name": "Mystic Voodoo",
         "description": "Spirit of the Forest fires thorns at nearby monsters when you or your party member takes damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 100 }
+          "base": {"poison_skill_damage": 0},
+          "perRank": {"poison_skill_damage": 100}
         }
       },
       {
         "id": "malevolent_spirit",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "utility", "note": "aura 294: player attack damage +125/r and attack rating +25%/r (player stats)"}], "confidence": "C", "note": "card table p14 (C)"},
         "name": "Malevolent Spirit",
         "description": "Increases attack damage and attack rating for you and your party.",
         "maxRank": 3,
         "effects": {
-          "base": { "attack_damage": 0, "attack_rating_pct": 0 },
-          "perRank": { "attack_damage": 125, "attack_rating_pct": 25 }
+          "base": {"attack_damage": 0, "attack_rating_pct": 0},
+          "perRank": {"attack_damage": 125, "attack_rating_pct": 25}
         }
       }
     ]
@@ -1863,6 +1945,8 @@
   {
     "id": "wounding_paw",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.18, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, melee attack skill counted IN-ZONE (dummy inside the weapon-strike reach; reach is item data); at the strict 160 px the strike does not reach and no ripple is created (value 0). 1 weapon strike (rule 6; d0 = W*(1 + V1'/100), V1' = (80 + 20*L)*(1+LSSD), neutral 100 % weapon present) + the Prophet_Wounding_Paw_Ripple_obj blood wave with probability GetTalentInfo(426,8) = 18 % per use (procChance = 0x12, cpr_irandom(99) < 18, once per use; sprite 320x320, deadlyFrames 0.25 s, single hit, d0 = floor(W*(1 + V1'/100)) = the strike's value, ratio 1.0) = 0.18 hits -> 1.18 (R3 426#0, C). perExtraProjectile 0: no projectile mechanism. p3 bleed, p4/p11 stun, p13 stacks are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Wounding Paw",
@@ -1895,10 +1979,9 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 80,
-        "perLevel": 20
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 180, "perLevel": 20 },
       "flatPhysicalMin": {
         "base": 4,
         "perLevel": 0
@@ -1943,34 +2026,37 @@
       {
         "id": "sharper_claws",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD 8%/r applies only to V1 (d0 = W*(1 + V1*(1+LSSD)/100)); the DPS gain is V1*0.08r/(100+V1') of d0, depends on L (V1 = 80+20L). Not a plain LSSD multiplier"}], "confidence": "C", "note": "card table p1 (C)", "plannerFix": "planner applies physical_skill_damage 8r as a full LSSD multiplier on the whole hit; the game scales only the V1 term of W*(1+V1/100)"},
         "name": "Sharper Claws",
         "description": "Increases damage when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 8}
         }
       },
       {
         "id": "accurate_slash",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating (accuracy) +10%/r; no dummy damage (crit/hit chance not a hit change on the dummy)"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Accurate Slash",
         "description": "Increases attack rating when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "shredding_claws",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1, 4, 9, 16, 25], "note": "bleed chance 4r% per use -> [22] = floor(d0*25r%); expected bleed per use = 0.04r*0.25r of d0 (% shown)"}], "confidence": "C", "note": "card table p3 (C); planner proc chance 4r and bleed 25r match"},
         "name": "Shredding Claws",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 25 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1983,6 +2069,7 @@
       {
         "id": "disorienting_crush",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "chance 4r% per use: LSSD +20%/r on that hit and stun 3 s; expected D multiplier 1 + 0.04r*0.2r*V1/(100+V1') (depends on L); stun is no DPS on a lone dummy by itself"}], "confidence": "C", "note": "card table p4 (C)", "plannerFix": "planner models physical_skill_damage 20r as a fixed proc bonus; the game multiplies the hit by 1+0.04r*0.2r*V1/(100+V1') (V1 term) with stun"},
         "name": "Disorienting Crush",
         "description": "Chance to stun monsters on hit dealing increased damage.",
         "maxRank": 5,
@@ -1999,86 +2086,91 @@
       {
         "id": "pummeling_the_disoriented",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "disorienting_crush", "note": "[179] extra vs stunned x(1+0.15r); stun comes from p4 (also p11). Value is the upper bound while the dummy is stunned; the stunned fraction of time is not in the card (I)"}], "confidence": "I", "note": "card table p5 (C mechanism, I uptime)"},
         "name": "Pummeling The Disoriented",
         "description": "Gain increased damage to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 15 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 15}
         }
       },
       {
         "id": "amplified_rabies",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [10, 20, 30, 40, 50], "note": "skill attack speed x(1+10%r) (TalentUseSetSpeed)"}], "confidence": "C", "note": "card table p6 (C)"},
         "name": "Amplified Rabies",
         "description": "Increased attack speed when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_speed_more": 0 },
-          "perRank": { "skill_attack_speed_more": 10 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 10}
         }
       },
       {
         "id": "slick_movement",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -8%/r, movement diminish 10%/r"}], "confidence": "C", "note": "card table p7 (C)"},
         "name": "Slick Movement",
         "description": "Decreased movement diminish and mana cost when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0, "mana_cost_reduction": 0 },
-          "perRank": {
-            "reduced_movement_diminish": 10,
-            "mana_cost_reduction": 8
-          }
+          "base": {"reduced_movement_diminish": 0, "mana_cost_reduction": 0},
+          "perRank": {"reduced_movement_diminish": 10, "mana_cost_reduction": 8}
         }
       },
       {
         "id": "critical_slashing",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "crit chance +5%/r ([1018]); crit damage per p9"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Critical Slashing",
         "description": "Increased critical strike chance when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0 },
-          "perRank": { "crit_chance": 5 }
+          "base": {"crit_chance": 0},
+          "perRank": {"crit_chance": 5}
         }
       },
       {
         "id": "slashing_with_accuracy",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit chance 0; crit damage +15%/r ([1019])"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Slashing with Accuracy",
         "description": "Increases critical strike damage when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 15 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 15}
         }
       },
       {
         "id": "vital_siphoning",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "life and mana on hit ([962]/[963])"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Vital Siphoning",
         "description": "Increases life steal and mana steal when using wounding paw.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_steal": 0, "mana_steal": 0 },
-          "perRank": { "life_steal": 3, "mana_steal": 3 }
+          "base": {"life_steal": 0, "mana_steal": 0},
+          "perRank": {"life_steal": 3, "mana_steal": 3}
         }
       },
       {
         "id": "accelerated_slash",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "note": "every 4th use (counter playerEffect[51]) LSSD +50%/r plus stun 3 s and area [71] = 75+25r; average D multiplier 1 + 0.25*0.5r*V1/(100+V1') (depends on L)"}, {"kind": "zero_on_dummy", "note": "area part 0 on a single dummy"}], "confidence": "C", "note": "card table p11 (C)", "plannerFix": "planner applies physical_skill_damage 50r on every use; the game applies it only on every 4th use (averaged 0.25 * 0.5r * V1 term)"},
         "name": "Accelerated Slash",
         "description": "Every fourth attack is empowered dealing increased damage on a larger radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 75 },
-          "perRank": { "physical_skill_damage": 50, "area_of_effect": 25 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 75},
+          "perRank": {"physical_skill_damage": 50, "area_of_effect": 25}
         }
       },
       {
         "id": "brutalizing_decomposition",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[909] -> buff 91 -> explosion only on kill; 0 on a non-dying dummy"}], "confidence": "C", "note": "card table p12 (C)", "plannerFix": "planner adds a 14r% proc with physical 25r and area 22.5r on the dummy; the game gives an on-kill effect only"},
         "name": "Brutalizing Decomposition",
         "description": "Chance on monster kill to unleash a ripple of blood dealing damage on a large radius.",
         "maxRank": 3,
@@ -2094,35 +2186,25 @@
       {
         "id": "slashing_momentum",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.24, 1.64, 2.2], "note": "stacks of player buff 272 (4 s, max 2+r) each +8r% attack damage at full stacks: 1 + (2+r)*0.08r (full stacks assumed under continuous attacks)"}, {"kind": "cast_speed_pct", "byRank": [24, 64, 120], "note": "attack speed +8r% per stack at full stacks: (2+r)*8r %"}], "confidence": "C", "note": "card table p13 (C); planner physical 8r, AS 8r and max stacks 2+r match"},
         "name": "Slashing Momentum",
         "description": "Gain a stack of slashing momentum on hit increasing your attack speed and damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "increased_attack_speed": 0,
-            "max_skill_stacks": 2
-          },
-          "perRank": {
-            "physical_skill_damage": 8,
-            "increased_attack_speed": 8,
-            "max_skill_stacks": 1
-          }
+          "base": {"physical_skill_damage": 0, "increased_attack_speed": 0, "max_skill_stacks": 2},
+          "perRank": {"physical_skill_damage": 8, "increased_attack_speed": 8, "max_skill_stacks": 1}
         }
       },
       {
         "id": "animal_siphoning",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[911] -> buff 92 -> buff 273 only on kill; 0 on a non-dying dummy (life steal, crit damage, movement are not dummy DPS here)"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner gives life_steal, crit_damage 25r and movement 35r; the card's dummy effect is 0 (the on-kill buff is the only effect)"},
         "name": "Animal Siphoning",
         "description": "Gain increased life steal, critical strike damage and movement speed on kill.",
         "maxRank": 3,
         "effects": {
-          "base": { "life_steal": 0, "crit_damage": 0, "movement_speed": 0 },
-          "perRank": {
-            "life_steal": 15,
-            "crit_damage": 25,
-            "movement_speed": 35
-          }
+          "base": {"life_steal": 0, "crit_damage": 0, "movement_speed": 0},
+          "perRank": {"life_steal": 15, "crit_damage": 25, "movement_speed": 35}
         }
       }
     ]
@@ -2130,6 +2212,9 @@
   {
     "id": "leaping_charge",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per use, MAIN = aim through the dummy centre (x, y) (rule 38), leap target = player + lengthdir(max(tupm[6], 128), tupm[7]) (0x1468bbb63-0x1468bbc9d, 128.0 @0x15069d1e0; tupm from (x_g, y_g+6), i.e. cursor - 6 px) so the jump ends at the dummy (IN-ZONE per rule 24): skillsLeap makes a damage object Explosion_Item_obj (Mask_Explosion_spr r ~32 px, active after 4 frames, own hit, copy of damage[0] = floor(W*LTD(V1)%*(1+LSSD)), V1 = 72 + 20*L, NO neutral 100 % weapon) every >= playerEffect[162] = 32 px of flight: v = [145] = 19.45 px/frame, flight 8.32 frames (v_z = 7.69, g = 0.35 + 1.5 = 1.85, [144] = -48), a trigger every 2nd frame (38.9 px) -> 4 explosions at 38.9/77.8/116.7/155.6 px. NEW from asm (skillsLeap 0x1460fb0ad-0x1460fb28f): each explosion is created at (x_g + lengthdir_x(8, a), y_g + 6 + lengthdir_y(8, a)) with a = pe[154] - 45 + irandom(90) (mov r8d,0x2d @0x1460fb0cd, irandom 0x5a @0x1460fb0e2, +6 @0x1460fb243, 8.0f = 0x14f189528); expected hits over 91 angles (own simulation): the 3rd and 4th explosion hit at every angle -> H = 2.0 per use (Resztki B+D+E: C). Variant cursor (x, y-24) (target (160, -30)): the 3rd explosion hits at 68 % of the angles -> H = 1.68 (R4 gave 1.76 as an approximation without the +6; the model with +6 for the old target (160, -24) gives 1.85). Each explosion = 1 main hit. perExtraProjectile 0: no projectile mechanism. p11 claws (fan 12 deg, main 2/2/2 with aim from y+6; r = 2 is 1 px at the edge, I), p12 trail (tick 0.5 s, 2-3 hits per trail covering the dummy, 4-6 per use at cursor (x, y)), p13 shuriken, p3 bleed are subskill effects."},
+    "usePeriod": {"kind": "leap", "extraFrames": 10.0, "note": "Leap on EVERY use (playerEffect[142] = 1, [143] = 428, tag 6/7 talent; skillsLeap L1064-L1067 zeroes [142] and [204] at landing, only tid 428, so the next jump waits for the landing): R4/Resztki C period = max(45/S, floor(24/S) + 11) frames, S = APS*(1+acc). floor(24/S)+1 = t_wyw are the engine's trigger frames; extraFrames = 9 frames of flight (8.32 + the transition frame, card 'lot 9 kl.') + 1 frame for the in-frame order (I) = 10 (was 9.0 with the trigger at sequence frame 14: 'T_atak until APS_eff ~3.4' is void). The 45/S term is the attack-path cooldown floor (engine side): S = 1: 45 frames; S = 2: 23; S = 3: 19; S = 4: 17 (the leap term dominates from S ~ 2). +-1 frame from the order in the frame: I."},
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Leaping Charge",
@@ -2188,34 +2273,37 @@
       {
         "id": "deadly_slashes",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r on V1 (d0 = W*V1%*(1+LSSD))"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Deadly Slashes",
         "description": "Increases damage dealt by charging leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "wide_slashing",
         "positionIndex": 2,
+        "dummy": {"effects": [], "confidence": "I", "note": "card table p2: area [71] = 1+15%r; no change to the explosion hit count on a lone dummy in the card (I)"},
         "name": "Wide Slashing",
         "description": "Increases the area of effect radius of the slashes.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "rupturing_charge",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1, 4, 9, 16, 25], "note": "bleed chance 4r% per use -> [22] = floor(d0*25r%); expected bleed per use = 0.04r*0.25r of d0 (% shown)"}], "confidence": "C", "note": "card table p3 (C); planner chance 4r and bleed 25r match"},
         "name": "Rupturing Charge",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 25 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2228,61 +2316,67 @@
       {
         "id": "nurturing_slashes",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "life on hit 2.5%/r"}], "confidence": "C", "note": "card table p4 (C)"},
         "name": "Nurturing Slashes",
         "description": "Increases life stolen per hit when using charging leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_steal": 0 },
-          "perRank": { "life_steal": 2.5 }
+          "base": {"life_steal": 0},
+          "perRank": {"life_steal": 2.5}
         }
       },
       {
         "id": "long_reaching_claws",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "range +10%/r; no reader found in the script (I)"}], "confidence": "I", "note": "card table p5 (I)"},
         "name": "Long Reaching Claws",
         "description": "Increases the maximum range of charging leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 10 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 10}
         }
       },
       {
         "id": "punctured_skin",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "rupturing_charge", "note": "[177] extra vs bleeding x(1+0.15r); bleed from p3 (only on a bleeding dummy)"}], "confidence": "C", "note": "card table p6 (C)"},
         "name": "Punctured Skin",
         "description": "Increases damage dealt to targets inflicted with bleeding.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "fatal_slashing",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "crit chance +4%/r ([1018]); crit damage +20%/r ([1019])"}], "confidence": "C", "note": "card table p7 (C)"},
         "name": "Fatal Slashing",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 4, "crit_damage": 20 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 4, "crit_damage": 20}
         }
       },
       {
         "id": "deadly_slash",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "note": "deadly blow chance 3%/r ([1010]) with strength 10%/r ([1015]); the resulting damage multiplier is not read in the card (C structure, value not given)"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Deadly Slash",
         "description": "Chance to deal a deadly blow with increased effectiveness.",
         "maxRank": 5,
         "effects": {
-          "base": { "deadly_blow": 0, "deadly_blow_effectiveness": 0 },
-          "perRank": { "deadly_blow": 3, "deadly_blow_effectiveness": 10 }
+          "base": {"deadly_blow": 0, "deadly_blow_effectiveness": 0},
+          "perRank": {"deadly_blow": 3, "deadly_blow_effectiveness": 10}
         }
       },
       {
         "id": "raging_slash",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "chance 5r% per hit -> fury stack (player buff 255, attack speed) for 4 s: a player stat, its size not given in the card"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Raging Slash",
         "description": "Chance on hit to gain a stack of rage when using charging leap, increasing your attack speed.",
         "maxRank": 3,
@@ -2298,50 +2392,55 @@
       {
         "id": "elusive_leap",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.6], "note": "d0 x(1-40%) (p10 s9 = -40%); ignores terrain"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Elusive Leap",
         "description": "Reduces charging leaps damage but ignores terrain.",
         "maxRank": 1,
         "effects": {
-          "base": { "physical_skill_damage": -40, "terrain_ignored": 100 },
-          "perRank": { "physical_skill_damage": 0, "terrain_ignored": 0 }
+          "base": {"physical_skill_damage": -40, "terrain_ignored": 100},
+          "perRank": {"physical_skill_damage": 0, "terrain_ignored": 0}
         }
       },
       {
         "id": "skipping_claws",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.36, 2.72, 3.08], "per": "use", "note": "R4 428#2 + Resztki: 1+r claws (Prophet_Leaping_Charge_Claw_obj) in a 12 deg fan (dir_i = aim + 12*(i - r/2), start host + lengthdir(8, a) with 8.0f 0x14f189528, 14 px/frame, projType 0, singleHit, life 120 frames, image_angle += 18/frame, mask 31x32 origin [17, 17] rotated, SetAllModifiersNew); MAIN (aim through the centre, direction from y+6, Resztki B+D+E) hits r1/r2/r3 = 2/2/2 (r2: the ray at -9.85 deg is inside the -10.3 deg limit by 0.45 deg ~ 1 px, I; axis 0 deg gives 2/1/2), each d0*(1+0.18r): value = 2*(1+0.18r) = 2.36/2.72/3.08. Variant cursor (x, y-24): 1/2/2 hits (1.18/2.72/3.08)"}], "confidence": "I", "note": "card Resztki B+D+E (claws 2/2/2, r2 edge I) supersedes Po R4 2/1-2/2 and R4 1/2/2; (1+r)(1+0.18r) upper bound void", "plannerFix": "planner applies physical 18r as a skill-damage multiplier and projectile count 1/r; the game makes 1+r separate claw objects with d0*(1+0.18r)"},
         "name": "Skipping Claws",
         "description": "Unleash multiple flying claws that deal damage and bounce off terrain while using charging leap.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 1 },
-          "perRank": { "physical_skill_damage": 18, "projectile_count": 1 }
+          "base": {"physical_skill_damage": 0, "projectile_count": 1},
+          "perRank": {"physical_skill_damage": 18, "projectile_count": 1}
         }
       },
       {
         "id": "trail_of_agony",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5.0, 5.0, 5.0], "per": "use", "note": "R4 428#1 (C/I): Prophet_Leaping_Charge_Trail_obj is created at EVERY leap trigger (no chance; [905] = [45r, 25r] has no reader: PC00Skills 125 values and PC24 21 values have no case 905) at the player position: precise ellipse mask 71x62 (semi-axes 35.5 x 31, image_angle 0), destroyTimer 60 frames, tick_frequency 0.5 s -> 2 hits per trail (a 3rd in the fade phase if the map is still cleared, I) on a trail that covers the dummy; the dummy (160, 0) lies in the 3rd and 4th trail (cursor (x, y)) -> 4-6 hits d0 per jump, midpoint 5; (cursor (x, y-24): only the 4th trail -> 2-3). Resztki D: the 3rd and 4th trail still cover the dummy (44.7 px < 47.5 px). Damage d0 is copied by hand (manual pe: crit [1019] kept; multipliers, other bonuses vs ailments and penetration lost - correction of 2026-10-09)"}], "confidence": "I", "note": "card R4 428#1 + Resztki B+D+E (4-6 hits at cursor (x,y); 2-3 at (x,y-24))", "plannerFix": "planner models physical 45r and area 25r as a skill-damage increase; the game adds trail objects with no modifiers along the path"},
         "name": "Trail of Agony",
         "description": "Leave behind a trail of blood dealing area of effect damage on your path.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 45, "area_of_effect": 25 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 45, "area_of_effect": 25}
         }
       },
       {
         "id": "shuriken_of_claws",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.45, 1.9, 2.35], "per": "use", "note": "transformation adds one Shuriken object per cycle (1 s) with d0 = W*V1%*(1+LSSD+0.45r): one extra hit with ratio (1+0.45r) at LSSD 0; the charge still follows (I, cadence of the shuriken not read)"}], "confidence": "I", "note": "card table p13 (C structure, I cadence)", "plannerFix": "planner applies physical 45r as a skill-damage multiplier and area 20r; the game adds a separate shuriken hit with ratio (1+0.45r)"},
         "name": "Shuriken of Claws",
         "description": "Throw a shuriken of claws dealing damage to monsters on hit and forcing you to charge towards it after a short delay.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "physical_skill_damage": 45, "projectile_size": 20 }
+          "base": {"physical_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"physical_skill_damage": 45, "projectile_size": 20}
         }
       },
       {
         "id": "herald_of_bones",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[906] -> buff 89 -> bones only on kill; 0 on a non-dying dummy"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner adds a 10r% proc with physical 22r and 3+r projectiles on hit; the game gives an on-kill effect only"},
         "name": "Herald of Bones",
         "description": "Chance on monster kill to unleash multiple sharp bones bouncing off terrain and dealing damage on hit.",
         "maxRank": 3,
@@ -2359,6 +2458,7 @@
   {
     "id": "storm_hawk",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "prophet",
     "name": "Storm Hawk",
     "kind": "active",
@@ -2413,39 +2513,43 @@
       {
         "id": "hawks_eye",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack range [74] +15%/r"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Hawk´s Eye",
         "description": "Increases attack range while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "hawks_surge",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD 10%/r on buff 268 V1 (lightning, no reader found) and V2 (flat physical floor(V2*(1+LSSD)), V2 = 4.5+0.5L): gain = flat physical per attack, depends on L"}], "confidence": "C", "note": "card table p2 (C); slot 0 reader not found (I)", "plannerFix": "planner applies lightning_skill_damage 10r; the card finds no reader of the lightning slot, and the LSSD acts on the flat physical slot V2"},
         "name": "Hawk´s Surge",
         "description": "Increases damage dealt while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 10 }
+          "base": {"lightning_skill_damage": 0},
+          "perRank": {"lightning_skill_damage": 10}
         }
       },
       {
         "id": "hawks_storm",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card table p3 (C)", "plannerFix": "max_bounces = 4+2r does not change the hit count of the chain on a lone dummy (N0 = 1); the planner projectile_bounces gives hits that do not exist"},
         "name": "Hawk´s Storm",
         "description": "Increases lightning bounces while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 2 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 2}
         }
       },
       {
         "id": "hawks_focus",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.104, 0.256, 0.456, 0.704, 1.0], "per": "use", "note": "chance 4r% per attack -> Storm_Hawk_Lightning_Bolt with d4 = W*(1+0.3r); the handler runs for the projectile and for the chain (which copies [155]), so 2 bolts: expected 2*0.04r*(1+0.3r) per attack"}], "confidence": "C", "note": "card table p4 (C); planner base hits None so values are extra per attack", "plannerFix": "planner models one bolt per proc (chance 4r, lightning 30r); the game fires the bolt on both the projectile and the chain hit, i.e. 2 bolts"},
         "name": "Hawk´s Focus",
         "description": "Chance on hit to strike the target with a lightning bolt while in hawk form.",
         "maxRank": 5,
@@ -2461,34 +2565,37 @@
       {
         "id": "hawks_flight",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed +15%/r in form"}], "confidence": "C", "note": "card table p5 (C)"},
         "name": "Hawk´s Flight",
         "description": "Increases movement speed while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "hawks_agility",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "V3 (attack speed buff, 25+L) x(1+10%r): extra attack speed = (25+L)*0.1r % of the form attacks; depends on L"}], "confidence": "C", "note": "card table p6 (C)", "plannerFix": "planner models faster_cast_rate 10r; the card gives attack speed of the form (V3 x(1+0.1r)), not cast rate"},
         "name": "Hawk´s Agility",
         "description": "Increases attack speed while in hawk form.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "hawks_stasis",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [2.4, 9.6, 21.6, 38.4, 60.0], "note": "chance 4r% per attack -> [26] += floor(dmg*30r%) (Stasis, lightning DoT); [26] is copied to the chain, so applied 2x per attack: expected 2*0.04r*0.3r of dmg (% shown)"}], "confidence": "C", "note": "card table p7 (C structure, I stacking)", "plannerFix": "planner applies one stasis proc (chance 4r, 30r) per attack; the game applies it on the projectile and again on the chain hit"},
         "name": "Hawk´s Stasis",
         "description": "Chance to inflict stasis on hit while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 30 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2501,23 +2608,25 @@
       {
         "id": "hawks_hunger",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "crit chance 3%/r per planner (card confirms crit damage +15%/r via s10 on the form's StatCritDamage)"}], "confidence": "C", "note": "card table p8 (C); crit chance value from planner, not confirmed in card (I)"},
         "name": "Hawk´s Hunger",
         "description": "Chance to critical hit dealing increased critical damage while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 3, "crit_damage": 15 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 3, "crit_damage": 15}
         }
       },
       {
         "id": "hawks_mind",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "chance 4r% per attack -> lightning break [976] = 30r% for 5 s, copied to the chain, so applied 2x per attack (refreshes the timer); break multiplier on lightning hits, uptime depends on attack rate (not in card, I)"}], "confidence": "C", "note": "card table p9 (C)", "plannerFix": "planner applies one lightning break proc per attack; the game applies it on both the projectile and the chain hit"},
         "name": "Hawk´s Mind",
         "description": "Chance to inflict lightning break on hit while in hawk form.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 30 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2533,34 +2642,37 @@
       {
         "id": "hawks_shadow",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "R4: p10.s9 = -25 constant for r >= 1 (no per-rank term; base field, rule 39); StatMovementSpeed reads (433, 10, 9) -> -25 movement speed in the form (not a cost/cooldown); no dummy damage effect"}], "confidence": "C", "note": "card R4 'Pola bazowe' + table p10 (C)"},
         "name": "Hawk´s Shadow",
         "description": "Gain the ability to fly over terrain, but decreases your total movement speed while in hawk form.",
         "maxRank": 1,
         "effects": {
-          "base": { "movement_speed": -25 },
-          "perRank": { "movement_speed": 0 }
+          "base": {"movement_speed": -25},
+          "perRank": {"movement_speed": 0}
         }
       },
       {
         "id": "stormbolts",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 4, 5], "note": "2+r extra Projectile_Player_obj in a 12 deg fan with W*(1+0.15r) and one shared singleHitPackId"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "shared pack: 0 extra hits on a lone dummy (card C/I)"}], "confidence": "C", "note": "card table p11 (C/I)", "plannerFix": "planner counts projectile_count 2+r as extra hits with lightning 15r; the game's pack shares one hit list, so 0 extra hits on a lone dummy"},
         "name": "Stormbolts",
         "description": "When attacking fire multiple stormbolts in an arc while in hawk form.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 2 },
-          "perRank": { "lightning_skill_damage": 15, "projectile_count": 1 }
+          "base": {"lightning_skill_damage": 0, "projectile_count": 2},
+          "perRank": {"lightning_skill_damage": 15, "projectile_count": 1}
         }
       },
       {
         "id": "bird_of_thunder",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [40, 80, 120], "note": "when [26] > 0 (p7 applied): stasis DoT x(1+0.4r) and +1/r stasis stacks; the planner's 100% stasis proc is not in the card"}], "confidence": "C", "note": "card table p12 (C/I)", "plannerFix": "planner applies a 100% stasis proc of 40r; the card multiplies the p7 stasis DoT by (1+0.4r) and adds stacks, no independent proc"},
         "name": "Bird of Thunder",
         "description": "Increases stasis inflicted while in hawk form with increased stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_stasis_damage": 0, "max_skill_stacks": 0 },
-          "perRank": { "increased_stasis_damage": 40, "max_skill_stacks": 1 }
+          "base": {"increased_stasis_damage": 0, "max_skill_stacks": 0},
+          "perRank": {"increased_stasis_damage": 40, "max_skill_stacks": 1}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2573,17 +2685,19 @@
       {
         "id": "thundering_bolt",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "R4 433#1 (C switches, I scan): [156] = floor(W*(1+0.5r)) and [157] (random) are written only by attackClasses L346-L347; the ProjectileCollision00Skills (125 values) and ProjectileCollision24Prophet (21 values) switches have no case 156/157 and the byte scan mov r8d,0x9c/0x9d finds no reader (only Define*Tree, GetPlayerSpawner, WormholeUtilityFuncs) -> Thundering Bolt does nothing in this version: 0"}], "confidence": "I", "note": "card R4 433#1 (C for the switches, I for the scan limited to r8d encodings)", "plannerFix": "planner applies lightning 50r and area 15r; the card found no reader of [156]"},
         "name": "Thundering Bolt",
         "description": "Storm bolts call down bolts of lightning while traveling dealing damage on a large radius while in hawk form. Projectiles are now piercing.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "lightning_skill_damage": 50, "area_of_effect": 15 }
+          "base": {"lightning_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"lightning_skill_damage": 50, "area_of_effect": 15}
         }
       },
       {
         "id": "electric_screech",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.162, 0.408, 0.738], "per": "use", "note": "chance 12r% per attack -> Storm_Hawk_Screech_obj with d4 = floor(W*(1+0.35r)): expected 0.12r*(1+0.35r) per attack"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner adds area_of_effect 15r which the card does not give for the screech object; chance 12r and lightning 35r match"},
         "name": "Electric Screech",
         "description": "Chance when attacking in hawk form to unleash an electric screech causing monsters to be struck by lightning bolts on hit.",
         "maxRank": 3,
@@ -2601,6 +2715,7 @@
   {
     "id": "spirit_of_the_ent",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "prophet",
     "name": "Spirit of the Ent",
     "kind": "active",
@@ -2661,39 +2776,43 @@
       {
         "id": "ents_rage",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r on buff 267 V1 (flat physical to weapon, [StatPhysicalFlat]); stat of the form"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Ent´s Rage",
         "description": "Increases damage while in ent form.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "ents_bark",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "physical and magic damage reduction in form"}], "confidence": "C", "note": "card table p2 (C)"},
         "name": "Ent´s Bark",
         "description": "Increases damage reduction from all sources while in ent form.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 4 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 4}
         }
       },
       {
         "id": "ents_vitality",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "V2 life x(1+4%r)"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Ent´s Vitality",
         "description": "Increases maximum life while in ent form.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_life": 0 },
-          "perRank": { "increased_life": 4 }
+          "base": {"increased_life": 0},
+          "perRank": {"increased_life": 4}
         }
       },
       {
         "id": "ents_weight",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.05, 1.1, 1.15, 1.2, 1.25], "note": "chance 5r% per attack -> damage x2 (W*2): expected x(1+0.05r)"}], "confidence": "C", "note": "card table p4 (C structure, I-free)", "plannerFix": "planner has a bare proc (chance 5r) with no damage effect; the game doubles the attack with chance 5r%"},
         "name": "Ent´s Weight",
         "description": "Chance to deal double damage on hit while in ent form.",
         "maxRank": 5,
@@ -2702,28 +2821,31 @@
       {
         "id": "ents_thorns",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "damage return 250r in form; triggers only when the player is hit, the dummy does not attack"}], "confidence": "C", "note": "card table p5 (C)"},
         "name": "Ent´s Thorns",
         "description": "Increases damage return while in ent form.",
         "maxRank": 5,
         "effects": {
-          "base": { "damage_return": 0 },
-          "perRank": { "damage_return": 250 }
+          "base": {"damage_return": 0},
+          "perRank": {"damage_return": 250}
         }
       },
       {
         "id": "ents_wisdom",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "all resistances +10/r in form"}], "confidence": "C", "note": "card table p6 (C)"},
         "name": "Ent´s Wisdom",
         "description": "Increases all resistances while in ent form.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_resistances": 0 },
-          "perRank": { "all_resistances": 10 }
+          "base": {"all_resistances": 0},
+          "perRank": {"all_resistances": 10}
         }
       },
       {
         "id": "ents_roots",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4.6, 10.4, 17.55, 25.6, 35.0], "note": "chance 4r% per attack -> Earth Bind with poison [60] = floor(W*(1+0.15r)), 3 s: expected poison per attack = 0.04r*(1+0.15r) of W (% shown, I)"}], "confidence": "C", "note": "card table p7 (C)", "plannerFix": "planner applies physical 15r as a skill-damage increase; the game makes a 4r% proc of an Earth Bind poison DoT of W*(1+0.15r)"},
         "name": "Ent´s Roots",
         "description": "Chance on hit to root monsters in place dealing damage over time while in ent form..",
         "maxRank": 5,
@@ -2740,6 +2862,7 @@
       {
         "id": "ents_trunk",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "trigger when the player is hit; 0 on the dummy"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Ent´s Trunk",
         "description": "Chance to block all incoming damage while in ent form.",
         "maxRank": 5,
@@ -2748,6 +2871,7 @@
       {
         "id": "ents_heart",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "trigger when the player is hit; 0 on the dummy"}], "confidence": "C", "note": "card table p9 (C)"},
         "name": "Ent´s Heart",
         "description": "Chance to replenish a portion of your maximum life when struck while in ent form.",
         "maxRank": 5,
@@ -2763,17 +2887,19 @@
       {
         "id": "ents_intellect",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "magic skill damage +10%/r in form: applies to the player's magic skills, not to the Ent's melee hits"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Ent´s Intellect",
         "description": "Increases magic skill damage while in ent form.",
         "maxRank": 5,
         "effects": {
-          "base": { "magic_skill_damage": 0 },
-          "perRank": { "magic_skill_damage": 10 }
+          "base": {"magic_skill_damage": 0},
+          "perRank": {"magic_skill_damage": 10}
         }
       },
       {
         "id": "reflecting_branches",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "trigger on damage taken (PlayerTakeDamage); the dummy does not attack"}], "confidence": "C", "note": "card table p11 (C)", "plannerFix": "planner adds a 17r% proc with physical 100r on hit; the game triggers only when the player takes damage"},
         "name": "Reflecting Branches",
         "description": "Chance to throw a huge branch towards monsters when struck while in ent form.",
         "maxRank": 3,
@@ -2789,17 +2915,19 @@
       {
         "id": "grizzly",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "note": "flat physical damage = r * floor(max life / 500) (StatPhysicalFlat += p12.s9 * RSS(36)); divisor 500 per the card (I)"}], "confidence": "C", "note": "card table p12 (C/I)"},
         "name": "Grizzly",
         "description": "Morph into a grizzly bear and gain increased damage based on your maximum life while in ent form.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_max_life_per500": 0 },
-          "perRank": { "conversion_max_life_per500": 1 }
+          "base": {"conversion_max_life_per500": 0},
+          "perRank": {"conversion_max_life_per500": 1}
         }
       },
       {
         "id": "dominos_of_trunks",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "spawns on damage taken (PlayerTakeDamage); 0 on the dummy"}], "confidence": "C", "note": "card table p13 (C)", "plannerFix": "planner adds a 8r% proc with physical 40r and 2+r projectiles on hit; the game triggers only on damage taken"},
         "name": "Dominos of Trunks",
         "description": "Chance when struck to summon a sequence of falling tree trunks towards the target while in ent form.",
         "maxRank": 3,
@@ -2815,12 +2943,13 @@
       {
         "id": "crushing_trunksmash",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "[108] = floor(W*(1+0.75r)) with slow 0.5 s; no reader of [108] outside attackClasses found, so likely an extra hit but not confirmed (I)"}], "confidence": "I", "note": "card table p14 (I)", "plannerFix": "planner applies physical 75r as a skill-damage increase; the card found no reader of [108] and the effect is unconfirmed"},
         "name": "Crushing Trunksmash",
         "description": "Knock monsters back on hit while in ent form causing them to take increased damage when colliding with terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 75 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 75}
         }
       }
     ]
@@ -2828,6 +2957,8 @@
   {
     "id": "maelstrom_of_frost",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 30.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 40 s, duration 30 s; uptime 75 % without p11), area around the player so the dummy at 160 px is inside once the mask has grown: one Prophet_Maelstrom_obj (PDP, glued to the player, destroyTimer = 30*60 = 1800 frames, scale 0.1 -> maxScale 3.5 at +0.05/frame, mask ~134 px *scale, so a dummy at 160 px is reached at scale ~2.57 = frame ~49), tick_frequency = 60 frames (FPS*(1 - p6.s9%), overrides the 0.5 s of Create), one hit per map clear, each hit = d0 = floor(W*(1 + V2%)*(1+LSSD)) + d2 = floor(V1*(1+LSSD)) cold (one hit with two components, V1 = 15*L, V2 = 82 + 18*L) = 1.0 main hit. By tools/tick_hits.py (METODA rule 20; active frames = 1800 - 2 = 1798, T = 60, first overlap at frame 49 or 0 or 42): 30 hits (the card's 1 + floor(30/tick) = 31 is the older tick formula). perExtraProjectile 0: no projectile mechanism. A skill-duration bonus scales the tick count in the engine. p6 (shorter tick: more hits), p11 (permanent, mana drain), p1/p4/p5/p9 per-tick procs, p12 meteors, p14 ice blocks are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Maelstrom of Frost",
@@ -2860,20 +2991,16 @@
       }
     ],
     "attackKind": "attack",
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 16
-    },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": {
       "base": 8,
       "perLevel": 1.75,
       "rankIndexing": "fullRank"
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 82,
-        "perLevel": 18
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 182, "perLevel": 18 },
       "flatPhysicalMin": {
         "base": 4,
         "perLevel": 0
@@ -2924,6 +3051,7 @@
       {
         "id": "freezing_wind",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "per tick chance 25r%: cold part d2 x(1+0.05r) and freeze 3 s (enables p7). Only the cold part d2 is multiplied; expected multiplier on d2 = 1+0.0125r^2 (cold share of the hit depends on W and L, not a plain multiplier on the whole hit)"}], "confidence": "C", "note": "card table p1 (C); freeze uptime not given", "plannerFix": "planner applies cold_skill_damage 5r to the whole hit with proc chance 25r; the game multiplies only the cold part d2 by 1+0.05r"},
         "name": "Freezing Wind",
         "description": "Chance to freeze target on hit dealing increased damage.",
         "maxRank": 4,
@@ -2940,34 +3068,37 @@
       {
         "id": "maelstroms_magnitude",
         "positionIndex": 2,
+        "dummy": {"effects": [], "confidence": "I", "note": "card table p2 (C structure, I geometry)", "plannerFix": "area only raises the maximal radius (maxScale x(1+15r)); the entry time at 160 px is set by the growth speed 0.05/tick, so no extra hits on the dummy"},
         "name": "Maelstroms Magnitude",
         "description": "Increases the area of effect radius of maelstrom of frost.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "frostburning_temperature",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r for both parts (d0 and d2)"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Frostburning Temperature",
         "description": "Increases the damage dealt by maelstrom of frost.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "coldsnapping_breeze",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1, 4, 9, 16, 25], "note": "per tick chance 4r% -> frostbite DoT [35] = floor(base*25r%); expected per tick = 0.04r*0.25r of base (% shown, I for base)"}], "confidence": "C", "note": "card table p4 (C)", "plannerFix": "planner also applies increased_frost_bite_damage 25r, which the card does not give; the frostbite proc itself (chance 4r, 25r) matches"},
         "name": "Coldsnapping Breeze",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 25 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2980,6 +3111,7 @@
       {
         "id": "hypothermic_snap",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "per tick chance 4r%: cold part d2 x2; expected multiplier on d2 = 1+0.04r (cold part only)"}], "confidence": "C", "note": "card table p5 (C)", "plannerFix": "planner has a bare proc (chance 4r) with no effect; the game doubles only the cold part d2"},
         "name": "Hypothermic Snap",
         "description": "Chance to deal double damage on hit.",
         "maxRank": 5,
@@ -2988,28 +3120,31 @@
       {
         "id": "intense_temperature",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.111, 1.25, 1.429, 1.667, 2.0], "note": "tick x(1-10%r): hits per cast = 1+floor(30/tick) scale as 1/(1-0.1r); base 30 hits at 160 px"}], "confidence": "C", "note": "card table p6 (C)", "plannerFix": "planner models faster_cast_rate 10r; the game shortens the tick (more hits per cast), not the cast rate"},
         "name": "Intense Temperature",
         "description": "Increases the tick frequency of maelstrom of frost.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "frosted_bones",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "freezing_wind", "note": "[178] extra vs frozen x(1+0.15r); freeze comes from p1 (chance 25r per tick, 3 s); the frozen fraction of time is not in the card (upper bound, I)"}], "confidence": "I", "note": "card table p7 (C mechanism, I uptime)"},
         "name": "Frosted Bones",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 15 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 15}
         }
       },
       {
         "id": "leeching_from_frost",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "life on proc (leechingFrost 1%/r, [966])"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Leeching from Frost",
         "description": "Chance to replenish a portion of your maximum life on hit.",
         "maxRank": 3,
@@ -3025,12 +3160,13 @@
       {
         "id": "shattering_permafrost",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "per tick chance 4r% -> cold break [973] = 25r% for 5 s, multiplies the cold part only; uptime 4r*(ticks in 5 s) not given (I)"}], "confidence": "C", "note": "card table p9 (C); planner cold_break 25r and chance 4r match"},
         "name": "Shattering Permafrost",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 25 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -3043,6 +3179,7 @@
       {
         "id": "chaotic_growth",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 90 on kill -> scale on kill; 0 on a non-dying dummy"}], "confidence": "C", "note": "card table p10 (C)", "plannerFix": "planner adds a 3r% proc with area 4r on hit; the game gives an on-kill effect only"},
         "name": "Chaotic Growth",
         "description": "Chance on monster kill to increase the area of effect radius of maelstrom of frost for a short duration.",
         "maxRank": 5,
@@ -3058,17 +3195,19 @@
       {
         "id": "endless_blizzard",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "damage_mult", "byRank": [1.3333, 1.3333, 1.3333], "note": "uptime 100% instead of 75% (destroyTimer -1; base 30 s on 40 s cooldown): DPS x4/3; mana drain (8+2r)% max mana/s is a cost, not DPS"}], "confidence": "C", "note": "card table p11 (C)", "plannerFix": "planner models mana_cost_reduction 8+2r and cold 15r; the game makes the Maelstrom permanent (uptime 100%, x4/3 DPS) with a mana drain"},
         "name": "Endless Blizzard",
         "description": "Maelstrom of frost no longer expires draining your mana over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "mana_cost_reduction": 8 },
-          "perRank": { "cold_skill_damage": 15, "mana_cost_reduction": 2 }
+          "base": {"mana_cost_reduction": 8, "subtree_damage": 0},
+          "perRank": {"mana_cost_reduction": 2, "subtree_damage": 15}
         }
       },
       {
         "id": "meteor_of_ice",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.16, 0.3], "per": "hit", "note": "per tick chance 4r% (on the hit of the Maelstrom) -> Prophet_Maelstrom_Meteor_obj created at the position of the hit enemy (r13 = self = the dummy, @0x1452a54b2); after the fall (yy 320, g 1.25, ~23 frames) Destroy_0 (0x1495a9cb0) creates an Explosion_Item_obj (index 0x5d4, scale x3.5) at the meteor position with damage[2], damage[0] (x(1+0.5r)) and InheritModifiers (one call) -> centred on the dummy: +1 hit per proc with d*(1+0.5r); expected 0.04r*(1+0.5r) per base hit (R4 maelstrom 430#2: hit on the dummy is certain)"}], "confidence": "C", "note": "card R4 430#2 (C): the meteor explosion lands on the dummy", "plannerFix": "planner adds an area 20r to the proc; the card gives a meteor object (landing damage) with no area term"},
         "name": "Meteor of Ice",
         "description": "Chance on hit to drop a meteor of ice on its location dealing increased damage on a large radius.",
         "maxRank": 3,
@@ -3084,31 +3223,25 @@
       {
         "id": "the_frozen_layer_of_hell",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute [140] = 3r: 0 on a full-HP dummy; area (maxScale x(1+25r)) gives no extra hits at 160 px, as with p2"}], "confidence": "C", "note": "card table p13 (C)", "plannerFix": "planner models area 25r and execute 3r as DPS; the card gives 0 execution on the dummy and no hit change from the larger max radius"},
         "name": "The Frozen Layer of Hell",
         "description": "Increases the area of effect radius of maelstrom of frost and executing monsters below a threshold.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "execute_below": 0 },
-          "perRank": { "area_of_effect": 25, "execute_below": 3 }
+          "base": {"area_of_effect": 0, "execute_below": 0},
+          "perRank": {"area_of_effect": 25, "execute_below": 3}
         }
       },
       {
         "id": "storm_of_frost",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "every stormOfFrostTimerSet (about 1 s*(1-0.15r)) an ice block at a random point in a circle of radius sprite_width/2 with cold damage d*(1+0.15r); hit probability ~ (block radius+12)^2/R^2 per burst; block radius and burst count not given (I)"}], "confidence": "I", "note": "card table p14 (I)", "plannerFix": "planner applies cold 15r, area 22.5r and cast speed 15r; the card gives random-point ice blocks with (1+0.15r) damage and a hit probability per burst, cast speed is not in the card"},
         "name": "Storm of Frost",
         "description": "The maelstrom drops chunks of ice on a radius around you dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "cold_skill_damage": 0,
-            "area_of_effect": 0,
-            "faster_cast_rate": 0
-          },
-          "perRank": {
-            "cold_skill_damage": 15,
-            "area_of_effect": 22.5,
-            "faster_cast_rate": 15
-          }
+          "base": {"cold_skill_damage": 0, "area_of_effect": 0, "faster_cast_rate": 0},
+          "perRank": {"cold_skill_damage": 15, "area_of_effect": 22.5, "faster_cast_rate": 15}
         }
       }
     ]
@@ -3181,6 +3314,7 @@
   {
     "id": "spirit_of_the_wendigo",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "prophet",
     "name": "Spirit of The Wendigo",
     "kind": "active",
@@ -3243,67 +3377,73 @@
       {
         "id": "wendigos_rage",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r on buff 266 V1 (form attack damage: AD % and flat physical); not a hit change"}], "confidence": "C", "note": "card table p1 (C)"},
         "name": "Wendigo´s Rage",
         "description": "Increases physical damage while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "wendigos_hunger",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "V2' = (29+L)*(1+0.15r) on buff slot 1 -> attack speed of the form; value depends on L, not a fixed %"}], "confidence": "C", "note": "card table p2 (C)", "plannerFix": "planner models faster_cast_rate 15r; the card gives attack speed (V2 = 29+L) x (1+0.15r), not cast rate"},
         "name": "Wendigo´s Hunger",
         "description": "Increases attack speed while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 15 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 15}
         }
       },
       {
         "id": "wendigos_agility",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "V3 = 25 x (1+12.5%r) movement"}], "confidence": "C", "note": "card table p3 (C)"},
         "name": "Wendigo´s Agility",
         "description": "Increases movement speed while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 12.5 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 12.5}
         }
       },
       {
         "id": "wendigos_skin",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "all resistances +5/r in form"}], "confidence": "C", "note": "card table p4 (C)"},
         "name": "Wendigo´s Skin",
         "description": "Increases resistances while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_resistances": 0 },
-          "perRank": { "all_resistances": 5 }
+          "base": {"all_resistances": 0},
+          "perRank": {"all_resistances": 5}
         }
       },
       {
         "id": "wendigos_focus",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit chance 0; crit damage +22.5%/r in form (StatCritDamage), applies to form attacks"}], "confidence": "C", "note": "card table p5 (C)"},
         "name": "Wendigo´s Focus",
         "description": "Increases critical strike damage while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 22.5 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 22.5}
         }
       },
       {
         "id": "wendigos_claws",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "no Stat* function reads subtalent (425, 6, .) in the card scan; the bleed in the planner is not confirmed (I)"}], "confidence": "I", "note": "card table p6 (I)", "plannerFix": "planner adds bleeding 20r on every hit (proc chance 100); the card finds no reader for this subskill"},
         "name": "Wendigo´s Claws",
         "description": "Increases bleed damage inflicted while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 20 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -3316,86 +3456,85 @@
       {
         "id": "wendigos_paw",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "melee attack area [71] +15%/r: 0 on a single dummy"}], "confidence": "C", "note": "card table p7 (C)"},
         "name": "Wendigo´s Paw",
         "description": "Increases the attack radius while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "wendigos_recuperation",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "life replenish +50%/r in form"}], "confidence": "C", "note": "card table p8 (C)"},
         "name": "Wendigo´s Recuperation",
         "description": "Increases life replenish while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 50 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 50}
         }
       },
       {
         "id": "wendigos_bloodlust",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 275 only on kill (ProjectileKill24Prophet); 0 on a non-dying dummy"}], "confidence": "C", "note": "card table p9 (C)", "plannerFix": "planner adds physical_skill_damage 2r on every hit; the game gives a buff only when the target dies"},
         "name": "Wendigo´s Bloodlust",
         "description": "Gain a stack of bloodlust after monster kill increasing your damage dealt while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "max_skill_stacks": 0 },
-          "perRank": { "physical_skill_damage": 2, "max_skill_stacks": 2 }
+          "base": {"physical_skill_damage": 0, "max_skill_stacks": 0},
+          "perRank": {"physical_skill_damage": 2, "max_skill_stacks": 2}
         }
       },
       {
         "id": "wendigos_endurance",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "defense +5/r in form"}], "confidence": "C", "note": "card table p10 (C)"},
         "name": "Wendigo´s Endurance",
         "description": "Increases your defense while in wendigo form.",
         "maxRank": 5,
         "effects": {
-          "base": { "enhanced_defense": 0 },
-          "perRank": { "enhanced_defense": 5 }
+          "base": {"enhanced_defense": 0},
+          "perRank": {"enhanced_defense": 5}
         }
       },
       {
         "id": "blood_thirsty_skinwalker",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD +20%/r (s9) on buff 266 V1; life-per-hit (StatLifePerHit) and s10/s11 not read"}], "confidence": "C", "note": "card table p11 (C/I)", "plannerFix": "planner gives physical_skill_damage 30r; the card gives LSSD 20%/r on V1 (s9)"},
         "name": "Blood Thirsty Skinwalker",
         "description": "Increases life steal, life steal frequency and damage while in wendigo form.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "life_steal": 0,
-            "faster_cast_rate": 0,
-            "physical_skill_damage": 0
-          },
-          "perRank": {
-            "life_steal": 20,
-            "faster_cast_rate": 15,
-            "physical_skill_damage": 30
-          }
+          "base": {"life_steal": 0, "faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"life_steal": 20, "faster_cast_rate": 15, "subtree_damage": 20}
         }
       },
       {
         "id": "clawarang",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.4, 1.8, 2.2], "per": "use", "note": "each form attack throws Clawarang (1 hit on departure) with W*(1+0.4r): extra = 1*(1+0.4r) per attack; return trip adds no hit (map not cleared, 10 px/kl.)"}], "confidence": "C", "note": "card table p12 (C)", "plannerFix": "planner models a 40r physical skill damage and projectile size 15r; the game adds one Clawarang hit W*(1+0.4r) per form attack"},
         "name": "Clawarang",
         "description": "Throw a boomerang of claws when attacking while in vendigo form. Catching the boomerang increases your damage for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "physical_skill_damage": 40, "projectile_size": 15 }
+          "base": {"physical_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"physical_skill_damage": 40, "projectile_size": 15}
         }
       },
       {
         "id": "flesh_ripping_beast",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1.6, 6.4, 14.4], "note": "bleed chance 8r% per attack, [22] += floor(W*20r%) and stacks +1/r: expected bleed per attack = 0.08r*0.2r of W (% shown)"}], "confidence": "C", "note": "card table p13 (C); planner proc chance 8r, bleeding 20r match"},
         "name": "Flesh Ripping Beast",
         "description": "Chance to inflict bleeding on hit with increased stacks of bleeding while in wendigo form.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 20 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -3412,12 +3551,13 @@
       {
         "id": "blood_carnage",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.167, 0.143, 0.125], "per": "use", "note": "at full player stacks (max 4+r, 3 s) one Blood Carnage object with d0 (ratio 1) per cycle: 1 hit every (5+r) attacks -> 1/(5+r) per attack (I, stack bonus not read)"}], "confidence": "I", "note": "card table p14 (C structure, I cadence)"},
         "name": "Blood Carnage",
         "description": "Every attack adds a stack of blood carnage, at maximum stacks become empowered unleashing ripples of blood on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "max_skill_stacks": 4 },
-          "perRank": { "physical_skill_damage": 15, "max_skill_stacks": 1 }
+          "base": {"physical_skill_damage": 0, "max_skill_stacks": 4},
+          "perRank": {"physical_skill_damage": 15, "max_skill_stacks": 1}
         }
       }
     ]

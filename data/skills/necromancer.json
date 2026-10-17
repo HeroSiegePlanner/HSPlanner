@@ -3,6 +3,8 @@
     "id": "bone_shred",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 3, "perExtraProjectile": 0.14, "confidence": "C", "note": "Per cast, dummy at 160 px on the aim line: n = XSP(3 + p1.s9) = 3 Necromancer_Bone_Shred_obj (4 px/frame, 2 s, singleHit, bbox 15x18 so hit while |theta| <= atan(20/160) = 7.1 deg) in a fan of step s = max(18 - n, 5) deg around the aim; with n = 3 (s = 15 deg) only the central shard hits = 1 hit. perExtraProjectile = 0.14 = least-squares slope through the base point (n = 3, 1 hit) of the card's H(n) (non-monotonic, step narrows as n grows; Resztki D(b): the shard starts at (x, y) while the aim axis runs from (x, y+6), transverse offset 6*cos(phi), hit threshold 12+8 = 20 px (I)): n = 3 -> 1, 4 -> 1 (1.06 mean over azimuths, was 2: 19.6 vs 20 px borderline now unfavourable), 5 -> 1, 6 -> 2, 7 -> 1, 8 -> 2, 9 -> 1, 10 -> 2, 13 -> 3, 18 -> 3 (2.9 mean, was 2), 23 -> 3 (I; the old 0.33 came from n = 3 -> 6 only; n = 5..10 values are the pre-Resztki table, which Resztki D(b) lists as unchanged). p11 Bomb of Bones (1 blast + ~0.40 N shards at the (x, y-24) cursor, Resztki lob correction), p12/p14 child shards (~1 + 0.45 (N-1), R4 4 px from the hitting shard, per hitting shard), p13 orbit spiral, p7 Bonerang (0 on the dummy), p10 second fan are subskill effects."},
     "classId": "necromancer",
     "name": "Bone Shred",
     "kind": "active",
@@ -17,7 +19,7 @@
     "tree": "Venomancer",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 10 },
+    "damageFormula": { "base": 0, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -36,50 +38,55 @@
       {
         "id": "endochondral_ossification",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15], "note": "n = XSP(3 + p1.s9), +5 odlamkow/r"}, {"kind": "extra_hits", "byRank": [1, 2, 1.9], "per": "use", "replacesProjectileHits": true, "note": "card H(n) table at 160 px: n=3 -> 1 (base), n=8 (r1) -> 2, n=13 (r2) -> 3, n=18 (r3) -> 2.9 (Resztki D(b): 3 horizontally, 2.9 mean over azimuths, was 2); extra = H - 1; base hits 1.0 = n=3"}], "confidence": "I", "note": "card Runda 3 / Bone Shred section p1 + Resztki D(b) (aim origin (x, y) vs axis (x, y+6)); geometry: fan step max(18-n,5) deg, hit if |theta| <= atan(20/160)=7.1 deg (threshold 12+8 = 20 px is I); r1..r3 from card example n=8,13,18. Only r3 changed (2 -> 2.9)", "plannerFix": "planner converts +5 projectiles/r at perExtraProjectile (about +0.7 hits per rank at 0.14); card's explicit H(n) gives +1, +2, +1.9 (non-monotonic, step narrows then widens)"},
         "name": "Endochondral Ossification",
         "description": "Increases the amount of bone shreds.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 5 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 5}
         }
       },
       {
         "id": "lrp5_gene",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8/r"}], "confidence": "C", "note": "card Bone Shred section, p2 row (C)"},
         "name": "LRP5 Gene",
         "description": "Increases the damage dealt by bone shred.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "remodelling",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost only (LoadManaCost)"}], "confidence": "C", "note": "card p3 row (C): no DPS effect"},
         "name": "Remodelling",
         "description": "Decreases mana cost when using bone shred.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 6 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 6}
         }
       },
       {
         "id": "bone_disruption",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "projectile speed and orbit speed x(1+15r%); no change of hits on a stationary dummy for the fan (shards do not skip the dummy); only enters via p13 sweep angle"}], "confidence": "C", "note": "card p4 row (C)"},
         "name": "Bone Disruption",
         "description": "Increases projectile speed of the bone shreds.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "osteochondroma",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.9, 3.6, 8.1, 14.4, 22.5], "note": "expected LSSD: per shard roll chance 3r% (p5.s11) of +30r% (p5.s9); expectation 0.03r*0.30r = 0.009r^2 (percent: 0.9, 3.6, 8.1, 14.4, 22.5); the roll is per shard in game, average only"}, {"kind": "other", "note": "separate size roll p5.s10 = 15/r % (shard size); card gives no dummy hit delta for it (not quantified, I)"}], "confidence": "C", "note": "card p5 row: LSSD per shard + size roll L55", "plannerFix": "planner puts the proc on_cast (one roll per cast); game rolls per shard (same average, different variance); size roll missing"},
         "name": "Osteochondroma",
         "description": "Chance on cast to increase the damage and size of bones.",
         "maxRank": 5,
@@ -95,34 +102,37 @@
       {
         "id": "quick_growth",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 8, "note": "FCR +8/r in TalentUseSetSpeed; period x (castRate + 0.08r)/castRate"}], "confidence": "C", "note": "card p6 row (C)"},
         "name": "Quick Growth",
         "description": "Increases cast rate when using bone shred.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 8 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 8}
         }
       },
       {
         "id": "bonerang",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[461] = 10r% multiplies only the return damage after a wall; the dummy is already hit by the outgoing pass and the map is not cleared, so 0 extra hits on the dummy"}], "confidence": "C", "note": "card p7 row (C), dekompilacja 0x148bdf090", "plannerFix": "planner gives arcane_skill_damage +10/r to the whole skill; in game it only scales the return object after a wall (no dummy hit)"},
         "name": "Bonerang",
         "description": "Bone shreds now return to the necromancer dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 10}
         }
       },
       {
         "id": "exposed_fracture",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "note": "bleeding (buff 3, reports/dot_debuffs.md): rolled ONCE per cast with chance 3r% (p8.s10); when it procs, [22] = floor(dmg * 50r%) on all shards (dmg = damage[1] of the skill's shard); DoT modelled separately by the engine"}], "confidence": "C", "note": "card p8 row (C): raz na rzut z szansa p8.s10", "plannerFix": "planner rolls on_hit (per hit) and calls it increased_bleeding_damage; game rolls once per cast (on_cast) and adds the bleed damage as 50r% of the shard damage"},
         "name": "Exposed Fracture",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 50 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -135,17 +145,19 @@
       {
         "id": "infected_wound",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "exposed_fracture", "note": "[177] = 15r% extra damage only vs bleeding targets; the dummy bleeds only through p8 (chance 3r% per cast), so the realised multiplier = 1 + 0.15r * (bleed uptime on the dummy, not in card: I)"}], "confidence": "C", "note": "card p9 row (C); condition 'vs bleeding' stated, uptime I"},
         "name": "Infected Wound",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "bone_spurs",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "chance 4r% per cast (p10.s9) of a second full fan (outer loop limit +1); expected x(1 + 0.04r)"}], "confidence": "C", "note": "card p10 row (C), asm 0x1463b5368", "plannerFix": "planner says of_total_damage 50 (second fan at 50 percent damage); card says the second fan is a full fan (100 percent), chance 4r% per cast"},
         "name": "Bone Spurs",
         "description": "Chance on cast to unleash additional bone shreds.",
         "maxRank": 5,
@@ -161,45 +173,49 @@
       {
         "id": "bomb_of_bones",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.4, 4.5, 5.8], "note": "transformation: n = XSP(1) bombs; each bomb lands near the cursor (x, y-24) and makes 1 Explosion_Item_obj (hit, <= 40 px < 91 px, unchanged) plus shards from the landing point; Resztki lob correction (rule 40, C asm): the target is 6 px above the cursor and the bomb lands ~12 px short of it, 16-40 px from the dummy centre; shards hit ~0.40*N on average over azimuths (was 0.31; Po R4 0.51) with N = 3 + p1 + 3*r11 = 6, 9, 12 for r11 = 1..3 at p1 = 0 -> shard hits 2.4, 3.5, 4.8 (azimuth ranges 1-6 / 1-9 / 2-12); total = 1 + shard hits = 3.4, 4.5, 5.8. Card also lists r11 = 4, 5 (N = 15, 18: 6.0, 7.1) but planner maxRank is 3. Cursor at (x, y): all N shards hit (not modelled). p1 raises N, not included"}, {"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += 20r% (p11.s10)"}], "confidence": "I", "note": "card p11 row (C/I) + Resztki lob (C asm, simulation lob.py/others.py); hit counts depend on cursor azimuth", "plannerFix": "planner models +3r extra projectiles at 0.14 hits each and no bomb explosion; game replaces the fan by 1 explosion plus ~0.40*N shards from the landing point (cursor at (x,y-24))"},
         "name": "Bomb of Bones",
         "description": "Throw a bonebomb that explodes into an increased amount of piercing bone shred into all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 3, "arcane_skill_damage": 20 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 20}
         }
       },
       {
         "id": "shattering_carcass",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += 15r% (p12.s10)"}, {"kind": "extra_hits", "byRank": [1.0, 1.8, 3.0], "per": "hit", "note": "[462] = 2r shards created by EACH hitting shard (R4 item 1: L31 zeroes [462] on the shard after its first hit, so the number of procs = number of base hits on the dummy, e.g. n = 8/13/18 with p1). Per proc the shards start 4 px from the ORIGIN of the hitting shard (argument[2].x/y/direction, asm 0x1451ad8a9-0x1451ada66), 12-28 px from the dummy centre, and hit on average 1.0 / 1.8 / 3.0 of N = 2, 4, 6 (r1..r3; r4 3.9, r5 4.8 of N = 8, 10); simulation shred3.py (I: event order of a new shard, mask rotation, +-15 %); the card's working formula 1 + 0.45 (N-1) does not reproduce its own table for small N, the table is used. Hits at the damage[1] of the parent"}], "confidence": "I", "note": "card p12 row, R4 item 1 (necromancer/110#1, C position / I motion); was: all 2r shards hit once per use", "plannerFix": "planner converts the 2r shards as projectiles at perExtraProjectile 0.14 (about 0.28 hits per rank); in game each hitting shard spawns 2r child shards and ~1.0 / 1.8 / 3.0 of them hit"},
         "name": "Shattering Carcass",
         "description": "Bone shreds now explode into piercing bone shards on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 2, "arcane_skill_damage": 15 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 15}
         }
       },
       {
         "id": "orbiting_remains",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: shards orbit the player on a spiral (orbitRadius 32 + 1.25/frame); at 160 px the spiral crosses the dummy once: 1 hit per use (deterministic, card); expectation n*(124(1+p4%)+14)/360 = 1.15 for n = 3 at p4 = 0 (I), not used"}, {"kind": "damage_pct", "base": 0, "perRank": 85, "note": "LSSD += 85r% (p13.s9)"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner has only arcane +85/r; the orbit spiral transformation (about 1 hit per use at 160 px) is missing"},
         "name": "Orbiting Remains",
         "description": "Bone shred now orbits the necromancer with increased damage and are sent outwards after a short period if they do not hit a target.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 85 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 85}
         }
       },
       {
         "id": "skeletal_split",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += 20r% (p14.s9)"}, {"kind": "extra_hits", "byRank": [1.0, 1.0, 1.1], "per": "hit", "note": "[463] = r shards created by EACH hitting shard (R4 item 1), start 4 px from the origin of the hitting shard; expected hits 1.0 / 1.0 / 1.1 of N = r = 1, 2, 3 (r4 1.8, r5 2.5 of N = 4, 5); shred3.py (I); damage[1] of the parent"}], "confidence": "I", "note": "card p14 row, R4 item 1 (necromancer/110#1); was: all r shards hit once per use", "plannerFix": "planner converts the r shards as projectiles at 0.14 hits each; in game each hitting shard spawns r child shards starting at the hitting shard, 1.0 / 1.0 / 1.1 of them hit"},
         "name": "Skeletal Split",
         "description": "Bone shreds split into multiple piercing shreds on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 20, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 20}
         }
       }
     ]
@@ -229,6 +245,8 @@
   {
     "id": "meat_bomb",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast, cursor on the dummy's body (x, y-24): Necromancer_Meat_Bomb_obj (Ability parent) lobs to the cursor (36 frames) and at its last landing creates 1 Explosion_Item_obj (singleHit, scale 1 + explosionAOE = 1 + 1.5*(1 + p6) = 2.5, reach ~79 + 12 px) 24 px from the dummy = 1 hit. The corpses (Corpse_obj, 1 + p4.s9, 6 s) it leaves are only fuel for Corpse Explosion / Raise Skeleton (separate skills). perExtraProjectile = 1.0: p13 Multi Lumps adds bombs in a 10 deg arc at the same distance, all hit for r1-r4 (5 of 6 for r5 at the (x, y-24) cursor with p6 = 0), p8 doubles bombs. p14 landing hit (lambda*floor(1.5*r*D) physical, blast radius ~173 px), p5 bounces (spoil the final blast), p10 leftovers are subskill effects. No cooldown: period 1/castRate."},
     "classId": "necromancer",
     "name": "Meat Bomb",
     "kind": "active",
@@ -243,7 +261,7 @@
     "tree": "Venomancer",
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 16 },
+    "damageFormula": { "base": 0, "perLevel": 13.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Meat Shield", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -262,83 +280,91 @@
       {
         "id": "high_protein",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 16, "note": "LSSD += 16r% (p1.s9)"}], "confidence": "C", "note": "card p1 row (C)"},
         "name": "High Protein",
         "description": "Increases the damage dealt by meat bomb.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 16 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 16}
         }
       },
       {
         "id": "far_reaching_meat",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "throw range not read by the code; the cursor sets the landing point, so no dummy hit change at 160 px"}], "confidence": "C", "note": "card p2 row (C): brak odczytu", "plannerFix": "planner gives skill_range +15/r; card: no read of range in the throw code, so no effect on the dummy"},
         "name": "Far Reaching Meat",
         "description": "Increases the cast range of meat bomb.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "metabolic_lump",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "life replenish 1% max HP per r on hit ([966] = p3.s9%); no dummy DPS"}], "confidence": "C", "note": "card p3 row (C)"},
         "name": "Metabolic Lump",
         "description": "Recover a portion of your maximum life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1}
         }
       },
       {
         "id": "cadavery",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "corpses = 1 + r per bomb (6 s); they add no hit to the Meat Bomb itself; fuel for Corpse Explosion and Raise Skeleton (their hit counts depend on n_c, see those skills)"}], "confidence": "C", "note": "card p4 row (C); corpse positions 48 px ring (R3 pkt 3)"},
         "name": "Cadavery",
         "description": "Increases the amount of corpses created by meat bomb.",
         "maxRank": 3,
         "effects": {
-          "base": { "corpse_count": 0 },
-          "perRank": { "corpse_count": 1 }
+          "base": {"corpse_count": 0},
+          "perRank": {"corpse_count": 1}
         }
       },
       {
         "id": "elastic_meat",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "r1 only given: bounce explosion at 15r% of D hits the dummy (hit count 1, damage x0.15); the final full blast lands about 110 px beyond the dummy (out of range) -> DPS x0.15 at r1 when aimed at the dummy; r2..r5 not determined by the card; assumes cursor on dummy; aiming in front of dummy would restore the full blast (not modelled)"}], "confidence": "I", "note": "card p5 row (C/I), bounceDamage = 15r%, zSpeed 2 + 1.25*bounces, deltaSpeed x0.85", "plannerFix": "planner adds +15r% of total damage and +1 bounce per rank as extra damage; in game the final full blast moves away from the dummy, so the net is a DPS drop (x0.15 at r1)"},
         "name": "Elastic Meat",
         "description": "Meatbomb bounces off the ground dealing area of effect damage with each bounce.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "of_total_damage": 15, "projectile_bounces": 1 }
+          "base": {"of_total_damage": 0, "projectile_bounces": 0},
+          "perRank": {"of_total_damage": 15, "projectile_bounces": 1}
         }
       },
       {
         "id": "high_blood_pressure",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "explosionAOE x(1 + 15r%) -> radius only; hit count unchanged at 160 px (kursor (x,y-24)); needed for the p13/p14 geometry (radius 79 px at p6=0)"}], "confidence": "C", "note": "card p6 row (C)"},
         "name": "High Blood Pressure",
         "description": "Increases meat bombs explosion area of effect radius.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "tossing_the_meat",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "gravityPower x(1 + 10r%): shorter flight; cast cadence unchanged; no dummy hit change"}], "confidence": "C", "note": "card p7 row (C); planner calls it projectile_speed (same numbers, different stat name)"},
         "name": "Tossing The Meat",
         "description": "Increases meat bombs traveling speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "double_the_meat",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "chance 4r% per cast (p8.s9) that every bomb is doubled (inner loop limit +1); expected x(1 + 0.04r); multiplies with p13 bomb count"}], "confidence": "C", "note": "card p8 row (C), asm 0x1463bd953"},
         "name": "Double The Meat",
         "description": "Chance on cast to unleash an additional meat bomb.",
         "maxRank": 5,
@@ -354,6 +380,7 @@
       {
         "id": "heavy_lump_of_meat",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s on hit with chance 4r% per cast ([51]); no damage; enables 'vs stunned' bonuses of other skills (not of this one)"}], "confidence": "C", "note": "card p9 row (C)", "plannerFix": "planner rolls the stun on_hit; card rolls it per cast (on_cast); no DPS in either case"},
         "name": "Heavy Lump of Meat",
         "description": "Chance on hit to stun.",
         "maxRank": 5,
@@ -366,6 +393,7 @@
       {
         "id": "fleshy_leftovers",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.01, 0.04, 0.09, 0.16, 0.25], "per": "use", "note": "chance 5r% per cast (p10.s10) of a leftover (leftOvers = 20r% of dmg) blast on landing: expected 0.05r * 0.20r = 0.01r^2 hits per use; the leftover flies in a random direction, so whether the blast reaches the dummy (a few px off) is not certain (I)"}], "confidence": "I", "note": "card p10 row (C/I), Meat_Bomb_Leftovers_obj random direction", "plannerFix": "planner rolls on_hit (per hit) with 100 percent of total damage; in game one roll per cast, leftover blast = 20r% of dmg with chance 5r% (expected 0.01r^2 hits per cast)"},
         "name": "Fleshy Leftovers",
         "description": "Chance for smaller chunks of meat to explode and spawn an additional corpse.",
         "maxRank": 5,
@@ -381,23 +409,25 @@
       {
         "id": "strong_bones",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD += 30r% (p11.s9)"}, {"kind": "utility", "note": "p11.s10 (15/r) is the pull strength [464] of Destroy_0 (no dummy effect); no range effect in card"}], "confidence": "C", "note": "card p11 row (C)", "plannerFix": "planner skill_range +15/r has no source in the card (the 15/r value drives the pull strength [464], not range)"},
         "name": "Strong Bones",
         "description": "Pull nearby monsters into the explosion location.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "arcane_skill_damage": 30, "skill_range": 15 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 15, "subtree_damage": 30}
         }
       },
       {
         "id": "rotten_corpses",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "dot", "note": "branch: bomb damage becomes damage[5] (poison, changes resistances and bonuses) plus poison DoT [0] = floor(dmg * 125r%) (B2) per bomb; DoT modelled separately by the engine"}], "confidence": "C", "note": "card p12 row (C), reports/dot_debuffs.md", "plannerFix": "planner models increased_poisoned_damage +125/r on hit; game switches the bomb to poison damage[5] and adds a separate poison DoT of 125r% dmg"},
         "name": "Rotten Corpses",
         "description": "Converts meat bombs damage to poison inflicting poisoned. Consumed corpses unleash a poison nova.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 125 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 125}
         },
         "proc": {
           "trigger": "on_hit",
@@ -410,12 +440,13 @@
       {
         "id": "multi_lumps",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "1 + r bombs in a 10 deg arc at the cursor distance; all hit at 160 px for r1..r3 (radius 79 px + 12 px); converted by planner at perExtraProjectile 1.0 = same number of hits"}, {"kind": "other", "note": "arcane break 25r (buff 8, 5 s) on the dummy, no damage; the card gives r5 geometry (5 of 6 bombs at cursor (x,y-24)) but planner maxRank is 3, so r4/r5 not used"}], "confidence": "I", "note": "card p13 row (C/I): hits r1..r3 all bombs (C/I), arcane break [979] C"},
         "name": "Multi Lumps",
         "description": "Throw multiple meat bombs in an arc inflicting arcane break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_break": 0, "projectile_count": 0 },
-          "perRank": { "arcane_break": 25, "projectile_count": 1 }
+          "base": {"arcane_break": 0, "projectile_count": 0},
+          "perRank": {"arcane_break": 25, "projectile_count": 1}
         },
         "proc": {
           "trigger": "on_hit",
@@ -428,12 +459,13 @@
       {
         "id": "colossal_carcass",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "landing hit on the dummy: lambda * floor(1.5 * r * D), physical, class 'none' (no crit, no multipliers); expected value at lambda = 1/2 (kept). R4 rule 37: lambda = 1/ceil(46/T) with T = ceil(72/c) + 1 frames (not 60/castRate): lambda = 1/2 for c <= 3.27 (T >= 23; at c = 1.75 T = 43, the next cast falls in flight and is blocked), 1/3 for T = 12..22 (c ~ 3.3..6.4); exceptions when n*T in {44, 45} (next cast relaunches inside the 44-45 window and replaces the landing): T = 22 (c ~ 3.43-3.6), T = 15 (c ~ 5.1-5.5); the old bands 2.61-2.76 / 3.92-4.17 and the 1/4 band no longer apply. Scale by 2/3 for lambda = 1/3. Also enemy knockback (zSpeed 8, jump 8) and stun, no extra hit"}, {"kind": "other", "note": "explosion scale x (1 + 4.5 + 1.5*p6%) about 5.5, radius about 173 px instead of 79 px; no extra hit beyond the bomb itself at 160 px (already hit at 79 px)"}], "confidence": "I", "note": "card p14 row (C/I), R3 pkt 5 (B47 landing, asm 0x1418bc8c1 / 0x1418bcc42) + R4 rule 37 lambda thresholds; values unchanged", "plannerFix": "planner adds arcane +150/r as LSSD; in game it is a separate physical landing hit on the dummy, lambda * floor(1.5 r D) per cast (lambda depends on castRate), plus a 5.5x explosion"},
         "name": "Colossal Carcass",
         "description": "Throw a massive chunk of meat with increased size and damage sending monsters airborne dealing area of effect damage when landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 150 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 150}
         }
       }
     ]
@@ -441,6 +473,8 @@
   {
     "id": "poison_breath",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 2.0, "confidence": "C", "note": "Per cast, dummy at 160 px on the aim line. One Necromancer_Poison_Breath_obj sits 16 px in front of the player and 6 px lower and grows (xs 0.25 + 0.14/frame, ys 1.25 + 0.05/frame for 12 frames, then fades 20 frames, destroyed in frame 32 AFTER that frame's collision check); alarm[11] = 2 makes it deadly in frame 2, so 31 active frames; tick_frequency 15 frames (0.25 s). First overlap with the dummy f1 = 4-6 frames after activation (5-7 for the 8.5 deg off-axis cursor); with tools/tick_hits.py: tick_hits(31, 15, f1) = 2 for every f1 = 0..15 (checked: f1 = 0, 4, 5, 6, 8, 15 all give 2): hit at f1, map clear at f = 15, 2nd hit at f = 16-18, the next clear (f = 31) falls after the last Step_0; a 3rd hit would need 33-35 active frames. So 2 hits of the poison damage[5] (direct hit, the poisoned DoT [0] of p3 is excluded). perExtraProjectile = 2.0: p14 Plague Breath makes n = 1 + p14.s10 breaths 14 deg apart, each reaches the dummy while theta <= ~24 deg: n = 2, 3, 4 -> all breaths (2 hits each), n = 5 -> ~3.8 of 5, n = 6 -> 4 of 6. p4 Contamination (+2P hits via a new breath on the dummy), p10 Necrotic Ward totem breaths (2 hits each), p11 Acid Spit are subskill effects."},
     "classId": "necromancer",
     "name": "Poison Breath",
     "kind": "active",
@@ -456,7 +490,7 @@
     "position": { "row": 1, "col": 2 },
     "hitModel": { "object": "Necromancer_Poison_Breath_Create", "tickFrequency": 0.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 20, "perLevel": 9.5 },
+    "damageFormula": { "base": 20, "perLevel": 8.65 },
     "manaCostFormula": { "base": 4.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Bone Shred", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
@@ -475,34 +509,37 @@
       {
         "id": "neurotoxin",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 6, "note": "FCR +6r% (p1.s9)"}], "confidence": "C", "note": "card p1 row (C)"},
         "name": "Neurotoxin",
         "description": "Increases cast rate when using poison breath.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "aerial_fumes",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "sizeMult = 1 + 15r%: wider and longer cone (growth 0.14*(sizeMult+rangeMult)); hit count unchanged (lifetime fixed at 31 active frames)"}], "confidence": "I", "note": "card p2 row (C/I)"},
         "name": "Aerial Fumes",
         "description": "Increases the size of poison breath.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "venomous_essence",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "note": "poisoned DoT [0] = floor(dmg * 30r%) per hit (B2); DoT modelled separately by the engine; enables p6"}], "confidence": "C", "note": "card p3 row (C), reports/dot_debuffs.md", "plannerFix": "planner models increased_poisoned_damage +30/r (an increase of poisoned damage); game adds a separate poison DoT floor(dmg*30r%) per hit"},
         "name": "Venomous Essence",
         "description": "Inflicts poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 30 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -515,6 +552,7 @@
       {
         "id": "contamination",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.154, 0.294, 0.422], "per": "hit", "note": "chance 8r% per hit of the breath, 2 tries per breath, one success at most ([465] zeroed): P = 1-(1-0.08r)^2 per source breath = 2 hits of a new breath, so 2P hits per breath = P per base hit (base = 2 hits per breath). Values per base hit; card: +0.31, +0.59, +0.84, +1.08, +1.28 per breath (2P). New breath origin in the dummy centre: f1 = 0, 2 hits (H_new = 2 per card R3). Planner maxRank is 3, so only r1..r3 are given (card r4 0.538, r5 0.640 omitted)"}], "confidence": "I", "note": "card p4 row (C/I), R3 pkt 1-2 (H_new = 2)", "plannerFix": "planner: independent on_hit chance 8r with no single-success cap and +3 per new breath (old); game: at most one new breath per source breath (P = 1-(1-0.08r)^2) with 2 hits each"},
         "name": "Contamination",
         "description": "Chance on hit to chain an additional breath from the target to its closest monster.",
         "maxRank": 3,
@@ -523,34 +561,37 @@
       {
         "id": "acid_components",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below 1r% life ([140] = p5.s9) and puddle on execute ([466]); the training dummy never dies, so 0"}], "confidence": "C", "note": "card p5 row (C)", "plannerFix": "planner adds poison_skill_damage +12/r; card gives no LSSD for p5 (only execute and puddle on kill)"},
         "name": "Acid Components",
         "description": "Dissolve low life monsters into pools of acid dealing additional damage and slowing on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0, "poison_skill_damage": 0 },
-          "perRank": { "execute_below": 1, "poison_skill_damage": 12 }
+          "base": {"execute_below": 0, "poison_skill_damage": 0},
+          "perRank": {"execute_below": 1, "poison_skill_damage": 12}
         }
       },
       {
         "id": "poisonous_gas",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "venomous_essence", "note": "[181] = 10r% extra damage vs poisoned targets; works only with the p3 DoT (poisoned state on the dummy); card gives no split of which of the 2 hits per breath see the poisoned state, so the realised average is lower than the multiplier (I)"}], "confidence": "C", "note": "card p6 row (C): '+% vs zatruty (tylko przy B2)'"},
         "name": "Poisonous Gas",
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 10 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 10}
         }
       },
       {
         "id": "vile_bacteria",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "poison break in game = 0.1r% (card: [982][0] = p7.s9 * 0.01 = 0.1r%, a double-percent bug); planner 10r% is wrong; chance 3r% per cast. No hit change; negligible DPS"}], "confidence": "C", "note": "card p7 row (C), L327", "plannerFix": "planner poison_break +10/r; game applies 0.1r% (double percent bug in [982][0] = p7.s9*0.01)"},
         "name": "Vile Bacteria",
         "description": "Chance on hit to inflict poison break.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 10 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -564,28 +605,31 @@
       {
         "id": "toxic_lungs",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 16, "note": "LSSD += 16r% (p8.s9)"}], "confidence": "C", "note": "card p8 row (C)"},
         "name": "Toxic Lungs",
         "description": "Increases the damage dealt by poison breath.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 16 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 16}
         }
       },
       {
         "id": "necrotic_intellect",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost only"}], "confidence": "C", "note": "card p9 row (C)"},
         "name": "Necrotic Intellect",
         "description": "Decreases the mana cost of poison breath.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "necrotic_ward",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.7, 1.4], "per": "hit", "note": "R4 item 2: each hit of a breath carrying [467] rolls irandom(99) < 5r (every hit, [467] is not zeroed) for a Necrotic Ward (Shaman_Totem_Parent_obj_Step_0 0x149e27690 schedules alarm[1]; shot period 25 frames, first shot after ~16 frames, life 180 frames -> 7 salvos). The ward stands 44 px from the dummy centre (PC07 0x1451af03b-0x1451af1be) and always shoots; each salvo is 1 breath (extraProjectiles 0) = 2 hits (tick_hits 31 15 0), so 14 hits per ward, hits at the damage[5] of the source breath (crit lost, I). Expected wards per base hit 0.05r -> 14 * 0.05r = 0.7r hits per base hit = +1.4r hits per breath of 2 hits (card: +1.4, 2.8, 4.2, 5.6, 7.0 for r1..r5; planner maxRank 2). Every extra Contamination breath and each of the n p14 breaths adds its own rolls (hence per hit); the ward breaths themselves do not carry [467]. Entity count is not encoded separately"}], "confidence": "I", "note": "card p10 row, R4 item 2 (necromancer/113#0; C schedule and position, I phase); was: other, count only", "plannerFix": "planner rolls on_hit chance 5r with no entity effect; game spawns on average 0.05r wards per hit that each add 14 breath hits (+0.7r hits per base hit)"},
         "name": "Necrotic Ward",
         "description": "Chance to spawn a necrotic ward on hit unleashing poison breath towards the nearest monster for a short period.",
         "maxRank": 2,
@@ -594,12 +638,13 @@
       {
         "id": "acid_spit",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.15, 5.78, 8.4], "note": "transformation: n = 1 + p11.s9 (+5/r) + p14.s10 acid projectiles (p14 r = 0 here) with a random spread of 40 deg; per projectile hit chance 0.31 (projectile hits the dummy with its mask, 12.4/40 deg) plus cloud hit 0.215 (cloud only if origin enters the dummy circle, |lateral| <= 12 px) = 0.525 hits per projectile; n = 6, 11, 16 for r = 1..3 -> 3.15, 5.78, 8.40 hits. Projectile damage per card: damage[5]; cloud is singleHit with damage[5]"}, {"kind": "dot", "note": "[0] = floor(dmg * (p3.s9 + p11.s10)%) = 60r% per projectile hit (poison DoT), card. Note: p11.s10 is 60/r per card"}], "confidence": "I", "note": "card p11 row (C/I); R3: cloud only for |lateral| <= 12 px; card earlier said 0.62 per n, now 0.52", "plannerFix": "planner models of_total_damage 5/r and increased_poisoned_damage 60/r on hit; game replaces the breath by n acid projectiles with a 40 deg spread: ~0.525 hits per projectile (about 31 % direct, 21.5 % cloud)"},
         "name": "Acid Spit",
         "description": "Spew out multiple poison projectiles exploding into acid novas inflicting increased poisoned damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "increased_poisoned_damage": 0 },
-          "perRank": { "of_total_damage": 5, "increased_poisoned_damage": 60 }
+          "base": {"of_total_damage": 0, "increased_poisoned_damage": 0},
+          "perRank": {"of_total_damage": 5, "increased_poisoned_damage": 60}
         },
         "proc": {
           "trigger": "on_hit",
@@ -612,31 +657,25 @@
       {
         "id": "bio_hazard",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "utility", "note": "[468] = 30r%: sizeMult += [468] after the first hit (breath grows); hit count unchanged"}], "confidence": "C", "note": "card p12 row (C)"},
         "name": "Bio Hazard",
         "description": "Increases the size of poison breath on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 30 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 30}
         }
       },
       {
         "id": "necrotic_tongue",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 60, "note": "LSSD += 60r% (p13.s9)"}, {"kind": "other", "note": "rangeMult = 25r% (growth of the breath), poison break 15r% always on hit ([982], buff 12, 5 s); no hit change stated by the card; poison break not quantified"}], "confidence": "C", "note": "card p13 row (C)"},
         "name": "Necrotic Tongue",
         "description": "Increases the length of poison breath inflicting poison break and dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "poison_skill_damage": 0,
-            "skill_range": 0,
-            "poison_break": 0
-          },
-          "perRank": {
-            "poison_skill_damage": 60,
-            "skill_range": 25,
-            "poison_break": 15
-          }
+          "base": {"skill_range": 0, "poison_break": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "poison_break": 15, "subtree_damage": 60}
         },
         "proc": {
           "trigger": "on_hit",
@@ -649,12 +688,13 @@
       {
         "id": "plague_breath",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "n = 1 + r breaths 14 deg apart; at 160 px all breaths hit (theta <= 21 deg always, 28 deg only for ~40 % azimuths) for n = 2..4; card gives r4 ~3.8 of 5 and r5 4 of 6 but planner maxRank is 3. Converted by planner at perExtraProjectile 2.0 (2 hits per breath) = same numbers"}, {"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += 40r% (p14.s9)"}], "confidence": "I", "note": "card p14 row (C/I); breath_p14.py geometry"},
         "name": "Plague Breath",
         "description": "Unleash multiple breaths in an arc dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "poison_skill_damage": 40, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 40}
         }
       }
     ]
@@ -663,6 +703,8 @@
     "id": "bone_spear",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.14, "confidence": "C", "note": "Per cast, dummy at 160 px on the aim line: n = XSP(1 + p13.s9) = 1 Necromancer_Bone_Spear_obj (12 px/frame, 2.5 s, singleHit, no map clear, mask 58x13) = 1 hit. perExtraProjectile = 0.14 is the least-squares slope through the base point (n = 1, 1 hit) of the card's H(n) for extra spears in an 8 deg step arc (hit while |theta| <= atan(18.5/160) = 6.6 deg), Resztki D(a) game bug: the spear starts at (x + 8 cos, y + 8 cos) (lengthdir_x used for y, asm 0x1463ca568 / 0x1463ca5d4) so the lateral offset depends on the aim azimuth: n = 1 -> 1, 2 -> 1.74, 3 / 5 / 7 -> 1.49, 4 / 6 -> 1.81 (azimuth means, I: spear mask rotation assumed as in R3; the old table had 2, 1, 2, 1, 1). The base n = 1 is unchanged. p13 spears are also smaller. p3 spirit, p12 Bone Nova (+1 hit at (1+r) D), p14 Bone Splinters (0 or p14.s9 hits) are subskill effects. No cooldown: period 1/castRate."},
     "classId": "necromancer",
     "name": "Bone Spear",
     "kind": "active",
@@ -677,7 +719,7 @@
     "tree": "Venomancer",
     "position": { "row": 2, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 19 },
+    "damageFormula": { "base": 0, "perLevel": 14.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Bone Spirit", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -696,28 +738,31 @@
       {
         "id": "bone_density",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += 10r% (p1.s9)"}], "confidence": "C", "note": "card p1 row (C)"},
         "name": "Bone Density",
         "description": "Increases the damage dealt by bone spear.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "mana_dweller",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost only"}], "confidence": "C", "note": "card p2 row (C)"},
         "name": "Mana Dweller",
         "description": "Decreases the mana cost of bone spear.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "raising_spirits",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.096, 0.144, 0.192, 0.24], "per": "use", "note": "chance 6r% per cast ([469]) that one Bone Spirit (explosion only, spirits 0, damage[1] of the spear, ratio 1) is created; R4 (I): PC07 [469] creates the spirit at argument[1].x/y = the PLAYER, not at the hit point (asm 0x1451af9a5-0x1451af9b4); with no target set it searches only distance_to_object < 128 (Bone_Spirit_obj_Step_0 L13-L18) and the dummy at 160 px has a bbox gap of 137 px > 128, so it explodes only for ~80 % of azimuths (after flying past): expected 0.06r * 0.8 = 0.048r hits per use"}], "confidence": "I", "note": "card p3 row, R4 (I) note in the Bone Spear body (spirit spawned at the player); was 0.06r", "plannerFix": "planner rolls on_hit with chance 6r and no damage effect; game rolls once per cast, creates the spirit at the player and it explodes on the dummy in ~80 % of cases (0.048r expected hits per cast)"},
         "name": "Raising Spirits",
         "description": "Chance on hit to summon a bone spirit.",
         "maxRank": 5,
@@ -726,23 +771,25 @@
       {
         "id": "bone_sling",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "spear speed x(1 + 12r%); no change of hits (1 spear hits the dummy regardless of speed)"}], "confidence": "C", "note": "card p4 row (C)"},
         "name": "Bone Sling",
         "description": "Increases the projectile speed of bone spear.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 12 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 12}
         }
       },
       {
         "id": "disease_ridden_bone",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "note": "chance 3r% per cast ([0] = floor(dmg * 65r%)): poison DoT (B2) on the first hit when it rolls; DoT modelled separately by the engine"}], "confidence": "C", "note": "card p5 row (C)", "plannerFix": "planner rolls on_hit (per hit) and applies poisoned 65r; game rolls once per cast (on_cast) with 3r%"},
         "name": "Disease Ridden Bone",
         "description": "Chance to inflict poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 65 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 65}
         },
         "proc": {
           "trigger": "on_hit",
@@ -755,12 +802,13 @@
       {
         "id": "autoimmune_disease",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "chance 4r% per cast: arcane break [979] = 22.5r (buff 8, 5 s); no direct damage; uptime from the cast chance (not quantified)"}], "confidence": "C", "note": "card p6 row (C)", "plannerFix": "planner rolls arcane_break on_hit with 4r%; game rolls once per cast"},
         "name": "Autoimmune Disease",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 22.5 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 22.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -776,89 +824,97 @@
       {
         "id": "sharp_edged_bone",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 5, "note": "crit chance +5r% (value); crit damage +35r% ([1003]); spell crit"}], "confidence": "C", "note": "card p7 row (C); value = chance %, crit damage in the note (35r %)"},
         "name": "Sharp Edged Bone",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 35 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 5, "spell_crit_damage": 35}
         }
       },
       {
         "id": "bone_conjuring",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement while casting; no dummy DPS"}], "confidence": "C", "note": "card p8 row (C): brak; planner value 20r not in card (no dummy effect)"},
         "name": "Bone Conjuring",
         "description": "Decreases movement diminish when using bone spear.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 20 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 20}
         }
       },
       {
         "id": "fervoring_fever",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "requires": "disease_ridden_bone", "note": "[181] = 20r% extra damage vs poisoned; poisoned state on the dummy only from p5 (B2), so the multiplier applies only with p5 and only to hits after the poison; uptime not in card (I)"}], "confidence": "C", "note": "card p9 row (C): '+% vs zatruty (przy B2)'"},
         "name": "Fervoring Fever",
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 20 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 20}
         }
       },
       {
         "id": "spiritual_tradeoff",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD += 2r% per 100 Energy (RSS20 * 0.01 * 2r %), so the value depends on the Energy stat (not given in the card); mana cost increases (number not in card)"}], "confidence": "C", "note": "card p10 row (C); planner conversion_energy 2/r matches the card's 2 %*r per 100 Energy"},
         "name": "Spiritual Tradeoff",
         "description": "Increases damage based on your energy increasing the mana cost by a portion of your maximum mana.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_energy": 0, "mana_cost_reduction": 0 },
-          "perRank": { "conversion_energy": 2, "mana_cost_reduction": -5 }
+          "base": {"conversion_energy": 0, "mana_cost_reduction": 0},
+          "perRank": {"conversion_energy": 2, "mana_cost_reduction": -5}
         }
       },
       {
         "id": "impaling_spine",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 150, "note": "LSSD += 150r% (p11.s9)"}, {"kind": "zero_on_dummy", "note": "[110] = 60 knockback (lift) of the dummy and size +1; the lift does not add damage (the dummy is lifted, no extra object on the dummy from this skill)"}], "confidence": "C", "note": "card p11 row (C)"},
         "name": "Impaling Spine",
         "description": "Throw a colossal bone spear dealing increased damage and knocking up monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 150 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 150}
         }
       },
       {
         "id": "bone_nova",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 3, 4], "per": "use", "note": "one nova object created at the first hit point (inside the dummy, full circle mask r 32 -> 148 px) with damage[1] = floor(dmg * (1 + r)): 1 hit with ratio (1 + r) per use; [470] = 100r%, [51] stun 2 s (zero)"}], "confidence": "I", "note": "card p12 row (C/I)", "plannerFix": "planner adds arcane +100/r as LSSD; in game it is a separate nova object that hits once with damage dmg*(1+r), so +1 hit of ratio (1+r)"},
         "name": "Bone Nova",
         "description": "Bone spear now explodes into a bone nova on hit dealing increased damage and stunning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 100 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 100}
         }
       },
       {
         "id": "plenty_of_bone",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "n = XSP(1 + 2r) spears in an 8 deg arc, smaller spears; on the dummy at 160 px only the central spear hits (+-8 deg = 22 px)"}, {"kind": "extra_hits", "byRank": [0.49, 0.49, 0.49], "per": "use", "replacesProjectileHits": true, "note": "Resztki D(a) (game bug: spear start (x + 8 cos, y + 8 cos) via lengthdir_x for y, asm 0x1463ca568 / 0x1463ca5d4): for n = 3, 5, 7 spears (r1..r3) the card gives on average 1.49 spears hitting at 160 px (1 or 2 depending on azimuth: 2 when aiming right, 1 when aiming left; 1.57 with the 6 px offset alone); base 1 -> extra 0.49 for every rank (I: spear mask rotation with the direction assumed as in R3). Po R4 had 'only the central spear' (extra 0)"}, {"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD += 35r% (p13.s10)"}], "confidence": "I", "note": "card p13 row + Resztki D(a); near-range gain not modelled; was extra 0 (only the central spear)", "plannerFix": "planner converts +2r projectiles at perExtraProjectile 0.14 (+0.28r hits); card gives +0.49 hits for every rank at 160 px (n = 3, 5, 7)"},
         "name": "Plenty of Bone",
         "description": "Throw multiple smaller bone spears in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 2, "arcane_skill_damage": 35 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 35}
         }
       },
       {
         "id": "bone_splinters",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += 40r% (p14.s10)"}, {"kind": "extra_hits", "byRank": [2, 4, 6], "per": "hit", "note": "R4 item 3: every parent spear that hits the dummy spawns [471] = p14.s9 = 2r splinters (same damage[1]) 10 px from the dummy centre ahead of it, tail towards the dummy; the first collision check (frame f+1, Alarm_0 sets deadly, Step_0 collision before the built-in movement) hits with the mask tail 10 px < 12 px, so all 2r splinters hit once (separate hit maps): +2r hits per parent hit (x(1 + 2r) with n = 1 spear). C code / distribution, I runner order (if the runner moves before Step_0 of the new instance the tail is 19 px away and the result is 0). Was: 0 or 2r"}], "confidence": "I", "note": "card p14 row, R4 item 3 (necromancer/114#0); was: other, 0 or 2r", "plannerFix": "planner converts +2r projectiles at 0.14 hits each; in game each parent spear hit spawns 2r splinters that all hit once (+2r hits per parent hit)"},
         "name": "Bone Splinters",
         "description": "Bone spears split into multiple smaller bone spears on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 2, "arcane_skill_damage": 40 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 40}
         }
       }
     ]
@@ -866,6 +922,8 @@
   {
     "id": "corpse_explosion",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.35, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast, base (n_c = 1 corpse = Meat Bomb without p4, CE p1 = 0), cursor on the dummy's visible centre (x, y-24) for BOTH Meat Bomb and CE (decision: rule 22/38 main result). The dummy never dies, so without a Meat Bomb corpse CE deals 0. Resztki 2026-10-17 (rule 40 + E, lob C from asm 0x148c0d620 / 0x1463bf2ec-0x1463bf41a, simulation ce2.py): the bomb target T is 6 px above the cursor = (x, y-30) and the bomb lands s = 0.0732*dist (~12 px) short of T towards the player, so the landing point L is 30 px (player at the side), 16 px (under the dummy) or 40 px (above it) from the dummy centre; corpse 0 lies at L + (48, 0), 1 at (-24, -41.6), 2 at (-24, +41.6), 3 = 0, 4 at +96, 5 at +144. CE blast = Explosion_Item_obj scale 1.25*(1 + 0.15*p1), reach to the dummy centre 51.4 + 5.9*p1 px. Hits per bomb, MEAN over player azimuths (every 2 deg), n_c = 1..6: p1 = 0: 0.35, 0.35, 1.35, 1.70, 1.70, 1.70; p1 = 1: 0.52, 0.52, 1.52, 2.03; p1 = 2: 0.71, 0.86, 1.86, 2.56; p1 = 3: 1, 1.36, 2.36, 3.36; p1 = 4: 1, 1.52, 2.52, 3.52; p1 = 5: 1, 1.70, 2.70, 3.70 (individual azimuths range 0..3 at p1 = 0). Cursor (x, y) variant (T = (x, y-6)): p1 = 0: 0.55, 0.97, 1.69, 2.24; p1 = 1: 0.76, 1.34, 2.34, 3.10; p1 = 2: 1, 1.82, 2.82, 3.82; p1 >= 3: 1, 2, 3, 4. Old entry (coordinator override) used 1.0 = Meat Bomb aimed at the centre (x, y) with one fresh corpse per CE cast (the pre-Resztki R3 table gave 1 for (x, y) and 0 for (x, y-24)); this entry follows the stated decision (x, y-24) and the new azimuth mean 0.35. The value depends on the Meat Bomb rotation, MB p4 (n_c), CE p1 and the player azimuth, so it is only a per-cast constant under these assumptions (repeatGravity = 0 is still I). baseProjectiles 1 / perExtraProjectile 0: more corpses come from Meat Bomb p4 (cross-skill). p14 fire (2.2 hits at n_c = 1), p13 aura (0 at n_c = 1, 2), p5 Homunculus x(1 + 0.15r) are subskill effects."},
     "classId": "necromancer",
     "name": "Corpse Explosion",
     "kind": "active",
@@ -879,7 +937,7 @@
     "tree": "Venomancer",
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 18 },
+    "damageFormula": { "base": 0, "perLevel": 13.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Meat Bomb", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -898,17 +956,19 @@
       {
         "id": "volatile_magic",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.17, 0.36, 0.65, 0.65, 0.65], "per": "use", "note": "relative to the new base 0.35 (n_c = 1, p1 = 0, cursor (x, y-24)): hits per bomb for n_c = 1 at p1 = 1..5 are 0.52, 0.71, 1, 1, 1 (azimuth means, Resztki lob+E, rule 40; individual azimuths 0..1). CE blast scale 1.25 (1 + 0.15 p1), reach to the dummy centre 51.4 + 5.9 p1 px decides whether corpses 0 (44-62 px) and 2 (22-40 px) hit. n_c = 2: 0.35, 0.52, 0.86, 1.36, 1.52, 1.70; n_c = 3: 1.35, 1.52, 1.86, 2.36, 2.52, 2.70 (p1 = 0..5); n_c = 4+ see card. Cursor (x, y) variant: p1 = 0..5 at n_c = 1: 0.55, 0.76, 1, 1, 1, 1"}], "confidence": "I", "note": "card p1 row + Resztki lob/E tables (ce2.py); was: other, 0 relative to base 1.0 at centre aim"},
         "name": "Volatile Magic",
         "description": "Increases the explosion area of effect radius of corpse explosion.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "violent_burst",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 5, "note": "spell crit chance +5r% ([1004] = p2.s10); crit damage +25r% ([1003] = p2.s9 in the card)"}], "confidence": "C", "note": "card p2 row (C)", "plannerFix": "planner models violent burst as an on_hit proc (5r %) instead of a flat spell crit chance +5r% and crit damage +25r%"},
         "name": "Violent Burst",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
@@ -924,72 +984,79 @@
       {
         "id": "channeling_necromancy",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "cast range (no read in the code); cursor sets the target, so no dummy hit change"}], "confidence": "C", "note": "card p3 row (C)", "plannerFix": "planner skill_range +15/r; card: no read of range for CE (brak odczytu), so no effect on the dummy"},
         "name": "Channeling Necromancy",
         "description": "Increases maximum cast range of corpse explosion.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "reaching_conduit",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "corpse search radius 80*(1 + 12r%) around the cursor; corpses 0-3 are within 80 px already, corpses 4-5 (96 and 144 px) never reach the dummy, so 0 extra hits"}], "confidence": "C", "note": "card p4 row (C); corpse count 1 + cadavery(MB p4) is a Meat Bomb effect"},
         "name": "Reaching Conduit",
         "description": "Increases the area of effect radius of corpse explosion.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 12 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 12}
         }
       },
       {
         "id": "homunculus",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "corpses from Meat Bomb: dmg x(1 + 0.15r) (multiplier, not LSSD); always applies on the dummy since every corpse on the dummy comes from Meat Bomb"}], "confidence": "C", "note": "card p5 row (C)", "plannerFix": "planner adds arcane +15/r to LSSD (additive with the other LSSD); game multiplies the explosion damage by (1 + 0.15r) separately"},
         "name": "Homunculus",
         "description": "Corpses spawned from meat bomb causes corpse explosions to deal additional damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 15}
         }
       },
       {
         "id": "reaper_within",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8r% (p6.s9)"}], "confidence": "C", "note": "card p6 row (C)"},
         "name": "Reaper Within",
         "description": "Increases the damage dealt by corpse explosion.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "rush_from_the_harvest",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed buff 15r% for 3 s on the player; no dummy DPS"}], "confidence": "C", "note": "card p7 row (C): BuffAdd(307, p7.s9, 3 s)"},
         "name": "Rush from the Harvest",
         "description": "Exploding a corpse gives you a burst of movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "unfair_advantage",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "presence_of_the_lich", "note": "[179] = 10r% vs stunned target; the dummy is stunned only by p9 (Presence of the Lich, chance 4r% per cast, 3 s); uptime of the stun on the dummy not in card (I)"}], "confidence": "C", "note": "card p8 row (C): 'tylko z ogluszeniem'"},
         "name": "Unfair Advantage",
         "description": "Increases damage dealt to stunned enemies.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "presence_of_the_lich",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s with chance 4r% per cast ([51]); no damage; enables p8 only"}], "confidence": "C", "note": "card p9 row (C)", "plannerFix": "planner rolls the stun on_hit; card rolls it once per cast"},
         "name": "Presence of the Lich",
         "description": "Chance to stun on hit.",
         "maxRank": 5,
@@ -1002,6 +1069,7 @@
       {
         "id": "assured_passing",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.02, 1.04, 1.06, 1.08, 1.1], "note": "chance 2r% per cast that the corpses explode twice (counter +1, card L752): expected x(1 + 0.02r); the counter itself not verified (I)"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner has an on_hit proc with chance 2r and no effect; game: once per cast, corpses explode a second time (x(1 + 0.02r) expected hits)"},
         "name": "Assured Passing",
         "description": "Corpses have a chance to explode twice.",
         "maxRank": 5,
@@ -1010,12 +1078,13 @@
       {
         "id": "convergence",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "dot", "note": "Meat Bomb corpses: [0] = floor(dmg * (1 + p5%) * 40r%) poison DoT (B2) per explosion (Homunculus multiplier included); regular corpses get [0] = p11.s9*0.01 (about 0, card error); DoT modelled separately by the engine"}, {"kind": "other", "note": "poison break [982] = 15r (buff 12, 5 s) on the dummy; no hit change"}], "confidence": "C", "note": "card p11 row (C)", "plannerFix": "planner models increased_poisoned_damage +40/r (an increase) and poison_break 15/r on hit; game adds a poison DoT floor(dmg*40r%) per corpse explosion"},
         "name": "Convergence",
         "description": "Corpse explosion now inflicts poisoned and poison break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_poisoned_damage": 0, "poison_break": 0 },
-          "perRank": { "increased_poisoned_damage": 40, "poison_break": 15 }
+          "base": {"increased_poisoned_damage": 0, "poison_break": 0},
+          "perRank": {"increased_poisoned_damage": 40, "poison_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1029,12 +1098,13 @@
       {
         "id": "dissolvant_solution",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execution below 1.5r% life ([140]) and clouds on execution ([472]) only; the dummy never dies, so 0 hits"}, {"kind": "other", "note": "explosion damage type becomes poison (damage[5] instead of arcane) when p12 > 0: changes the resistances and bonuses applied, no hit count change"}], "confidence": "C", "note": "card p12 row (C)", "plannerFix": "planner adds a poison break 30/r on hit; card gives no poison break for p12 (only execution, clouds on execution and the damage type change to poison)"},
         "name": "Dissolvant Solution",
         "description": "Corpse explosion deals poison damage inflicting poison break and dissolves low life monsters into gas clouds.",
         "maxRank": 3,
         "effects": {
-          "base": { "execute_below": 0, "poison_break": 0 },
-          "perRank": { "execute_below": 1.5, "poison_break": 30 }
+          "base": {"execute_below": 0, "poison_break": 0},
+          "perRank": {"execute_below": 1.5, "poison_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1047,31 +1117,25 @@
       {
         "id": "devouring_aura",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "transformation: the aura (R_a = 118.1 + 5.9*p1 px around (x, y+6) of the player, 6 s or until the next CE) consumes corpses and makes a scale-1 Explosion_Item_obj (reach 43.5 px) at each; the hit needs the corpse within R_a + 16 of the player and within 43.5 px of the dummy. Resztki: mean hits per bomb for n_c = 3..6 are 0.28 / 0.37 / 0.44 / 0.52 / 0.59 / 0.68 for CE p1 = 0..5 (was 0.15..0.51 / Po R4 0.28..0.61), and 0 for n_c = 1, 2 (cursor (x, y-24)), so 0 at the base n_c = 1; 0 at cursor (x, y) for every n_c. The p13 rank only sets the consumption tempo (corpseTimerMax = 60 (1 - 0.15 r), 2, 2, 3, 3, 5 consumptions per MB -> CE cycle for r = 1..5, order = instance order, I). Aura blast damage[1] has no Homunculus p5 multiplier and no poison p11, crit p2 and [179] p8 apply"}], "confidence": "I", "note": "card p13 row + Resztki aura table (aura.py); was: other, no number (depends on n_c and the aura timer)", "plannerFix": "planner has no aura model; card: aura reach 118 + 5.9r px, 0 hits at centre aim, 0-1 hits per consumed corpse at realistic cursor"},
         "name": "Devouring Aura",
         "description": "Activate an aura around you consuming nearby corpses per second casting corpse explosion for a short period. Corpse explosion now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 15 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 15}
         }
       },
       {
         "id": "lichs_command",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.2, 2.2, 2.2], "note": "transformation: the explosion becomes a flame object (singleHit 0, tick 1 s, 3 s life, fade 0.075/frame, scale up to 0.66*(1 + p1% + p14.s10%)). Resztki (new landing point, others.py), cursor (x, y-24): 2.2, 2.2, 6.2, 8.4, 8.4, 8.4 hits per bomb for n_c = 1..6 (Po R4 3.3, 3.3, 7.3, 10.6; R3 3, 3, 7, 10); cursor (x, y): 3.5, 5.3, 8.4, 11.9 for n_c = 1..4 (R3 4, 7, 10, 14). n_c = 1 value 2.2 used for every rank (rank does not change the count; p7 r5 variant 2.0)"}, {"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD += 30r% (p14.s9)"}, {"kind": "dot", "note": "burning [18] = floor(dmg * (1 + p5%) * 35r%) per flame hit (on_hit, chance 100); DoT modelled separately"}], "confidence": "I", "note": "card p14 row + Resztki (flame table), ce_fire.py schedule (activation frame 2, clears 62, 123, 184, destroy 180); was set_hits 4 (centre-aim value)", "plannerFix": "planner adds arcane +30/r LSSD and projectile_size +25/r with burning 35/r on hit, but no flame object; game replaces the explosion by flames with 2.2 hits per corpse (mean, cursor (x, y-24), n_c = 1; 3.5 at (x, y))"},
         "name": "Lich's Command",
         "description": "Corpses are now lit on fire with increased size, dealing increased damage and inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "projectile_size": 0,
-            "increased_burning_damage": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 30,
-            "projectile_size": 25,
-            "increased_burning_damage": 35
-          }
+          "base": {"projectile_size": 0, "increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 25, "increased_burning_damage": 35, "subtree_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1086,6 +1150,8 @@
   {
     "id": "bone_spirit",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast, dummy at 160 px: the Necromancer_Bone_Spirit_obj (Ability parent, no damage itself) homes on the dummy at 4 px/frame (~40 frames) and, on position_meeting with the dummy's mask, makes 1 Explosion_Item_obj (damage[1]*explosionDamage, 1 + p3 = 1) = 1 hit, and spirits = 1 + p1.s9 + p12.s10 = 1 Necromancer_Bone_Spirit_Shred_obj (homingTarget = instance_nth_nearest(.., 2 + i) = the lone dummy, rule 17; direction = spirit direction + 360/spirits*i so shard 0 flies at the dummy) which hits once (the first shard always) = 1 hit -> 2.0. perExtraProjectile = 1.0 per additional shard (p1 / p12): R4 item 4 (C code, I frame order): there is no angular threshold, StepDamageParentHoming (0x1452d3550) snaps the shard direction onto the dummy centre when the bbox gap <= 16 (every shard starts inside the dummy mask) and homingRate is 5, not turnRate 3, so H_Sum = spirits (up to 21 shards); the earlier 1 + 0.7*(spirits - 1) / 125 deg model was wrong. Resztki A: the ~151 px bbox gap check (< 128) does not change the flight time. p11 Ghouls (no shards, 1-2 hits at (1 + r)), p14 Spirit Festival, p4 growth are subskill effects. No cooldown: period 1/castRate."},
     "classId": "necromancer",
     "name": "Bone Spirit",
     "kind": "active",
@@ -1100,7 +1166,7 @@
     "tree": "Venomancer",
     "position": { "row": 3, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 29 }],
-    "damageFormula": { "base": 0, "perLevel": 18 },
+    "damageFormula": { "base": 0, "perLevel": 12.25 },
     "manaCostFormula": { "base": 29, "perLevel": 1 },
     "bonusSources": [
       { "source": "Bone Spear", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -1119,67 +1185,73 @@
       {
         "id": "divide_soul",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "spirits = 1 + r shards (each one dmg); R4 item 4: ALL shards hit (Sum H = spirits), so the default perExtraProjectile 1.0 reproduces it (was 0.7)"}], "confidence": "I", "note": "card p1 row, R4 item 4 (C code, I frame order); numbers unchanged, interpretation: perExtraProjectile 0.7 -> 1.0"},
         "name": "Divide Soul",
         "description": "Bone spirit unleashes additional souls on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "purifying_essence",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += 10r% (p2.s9)"}], "confidence": "C", "note": "card p2 row (C)"},
         "name": "Purifying Essence",
         "description": "Increases the damage dealt by bone spirit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "life_infusion",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "explosionAOE = 1 + 15r%: explosion radius only; hit count unchanged at 160 px"}], "confidence": "C", "note": "card p8 row (C)"},
         "name": "Life Infusion",
         "description": "Increases the explosion area of effect radius of bone spirit.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "ancient_possession",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "every 0.5 s of flight: damage[1] += floor(dmg * 8r%); about 0.67 s at 160 px = one increase (+8r%) on the spirit (explosion and shards copy it); projectile size +p4.s10 (no hit change)"}], "confidence": "I", "note": "card p4 row (C/I); general formula floor(t_flight/0.5 s)"},
         "name": "Ancient Possession",
         "description": "Bone spirits grow larger and deal more damage over time while traveling.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "arcane_skill_damage": 8, "projectile_size": 8 }
+          "base": {"projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 8, "subtree_damage": 8}
         }
       },
       {
         "id": "cycle_of_life",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 3, "note": "spell crit chance +3r% (value); crit damage +22.5r% ([1003])"}], "confidence": "C", "note": "card p5 row (C)"},
         "name": "Cycle of Life",
         "description": "Gain chance to critically hit with increased critical damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 22.5 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 22.5}
         }
       },
       {
         "id": "touch_of_arcana",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "arcane break [979] = 15r (buff 8, 5 s) on every hit; 100 % uptime with continuous casting; no direct damage"}], "confidence": "C", "note": "card p6 row (C)"},
         "name": "Touch of Arcana",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1192,67 +1264,73 @@
       {
         "id": "mark_target",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[121] = 10r% extra damage vs bosses; the training dummy is not a boss (I), so 0"}], "confidence": "I", "note": "card p7 row (C/I)", "plannerFix": "planner adds extra_damage_bosses 10/r; the dummy is not a boss, so 0 on the dummy"},
         "name": "Mark Target",
         "description": "Increases the damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 10 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 10}
         }
       },
       {
         "id": "follow_the_leader",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.05, 1.1, 1.15, 1.2, 1.25], "note": "explosionDamage = 1 + 10r%: applies to the explosion hit only, not to the shards. Value is exact for the base pattern (2 hits: 1 explosion + 1 shard) = 1 + 0.05r; with more shards the factor is 1 + 0.1r * (explosion share of hits)"}], "confidence": "C", "note": "card p3 row (C)", "plannerFix": "planner adds arcane +10/r to LSSD (all hits); game multiplies only the explosion damage (explosionDamage)"},
         "name": "Follow the Leader",
         "description": "Increases the damage dealt by bone spirits explosion.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 10}
         }
       },
       {
         "id": "spirits_unleashed",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD += (Explosion AoE stat RSS191) * 0.07r % (scales with the Explosion AoE stat, not a flat number) and explosion AoE += RSS191 * 0.10r % (radius only). Value depends on RSS191, not given in the card"}], "confidence": "C", "note": "card p9 row (C)", "plannerFix": "planner gives flat arcane +7/r LSSD; game scales LSSD by the Explosion AoE stat (RSS191) times 0.07r"},
         "name": "Spirits Unleashed",
         "description": "Increases bone spirit size and damage scaling with your explosion area of effect stat.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "arcane_skill_damage": 7, "projectile_size": 10 }
+          "base": {"arcane_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"arcane_skill_damage": 7, "projectile_size": 10}
         }
       },
       {
         "id": "soul_infusion",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "[473]: life replenish for summons on pass-through; no dummy DPS"}], "confidence": "C", "note": "card p10 row (C)"},
         "name": "Soul infusion",
         "description": "When passing through one of the necromancers summons or allies bone spirits heals them for a portion of their maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 2 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 2}
         }
       },
       {
         "id": "ghouls_of_agony",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.0, 4.5, 6.0], "note": "transformation: the spirit becomes a ghoul (Bone_Spirit_Shred_obj) with damage dmg*(1 + r) that passes through the dummy at 2 px/frame: 1-2 hits (midpoint 1.5 used) with ratio (1 + r) -> hits = 1.5 * (1 + r). The explosion and the shards are NOT created (ret in the ghoul branch, asm 0x148bec929). Range 1-2 hits per card (I)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner adds arcane +100/r LSSD to the explosion; in game the explosion and shards are replaced by a ghoul passing through the dummy: 1-2 hits of dmg*(1+r)"},
         "name": "Ghouls of Agony",
         "description": "No longer explodes on hit but travels forwards slowly dealing damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 100 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 100}
         }
       },
       {
         "id": "furnace_of_souls",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 3, "note": "spirits += 3r shards; R4 item 4: all shards hit (default perExtraProjectile 1.0, was 0.7)"}, {"kind": "dot", "note": "burning B1: [18] = floor(dmg * 80r%) per hit (on_hit, chance 100), DoT modelled separately by the engine"}], "confidence": "C", "note": "card p12 row, R4 item 4; numbers unchanged, interpretation: perExtraProjectile 0.7 -> 1.0"},
         "name": "Furnace of Souls",
         "description": "Summon increased amount of souls inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "projectile_count": 0 },
-          "perRank": { "increased_burning_damage": 80, "projectile_count": 3 }
+          "base": {"increased_burning_damage": 0, "projectile_count": 0},
+          "perRank": {"increased_burning_damage": 80, "projectile_count": 3}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1265,23 +1343,25 @@
       {
         "id": "soul_sacrifice",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1, 1, 1], "note": "R4 item 5 (C formula, I steady state): soulSacrifice = M * 0.0015 * r with M = CURRENT mana (GPV(host.pSt[18]), asm 0x1463d3222; I that [18] = mana), multiplier on the blast and the shards = 1 + floor(soulSacrifice) frozen at cast, and ceil(0.15 r M) mana is consumed at the blast. In a continuous rotation m_{n+1} = m_n (1 - 0.15 r) - C + R_c, so the steady state is m* = (R_c - C)/(0.15 r) and the multiplier is 1 + floor(0.01 (R_c - C)), INDEPENDENT of r (R_c = mana regenerated per cast period incl. leech and potions, C = mana cost 27.5). It is 1 unless R_c exceeds C by >= 100 mana per 43-frame period, hence byRank 1 as the default; the first cast from full mana gives 1 + floor(0.0015 r m_max) (r5, 1000 mana: x8) and then falls. The engine needs R_c to evaluate it"}], "confidence": "I", "note": "card p13 row + R4 item 5 (necromancer/116#1); was: other, M probably current mana, no number", "plannerFix": "planner models conversion_max_mana 15/r (a flat conversion); game uses a stepped multiplier 1 + floor(0.01 (R_c - C)) in steady state (not a function of max mana or of r) and consumes 15r % of the current mana"},
         "name": "Soul Sacrifice",
         "description": "Now consumes a portion of your mana on hit converting it into additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_max_mana": 0 },
-          "perRank": { "conversion_max_mana": 15 }
+          "base": {"conversion_max_mana": 0},
+          "perRank": {"conversion_max_mana": 15}
         }
       },
       {
         "id": "spirit_festival",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.02, 1.18, 1.38], "per": "use", "note": "each Meat Bomb corpse inside collision_circle_list(player, floor(128 (1 + 0.1 r))) = 140, 153, 166 px (r1..r3; planner maxRank 3) becomes one extra spirit = 1 blast + (1 + p1.s9) shards, all hit, so 2 hits per corpse at p1 = 0. Resztki F: the call is a bbox test (prec = 0, Corpse_obj mask 32x32), i.e. centre distance <= R + 16 (R + 22.6 diagonal); landing 12 px short of T (6 px above the cursor). Mean corpses in range over azimuths for n_c = 3 (r1..r5): 1.57 / 1.97 / 2.32 / 2.54 / 2.79, n_c = 6: 2.86 / 3.43 / 3.99 / 4.46 / 4.96 (card). n_c = 1 (Meat Bomb without p4, the base here) is not printed in the Resztki card: 0.51 / 0.59 / 0.69 (r1..r3) were computed by re-running the card's geometry (reproduces its n_c = 3 and 6 rows within 0.03), so 2 * 0.51..0.69 = 1.02 / 1.18 / 1.38 extra hits per use (I). Scales with corpses per bomb 1 + Meat Bomb p4 (cross-skill, not expressible). Old value [0, 0, 2] assumed 1 corpse at 136-184 px and 0 for r1-r2 (horizontal layout)"}], "confidence": "I", "note": "card p14 row, R4 item 6 + Resztki F(1); n_c = 1 row derived by me from the card's geometry (not printed), I", "plannerFix": "planner gives arcane +10/r LSSD and skill_range +15/r with no corpse model; game: extra spirit (2 hits) per Meat Bomb corpse within 128 (1 + 0.1 r) px of the player (bbox test), 0.51-0.69 corpses per bomb at n_c = 1"},
         "name": "Spirit Festival",
         "description": "Consume multiple corpses in a radius around you summoning a bone spirit from each. Cooldown is now increased.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "arcane_skill_damage": 10, "skill_range": 15 }
+          "base": {"arcane_skill_damage": 0, "skill_range": 0},
+          "perRank": {"arcane_skill_damage": 10, "skill_range": 15}
         }
       }
     ]
@@ -1289,6 +1369,7 @@
   {
     "id": "cursed_ground",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "necromancer",
     "name": "Cursed Ground",
     "kind": "active",
@@ -1313,6 +1394,8 @@
     "id": "poison_nova",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 5, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, dummy on the aim line at 160 px: n = XSP(5 + p1.s9) = 5 Necromancer_Poison_Nova_obj projectiles in a ring (360/n deg apart from the aim direction, 3 px/frame, 1.5 s, singleHit, mask 25x9 x1.2): only the projectile aimed at the dummy hits (|theta| <= atan(16.5/160) = 5.9 deg, the others are 72 deg away) = 1 hit of poison damage[5]; the base poisoned DoT (V2 = 25 %) is excluded. baseProjectiles = 5 ring projectiles; perExtraProjectile = 0 (more ring projectiles only narrow the spacing, n < 30 never adds a second hit at 160 px). p12 Virulent Blink (nova at the cursor: x n at (x, y), ~0.26 n at (x, y-24)), p10 spiral (~0.34 n), p11 cloud, p14 are subskill effects. No cooldown: period 1/castRate."},
     "classId": "necromancer",
     "name": "Poison Nova",
     "kind": "active",
@@ -1327,7 +1410,7 @@
     "tree": "Venomancer",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 12.5 },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Poison Breath", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1346,34 +1429,37 @@
       {
         "id": "hollow_fangs",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10], "note": "n = XSP(5 + 2r) ring projectiles; at 160 px only the aimed one hits (ring spacing does not add a second hit below n = 30)"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "card: 0 extra hits at 160 px (ring, 1 hit) for every rank"}], "confidence": "C", "note": "card p1 row (C); Poison Nova base note"},
         "name": "Hollow Fangs",
         "description": "Increases the amount of poison projectiles.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "potent_venom",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 16, "note": "LSSD += 16r% (p2.s9)"}], "confidence": "C", "note": "card p2 row (C)"},
         "name": "Potent Venom",
         "description": "Increases the damage dealt by poison nova.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 16 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 16}
         }
       },
       {
         "id": "embrace_the_venom",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "note": "poison DoT [0] = floor(dmg * (V2 25% + 30r%)): the base 25% DoT is part of the skill (card: V2 = 25 constant), p3 adds 30r% per hit; chance 100 on hit; DoT modelled separately by the engine"}], "confidence": "C", "note": "card p3 row (C); card Planer note: base poison V2 25% missing in planner", "plannerFix": "planner models increased_poisoned_damage +30/r; game adds 30r% to the poison DoT [0] (on top of the base 25% DoT which the planner lacks)"},
         "name": "Embrace the Venom",
         "description": "Increases the poisoned amount when dealing damage with poison nova.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 30 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1386,17 +1472,19 @@
       {
         "id": "conjurers_might",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "projectile speed x(1 + 10r%); the ring projectile hits the dummy regardless of speed; no change in hits"}], "confidence": "C", "note": "card p4 row (C)"},
         "name": "Conjurer's Might",
         "description": "Increases the projectile speed of poison nova.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "venoms_reach",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 5r% per projectile to spread the DoT [0] to other enemies within 240 px without B2 ([474]); the dummy already has B2 from the skill's own DoT, so about 0 on the dummy"}], "confidence": "C", "note": "card p5 row (C): approx 0 on the dummy (I'd keep planner empty)"},
         "name": "Venom's Reach",
         "description": "Chance to spread poison to nearby monsters on hit.",
         "maxRank": 5,
@@ -1405,6 +1493,7 @@
       {
         "id": "weakening_infection",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 3r% per projectile to apply buff 57 (weakened, 8 s, value 20r per planner) to the target; card: no dummy DPS"}], "confidence": "C", "note": "card p6 row (C): brak"},
         "name": "Weakening Infection",
         "description": "Chance to reduce targets damage dealt on hit.",
         "maxRank": 5,
@@ -1419,12 +1508,13 @@
       {
         "id": "down_with_the_sickness",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "chance 3r% per projectile: poison break [982] = 15r (buff 12, 5 s), plus poisoned and slow 3 s ([53]); break uptime from the chance, not quantified; slow has no dummy DPS"}], "confidence": "C", "note": "card p7 row (C)"},
         "name": "Down with the Sickness",
         "description": "Chance to slow and inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 15 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1439,61 +1529,67 @@
       {
         "id": "amplifying_mark",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "[181] = 15r% extra damage vs poisoned; the base DoT keeps the dummy poisoned, so the multiplier is practically constant (I)"}], "confidence": "I", "note": "card p8 row (C/I)"},
         "name": "Amplifying Mark",
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 15 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 15}
         }
       },
       {
         "id": "overwhelming_presence",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile size +20r%: wider hit window; still 1 hit at 160 px"}], "confidence": "C", "note": "card p9 row (C)"},
         "name": "Overwhelming Presence",
         "description": "Increases the size of poison projectiles.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 20 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 20}
         }
       },
       {
         "id": "toxic_twist",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.7, 1.7, 1.7, 1.7, 1.7], "note": "transformation: projectiles orbit the throw point in a spiral (radius 12 -> +1.75 px/frame, 4.75 deg/frame) and clear the map every 360 deg, lifetime 1.5 s * (1 + p10.s9%). The spiral band [148, 172] px sweeps about 109 deg in 23 frames: hits about n * (109 + 12)/360 = 0.34 n; value at p1 = 0 (n = 5) = 1.7. Rank changes the lifetime only; the card gives no rank-dependent hits; p1 raises n (not included)"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner has no spiral model; game replaces the ring with a spiral giving about 0.34 hits per projectile (1.7 at n = 5)"},
         "name": "Toxic Twist",
         "description": "Poison nova projectiles now orbit outwards with increased duration.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "poison_cloud",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 16], "note": "transformation: XSP(1) cloud around the player (singleHit, deadlyFrames 15, scale lerp 0.1 -> maxScale, mask r ~114 px * scale) with damage[5] = floor(LTD(V1) * (1 + LSSD + (5 + p1) * r11 %)): ratio 1 + 5r at p1 = 0 (6, 11, 16) IF the cloud reaches the dummy. R4 item 7 (C formula, I frames +-1): maxScale = 1 + 0.20*r9 + 0.45*r11 (asm 0x1463dc9f0, 0x1463de280, 0x1463dfd58), reach 114*s_14 + 12 = 125.8 / 159.9 / 194 px for r11 = 1, 2, 3 (r9 = 0) vs the dummy at 160 px: r1 NO hit (0), r2 borderline (0, I, error 1 px), r3 hits (ratio 16); every p9 rank adds 0.20 to maxScale (r1 hits from p9 >= 3). Dummy-side condition 0.665*M + 0.0335 >= (160 - 12)/114. LSSD cross term ignored"}], "confidence": "I", "note": "card p11 row + R4 item 7 (necromancer/118#0); was set_hits [6, 11, 16] assuming a hit", "plannerFix": "planner adds of_total_damage 100/r; game: one cloud with damage ratio (1 + 5r) that hits the dummy at 160 px only from r11 >= 3 (maxScale 1 + 0.2 r9 + 0.45 r11)"},
         "name": "Poison Cloud",
         "description": "Instead of releasing projectiles poison nova instead causes an explosion centered around the necromancer dealing increased damage based on projectile amount.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 100, "area_of_effect": 45 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 100, "area_of_effect": 45}
         }
       },
       {
         "id": "virulent_blink",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.0, 1.0, 1.0], "note": "transformation: nova starts at the cursor target T; Resztki E: T is 6 px above the cursor, so for cursor (x, y-24) the nova starts 30 px from the dummy centre and a projectile (rectangle 25x9x1.2, 3 px/frame) hits if its direction is within asin(17.4/30) = 35.4 deg of the direction to the dummy: about 0.20 n hits (was 0.26 n at 24 px), n = 5 (p1 = 0) -> 1.0. At cursor (x, y) T = (x, y-6) (6 px < 12) and all n = 5 hit (set_hits 5). Realistic value used; LSSD +10r% from p12.s10 is a separate effect below"}, {"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += 10r% (p12.s10)"}, {"kind": "other", "note": "[67] = 3 s curse and teleport to the throw point (no dummy DPS)"}], "confidence": "I", "note": "card p12 row + Resztki E (playerEffect[128-130], asm 0x1463ddd54 / 0x1463dddbc); was 1.3 (0.26 n)", "plannerFix": "planner multiplies all n projectiles (x n); game: nova starts at T 6 px above the cursor and only projectiles aimed at the dummy hit: about 0.20 n at (x, y-24), all n at (x, y)"},
         "name": "Virulent Blink",
         "description": "Teleport to cast location hexing enemies on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0, "poison_skill_damage": 0 },
-          "perRank": { "skill_range": 25, "poison_skill_damage": 10 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "subtree_damage": 10}
         }
       },
       {
         "id": "center_of_epidemy",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24], "per": "use", "note": "chance 8r% per projectile (p13.s10) that the projectile returns to the player (centerOfEpidemy) and passes the dummy again with singleHitListClear: +1 hit at chance 8r% for the projectile on the dummy line (1 projectile hits)"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner rolls on_hit with chance 8r and no damage effect; game adds a returning projectile that hits the dummy again with chance 8r per projectile on the dummy line"},
         "name": "Center of Epidemy",
         "description": "Poison nova projectiles have a chance to return to the necromancer dealing damage and increasing the necromancers poison damage on return.",
         "maxRank": 3,
@@ -1509,12 +1605,13 @@
       {
         "id": "puppet_master",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "from each POISONED enemy within 96*(35r%) = 33.6 r px of the player a nova of XSP(5 + p1) projectiles with damage ratio 65r% spawns; at 160 px the dummy is outside the radius (max about 101 px at r3), so 0"}], "confidence": "I", "note": "card p14 row (C/I)", "plannerFix": "planner adds poison_skill_damage +65/r as LSSD and skill_range +35/r; game: separate nova with damage 65r% of the base per projectile, only from poisoned enemies within 33.6 r px of the player (0 on the dummy at 160 px)"},
         "name": "Puppet Master",
         "description": "Cast a poison nova from all nearby poisoned enemies with increased damage based on poisoned. Poison nova now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "poison_skill_damage": 65, "skill_range": 35 }
+          "base": {"poison_skill_damage": 0, "skill_range": 0},
+          "perRank": {"poison_skill_damage": 65, "skill_range": 35}
         }
       }
     ]
@@ -1522,6 +1619,7 @@
   {
     "id": "amplify_damage",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "necromancer",
     "name": "Amplify Damage",
     "kind": "active",
@@ -1544,6 +1642,8 @@
   {
     "id": "raise_skeleton",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of one Summon_Skeleton_Warrior_obj; N = 3 + p1.s9 + p13.s9 + RSS360 warriors, permanent, minionType 9 melee with attackRangeMin 24): each attack makes one Hitbox_Summon_obj (1 hit), the dummy is in melee reach of the skeletons by scenario; interval T = max(1.1*(1 - p3), 0.5 s)/(1 + AS/100) (engine side). Raising needs a Meat Bomb corpse within 240 px of the cursor (one-off). pe[58] splash (p5) acts only on other targets; p9, p10 = 0; p11 Zombies, p12 whirlwind (x(1 + 0.325r) with 6r %) are subskill effects."},
     "classId": "necromancer",
     "name": "Raise Skeleton",
     "kind": "active",
@@ -1557,7 +1657,7 @@
     "tree": "Lord of the Dead",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7, "perLevel": 5 },
+    "damageFormula": { "base": 6, "perLevel": 8 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       {
@@ -1596,122 +1696,133 @@
       {
         "id": "undead_army",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "entity count: N += 1 per rank (N = 3 + p1 + p13 + RSS360 skeletons, each 1 hit per attack); the engine multiplies the entity base by summon_max_amount, so the count is recorded here, not as extra_hits"}], "confidence": "C", "note": "card p1 row (C)"},
         "name": "Undead Army",
         "description": "Increases the maximum amount of skeleton warriors.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "unholy_strike",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8r% (p2.s9)"}], "confidence": "C", "note": "card p2 row (C)"},
         "name": "Unholy Strike",
         "description": "Increases damage dealt by skeleton warriors.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "command_for_haste",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "base": 0, "perRank": -15, "entity": true, "note": "attackCooldown x(1 - 15r%): tempo x 1/(1 - 0.15r); R4 item 8 (C code, I latency): the attack animation floor is T_anim = 6 frames / (12 fps * attackSpeedAnim) = 30/(1 + AS/100) frames (0.5 s at AS = 0) PLUS 1-2 frames of 'animation end' event latency, so period = max(cd_eff, 30/(1+AS) + 1..2) frames; cd_eff = 66 (1 - 0.15r) frames: r1..r3 56 / 46 / 36 (cooldown binds), r4 26.4 -> 31 frames, r5 16.5 -> 31 frames (animation binds); tempo vs 1.1 s: x1.18 / 1.43 / 1.83 / 2.13 (r4) / 2.13 (r5); was max x2.2 with 30 frames"}], "confidence": "I", "note": "card p3 row + R4 item 8 (necromancer/120#0); uncertainty 30-32 frames (+-3 % at r4-r5)", "plannerFix": "planner models summon_attack_speed +15/r (x(1 + 0.15r) on speed); game subtracts 15r% from the attack cooldown (x 1/(1 - 0.15r)) and is capped by the animation time"},
         "name": "Command for Haste",
         "description": "Increases the attack speed of skeleton warriors.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 15 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 15}
         }
       },
       {
         "id": "absorb_vitality",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "life steal for the skeleton; no dummy DPS"}], "confidence": "C", "note": "card p4 row (C)"},
         "name": "Absorb Vitality",
         "description": "Skeleton warriors heal them selves for a portion of their missing life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life_steal": 0 },
-          "perRank": { "summon_life_steal": 2 }
+          "base": {"summon_life_steal": 0},
+          "perRank": {"summon_life_steal": 2}
         }
       },
       {
         "id": "undead_berserker",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "splash pe[58] = 0.75 + 25r% applies only to other targets (mult = 1 for the main target); a single dummy gets 0 splash"}], "confidence": "C", "note": "card p5 row (C)", "plannerFix": "planner adds of_total_damage 25/r as extra damage; game splash only on other enemies, 0 on the single dummy"},
         "name": "Undead Berserker",
         "description": "Skeleton warriors now deal a portion of their damage as area of effect damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 25 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 25}
         }
       },
       {
         "id": "between_the_ribs",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "dodge chance for the skeleton; no dummy DPS"}], "confidence": "C", "note": "card p6 row (C)"},
         "name": "Between the Ribs",
         "description": "Skeleton warriors now have a chance to dodge incoming damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_dodge_chance": 0 },
-          "perRank": { "summon_dodge_chance": 8 }
+          "base": {"summon_dodge_chance": 0},
+          "perRank": {"summon_dodge_chance": 8}
         }
       },
       {
         "id": "unholy_lifeforce",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "skeleton life +12.5r%, affects damage only via the RSS357 life term (not via LSSD)"}], "confidence": "C", "note": "card p7 row (C)"},
         "name": "Unholy Lifeforce",
         "description": "Increases the life of skeleton warriors.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 12.5 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 12.5}
         }
       },
       {
         "id": "toes_attached",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed of the skeleton; no dummy DPS"}], "confidence": "C", "note": "card p8 row (C)"},
         "name": "Toes Attached",
         "description": "Increases skeleton warrior movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_movement_speed": 0 },
-          "perRank": { "summon_movement_speed": 15 }
+          "base": {"summon_movement_speed": 0},
+          "perRank": {"summon_movement_speed": 15}
         }
       },
       {
         "id": "undying_rage",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "damageMissingLife = 1r: DMG += x * missing life; the skeleton does not get hurt by the dummy, so 0 extra"}], "confidence": "C", "note": "card p9 row (C)", "plannerFix": "planner gives arcane +1/r LSSD; game adds damage only per missing life of the skeleton, 0 at full life"},
         "name": "Undying Rage",
         "description": "Increases skeleton warrior damage based on their missing life percentage.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 1 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 1}
         }
       },
       {
         "id": "last_stand",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "life x0.5; on death 6 shards with damage x(1 + p10%); the skeleton never dies on the dummy, so 0"}], "confidence": "C", "note": "card p10 row (C)", "plannerFix": "planner gives arcane +10/r LSSD; game only creates shards on death (never on the dummy), so 0"},
         "name": "Last Stand",
         "description": "Skeleton warrior life is reduced and they explode upon death unleashing bone shrapnel around them.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 10}
         }
       },
       {
         "id": "zombies",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "note": "R4 item 9 (C structure, I constants): zombies = 1.5r (p11.s9 = 150r %). Skeleton Step_0 drains life every frame (SPV(pSt[16], GPV(pSt[21]) - GPV(pSt[16])*0.005*roomSpd*GPV(pSt[15])), meaning of the pSt indices I) and Destroy_0 makes an Explosion with damage[5] = projEffect[0] = floor(GPV(pSt[1]) * (1 + zombies)) (poison, class without crit) in place of the skeleton. If the drain is maxHP*0.005 per frame the skeleton lives 200 frames (3.3 s) and then deals D*(1 + 1.5r) once per 3.3 s plus the re-raise time (a Raise Skeleton cast with a Meat Bomb corpse within 240 px of the cursor), i.e. at most 0.75*D/s per skeleton at r1 and 1.65*D/s at r3 against 1.9*D/s from attacks, while the DPS of the attacks drops by the dead time. Not a poisoned-damage increase. Only bounds, no per-attack number (zawezone): left as other"}], "confidence": "I", "note": "card p11 row + R4 item 9 (necromancer/120#1, [R4 zawezone]); was: other, periodic burst not quantified", "plannerFix": "planner rolls poisoned 150r on hit (chance 100); game: life drain kills the skeleton after ~3.3 s (I) and its death explosion deals floor(x * (1 + 1.5r)) as poison, then the skeleton must be raised again"},
         "name": "Zombies!",
         "description": "Skeleton warriors are spawned as zombies rapidly draining their life and exploding into pieces inflicting poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 150 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 150}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1724,6 +1835,7 @@
       {
         "id": "winds_of_the_dead",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0195, 1.078, 1.1755], "note": "chance 6r% per attack: damageMultiplier += 32.5r% for that attack: expected x(1 + 0.06r * 0.325r) = 1 + 0.0195 r^2 (r = 1..3); whirlwind AoE scale 1 + p12.s10% has no dummy hit change"}], "confidence": "C", "note": "card p12 row (C): 'srednio x(1 + 0,06r*0,325r)'"},
         "name": "Winds of the Dead",
         "description": "Skeleton warriors have a chance to perform an area of effect attack with increased radius and damage.",
         "maxRank": 3,
@@ -1739,17 +1851,23 @@
       {
         "id": "horde_of_undead",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.5, 0.5, 0.5], "note": "skeleton damage and life x0.5 (L49-51), applies to every skeleton"}, {"kind": "other", "note": "entity count: N += 4r skeletons (each at half damage); DPS factor (N + 4r) * 0.5 / N, pays off when N < 4r"}], "confidence": "C", "note": "card p13 row (C)", "plannerFix": "planner adds summon_max_amount +4/r without the x0.5 damage and life factor"},
         "name": "Horde of Undead",
         "description": "Increases the maximum summon amount of skeleton warriors. Skeleton warriors damage and life is reduced.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 4 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 4}
         }
       },
       {
         "id": "weapons_beyond_grave",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD += 30r% (p14.s10)"}, {"kind": "crit", "base": 0, "perRank": 20, "note": "crit chance is ASSIGNED per attack pe[1004] = 20r% (not summed); crit damage from the player's RSS31 applies"}], "confidence": "C", "note": "card p14 row (C)", "plannerFix": "planner models on_hit chance 20r% times 30r% bonus; card: constant LSSD +30r% and crit chance assigned 20r% per attack"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 30}
+        },
         "name": "Weapons Beyond Grave",
         "description": "Skeleton warriors have a chance on attack to deal critical damage equal to your critical strike damage.",
         "maxRank": 3,
@@ -1785,6 +1903,8 @@
   {
     "id": "raise_skeleton_mage",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of one Summon_Skeleton_Mage_obj, ranged minionType 10, attackRangeMin 200; N = 2 + p1.s9 + RSS360 mages, T = max(0.9*(1 - p10), 0.667 s)/(1 + AS/100)): the projectile (8 px/frame, projType 1, projEffect[56] = 0) hits the dummy by mask contact = hit 1; when its origin enters the dummy's mask (rule 33) it snaps to the dummy, stops and 3 frames later Destroy_0 creates an Explosion_Item_obj at the dummy's centre (scale x2 = r ~42 px, full damage[1] of the projectile, no singleHitPackId, active after 4 frames) = hit 2 -> 2 hits of equal value (R3 122#0 C; the mechanism is origin-in-mask, not the dead destroyEnemy field). Exceptions (Dark Bolts p6 side bolts, item projectiles [169]/[171] that fly through) are subskill/item effects. p11 Cursed Blast (+0.30r D), p12 Chaining Scorn (4 hits at (1 + 0.15r) D per projectile), p14 Unholy Lightning (1 hit, no blast) are subskill effects."},
     "classId": "necromancer",
     "name": "Raise Skeleton Mage",
     "kind": "active",
@@ -1817,28 +1937,31 @@
       {
         "id": "undead_coven",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "entity count: N = 2 + p1 + RSS360 mages (+1 per rank); engine multiplies the per-action base by summon_max_amount, so no extra_hits"}], "confidence": "C", "note": "card p1 row (C)"},
         "name": "Undead Coven",
         "description": "Increases the maximum amount of skeleton mages.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "unholy_force",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += 15r% (p2.s9)"}], "confidence": "C", "note": "card p2 row (C)"},
         "name": "Unholy Force",
         "description": "Increases damage dealt by skeleton mages.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "reflection",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.07, 1.1, 1.13, 1.16], "note": "burst chance (1 + 3r)% per attack (p3.s9 = 3r, base 1%): B = 1 + (1 + 3r)/100 full salvos; the factor includes the base 1%; the extra salvo is a full salvo (x1 damage)"}], "confidence": "C", "note": "card p3 row (C)", "plannerFix": "planner models of_total_damage 50 on an on_hit proc with chance 3r; game adds a full second salvo with chance (1 + 3r)% per attack (B = 1 + (1 + 3r)/100)"},
         "name": "Reflection",
         "description": "Chance for skeleton mages to fire an additional projectile on attack.",
         "maxRank": 5,
@@ -1854,39 +1977,43 @@
       {
         "id": "unholy_spellsling",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 4, "note": "pe[1004] += 4r (crit chance %)"}], "confidence": "C", "note": "card p4 row (C)"},
         "name": "Unholy Spellsling",
         "description": "Chance for skeleton mages to critically hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0 },
-          "perRank": { "spell_crit_chance": 4 }
+          "base": {"spell_crit_chance": 0},
+          "perRank": {"spell_crit_chance": 4}
         }
       },
       {
         "id": "unholy_necrosis",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "crit damage pe[1003] = 25 + 10r % (the base 25 % is part of the skill); crit chance unchanged"}], "confidence": "C", "note": "card p5 row (C); value field = chance, crit damage in note"},
         "name": "Unholy Necrosis",
         "description": "Increases critical strike damage dealt by skeleton mages.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_damage": 10 }
+          "base": {"spell_crit_damage": 0},
+          "perRank": {"spell_crit_damage": 10}
         }
       },
       {
         "id": "dark_bolts",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.5, 0.75, 0.9, 1.0, 1.1], "note": "multiShot = 1 + r bolts 8 deg apart, each damage x0.25 (n = 2..6 bolts); the second (blast) hit exists only for bolts whose origin enters the dummy circle (lateral d*sin(delta) <= 12 px). Resztki A(3): the mage spawns at the corpse position (Talents 122 L1223, asm 0x1463f3b3f; corpse 16-82 px from the dummy, mean d = 46-61 px for n_c = 1..3, not 160-200 px) and attacks from there (bbox gap <= 200 satisfied at once, SummonStepSeekTarget 0x1461d9a70 L47), so most bolts also blast: hits per volley in units of 0.25*D: 4, 6, ~7.1, 8, ~9.1 for r1..r5 (r1 = 2 bolts, r5 = 6 bolts), i.e. DPS vs the base (2 hits of D = 8 units) x0.5 / x0.75 / x0.9 / x1.0 / x1.1 (card rounding of 7.1/8 and 9.1/8). Was x0.5 / 0.25 / 0.5 / 0.5 / 0.5 at d = 160-200 px. I: whether SummonStepLoop pulls the mage back"}], "confidence": "I", "note": "card p6 row + Resztki A(3) (darkbolt.py); mage position is I", "plannerFix": "planner adds a full-damage bolt per rank (projectile_count +1/r); game bolts are x0.25 each at 8 deg spacing: DPS x0.5 .. x1.1 of the base"},
         "name": "Dark Bolts",
         "description": "Skeleton mage now fires multiple projectiles in an arc.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "necrotic_mirage",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "chance 1r% per attack to create a mirage copy of the mage (Summon_Skeleton_Mage_Mirage_obj, 3 s, copies stats but makes no copies); about +3 * 0.01r mage per mage over time (about +3.3 % per rank); count recorded here, not as extra_hits"}], "confidence": "I", "note": "card p7 row (C/I)", "plannerFix": "planner rolls on_hit chance 1r with no entity effect; game adds a 3-second mage copy with chance 1r% per attack"},
         "name": "Necrotic Mirage",
         "description": "Chance on attack to create an illusion for a short period of time.",
         "maxRank": 5,
@@ -1895,12 +2022,13 @@
       {
         "id": "festering_scorch",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "note": "chance 3r% per attack: burning [18] = floor(D * 20r%) on the bolt (B1); DoT modelled separately by the engine"}], "confidence": "C", "note": "card p8 row (C)", "plannerFix": "planner models increased_burning_damage +20/r on the skill; game adds a separate burning DoT floor(D*20r%) with chance 3r% per attack"},
         "name": "Festering Scorch",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 20 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1913,67 +2041,73 @@
       {
         "id": "gluttony",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "mage life; no dummy DPS"}], "confidence": "C", "note": "card p9 row (C)"},
         "name": "Gluttony",
         "description": "Increases the life of skeleton mages.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 10 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 10}
         }
       },
       {
         "id": "unholy_grasp",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "base": 0, "perRank": -10, "entity": true, "note": "attack cooldown x(1 - 10r%): tempo x 1/(1 - 0.1r); attack animation floor 0.667 s / (1 + AS) becomes binding from about r3"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner models summon_attack_speed +10/r (x(1 + 0.1r) speed); game multiplies cooldown by (1 - 0.1r) with an animation cap"},
         "name": "Unholy Grasp",
         "description": "Increases attack speed for skeleton mages.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 10 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 10}
         }
       },
       {
         "id": "cursed_blast",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9], "per": "use", "note": "+1 blast hit at ratio 0.30r * D on the first hit of each hitting bolt ([476] zeroed on the bolt); card: one hitting bolt per use at 160 px, so expected 0.30r hits per use; scales with the number of hitting bolts (p6, I)"}], "confidence": "I", "note": "card p11 row (C/I); Destroy_0 copy order (I)"},
         "name": "Cursed Blast",
         "description": "Unleash an arcane nova on hit dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 30 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 30}
         }
       },
       {
         "id": "chaining_scorn",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.6, 5.2, 5.8], "per": "use", "note": "chain T0 starting on the dummy with damage floor(D*(1 + 0.15r)): 4 hits (1 + floor(9/3), max_bounces unset -> 8) per hitting bolt, so 4 * (1 + 0.15r) hits-equivalent per use (one bolt hits at 160 px); exact start point I"}], "confidence": "I", "note": "card p12 row (C/I); reguly 23 (chains.md 7-8)", "plannerFix": "planner adds arcane +15/r to LSSD for the whole skill and projectile_bounces +3/r; game: a separate 4-hit chain with ratio (1 + 0.15r) per bolt hit"},
         "name": "Chaining Scorn",
         "description": "Attacks now chain on hit dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "arcane_skill_damage": 15, "projectile_bounces": 3 }
+          "base": {"arcane_skill_damage": 0, "projectile_bounces": 0},
+          "perRank": {"arcane_skill_damage": 15, "projectile_bounces": 3}
         }
       },
       {
         "id": "summon_archmage",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.25, 0.5, 0.75], "note": "limit to 1 mage (L1214), damage b * (1 + p1) * 25r% (skill scale 2.25): per-mage damage ratio 0.25r (p1 = 0 here)"}, {"kind": "other", "note": "entity count drops to 1 mage (instead of 2 + p1 + RSS360): engine summon_max_amount must be 1 for this rank; the DPS factor is 0.25r * 1 / (2 + p1)"}], "confidence": "C", "note": "card p13 row (C)", "plannerFix": "planner adds conversion_summon_count 25/r and keeps the mage count; game sets the count to 1 with damage ratio 0.25r per rank"},
         "name": "Summon Archmage",
         "description": "You can now only summon one skeleton mage but it scales according to the maximum amount of skeleton mages.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_summon_count": 0 },
-          "perRank": { "conversion_summon_count": 25 }
+          "base": {"conversion_summon_count": 0},
+          "perRank": {"conversion_summon_count": 25}
         }
       },
       {
         "id": "unholy_lightning",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: attackProj = Unholy_Lightning_obj (beam 424 px, 1 hit, no blast) replaces the projectile with its 2 hits -> 1 hit per attack"}, {"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD += 35r% (p14.s9)"}, {"kind": "utility", "note": "attack range +25r% (no dummy hit change at 160 px)"}], "confidence": "I", "note": "card p14 row (C/I): ratio (1+M+0.35r)/(2(1+M))", "plannerFix": "planner keeps the 2-hit projectile and adds LSSD; game replaces the projectile by a 1-hit beam (no blast), so the hits drop from 2 to 1 per attack"},
         "name": "Unholy Lightning",
         "description": "Skeleton mages now shoot a surge of dark lightning with increased range and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "arcane_skill_damage": 35, "skill_range": 25 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "subtree_damage": 35}
         }
       }
     ]
@@ -1981,6 +2115,7 @@
   {
     "id": "life_tap",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "necromancer",
     "name": "Life Tap",
     "kind": "active",
@@ -2018,6 +2153,7 @@
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": { "summon_attack_speed": 10, "movement_speed": 5 },
       "perRank": { "summon_attack_speed": 2, "movement_speed": 1 }
@@ -2044,11 +2180,13 @@
   {
     "id": "summon_damned_legion",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of one Summon_Damned_Legion_obj; N = 1 + p6.s9 legions, melee minionType 11, attackRangeMin 20, T = max(1.15*(1 - p9), 0.5 s)/(1 + AS/100)): one Hitbox_Summon_obj per attack = 1 hit of damage[1] (arcane despite the 'physical' key); the legion stands next to the dummy (summoned at the cursor with CreateInFreePos). p13 Damned Sharpshooter (bolt + blast = 2 hits), p5 Vile Shock cascade, p10 Crimson Aura (+1 hit/s, physical life-based), p11 Abomination are subskill effects."},
     "classId": "necromancer",
     "name": "Summon Damned Legion",
     "kind": "active",
     "description": "Summon a damned legion to fight on your side.",
-    "damageType": "physical",
+    "damageType": "arcane",
     "tags": ["Cast", "Active", "Spell", "Summon"],
     "movementDuringUse": 85,
     "baseCastRate": 1.75,
@@ -2057,7 +2195,7 @@
     "tree": "Lord of the Dead",
     "position": { "row": 3, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 13 }],
-    "damageFormula": { "base": 0, "perLevel": 12 },
+    "damageFormula": { "base": 0, "perLevel": 8.75 },
     "manaCostFormula": { "base": 13, "perLevel": 1 },
     "bonusSources": [
       { "source": "Raise Skeleton", "stat": "attack_damage", "value": 15, "per": "skill_level" },
@@ -2076,17 +2214,19 @@
       {
         "id": "unhallowed_authority",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8r% (p1.s9). Damage type is arcane (damage[1], abilityDamageType 1), so the LSSD applies to arcane"}], "confidence": "C", "note": "card p1 row (C); Podumiejetnosci Damned Legion (summons.md section 3)", "plannerFix": "planner uses physical_skill_damage; the legion damage is arcane (damage[1]), so the physical bonus does not apply"},
         "name": "Unhallowed Authority",
         "description": "Increases the damage dealt by damned legion.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "undead_leadership",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "chance 3r% per attack: owner buffs 310 (+8r % damage) and 308 (+6r % speed) for 5 s; they strengthen the player, not the legion; uptime from the chance (I)"}], "confidence": "I", "note": "card p2 row (C/I)"},
         "name": "Undead Leadership",
         "description": "Chance on hit to inspire nearby allies increasing their attack speed and damage for a short period.",
         "maxRank": 5,
@@ -2102,6 +2242,7 @@
       {
         "id": "unholy_reverberation",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun chance 4r% per attack; no damage"}], "confidence": "C", "note": "card p3 row (C)"},
         "name": "Unholy Reverberation",
         "description": "Chance on attack for damned legion to stun nearby monsters.",
         "maxRank": 5,
@@ -2114,17 +2255,19 @@
       {
         "id": "colossus_smash",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "splash pe[58] = 35r% (other targets only), 0 on a single dummy"}], "confidence": "C", "note": "card p4 row (C)", "plannerFix": "planner adds splash_of_total_damage 35/r as extra damage; game splash only hits other targets (0 on the single dummy)"},
         "name": "Colossus Smash",
         "description": "Attacks deal a portion of their damage to enemies around the target.",
         "maxRank": 5,
         "effects": {
-          "base": { "splash_of_total_damage": 0 },
-          "perRank": { "splash_of_total_damage": 35 }
+          "base": {"splash_of_total_damage": 0},
+          "perRank": {"splash_of_total_damage": 35}
         }
       },
       {
         "id": "vile_shock",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.061, 0.153, 0.277, 0.432, 0.619], "per": "use", "note": "chance 3r% per attack: cascade of 5 explosions in a line (60 px apart, 0.135 s) with damage (1 + 0.35r) * dmg, stun 2 s; card: 1-2 of the 5 blasts reach the dummy (midpoint 1.5 used): expected 1.5 * 0.03r * (1 + 0.35r) per attack"}], "confidence": "I", "note": "card p5 row (C/I)", "plannerFix": "planner adds physical_skill_damage 35/r on on_hit chance 3r; game adds 1-2 explosion hits of (1 + 0.35r) * dmg per proc, and the explosions are arcane"},
         "name": "Vile Shock",
         "description": "Chance on attack to cast shockwave dealing area of effect damage and stunning monsters in a line.",
         "maxRank": 5,
@@ -2141,28 +2284,31 @@
       {
         "id": "mass_legion",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "entity count: N = 1 + p6 legions (+1 per rank); engine multiplies the per-attack base by summon_max_amount"}], "confidence": "C", "note": "card p6 row (C)"},
         "name": "Mass Legion",
         "description": "Increases the maximum amount of damned legions.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "infused_with_blood",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "legion life +150r % of RSS36; affects damage only via the RSS357 life term"}], "confidence": "C", "note": "card p7 row (C)"},
         "name": "Infused with Blood",
         "description": "Increases the life of damned legion based on your maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 150 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 150}
         }
       },
       {
         "id": "profane_zeal",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "burst chance 4r% per attack (B = 1 + p8.s9/100): extra full salvo, expected x(1 + 0.04r)"}], "confidence": "C", "note": "card p8 row (C)"},
         "name": "Profane Zeal",
         "description": "Chance to perform an additional attack.",
         "maxRank": 5,
@@ -2178,75 +2324,73 @@
       {
         "id": "legionnaire_agility",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "base": 0, "perRank": -15, "entity": true, "note": "attack cooldown x(1 - 15r%): tempo x 1/(1 - 0.15r); attack animation floor 0.5 s / (1 + AS) becomes binding from r4"}], "confidence": "I", "note": "card p9 row (C/I)", "plannerFix": "planner models summon_attack_speed +15/r; game subtracts 15r% from the attack cooldown with an animation cap"},
         "name": "Legionnaire Agility",
         "description": "Increases the attack speed of damned legion.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 15 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 15}
         }
       },
       {
         "id": "crimson_aura",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "note": "every 1 s an aura (r about 192 px, singleHit, 0.1 s) hits the dummy with physical damage[0] = floor(life * 22.5r%): about 1 extra hit per second (per 1 s, not per attack); ratio to D depends on the legion life (1250 + 250*L, not in card) and on the attack cadence (I). Not converted to a per-attack number"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner models conversion_summon_life 22.5/r (life-based damage) per attack; game adds a separate physical aura hit once per second with damage 22.5r% of life"},
         "name": "Crimson Aura",
         "description": "Damned legion has an aura around them that pulses every second dealing a portion of their life as damage to nearby monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_summon_life": 0, "area_of_effect": 0 },
-          "perRank": { "conversion_summon_life": 22.5, "area_of_effect": 15 }
+          "base": {"conversion_summon_life": 0, "area_of_effect": 0},
+          "perRank": {"conversion_summon_life": 22.5, "area_of_effect": 15}
         }
       },
       {
         "id": "abombination",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.38, 0.38, 0.38], "per": "hit", "note": "R4 item 12 (C): the Abomination's death explosion is Explosion_Item_obj with damage[1] = floor(damage[1] + damage[0]) of the Abomination = x1 of its own hit (no multiplier; modifier class 'none': no crit, no ailment bonus, no penetration; scale 2*(1 + p11.s10 %) only enlarges the radius); the Abomination (limit 1, destroyTimer 3 s) attacks ~3 s / T times and dies once: +1 hit per ~2.6 attacks at T = 1.15 s (p9 = 0, AS = 0) = +0.38 hits per base hit (+38 % of its attacks; with Legionnaire Agility p9 or AS the ratio rises). Needs a recast every 3 s (cast cost not modelled). Replaces the legion pattern (one Abomination, limit 1). Was: not quantified"}, {"kind": "damage_pct", "base": 0, "perRank": 100, "note": "LSSD += 100r% (p11.s9), applies to the abomination only (and 'massively increased' is only this LSSD and the radius)"}], "confidence": "I", "note": "card p11 row + R4 item 12 (necromancer/125#0); explosion class 'none' ratio vs the main hit I", "plannerFix": "planner adds physical_skill_damage 100/r and area 33/r for the legion; game replaces the legion by one abomination (limit 1) with ~3 attacks and a x1 death explosion per 3 s"},
         "name": "Abombination",
         "description": "Summon an frenzied Abomination instead that deals increased Damage for a short period of time before exploding dealing massively increased damage to nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 100, "area_of_effect": 33 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 33, "subtree_damage": 100}
         }
       },
       {
         "id": "thorned_revenant",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "damage return and increased life: the training dummy does not attack, so 0"}], "confidence": "C", "note": "card p12 row (C)"},
         "name": "Thorned Revenant",
         "description": "Damned legion gains damage return based on your total damage return.",
         "maxRank": 3,
         "effects": {
-          "base": { "damage_return": 0, "increased_life": 0 },
-          "perRank": { "damage_return": 250, "increased_life": 25 }
+          "base": {"damage_return": 0, "increased_life": 0},
+          "perRank": {"damage_return": 250, "increased_life": 25}
         }
       },
       {
         "id": "damned_sharpshooter",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2], "note": "transformation: attackProj = Damned_Bolt_obj (10 px/frame, attackRangeMin 320) replaces the melee hit; on destruction an Explosion_Item_obj damage[1] = floor(d0 + d1): 2 hits per attack (bolt + blast)"}, {"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += 40r% (p13.s9)"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner adds physical_skill_damage 40/r with 1 hit; game: bolt plus blast = 2 hits per attack"},
         "name": "Damned Sharpshooter",
         "description": "Instead summon a legion marksman firing explosive bolts with a giant ballista.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 40 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
         }
       },
       {
         "id": "catastrophic_legion",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "limit N = 1 legion (instead of 1 + p6): the DPS factor is (1 + M + 0.75r) / (N (1 + M)) with N = 1 in the new case; engine summon_max_amount must be set to 1 for this rank"}, {"kind": "damage_pct", "base": 0, "perRank": 75, "note": "LSSD += 75r% (p14.s9)"}], "confidence": "C", "note": "card p14 row (C); life +25r % and scale 0.075r (not DPS on dummy)", "plannerFix": "planner keeps N = 1 + p6 legions and adds physical_skill_damage 75/r; game limits the count to 1 and the damage is arcane"},
         "name": "Catastrophic Legion",
         "description": "Summon a single damned legion with increased damage and life. Additionally grows the size of damned legion scaling from the legion's maximum life.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "summon_life": 0,
-            "projectile_size": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 75,
-            "summon_life": 25,
-            "projectile_size": 0.075
-          }
+          "base": {"summon_life": 0, "projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"summon_life": 25, "projectile_size": 0.075, "subtree_damage": 75}
         }
       }
     ]
@@ -2254,6 +2398,8 @@
   {
     "id": "summon_vengeful_spirit",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of one Summon_Vengeful_Spirit_obj, ranged minionType 12 so NO Summon Mastery, attackRangeMin 220; N = 1 + p12.s9 spirits, T = max(1.25*(1 - p3), 0.667 s)/(1 + AS/100)): each attack is one Summon_Chain_Lightning_obj (Chain_Lightning_Parent, chainType -1, projTravel = 0, max_bounces = 2 + p9.s9) whose targetList is the lone dummy x n (rule 17) but which, as an N0 chain, does not clear its hit map on jumps -> 1 hit (rule 23, N0). p5 Forking Bolts (+0.03r), p9 (0 extra), p14 Vengeful Poltergeist (+1 blast + ~2.3 of 3 shards), p11 (poison nova up to 12 hits at 10 %*r) are subskill effects."},
     "classId": "necromancer",
     "name": "Summon Vengeful Spirit",
     "kind": "active",
@@ -2267,7 +2413,7 @@
     "tree": "Lord of the Dead",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 13 }],
-    "damageFormula": { "base": 0, "perLevel": 14 },
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
     "manaCostFormula": { "base": 13, "perLevel": 1 },
     "bonusSources": [
       { "source": "Raise Skeleton", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -2286,50 +2432,55 @@
       {
         "id": "hostile_intelligence",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD = Intelligence * 0.01 * 5r % (scales with the Int stat, value not in card): multiplier (1 + LSSD) on D"}], "confidence": "C", "note": "card p1 row (C); planner conversion_intelligence 5/r matches"},
         "name": "Hostile Intelligence",
         "description": "Increases vengeful spirits damage based on your intelligence.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_intelligence": 0 },
-          "perRank": { "conversion_intelligence": 5 }
+          "base": {"conversion_intelligence": 0},
+          "perRank": {"conversion_intelligence": 5}
         }
       },
       {
         "id": "nimble_spirit",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "extraMS = p2.s9 (movement speed), no change in the number of spirits (summons.md correction)"}], "confidence": "C", "note": "card p2 row (C)"},
         "name": "Nimble Spirit",
         "description": "Increases the movement speed of vengeful spirit.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "swift_bolts",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "base": 0, "perRank": -15, "entity": true, "note": "attack cooldown x(1 - 15r%): tempo x 1/(1 - 0.15r); attack animation floor 0.667 s / (1 + AS) binding from r4"}], "confidence": "I", "note": "card p3 row (C/I)", "plannerFix": "planner models summon_attack_speed +15/r; game subtracts 15r% from the cooldown with an animation cap"},
         "name": "Swift Bolts",
         "description": "Increases the attack speed of vengeful spirit.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 15 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 15}
         }
       },
       {
         "id": "eternal_vengeance",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "spirit life; no dummy DPS"}], "confidence": "C", "note": "card p4 row (C)"},
         "name": "Eternal Vengeance",
         "description": "Increases vengeful spirits life.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 10 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 10}
         }
       },
       {
         "id": "forking_bolts",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "chance 3r% per chain hit ([479]) makes a new Summon_Chain_Lightning_obj (N0) that jumps to the dummy and hits once: +0.03r hits per chain hit (base 1 hit per attack); only without p11 (the p11 attack object fails the object_index check in PC07 L332)"}], "confidence": "I", "note": "card p5 row (C/I); asm 0x1451b7500", "plannerFix": "planner rolls on_hit chance 3r with no damage effect; game: a new N0 chain that hits the dummy once with chance 3r% (+0.03r hits per base hit), not with p11"},
         "name": "Forking Bolts",
         "description": "Attacks by vengeful spirit have a chance to fork creating multiple chain lightnings.",
         "maxRank": 5,
@@ -2338,28 +2489,31 @@
       {
         "id": "critical_wrath",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.75, 2.5, 3.25, 4.0, 4.75], "per": "use", "note": "on a hit on a target at FULL life a Universal_Damage_Return_obj with damage floor(D*(1 + 0.75r)) is created at the dummy (hits once, 2 s stun): +1 hit with ratio (1 + 0.75r) per attack. R4 item 14 (C flow, I HP write): the dummy always has full HP at the first hit of every frame (Attack_Dummy_obj_Step_2 0x1471642e0 resets enemy_hp = max_hp each frame and the PC07 check enemy_hp >= max_hp is evaluated before CalculateEndDamage), so it applies on every attack (no longer an upper bound; slightly lower only when two hits fall in the same frame, e.g. two spirits)"}], "confidence": "I", "note": "card p6 row + R4 item 14 (necromancer/127#0); was 'upper bound: dummy must be at full life (I)'", "plannerFix": "planner models spell_crit_damage 75/r; game adds a full-life return hit x(1 + 0.75r) (conditional on full life of the target)"},
         "name": "Critical Wrath",
         "description": "Attacks always critically strike targets at max health dealing increased damage stunning them.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_damage": 75 }
+          "base": {"spell_crit_damage": 0},
+          "perRank": {"spell_crit_damage": 75}
         }
       },
       {
         "id": "stacking_pain",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "critical_wrath", "note": "[179] = 10r% extra damage vs stunned; the dummy is stunned only by p6 (2 s), so the multiplier applies only with p6"}], "confidence": "C", "note": "card p7 row (C): 'z p6'"},
         "name": "Stacking Pain",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "vacuuming_apparation",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.005, 0.01, 0.015, 0.02, 0.025], "per": "use", "note": "chance 2r% per attack ([481] = p8.s9) of a vortex with 25 % of damage (ratio 0.25): expected 0.02r * 0.25 = 0.005r hits per use (small, I)"}], "confidence": "I", "note": "card p8 row (C/I)", "plannerFix": "planner rolls on_hit chance 2r with no damage effect; game vortex deals 25 % of damage on that chance"},
         "name": "Vacuuming Apparation",
         "description": "Chance on attack to summon a ghastly whirlpool that pulls nearby targets into it.",
         "maxRank": 5,
@@ -2368,34 +2522,37 @@
       {
         "id": "extended_lightning",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "max_bounces = 2 + p9.s9: a single target, the chain N0 does not clear its hit map, so extra bounces add no hit on the dummy"}], "confidence": "C", "note": "card p9 row (C); rule 23 N0", "plannerFix": "planner converts projectile_bounces 2/r into hits; with one dummy and an N0 chain the extra bounces add 0 hits"},
         "name": "Extended Lightning",
         "description": "Chain lightning from vengeful spirit chains to additional targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 2 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 2}
         }
       },
       {
         "id": "retaliatory_transfusion",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "aura every 1 s (r about 192 px) around the spirit; R4/Resztki A(3): the earlier '0 because the spirit stands ~220 px from the dummy' is not derived from code: if the spirit stays where it was created (CreateInFreePos at the cursor, 30-60 px from the dummy, I) the 192 px aura reaches the dummy once per second (was 0). The card does NOT enter this in the DPS (I), so the model keeps zero_on_dummy; alternative reading: +1 hit/s with damage floor(x*(1 + p10.s9%))"}], "confidence": "I", "note": "card p10 row + Resztki A(3); position of the spirit is I (SummonStepLoop conditions not decoded)", "plannerFix": "planner adds arcane +25/r LSSD and life replenish 1/r; game aura damage only within about 192 px of the spirit (0 at the dummy, about 220 px)"},
         "name": "Retaliatory Transfusion",
         "description": "Vengeful spirit gains an aura dealing damage and draining a portion of it to heal it self.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "life_replenish_pct": 0 },
-          "perRank": { "arcane_skill_damage": 25, "life_replenish_pct": 1 }
+          "base": {"arcane_skill_damage": 0, "life_replenish_pct": 0},
+          "perRank": {"arcane_skill_damage": 25, "life_replenish_pct": 1}
         }
       },
       {
         "id": "contaminated_spirit",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "dot", "note": "green chain with poison [0] = floor(D * 33r%) per hit (B2); DoT modelled separately by the engine"}, {"kind": "extra_hits", "byRank": [1.2, 2.4, 3.6], "per": "use", "note": "chance 10r% per attack ([483]) to create 12 Poison_Nova_obj from the hit spot: up to 12 nova hits -> upper bound 12 * 0.1r expected (depends on how many novas hit the dummy from its own position, I)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner models increased_poisoned_damage +33/r on hit; game adds a poison DoT floor(D*33r%) and a chance 10r% of up to 12 nova hits"},
         "name": "Contaminated Spirit",
         "description": "Vengeful spirit now deals poison damage inflicting poisoned for a portion of its damage. Additionally gains a chance to unleash a poison nova on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 33 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 33}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2408,34 +2565,37 @@
       {
         "id": "hatred_reinforcements",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "note": "entity count: N = 1 + p12 spirits (+1 per rank, ReturnSummonAmount 127); engine multiplies the per-attack base by summon_max_amount"}], "confidence": "C", "note": "card p12 row (C); summons.md correction (1 + p12, not p2 + p14)"},
         "name": "Hatred Reinforcements",
         "description": "You can now summon additional vengeful spirits.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "sacrificial_offering",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "note": "sacrifices all Necro_Summon_Parent summons: damageExtra = lifeExtra = sum of 15r% per sacrificed summon, so DPS x(1 + 0.15r * k), k = number of sacrificed summons (depends on the build, not on the dummy); blocks other summons (playerEffect 267)"}], "confidence": "C", "note": "card p13 row (C)"},
         "name": "Sacrificial Offering",
         "description": "Sacrifice all existing necromancer summons increasing the stats of vengeful spirit per summon sacrificed. You can no longer summon any minion while vengeful spirit is active.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_summon_count": 0 },
-          "perRank": { "conversion_summon_count": 15 }
+          "base": {"conversion_summon_count": 0},
+          "perRank": {"conversion_summon_count": 15}
         }
       },
       {
         "id": "vengeful_poltergeist",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.25, 4.5, 6.75], "per": "use", "note": "each attack also makes a Bone_Spirit with spirits = 3 and damage floor(D*0.45r) (blast and shards) and a Poltergeist tornado with the same damage: R4 items 4 and 15 (C code, I trajectory/frames): +1 blast + 3 shards (ALL hit: homing snaps onto the dummy, Sum H_s = spirits; was ~2.3 of 3) + 1 tornado hit (tick_frequency 0, singleHit, passes the dummy at 2-11 px, hit 32-46 frames after creation) = 5 hits at ratio 0.45r per attack = 2.25r"}], "confidence": "I", "note": "card p14 row + R4 items 4, 15 (necromancer/127#1); was [1.485, 2.97, 4.455] = (1 + 2.3) * 0.45r without the tornado", "plannerFix": "planner adds of_total_damage 45/r per attack; game adds an explosion and about 2.3 shards at 0.45r D each, plus a tornado"},
         "name": "Vengeful Poltergeist",
         "description": "Vengeful spirit now summons bone spirits and tornados in addition to its normal attack.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 45 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 45}
         }
       }
     ]

@@ -432,12 +432,7 @@ pub fn apply_subskill_aggregation(
         if class_id == "amazon" {
             owner
                 .subskills
-                .retain(|node| match (skill.id.as_str(), node.id.as_str()) {
-                    ("noxious_strike", "corrosive_reach") => weapon_kind == "Polearm",
-                    ("rebound", "marksmanship") => weapon_kind == "Bow",
-                    ("astropes_gift", "master_of_javelin") => weapon_kind == "Throwing",
-                    _ => true,
-                });
+                .retain(|node| node_weapon_ok(&skill.id, &node.id, weapon_kind));
         }
         let agg = crate::calc::subskill::aggregate_subskill_stats(
             &owner,
@@ -895,5 +890,15 @@ pub fn apply_charge_attribute_damage(
                 forge: None,
             },
         );
+    }
+}
+
+/// Amazon nodes that explicitly require the equipped weapon class.
+pub(crate) fn node_weapon_ok(skill_id: &str, node_id: &str, weapon_kind: &str) -> bool {
+    match (skill_id, node_id) {
+        ("noxious_strike", "corrosive_reach") => weapon_kind == "Polearm",
+        ("rebound", "marksmanship") => weapon_kind == "Bow",
+        ("astropes_gift", "master_of_javelin") => weapon_kind == "Throwing",
+        _ => true,
     }
 }

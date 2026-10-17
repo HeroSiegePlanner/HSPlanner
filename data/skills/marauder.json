@@ -3,6 +3,8 @@
     "id": "bouncing_grenade",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.5, "baseProjectiles": 1, "perExtraProjectile": 1.23, "confidence": "I", "note": "Per cast (1 Marauder_Bouncing_Grenade_obj, Player_Ability_Parent, no damage itself), cursor on the dummy's body (x, y-24), dummy at 160 px. R4/Resztki E: discrete flight (30 movement frames) and target = host + lengthdir(max(tupm[6], 64), tupm[7]) from (x, y+6), i.e. 6 px above the cursor at +10.6 deg: the grenade lands at 149.8 / 235.4 / 278.0 px = 30.4 / 83.5 / 124.2 px from the dummy (old model 161.8 / 253.6 / 298.4 px = 24 / 98 / 142 px). Each landing with bounces > 0 creates one Marauder_Bouncing_Grenade_AOE_obj (singleHit, disc r = 111.5*0.4*(1 + 0.25k) = 55.8 / 66.9 / 78.1 px, reach +11.5 px) with damage[3] = D + k*damageBase, damageBase = floor(0.1*D): AOE no. 1 (reach 67.2 px) hits = 1.1 D; AOE no. 2 (reach 78.4 px) misses by 5.1 px (C; was 0.9 px, I); AOE no. 3 misses. The final explosion (Explosion_Item_obj r 66.6 px, 138 px from the dummy) misses (0). The 6 Marauder_Bomb_Shrapnel_obj (60 deg*i absolute directions, 168 px, one shared singleHitPackId so <= 1 hit) hit with P = 0.31 per grenade (end blast 134-138 px from the dummy; mean over 72 aim angles, I; old model 0.24) for D + 3*damageBase = 1.3 D -> 0.31*1.3 = 0.403. Total 1.1 + 0.403 = 1.50 hits of the main hit D (was 1.41). perExtraProjectile = 1.23 is the least-squares slope of the R4 p14 fan table (symmetric 12 deg fan, grenade k aims at aim + 12*(k-(n-1)/2); n = 1..6 grenades: AOE no. 1 hits 1,2,3,3,4,4, AOE no. 2 hits 0,1,1,1,1,1, plus 0.403 shrapnel per grenade = 1.50 / 4.21 / 5.71 / 6.11 / 7.62 / 8.02 hits; shrapnel of off-axis grenades is I; old value 1.0 was a best reading). Cursor exactly on the dummy: landings 13.9 / 71.8 / 113.6 px, AOE no. 2 (1.2 D) already hits in the base. p13 molten ground (+3 hits), p6/p7 AOE 2/3, p12 ricochet (0), p5 second throw are subskill effects. No cooldown: period = animation lock (43 frames at c = 1.75), handled centrally (rule 37)."},
     "classId": "marauder",
     "name": "Bouncing Grenade",
     "kind": "active",
@@ -17,7 +19,7 @@
     "tree": "Juggernaut",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 8, "perLevel": 10 },
+    "damageFormula": { "base": 7.75, "perLevel": 9.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Heavy Ball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -36,50 +38,55 @@
       {
         "id": "pressurized_bombs",
         "positionIndex": 1,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p1: final explosion radius only; r ~90 px never reaches dummy at 148+ px (0 change)"},
         "name": "Pressurized Bombs",
         "description": "Increases area of effect radius of bouncing grenade.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "strong_lats",
         "positionIndex": 2,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p2 row", "plannerFix": "card: Strong Lats is gravityPower x(1+0.15r) (shorter flight, ~1 px landing shift), not projectile_speed; no hit change"},
         "name": "Strong Lats",
         "description": "Increased the projecile speed of bouncing grenade.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "nitroglycerine_solution",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10/rank (fire)"}], "confidence": "C", "note": "card p3 row"},
         "name": "Nitroglycerine Solution",
         "description": "Increases the damage dealt by bouncing grenade.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "elastic_cover",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4 row", "plannerFix": "card: extra bounces land 250-1000 px away (no extra hits on dummy); planner projectile_bounces does not model it"},
         "name": "Elastic Cover",
         "description": "Increases the amount of bounces for bouncing grenade.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "ace_up_your_sleeve",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "extra cast with chance 4r% per cast (x(1+p5%))"}], "confidence": "C", "note": "card p5 row; planner on_cast 4r% + of_total_damage 100 agrees"},
         "name": "Ace Up Your Sleeve",
         "description": "Chance on cast to unleash an additional bouncing grenade.",
         "maxRank": 5,
@@ -95,28 +102,31 @@
       {
         "id": "big_boy_bombs",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.2, 1.2, 1.2, 1.2, 1.2], "per": "use", "note": "AOE nr 2 (1.2 x D) reaches the dummy from p6 r1 (reach 85.1 px vs landing 83.5 px; cursor above, base convention; with the cursor on the dummy it is already in the base). AOE nr 3 does NOT reach even at r6 = 5 (124.2 vs 123.0 px). Overlaps with p7 AOE 2 (take max, not sum)"}], "confidence": "C", "note": "card p6 row (R4 255#2 discrete flight + Resztki E 6 px above cursor); was r6 >= 3"},
         "name": "Big Boy Bombs",
         "description": "Increases the size of bouncing grenade.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "heavy_weight",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 1.2, 1.2, 1.2, 1.2], "per": "use", "note": "AOE nr 2 (1.2 x D): landing 2 is 83.5 / 79.6 / 75.6 / 67.9 / 64.1 / 60.3 px from the dummy for r7 = 0..5 vs reach 78.4 px -> hits from r7 = 2 (cursor above; Resztki E; was r7 >= 4). Overlaps with p6 AOE 2 (take max, not sum)"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 1.3], "per": "use", "note": "AOE nr 3 (1.3 x D) only at r7 = 5 (Resztki E: AOE 3 from p7 r5; p6 r5 alone misses by 1.2 px); the old 'requires big_boom p6' is dropped, the combination with p6 is not stated by the card"}], "confidence": "C", "note": "card p7 row (R4 255#2 + Resztki E); was AOE2 from r7 >= 4, AOE3 only with p6 r>=3 and r7 = 5", "plannerFix": "planner skill_range -10/rank is wrong: game shortens bounceLength 2*(1+p7%), landing 2 moves to 98->76 px"},
         "name": "Heavy Weight",
         "description": "Decreases the distance between bounces.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": -10 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": -10}
         }
       },
       {
         "id": "rubber_coated_shell",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p8: wall bounce, no walls on dummy scenario"},
         "name": "Rubber Coated Shell",
         "description": "Chance for bouncing grenades to bounce off of terrain.",
         "maxRank": 5,
@@ -125,12 +135,13 @@
       {
         "id": "sharp_shrapnels",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [7.5, 25.9, 50.5, 78.3, 107.3], "note": "expected fire break (%) on dummy: break 25r% x uptime, uptime = 1-(1-0.04r)^8.75 (8.75 casts per 5 s at castRate 1.75); damage multiplier not determined"}], "confidence": "C", "note": "card p9 row", "plannerFix": "planner on_hit chance; card rolls once per cast (na rzut) - per cast uptime"},
         "name": "Sharp Shrapnels",
         "description": "Chance to inflict fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 25 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -143,12 +154,13 @@
       {
         "id": "flammable_charge",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "note": "burning B1 per cast: chance 3r% x floor(dmg*25r%): 0.0075 r^2 D per use"}], "confidence": "C", "note": "card p10 row", "plannerFix": "card: chance rolled once per cast (na rzut); planner uses on_hit"},
         "name": "Flammable Charge",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 25 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -161,34 +173,37 @@
       {
         "id": "resetting_fuse",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50/rank (fire); bounceWalls/bounceReset no dummy effect"}], "confidence": "C", "note": "card p11 row"},
         "name": "Resetting Fuse",
         "description": "Bouncing from terrain resets the duration of bouncing grenade.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "duration_resets": 0 },
-          "perRank": { "fire_skill_damage": 50, "duration_resets": 2 }
+          "base": {"duration_resets": 0, "subtree_damage": 0},
+          "perRank": {"duration_resets": 2, "subtree_damage": 50}
         }
       },
       {
         "id": "blazing_rebound",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "ricochet triggers only when grenade lands on an enemy (place_meeting, 22.5 px); cursor (x,y-24) gives 23.7 px -> no trigger"}], "confidence": "C", "note": "card p12 row (C/I, regua 17)", "plannerFix": "card: ricochet needs place_meeting; planner applies fire_skill_damage 42.5/rank and bounces, none on dummy"},
         "name": "Blazing Rebound",
         "description": "Hitting a monster causes bouncing grenade to bounce towards another nearby monster increasing its damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "fire_skill_damage": 42.5, "projectile_bounces": 2 }
+          "base": {"fire_skill_damage": 0, "projectile_bounces": 0},
+          "perRank": {"fire_skill_damage": 42.5, "projectile_bounces": 2}
         }
       },
       {
         "id": "fiery_charge",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.3, 3.3, 3.3], "per": "use", "note": "Molten Ground patch at landing 1 (24 px from dummy): 3 ticks x damage 1.1 D (after first bounce +damageBase); patch size 1+0.1r does not change hits"}, {"kind": "dot", "byRank": [0.8, 1.6, 2.4], "note": "burning [18] += floor(dmg*80r%) always"}], "confidence": "C", "note": "card p13 row", "plannerFix": "planner only area_of_effect 10/rank + burning 80/rank; game adds 3 full-damage patch ticks on dummy"},
         "name": "Fiery Charge",
         "description": "Each bounce increases the size of the molten trail. Unleash flames on a large radius inflicting burning after exploding.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "increased_burning_damage": 0 },
-          "perRank": { "area_of_effect": 10, "increased_burning_damage": 80 }
+          "base": {"area_of_effect": 0, "increased_burning_damage": 0},
+          "perRank": {"area_of_effect": 10, "increased_burning_damage": 80}
         },
         "proc": {
           "trigger": "on_hit",
@@ -201,12 +216,13 @@
       {
         "id": "coast_to_coast",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "XSP(1 + p14.s9): +1 grenade per rank, symmetric 12 deg fan aim + 12*(k-(n-1)/2), start host + lengthdir(8, angle), target host + lengthdir(max(cursor distance, 64), angle) (R4 255#0, C)"}, {"kind": "extra_hits", "byRank": [2.7, 4.21, 4.61], "per": "use", "replacesProjectileHits": true, "note": "R4 fan table, cursor above the dummy (Resztki E base landings): n = 2,3,4 grenades -> AOE nr 1 hits 2,3,3 (x1.1 D), AOE nr 2 hits 1,1,1 (x1.2 D), plus the shrapnel 0.403 per grenade (I for off-axis grenades): total 4.21 / 5.71 / 6.11 minus the base 1.50 = +2.70 / +4.21 / +4.61 (cursor on the dummy: AOE 1 hits 2,3,4 and AOE 2 hits 2,1,2 for n = 2,3,4)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25/rank (fire)"}], "confidence": "I", "note": "card p14 row (R4 255#0 fan table, C geometry; shrapnel of the extra grenades I); replaces 'fan spread I' with perExtraProjectile 1.0"},
         "name": "Coast to Coast",
         "description": "Throw multiple bouncing grenades in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "fire_skill_damage": 0 },
-          "perRank": { "projectile_count": 1, "fire_skill_damage": 25 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 25}
         }
       }
     ]
@@ -214,6 +230,8 @@
   {
     "id": "heavy_ball",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.23, "confidence": "C", "note": "Per attack (weapon projectile, METODA rule 6; directional skill, aimed through the dummy centre, rule 38): the skill creates no object of its own in the base; it arms the player's next attack (projEffect[1020], [226] = 1 + RSS391 + p5.s9 projectiles, 10 deg fan, each its own map, no shared singleHitPackId). 1 projectile at 160 px = 1 hit. R4 254#1 (C): the attack projectile mask is Marauder_Heavy_Ball_Mask_spr, a filled circle r_p = 31.5 px (LoadProjectileHeavyBall 0x14429e080, call 0x1442a467a), not the 3.5 px arrow of the old model. H(n) = #{i : d*sin|theta_i| <= 12 + 31.5}, theta_i = -5*(n-1) + 10*i degrees: at 160 px n = 1..9 -> 1, 2, 3, 4, 3, 4, 3, 4, 3 (was 1, 2, 1, 2, ...); 100 px: 1, 2, 3, 4, 5, 6, 5, 6, 5; 80 px: 1..7, then 6, 7; 50 px: 1..9. perExtraProjectile = 0.23 is the least-squares slope of the 160 px series (was 0.2). Open (I): the flight range of the attack projectile (playerProj[3] = GetItemStat(weapon, 24), mace base 64) - whether it reaches 160 px. Period: attack path (ceil(72/S)+1)/60 s, handled centrally (rule 37). Swing (p11) 1 ball + 1 chain at 0.5 D, Warlord (p13), Surprise Bombing p6 (0 hits, lands ~170 px away), Fire Frenzy p7, bleed p3, ignite p14 are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "marauder",
     "name": "Heavy Ball",
@@ -231,7 +249,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 34, "perLevel": 12 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 134, "perLevel": 12 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 7, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -252,28 +272,31 @@
       {
         "id": "the_bigger_the_better",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p8 row", "plannerFix": "card: p8.s10 read by script but s10 = 0 (game bug): no effect; planner projectile_size 15/rank is wrong"},
         "name": "The Bigger the Better",
         "description": "Increases the size of heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "log_sized_arms",
         "positionIndex": 2,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p2: projectile speed/arc only, no dummy hit change; planner projectile_speed 10/rank matches"},
         "name": "Log Sized Arms",
         "description": "Increased projectile speed for heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "surprise_bombing",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bomb lands ~170 px from hit point; 0 hits on dummy (rule 14/15)"}], "confidence": "I", "note": "card p6: 0 hits; bomb trajectory C, direction I"},
         "name": "Surprise Bombing",
         "description": "Chance to unleash a big bo-om on hit.",
         "maxRank": 5,
@@ -282,6 +305,7 @@
       {
         "id": "fire_frenzy",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.138, 0.312, 0.522, 0.768, 1.05], "per": "hit", "note": "fire flame Bouncing_Grenade_Flame_obj: 6 ticks x dmg*(1+15r%) with chance 2r% per hit => 6*0.02r*(1+0.15r) per hit, in units of D (extra hits)"}], "confidence": "C", "note": "card p7 row (proc flame)", "plannerFix": "planner models as physical_skill_damage +15%/rank; game spawns burning flame object (6 ticks) with chance 2r% per hit"},
         "name": "Fire Frenzy",
         "description": "Chance to unleash burning flames below the target on hit.",
         "maxRank": 5,
@@ -298,23 +322,25 @@
       {
         "id": "multi_wield",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "+1 attack projectile per rank ([226] += r)"}, {"kind": "extra_hits", "byRank": [1, 2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) from the R4 circle-mask table (r_p = 31.5 px) at 160 px: n = 2,3,4,5 -> 2,3,4,3 hits -> +1,+2,+3,+2 (was +1,0,+1,0); n = 1 + r"}], "confidence": "I", "note": "card p5 row (R4 254#1, circle mask r 31.5 px C) and 'Trafienia na kukle' table; flight range of the projectile to 160 px still I", "plannerFix": "planner perExtraProjectile (linear) cannot express the H(n) table; card (R4): n_traf(n, 160 px) = 1,2,3,4,3,4,3,4,3"},
         "name": "Multi Wield",
         "description": "Increases the amount of heavy balls.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "machine_drilled_spikes",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "note": "bleed B3 per use: chance 3r% x bleed 15r% of hit => expected bleed in units of D = 0.0045 r^2"}], "confidence": "C", "note": "card p3 row; gaaz L53", "plannerFix": "card: bleed chance is rolled once per use (na rzut), planner uses on_hit; matters only for multi-hit"},
         "name": "Machine Drilled Spikes",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -327,75 +353,73 @@
       {
         "id": "gladiators_strength",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4 row", "plannerFix": "card: [74] attack range x(1+0.0007 per rank) (double percent), practically 0; planner skill_range +7/rank overstates"},
         "name": "Gladiator's Strength",
         "description": "Increases the range of heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 7 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 7}
         }
       },
       {
         "id": "precision_and_power",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [5, 10, 15, 20, 25], "note": "LSSD += 5/rank (part V only, multiplies V not whole hit)"}], "confidence": "C", "note": "card p1 row (C); attack rating 5/rank has no dummy effect"},
         "name": "Precision and Power",
         "description": "Increases the attack rating and damage dealt by heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0, "physical_skill_damage": 0 },
-          "perRank": { "attack_rating_pct": 5, "physical_skill_damage": 5 }
+          "base": {"attack_rating_pct": 0, "subtree_damage": 0},
+          "perRank": {"attack_rating_pct": 5, "subtree_damage": 5}
         }
       },
       {
         "id": "full_body_training",
         "positionIndex": 9,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p9: no dummy effect (movement only)"},
         "name": "Full Body Training",
         "description": "Decreased movement diminish when using heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "critical_mass",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "crit chance % (5/rank) on attack; crit damage +15/rank % in planner"}], "confidence": "C", "note": "card p10: [1018] = 5r, [1019] = 15r"},
         "name": "Critical Mass",
         "description": "Increases the critical strike chance of heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 5, "crit_damage": 15 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 5, "crit_damage": 15}
         }
       },
       {
         "id": "heavy_swing",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35/rank (part V)"}, {"kind": "extra_hits", "byRank": [1.5, 1.5, 1.5], "per": "use", "note": "Swing object at n=1 swing: orbiting ball 1 hit + anchor chain 0.5 x D; swing i=1,2 chain-only (n>=2 swings from p5/RSS391 not added); cooldown 0.25 s does not bind at normal APS"}], "confidence": "I", "note": "card p11 row (C/I) and Swing analysis (druga runda)", "plannerFix": "planner lacks the Swing object (orbiting ball + chain); crit_damage 40/rank is correct in card"},
         "name": "Heavy Swing",
         "description": "Swing the heavy ball around you dealing increased damage and critical strike damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "crit_damage": 0 },
-          "perRank": { "physical_skill_damage": 35, "crit_damage": 40 }
+          "base": {"crit_damage": 0, "subtree_damage": 0},
+          "perRank": {"crit_damage": 40, "subtree_damage": 35}
         }
       },
       {
         "id": "sharpened_spikes",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.4, 1.8, 2.2], "note": "V1 x(1+0.4r) on part V only (multiplier on V part, not whole hit); exact D ratio depends on weapon W"}, {"kind": "projectiles", "byRank": [2, 3, 4], "note": "[226] += r+1 extra projectiles"}, {"kind": "extra_hits", "byRank": [2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) with n = 1+(r+1) = r+2 at 160 px (R4 circle mask): n=3 -> 3, n=4 -> 4, n=5 -> 3 hits -> +2, +3, +2 (was +0, +1, +0)"}, {"kind": "dot", "byRank": [0.5, 1.0, 1.5], "note": "always-on bleed [22] = floor(hit*50r%) (100 % chance)"}], "confidence": "C", "note": "card p12 row (C); H(n) from the R4 circle-mask table (254#1), n = base + r + 1"},
         "name": "Sharpened Spikes",
         "description": "Unleash multiple smaller heavy balls dealing a portion of the damage dealing increased damage to bleeding targets.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "of_total_damage": 0,
-            "projectile_count": 1,
-            "increased_bleeding_damage": 0
-          },
-          "perRank": {
-            "of_total_damage": 40,
-            "projectile_count": 1,
-            "increased_bleeding_damage": 50
-          }
+          "base": {"of_total_damage": 0, "projectile_count": 1, "increased_bleeding_damage": 0},
+          "perRank": {"of_total_damage": 40, "projectile_count": 1, "increased_bleeding_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -408,23 +432,25 @@
       {
         "id": "warlord_lees_apprentice",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.675, 1.7, 3.075], "per": "use", "note": "r Warlord hits, each W*(1+0.35r*v)/(1+v) with v=V1(1+LSSD)/100 assumed 1 (weapon dependent); bounded by Alarm_2 frequency (I): one hit per skill use assumed"}], "confidence": "I", "note": "card p13 row (C/I), Warlord analysis", "plannerFix": "planner of_total_damage 35/rank + projectile_count is a proxy; Warlord is an independent pursuing ally with its own hit"},
         "name": "Warlord Lee's Apprentice",
         "description": "Summon multiple heavy balls permanently dragging them behind you. When attacking or casting unleash the heavy balls towards a nearby enemy. Using this skill again will destroy the heavy balls.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 35, "projectile_count": 1 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 35, "projectile_count": 1}
         }
       },
       {
         "id": "terrain_collision",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.75, 1.5, 2.25], "per": "hit", "note": "burning B1 on every hit: [18] = floor(hit*75r%), i.e. 0.75r D per hit"}], "confidence": "I", "note": "card p14 row (C/I); trail_count [712] not read by lift"},
         "name": "Terrain Collision",
         "description": "Hitting terrain or monsters with heavy ball unleashes fiery shockwaves into all directions inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "trail_count": 1 },
-          "perRank": { "increased_burning_damage": 75, "trail_count": 1 }
+          "base": {"increased_burning_damage": 0, "trail_count": 1},
+          "perRank": {"increased_burning_damage": 75, "trail_count": 1}
         },
         "proc": {
           "trigger": "on_hit",
@@ -439,6 +465,8 @@
   {
     "id": "the_big_boom",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.8, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast, cursor on the dummy's body (x, y-24). R4/Resztki E: discrete flight (a new instance skips Step_0 in its creation frame; Alarm_0 in frame 2 takes t0 = 33.3 from the current zSpeed/yy) and target = host + lengthdir(tupm[6], tupm[7]) from (x, y+6) (asm 0x14661b4db-0x14661b5d1): the Marauder_The_Big_Boom_obj lands 156.9 px from the player = 29.5 px from the dummy centre (8.1 px for a cursor exactly on (x, y); the old model had 24 / 0 px) and creates 1 Explosion_Item_obj (r 31.5 px + 11.5 = 43 px reach, life 24 frames, tick 30 frames: tools/tick_hits.py 20 30 = 1 hit) = 1 hit of damage[3] = D. Destroy_0 throws 6 Player_Projectile_Shred_obj (60 deg*i absolute directions, deltaSpeed choose(1; 1.5; 2), zSpeed choose(2; 3; 4; 5), g 0.35, 12 equally probable landings 19-66 px away) whose Explosion_Item_obj (x0.65 scale, reach 20.5 + 11.5 = 32 px) carry the full damage[3]: E[k_shred] = 1.8 for the cursor 24 px above the dummy (was 2.0) and 2.2 for a cursor exactly on the dummy (was 3.0; the old 3.0 was an arithmetic/radius error: a bomb on the centre gives 2.0, 2.17 at 5.7 px); the threshold d = 33 px vs R = 32 px is fragile (I). The shrapnel blasts are class 'manual-pe' (only crit pe[1003]/[1004], fire break [970], bleed [22] are copied; no LDM, no [180], penetration, conversion), so each is f_shred*D with f_shred = 1 without gear (< 1 with gear): 1 + 1.8*1 = 2.8 (was 3.0). Not counted: Unstable Bomb passive procs (256), p2 scale (E 1.8 / 1.9 / 2.2 / 2.6 / 2.7 / 3.0 for r2 = 0..5), p5 second blast (0 at 160 px), p10 magma (6 hits), p11 bouncing booms (0), p12 crash booms (1,1,2,2,3 bombs hit), p13 scattering boom (cooldown 1 s, idle at the (x, y-24) cursor), p14 molten trails (~4.6*r hits). Extra projectiles: the card has no mechanism for extra bombs in the base (1 bomb), so perExtraProjectile = 0. Period: animation lock 43 frames at c = 1.75 (engine, rule 37)."},
     "classId": "marauder",
     "name": "The Big Bo-oM",
     "kind": "active",
@@ -453,7 +481,7 @@
     "tree": "Juggernaut",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 16.5 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
@@ -472,67 +500,73 @@
       {
         "id": "boomage",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10/rank (fire)"}], "confidence": "C", "note": "card p1 row"},
         "name": "Boomage",
         "description": "Increases the damage dealt by big bo-om.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "even_bigger_bo_om",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.4, 0.8, 0.9, 1.2], "per": "use", "note": "bomb scale 1+0.15r grows the shard count: E[k_odl] (cursor above, Resztki E) 1.8 -> 1.9/2.2/2.6/2.7/3.0 for r2 = 1..5; extra = E - 1.8 (cursor on the dummy: 2.2 -> 2.6/3.1/3.7/4.0/4.2)"}], "confidence": "I", "note": "card p2 row (R4 257#2 + Resztki E table; local variable L340 = p2 is C, shard model I); was 0.3/0.5/1.0/1.5/1.7"},
         "name": "Even Bigger Bo-oM!",
         "description": "Increases the area of effect radius of big bo-om.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "leg_day",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: movement only"},
         "name": "Leg Day",
         "description": "Decreases movement diminish when using big bo-om.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "wider_armory",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4: mana cost only"},
         "name": "Wider Armory",
         "description": "Decreases the mana cost of big bo-om.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "double_charges",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.8, -1.8, -1.8, -1.8, -1.8], "per": "use", "note": "double charges: the bomb bounces once more (second landing ~117 px beyond the first blast), the shards spawn at the second landing and miss, so only the first explosion hits: the whole base E[k_odl] = 1.8 is lost (the card p5 row still says 2.0 -> 0)"}], "confidence": "I", "note": "card p5 row (C/I) with the base E of Resztki E (1.8); was -2.0", "plannerFix": "planner fire_skill_damage 8/rank; game bounces the bomb once more and loses all shard hits on dummy"},
         "name": "Double Charges!",
         "description": "Big bo-om bounces once when hitting the ground dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 8}
         }
       },
       {
         "id": "pyro_enthusiast",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [19.6, 53.2, 86.8, 118.7, 149.6], "note": "fire break B9 (%) expected on dummy: break 30r% x uptime, expected value = break% x uptime, uptime = 1-(1-0.04r)^26 (per-hit rolls, 3 hits/cast x 8.75 casts per 5 s); damage multiplier not determined"}], "confidence": "C", "note": "card p6 row", "plannerFix": "planner fire_break 30/rank on_hit 4r%: check per-hit rolls vs per-cast"},
         "name": "Pyro Enthusiast",
         "description": "Chance to inflict fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 30 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -545,23 +579,25 @@
       {
         "id": "swift_bo_ombing",
         "positionIndex": 7,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p7 row", "plannerFix": "card: gravityPower x(1+0.20r) shortens flight only (no dummy hit change); planner projectile_speed 20/rank is a proxy"},
         "name": "Swift Bo-ombing",
         "description": "Increased projectile speed for the big bo-om.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 20 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 20}
         }
       },
       {
         "id": "burn_the_arena",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.014, 0.056, 0.126, 0.224, 0.35], "per": "use", "note": "burning B1 [18] = floor(dmg*35r%) with chance 4r% rolled once per use (na rzut): 0.04r*0.35r = 0.014 r^2 D per use"}], "confidence": "C", "note": "card p8 row", "plannerFix": "card: chance rolled per use; planner on_hit"},
         "name": "Burn the Arena",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 35 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -574,67 +610,73 @@
       {
         "id": "more_heat",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "extra damage vs burning (B1) [180] = 15r%; applies only if dummy is burning (from p6/p8/p14/Bouncing)"}], "confidence": "C", "note": "card p9 row"},
         "name": "More Heat!",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 15 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 15}
         }
       },
       {
         "id": "rollin_rollin_rollin",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.4, 4.8, 7.2, 9.6, 12.0], "per": "use", "note": "rolling Molten patches: 2 patches (k=0,1, 33 px apart) x 3 ticks x floor(dmg*0.4r) = 2.4r D per use"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner of_total_damage 40/rank counts only 0.4r; card gives 6 ticks x 0.4r D"},
         "name": "Rollin' Rollin' Rollin'",
         "description": "Big bo-om rolls on the ground leaving behind a trail of burning flames.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 40 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 40}
         }
       },
       {
         "id": "bouncing_boom",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45/rank (fire) on main bomb"}, {"kind": "zero_on_dummy", "note": "extra bombs (r+2 in 12 deg fan) land further along the aim line: 0 on dummy"}], "confidence": "C", "note": "card p11 row", "plannerFix": "planner projectile_count 2+r with no hit conversion; card: extra bombs miss the dummy"},
         "name": "Bouncing Boom",
         "description": "Unleash additional bombs traveling forward in an arc after exploding.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 2 },
-          "perRank": { "fire_skill_damage": 45, "projectile_count": 1 }
+          "base": {"projectile_count": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 45}
         }
       },
       {
         "id": "crashboom",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-2.05, -1.3, 1.7], "per": "use", "note": "transformation: the main bomb breaks at the apex into crashBoom = 4r bombs in a RING (360/n degrees, 8 px from the split, 17 movement frames x 2.59 px), each explosion 0.75r*D (V1 x p12.s9%); the base explosion and its shards (2.8 D) are lost. Bombs landing <= 43.0 px from the dummy hit: cursor above 1,1,2,2,3 for r12 = 1..5 (nearest bomb 41.1 px at n = 4, Resztki E), cursor on the dummy 1,1,1,2,3. Extra = n_hit*0.75r - 2.8 = 0.75-2.8, 1.5-2.8, 2*2.25-2.8. Shards of the crash bombs (hand-copied pe, x f_shred) are not counted (I)"}], "confidence": "I", "note": "card p12 row (R4 257#0 ring, C formula, I mask margins 41.1 vs 43.0 px) + Resztki E; was a flat -3 for all ranks", "plannerFix": "planner of_total_damage 75/rank + projectile_count 4r; card: transformation, dummy hits drop"},
         "name": "Crashboom",
         "description": "Throw big bo-om high into the air scattering additional bombs into all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 75, "projectile_count": 4 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 75, "projectile_count": 4}
         }
       },
       {
         "id": "scattering_boom",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "with the main-result cursor (x, y-24) the condition position_meeting(x, y, Enemy_Parent_obj) (bomb centre inside the dummy mask, r 12) is not met: the bomb centre is 29.5 px from the dummy, so Scattering Boom is idle. Cursor on the dummy: met only in the landing frame (8.1 px; flight frame 11.8 px with a 0.2 px margin, I): +1 explosion D*(1 + doubleCharges) and a landing blast with D*(1 + 0.5r); p7 r >= 2 makes it idle again"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "p13 adds a 1 s cooldown (base none): period = max(1 s, 0.717 s) = 1 s"}], "confidence": "I", "note": "card p13 row (R4 257#2: condition object Enemy_Parent_obj 0x595, C; margin 0.2 px I) + R4 'Okresy' (cd 1 s). The old entry (set_hits 7/10.3/10.8, LSSD 30r, cooldown +3 s) was the Bombardment p13 data and contradicted the card (fixed without a card change)", "plannerFix": "planner fire 30/rank, area 20, projectile_count 3r: the game has no LSSD or extra projectiles from p13; Scattering Boom needs a second enemy and the bomb centre inside the target, otherwise only the 1 s cooldown applies"},
         "name": "Scattering Boom",
         "description": "Hitting a monster with big bo-om unleashes an explosion and causes it to ricochet towards another nearby monster with increased damage and area of effect radius. Big bo-om now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 50, "area_of_effect": 25 }
+          "base": {"area_of_effect": 0, "cooldown_added": 3, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 25, "cooldown_added": 0, "subtree_damage": 30.0}
         }
       },
       {
         "id": "molten_boom",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "burning [18] += floor(dmg*75r%) always (per use, D fraction)"}, {"kind": "extra_hits", "byRank": [4.6, 9.2, 13.8], "per": "use", "note": "R4 257#1 (C structure, I mask): 2r trails of 9 segments (96x60 ellipse, life 60 frames, tick 30 frames -> 2 hits per overlapping segment, full damage[3]); expected overlapping segments per trail 1.15 for the cursor 29.5 px above (1.3 on the dummy, range 0.9-1.5) -> ~2.3 hits per trail -> 4.6*r hits per use (5.3*r with the cursor on the dummy)"}], "confidence": "I", "note": "card p14 row (R4 257#1 + Resztki E recomputation 4.6*r); the old entry did not count the trails"},
         "name": "Molten Boom",
         "description": "Unleashes multiple burning trails of fire in random directions after exploding.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "trail_count": 0 },
-          "perRank": { "increased_burning_damage": 75, "trail_count": 2 }
+          "base": {"increased_burning_damage": 0, "trail_count": 0},
+          "perRank": {"increased_burning_damage": 75, "trail_count": 2}
         },
         "proc": {
           "trigger": "on_hit",
@@ -649,6 +691,9 @@
   {
     "id": "crazy_grapple",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, throw to the cursor (min 96 px), dummy 24 px from the aim point: 1 Marauder_Crazy_Grapple_obj ball (Player_Damage_Parent, singleHit, mask r 41.5 px so reach 53 px, map never cleared) hits the dummy in flight or at landing = 1 hit, plus 1 Marauder_Grazy_Grapple_AOE_obj at landing (disc r = 111.5*ball scale = 111.5 px, reach 123 px, singleHit, same damage[3]) = 1 hit -> 2 hits of D. The ball lands 148.7 / 146.5 px from the player (cursor above / on the dummy; Resztki E, was 147.9 / 146.4). In the rzut-skok loop the next landing is 72-120 px from the dummy (min throw 96 px) and the AOE still reaches it. The player's own leap lands next to the dummy but deals no damage in the base (the landing blast is p14). p6 flames (5 flames x 5 hits x 0.08r), p11 thorns (3 hits), p12 bombs (0,1,2 hits), p13 Arena Master (1/1/0/1/1 hits, no leap), p14 landing blast (+1) are subskill effects. perExtraProjectile = 0 (no extra-projectile mechanism in the card)."},
+    "usePeriod": {"kind": "leap", "extraFrames": 44, "note": "Leap on EVERY use in the base (p13 Arena Master removes it): the ball flies 16 frames (discrete; Alarm_0 in frame 14, lands in Step_0 of frame 27 from the cast frame 11; p1 r1..r5: 14/12/11/10/9) and sets playerEffect[142] = 1 at landing (Crazy_Grapple_obj Step_0 L64, mov r8d,0x8e @0x1487df5f9, read @0x1487e7f66; the ball object, index 2612, steps before Player_obj 3553), then the player leaps 28 frames (vz = sqrt(2*1.35*128) = 18.59, g = pSt[42] + [155] = 0.35 + 1 = 1.35); the next cast is blocked while [142] > 0 (PlayerMovement L458, 0x144e716f1). The animation lock does not bind (tag 6 Movement, same-talent exception, CheckTalentUse L100/L104). extraFrames = 16 + 28 = 44 (was 16.7 + 28 = 44.7); period = t_wyw (floor(24/2.25) + 1 = 11 trigger frames) + 44 = 55 frames = 0.92 s (p1 r1..r5: 53/51/50/49/48; +-1-2 frames I) instead of 1/castRate = 0.44 s. p13 (no leap): period = cooldown 60/2.25 = 26.7 -> 27 frames (0.44 s). Resztki C: C for the [142] addresses, flight/leap length +-1-2 frames I."},
     "classId": "marauder",
     "name": "Crazy Grapple",
     "kind": "active",
@@ -662,7 +707,7 @@
     "tree": "Juggernaut",
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 18 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Heavy Ball", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -681,78 +726,85 @@
       {
         "id": "high_rpm_reel",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "period_frames", "byRank": [-2, -4, -5, -6, -7], "note": "ball flight (discrete) 16 -> 14/12/11/10/9 frames for p1 r1..r5 (gravityPower x(1+0.15r)); period 55 -> 53/51/50/49/48 frames (R4 259#0; was -2.1/-3.8/-5.1/-6.2/-7.1 from the continuous 16.7-frame flight)"}], "confidence": "C", "note": "card p1 row + Rodzaj i kadencja (R4 259#0)", "plannerFix": "planner projectile_speed 15/rank; card: gravityPower x(1+0.15r) shortens cycle period, not projectile speed"},
         "name": "High RPM Reel",
         "description": "Increases the projectile speed of crazy grapple.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "thornspikes",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60, 80, 100], "note": "LSSD += 20/rank (fire)"}], "confidence": "C", "note": "card p2 row"},
         "name": "Thornspikes",
         "description": "Increases the damage dealt by crazy grapple.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 20 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 20}
         }
       },
       {
         "id": "efficient_grappling",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: mana only"},
         "name": "Efficient Grappling",
         "description": "Decreases the mana cost of crazy grapple.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "the_most_the_best",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4 row (scale)"},
         "name": "The Most the Best",
         "description": "Increases the area of effect radius of crazy grapple.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "heatdash",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10/rank (fire); skill_range -10/rank (I)"}], "confidence": "C", "note": "card p5 row"},
         "name": "Heatdash",
         "description": "Increases the damage dealt by crazy grapple decreasing the maximum range.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "fire_skill_damage": 10, "skill_range": -10 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": -10, "subtree_damage": 10}
         }
       },
       {
         "id": "in_flames",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.0, 4.0, 6.0], "per": "use", "note": "In Flames: k_fl x 5 ticks x 0.08r D with k_fl = 5 flames overlapping the dummy (cursor above; 4 for the cursor on the dummy), ring of 9 flames at absolute angles 40*i deg, radius 64 px + the centre one, Marauder_Flame_spr bitmap mask; 5 hits per flame (tick_hits.py 148 30, not 6)"}], "confidence": "I", "note": "card p6 row (R4 259#1: k_fl 5/4 instead of 6/9, 5 ticks instead of 6; Resztki E unchanged; mask approximation I)", "plannerFix": "planner of_total_damage 8/rank; game spawns 10 burning flame objects, 6 ticks each, on the landing"},
         "name": "In Flames",
         "description": "Scorch the ground around the point of impact dealing damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 8 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 8}
         }
       },
       {
         "id": "burning_spikeball",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "use", "note": "burning B1 [18] = floor(dmg*15r%) with chance 3r% rolled once per use: 0.0045 r^2 D per use"}], "confidence": "C", "note": "card p7 row", "plannerFix": "card: chance rolled per use (na rzut); planner on_hit"},
         "name": "Burning Spikeball",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -765,23 +817,25 @@
       {
         "id": "spikey_grappler",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p8: skill_range read not in script; no dummy effect"},
         "name": "Spikey Grappler",
         "description": "Increases the maximum range of crazy grapple.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "blue_flames",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [2.3, 8.7, 18.2, 30.3, 44.3], "note": "expected fire break (%) on dummy: break 15r% x uptime, uptime = 1-(1-0.03r)^5.5 (assumed 5.5 casts per 5 s at ~0.9 s period)"}], "confidence": "I", "note": "card p9 row (C, cadence I)", "plannerFix": "card: chance per use with ~0.9 s cycle; planner on_hit with fire_break 15/rank"},
         "name": "Blue Flames",
         "description": "Chance to inflict fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 15 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -794,23 +848,25 @@
       {
         "id": "slingshot",
         "positionIndex": 10,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p10 row", "plannerFix": "card: slingshot distance bonus not read by ball events (I); planner skill_range 15/rank has no dummy effect"},
         "name": "Slingshot",
         "description": "Fly over the point of impact with increased range.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "thorns_of_sorrow",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3, 3, 3], "per": "use", "note": "one thorn plate 3 ticks x full dmg (3 hits) at 27 px from dummy (kursor above); thorn spacing 42 px"}, {"kind": "dot", "byRank": [1.0, 2.0, 3.0], "per": "use", "note": "bleed [22] = floor(dmg*100r%) with 100 % chance on thorns"}], "confidence": "C", "note": "card p11 row", "plannerFix": "planner bleeding 100/rank only; card adds 3 full-damage thorn ticks on the dummy"},
         "name": "Thorns of Sorrow",
         "description": "Leave a trail of metal thorns on your path inflicting slow and bleeding for a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 100 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 100}
         },
         "proc": {
           "trigger": "on_hit",
@@ -823,34 +879,37 @@
       {
         "id": "cannonade_grapple",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "cannonade: 3r unstable bombs per salvo in a ring (kierunek_kuli + 360/n*i), 2 salvos (frames 17 and 26) along the ball flight"}, {"kind": "extra_hits", "byRank": [0, 1, 2], "per": "use", "replacesProjectileHits": true, "note": "bomb blasts on the dummy for r12 = 1..3: 0,1,2 (cursor above, Resztki E; 1,1,2 for the cursor on the dummy); each bomb flies 60 px from the ball and explodes (r 43 px), nearest bombs 24.9-25.8 px (above) / 37.7-38.6 px (on dummy) from the centre, margins I; each blast = 1 D"}], "confidence": "I", "note": "card p12 row (R4 259#2 ring + Resztki E recount); was the midpoint 1.5/3.0/4.5 of the old '0-3r' range", "plannerFix": "planner projectile_count 3/rank has no hit conversion; card: 0-3r explosions on dummy (I)"},
         "name": "Cannonade Grapple",
         "description": "Throw bombs around you while flying towards the ball.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 3 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 3}
         }
       },
       {
         "id": "arena_master",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 0], "note": "transformation: orbiting ball (Arena_obj, 10 deg/frame, 2 s): hits per use 1/1/0 for r13 = 1/2/3 (r=4,5 in card: 1,1); replaces base 2 (ball + AOE). Hits per use (dummy at 160 px)"}], "confidence": "C", "note": "card p13 row (C), Zmiany round 2 (reguly 14, 18)", "plannerFix": "planner skill_range 20/rank + 2 hits model; card: orbit transformation, no AOE, no jump; hits 1/1/0"},
         "name": "Arena Master",
         "description": "Sweep your surroundings with the spike ball gathering monsters on hit and bringing them back in front of you stunning them.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "explosive_grapple",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "explosion at player landing point (player lands ~24 px from dummy) with damage = ball dmg, radius >= 43 px"}, {"kind": "other", "byRank": [40, 80, 120], "note": "fire break [970] = 40r% always (5 s, refreshed every cast); value is break %, damage multiplier not determined"}], "confidence": "C", "note": "card p14 row (C)", "plannerFix": "planner fire_break 40/rank + area 35/rank; card adds 1 landing explosion on dummy (not in planner)"},
         "name": "Explosive Grapple",
         "description": "Crazy grapple inflicts fire break on hit and a fiery explosion once you reach it dealing increased damage on an increased area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_break": 0, "area_of_effect": 0 },
-          "perRank": { "fire_break": 40, "area_of_effect": 35 }
+          "base": {"fire_break": 0, "area_of_effect": 0},
+          "perRank": {"fire_break": 40, "area_of_effect": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -924,6 +983,7 @@
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": { "attack_damage": 3, "attack_rating_pct": 3, "increased_attack_speed": 30 },
       "perRank": { "attack_damage": 3, "attack_rating_pct": 3, "increased_attack_speed": 1 }
@@ -951,6 +1011,8 @@
     "id": "bombardment",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 5.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cooldown 3 s), directional skill aimed THROUGH the dummy centre at 160 px (rule 38; Resztki D): the Marauder_Bombardment_Controller_obj stands at (x, y+6) and GetPlayerDirection measures from (x, y+6), so the 0th bomb of a wave flies through the dummy centre at phi0 = +2.15 deg. It throws 8 waves 0.25 s apart; wave k drops m_k = 2 + p8.s9 + k Marauder_Unstable_Bomb_obj in a non-centred 10 deg fan (angles dir - 5*m + 10*i) at 64 + 48k px; PoR4 rule 40: each bomb (g 0.165, zSpeed 3, yy 16, Alarm_0 in frame 2, t0 = 40.1) lands at 96 % of that distance (153.9 px for k = 2) and creates 1 Explosion_Item_obj (r 31.5 px + 11.5 = 43 px reach, 1 hit). Wave 2 (m = 4, 153.9 px): bombs at 54.9 / 28.1 / 6.2 / 28.1 px -> 3 hits (-10, 0, +10 deg); wave 3 (m = 5, 199.4 px): 86.7 / 61.0 / 42.3 / 42.3 / 61.0 px -> the two middle bombs hit (42.3 <= 43.0, margin 0.7 px, I); waves 1 and 4 (>= 53 px) miss = 5 hits of D (old model 3; PoR4 4). Cursor (x, y-24) (phi0 = +10.6 deg): 4 hits (wave 3 nearest bomb 40.7 px). p8 (+1 bomb per wave) keeps 5 hits for r8 = 0..5, so perExtraProjectile = 0; p4 adds nothing on top of 5 (4 -> 5 only for the cursor variant); p9 explosion scale (5 -> 11 hits), p11 all-around, p12/p13/p14 transformations are subskill effects. baseProjectiles stays at the planner default (the controller's bomb count is the object count). Period: cooldown 3 s (p10: 0.5 s, then the animation lock 43 frames)."},
     "classId": "marauder",
     "name": "Bombardment",
     "kind": "active",
@@ -966,7 +1028,7 @@
     "tree": "Juggernaut",
     "position": { "row": 4, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 24.5 },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "The Big Bo-oM", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -985,17 +1047,19 @@
       {
         "id": "double_the_fuel",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40], "note": "LSSD += 10/rank"}], "confidence": "C", "note": "card p1 row"},
         "name": "Double the Fuel",
         "description": "Increases the damage dealt by bombardment.",
         "maxRank": 4,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "spikeballrdment",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0225, 1.09, 1.2025, 1.36, 1.5625], "note": "Spikeballrdment: chance s10 = 15r% x bomb damage x(1+15r%) -> average 1 + 0.0225 r^2 (I: per bomb vs per wave)"}], "confidence": "I", "note": "card p2 row + R4 261#2 (zapis damage[idx], idx = 0 in the spike branch 0x148781fbc, C); the factor 1 + 0.0225 r^2 is exact only without gear (fire vs physical multipliers differ); chance per bomb vs per wave still I", "plannerFix": "the spike bomb deals PHYSICAL damage (damage[0], not fire damage[3]): fire modifiers do not apply to it, physical ones do; the planner's fire 15/rank proc is the wrong damage type; ratio to the fire bomb is gear dependent (1 without gear)"},
         "name": "Spikeballrdment",
         "description": "Chance for bombs to turn into spike balls dealing increased physical damage.",
         "maxRank": 5,
@@ -1011,45 +1075,49 @@
       {
         "id": "efficient_reload",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-8, -16, -24, -32, -40], "note": "cooldown 3 s x (1 - 8r%)"}], "confidence": "C", "note": "card p3 row"},
         "name": "Efficient Reload",
         "description": "Decreases the cooldown of bombardment.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 8 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 8}
         }
       },
       {
         "id": "full_body_workout",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4 row", "plannerFix": "card: skillSpeed 0.165 x(1+15r%) = bomb gravity (faster landing), no dummy hit change; planner projectile_speed is a proxy"},
         "name": "Full Body Workout",
         "description": "Increases the projectile speed of bombardment.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "massive_strike",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15/rank (fire)"}, {"kind": "cooldown_pct", "byRank": [12, 24, 36, 48, 60], "note": "cooldown +12%/rank (cd = 3(1 + 0.12r) with p5 term)"}], "confidence": "C", "note": "card p5 row (C)", "plannerFix": "planner skill_haste -12/rank; card: cooldown lengthens +12%/rank (not haste)"},
         "name": "Massive Strike",
         "description": "Increases the damage dealt by bombardment also increasing the cooldown.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0, "skill_haste": 0 },
-          "perRank": { "fire_skill_damage": 15, "skill_haste": -12 }
+          "base": {"skill_haste": 0, "subtree_damage": 0},
+          "perRank": {"skill_haste": -12, "subtree_damage": 15}
         }
       },
       {
         "id": "fire_charges",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.03, 0.12, 0.27, 0.48, 0.75], "per": "use", "note": "burning [18] = floor(dmg*15r%) per bomb, chance 4r% per bomb, 5 bombs hit the dummy per cast (base 5, through-centre convention): 5 x 0.04r x 0.15r = 0.03 r^2 D per use (was 3 bombs)"}], "confidence": "C", "note": "card p6 row; scaled to the new base of 5 bomb hits (Resztki D)"},
         "name": "Fire Charges",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1062,61 +1130,67 @@
       {
         "id": "factory_upgrade",
         "positionIndex": 7,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p7: skillSize 1+15r% bomb scale, zasieg I, no hit change"},
         "name": "Factory Upgrade",
         "description": "Increases the projectile size of bombardment.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "efficient_production",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "skillRadius = 2 + r8: one more bomb per wave (dummy hits stay 3 at scale 1; matters with p9)"}], "confidence": "C", "note": "card p8 row; projectile conversion perExtraProjectile = 0"},
         "name": "Efficient Production",
         "description": "Increases the projectile amount of bombardment.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "solid_explosive_fuel",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 3, 5, 6], "per": "use", "note": "R_e = 31.5*(1+0.15*r9) + 11.5; hits per cast at r8 = 0 (through-centre convention, Resztki D) for r9 = 0..5: 5,5,5,8,10,11 -> extra over the base 5 = 0,0,3,5,6. Full table (rows r9 = 0..5, columns r8 = 0..5): 5,5,5,5,5,5 / 5,5,5,5,5,5 / 5,8,5,8,5,8 / 8,10,9,10,9,10 / 10,10,11,10,11,10 / 11,10,13,10,13,10 (cursor (x, y-24): 4,4,4,4,4,4 / 5,6,5,6,5,6 / 7,7,7,7,7,7 / 8,9,8,9,8,9 / 10,10,11,10,11,10 / 11,11,13,11,13,11); margins 0.5-2 px"}], "confidence": "I", "note": "card p9 row (Resztki D table; lands at 96 % of the distance, phi0 = +2.15 deg); was [0,3,4,5,7] relative to base 3", "plannerFix": "planner area 15/rank; game: bomb count in range rises 3 -> 10 (r9 = 5, r8 = 0)"},
         "name": "Solid Explosive Fuel",
         "description": "Increases the area of effect radius of bombardment explosions.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "casual_bombing",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0], "note": "transformation: single close wave 64 px around player, 0 hits on dummy at 160 px; cooldown 0.5 s"}, {"kind": "damage_pct", "byRank": [50, 100], "note": "LSSD += 50/rank"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner fire_skill_damage 50/rank; game: close salvo (64 px) misses dummy at 160 px, cooldown 0.5 s"},
         "name": "Casual Bombing",
         "description": "Throw a single wave of bombs removing the cooldown from bombardment.",
         "maxRank": 2,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 50 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 50}
         }
       },
       {
         "id": "all_around_annihilation",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.72, 3.59, 4.62], "note": "bombs spread over 360 deg (skillRadius = 2 + p8 + 3r, first at phi0), damage x(1+0.13r) after each wave. At scale 1 only 2 bombs reach the dummy: i = 0 of wave 2 (6.2 px) with D*(1+0.13r)^2 and i = 0 of wave 3 (39.3 px) with D*(1+0.13r)^3 -> equivalent hits (1+0.13r)^2 + (1+0.13r)^3 = 2.72 / 3.59 / 4.62 for r11 = 1..3 (was 1 hit x (1+0.13r)^2). With explosion scale 1.45 (p9 r3) 3,3,3,3,5 hits for r11 = 1..5 (Resztki D)"}], "confidence": "I", "note": "card p11 row (PoR4 rule 40 + Resztki D: 2 hits at scale 1); replaces extra_hits -2 + damage_mult", "plannerFix": "planner fire_skill_damage 13/rank + projectile_count 3r; card: 1 hit with (1+0.13r)^2 multiplier"},
         "name": "All Around Annihilation",
         "description": "Unleash bombardment in a circle around you increasing bomb damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 13, "projectile_count": 3 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 13, "projectile_count": 3}
         }
       },
       {
         "id": "clusterbombing",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: bombs drop on each enemy <= 280 px; dummy gets 1 hit + 0 to 3r+4 secondary bomb hits (I, not counted)"}], "confidence": "I", "note": "card p12 row (C/I)", "plannerFix": "planner of_total_damage 75/rank misreads clustering; card: 1 bomb on dummy, secondaries uncertain"},
         "name": "Clusterbombing",
         "description": "Call down raining bombs on multiple nearby monsters. The raining bombs have a chance to unleash smaller bombs after exploding.",
         "maxRank": 3,
@@ -1132,31 +1206,25 @@
       {
         "id": "big_bo_ombing",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [7.8, 10.2, 11.3], "note": "transformation: Big Bo-oM on the -5 deg track each wave (skillRadius 1, skillAmount XSP(2+p8+3r)); through-centre convention (phi0 = +2.15 deg, bomb lands at 96 % of 64+48k px): r13 = 1..5 -> 7.8 / 10.2 / 11.3 / 12.0 / 13.6 hits (PoR4 7.8/10.0/10.6/11.5/12.5 at phi0 = 0); planner maxRank 3 keeps the first 3. Cursor (x, y-24): 7.8 / 9.7 / 11.2 / 12.7 / 14.2. Scale S = (1+0.2 r13)(1+0.15 r9), shard radius 20.5*S + 11.5 (I model)"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30/rank"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown +3 s"}], "confidence": "I", "note": "card p13 row (PoR4 rule 40 + Resztki D, I: explosion scale and shard directions C, geometry +-1 px I); was 7 / 10.3 / 10.8", "plannerFix": "planner fire 30/rank + area 20 + projectile_count 3r; card: Big Bo-oM per wave with cooldown +3 s"},
         "name": "Big Bo-Ombing",
         "description": "Unleash a single trail of big bo-oms with increased damage and area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "area_of_effect": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 30,
-            "area_of_effect": 20,
-            "projectile_count": 3
-          }
+          "base": {"area_of_effect": 0, "projectile_count": 0, "cooldown_added": 3, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "projectile_count": 3, "cooldown_added": 0, "subtree_damage": 30}
         }
       },
       {
         "id": "icbm",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.4, 1.8, 2.2], "per": "use", "note": "ICBM (R4 261#1, I): the missile explodes <= 8 px from the target; 8 ICBM_Explosion_obj (centre + 7 in a 64 px ring) of scale 0.25 + explosionAOE, explosionAOE = (1+0.2r13+0.08r14)(1+0.15r9) = 1.08/1.16/1.24 for r14 = 1..3 -> scale 1.33-1.49 <= 1.5: through the dummy centre only 1 explosion overlaps the dummy (the 5-explosion cascades and the ring miss). Each overlapping explosion deals D plus an extra object floor(D*ICBM), ICBM = 0.4r -> 1 x (1 + 0.4r) = 1.4 / 1.8 / 2.2 (extra object assumed to hit the dummy like its explosion, I). Cursor (x, y-24) variant: 4 explosions for r9 <= 1 (8 for r9 >= 4) -> 5.6 / 7.2 / 8.8"}], "confidence": "I", "note": "card p14 row (R4 261#1: cascade of 5, scale 0.25 + explosionAOE and the ICBM field are C, explosion count and extra-object hit I); was +1 hit", "plannerFix": "planner of_total_damage 40/rank + area 8/rank; card: homing ICBM centre explosion adds 1 hit"},
         "name": "ICBM",
         "description": "Launch an intercontinental ballistic missile towards target location dealing damage on a large radius leaving the ground blazing with flames dealing a portion of the damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 40, "area_of_effect": 8 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 40, "area_of_effect": 8}
         }
       }
     ]
@@ -1164,6 +1232,8 @@
   {
     "id": "serrated_chains",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, in-zone (area melee attack, [70] = 1, dummy inside the strike area; METODA scenario 'in the player's attack range'): 1 weapon strike with HIT = floor(W*(1 + V1*(1+LSSD)/100)) = 1 hit (rule 6). The strike also applies the Serrated-Chains DoT B14 (value = HIT, arcane tick every 1 s, 5 s) - the engine models ailments/DoT, so it is NOT counted here. p10 Bouncing Chains adds +1 HIT hit per proc (3r % per cast), p13 Gladiator's Dash (cooldown 0.75 s) are subskill effects. No projectile mechanism: perExtraProjectile = 0."},
     "weaponRequirement": "melee",
     "classId": "marauder",
     "name": "Serrated Chains",
@@ -1180,7 +1250,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 20, "perLevel": 25 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 120, "perLevel": 25 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 6, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1201,39 +1273,43 @@
       {
         "id": "more_reach",
         "positionIndex": 1,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p1: area only, no dummy effect; planner area 17.5/rank"},
         "name": "More Reach",
         "description": "Increases the area of effect radius of serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 17.5 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 17.5}
         }
       },
       {
         "id": "effective_steel",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8/rank (part V, also on DoT value)"}], "confidence": "C", "note": "card p2 row"},
         "name": "Effective Steel",
         "description": "Increases the damage dealt by serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "open_their_wounds",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.175, 1.35, 1.525, 1.7, 1.875], "note": "[177] extra damage vs bleeding 17.5r%; applies only when dummy bleeds (p11 or other source)"}], "confidence": "C", "note": "card p3 row"},
         "name": "Open Their Wounds",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 17.5 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 17.5}
         }
       },
       {
         "id": "rust_poisoning",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0006, 0.0024, 0.0054, 0.0096, 0.015], "per": "use", "note": "B14 DoT frequency +2r% in the roll with chance 3r% (rolled once per use): expected DoT frequency increase 0.0006 r^2 (fraction)"}], "confidence": "C", "note": "card p4 row", "plannerFix": "card: chance per use, [97] = 2r set at first application; planner faster_cast_rate on_hit"},
         "name": "Rust Poisoning",
         "description": "Chance to increase the tick frequency of serrated chains.",
         "maxRank": 5,
@@ -1250,56 +1326,61 @@
       {
         "id": "power_over_precision",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15/rank; attack rating -6/rank has no dummy effect"}], "confidence": "C", "note": "card p5 row"},
         "name": "Power over Precision",
         "description": "Increases the damage dealt by serrated chains decreasing attack rating.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "attack_rating_pct": 0 },
-          "perRank": { "physical_skill_damage": 15, "attack_rating_pct": -6 }
+          "base": {"attack_rating_pct": 0, "subtree_damage": 0},
+          "perRank": {"attack_rating_pct": -6, "subtree_damage": 15}
         }
       },
       {
         "id": "experienced_gladiator",
         "positionIndex": 6,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p6: attack rating +10/rank, no dummy hit change"},
         "name": "Experienced Gladiator",
         "description": "Increases attack rating when using serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "precision_over_power",
         "positionIndex": 7,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p7: defense_ignored 10/rank (RSS 388); no dummy armor modelled"},
         "name": "Precision over Power",
         "description": "Ignore a portion of target defense when using serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "defense_ignored": 0 },
-          "perRank": { "defense_ignored": 10 }
+          "base": {"defense_ignored": 0},
+          "perRank": {"defense_ignored": 10}
         }
       },
       {
         "id": "sweeping_slash",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p8: sweeping slash angle [72]/[73]; no dummy effect"},
         "name": "Sweeping Slash",
         "description": "Increases the area of effect width decreasing the length of serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "pierce_the_plating",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.9, 3.6, 8.1, 14.4, 22.5], "note": "physical break B7 (%) expected per attack: chance 4r% x break 22.5r%; uptime depends on attack rate (I)"}], "confidence": "C", "note": "card p9 row; planner armor_break 22.5/rank with on_hit 4r% matches"},
         "name": "Pierce the Plating",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 22.5 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 22.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1312,6 +1393,7 @@
       {
         "id": "bouncing_chains",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "Bouncing Chains proc chance 3r% per use: +1 HIT (chain placed at hit location hits dummy once); bounces 0 on single dummy"}], "confidence": "C", "note": "card p10 row (C/I)", "plannerFix": "planner projectile_bounces 2/rank on proc; game: +1 HIT on proc, no bounce hits on single dummy"},
         "name": "Bouncing Chains",
         "description": "Chance to unleash chains bouncing between multiple monsters on hit inflicting serrated chains.",
         "maxRank": 5,
@@ -1328,12 +1410,13 @@
       {
         "id": "thousand_wounds",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.2917, 0.63, 0.975], "per": "use", "note": "bleed per cycle: 0.35r x M x HIT (M = 1+4r stacks), per attack 0.35r M/(M+1) (I: uses 5-tick bleed)"}, {"kind": "dot", "byRank": [3, 5, 7], "per": "use", "note": "B14 DoT average stack multiplier (M+1)/2 over the cycle of M+1 attacks (stacks 1 -> M)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner max_skill_stacks 4/rank + bleeding proc 100 %; game: average stack multiplier and bleed burst at M stacks"},
         "name": "Thousand Wounds",
         "description": "Serrated chains now stack ripping them off violently when reaching maximum stacks inflicting bleeding on the target.",
         "maxRank": 3,
         "effects": {
-          "base": { "max_skill_stacks": 0, "increased_bleeding_damage": 0 },
-          "perRank": { "max_skill_stacks": 4, "increased_bleeding_damage": 35 }
+          "base": {"max_skill_stacks": 0, "increased_bleeding_damage": 0},
+          "perRank": {"max_skill_stacks": 4, "increased_bleeding_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1346,34 +1429,37 @@
       {
         "id": "rawest_power",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15/rank; area +60/rank (no dummy effect)"}], "confidence": "C", "note": "card p12 row"},
         "name": "Rawest Power",
         "description": "Perform a whirling attack hitting monsters around you with increased area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "physical_skill_damage": 0 },
-          "perRank": { "area_of_effect": 60, "physical_skill_damage": 15 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 60, "subtree_damage": 15}
         }
       },
       {
         "id": "gladiators_dash",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 75/rank (dash attack repeats the same area strike)"}, {"kind": "cooldown_s", "byRank": [0.75, 0.75, 0.75], "note": "cooldown 0.75 s from p13"}, {"kind": "period_frames", "byRank": [18, 18, 18], "note": "R4 / Resztki klasowe: the Charge_Controller dash (playerEffect[5] = 1, 200 px, 18 frames) does not write [142] (skillsCharge writes it only for pyromancer/shield_lancer) and does not clear [204], so the period is max(0.75 s, animation lock + dash) = max(45, ceil(72/a)+1 + 18) frames, >= 1.22 s at a = 1 (card 'blokada animacji + doskok'); +18 frames on top of the rule-37 lock (I: additive vs overlapping not stated; the cooldown 0.75 s never binds)"}], "confidence": "I", "note": "card p13 row (C/I) + cooldown table; R4 263#0: Charge_Controller deals no damage on the way (no extra hit, C)", "plannerFix": "planner physical 75/rank correct; cooldown 0.75 s missing in planner"},
         "name": "Gladiator's Dash",
         "description": "Dash forward a short distance before performing an area of effect attack dealing increased damagee.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 75, "area_of_effect": 10 }
+          "base": {"area_of_effect": 0, "cooldown_added": 0.75, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 10, "cooldown_added": 0, "subtree_damage": 75}
         }
       },
       {
         "id": "rusted_throns",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1.2195, 1.5625, 2.0833], "per": "use", "note": "B14 DoT tick frequency multiplier 1/(1-0.18r): card gives 1/(1-0.18r) (per tick rate)"}, {"kind": "damage_pct", "byRank": [5, 10, 15], "note": "LSSD += 5/rank"}], "confidence": "C", "note": "card p14 row (C)", "plannerFix": "planner faster_cast_rate 18/rank is DoT tick frequency in game, not cast rate"},
         "name": "Rusted Throns",
         "description": "Increases the tick frequency of serrated chains.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "physical_skill_damage": 0 },
-          "perRank": { "faster_cast_rate": 18, "physical_skill_damage": 5 }
+          "base": {"faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 18, "subtree_damage": 5}
         }
       }
     ]
@@ -1424,6 +1510,8 @@
   {
     "id": "retiarius_net",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast, cursor on the dummy's body (x, y-24): the base net flies to the cursor point (xTarget = tupm[6]/[7]; the instance_nearest <= 320 px retarget runs only with p11) and lands 24 px from the dummy centre; Marauder_Retiarius_Net_obj creates 1 Explosion_Item_obj (reach >= 31.5 + 11.5 = 43 px) with damage[1] = D = 1 hit; stun [94]/buff 19 adds none. perExtraProjectile = 1.0: the net loop is i < 1 (+1 from p8 Multinet Throw), an extra net lands on the same aim point and adds one blast (I for gear 'extra projectile' feeding this loop). p5 second bounce (0), p6 bomb, p13 chain (+1 hit), p10 pull (the dummy cannot be pulled) are subskill effects. No cooldown in the base (p14: 8 s): period 1/castRate."},
     "classId": "marauder",
     "name": "Retiarius Net",
     "kind": "active",
@@ -1438,7 +1526,7 @@
     "tree": "Gladiator",
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 5 },
+    "damageFormula": { "base": 0, "perLevel": 4.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Serrated Chains", "stat": "arcane_skill_damage", "value": 7.8, "per": "skill_level" },
@@ -1457,50 +1545,55 @@
       {
         "id": "bigger_web",
         "positionIndex": 1,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p1: scale of net explosion only, dummy inside radius anyway"},
         "name": "Bigger Web",
         "description": "Increases the area of effect radius of retiarius net.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "well_knitted_net",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8/rank (arcane)"}], "confidence": "C", "note": "card p2 row"},
         "name": "Well Knitted Net",
         "description": "Increases the damage dealt by retiarius net.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "gladiators_resilience",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: movement only"},
         "name": "Gladiators Resilience",
         "description": "Decreases movement diminish when using retiarius net.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "throwing_technique",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4 row", "plannerFix": "card: gravityPower x(1+0.15r) (shorter flight), no dummy hit change; planner projectile_speed is a proxy"},
         "name": "Throwing Technique",
         "description": "Increases the projectile speed of retiarius net.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "bouncing_net",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 4r% per use: second landing ~110 px behind dummy -> second blast 0 on dummy"}], "confidence": "C", "note": "card p5 row (C/I)"},
         "name": "Bouncing Net",
         "description": "Chance to bounce towards a nearby monster when landing.",
         "maxRank": 5,
@@ -1509,6 +1602,7 @@
       {
         "id": "target_for_destruction",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "chance 3r% per hit: Unstable Bomb at target with damage = net damage (100 % of D, fire): 1 hit"}], "confidence": "C", "note": "card p6 row", "plannerFix": "planner of_total_damage 50 (flat) on proc; card: bomb with 100 % of net damage at chance 3r%"},
         "name": "Target for Destruction",
         "description": "Chance to rain down a spike ball on hit dealing additional damage.",
         "maxRank": 5,
@@ -1524,12 +1618,13 @@
       {
         "id": "sharp_string_net",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "use", "note": "bleed B3 [22] = floor(dmg*15r%) with chance 3r% rolled once per use: 0.0045 r^2 D per use"}], "confidence": "C", "note": "card p7 row", "plannerFix": "card: chance per use (na rzut); planner on_hit"},
         "name": "Sharp String Net",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1542,6 +1637,7 @@
       {
         "id": "multinet_throw",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "chance 3r% per cast for one extra net on the same aim point (extra blast)"}], "confidence": "C", "note": "card p8 row; planner on_cast 3r% + of_total_damage 100 agrees"},
         "name": "Multinet Throw",
         "description": "Chance on cast to unleash an additional retiarius net.",
         "maxRank": 5,
@@ -1557,17 +1653,19 @@
       {
         "id": "devastating_net",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "[184] extra damage vs B14 targets: 10r%; 1.0 unless dummy has Serrated Chains DoT"}], "confidence": "C", "note": "card p9 row"},
         "name": "Devastating Net",
         "description": "Increases damage to targets inflicted with serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_serrated_chains": 0 },
-          "perRank": { "extra_damage_serrated_chains": 10 }
+          "base": {"extra_damage_serrated_chains": 0},
+          "perRank": {"extra_damage_serrated_chains": 10}
         }
       },
       {
         "id": "elastic_strings",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 3r% pulls enemy; dummy cannot be pulled (em[162]); area +20r on proc does not change hits"}], "confidence": "C", "note": "card p10 row", "plannerFix": "planner on_hit area 20/rank proc; card: pull only, dummy immovable"},
         "name": "Elastic Strings",
         "description": "Chance to pull nearby monsters towards the point of impact when landing.",
         "maxRank": 5,
@@ -1583,45 +1681,49 @@
       {
         "id": "rocket_boosted_net",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50/rank (arcane); projectile speed 20/rank no dummy effect"}], "confidence": "C", "note": "card p11 row"},
         "name": "Rocket Boosted Net",
         "description": "Throw retiarius net towards the nearest monsters with increased speed dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_speed": 0 },
-          "perRank": { "arcane_skill_damage": 50, "projectile_speed": 20 }
+          "base": {"projectile_speed": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed": 20, "subtree_damage": 50}
         }
       },
       {
         "id": "metal_net",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [125, 250, 375], "note": "LSSD += 125/rank (arcane); [94] stun removed (no hit change)"}], "confidence": "C", "note": "card p12 row"},
         "name": "Metal Net",
         "description": "Increases the area of effect radius and damage slowing monsters on hit instead of rooting them.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 125, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 30, "subtree_damage": 125}
         }
       },
       {
         "id": "ricocheting_net",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.08, 1.16, 1.24], "per": "use", "note": "[716] chain on net hit: 1 hit at damage x(1 + 8r%), chain bounces 0 on single dummy"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner projectile_bounces 4/rank; card: +1 chain hit amplified 8r %, bounces give no hits on single dummy"},
         "name": "Ricocheting Net",
         "description": "Retiarius net bounces between multiple monsters increasing its damage dealt with every bounce.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "arcane_skill_damage": 8, "projectile_bounces": 4 }
+          "base": {"arcane_skill_damage": 0, "projectile_bounces": 0},
+          "perRank": {"arcane_skill_damage": 8, "projectile_bounces": 4}
         }
       },
       {
         "id": "arena_dominator",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "p14 sets cooldown 8 s (Arena Dominator loop, no damage object)"}], "confidence": "C", "note": "card p14 row (R4 264#1: the loop collision_circle_list r = 320*(1+p14.s9%) -> collision_line + enemyType -> TalentPullMonster has no damage object, C asm 0x146634769-0x146634d06) and cooldown 8 s (C); the net itself is the same single net (8 s period = loss)", "plannerFix": "planner skill_range 35/rank; card: cooldown 8 s (one net per 8 s)"},
         "name": "Arena Dominator",
         "description": "Pull nearby monsters towards you rooting them in place. Retiarius net now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 35 }
+          "base": {"skill_range": 0, "cooldown_added": 8},
+          "perRank": {"skill_range": 35, "cooldown_added": 0}
         }
       }
     ]
@@ -1648,6 +1750,8 @@
     "id": "chain_trap",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast (1 trap; loop XSP(1 + p14.s9) traps x (1 + p5 chance)): the trap lands at the aim point (x, y-24); after landing it fires 1 Marauder_Hook_obj at every enemy within max_length 260 px (up to 5 + p4.s9 hooks) - for the single dummy 1 hook; the hooks of one trap share the trap's singleHitPackId and the hook hits once (singleHit; it tries to pull the dummy, which has em[162] = 1) = 1 hit of damage[1] = D per trap. perExtraProjectile = 1.0 (each extra trap adds its own hook hit; 'n_traps hits per cast', card). p2 DoT B14, p10/p13 C4 blast (+1 hit (1 + 0.15r) D), p12 Spinning Trap (~3.7*N hits), p11 bleed are subskill effects. No cooldown: period 1/castRate."},
     "classId": "marauder",
     "name": "Chain Trap",
     "kind": "active",
@@ -1661,7 +1765,7 @@
     "tree": "Gladiator",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 11 },
+    "damageFormula": { "base": 0, "perLevel": 8.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Retiarius Net", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -1680,17 +1784,19 @@
       {
         "id": "absolute_unit",
         "positionIndex": 1,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p1: throw range, no dummy effect"},
         "name": "Absolute Unit",
         "description": "Increases the cast range of chain trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "rusty_chaintip",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.1605, 0.33, 0.5085, 0.696, 0.8925], "per": "use", "note": "B14 (Serrated Chains) DoT per use: chance 3r% x (0.15r + V1_SC) D per tick; V1_SC = 5.2 assumed (L=20: 20+25*L %)"}], "confidence": "C", "note": "card p2 row (C, example L20)", "plannerFix": "card: chance per use; planner serrated_chains state chance 3/rank with no amount scaling by V1_SC"},
         "name": "Rusty Chaintip",
         "description": "Chance to inflict serrated chains on hit.",
         "maxRank": 5,
@@ -1708,12 +1814,13 @@
       {
         "id": "arcane_shattering_force",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.45, 1.8, 4.05, 7.2, 11.25], "note": "arcane break B8 (%) expected per use: chance 3r% x break 15r%"}], "confidence": "C", "note": "card p3 row", "plannerFix": "card: chance rolled per use; planner on_hit"},
         "name": "Arcane Shattering Force",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1726,17 +1833,19 @@
       {
         "id": "target_hungry",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "+2 hooks per rank on other enemies; dummy gets one hook (per trap)"}], "confidence": "C", "note": "card p4 row"},
         "name": "Target Hungry",
         "description": "Increases the amount of targets for chain trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_targets": 0 },
-          "perRank": { "max_targets": 2 }
+          "base": {"max_targets": 0},
+          "perRank": {"max_targets": 2}
         }
       },
       {
         "id": "double_trouble",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "chance 3r% per cast for +1 trap (x(1+p5%))"}], "confidence": "C", "note": "card p5 row; planner on_cast 3r% of_total_damage 100 agrees"},
         "name": "Double Trouble",
         "description": "Chance on cast to unleash an additional chain trap.",
         "maxRank": 5,
@@ -1752,70 +1861,73 @@
       {
         "id": "serrated_chaintrap",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "[184] = RSS467 + 10r% vs B14 targets"}], "confidence": "C", "note": "card p6 row"},
         "name": "Serrated Chaintrap",
         "description": "Increases damage dealt to targets inflicted with serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_serrated_chains": 0 },
-          "perRank": { "extra_damage_serrated_chains": 10 }
+          "base": {"extra_damage_serrated_chains": 0},
+          "perRank": {"extra_damage_serrated_chains": 10}
         }
       },
       {
         "id": "sharpened_chaintip",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8/rank (arcane)"}], "confidence": "C", "note": "card p7 row"},
         "name": "Sharpened Chaintip",
         "description": "Increases the damage dealt by chain trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "efficient_reel",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p8 row", "plannerFix": "card: hook speed 8*(1+15r%) (reel), not projectile speed; hook hits once so no hit change"},
         "name": "Efficient Reel",
         "description": "Increases the hooking speed of chain trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "longer_chains",
         "positionIndex": 9,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p9: max_length +15r; dummy within 260 px already"},
         "name": "Longer Chains",
         "description": "Increases the hooking ranged of chain trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "c4_charged_trap",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "per": "use", "note": "C4 explosion at trap: damage floor(dmg*(1+0.15r)), reach 43 px vs trap 24 px from dummy: 1 hit"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner arcane_skill_damage 15/rank; card adds a C4 explosion hit at 1+0.15r D"},
         "name": "C4 Charged Trap",
         "description": "After hooking monsters cause chain trap to explode dealing area of effect damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 15}
         }
       },
       {
         "id": "sharpened_tip",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50/rank (arcane); stun [51] 3 s no hit change"}, {"kind": "dot", "byRank": [0.45, 0.9, 1.35], "per": "use", "note": "bleed [22] = floor(dmg*45r%) with 100 % chance"}], "confidence": "C", "note": "card p11 row"},
         "name": "Sharpened Tip",
         "description": "Increases damage dealt inflicting bleeding and stunning targets on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "increased_bleeding_damage": 0 },
-          "perRank": {
-            "arcane_skill_damage": 50,
-            "increased_bleeding_damage": 45
-          }
+          "base": {"increased_bleeding_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_bleeding_damage": 45, "subtree_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1828,34 +1940,37 @@
       {
         "id": "spinning_trap",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [18.5, 18.5, 18.5], "note": "transformation: Spin hooks N = 5 + 2*r4 (p4=0 here) each with chain: 3.7 x N hit-equivalents; hook 1.1-1.2 + chain 5 hits per trap at N=5; range +20r% shifts only radius"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25/rank"}], "confidence": "I", "note": "card p12 row (C mechanics, I radius/chain width) and Zmiany (3.7 N)", "plannerFix": "planner arcane 25/rank and skill_range; card: spinning hooks + chains give ~3.7 hit-equivalents per hook"},
         "name": "Spinning Trap",
         "description": "Chain trap spins its chains dealing increased damage in a large radius. No longer hooks monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "arcane_skill_damage": 25, "skill_range": 20 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 20, "subtree_damage": 25}
         }
       },
       {
         "id": "betrayal",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "requires": "c4_charged_trap", "note": "c4Charge += 75r% increments the C4 explosion (requires p10 explosion to exist); betrayal attach only at cursor on dummy"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner arcane 75/rank; card: C4 charge increment on the p10 explosion, plus attach mechanic"},
         "name": "Betrayal",
         "description": "Chain trap now attaches to a monster on hit causing the monster to explode dealing increased damage after hooking nearby monsters in.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 75 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 75}
         }
       },
       {
         "id": "wait_for_the_prey",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.41, 0.61, 0.82], "note": "R4 265#1 (L1136, C): with p14 new traps are created only when NO Marauder_Chain_Trap_obj exists (every existing trap gets activate = 1 and the creation flag is cleared). Steady state: cast A creates 1 + r14 traps (activate = 0), cast B activates them, further casts only re-activate the living traps (>= 2 s after phase 2): one batch of (1 + r14) hook hits per ~3.5 s (card 'rzad 3-4 s na partie', phase-2 length unknown, I), NOT +r traps on every cast. Per cast: (1 + r14) * t_cast / T_batch = (1 + r14) * 0.717 s / 3.5 s = 0.41 / 0.61 / 0.82 (castRate 1.75, animation lock 43 frames); depends on t_cast / T_batch. The XSP(1 + p14) loop of the base is replaced, so no 'projectiles' effect is emitted (old: +1 hit per extra trap per cast)"}], "confidence": "I", "note": "card p14 row + R4 265#1 (mechanism C, batch period I); old entry: projectiles [1,2,3] (each trap +1 hit per cast)", "plannerFix": "planner projectile_count/XSP model gives +r traps on every cast; in the game the extra traps fire once per batch (creation only while no trap exists), so single-target DPS per cast drops below the base 1 hit"},
         "name": "Wait for the Prey",
         "description": "Throw multiple deactivated chain traps. Casting chain trap again will cause the traps to activate.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       }
     ]
@@ -1863,6 +1978,8 @@
   {
     "id": "annihilation",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 5 s*(1 - p3)), dummy within 240 px (160 px OK; the skill hits every enemy <= 240*(1+p1) px): 1 Explosion_Item_obj stuck to the dummy (stickHost, singleHit) = 1 hit with damage[0] = floor(floor((floor(W*(1 + V1%))*(1 + LSSD) + B14*(1 + V2%))*m19)*(1 + p4)); in the training-dummy scenario B14 = 0 (no Serrated Chains DoT unless the player rotates it), m19 = 1. It then removes B14 from the target. p10 Blood Ripple (+0.04r D), p12 Symphony of Chains (~2.1 hits of D per hook, N = 2r hooks) and p14 Total Annihilation (N = 1: ~2.0), p13 Megadeath (+1 blast + 3.0*f_shred shards) are subskill effects. No projectile mechanism: perExtraProjectile = 0."},
     "classId": "marauder",
     "name": "Annihilation",
     "kind": "active",
@@ -1879,7 +1996,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 3, "perLevel": 15 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 100, "perLevel": 15 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 7, "perLevel": 0 }
     },
@@ -1903,100 +2022,109 @@
       {
         "id": "forceful_rip",
         "positionIndex": 1,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p1: radius 240*(1+15r%); dummy at 160 px always in range"},
         "name": "Forceful Rip",
         "description": "Increases the area of effect radius of annihilation.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "attack_force_by_force",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8/rank (weapon part only, not B14)"}], "confidence": "C", "note": "card p2 row"},
         "name": "Attack Force by Force",
         "description": "Increases the damage dealt by annihilation.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "more_violence",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 5 s x (1 - 7r%)"}], "confidence": "C", "note": "card p3 row"},
         "name": "More Violence!",
         "description": "Decreases the cooldown of annihilation.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "serrated_annihilation",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "whole hit x(1+10r%) (unconditional)"}], "confidence": "C", "note": "card p4 row", "plannerFix": "planner extra_damage_serrated_chains 10/rank (conditional); card: x(1+p4) on the whole hit"},
         "name": "Serrated Annihilation",
         "description": "Increases damage dealt to targets inflicted with serrated chains.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_serrated_chains": 0 },
-          "perRank": { "extra_damage_serrated_chains": 10 }
+          "base": {"extra_damage_serrated_chains": 0},
+          "perRank": {"extra_damage_serrated_chains": 10}
         }
       },
       {
         "id": "arena_controller",
         "positionIndex": 5,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p5 row (I)", "plannerFix": "card: local scale 15/rank with no write (I); planner projectile_speed 15 is unsupported"},
         "name": "Arena Controller",
         "description": "Annihilation pulls monsters towards you with increased force.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "brutal_reach",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "attack crit damage +20/rank (crit chance unchanged, value 0); planner says spell crit"}], "confidence": "C", "note": "card p6 row", "plannerFix": "planner spell_crit_damage 20/rank; card: attack crit damage [1019] (physical)"},
         "name": "Brutal Reach",
         "description": "Increases the critical strike damage dealt by annihilation.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_damage": 20 }
+          "base": {"spell_crit_damage": 0},
+          "perRank": {"spell_crit_damage": 20}
         }
       },
       {
         "id": "everyone_gets_it",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "max targets 10 + 2r, single dummy"}], "confidence": "C", "note": "card p7 row"},
         "name": "Everyone Gets it!",
         "description": "Increases the amount of annihilated targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_targets": 0 },
-          "perRank": { "max_targets": 2 }
+          "base": {"max_targets": 0},
+          "perRank": {"max_targets": 2}
         }
       },
       {
         "id": "rip_the_wounds",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "[177] extra damage vs bleeding 10r%; applies only when dummy bleeds"}], "confidence": "C", "note": "card p8 row"},
         "name": "Rip the Wounds",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "deep_cuts",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "use", "note": "bleed [22] = floor(hit*15r%) with chance 3r% rolled once per use"}], "confidence": "C", "note": "card p9 row", "plannerFix": "card: chance per use (rzut); planner on_hit"},
         "name": "Deep Cuts",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2009,6 +2137,7 @@
       {
         "id": "explosive_delivery",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "Blood Ripple (arcane, damage = hit) on proc 4r% per hit: 1 hit x 0.04r"}], "confidence": "C", "note": "card p10 row + R4 271#2: Marauder_Annihilation_Blood_Ripple_obj is a PDP with singleHit = 1, no tick_frequency, 16-frame animation -> exactly 1 hit per proc (C, Create_0 0x14877a9b0), damage[1] = damage[0]; proc chance 4r% per hit", "plannerFix": "planner on_hit chance 4/rank without effect; card: Blood Ripple object hits once (I)"},
         "name": "Explosive Delivery",
         "description": "Chance to unleash a bloody explosion on hit.",
         "maxRank": 5,
@@ -2017,23 +2146,25 @@
       {
         "id": "rusted_chains",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.01, 0.02, 0.03], "note": "fire part damage[3] = floor(W*r%) (fraction of W added as fire, not of D); execute below 2r% (0 on dummy)"}], "confidence": "C", "note": "card p11 row", "plannerFix": "planner has no fire part from W; card: W x r% fire damage"},
         "name": "Rusted Chains",
         "description": "Increases damage based on targets current life and executes monsters below a life threshold.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_life": 0, "execute_below": 0 },
-          "perRank": { "increased_life": 1, "execute_below": 2 }
+          "base": {"increased_life": 0, "execute_below": 0},
+          "perRank": {"increased_life": 1, "execute_below": 2}
         }
       },
       {
         "id": "symphony_of_chains",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "N = 2r Spin hooks around player"}, {"kind": "extra_hits", "byRank": [4.0, 9.0, 12.5], "per": "use", "replacesProjectileHits": true, "note": "hook ~1.0 + chain ~2.1 hit-equivalents per hook (0.5 x D chain): 2.1 N (N=2: 4.0; N=4: 8.5-9.5; N=6: 12.5)"}, {"kind": "dot", "byRank": [0.25, 0.5, 0.75], "per": "use", "note": "bleed [22] += floor(hit*25r%) always"}], "confidence": "I", "note": "card p12 row (C/I) and Zmiany (2.1 N)", "plannerFix": "planner projectile_count 2/rank + bleeding 25/rank; game: orbiting hooks + chains, ~2.1 hits per hook"},
         "name": "Symphony of Chains",
         "description": "Unleash multiple spinning chains around you inflicting bleeding on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "increased_bleeding_damage": 0 },
-          "perRank": { "projectile_count": 2, "increased_bleeding_damage": 25 }
+          "base": {"projectile_count": 0, "increased_bleeding_damage": 0},
+          "perRank": {"projectile_count": 2, "increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2046,23 +2177,25 @@
       {
         "id": "megadeath",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.5, 4.0, 4.5], "per": "use", "note": "Megadeath: every blast spawns a Big Bo-oM on the target (damage = blast damage, no cast roll, handler L66-77): 1 explosion + E[k_odl] shards x f_shred with the bomb falling on the dummy centre, scale 1 + 0.1*r13 ([718][1]; [718][0] is dead): E = 2.0 / 2.5 / 3.0 / 3.5 / 3.5 / 4.0 for r13 = 0..5 (Resztki B: C) -> 1 + 2.5 / 3.0 / 3.5 = 3.5 / 4.0 / 4.5 (f_shred = 1; was 4.0 with E = 3.0 for every rank)"}], "confidence": "C", "note": "card p13 row (R4 271#3 scale 1+0.1r13, PoR4 base E 2.0, Resztki B: C); shard blasts are hand-copied pe (rule 32), f_shred < 1 with gear", "plannerFix": "planner physical_skill_damage 20/rank + area 10/rank; card: extra Big Bo-oM with shards on each blast"},
         "name": "Megadeath",
         "description": "Rain down large bombs at monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 20, "area_of_effect": 10 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 20, "area_of_effect": 10}
         }
       },
       {
         "id": "total_annihilation",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50/rank"}, {"kind": "extra_hits", "byRank": [2.0, 2.0, 2.0], "per": "use", "note": "Total Annihilation: 1 Hook_Spin hook (always crit) = 1 hit + 2 chain hits at 0.5 D = 2.0 per use"}, {"kind": "crit", "byRank": [0, 0, 0], "note": "crit damage +35/rank on attack; hook always crit"}], "confidence": "C", "note": "card p14 row (C/I)", "plannerFix": "planner physical 50/rank + spell_crit 35/rank; card: orbiting hook (N=1) adds 2.0 hits"},
         "name": "Total Annihilation",
         "description": "Spin a large chain around you for a short duration dealing increased damage and stunning monsters on hit. The outer edge of the chain always critically hits.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "spell_crit_damage": 0 },
-          "perRank": { "physical_skill_damage": 50, "spell_crit_damage": 35 }
+          "base": {"spell_crit_damage": 0, "subtree_damage": 0},
+          "perRank": {"spell_crit_damage": 35, "subtree_damage": 50}
         }
       }
     ]
@@ -2088,6 +2221,8 @@
   {
     "id": "madness_control",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 6.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 8 s*(1 - p4)), IN-ZONE per rule 24: the bomb falls at player + 10 px (local var = 10, asm 0x146649553), independent of the cursor (the bomb is created at the cast position, vertical fall yy 300, deltaSpeed 0: rule 40 does not move it), so the main result puts the dummy at the bomb zone: 1 Marauder_Hook_obj (arcane damage[1] = D, hits once, no pull: em[162]) + 1 Explosion_Item_obj of the Big Bo-oM bomb (scale 1.5, reach 31.5*1.5 + 11.5 = 59 px, fire damage[3] = floor(V1*(1+LSSD)*(1+p11)) = D at rank 20 without subskills; life 24 frames, tick 30 frames: 1 hit) + the 6 shred blasts with E = 4.0 hits at p2 = 0 (E = 4.0 / 4.5 / 5.0 / 5.5 / 5.5 / 5.5 for p2 = 0..5; PoR4 model with R = 20.5*S + 11.5, S = 1.5*(1 + 0.15*r2); Resztki B: C, inputs @0x14930d8d8/0x14930dddf, 60 deg*i @0x148824009, independently reproduced by boom2.py) = 1 + 1 + 4.0 = 6.0 (6.0 / 6.5 / 7.0 / 7.5 / 7.5 / 7.5 for p2 = 0..5; old model 6.2 with E 4.2 / 4.9 / 5.2 / 5.3 / 5.5 / 5.7). Shred blasts are class 'manual-pe' (f_shred = 1 without gear, < 1 with gear), converted at f_shred = 1; the bomb is fire (damage[3]) while the hook is arcane. At the strict 160 px convention only the hook reaches the dummy (explosion reach <= 94 px, shreds <= 137 px): 1.0 hit. p12 Area Control (bomb at the cursor: 1 + 4.8-6.0 shards), p7 Boom Boom BOOM, p11 are subskill effects."},
     "classId": "marauder",
     "name": "Madness Control",
     "kind": "active",
@@ -2102,7 +2237,7 @@
     "tree": "Gladiator",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 16 },
+    "damageFormula": { "base": 0, "perLevel": 13.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Chain Trap", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -2121,67 +2256,73 @@
       {
         "id": "mad_rampage",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8/rank (arcane)"}], "confidence": "C", "note": "card p1 row"},
         "name": "Mad Rampage",
         "description": "Increases the damage dealt by madness control.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "ground_zero",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5, 1.5, 1.5], "per": "use", "note": "bomb scale 1.5(1+0.15r) grows the shard count in the zone: E = 4.0 / 4.5 / 5.0 / 5.5 / 5.5 / 5.5 for r2 = 0..5 (R4 shard model, Resztki B: C); extra = E - 4.0 (was 4.2 -> 4.9/5.2/5.3/5.5/5.7, I)"}], "confidence": "C", "note": "card p2 row (PoR4 + Resztki B: 'potwierdzone: C')", "plannerFix": "planner area 15/rank is bomb scale only; card: shard count grows (E table)"},
         "name": "Ground Zero",
         "description": "Increases the area of effect radius of madness control.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "powerful_chainstrike",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: stun duration only, no damage"},
         "name": "Powerful Chainstrike",
         "description": "Inflicts stun with increased duration on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "arena_police",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 8 s x (1 - 7r%)"}], "confidence": "C", "note": "card p4 row"},
         "name": "Arena Police",
         "description": "Decreases the cooldown of madness control.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "we_are_all_mad_here",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "more hooks, dummy is the only target"}], "confidence": "C", "note": "card p5 row"},
         "name": "We Are All Mad Here",
         "description": "Increases the amount of hooked targets with madness control.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_targets": 0 },
-          "perRank": { "max_targets": 2 }
+          "base": {"max_targets": 0},
+          "perRank": {"max_targets": 2}
         }
       },
       {
         "id": "napalm_charge",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "use", "note": "burning B1 on hook/bomb: chance 3r% rolled once per use x floor(dmg*15r%)"}], "confidence": "C", "note": "card p6 row", "plannerFix": "card: chance per use (rzut); planner on_hit"},
         "name": "Napalm Charge",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2194,6 +2335,7 @@
       {
         "id": "boom_boom_boom",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45], "per": "use", "note": "chance 3r% per hook hit (handler on the HOOK hit; read as once per use because the hook hits once): a Big Bo-oM falls on the dummy centre with damage = hook damage (as fire), scale 1: 1 explosion + E[k_odl] = 2.0 shards (was 3.0; Resztki B: C) = 3.0 D per proc -> 3.0 x 0.03r = 0.09r per use. Was per 'hit' [0.12r]: with the base of 6.0 hits per cast a per-hit rolling would multiply the proc by the 6 base hits, but the card ties it to the hook hit"}], "confidence": "C", "note": "card p7 row (PoR4: E 3.0 -> 2.0; Resztki B 'bomb on the dummy centre 2.0: potwierdzone C'); per changed from 'hit' to 'use' (hook hit only)", "plannerFix": "planner of_total_damage 50 flat; card: full bomb (1 explosion + 3 shards) with hook damage at chance 3r%"},
         "name": "Boom Boom BOOM",
         "description": "Chance to rain down additional bombs at targets on hit.",
         "maxRank": 5,
@@ -2209,6 +2351,7 @@
       {
         "id": "capture_and_punish",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.45, 1.8, 4.05, 7.2, 11.25], "note": "LSSD += 15r% with chance 3r% per use (expected LSSD % = 0.03r x 15r); slow 8 s no hit change"}], "confidence": "C", "note": "card p8 row", "plannerFix": "card: chance rolled per use (rzut); planner on_hit arcane 15/rank"},
         "name": "Capture and Punish",
         "description": "Chance to deal increased damage inflicting slow on hit.",
         "maxRank": 5,
@@ -2225,67 +2368,73 @@
       {
         "id": "effective_control",
         "positionIndex": 9,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p9 row", "plannerFix": "card: hook speed x(1+15r%) (I effect on dummy 0); planner projectile_speed is a proxy"},
         "name": "Effective Control",
         "description": "Increases the hooking speed of madness control.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "keep_sane_among_mad",
         "positionIndex": 10,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p10: movement diminish only"},
         "name": "Keep Sane among Mad",
         "description": "Decreases movement diminish when using madness control.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "surging_madness",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.0, 4.0, 6.0], "per": "use", "note": "bomb damage x(1+0.4r) on the explosion and the shards in the bomb zone: bomb hits 1 + E = 1 + 4.0 = 5.0, extra 5.0 x 0.4r (was 5.2 x 0.4r with E 4.2; the card text writes '2 + E' hits, see cardIssues)"}], "confidence": "I", "note": "card p11 row; scaled to E = 4.0 (PoR4)", "plannerFix": "planner arcane 40/rank; card: bomb (fire) damage multiplier 1+0.4r"},
         "name": "Surging Madness",
         "description": "After hooking monsters in knock them back with intense force dealing increased damage stunning them.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 40 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 40}
         }
       },
       {
         "id": "area_control",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.8, 1.8, 2.0], "per": "use", "note": "bomb falls at the cursor (24 px from the dummy) with scale 1.5(1+0.6r12+0.15r2): shards E = 4.8 / 5.8 / 6.0 (cursor above, PoR4; was 5.0/5.8/6.0; on the dummy 5.5/6.0/6.0) vs the base zone E = 4.0 -> extra +0.8 / +1.8 / +2.0; the explosion (reach >= 87 px) is counted in the base"}], "confidence": "C", "note": "card p12 row (PoR4 recount; base E 4.0)", "plannerFix": "planner area 60/rank; card: bomb at cursor position, bigger scale and more shards"},
         "name": "Area Control",
         "description": "Madness control can be casted at target location with increased area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 60 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 60}
         }
       },
       {
         "id": "evasive_move",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "utility", "note": "Evasive Move: buff 88 on player, no dummy damage"}], "confidence": "I", "note": "card p13 row"},
         "name": "Evasive Move",
         "description": "Become immortal for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "blink_and_you_are_dead",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35/rank (arcane); teleport (skillsBlink) no hit change"}], "confidence": "C", "note": "card p14 row (C/I)", "plannerFix": "planner skill_range 25/rank is teleport distance (no dummy effect) and arcane 35/rank matches"},
         "name": "Blink and you are dead",
         "description": "Teleport a short distance unleashing madness control at the initial location.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "arcane_skill_damage": 35, "skill_range": 25 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "subtree_damage": 35}
         }
       }
     ]

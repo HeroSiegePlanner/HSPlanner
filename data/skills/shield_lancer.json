@@ -2,6 +2,8 @@
   {
     "id": "glorious_strike",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (melee strike, period T_att = 0.75/(APS_eff*(1 + 0.06 r_p9)), abilityAttackSpeed = true; the dummy is taken inside weapon reach, the card gives no separate 160 px value): attackClasses fires 1 + [117] = 1 weapon hit per use in the base ([117] = 0) with hit W*(1 + V1*(1+LSSD)/100) = the main hit -> 1.0. baseProjectiles = 1; perExtraProjectile = 0 (no projectile count; the gear loop 'for i < 1 + RSS391' only repeats the effect set-up for the next attack). p14 Valiant Combo ([117] = 3: 4 strikes + a wave with the same damage = 5 hits, the wave loses the object modifiers), p11 Punisher (5r % per use: Impale object with tick 0.4 s = 8 hits of d0 by tools/tick_hits.py 194/24), p13 javelin (+0.12r hits of d0), p12 (extra hit only at the spear tip) are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "shield_lancer",
     "name": "Glorious Strike",
@@ -16,9 +18,11 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.5, "perLevel": 0.75 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 77.5, "perLevel": 25 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 177.5, "perLevel": 25 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -39,45 +43,49 @@
       {
         "id": "radiant_glory",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r applies to the V1 addend only (rule 9), not the whole hit; engine scales by V1/(W+V1)."}], "confidence": "C", "note": "Card p3, rule 9.", "plannerFix": "Planner applies physical_skill_damage to the whole hit; card says LSSD multiplies only the V1 addend of the strike."},
         "name": "Radiant Glory",
         "description": "Increases the damage dealt by glorious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "lance_training",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Attack rating x(1+10%/r); card gives no dummy DPS change (the strike is taken as landing)."}], "confidence": "C", "note": "Card table p2."},
         "name": "Lance Training",
         "description": "Increases attack rating when using glorious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "jousting_master",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Area radius only; a lone target gets no DPS (card p1 C)."}], "confidence": "C", "note": "Card table p1; planner area 25+25r is harmless on a dummy."},
         "name": "Jousting Master",
         "description": "Increases attack area of effect radius of glorious strike.",
         "maxRank": 2,
         "effects": {
-          "base": { "area_of_effect": 25 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 25},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "piercing_thrust",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "Value = bleed chance % per use (4r). Bleed amount 0.3r*d0 (card: floor(d0*30%/r)), 5 s. Engine models DoT."}], "confidence": "C", "note": "Card p4; dot_debuffs.md formula."},
         "name": "Piercing Thrust",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -90,72 +98,79 @@
       {
         "id": "brutal_knight",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "Crit damage +25r%; crit chance unchanged (value 0 = chance). Expected gain depends on base crit chance in CalculateEndDamage."}], "confidence": "C", "note": "Card p5."},
         "name": "Brutal Knight",
         "description": "Increases the critical strike damage of glorious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 25 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 25}
         }
       },
       {
         "id": "blood_satiable",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Life on kill; dummy does not die."}], "confidence": "C", "note": "Card p6."},
         "name": "Blood Satiable",
         "description": "Recover a portion of your maximum life when killing monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 2 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 2}
         }
       },
       {
         "id": "heroic_onslaught",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stack (buff 108) only on kill (ProjectileKill17); enemy buff 76 gives 0 on dummy. Planner physical 2r + armour 1r always-on is wrong."}], "confidence": "C", "note": "Card p7 and rule 6.", "plannerFix": "Heroic Onslaught stacks only on kill; planner applies physical_skill_damage 2r and armour 1r on every strike."},
         "name": "Heroic Onslaught",
         "description": "Gain a stack of heroic onslaught after killing monsters increasing your damage and armor.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "increased_armor": 0 },
-          "perRank": { "physical_skill_damage": 2, "increased_armor": 1 }
+          "base": {"physical_skill_damage": 0, "increased_armor": 0},
+          "perRank": {"physical_skill_damage": 2, "increased_armor": 1}
         }
       },
       {
         "id": "leave_no_survivors",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "Only while the dummy bleeds (p4 or p13 procs). Engine must gate by bleed uptime; value is the conditional multiplier 1+0.15r."}], "confidence": "C", "note": "Card p8.", "plannerFix": "Planner extra_damage_bleeding is ungated; in game it applies only while the target bleeds."},
         "name": "Leave no Survivors",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "sparring_haste",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "Attack speed: T_att = 0.75/(APS*(1+acc)), acc = 0.06r (additive)."}], "confidence": "C", "note": "Card p9, TalentUseSetSpeed case 290."},
         "name": "Sparring Haste",
         "description": "Increases attack speed when using glorious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_speed_more": 0 },
-          "perRank": { "skill_attack_speed_more": 6 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 6}
         }
       },
       {
         "id": "high_reach",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Range only; dummy already inside weapon reach (card p10 C)."}], "confidence": "C", "note": "Card p10; planner skill_range matches."},
         "name": "High Reach",
         "description": "Increases glorious strike attack range when using polearms.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "punisher",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2.75, 11, 24.75], "note": "Expected LSSD: roll 5r% per use x LSSD 55r% = 0.0275*r^2 (in %), V1 part. Conditional values would be 55r."}, {"kind": "extra_hits", "byRank": [0.4, 0.8, 1.2], "per": "use", "note": "Expected extra hits per use = 5r% x 8 Impale ticks of d0 (Impale tick 0.4 s, ~194 frames active => 8 hits; lifetime is I)."}], "confidence": "I", "note": "Card p11; lifetime of Impale (tick_hits 194/24) is I. Stun 3 s on dummy has no DPS effect.", "plannerFix": "Planner has the 55r LSSD proc but omits the Impale object (8 hits of d0 at 5r% per use)."},
         "name": "Punisher",
         "description": "Chance on attack to gain increased area of effect radius. Impale targets on hit dealing damage over time.",
         "maxRank": 3,
@@ -171,23 +186,25 @@
       {
         "id": "unstoppable_piker",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "note": "0 extra hits at 160 px. p12 sets pe[130] += 200 (RV_addInt, asm 0x14669bb87; hit area +200 %, tip floor(W*xs) >= 300 px Spear / >= 384 px Lance, R = floor(16*ys) >= 48); the extra hit d0 + 1.25r (flat add, not x) lands only when the dummy origin is within R of the tip, i.e. a dummy ~252-348 px (Spear) / 336-432 px (Lance) away at p1 = 0. The directional strike aims through the dummy centre (rule 38) and [122] has no reader."}], "confidence": "I", "note": "PoR4 (a),(d) + R4 290#1 [PoR4: replaced]: the 24 px-below-aim geometry no longer applies; 0 extra hits at 160 px (C arithmetic, I sprite and W of the weapon). Was kind other 'best reading 0, not counted'.", "plannerFix": "Planner applies physical +125%/r on every strike; card: p12 adds +200% hit area and one flat extra hit d0 + 1.25r only when the dummy is at the spear tip (>= 252 px), 0 at 160 px."},
         "name": "Unstoppable Piker",
         "description": "Strike with a long narrow hitbox pushing monsters towards the tip on hit. Monsters hit by the tip take increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 125 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 125}
         }
       },
       {
         "id": "javelin_harbinger",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [12, 24, 36], "note": "Value = bleed chance % on javelin hit (12r per use). Bleed 0.65r*d0 (card floor(d0*0.65r))."}, {"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36], "per": "use", "note": "Javelin hit of d0 with chance 12r% per strike hit (one hit per use on dummy); pierces, direction is I."}], "confidence": "I", "note": "Card p13; javelin direction I.", "plannerFix": "Planner has the bleed proc but no javelin hit (+0.12r*d0 per use)."},
         "name": "Javelin Harbinger",
         "description": "Increases the range of glorious strike significantly. Chance on attack to throw a piercing javelin inflicting bleeding on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 65 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 65}
         },
         "proc": {
           "trigger": "on_hit",
@@ -200,12 +217,13 @@
       {
         "id": "valiant_combo",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [5, 5, 5], "note": "4 strikes ([117]=3, loop i<=3) + 1 slashing wave = 5 hits per use; wave is manual pe (modifiers lossy, rule 32), its exact factor needs player stats. 60%/r value not used by the code."}], "confidence": "C", "note": "Card p14, rule 32 for the wave.", "plannerFix": "Planner adds physical 60%/r; card: value unused, the skill is 4 strikes + wave = 5 hits per use."},
         "name": "Valiant Combo",
         "description": "Glorious strike performs a burst of three attacks. The last strike sends a slashing wave knocking monsters back dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 60 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 60}
         }
       }
     ]
@@ -213,6 +231,9 @@
   {
     "id": "battle_charge",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, STEADY STATE (cast path, S = 2 + FCR/100; the charge lasts 1-2 frames and does not block casting): the player stands <= 14.5 px from the charge target after the previous charge (PoR4 rule 38: the charge aims through the dummy centre (x, y); Resztki: pe[150]/[151] = cursor - 6 px, so the end point is 6 px above the cursor; the older text used cursor (x, y-24) = <= 40 px from the dummy centre, same result), pe[22] <= 15 px = one movement frame, and the end block (skillsCharge L1056) creates one Shield_Lancer_Battle_Charge_obj ring (mask 80x80 = circle r 40 px + dummy 12 = 52 px, singleHit, isAttack 0, damage[1] = D arcane = the main hit) next to the dummy = 1.0 hit. The charge flies THROUGH the dummy (case 292 of the L129 table sets [340] = 1, R3 C). FIRST charge from 160 px (aim through the dummy centre, Resztki B bc2/bc3, trail rings every >= 48 px of travel, first after ~60 px): 2 rings with p6 r0 average 2.18 (2-3); p6 r1..r5 = 1 / 2 / 2 / 2 / 1.46 (was 2 / 1 / 2 / 2 / 2 / 1, PoR4 2, R3 1.8 for cursor (x, y-24)); this first-use value is NOT in base (base = steady state 1.0). First-charge extras for subskills (not steady state): p13 Ground Slammer ~3.5 / 2.4 / 3 / 3 / 3 / 3.1 hits for p6 r0..r5 (was ~3), p14 Heroes ~1.4 (Resztki, I; PoR4 said ~2); p8/p13/p14 are 0 in the steady state. baseProjectiles = 1; perExtraProjectile = 0 (the planner's p8 Spear Dasher projectile_count spawns spears only at the 48 px trail spawns, which do not occur in the steady state). p12 Hyper Assault (4 charges: 7 ring hits = 1 + 3 x 2, 4 with p6 r2, + landing d1*(1 + 1.25r), +3 s cooldown), p4 (+0.05r hits) are subskill effects."},
+    "usePeriod": {"kind": "charge", "extraFrames": 11, "trigger": false, "note": "Resztki po R4 (C, asm; rule 37 supplement): the base charge does not set playerEffect[142] (only the p12 branch does, skillsCharge L1106 asm 0x1460ccc8f) and writes no [204]; the Movement/Blink-tagged talent bypasses the animation lock in CheckTalentUse (L97-L100), so the only limiter is the cast-path cooldown from TalentUseSetSpeed (L575-L578: SetCooldown = 1/S s, counted down with skill haste, rule 35) plus the charge time. period = max(ceil(60/S)/(1 + 0.005*h_eff), T_c) = 30 frames (0.5 s) at S = 2 (FCR 0), 24 at S = 2.5, 20 at S = 3 instead of ceil(72/S)+1 = 37 / 30 / 25; the effect fires at t_wyw = 13 frames < 30, so the cadence is the cooldown. extraFrames 11 = T_c for the first charge from 160 px at rank 20 without subskills (step 1 + pe[12], pe[12] 13.5 growing x1.025 per frame to 18: 10 move frames + the end-block frame; derived from the card's pe[12] model, I; a re-charge of 180 px is ~12 frames per R4 292#0); in the steady state T_c is 1-2 frames (card). T_c is below the cooldown floor for S <= ~5, so the period is the floor. With p12 the cooldown +3 s/(1 + 0.005*h_eff) (>= 90 frames at h_eff 200) binds, longer than the ~80-frame sequence; the landing zeroes [142] before CheckTalentUse in the same frame. C code, I game effect (cooldown tick order +-1 frame)."},
     "classId": "shield_lancer",
     "name": "Battle Charge",
     "kind": "active",
@@ -226,7 +247,7 @@
     "tree": "Champion",
     "position": { "row": 0, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7, "perLevel": 13 },
+    "damageFormula": { "base": 6, "perLevel": 12 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Glorious Strike", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -245,39 +266,43 @@
       {
         "id": "battle_charged",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "Arcane LSSD +8%/r on the ring damage."}], "confidence": "C", "note": "Card p1."},
         "name": "Battle Charged",
         "description": "Increases the damage dealt by battle charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "arena_glider",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Range only; card finds no script read for Arena Glider; no dummy effect."}], "confidence": "I", "note": "Card p2 (no script read)."},
         "name": "Arena Glider",
         "description": "Increases the range of battle charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "concrete_wall",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD += 0.10*r * armour (RSS21 x 0.01 x 10%/r): needs player armour; value = 0.1*r*armour percent. Engine evaluates with the player's armour."}], "confidence": "C", "note": "Card p3; planner conversion_armor 10r matches."},
         "name": "Concrete Wall",
         "description": "Increases the damage dealt by battle charge according to your armor.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_armor": 0 },
-          "perRank": { "conversion_armor": 10 }
+          "base": {"conversion_armor": 0},
+          "perRank": {"conversion_armor": 10}
         }
       },
       {
         "id": "rampaging_assault",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "use", "note": "Extra hit ~ d1 (card: floor(d0+d1+1+0.3r), flat add) with chance 5r% per hit."}], "confidence": "C", "note": "Card p4; rule 22 knock-up.", "plannerFix": "Planner applies arcane +30%/r on proc; card: extra hit is approximately one more d1 (chance 5r%)."},
         "name": "Rampaging Assault",
         "description": "Chance to knock monsters up dealing increased damage on hit.",
         "maxRank": 5,
@@ -293,28 +318,31 @@
       {
         "id": "turtle_armor",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "DR buff 6%/r for 3 s; no dummy DPS."}], "confidence": "C", "note": "Card p5."},
         "name": "Turtle Armor",
         "description": "Increases damage reduction for a short duration when using battle charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 6 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 6}
         }
       },
       {
         "id": "rocket_boots",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "Charge speed +15%/r; affects travel time only, no steady-state dummy effect."}], "confidence": "C", "note": "Card p6."},
         "name": "Rocket Boots",
         "description": "Increases the speed of battle charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "shoulder_slam",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stun chance 3r% per use; the dummy accepts stun, but the effect only gates p9."}], "confidence": "C", "note": "Card p7; planner stun on hit."},
         "name": "Shoulder Slam",
         "description": "Chance to stun targets on hit.",
         "maxRank": 5,
@@ -327,67 +355,73 @@
       {
         "id": "spear_dasher",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "note": "Steady state: 0 (travel < 48 px per spawn). First charge from 160 px: 2 spawns x r lances, hit depends on direction (I). Best steady reading: 0."}], "confidence": "I", "note": "Card p8.", "plannerFix": "Planner counts lance projectiles (1r per 48 px) and 40r% damage as steady DPS; card: 0 steady hits."},
         "name": "Spear Dasher",
         "description": "Throw lances around you as you charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 40, "projectile_count": 1 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 40, "projectile_count": 1}
         }
       },
       {
         "id": "bluntforce_trauma",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "Only while the dummy is stunned (p7 stun, 3 s; the stun on the same hit counts). Engine must gate by stun uptime; p7 rank needed."}], "confidence": "C", "note": "Card p9, rule 27.", "plannerFix": "Planner extra_damage_stunned is ungated; in game it needs the dummy stunned."},
         "name": "Bluntforce Trauma",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "provoking_arrival",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Taunt at the end of the charge; range 15%/r; no DPS."}], "confidence": "C", "note": "Card p10."},
         "name": "Provoking Arrival",
         "description": "Taunt nearby monsters at the end of your charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "bulldozer",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "Arcane LSSD +45%/r. Bulldozer pull does not grab the dummy."}], "confidence": "C", "note": "Card p11, dummy_debuffs.md 2.4."},
         "name": "Bulldozer",
         "description": "Pull monsters infront of you on hit while charging impaling them when hitting terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 45, "area_of_effect": 15 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 15, "subtree_damage": 45}
         }
       },
       {
         "id": "hyper_assault",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "Cooldown +3 s (GetTalentCooldown), counted down with skill haste: >= 3 s/(1 + 0.005*h_eff) (>= 90 frames at h_eff 200). It binds the period: the sequence (4 charges ~2 + 3 x 12 frames + jump ~30 frames + t_wyw 13) is ~80 frames (I); the landing zeroes [142] before CheckTalentUse (Resztki)."}, {"kind": "extra_hits", "byRank": [8.25, 9.5, 10.75], "per": "use", "note": "Per use: 7 ring hits d1 (1 + 3 re-charges x 2 rings; 4 ring hits with p6 r2 when the trail ring falls >= 52 px) plus one landing hit d1*(1 + 1.25r) = 8 + 1.25r hits; minus the base 1 gives 7 + 1.25r (r = 1..3: 8.25 / 9.5 / 10.75). Was 4 + 1.25r (4 rings)."}], "confidence": "C", "note": "PoR4 (a) + Resztki B (bc2.py, bc3.py, C for p12): 4 charges (3 re-charges teleported 180 px at +90 deg), each re-charge starts 180 px from the target and gives exactly 2 rings (trail ring at ~99/49 px + end ring), independent of the angle; target = cursor - 6 px; the ring count depends on p6 (4 at p6 r2). Landing d1*(1 + 1.25r) is damage[1] = [767] (C). Card 'Pewnosc' line still lists the ring counts as I.", "plannerFix": "Planner gives +125%/r only; card: 7 ring hits d1 (1 + 3 x 2) plus one landing hit d1*(1 + 1.25r) per use with +3 s cooldown."},
         "name": "Hyper Assault",
         "description": "Charge multiple times in high speed at the target area, dealing area of effect damage damage before falling from the sky smashing the ground, knocking monsters up with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 125 }
+          "base": {"arcane_skill_damage": 0, "cooldown_added": 3},
+          "perRank": {"arcane_skill_damage": 125, "cooldown_added": 0}
         }
       },
       {
         "id": "ground_slammer",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "note": "Spawns only every 48 px of travel: steady 0; first charge 0-3 hits depending on last spawn (<= 57 px from dummy). Best steady reading 0."}], "confidence": "I", "note": "Card p13.", "plannerFix": "Planner of_total_damage 90r and elemental break counted as steady DPS; card: 0 steady."},
         "name": "Ground Slammer",
         "description": "As you charge through monsters, leave the ground quaking for a small duration inflicting elemental break.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "elemental_break": 0 },
-          "perRank": { "of_total_damage": 90, "elemental_break": 25 }
+          "base": {"of_total_damage": 0, "elemental_break": 0},
+          "perRank": {"of_total_damage": 90, "elemental_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -403,18 +437,13 @@
       {
         "id": "call_of_the_fallen_heroes",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "Summons 4r heroes with d1*(1+0.8r) only near the player; steady state 0 (charge ~1 frame); first charge depends on lateral offset (I). Best steady reading 0."}], "confidence": "I", "note": "Card p14.", "plannerFix": "Planner counts summon damage (80r arcane) as steady DPS; card: 0 steady."},
         "name": "Call of the Fallen Heroes",
         "description": "Call upon fallen heroes to charge by your side, dealing increased damage on a larger radius.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "summon_max_amount": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "summon_max_amount": 4,
-            "arcane_skill_damage": 80
-          }
+          "base": {"summon_max_amount": 0, "arcane_skill_damage": 0},
+          "perRank": {"summon_max_amount": 4, "arcane_skill_damage": 80}
         }
       }
     ]
@@ -460,6 +489,8 @@
   {
     "id": "crushing_lance",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (period T_att = 0.75/(APS_eff*(1 + 0.06 r_p7)), abilityAttackSpeed = true; no cooldown in the base, p12 +4 s): the script creates a Shield_Lancer_Crushing_Lance_obj (Player_Ability_Parent: hits nothing; falls ~31 frames) at the cursor point (x, y-24), 24 px from the dummy; on landing it creates one Shield_Lancer_Crushing_Lance_AOE_obj (Player_Damage_Parent, singleHit, scale 1.25 on a 224x224 precise mask = circle r ~140 px, 14 frames at 24 fps, pulses = 0, [51] = 2 s stun) that covers the dummy (rule 24; 160 px identical) = 1 hit of damage[0] = the main hit = 1.0. baseProjectiles = 1; perExtraProjectile = 0: the planner's projectile_count from p11 Annihilating Salvo (+4/r lances every 96 px) is NOT linear on the dummy - only the second lance (96 px away, inside r 140) also hits, i.e. +1 hit in total for any rank (card, I), p13 Seismic Perforation adds 0-3r hits (geometry I). p5 applies constantly (the 2 s stun outlasts the period), p10 (4r % pulse echo + burn), p12 Magnetized Glaive (5 pulses + 1 = 6 hits, +4 s cooldown), p14 Javelinstrike (+0.75r d0 object per hit) are subskill effects."},
     "classId": "shield_lancer",
     "name": "Crushing Lance",
     "kind": "active",
@@ -476,7 +507,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 60, "perLevel": 24 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 160, "perLevel": 24 },
       "flatPhysicalMin": { "base": 2, "perLevel": 1 },
       "flatPhysicalMax": { "base": 10, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -497,61 +530,67 @@
       {
         "id": "sharp_point",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r on the whole hit."}], "confidence": "C", "note": "Card p1."},
         "name": "Sharp Point",
         "description": "Increases the damage dealt by crushing lance.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "devastating_impact",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "AOE size (244*0.75*(1+15%/r)); dummy covered anyway (rule 24)."}], "confidence": "C", "note": "Card p2."},
         "name": "Devastating Impact",
         "description": "Increases the area of effect radius of crushing lance.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "precision_blow",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Attack rating x(1+10%/r); no dummy DPS change."}], "confidence": "C", "note": "Card p3."},
         "name": "Precision Blow",
         "description": "Increases attack rating when using crushing lance.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "dormant_javelin",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [4, 8, 12, 16, 20], "note": "Every 3rd use: LSSD +12r% and area +15r%. Expected average LSSD +4r% (card)."}], "confidence": "C", "note": "Card p4, playerEffect[275].", "plannerFix": "Planner applies physical 12r on every use; card: every 3rd use, average +4r%."},
         "name": "Dormant Javelin",
         "description": "Every third attack with crushing lance is empowered increasing area of effect radius and damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 12, "area_of_effect": 15 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 15, "subtree_damage": 4}
         }
       },
       {
         "id": "finishing_stagger",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "Vs stunned: the dummy is stunned constantly (base 2 s, rule 27), so the multiplier applies on every hit."}], "confidence": "C", "note": "Card p5."},
         "name": "Finishing Stagger",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "two_for_one",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Per landing: chance 4r% (irandom(99) < 4r) for a second Crushing_Lance_obj at instance_nth_nearest(2) = the dummy origin (n clamps to the single instance), 24-30 px from the first lance, falls 31 frames (~0.5 s delay); its AOE (r ~140 px) hits the dummy: 0.04r*(1 + pulses) hits of d0; pulses = 0 in the base, so 0.04r. The copy carries pulses, damage[0], [51], [1022], [179], [1019], [969], [769], [770], [18] but not [761]/shockWave (no recursion/chain). With p10 echo (pulses = 1 on a rolled use) the second lance repeats its AOE too (card formula 0.04r*(1 + pulses)); the [769] copy (p12) is not quantified by the card."}], "confidence": "I", "note": "R4 296#1 (C object type and position; nth_nearest clamp read from the decompilation, I). Same base number as before (0.04r), but the object type is resolved and the (1 + pulses) factor is new.", "plannerFix": "Planner proc has no second-lance effect; card: second Crushing_Lance_obj at the dummy with chance 4r% per landing, 0.04r*(1 + pulses) hits of d0."},
         "name": "Two for One",
         "description": "Chance to unleash an additional crushing lance from the target to a nearby monster on hit.",
         "maxRank": 5,
@@ -560,34 +599,37 @@
       {
         "id": "rapidcast_artillery",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "Attack speed: acc = 0.06r in TalentUseSetSpeed case 296."}], "confidence": "C", "note": "Card p7."},
         "name": "Rapidcast Artillery",
         "description": "Increases attack speed when using crushing lance.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_speed_more": 0 },
-          "perRank": { "skill_attack_speed_more": 6 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 6}
         }
       },
       {
         "id": "landspike",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "Crit damage +20r%; chance unchanged."}], "confidence": "C", "note": "Card p8."},
         "name": "Landspike",
         "description": "Increases the critical strike damage dealt by crushing lance.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "pulverizing_shock",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.25, 1.5, 1.75, 2.0, 2.25], "note": "Armour break 25r% (+RSS234, not traced, taken as 0) while active (5 s). Conditional multiplier; engine gates by break uptime from 4r% per use."}], "confidence": "C", "note": "Card p9, [969] = [25/r + RSS234, 5 s]."},
         "name": "Pulverizing Shock",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 25 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -600,12 +642,13 @@
       {
         "id": "scorching_quake",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Echo: chance 4r% on cast to repeat the AOE once (pulses=1): +1 hit d0 per roll."}, {"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "Value = burning chance % per use; burn amount 0.3r*d0 (card floor(d0*30%/r))."}], "confidence": "C", "note": "Card p10, asm L501/L540.", "plannerFix": "Planner has only the burning proc; the echo second AOE hit (+1 d0 at 4r%) is missing."},
         "name": "Scorching Quake",
         "description": "Chance on cast to empower crushing lance causing it to echo an additional time inflicting burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 30 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 30}
         },
         "proc": {
           "trigger": "on_cast",
@@ -618,45 +661,49 @@
       {
         "id": "annihilating_salvo",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12], "note": "Chain of 4r lances 96 px apart (shockWave = 4r)."}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "Only the second lance reaches the dummy (within r~140 px of the first AOE): +1 hit, rest too far."}], "confidence": "I", "note": "Card p11, AOE radius I.", "plannerFix": "Planner counts projectile_count 4r as hits; card: only +1 hit on a single dummy."},
         "name": "Annihilating Salvo",
         "description": "Unleash a shockwave of crushing lances towards target location.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 4 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 4}
         }
       },
       {
         "id": "magnetized_glaive",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "Cooldown +4 s (scaled by haste). Magnetized pulses: after landing D=2.5 s*(1+0.25r), I=max(0.5 s*(1+0.25r),0.1 s); 5 pulses regardless of rank."}, {"kind": "extra_hits", "byRank": [5, 5, 5], "per": "use", "note": "5 pulse hits of d0 per use (object ignoreHost, singleHit) on top of the landing hit (6 hits total)."}], "confidence": "I", "note": "Card p12, pulse timing C/I.", "plannerFix": "Planner has no +4 s cooldown and no pulse hits; card: 6 hits per use, period 4 s."},
         "name": "Magnetized Glaive",
         "description": "The lance remains on the ground for a short duration frequently pulsating and pulling monsters towards it on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0, "faster_cast_rate": 0 },
-          "perRank": { "skill_duration": 25, "faster_cast_rate": 25 }
+          "base": {"skill_duration": 0, "faster_cast_rate": 0, "cooldown_added": 4},
+          "perRank": {"skill_duration": 25, "faster_cast_rate": 25, "cooldown_added": 0}
         }
       },
       {
         "id": "seismic_perforation",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "3r Seismic chains (N = seismicPerforation[0] = 3r, first node 44 px from the lance at angle 360/N*i, then every floor(48*1.25) = 60 px); their hits are given by the extra_hits below."}, {"kind": "extra_hits", "byRank": [1, 2, 4], "per": "use", "replacesProjectileHits": true, "note": "Only the FIRST node of each chain reaches the dummy (node mask r ~39.4 + dummy 12 = 51.4 px; later nodes >= 80 px). Lance at T = (x, y-30), 30 px from the dummy origin (Resztki E): 1 / 2 / 4 hits of d0 for r = 1..3 (card lists r = 1..5: 1 / 2 / 4 / 5 / 7; margin +-1, nodes at 0 and 180 deg sit ~50 px away). Cursor exactly on (x, y): all 3r nodes hit = 3 / 6 / 9 (r = 1..3)."}], "confidence": "I", "note": "R4 296#2 + Resztki E (asm 0x1466b1d59: Crushing Lance at T = (x, y-30)): 1 / 2 / 4 / 5 / 7 (old R4 2 / 4 / 5 / 7 / 8 was for 24 px). Was kind other 'not counted'. Geometry C, +-1 margin I.", "plannerFix": "Planner counts trail/projectile 3r as hits; card: only the first node of each chain reaches a lone dummy, 1 / 2 / 4 hits (r = 1..3) with the lance 30 px from the dummy."},
         "name": "Seismic Perforation",
         "description": "Crushing lance hits the ground with force unleashing shockwaves into all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "trail_count": 0, "projectile_count": 0 },
-          "perRank": { "trail_count": 3, "projectile_count": 3 }
+          "base": {"trail_count": 0, "projectile_count": 0},
+          "perRank": {"trail_count": 3, "projectile_count": 3}
         }
       },
       {
         "id": "marked_for_javelinstrike",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "One javelin per lance hit with damage 0.75r*d0: +0.75r hits per use."}], "confidence": "I", "note": "Card p14 (javelin path I); planner of_total_damage 75r matches."},
         "name": "Marked for Javelinstrike",
         "description": "Throw piercing javelins at monsters hit by crushing lance for a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 75 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 75}
         }
       }
     ]
@@ -664,6 +711,8 @@
   {
     "id": "lance_thrust",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (period T_att = 0.75/APS_eff without a banner), melee with the dummy inside the 297 px thrust reach (66 px sprite x 4.5): one Shield_Lancer_Lance_Thrust_obj (Player_Damage_Parent, isAttack 1, singleHit, no map clear, rectangle mask 66x9 x scale) hits the dummy in every azimuth (lance_geom.py, cursor (x, y-24), oriented rectangle and AABB both 1.000, dummy at 100-250 px) = 1 hit of damage[0] = the main hit = 1.0, also at 160 px. baseProjectiles = 1; perExtraProjectile = 0 (p13 Trust in the Thrust +3r thrusts of 0.5r d0 and p14 Commend to Onslaught +5r thrusts at the banner are subskill effects with their own damage). PERIOD: the jump to a Commending Banner (leap [143] = 293, 22 frames, ~6 frames after the thrust is created, the landing AOE r 252 px adds one more hit and destroys the banner) happens only when a banner stands at the cursor - one jump per banner, NOT on every use - so period is left null; with a fresh banner the period of that thrust is max(T_att, t_w + 6 + 22 frames) and the thrust+AOE give 2 hits (rotation, R3 293#0). p9 (every 3rd use +0.15r range/damage), p10 banner explosion, p12 spin are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "shield_lancer",
     "name": "Lance Thrust",
@@ -681,7 +730,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.25, "perLevel": 0.65, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 57, "perLevel": 25 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 145, "perLevel": 25 },
       "flatPhysicalMin": { "base": 2, "perLevel": 1 },
       "flatPhysicalMax": { "base": 8, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -702,45 +753,49 @@
       {
         "id": "battle_experienced",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60], "note": "LSSD +12%/r multiplies the whole hit (rule 9 variant 2)."}], "confidence": "C", "note": "Card p1."},
         "name": "Battle Experienced",
         "description": "Increases the damage dealt by lance thrust.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "pole_reach",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Thrust range x(1+15%/r); dummy already inside reach at 100-250 px."}], "confidence": "C", "note": "Card p2."},
         "name": "Pole Reach",
         "description": "Increases the range of lance thrust.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "heroic_arrival",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "note": "Banner rotation only: AOE on landing d0*(1+0.12r) and stun 2 s*(1+0.2r). Base dummy hit 0 added; best rotation reading: +1 hit d0*(1+0.12r) per jump."}], "confidence": "C", "note": "Card p3, banner jump mechanics.", "plannerFix": "Planner applies physical 12r and stun 20r always; card: only on contact with a Commending Banner (jump rotation)."},
         "name": "Heroic Arrival",
         "description": "Increases stun duration and damage when colliding with commending banner.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "stun_duration_pct": 0 },
-          "perRank": { "physical_skill_damage": 12, "stun_duration_pct": 20 }
+          "base": {"physical_skill_damage": 0, "stun_duration_pct": 0},
+          "perRank": {"physical_skill_damage": 12, "stun_duration_pct": 20}
         }
       },
       {
         "id": "punctured_organs",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "Value = bleed chance % per use (4r). Bleed amount 0.25r*d0, 5 s."}], "confidence": "C", "note": "Card p4; dot_debuffs.md."},
         "name": "Punctured Organs",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 25 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -753,17 +808,19 @@
       {
         "id": "tactical_distancing",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r; knockback 0.25 s has no dummy DPS."}], "confidence": "C", "note": "Card p5."},
         "name": "Tactical Distancing",
         "description": "Knock monsters back on hit dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "swift_striking",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "Per use chance 2r% of 1r AS and 2r AR stack (buff 109, 3 s, max 15). Average AS bonus ~ r * 0.02r * min(15, 3 s / T_att): depends on T_att, not a constant. Expected hit-count effect 0."}], "confidence": "I", "note": "Card p6 (C/I, stacks average); planner chance 2r and AS 1r, AR 2r match."},
         "name": "Swift Striking",
         "description": "Chance to gain a stack of swift strikes on hit increasing your attack speed and attack rating.",
         "maxRank": 5,
@@ -779,89 +836,97 @@
       {
         "id": "polearm_expertise",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "Crit damage +27.5r% only with polearm weapon type 6 (weapon gate). Chance unchanged."}], "confidence": "C", "note": "Card p7."},
         "name": "Polearm Expertise",
         "description": "Increases the critical strike damage dealt by lance thrust when using polearms.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 27.5 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 27.5}
         }
       },
       {
         "id": "blood_harvester",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "Only while the dummy bleeds (p4 proc). Engine gates by bleed uptime."}], "confidence": "C", "note": "Card p8.", "plannerFix": "Planner extra_damage_bleeding is ungated; in game it applies only while the target bleeds."},
         "name": "Blood Harvester",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "stab_sequence",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [5, 10, 15, 20, 25], "note": "Every 3rd use: LSSD +15r%, range +15r%, slow. Average over uses = +5r% (card)."}], "confidence": "C", "note": "Card p9, asm L372.", "plannerFix": "Planner applies physical 15r on every use; card: every 3rd use, average +5r%."},
         "name": "Stab Sequence",
         "description": "Every third attack with lance thrust is empowered increasing range and damage slowing monsters on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "physical_skill_damage": 15, "skill_range": 15 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 15, "subtree_damage": 5}
         }
       },
       {
         "id": "volatile_irontip",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "note": "Explosion only when the thrust hits the Commending Banner (banner rotation): d0*(1+0.1r), area 1.5*(1+0.06r). Base 0 without banner."}], "confidence": "I", "note": "Card p10; explosion position I.", "plannerFix": "Planner counts physical 10r and area 6r always; card: banner contact only."},
         "name": "Volatile Irontip",
         "description": "Collision with commending banner causes it to explode dealing area of effect damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 10, "area_of_effect": 6 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 10, "area_of_effect": 6}
         }
       },
       {
         "id": "head_collector",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r; pull and stun do not add dummy DPS (stun is not a stack)."}], "confidence": "C", "note": "Card p11."},
         "name": "Head Collector",
         "description": "Lance thrust pulls monsters towards you and stuns them on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "physical_skill_damage": 25, "skill_range": 20 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 20, "subtree_damage": 25}
         }
       },
       {
         "id": "legion_exterminator",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r; whirl transformation still gives 1 hit (no map clear at 360 deg), no banner synergy."}], "confidence": "C", "note": "Card p12."},
         "name": "Legion Exterminator",
         "description": "Unleash a whirl attack with increased area of effect radius. Lance thrust no longer collides with commending banner.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 25, "area_of_effect": 20 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "subtree_damage": 25}
         }
       },
       {
         "id": "trust_in_the_thrust",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 6, 13.5], "per": "use", "replacesProjectileHits": true, "note": "3r extra thrusts x floor(0.5r*d0) each per use (deterministic on the first hit, each aimed at the dummy origin: image_angle = angle - 180, ignoreHost, own hit pack) = 1.5r^2 hits (r = 1..3: 1.5 / 6 / 13.5)."}, {"kind": "projectiles", "byRank": [3, 6, 9], "note": "3r extra thrust objects (projectile_count); their hits are given by the extra_hits above."}], "confidence": "C", "note": "R4 293#1 (C, asm 0x145254ed9-0x1452555d1, 0x145255066, 0x145255542): every new thrust is aimed at the dummy origin and reaches it ~3 frames + 2 activation frames after the first hit; the card's number is confirmed (was I, 'thrust directions I')."},
         "name": "Trust in the Thrust",
         "description": "Unleash a circle of lances thrusting the first target on hit from all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 50, "projectile_count": 3 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 50, "projectile_count": 3}
         }
       },
       {
         "id": "commend_to_onslaught",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "Banner rotation only: 5r extra thrusts from the banner, each d0 (InheritModifiers). Base 0 without banner."}], "confidence": "I", "note": "Card p14.", "plannerFix": "Planner projectile_count 5r on every use; card: only on banner contact."},
         "name": "Commend to Onslaught",
         "description": "Unleash additional lance thrusts towards nearby monsters from commending banner on banner impact.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 5 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 5}
         }
       }
     ]
@@ -930,6 +995,7 @@
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 9 }],
     "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": { "attack_damage": 3.5, "magic_skill_damage": 3 },
       "perRank": { "attack_damage": 3.5, "magic_skill_damage": 3 }
@@ -938,6 +1004,8 @@
   {
     "id": "shield_slam",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (shield strike, period T_att = 0.75/APS_eff, abilityAttackSpeed = true, acc = 0; p11 +6 s and p14 +1.5 s cooldown), melee with the dummy inside the weapon/shield reach (the card gives no separate 160 px value): attackClasses fires 1 weapon hit ([117] = 0) with W*(1 + V1*(1+LSSD)/100) = the main hit -> 1.0. baseProjectiles = 1; perExtraProjectile = 0 (no projectile count; the gear loop 'for i < 1 + RSS391' multiplies only the objects of p11/p12/p14). p14 Captain Tarethiel (boomerang, 2 hits, 1.5 s cooldown, replaces the strike), p11 Groundquake (4 hits by tools/tick_hits.py 88/24, 6 s cooldown), p12 Knight's Templar (1-2 shield hits, modifiers lost), p10 Rogue Shield (4 hits x 0.3r d0 at 3r %) are subskill effects."},
     "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Shield Slam",
@@ -955,7 +1023,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 160, "perLevel": 40 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 260, "perLevel": 40 },
       "flatPhysicalMin": { "base": 6, "perLevel": 0 },
       "flatPhysicalMax": { "base": 16, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 4 }
@@ -976,28 +1046,31 @@
       {
         "id": "obsidian_shield",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r on the V1 addend."}], "confidence": "C", "note": "Card p1."},
         "name": "Obsidian Shield",
         "description": "Increases the damage dealt by shield slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "gradient_strikes",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Attack rating x(1+10%/r); no dummy DPS change."}], "confidence": "C", "note": "Card p6."},
         "name": "Gradient Strikes",
         "description": "Increases the attack rating of shield slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "concussive_bash",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stun chance 10r% per use (3 s); dummy accepts stun; the effect is a gate for p4."}], "confidence": "C", "note": "Card p3."},
         "name": "Concussive Bash",
         "description": "Chance to stun enemies on hit.",
         "maxRank": 5,
@@ -1010,39 +1083,43 @@
       {
         "id": "skull_fracture",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "Only while the dummy is stunned (p3 stun, 3 s). Stun on the same hit counts. Engine gates."}], "confidence": "C", "note": "Card p4.", "plannerFix": "Planner extra_damage_stunned is ungated; in game it needs the dummy stunned."},
         "name": "Skull Fracture",
         "description": "Increases damage dealt to stunned enemies.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "offensive_safeguard",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD += block rating * 0.01 * 50%/r: depends on player block rating (RSS115), engine evaluates."}], "confidence": "C", "note": "Card p5; planner conversion_block_rating 50r."},
         "name": "Offensive Safeguard",
         "description": "Deal increased damage based on the block rating of your shield.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_block_rating": 0 },
-          "perRank": { "conversion_block_rating": 50 }
+          "base": {"conversion_block_rating": 0},
+          "perRank": {"conversion_block_rating": 50}
         }
       },
       {
         "id": "field_coverage",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Area size (25+25r%); dummy covered anyway."}], "confidence": "C", "note": "Card p2."},
         "name": "Field Coverage",
         "description": "Increases the area of effect of shield slam.",
         "maxRank": 2,
         "effects": {
-          "base": { "area_of_effect": 25 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 25},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "violent_bash",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.3, 1.2, 2.7, 4.8, 7.5], "note": "Expected LSSD: roll 3r% per use x 10r% = 0.3*r^2 (in %), V1 part."}], "confidence": "C", "note": "Card p7 (average +0.03r * 0.1r)."},
         "name": "Violent Bash",
         "description": "Chance on attack to increase the damage and area of effect radius of shield slam.",
         "maxRank": 5,
@@ -1058,6 +1135,7 @@
       {
         "id": "hardening_stance",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "Damage return buff on player; dummy does not attack, no dummy DPS."}], "confidence": "C", "note": "Card p8."},
         "name": "Hardening Stance",
         "description": "Chance to increase your damage return on hit for a short duration.",
         "maxRank": 5,
@@ -1073,17 +1151,19 @@
       {
         "id": "vanguard",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "DR stack buff on player; no dummy DPS."}], "confidence": "C", "note": "Card p9."},
         "name": "Vanguard",
         "description": "Gain a stack of vanguard on hit increasing your damage reduction for a short duration.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 0.35 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 0.35}
         }
       },
       {
         "id": "rogue_shield",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "note": "Orbit shield (radius 64 px, 2 s, 4 turns) hits the dummy only when the dummy is 36-92 px from the player. At 160 px: 0. Formula when in range: 0.03r*4*0.3r*d0."}], "confidence": "C", "note": "Card p10.", "plannerFix": "Planner counts the 3r% orbit proc as dummy hits; card: orbit does not reach a dummy at 160 px."},
         "name": "Rogue Shield",
         "description": "Chance to summon an orbiting shield on hit for a short duration.",
         "maxRank": 5,
@@ -1099,28 +1179,31 @@
       {
         "id": "groundquake_bulwark",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [6, 6, 6], "note": "Cooldown +6 s (scaled by haste: 6 s/(1 + 0.005*h_eff)); binds the period."}, {"kind": "extra_hits", "byRank": [6, 6, 6], "per": "use", "note": "Groundquake: lives ~141 frames (fissureTimer reset to tick_frequency = 24 frames, fissures at steps 16, 41, 66, 91, 116, 141, destroyed at 142), tick 0.4 s -> tick_hits(~140; 24) = 6 hits per use (was 4). Rule 24 in-zone value: the object sits 27.3 px in front of the player (r ~58 px), so the dummy is hit only when <= ~97 px from the player; at the strict 160 px: 0 (6 for <= 97 px). Damage per tick taken as d0 (the card gives [777] = 6%/r, ratio unresolved)."}, {"kind": "other", "note": "LSSD += armour * 0.01 * 6%/r (armour conversion); engine evaluates."}], "confidence": "I", "note": "R4 299#1 + Shield Slam body p11 + Planer (2): life 141 frames and 6 hits are C; the geometry (<= 97 px) and the per-tick damage ratio are I. Cooldown 6 s (haste) does not overlap the 2.35 s life.", "plannerFix": "Planner has no 6 s cooldown and no Groundquake hits; card: 6 hits per use in zone (<= 97 px, 0 at 160 px), period 6 s/(1 + 0.005*h_eff)."},
         "name": "Groundquake Bulwark",
         "description": "Smash your shield into the ground unleashing an earthquake pulling monsters towards you on hit. Earthquake damage and area of effect radius are increased based on your armor. Shield slam now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_armor": 0 },
-          "perRank": { "conversion_armor": 6 }
+          "base": {"conversion_armor": 0, "cooldown_added": 6},
+          "perRank": {"conversion_armor": 6, "cooldown_added": 0}
         }
       },
       {
         "id": "knights_templar",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [60, 120, 180], "note": "LSSD +60%/r on V1 addend; shield object uses manual pe (lossy modifiers, rule 32)."}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "note": "Shield throw: 2 hits at 160 px when the landing falls on the dummy (bounces 2r add landings). Shield damage d0 times lossy factor (I)."}], "confidence": "I", "note": "Card p12, bounce landings I.", "plannerFix": "Planner has LSSD 60%/r but no shield hits (1-2 per use)."},
         "name": "Knight´s Templar",
         "description": "Throw your shield with force causing it to bounce from the ground and terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "physical_skill_damage": 60, "projectile_bounces": 2 }
+          "base": {"projectile_bounces": 0, "subtree_damage": 0},
+          "perRank": {"projectile_bounces": 2, "subtree_damage": 60}
         }
       },
       {
         "id": "thorned_aegis",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Thorned Aegis buff (4 s, max 5r stacks) is defensive; 0 on dummy."}], "confidence": "I", "note": "Card p13 (C/I).", "plannerFix": "Planner proc adds physical damage stacks; card: defensive buff, 0 on dummy."},
         "name": "Thorned Aegis",
         "description": "Chance to gain a stack of thorned aegis on hit. Throw shields at monsters when taking damage while thorned aegis is active.",
         "maxRank": 3,
@@ -1136,12 +1219,13 @@
       {
         "id": "captain_tarethiel",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2], "note": "Strike replaced by Captain Tarethiel boomerang: 2 hits per use (out and back). Value = hits per use."}, {"kind": "damage_pct", "byRank": [175, 350, 525], "note": "LSSD +175%/r on the V1 addend of the boomerang."}, {"kind": "cooldown_s", "byRank": [1.5, 1.5, 1.5], "note": "Cooldown +1.5 s (replaces the strike period, 1.5 s)."}], "confidence": "C", "note": "Card p14; player strike in this branch I.", "plannerFix": "Planner gives only LSSD 175%/r; card: strike replaced by a 2-hit boomerang with 1.5 s cooldown."},
         "name": "Captain Tarethiel",
         "description": "Throw your shield with increased size and damage. The shield returns to you after a short duration dealing additional damage. Shield slam now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 175, "area_of_effect": 15 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0, "cooldown_added": 1.5},
+          "perRank": {"area_of_effect": 15, "subtree_damage": 175, "cooldown_added": 0}
         }
       }
     ]
@@ -1149,6 +1233,7 @@
   {
     "id": "taunt",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "shield_lancer",
     "name": "Taunt",
     "kind": "active",
@@ -1170,6 +1255,8 @@
   {
     "id": "honed_defenses",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "0 hits on a lone dummy. The pulse (Shield_Lancer_Honed_Defenses_obj, isAttack 0, circle r = 112*(1 + p3) px around the player, singleHit, 14 frames) is created only when Buff 105 stacks exist (TalentsShieldLancer L911) and has damage[1] = floor(d_s * n * (1 + m)) with n = stacks consumed, d_s = floor(V1*(1 - p10)*(1 + p1 + RSS21*0.01*p5)), V1 = 3.25L. Stacks come only from the player taking or blocking damage or from Shield Wall hits on an enemy (+1 stack per shield hit, max 20 + p7, 8 s refreshed); the dummy never attacks, so without Shield Wall n = 0 and the cast does nothing. Range (rule 24): a ring around the player - a dummy up to ~124 px away (p3 = 0) gets the single pulse, at the strict 160 px 0 unless p3 >= 3 (reach 112*1.45 + 12 = 174 px). With Shield Wall the engine should model it as deferred damage: every Shield Wall hit on the dummy deposits d_s*(1 + m) (m = p9/p12 bonus, thorns excluded) that is paid out in one pulse per cast, i.e. per cast 1 hit of n*d_s with n = (Shield Wall hits per s) * period, capped at 20 + p7; this per-cast stack count is not a constant, so the standalone base is 0.0. baseProjectiles = 1, perExtraProjectile = 0. p13 Royal Defender summons, p11 Sky Bulwark, p12 (x(1 + 0.18r) and 3 s stun at full stacks) are subskill effects."},
     "classId": "shield_lancer",
     "name": "Honed Defenses",
     "kind": "active",
@@ -1203,17 +1290,19 @@
       {
         "id": "fortified_bastion",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Pulse value multiplier; pulse needs stacks (only from player damage or Shield Wall hits) -> 0 on a lone dummy."}], "confidence": "C", "note": "Card p1; rule 31(b)."},
         "name": "Fortified Bastion",
         "description": "Increases the damage dealt by honed defenses.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 8}
         }
       },
       {
         "id": "lucky_defense",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stack chance; no stacks on lone dummy."}], "confidence": "C", "note": "Card p2."},
         "name": "Lucky Defense",
         "description": "Chance to increase the amount of stacks gained when struck.",
         "maxRank": 5,
@@ -1229,67 +1318,73 @@
       {
         "id": "engulfing_wave",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Pulse radius 112*(1+p3) px (reaches 160 px only at p3 >= 3) but the pulse needs stacks; 0 on a lone dummy."}], "confidence": "C", "note": "Card p3."},
         "name": "Engulfing Wave",
         "description": "Increases the area of effect radius of honed defenses.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "thorn_surge",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Thorns are damage return, not pulse damage; 0 on dummy."}], "confidence": "C", "note": "Card p4 (StatDamageReturn)."},
         "name": "Thorn Surge",
         "description": "Increases damage return per stack of honed defenses.",
         "maxRank": 5,
         "effects": {
-          "base": { "damage_return": 0 },
-          "perRank": { "damage_return": 2 }
+          "base": {"damage_return": 0},
+          "perRank": {"damage_return": 2}
         }
       },
       {
         "id": "deadly_resistance",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Armour-scaled pulse value; no pulse without stacks."}], "confidence": "C", "note": "Card p5."},
         "name": "Deadly Resistance",
         "description": "Increases the damage dealt by honed defenses based on your armor.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_armor": 0 },
-          "perRank": { "conversion_armor": 5 }
+          "base": {"conversion_armor": 0},
+          "perRank": {"conversion_armor": 5}
         }
       },
       {
         "id": "hold",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stack duration; no stacks on lone dummy."}], "confidence": "C", "note": "Card p6."},
         "name": "Hold!",
         "description": "Increases the duration of honed defenses.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "optimized_safeguard",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Max stacks; no stacks on lone dummy."}], "confidence": "C", "note": "Card p7."},
         "name": "Optimized Safeguard",
         "description": "Increases the maximum amount of stacks for honed defenses.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_skill_stacks": 0 },
-          "perRank": { "max_skill_stacks": 2 }
+          "base": {"max_skill_stacks": 0},
+          "perRank": {"max_skill_stacks": 2}
         }
       },
       {
         "id": "weakening_counter",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Arcane break on hit by the pulse; no pulse on lone dummy."}], "confidence": "C", "note": "Card p8."},
         "name": "Weakening Counter",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1302,6 +1397,7 @@
       {
         "id": "oppresive_countermeasure",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Ground slam on the attacker when struck; no attacker."}], "confidence": "C", "note": "Card p9."},
         "name": "Oppresive Countermeasure",
         "description": "Chance to unleash a ground slam on the attacker when struck dealing damage based on honed defenses stacks.",
         "maxRank": 5,
@@ -1317,23 +1413,25 @@
       {
         "id": "deflective_fortification",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Reduces pulse value (-10%/r) and raises thorns; 0 on dummy."}], "confidence": "C", "note": "Card p10.", "plannerFix": "Planner has only damage_return 10r; card also reduces the pulse value by 10%/r."},
         "name": "Deflective Fortification",
         "description": "Gain increased damage return per stack of honed defenses decreasing its damage dealt.",
         "maxRank": 5,
         "effects": {
-          "base": { "damage_return": 0 },
-          "perRank": { "damage_return": 10 }
+          "base": {"damage_return": 0},
+          "perRank": {"damage_return": 10}
         }
       },
       {
         "id": "sky_bulwark",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Sky Bulwark on pulse hit; no pulse on lone dummy."}], "confidence": "I", "note": "Card p11 (C/I)."},
         "name": "Sky Bulwark",
         "description": "Giant bulwarks fall down from the sky on hit dealing increased area of effect damage inflicting elemental break.",
         "maxRank": 3,
         "effects": {
-          "base": { "elemental_break": 0 },
-          "perRank": { "elemental_break": 20 }
+          "base": {"elemental_break": 0},
+          "perRank": {"elemental_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1353,48 +1451,37 @@
       {
         "id": "hauling_surge",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Hauling surge at full stacks only; no stacks on lone dummy."}], "confidence": "I", "note": "Card p12 (C/I, slot 2)."},
         "name": "Hauling Surge",
         "description": "Pull monsters towards you dealing increased damage and stunning them when reaching maximum stacks of honed defenses.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 18 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 18}
         }
       },
       {
         "id": "risen_guards",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [5.4, 10.8, 16.2], "per": "use", "note": "already modelled by planner summon_max_amount; Only on a cast with FULL stacks (never on a lone dummy without Shield Wall stacks). Unit = the pulse hit P = floor(d_s*n*(1 + m)) of that cast: N = 3r + RSS360 Royal_Defender_obj (3 / 6 / 9 at RSS360 = 0), each floor(0.2*P)*(1 + LoadSummonStats(0) + RSS353*0.01) per hit (bonus taken 0), ~9 attacks per defender in 5 s life (attack animation 6 frames @12 fps = 0.5 s, attackCooldown 0, melee approach speed unknown, I): N * 9 * 0.2 = 1.8N pulse-equivalents = 5.4 / 10.8 / 16.2. Independent of the pulse range (the defenders walk to the dummy)."}], "confidence": "I", "note": "R4 304#2 (damage formula C asm 0x1466ccd7f; cadence and approach I): the old entry said 0 on a lone dummy; the summon now has a quantified effect on a full-stack cast. Missing: approach speed to the dummy (range 24 px, playerRange 64) and RSS343/RSS259 of the sample build."},
         "name": "Risen Guards",
         "description": "Increases the amount of maximum stacks. At maximum stacks honed defenses calls forth a legion of skeleton warriors fighting on your side for a short duration dealing 10% of the damage of honed defenses.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "max_skill_stacks": 0,
-            "summon_max_amount": 0
-          },
-          "perRank": {
-            "max_skill_stacks": 50,
-            "summon_max_amount": 3
-          }
+          "base": {"max_skill_stacks": 0, "summon_max_amount": 0},
+          "perRank": {"max_skill_stacks": 50, "summon_max_amount": 3}
         }
       },
       {
         "id": "unstoppable_goliath",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "utility", "note": "Life/defence buff 106; no dummy DPS."}], "confidence": "I", "note": "Card p14 (I)."},
         "name": "Unstoppable Goliath",
         "description": "Honed defenses no longer causes ground slam at maximum stacks increasing your maximum life, damage return and life replenish for each stack.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_life": 0,
-            "damage_return": 0,
-            "life_replenish_pct": 0
-          },
-          "perRank": {
-            "increased_life": 2,
-            "damage_return": 10,
-            "life_replenish_pct": 15
-          }
+          "base": {"increased_life": 0, "damage_return": 0, "life_replenish_pct": 0},
+          "perRank": {"increased_life": 2, "damage_return": 10, "life_replenish_pct": 15}
         }
       }
     ]
@@ -1469,8 +1556,8 @@
         "description": "Increases the damage dealt by shield wall.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 8}
         }
       },
       {
@@ -1480,8 +1567,8 @@
         "description": "Increases the durability and duration of shield wall.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0, "skill_duration": 0 },
-          "perRank": { "summon_life": 3, "skill_duration": 12 }
+          "base": {"summon_life": 0, "skill_duration": 0},
+          "perRank": {"summon_life": 3, "skill_duration": 12}
         }
       },
       {
@@ -1491,8 +1578,8 @@
         "description": "Increases the amount of shields in shield wall.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
@@ -1510,8 +1597,8 @@
         "description": "Increases the orbiting radius of shield wall.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
@@ -1521,8 +1608,8 @@
         "description": "Increases the size of shield wall.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
@@ -1532,8 +1619,8 @@
         "description": "Chance to critically hit dealing increased critical strike damage with shield wall.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 20}
         }
       },
       {
@@ -1543,8 +1630,8 @@
         "description": "Chance to inflict poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 30 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1561,8 +1648,8 @@
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1579,8 +1666,8 @@
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 30 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 30}
         }
       },
       {
@@ -1590,16 +1677,8 @@
         "description": "Shield wall orbits in an orbit around you with increased projectile speed and increased amount of shields.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "orbital_skill_speed": 0,
-            "projectile_count": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "orbital_skill_speed": 25,
-            "projectile_count": 1,
-            "arcane_skill_damage": 20
-          }
+          "base": {"orbital_skill_speed": 0, "projectile_count": 0, "arcane_skill_damage": 0},
+          "perRank": {"orbital_skill_speed": 25, "projectile_count": 1, "arcane_skill_damage": 20}
         }
       },
       {
@@ -1609,14 +1688,8 @@
         "description": "Chance to inflict bleeding on hit with increased bleeding frequency.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_bleeding_damage": 0,
-            "increased_bleeding_frequency": 0
-          },
-          "perRank": {
-            "increased_bleeding_damage": 80,
-            "increased_bleeding_frequency": 25
-          }
+          "base": {"increased_bleeding_damage": 0, "increased_bleeding_frequency": 0},
+          "perRank": {"increased_bleeding_damage": 80, "increased_bleeding_frequency": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1633,8 +1706,8 @@
         "description": "Unleash a tornado of shields towards target location pulling nearby monsters towards it.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 25, "projectile_count": 1 }
+          "base": {"arcane_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"arcane_skill_damage": 25, "projectile_count": 1}
         }
       },
       {
@@ -1644,16 +1717,8 @@
         "description": "Blocking projectiles and attacks buff the shields increasing damage and size.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "projectile_size": 0,
-            "max_skill_stacks": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 6,
-            "projectile_size": 4.5,
-            "max_skill_stacks": 8
-          }
+          "base": {"arcane_skill_damage": 0, "projectile_size": 0, "max_skill_stacks": 0},
+          "perRank": {"arcane_skill_damage": 6, "projectile_size": 4.5, "max_skill_stacks": 8}
         }
       }
     ],
@@ -1698,6 +1763,8 @@
   {
     "id": "counter",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "0 hits on the dummy in every configuration. Counter is a reactive 6 s buff (cooldown 15 s, buff 104): all its damage is triggered by the PLAYER taking damage or blocking (PlayerTakeDamage L148-L172: reflected spells [785], accumulated damage [789] -> [790] lances when the buff ends, [792] Counter_World objects with floor(damage taken*(1 + [792][0]))). The dummy has disableAttack = 1 and never hits the player, so no object is ever created. baseProjectiles = 1, perExtraProjectile = 0. All subskills (p1/p13 LSSD, p2 crit, p3-p14 reflect/accumulate/world objects) depend on damage taken and are 0 on the dummy."},
     "weaponRequirement": "shield",
     "classId": "shield_lancer",
     "name": "Counter",
@@ -1735,28 +1802,31 @@
       {
         "id": "sharp_vengeance",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Counter damage comes only from damage taken or blocked by the player; dummy never attacks."}], "confidence": "C", "note": "Card p1."},
         "name": "Sharp Vengeance",
         "description": "Increases the damage dealt by counter.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 8}
         }
       },
       {
         "id": "vengeful_hit",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Crit values apply to counter damage only (triggered by damage taken)."}], "confidence": "C", "note": "Card p2."},
         "name": "Vengeful Hit",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 20 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 5, "spell_crit_damage": 20}
         }
       },
       {
         "id": "double_edge",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Lance throws on being struck; no hits on the dummy (dummy never attacks)."}], "confidence": "I", "note": "Card p3 (readings not fully traced)."},
         "name": "Double Edge",
         "description": "Chance to throw additional lances when struck.",
         "maxRank": 5,
@@ -1772,12 +1842,13 @@
       {
         "id": "rupturing_lance",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Bleed on being struck; no dummy effect."}], "confidence": "I", "note": "Card p4 (readings not fully traced)."},
         "name": "Rupturing Lance",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1790,28 +1861,31 @@
       {
         "id": "spell_reflection",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Reflects damage taken; no dummy effect."}], "confidence": "C", "note": "Card p5."},
         "name": "Spell Reflection",
         "description": "Counter also reflects non-physical projectiles and attacks dealing a portion of the damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 15 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 15}
         }
       },
       {
         "id": "battle_magus",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Duration of the buff only."}], "confidence": "C", "note": "Card p6."},
         "name": "Battle Magus",
         "description": "Increases the duration of counter.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "lusting_blood",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Life on hit trigger by being struck; no dummy effect."}], "confidence": "I", "note": "Card p7."},
         "name": "Lusting Blood",
         "description": "Chance to replenish a portion of your maximum life on hit.",
         "maxRank": 5,
@@ -1827,6 +1901,7 @@
       {
         "id": "stunning_lance",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stun on being struck; no dummy effect."}], "confidence": "I", "note": "Card p8."},
         "name": "Stunning Lance",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -1839,17 +1914,19 @@
       {
         "id": "cheap_counter",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Extra damage vs stunned in counter damage; counter does 0 on dummy."}], "confidence": "C", "note": "Card p9 (p9.s9 into [179])."},
         "name": "Cheap Counter",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "bursting_lances",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Bursting lances on being struck; no dummy effect."}], "confidence": "I", "note": "Card p10."},
         "name": "Bursting Lances",
         "description": "Chance to throw multiple piercing lances around you when struck.",
         "maxRank": 5,
@@ -1865,12 +1942,13 @@
       {
         "id": "insatiable_challenger",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Taunt/armour break on cast; no damage on dummy."}], "confidence": "I", "note": "Card p11 (L884)."},
         "name": "Insatiable Challenger",
         "description": "Casting counter taunts all nearby monsters inflicting armor break.",
         "maxRank": 3,
         "effects": {
-          "base": { "armor_break": 0, "skill_range": 0 },
-          "perRank": { "armor_break": 25, "skill_range": 15 }
+          "base": {"armor_break": 0, "skill_range": 0},
+          "perRank": {"armor_break": 25, "skill_range": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1883,36 +1961,31 @@
       {
         "id": "volley_build_up",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Stores damage taken; 0 on dummy."}], "confidence": "C", "note": "Card p12."},
         "name": "Volley Build-up",
         "description": "During its duration counter stores all damage taken. When expiring throw javelins at nearby monsters unleashing the stored damage taken.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 0 },
-          "perRank": { "splash_of_total_damage": 40 }
+          "base": {"splash_of_total_damage": 0},
+          "perRank": {"splash_of_total_damage": 40}
         }
       },
       {
         "id": "give_no_quarter",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "LSSD and life/mana drain on counter damage; 0 on dummy."}], "confidence": "C", "note": "Card p13."},
         "name": "Give No Quarter",
         "description": "Counter no longer has a duration but instead frequently drains your life and mana. Counter can be activated and deactivated and no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "increased_life": 0,
-            "increased_mana": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 45,
-            "increased_life": -2.5,
-            "increased_mana": -2.5
-          }
+          "base": {"arcane_skill_damage": 0, "increased_life": 0, "increased_mana": 0},
+          "perRank": {"arcane_skill_damage": 45, "increased_life": -2.5, "increased_mana": -2.5}
         }
       },
       {
         "id": "versus_the_world",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Chance to block; counter reflection depends on damage taken."}], "confidence": "C", "note": "Card p14."},
         "name": "Versus the World",
         "description": "Counter no longer throws lances at monsters but gives you a chance to block incoming damage reflecting it back to the attacker with intense power.",
         "maxRank": 3,
@@ -1945,6 +2018,7 @@
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 9 }],
     "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": { "magic_skill_damage": 3.5, "physical_damage_reduction": 1.25 },
       "perRank": { "magic_skill_damage": 3.5, "physical_damage_reduction": 1.25 }

@@ -142,6 +142,87 @@ pub fn cooldown_rate(skill: &SkillSpec, cooldown: f64, haste: Ranged) -> Ranged 
     )
 }
 
+/// METODA 37: the use animation gates every recast except Movement/Blink skills,
+/// which CheckTalentUse lets through while their own sequence still plays.
+/// Only skills whose speed path is known from the game data are locked.
+pub fn animation_locked(skill: &SkillSpec) -> bool {
+    skill.speed_path.is_some()
+        && !skill
+        .tags
+        .as_ref()
+        .is_some_and(|tags| tags.iter().any(|t| t == "Movement" || t == "Blink"))
+}
+
+/// Sequence speed S of the use animation (TalentUseSetSpeed image_speed): the
+/// weapon rate on the attack path, abilityCastSpeed + FCR/100 on the cast path.
+pub fn sequence_speed(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Ranged {
+    if skill.speed_path.as_deref() == Some("attack") {
+        let mut merged = stats.clone();
+        merged.insert("skill_attack_speed_more".into(), rg(scoped, "skill_attack_speed_more"));
+        let more = crate::calc::skills::attack_speed_more(&merged);
+        let base = rg(stats, "attacks_per_second");
+        let ias = rg(stats, "increased_attack_speed");
+        let s = |b: f64, i: f64, m: f64| {
+            (crate::calc::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0)
+        };
+        (s(base.0, ias.0, more.0), s(base.1, ias.1, more.1))
+    } else {
+        let base = skill.base_cast_rate.unwrap_or(1.75);
+        let fcr = rg(stats, "faster_cast_rate");
+        let more = rg(stats, "faster_cast_rate_more");
+        let s = |f: f64, m: f64| ((base + f / 100.0) * (1.0 + m / 100.0)).max(0.0);
+        (s(fcr.0, more.0), s(fcr.1, more.1))
+    }
+}
+
+/// Uses per second allowed by the use animation, or None when the skill is
+/// exempt (Movement/Blink).
+pub fn animation_lock(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Option<Ranged> {
+    if !animation_locked(skill) {
+        return None;
+    }
+    let speed = sequence_speed(skill, stats, scoped);
+    Some((
+        crate::calc::skills::animation_lock_rate(speed.0),
+        crate::calc::skills::animation_lock_rate(speed.1),
+    ))
+}
+
+/// Uses per second of a skill with a known speed path, as TalentUseSetSpeed,
+/// Controller_obj_Step_0 and CheckTalentUse gate it (METODA 34, 35, 37, 28/30):
+/// a cooldown of 0.5 s or less is replaced by the animation period 0.75 / S
+/// (attack) or 1 / S (cast); a longer one ticks with skill haste; a non-
+/// Movement/Blink skill also waits for its use animation; a leap/charge for its
+/// flight. None for skills without a speed path (legacy cadence).
+pub fn game_use_rate(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Option<Ranged> {
+    let path = skill.speed_path.as_deref()?;
+    let speed = sequence_speed(skill, stats, scoped);
+    let floor = |s: f64| if path == "attack" { s / 0.75 } else { s };
+    let mut rate = (floor(speed.0), floor(speed.1));
+    if let Some(cd) = effective_cooldown(skill, scoped).filter(|cd| *cd > 0.5) {
+        rate = cooldown_rate(skill, cd, rg(stats, "skill_haste"));
+    }
+    if let Some(lock) = animation_lock(skill, stats, scoped) {
+        rate = (rate.0.min(lock.0), rate.1.min(lock.1));
+    }
+    if let Some(period) = use_period_rate(skill, stats, scoped) {
+        rate = (rate.0.min(period.0), rate.1.min(period.1));
+    }
+    Some(rate)
+}
+
+/// Uses per second of a leap/charge skill: trigger frames + flight frames.
+pub fn use_period_rate(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Option<Ranged> {
+    let period = skill.use_period.as_ref()?;
+    let speed = sequence_speed(skill, stats, scoped);
+    let rate = |s: f64| {
+        let trigger = if period.trigger == Some(false) { 0.0 } else { crate::calc::skills::trigger_frames(s) };
+        let frames = trigger + period.extra_frames.max(0.0);
+        if frames > 0.0 { 60.0 / frames } else { 0.0 }
+    };
+    Some((rate(speed.0), rate(speed.1)))
+}
+
 fn uses_weapon_rate(skill: &SkillSpec) -> bool {
     skill.uses_attack_speed || matches!(skill.attack_kind, Some(AttackKindSpec::Attack))
 }
@@ -236,6 +317,11 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
         let (cap_min, cap_max) = cooldown_rate(input.skill, cooldown, rg(stats, "skill_haste"));
         cast_rate_min = Some(cast_rate_min.map_or(cap_min, |rate| rate.min(cap_min)));
         cast_rate_max = Some(cast_rate_max.map_or(cap_max, |rate| rate.min(cap_max)));
+    }
+    // Skills with a speed path from the game data use the game's own gating.
+    if let Some(rate) = game_use_rate(input.skill, stats, stats) {
+        cast_rate_min = Some(rate.0);
+        cast_rate_max = Some(rate.1);
     }
     let entity_rate = affix_tags::entity_tag_for(input.tags)
         .map(|kind| entity_rate(kind, input.tags, stats, input.entity_rates));
@@ -684,8 +770,10 @@ mod tests {
         // the weapon's two endpoints are preserved. IAS adds on min(APS, 0.75).
         bonuses.insert("increased_attack_speed".into(), (100.0, 200.0));
         let slow_weapon = cost(buckshot, 1.0, &bonuses);
-        assert!(close(slow_weapon.cast_rate_min.unwrap(), 0.1));
-        assert!(close(slow_weapon.cast_rate_max.unwrap(), 0.24));
+        // Swing speeds 0.1 / 0.24; the use animation (METODA 37) then allows
+        // 60 / (ceil(72 / S) + 1) uses per second.
+        assert!(close(slow_weapon.cast_rate_min.unwrap(), crate::calc::skills::animation_lock_rate(0.1)));
+        assert!(close(slow_weapon.cast_rate_max.unwrap(), crate::calc::skills::animation_lock_rate(0.24)));
     }
 
     #[test]
@@ -819,5 +907,24 @@ mod tests {
             entity_rate("Sentry", &tags, &stats(&[]), &HashMap::new()).base,
             DEFAULT_ENTITY_RATE
         );
+    }
+
+    #[test]
+    fn charge_without_trigger_frames_waits_only_for_the_charge() {
+        let skill = |trigger| SkillSpec {
+            base_cast_rate: Some(2.0),
+            use_period: Some(crate::calc::types::UsePeriodSpec {
+                kind: "charge".into(),
+                extra_frames: 9.0,
+                trigger,
+                note: None,
+            }),
+            ..Default::default()
+        };
+        let none = stats(&[]);
+        let leap = use_period_rate(&skill(None), &none, &none).unwrap();
+        let charge = use_period_rate(&skill(Some(false)), &none, &none).unwrap();
+        assert!(close(leap.0, 60.0 / 22.0));
+        assert!(close(charge.0, 60.0 / 9.0));
     }
 }

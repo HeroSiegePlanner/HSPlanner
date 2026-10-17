@@ -2,6 +2,8 @@
   {
     "id": "sand_carver",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.86, "baseProjectiles": 3, "perExtraProjectile": 0.29, "confidence": "I", "note": "Per attack, IN-ZONE (melee attack skill: dummy in front of the player inside the weapon-strike reach; the reach/mask of the weapon is item data and not in the scripts, so D is I): 1 weapon strike (projEffect[1020], rule 6) = 1 hit + the sand grains: on the first hit [270] = n = 3 + RSS391 + p1.s9 Sand_obj are created at the PLAYER (6 px out) at absolute angles 360/n*i (0, 120, 240 deg, independent of the aim), fly 4.5 px/frame (mask Mask_Ball_spr r 16, no pack, ~180 px) with damage[0] = floor(d0*(1 + p2)) = the strike's own physical damage, so a grain is worth exactly 1 main hit. A grain hits the dummy at distance D from the player while its angle is within asin(28/D) of the dummy's: E(D) = n for D <= 28 px, n*asin(28/D)/180 deg beyond (expected over the dummy azimuth; for a fixed azimuth an integer 0 or 1): n = 3 -> E = 1.15 / 0.74 / 0.57 at D = 30 / 40 / 50 px (1 + E = 2.15 / 1.74 / 1.57; D = 28: 4.0, D = 80: 1.34). Convention: dummy at the middle of the strike reach D ~ 30-50 px -> 1 + E in [1.57, 2.15], midpoint 1.86 (D = 40 px: 1.74). baseProjectiles = 3 grains; perExtraProjectile = E/n averaged over D = 30-50 px = (0.383 + 0.189)/2 = 0.29 per extra grain (p1 +2 grains per rank). p5 vortex (22 hits at 5 %*r), p12 parasites (+4 per hit), p14 Desert's Blade, p11 crit grains are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Sand Carver",
@@ -16,9 +18,11 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "manaCostFormula": { "base": 3.75, "perLevel": 0.95 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 106, "perLevel": 32 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 206, "perLevel": 32 },
       "flatPhysicalMin": { "base": 3, "perLevel": 1 },
       "flatPhysicalMax": { "base": 12, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -39,34 +43,37 @@
       {
         "id": "desert_mix",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.49, 0.99, 1.48, 1.97], "per": "use", "note": "2 grains/r, each 2*asin(28/40)/360 = 0.247 at D=40 px (planner uses 0.29 = D~35 px); grains are 1 main hit each"}], "confidence": "C", "note": "card row p1 + R3 E(D)", "plannerFix": "planner gives projectile_count 2r converted at 0.29/grain (D~35); card D=40 gives 0.25/grain; close, ok in magnitude"},
         "name": "Desert Mix",
         "description": "Increases the amount of sand thrown.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "concentrated_sand",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.11, 0.22, 0.33, 0.44, 0.56], "per": "use", "note": "grain-only multiplier (1+0.15r) on base grain hits E=3*0.247=0.74 at D=40: extra = 0.74*0.15r; does not touch the strike"}], "confidence": "C", "note": "card row p2 (grain-only multiplier)"},
         "name": "Concentrated Sand",
         "description": "Increases the damage dealt by sand carver.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 15 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 15}
         }
       },
       {
         "id": "glass_shards",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [40, 80, 120, 160, 200], "note": "bleed per grain hit = floor(d0*p3.s9%) (40 % of d0 per rank); chance 6r% rolled ONCE per cast, then every grain applies it"}], "confidence": "C", "note": "card row p3", "plannerFix": "planner uses on_hit chance per hit; card: chance is rolled once per cast and bleed applies only to grains"},
         "name": "Glass Shards",
         "description": "Thrown sand has a chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 40 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -79,17 +86,19 @@
       {
         "id": "special_pouch",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "+% vs boss only; training dummy is not a boss"}], "confidence": "I", "note": "card row p4 (I)"},
         "name": "Special Pouch",
         "description": "Increases the damage dealt to bosses by sand carver.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 10 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 10}
         }
       },
       {
         "id": "vortex_master",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.975, 1.95, 2.925, 3.9], "per": "use", "note": "chance 5r% per cast -> vortex on the strike hit: tick_hits(298..320, 15) = 19-20 hits at d0 (vortexSize 0.25, 5 s + ~20 fade frames, tick 0.25 s); midpoint 19.5: 0.05r*19.5 = 0.975r per use (R4 74#0; was 22 from the naive formula). Vortices of consecutive attacks overlap in time (their hits add)."}], "confidence": "C", "note": "R4 74#0 (card row p5 + tick_hits); fade frames are I (range 19-20)", "plannerFix": "planner proc is on_kill; card: on_hit of the strike (vortex lives 5 s and ticks on the dummy)"},
         "name": "Vortex Master",
         "description": "Chance on kill to spawn a small sand vortex.",
         "maxRank": 4,
@@ -98,6 +107,7 @@
       {
         "id": "combat_skills",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "dodge buff 30 (15r) for 3 s on proc; no dummy damage"}], "confidence": "C", "note": "card row p6"},
         "name": "Combat Skills",
         "description": "Chance on hit to gain increased dodge chance for a short period.",
         "maxRank": 5,
@@ -113,45 +123,49 @@
       {
         "id": "swift_strikes",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [8, 16, 24, 32, 40, 48], "note": "skill attack speed +8%/r (more)"}], "confidence": "C", "note": "card row p7 (TalentUseSetSpeed)"},
         "name": "Swift Strikes",
         "description": "Increases attack speed when using sand carver.",
         "maxRank": 6,
         "effects": {
-          "base": { "skill_attack_speed_more": 0 },
-          "perRank": { "skill_attack_speed_more": 8 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 8}
         }
       },
       {
         "id": "raw_power",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r; applies to the V part of the strike and to grains via d0"}], "confidence": "C", "note": "card row p8"},
         "name": "Raw Power",
         "description": "Increases attack damage dealt by sand carver.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "headwind",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile speed 4.5*(1+0.2r) for grains; no change in hit count (I)"}], "confidence": "I", "note": "card row p9"},
         "name": "Headwind",
         "description": "Increases the projectile speed of sand thrown.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 20 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 20}
         }
       },
       {
         "id": "sand_infusion",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.25, 1.5, 1.75, 2.0, 2.25], "note": "physical break 25%*r for 5 s on the strike (grains do not copy it); uptime 1-(1-0.04r)^(5 s/T_atak) so this is the 100% uptime upper bound"}], "confidence": "C", "note": "card row p10", "plannerFix": "planner also gives arcane_break and treats it as on_hit chance 4r; card: physical break only (arcane break is for other skills), uptime < 100% for low rank"},
         "name": "Sand Infusion",
         "description": "Chance to inflict armor break and arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0, "armor_break": 0 },
-          "perRank": { "arcane_break": 25, "armor_break": 25 }
+          "base": {"arcane_break": 0, "armor_break": 0},
+          "perRank": {"arcane_break": 25, "armor_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -165,28 +179,35 @@
       {
         "id": "eviscerate",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45%/r (unconditional)"}, {"kind": "extra_hits", "byRank": [1.23, 2.47, 3.7], "per": "use", "note": "on CRIT of the strike only: +5r grains x 0.247 each; value is for 100% crit chance, multiply by P(crit)"}], "confidence": "I", "note": "card row p11 + grain E", "plannerFix": "planner gives 5r projectile grains unconditionally; card: extra grains only on a critical strike"},
         "name": "Eviscerate",
         "description": "Critical strikes cause the nomad to throw sand in a circle around him stunning and dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 45, "projectile_count": 5 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 5, "subtree_damage": 45}
         }
       },
       {
         "id": "parasitical_sand",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [11.83, 16.7, 21.58], "per": "use", "note": "every hit (strike + each grain, 1+E = 1.74 at D=40) spawns a parasite: 4 hits of d*(1+0.7r) each: 4*(1+0.7r)*1.74"}], "confidence": "C", "note": "card row p12 (handler, Create, Destroy); explosion hit I", "plannerFix": "planner gives physical_skill_damage 70r on the skill; card: 4 extra parasite hits per hit of strike and grains, damage d*(1+0.7r)"},
         "name": "Parasitical Sand",
         "description": "Thrown sand now sticks to the targets dealing damage over time for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 70 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 70}
         }
       },
       {
         "id": "piercing_sands",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40%/r unconditional; branch (2r split grains) gives 0 on the dummy"}], "confidence": "C", "note": "card row p13", "plannerFix": "planner gates LSSD behind a 15%/r proc; card: LSSD is unconditional 40%/r"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
+        },
         "name": "Piercing Sands",
         "description": "Thrown sand is now piercing and has a chance to fork on hit.",
         "maxRank": 3,
@@ -202,6 +223,7 @@
       {
         "id": "deserts_blade",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.11, 0.45, 1.01], "per": "use", "note": "Desert's Blade: chance 0.15r per cast x one hit of 0.75r*W-damage: 0.15r*0.75r"}], "confidence": "I", "note": "card row p14 (blade path I)", "plannerFix": "planner adds +75%/r to the same hit; card: separate blade object with its own hit at 0.75r of the strike, chance 15%*r"},
         "name": "Desert´s Blade",
         "description": "Chance on attack to summon a big tornado pulling in and dealing additional damage to nearby monsters.",
         "maxRank": 3,
@@ -219,6 +241,8 @@
   {
     "id": "cloud_of_sand",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per use, averaged over the two-cast cycle: a cycle is 2 uses - use 1 throws a Cloud_of_Sand_obj (player-as-cloud, 8 px/frame for 2.25 s, mask Mask_Ball r 16, singleHit, no tick) along the aim line over the dummy = 1 hit if its track crosses the dummy (dummy on the aim line, yes); use 2 'lands' (the branch runs when !tupm[8] and p13 = 0 and the cloud exists, not requiring hasSafeSpot for the hit): the player jumps to the cloud's position (refreshed every 3 frames), a Cloud_of_Sand_Aoe_obj (Nomad_Sand_Tremors_spr ellipse 240x200, 0.1 s, singleHit) appears there = 1 hit if the cloud age at landing is <= ~30 frames (a landing cast right after the cloud cast: ~24 frames = ~190 px, OK) and the cloud is destroyed + SetCooldown(75, 0.75 s). So 2 hits per 2-use cycle = 1.0 hit per use; every hit is one object carrying BOTH damage[1] (arcane V1) and damage[0] = W*V2% (physical) in the same hit. Blink is not a leap: casting is not blocked ([142] not set). period stays null: the blink/cooldown happens only in the second use of each pair; the cycle of 2 uses is ~T_cast + t_wyw + 0.75 s = ~1.25-1.40 s (T_cast = 0.4 s at c = 2.5; t_wyw 0.11-0.22 s, I) instead of 2/castRate; with p13 Desert's Echo the skill never lands (every use makes clouds, 1 hit each, no cooldown), p14 Ascension adds a 10 s cooldown. Geometry/timing I; p3 tornadoes, p6, p12 vortices (22 hits) are subskill effects."},
     "classId": "nomad",
     "name": "Cloud of Sand",
     "kind": "active",
@@ -232,7 +256,7 @@
     "tree": "Wanderer",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 6, "perLevel": 16 },
+    "damageFormula": { "base": 4.75, "perLevel": 15.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Sand Carver", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -251,111 +275,121 @@
       {
         "id": "breeze",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish; no read in script"}], "confidence": "C", "note": "card row p1"},
         "name": "Breeze",
         "description": "Decreases movement diminish when using cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "deserts_spirit",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [5, 10, 15, 20, 25], "note": "TalentUseSetSpeed: cast rate +5%/r"}], "confidence": "C", "note": "card row p2"},
         "name": "Desert's Spirit",
         "description": "Increases cast rate when using cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 5 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 5}
         }
       },
       {
         "id": "sand_twisters",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5, 2.0, 2.5], "per": "use", "note": "r Orbiting tornadoes at the landing point per cycle, <=1 hit each (singleHit, no tick); cycle = 2 uses so per use = r/2 (upper bound, I)"}], "confidence": "I", "note": "card row p3", "plannerFix": "planner projectile_count 1r converts at perExtraProjectile 0, so it gives 0 hits; card: r tornado hits per landing"},
         "name": "Sand Twisters",
         "description": "Teleporting into the cloud now unleashes multiple sand tornados around the cloud.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 20, "projectile_count": 1 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 20, "projectile_count": 1}
         }
       },
       {
         "id": "deserts_will",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card row p4"},
         "name": "Desert's Will",
         "description": "Decreases mana cost when using cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "deserts_endurance",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30, 45, 60, 75], "note": "cloud lifetime 2.25*(1+0.15r) s; singleHit so no hit change (zero effect on dummy hits)"}], "confidence": "C", "note": "card row p5"},
         "name": "Desert's Endurance",
         "description": "Increases the duration of cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "sandbender",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.355, 0.71, 1.065, 1.42, 1.775], "per": "use", "note": "Nomad_Cloud_Trail_obj (one per >36 px of cloud track, singleHit, own map, 2 s, snake-like flight) with damage[1] = floor(d1*0.2*r) ARCANE ONLY: ~3.55 trail hits per 2-use cycle (dummy on the cloud's flight line, rule 38; 2.55 when the landing happens at cloud age 17-19 frames; 3.63/2.63 for the opposite lateral offset; 3.6 for p7 r2-r3 speed 9.6-10.4); per use = 3.55*0.2r/2. UNIT: d1-hits (not main-hit units): multiply by the arcane share d1/(d1 + d0) of the cloud hit for main-hit equivalents, so this is an upper bound. With cursor (x, y-24) the card had 3.1/2.1 per cycle."}], "confidence": "I", "note": "R4 75#1 + PoR4 (rule 38) + Resztki D (3.55/2.55); mask approximated by an ellipse (+-0.1), spawn spacing C", "plannerFix": "planner of_total_damage 20r is an unverified guess; card: separate Nomad_Cloud_Trail_obj hits of floor(d1*0.2r) arcane (~3.55 per cycle)"},
         "name": "Sandbender",
         "description": "Cloud of sand now leaves behind a trail of tornados.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 20 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 20}
         }
       },
       {
         "id": "zephyr",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "cloud speed 8*(1+0.1r): shorter flight, not in cycle formula"}], "confidence": "C", "note": "card row p7"},
         "name": "Zephyr",
         "description": "Increases the projectile speed of cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "heavy_sand",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60], "note": "LSSD += 12%/r on both the arcane cloud and the AoE"}], "confidence": "C", "note": "card row p8"},
         "name": "Heavy Sand",
         "description": "Increases the damage dealt by cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "dust_storm",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "AoE size 20%/r of the landing area; dummy already inside"}], "confidence": "I", "note": "card row p9"},
         "name": "Dust Storm",
         "description": "Increases the size of cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "hand_of_the_oasis",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.05, 1.1, 1.15, 1.2, 1.25], "note": "arcane break 10%*r from the 2nd hit of each cycle; averaged over the 2-use cycle: 1+0.5*0.1r. Arcane part only (upper bound)"}], "confidence": "C", "note": "card row p10", "plannerFix": "planner applies arcane_break from the first hit (on_hit chance 100); card: break starts after the first hit of the cycle"},
         "name": "Hand of the Oasis",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 10 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -368,45 +402,49 @@
       {
         "id": "cloud_bender",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r"}, {"kind": "utility", "note": "cloudBender: cloud steers toward cursor, speed x0.75, AoE +30%/r"}], "confidence": "C", "note": "card row p11"},
         "name": "Cloud Bender",
         "description": "The cloud is now under your control gaining increased size and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 35, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 30, "subtree_damage": 35}
         }
       },
       {
         "id": "field_of_quicksand",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}, {"kind": "extra_hits", "byRank": [2.925, 5.85, 8.775], "per": "use", "note": "landing places 3r Sand_Vortex (vortexSize 0.35, default 5 s + ~20 fade frames, tick 15 frames: tick_hits = 19-20, midpoint 19.5 ticks of d1+d0, was 22) on a 96 px ring; dummy under one vortex with P = 0.1*3r (arc coverage), per use = 19.5*P/2 (I; needs landing 96 px from the dummy)"}], "confidence": "I", "note": "card row p12 (R4: 19-20 vortex hits via tick_hits, was 22)", "plannerFix": "planner gives projectile_count 3r with perExtraProjectile 0 (0 hits); vortex geometry (96 px ring) is missing"},
         "name": "Field of Quicksand",
         "description": "Teleporting to the cloud now summons multiple small sand vortexes around it.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 20, "projectile_count": 3 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 20}
         }
       },
       {
         "id": "deserts_echo",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}, {"kind": "extra_hits", "byRank": [2, 4, 6], "per": "use", "note": "2r extra clouds per cast, each crossing the aimed dummy: +2r hits per use"}, {"kind": "cooldown_s", "byRank": [-0.75, -0.75, -0.75], "note": "branch removes landing and its 0.75 s cooldown; period becomes T_cast"}], "confidence": "I", "note": "card row p13 + R3 'Z p13'", "plannerFix": "planner gives projectile_count 2r with perExtraProjectile 0 (no hits), and the landing/cooldown change is missing"},
         "name": "Desert´s Echo",
         "description": "Summon multiple clouds dealing increased damage. You are no longer able to teleport into the cloud.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 15, "projectile_count": 2 }
+          "base": {"projectile_count": 0, "cooldown_added": -0.75, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "cooldown_added": 0, "subtree_damage": 15}
         }
       },
       {
         "id": "ascension",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [9.25, 9.25, 9.25], "note": "landing sets SetCooldown(75, 10 s) instead of 0.75 s: +9.25 s per cycle"}, {"kind": "utility", "note": "BuffAdd 88 for 0.5 s per rank at landing (buff unknown)"}], "confidence": "C", "note": "card row p14", "plannerFix": "planner gives skill_duration 0.5r; card: landing cooldown becomes 10 s (cycle >= 10 s)"},
         "name": "Ascension",
         "description": "Teleporting to the cloud now renders you immortal for a short period. Cloud of sand now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 0.5 }
+          "base": {"skill_duration": 0, "cooldown_added": 9.25},
+          "perRank": {"skill_duration": 0.5, "cooldown_added": 0}
         }
       }
     ]
@@ -414,6 +452,8 @@
   {
     "id": "sand_tremors",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack skill, dummy within the weapon reach): 1 weapon strike (rule 6) + 1 Sand_Tremors_obj wave created at player + lengthdir(32, aim) with image_angle = aim, scale 1 (mask Nomad_Sand_Tremors_spr: ellipse 240x200 centred 50 px in front of the origin, semi-axes 120 x 100, reaches 202 px; no tick, singleHit, lives until the end of its 15-frame animation = 0.375 s): the dummy at 160 px (128 px from the origin) is inside with >= 30 px margin = 1 hit -> 2 hits per attack. Both the strike and the wave deal floor(W*(1 + V1_SC/100)) with V1_SC = the SAND CARVER value (106 + 32*L_SC; strike without LSSD, wave x(1 + LSSD), equal at LSSD = 0) so the wave = 1 main hit. perExtraProjectile = 0 (no projectiles). p1 extra tremors (+p1.s9 hits at 5 %*r per cast), p8 tornado, p11 storm aura (~3 hits/s), p12 shockwave, p13 frost DoT are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Sand Tremors",
@@ -451,6 +491,7 @@
       {
         "id": "amplified_frequency",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.2, 0.45, 0.8, 1.25], "per": "use", "note": "extra waves = r (extraTremors) with chance 5r% per cast: expected 0.05r*r per use, each a 1 main hit wave at the same place"}], "confidence": "C", "note": "card row p1", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0 and chance on hit; card: r extra waves at 5%*r chance"},
         "name": "Amplified Frequency",
         "description": "Chance on attack to spawn additional tremors.",
         "maxRank": 5,
@@ -466,23 +507,25 @@
       {
         "id": "light_footwork",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "no read in script"}], "confidence": "C", "note": "card row p2"},
         "name": "Light Footwork",
         "description": "Decreases movement diminish when using sand tremors.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "oasis_impaler",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "bleed = floor(hit*35%*r), chance 5r% per hit (on wave and strike)"}], "confidence": "C", "note": "card row p3"},
         "name": "Oasis Impaler",
         "description": "Chance on hit to inflict bleeding for a portion of the damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 35 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -495,50 +538,55 @@
       {
         "id": "internal_bleeding",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [10, 20, 30, 40, 50], "note": "+% vs bleeding (applies to p3 bleed)"}], "confidence": "C", "note": "card row p4"},
         "name": "Internal Bleeding",
         "description": "Increases damage to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "waves_of_despair",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "AoE 15%/r; dummy already inside the wave"}], "confidence": "I", "note": "card row p5"},
         "name": "Waves of Despair",
         "description": "Increases the area of effect radius of sand tremors.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "shock_therapy",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on the WAVE only (the strike has no LSSD)"}], "confidence": "C", "note": "card row p6", "plannerFix": "planner applies physical_skill_damage to the whole skill; card: LSSD applies to the wave hit only (about half of the hits)"},
         "name": "Shock Therapy",
         "description": "Increases the damage dealt by sand tremors.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "tremors_reach",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "range +25%/r and AoE +15%/r"}], "confidence": "C", "note": "card row p7"},
         "name": "Tremor´s Reach",
         "description": "Increases attack range and area of effect radius when using sand tremors.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0, "area_of_effect": 0 },
-          "perRank": { "skill_range": 25, "area_of_effect": 15 }
+          "base": {"skill_range": 0, "area_of_effect": 0},
+          "perRank": {"skill_range": 25, "area_of_effect": 15}
         }
       },
       {
         "id": "conjuring_winds",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.15, 0.24, 0.36, 0.48], "per": "use", "note": "tornado on the dummy with damage d0*(1+0.12r): chance 6r% * (1+0.12r) per use"}], "confidence": "I", "note": "card row p8", "plannerFix": "planner gives physical_skill_damage 12r on the proc; card: a separate tornado hit with d0*(1+0.12r)"},
         "name": "Conjuring Winds",
         "description": "Chance on hit to send a sand tornado towards the target dealing additional damage.",
         "maxRank": 5,
@@ -554,62 +602,61 @@
       {
         "id": "exchange_of_life",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "enemy buff 53 for 3 s; no damage read"}], "confidence": "C", "note": "card row p9", "plannerFix": "planner gives life_replenish_pct; the card reads [64] as an enemy buff 53 with no damage (planner life replenish not verified)"},
         "name": "Exchange of Life",
         "description": "Killing monsters with sand tremors restores your life.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1}
         }
       },
       {
         "id": "area_of_impact",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [18, 36, 54, 72, 90], "note": "value is crit DAMAGE % (not chance) on strike and wave: [1019] = 18%*r"}], "confidence": "C", "note": "card row p10"},
         "name": "Area of Impact",
         "description": "Increases critical strike damage dealt by sand tremors.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 18 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 18}
         }
       },
       {
         "id": "shrouding_sand",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "note": "Storm aura Nomad_Sand_Tremors_Storm_obj (no rotation, stands at (player.x, player.y + 6), mask = Nomad_Sand_Tremors_spr ellipse 240x200 x scale s, centre 50*s px to the RIGHT of the player, semi-axes 120s x 100s): tick 0.33 s -> one hit every 21 frames (~2.86/s) of floor(d0*(1 + 0.35r)) (first hit d0*(1 + p8)) while the dummy is inside. A dummy 160 px from the player is inside only for azimuths in a sector to the right: +-32 deg at s = 1, +-54 (s 1.2), +-80 (1.5), +-108 (1.8), +-135 (2.0), none for s < 0.87; the scenario dummy at azimuth 0 is inside for s >= 0.87. s starts at 1, grows 0.1*(1 + 0.08r) per wave hit (max 2) and shrinks 0.005 per frame (0.005*P per attack period P): the storm survives only if 0.1*(1 + [416]) >= 0.005*P, otherwise s falls below 0.87 after a few attacks (e.g. P = 37-42 frames: -0.185..-0.21 per attack vs +0.108/0.116/0.124 gained at r1/2/3). Hits per attack therefore depend on attack speed and azimuth and cannot be given as one number (I)."}], "confidence": "I", "note": "R4 79#2 (card row p11, C/I): mask and tick C, ellipse shape and dynamics I", "plannerFix": "planner gives physical_skill_damage 35r and duration 8r; card: storm aura, tick 21 frames, damage d0*(1 + 0.35r), only inside the right-hand ellipse, scale decays 0.005/frame and is fed by wave hits"},
         "name": "Shrouding Sand",
         "description": "Striking monsters now enshrouds you in a sandstorm which gradually shrinks and disappears. Striking additional enemies causes it to grow larger and last longer.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "physical_skill_damage": 35, "skill_duration": 8 }
+          "base": {"physical_skill_damage": 0, "skill_duration": 0},
+          "perRank": {"physical_skill_damage": 35, "skill_duration": 8}
         }
       },
       {
         "id": "pulsating_tremors",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "first Shockwave spawns on the dummy with d0: +1 hit per use; later shockwaves are outside (I)"}], "confidence": "I", "note": "card row p12", "plannerFix": "planner projectile_count 1r with perExtraProjectile 0 (no hits); card: +1 shockwave hit at the dummy"},
         "name": "Pulsating Tremors",
         "description": "Tremors now travel a short distance dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 1 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 1},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "night_at_the_desert",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30%/r on the WAVE only"}, {"kind": "dot", "byRank": [115, 230, 345], "note": "freeze (DoT) = floor(hit*115%*r) on the wave, chance 100"}], "confidence": "C", "note": "card row p13", "plannerFix": "planner applies physical_skill_damage to the whole skill; card: LSSD on the wave only"},
         "name": "Night at the Desert",
         "description": "Tremors deal increased damage and inflict permafrost on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "increased_permafrost_damage": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 30,
-            "increased_permafrost_damage": 115
-          }
+          "base": {"increased_permafrost_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_permafrost_damage": 115, "subtree_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -622,12 +669,13 @@
       {
         "id": "dune_warrior",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [7.5, 30.0, 67.5], "per": "use", "note": "burst on every 6th wave hit (5 stacks of buff 31, the 6th consumes them): 3r Orbiting_Tornado_obj created 8 px from the dummy centre, each hits once (wave has no hit pack, singleHitPackId = -1) for floor(d0_wave*3r*5) = 15r x the wave hit (value 3r x 5 stacks, no x0.01). Per attack: 0.5r tornadoes x 15r = 7.5r^2 main-hit units. Formula read from asm (C); I that BuffAdd stores the value 1:1 and the missing x0.01 is not a game bug (if it were, 0.075r^2)."}], "confidence": "I", "note": "R4 79#1 (card row p14): +0.5r hits per attack at 15r x d0; units and BuffAdd value are I", "plannerFix": "planner gives physical 3r and projectile_count 3r; card (R4): a burst every 6th wave hit makes 3r tornadoes that each hit the dummy once for floor(d0*3r*5)"},
         "name": "Dune Warrior",
         "description": "Striking monsters adds a stack of dune warrior sending multiple tornados dealing additional damage in an arc upon reaching maximum stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 3, "projectile_count": 3 }
+          "base": {"physical_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"physical_skill_damage": 3, "projectile_count": 3}
         }
       }
     ]
@@ -672,6 +720,8 @@
     "id": "sand_gush",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 32.8, "baseProjectiles": 2, "perExtraProjectile": 6.9, "confidence": "I", "note": "Per cast, IN-ZONE per rule 24 (dummy within 20 px of the player, the waves appear around the player at 8 + random(64) px; at the strict 160 px convention only ~0.1 wave + ~0.4 tornado hit): 1 Sand_Gush_obj on the player + the Nomad_Sand_Gush_Controller_obj making skillAmount = 18 waves 4.5 frames apart, each a Sand_Gush_obj (singleHit, own map, mask ellipse 201x230, scale 0.1 -> 0.7 by lerp 0.2/frame, 7 deg/frame, 40 frames, active from frame 2) centred at host + lengthdir(8 + random(64), random(360)): hits of the 18 waves vs dummy distance D: 18 for D <= 20 px, 17.7 / 16.9 / 15.7 / 14.3 / 12.9 / 11.0 / 8.8 / 7.0 / 3.2 / 1.2 / 0.1 at D = 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 / 120 / 140 / 160 px; plus the player-centred wave -> 19 wave hits. Tornadoes (Orbiting_Tornado_obj, n = XSP(2 + p7.s9 + p14.s10) = 2 per wave and a script volley, 1 hit each at most, no tick, damage[1] = V1 without LSSD = the wave hit at LSSD = 0, so ratio 1): the controller tornadoes orbit their own start point (no setHost) and hit with P = 0.38 each for D <= 20 px (18 waves x 0.38 = 6.84 per tornado of the n): 14.0 / 13.8 / 13.6 at D = 0 / 10 / 20 px (midpoint 13.8 used; 12.6 at 40, 6.8 at 80, 0 at 160); script tornadoes 0 for D <= 30 px. Total 19 + 13.8 = 32.8 main hits. baseProjectiles = 2 tornadoes per wave; perExtraProjectile = 13.8/2 = 6.9 hits per additional tornado. Waves C (counts/constants), tornado orbit model I. p12 Sandstorm adds an 8 s cooldown; p7/p14 more tornadoes, p11 cyclones are subskill effects."},
     "classId": "nomad",
     "name": "Sand Gush",
     "kind": "active",
@@ -686,7 +736,7 @@
     "tree": "Wanderer",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
-    "damageFormula": { "base": 1, "perLevel": 16 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 3.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Sand Entombment", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -705,17 +755,19 @@
       {
         "id": "deserts_sand",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "maxScale 0.7*(1+0.16r): waves bigger, dummy already within 20 px so no hit change at D<=20"}], "confidence": "C", "note": "card row p1"},
         "name": "Desert´s Sand",
         "description": "Increases the area of effect radius of sand gush.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 16 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 16}
         }
       },
       {
         "id": "gushing_winds",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.93, 3.86, 5.79], "per": "use", "note": "tornado damage x(1+0.14r) (not a chance): 13.8 tornado hits per cast at D<=20 times 0.14r; tornado size 0.6*(1+p2.s10%) effect not quantified"}], "confidence": "C", "note": "card row p2", "plannerFix": "planner makes it on_cast chance 14r with arcane +14r on the whole skill; card: deterministic bonus on tornado hits only"},
         "name": "Gushing Winds",
         "description": "Chance on cast to increase the size and damage of tornados.",
         "maxRank": 3,
@@ -731,34 +783,37 @@
       {
         "id": "piercing_sand",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r; card says waves only (tornadoes have no LSSD, about 42% of hits)"}], "confidence": "C", "note": "card row p3"},
         "name": "Piercing Sand",
         "description": "Increases the damage dealt by sand gush.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "stranded_impact",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "+% vs boss only"}], "confidence": "I", "note": "card row p4 (planner number 7.5r not in card)"},
         "name": "Stranded Impact",
         "description": "Increases damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 7.5 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 7.5}
         }
       },
       {
         "id": "armor_piercing_flow",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45], "note": "arcane break 15%*r for 5 s on hit (chance 100): multiplier on arcane waves/tornadoes"}], "confidence": "C", "note": "card row p5"},
         "name": "Armor Piercing Flow",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -771,34 +826,37 @@
       {
         "id": "gusting_winds",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "orbit/move speed 4.5*(1+0.15r) of tornadoes; hit count change not quantified (I)"}], "confidence": "I", "note": "card row p6"},
         "name": "Gusting Winds",
         "description": "Increases the speed of sand tornados.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "desert_storm",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "+1 tornado per wave per rank (XSP 2+p7.s9); engine converts at perExtraProjectile 6.9 (= 18 waves x 0.38 at D<=20), card 6.84"}, {"kind": "damage_pct", "byRank": [4, 8, 12, 16], "note": "LSSD += 4%/r (p7.s10)"}], "confidence": "C", "note": "card row p7 (tornado count + LSSD)"},
         "name": "Desert Storm",
         "description": "Increases the amount of sand tornados.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 1, "arcane_skill_damage": 4 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 4}
         }
       },
       {
         "id": "overwhelming_sand",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [25, 50, 75, 100, 125], "note": "bleed = floor(hit*25%*r) on waves and tornadoes, chance 4r% per hit"}], "confidence": "C", "note": "card row p8"},
         "name": "Overwhelming Sand",
         "description": "Tornados have a chance on hit to inflict bleeding for a portion of the damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 25 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -811,75 +869,73 @@
       {
         "id": "tamed_winds",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30], "note": "tornado time 0.5*(1+0.15r) s: longer arc, more hit chance (I)"}], "confidence": "I", "note": "card row p9"},
         "name": "Tamed Winds",
         "description": "Tornados now spin outwards following the nomad.",
         "maxRank": 2,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "contaminated_wounds",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [20, 40, 60, 80, 100], "note": "+% vs bleeding targets (affects p8 bleed only)"}], "confidence": "C", "note": "card row p10"},
         "name": "Contaminated Wounds",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 20 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 20}
         }
       },
       {
         "id": "desert_cyclones",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [13.8, 55.2, 124.2], "per": "use", "note": "per tornado hit on dummy, 2r new tornadoes spawn on the target with damage 0.5r*d1: 2r*0.5r per tornado hit = r^2, 13.8 tornado hits per cast; no recursion assumed (I)"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner of_total_damage 50r and projectile_count 2r (converted at 6.9 each, i.e. linear); card: new tornadoes spawn per tornado hit, so the count is quadratic in r"},
         "name": "Desert Cyclones",
         "description": "Tornados spawn multiple small cyclones on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 50, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 50, "projectile_count": 2}
         }
       },
       {
         "id": "sandstorm",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30%/r"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "Sandstorm sets cooldown 8 s (replaces T_cast period)"}], "confidence": "C", "note": "card row p12 + Transformacje (GetTalentCooldown)", "plannerFix": "planner has no cooldown 8 s; card: period becomes 8 s"},
         "name": "Sandstorm",
         "description": "Cast continuous gushes around you for a short period with increased radius and damage. Sand Gush now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 30, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "cooldown_added": 8, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 30, "cooldown_added": 0, "subtree_damage": 30}
         }
       },
       {
         "id": "sand_tornado",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45%/r on waves; tornado damage x(1+0.45r) too"}], "confidence": "C", "note": "card row p13"},
         "name": "Sand Tornado",
         "description": "Send out a sand tornado casting sand gush continuously.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 45 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 45}
         }
       },
       {
         "id": "dust_devils",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 tornadoes per wave per rank (XSP 2+p7.s9+p14.s10); tornado size x0.5 lowers per-tornado hit chance (not quantified)"}, {"kind": "damage_pct", "byRank": [65, 130, 195], "note": "LSSD += 65%/r"}], "confidence": "C", "note": "card row p14"},
         "name": "Dust Devils",
         "description": "Unleash small dust devils bouncing off of walls and unleashing a pulse of sand on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "projectile_speed": 0,
-            "projectile_count": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "projectile_speed": 10,
-            "projectile_count": 2,
-            "arcane_skill_damage": 65
-          }
+          "base": {"projectile_speed": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed": 10, "projectile_count": 2, "subtree_damage": 65}
         }
       }
     ]
@@ -887,6 +943,7 @@
   {
     "id": "dissipating_tornado",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "nomad",
     "name": "Dissipating Tornado",
     "kind": "active",
@@ -933,6 +990,8 @@
     "id": "sand_vortex",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 12.5, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cooldown 5 s*(1 - 0.07*p6), haste applies), cursor on the dummy's body (x, y-24), vortex centre 24 px from the dummy: Sand_Vortex_obj (disc ~85.5 px*vortexSize 1, scale 0.1 + 0.05/frame to 1.3, so the dummy is inside long before activation) lives destroyTimer = 4 s*(1 + p7) = 240 frames in the base (the x0.33 time and shorter tick are p12 only) then Alarm_10 fades it for ~20 frames (alpha -0.05/frame) during which it still deals damage (no deadly = 0, I); tick_frequency 0.33 s = 19.8 frames. By tools/tick_hits.py (rule 20, replacing the card's 1 + floor((240-2)/19.8) = 13-14): tick_hits(238, 19.8, 0) = 12 without the fade and tick_hits(258, 19.8, 0) = 13 with the 20 fade frames -> midpoint 12.5 (the fade frames are I). Each tick hit is damage[1] = V1*(1+LSSD) = 1 main hit. The planner's hitModel (tickFrequency 0.33, lifetime 1.32 s) is only right for p12; the base needs lifetime 4 s (+ fade). perExtraProjectile = 0: extra vortices (XSP, p11) are placed on rings of 150-300 px and do not reach the dummy. p7 (longer life), p12 (x0.33 time: 6-13 hits), p13 Kraken tornadoes (+5), p5/p8 stun are subskill effects."},
     "classId": "nomad",
     "name": "Sand Vortex",
     "kind": "active",
@@ -948,7 +1007,7 @@
     "position": { "row": 4, "col": 0 },
     "hitModel": { "object": "Sand_Vortex_Create", "tickFrequency": 0.33, "lifetime": 4 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 17 },
+    "damageFormula": { "base": 0, "perLevel": 11.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Cloud of Sand", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -967,50 +1026,55 @@
       {
         "id": "desert_mass",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "vortexSize x(1+0.15r): dummy already in the vortex at the cursor"}], "confidence": "C", "note": "card row p1"},
         "name": "Desert Mass",
         "description": "Increases the area of effect radius of sand vortex.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "quicksand",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "pull strength 20%*r; pulls do nothing on the dummy (enemyModifier 26)"}], "confidence": "C", "note": "card row p2"},
         "name": "Quicksand",
         "description": "Increases pulling strength.",
         "maxRank": 5,
         "effects": {
-          "base": { "pull_strength": 0 },
-          "perRank": { "pull_strength": 20 }
+          "base": {"pull_strength": 0},
+          "perRank": {"pull_strength": 20}
         }
       },
       {
         "id": "shredding_sand",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on vortex damage"}], "confidence": "C", "note": "card row p3"},
         "name": "Shredding Sand",
         "description": "Increases the damage dealt by sand vortex.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "locust_whirlpool",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana replenish per tick"}], "confidence": "C", "note": "card row p4"},
         "name": "Locust Whirlpool",
         "description": "Restores mana on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_replenish_pct": 0 },
-          "perRank": { "mana_replenish_pct": 1 }
+          "base": {"mana_replenish_pct": 0},
+          "perRank": {"mana_replenish_pct": 1}
         }
       },
       {
         "id": "stuttering_pull",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 5 s on chance 5%*r per tick: CC, no damage; the stun works on the dummy and only enables p8"}], "confidence": "C", "note": "card row p5 (stun works on dummy, see Uwagi rule 16)"},
         "name": "Stuttering Pull",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -1023,45 +1087,49 @@
       {
         "id": "desert_control",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown x(1-0.07r): negative = shorter"}], "confidence": "C", "note": "card row p6"},
         "name": "Desert Control",
         "description": "Reduces the cooldown of sand vortex.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "lasting_whirlpool",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [12, 24, 36, 48, 60], "note": "destroyTimer x(1+0.12r): more ticks"}], "confidence": "C", "note": "card row p7"},
         "name": "Lasting Whirlpool",
         "description": "Increases the duration of sand vortex.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 12 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 12}
         }
       },
       {
         "id": "veil_of_sand",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.12, 1.24, 1.36, 1.48, 1.6], "requires": "stuttering_pull", "note": "+12%*r vs stunned targets; upper bound (stun uptime < 100%, depends on p5)"}], "confidence": "C", "note": "card row p8", "plannerFix": "planner gives skill_duration 12r (wrong stat); card: +% damage vs stunned, needs p5"},
         "name": "Veil of Sand",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 12 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 12}
         }
       },
       {
         "id": "breaking_sands",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.09, 1.18, 1.28, 1.37, 1.46], "note": "arcane break 10%*r from the 2nd tick: averaged over ~12.5 hits (0.92 of hits)"}], "confidence": "C", "note": "card row p9", "plannerFix": "planner applies arcane_break from the first hit; card: from the second hit of the vortex"},
         "name": "Breaking Sands",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 10 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1074,56 +1142,61 @@
       {
         "id": "brain_damaging_whirl",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below 2%*r: the dummy does not die"}], "confidence": "I", "note": "card row p10"},
         "name": "Brain Damaging Whirl",
         "description": "Sand vortex now executes targets below a certain percentage of life.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 2 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 2}
         }
       },
       {
         "id": "sunken_field",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r; branch with 4r extra vortices at 150-300 px gives 0 on the dummy"}], "confidence": "C", "note": "card row p11"},
         "name": "Sunken Field",
         "description": "Summon multiple small sand vortexes around target location with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 35, "projectile_count": 4 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "subtree_damage": 35}
         }
       },
       {
         "id": "accelerated_sand",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6, 8, 13], "note": "transformation: lifetime 4 s*0.33 = 1.32 s, tick max(0.33*(1-0.25r), 0.1) s; hits = 1+floor((79.2-2)/tick_frames) per rank; fade frames excluded (about +1)"}], "confidence": "C", "note": "card row p12 + Planer", "plannerFix": "planner has faster_cast_rate 25r and area 60r; its hitModel (lifetime 1.32, tick 0.33) is correct only with p12, base lifetime should be 4 s"},
         "name": "Accelerated Sand",
         "description": "Sand vortex size and tick rate increases rapidly but lasts for a shorter duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "area_of_effect": 0 },
-          "perRank": { "faster_cast_rate": 25, "area_of_effect": 60 }
+          "base": {"faster_cast_rate": 0, "area_of_effect": 0},
+          "perRank": {"faster_cast_rate": 25, "area_of_effect": 60}
         }
       },
       {
         "id": "cycloning_kraken",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.0, 15.6, 23.8], "per": "use", "note": "Kraken tornadoes: count 1+floor((4-0.25)/(1-0.15r)) = 5/6/7 per cast, each damage d1*(1+0.8r) (ratio 1.8/2.6/3.4)"}], "confidence": "C", "note": "card row p13 (I on timing)", "plannerFix": "planner gives faster_cast_rate 15r and arcane 80r; card: extra orbiting tornadoes with d1*(1+0.8r) and frequency 1/(1-0.15r)"},
         "name": "Cycloning Kraken",
         "description": "Sand vortex now spawns cycling tornados from its center.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
-          "perRank": { "faster_cast_rate": 15, "arcane_skill_damage": 80 }
+          "base": {"faster_cast_rate": 0, "arcane_skill_damage": 0},
+          "perRank": {"faster_cast_rate": 15, "arcane_skill_damage": 80}
         }
       },
       {
         "id": "slow_burn",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "slow 5 s only; burning damage (p14.s9) is loaded but not read"}], "confidence": "C", "note": "card row p14", "plannerFix": "planner gives burning 80%*r on hit; card reads no burning damage for p14"},
         "name": "Slow Burn",
         "description": "Sand vortex now doesn’t pull monsters but slows them and inflicts burning for a portion of the damage on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 80 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 80}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1138,6 +1211,8 @@
   {
     "id": "blade_strike",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack skill, dummy within the weapon reach): 1 weapon strike (rule 6: projEffect[1020] = LSSD, [70] = 1 area) = 1 hit. p8 Agile Striker (second salvo at 6 %*r), p6 thrown blade (8 %*r), p11 skewering blades (+1 hit), p13 stacked blades (up to 6r hits), p12 Brutalizing Cleave are subskill effects; no extra-projectile mechanism in the base (perExtraProjectile = 0). The strike hit itself is I (no skill object)."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Blade Strike",
@@ -1172,56 +1247,61 @@
       {
         "id": "ferocious_swipe",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "crit chance +5 points per rank"}], "confidence": "C", "note": "card row p1"},
         "name": "Ferocious Swipe",
         "description": "Increases critical strike chance when using blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_chance": 0 },
-          "perRank": { "skill_crit_chance": 5 }
+          "base": {"skill_crit_chance": 0},
+          "perRank": {"skill_crit_chance": 5}
         }
       },
       {
         "id": "blades_edge",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "crit damage +5%/r (value is crit damage %, not chance)"}], "confidence": "C", "note": "card row p2"},
         "name": "Blade´s Edge",
         "description": "Increases critical strike damage when using blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_damage_multiplier_pct": 0 },
-          "perRank": { "skill_crit_damage_multiplier_pct": 5 }
+          "base": {"skill_crit_damage_multiplier_pct": 0},
+          "perRank": {"skill_crit_damage_multiplier_pct": 5}
         }
       },
       {
         "id": "lethal_swing",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90, 120, 150], "note": "LSSD += 30 points per rank (LSSD p3 is NOT x0.01 in the game)"}], "confidence": "C", "note": "card row p3 (asm LoadSubSkillDamage)"},
         "name": "Lethal Swing",
         "description": "Increases damage dealt by blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 30 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 30}
         }
       },
       {
         "id": "blade_master",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating x(1+0.1r): no dummy damage"}], "confidence": "C", "note": "card row p4"},
         "name": "Blade Master",
         "description": "Increases attack rating when using blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_rating_multiplier_pct": 0 },
-          "perRank": { "skill_attack_rating_multiplier_pct": 10 }
+          "base": {"skill_attack_rating_multiplier_pct": 0},
+          "perRank": {"skill_attack_rating_multiplier_pct": 10}
         }
       },
       {
         "id": "gut_slicer",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "physical break 10%*r on the strike, ~100% uptime"}], "confidence": "C", "note": "card row p5"},
         "name": "Gut Slicer",
         "description": "Inflicts armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 10 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1234,6 +1314,7 @@
       {
         "id": "catch_up_blade",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.19, 0.31, 0.45, 0.6], "per": "use", "note": "thrown blade (separate hit) with chance 8r% and damage W*(1+0.10r) (ratio ~1+0.1r): 0.08r*(1+0.1r)"}], "confidence": "I", "note": "card row p6", "plannerFix": "planner gives +10%*r physical damage on the proc; card: a separate thrown hit of W*(1+0.1r) at chance 8%*r"},
         "name": "Catch Up Blade",
         "description": "Chance on attack to throw your weapon with force dealing additional damage and bouncing from terrain.",
         "maxRank": 5,
@@ -1249,17 +1330,19 @@
       {
         "id": "cleaving_slash",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "cleaving slash area; single target"}], "confidence": "I", "note": "card row p7"},
         "name": "Cleaving Slash",
         "description": "Increases the area of effect of blade strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "agile_striker",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "second salvo with chance 6%*r per attack (+1 hit)"}], "confidence": "I", "note": "card row p8"},
         "name": "Agile Striker",
         "description": "Chance on attack to strike additional times.",
         "maxRank": 5,
@@ -1275,6 +1358,7 @@
       {
         "id": "bounty_hunting",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "chance 2%*r for Strength buff 6%*r for 3 s"}], "confidence": "C", "note": "card row p9"},
         "name": "Bounty Hunting",
         "description": "Chance on hit to increase your strength for a short period of time.",
         "maxRank": 5,
@@ -1290,6 +1374,7 @@
       {
         "id": "tribal_commander",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "chance 2%*r for all-attributes buff 4%*r for 5 s"}], "confidence": "C", "note": "card row p10"},
         "name": "Tribal Commander",
         "description": "Gain a portion of your strength as all attributes.",
         "maxRank": 5,
@@ -1305,45 +1390,49 @@
       {
         "id": "skewering_blades",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "skewering object lands on the target and hits once with d0 (when yy<=0)"}, {"kind": "dot", "byRank": [50, 100, 150], "note": "bleed = floor(d0*0.5r)"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner gives physical_skill_damage 50r on the strike; card: separate skewering hit (+1 hit d0) and bleed 50%*r"},
         "name": "Skewering Blades",
         "description": "Unleash flying blades on monster hit dealing area of effect damage and inflict bleeding.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 50 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 50}
         }
       },
       {
         "id": "brutalizing_cleave",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2.25, 4.5, 6.75], "note": "LSSD += p12.s9*0.01 = 2.25 points per rank (game value; the 225 in the planner is a unit error)"}], "confidence": "C", "note": "card row p12 + Blade Strike Transformacje (unit error)", "plannerFix": "planner uses 225 per rank; card: LSSD += p12.s9 * 0.01 = 2.25 percent per rank"},
         "name": "Brutalizing Cleave",
         "description": "Gain increased attack range and damage slightly knocking enemies back stunning them.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "physical_skill_damage": 225, "skill_range": 50 }
+          "base": {"skill_range": 0, "subtree_damage": 0.0},
+          "perRank": {"skill_range": 50, "subtree_damage": 2.25}
         }
       },
       {
         "id": "stacked_blade",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 1.6, 3.6], "per": "use", "note": "burst on every 6th strike hit (GetBuffStack(34) >= 5, BuffRemove; otherwise BuffAdd): 6r Nomad_Blade_Strike_Stacked_Blade_obj spawned 8 px from the dummy, each hits once with floor(d0*0.08r*N), N = 5 -> 0.4r*d0. Per attack: r hits x 0.4r = 0.4r^2 main-hit units (r1/2/3: 0.4/1.6/3.6). Stacks are added by every strike, p6 throw and p8 salvo hit; crit rolled per blade."}], "confidence": "I", "note": "R4 83#0 (card row p13, C/I): formula and threshold C, hit of the rectangular mask in the first frame I", "plannerFix": "planner gives physical 8r and projectile_count 6r with perExtraProjectile 0; card (R4): burst every 6th hit, 6r blades, +r hits per attack at 0.4r x d0"},
         "name": "Stacked Blade",
         "description": "Striking a monster applies a debuff which when reaching max stacks will unleash multiple blades dealing additional damage and bouncing from terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 8, "projectile_count": 6 }
+          "base": {"physical_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"physical_skill_damage": 8, "projectile_count": 6}
         }
       },
       {
         "id": "giant_slayer",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9], "note": "crit damage +3% per rank per 100 vitality (value per 100 vit)"}], "confidence": "C", "note": "card row p14"},
         "name": "Giant Slayer",
         "description": "Critical strike damage by blade strike is increased based on your vitality.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_crit_damage_multiplier_per_100_vitality": 0 },
-          "perRank": { "skill_crit_damage_multiplier_per_100_vitality": 3 }
+          "base": {"skill_crit_damage_multiplier_per_100_vitality": 0},
+          "perRank": {"skill_crit_damage_multiplier_per_100_vitality": 3}
         }
       }
     ]
@@ -1351,6 +1440,8 @@
   {
     "id": "eye_of_ra",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack skill, dummy within the weapon reach): 1 weapon strike (rule 6) = 1 hit + 1 chain hit: hitboxCollisionEyeOfRa creates a Nomad Eye_of_Ra_obj (Chain_Lightning_Parent, N0: projTravel = 0, chainType -1, max_bounces [243] = 5) at the struck dummy with damage[0] = d0 (the strike's damage); Alarm_0 picks instance_nearest without excluding inst_prev = the dummy, the chain sits on it (mask r 22), does not clear its hit map (only chainType 139 does, rule 23) = exactly 1 hit of d0 (active from frame 2), the 5 bounces add nothing -> 2.0 main hits (secondary object: full modifiers minus the trigger 244, ratio 1). p14 Lightbringer (+14-19 hits at 0.68 per mote), p12 pillar (replaces the chain: 2 hits), p13 orbiting orbs (replace the chain), p11 8 s cooldown, p6/p3 (no effect) are subskill effects. perExtraProjectile = 0."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Eye of Ra",
@@ -1367,7 +1458,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 88, "perLevel": 24 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 188, "perLevel": 24 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 10, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1388,45 +1481,49 @@
       {
         "id": "sunburn",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "sunburn: only the >0 gate for chain flag 244"}], "confidence": "C", "note": "card row p1"},
         "name": "Sunburn",
         "description": "Increases the maximum targets per hit being affected by eye of ra.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_targets": 0 },
-          "perRank": { "max_targets": 2 }
+          "base": {"max_targets": 0},
+          "perRank": {"max_targets": 2}
         }
       },
       {
         "id": "rays_of_wisdom",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2, 4, 6, 8, 10], "note": "LSSD += energy*2%/r (value shown at Energy 100; scales with Energy)"}], "confidence": "C", "note": "card row p2"},
         "name": "Ray´s of Wisdom",
         "description": "Increases damage dealt by sun rays based on your energy.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_energy": 0 },
-          "perRank": { "conversion_energy": 2 }
+          "base": {"conversion_energy": 0, "subtree_damage": 0},
+          "perRank": {"conversion_energy": 2, "subtree_damage": 2}
         }
       },
       {
         "id": "solar_flow",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "chain range 220*(1+0.15r): no hit change (N0 chain, dummy at distance 0)"}], "confidence": "C", "note": "card row p3"},
         "name": "Solar Flow",
         "description": "Increases the range of the sun rays.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "ultra_violet_radiation",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "burn (fire DoT) = floor(hit*15%*r) with chance 10%*r"}], "confidence": "C", "note": "card row p4"},
         "name": "Ultra Violet Radiation",
         "description": "Chance on hit to inflict burning for a portion of the damage dealt by eye of ra.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1439,34 +1536,37 @@
       {
         "id": "scorching_sun",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [10, 20, 30, 40, 50], "note": "+% vs burning (applies to p4 burn)"}], "confidence": "C", "note": "card row p5"},
         "name": "Scorching Sun",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "ras_wrath",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bounces 5+2r and slow 3 s: chain is N0, extra bounces add no hits; longer chain life delays p14"}], "confidence": "C", "note": "card row p6"},
         "name": "Ra´s Wrath",
         "description": "Increases the amount of sun rays additionally inflicting slow on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 2 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 2}
         }
       },
       {
         "id": "heat_paralysis",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "elemental break 10%*r: no physical effect (DoT ignores breaks)"}], "confidence": "C", "note": "card row p7"},
         "name": "Heat Paralysis",
         "description": "Inflicts elemental break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "elemental_break": 0 },
-          "perRank": { "elemental_break": 10 }
+          "base": {"elemental_break": 0},
+          "perRank": {"elemental_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1482,34 +1582,37 @@
       {
         "id": "piercing_sunlight",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [20, 40, 60, 80, 100], "note": "crit damage +20%/r (value is crit damage %)"}], "confidence": "C", "note": "card row p8"},
         "name": "Piercing Sunlight",
         "description": "Increases critical strike damage dealt by eye of ra.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "armed_light",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating +10%*r"}], "confidence": "C", "note": "card row p9"},
         "name": "Armed Light",
         "description": "Increases attack rating when using eye of ra.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "piercing_radiation",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.125, 1.25, 1.375, 1.5, 1.625], "note": "physical break 12.5%*r for 5 s, ~100% uptime"}], "confidence": "C", "note": "card row p10"},
         "name": "Piercing Radiation",
         "description": "Inflicts armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 12.5 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 12.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1522,45 +1625,49 @@
       {
         "id": "god_of_gods",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "God of Gods: cooldown 8 s on the attack (period >= 8 s)"}], "confidence": "C", "note": "card row p11 + Transformacje (GetTalentCooldown)", "plannerFix": "planner gives area_of_effect 100 only; card: cooldown 8 s is missing"},
         "name": "God of Gods",
         "description": "Unleash eye of ra on all nearby monsters. Eye of Ra now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 100 }
+          "base": {"area_of_effect": 0, "cooldown_added": 8},
+          "perRank": {"area_of_effect": 100, "cooldown_added": 0}
         }
       },
       {
         "id": "pillar_of_light",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30%/r"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "pillar replaces the chain: pillar 2 hits minus the 1 chain hit = +1; with p13 also taken the chain is removed once (double count if both, see note)"}], "confidence": "I", "note": "card row p12 (C/I)", "plannerFix": "planner gives projectile_count 5r with perExtraProjectile 0; card: the pillar replaces the chain (2 hits) and the chain 1 hit is lost"},
         "name": "Pillar of Light",
         "description": "Unleash pillars of light in a narrow line each dealing damage over time and slowing on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 30, "projectile_count": 5 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 5, "subtree_damage": 30}
         }
       },
       {
         "id": "orbiting_the_sun",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5, 11, 17], "per": "use", "note": "orbs replace the chain: 2r orbs x 3 hits each = 6r, minus the 1 chain hit = 6r-1 (I); with p12 both replace the same chain once (overlap caveat)"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives projectile_count 2r with perExtraProjectile 0; card: orbs replace the chain with 6r hits total"},
         "name": "Orbiting the Sun",
         "description": "Unleash multiple light pillars orbiting you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "lightbringer",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [14.2, 16.9, 19.0], "per": "use", "note": "Lightbringer: S = 21/25/28 motes (floor(18*(1+0.2r))) * P(hit) 0.68 at d0 each; chain dies on the dummy so this is added after the chain hit"}], "confidence": "I", "note": "card row p14 (count C, geometry I)", "plannerFix": "planner gives of_total_damage 30r (not a hit count) and skill_duration 20r; card: 14-19 extra motes hits, not a damage bonus (30%/r does not multiply damage)"},
         "name": "Lightbringer",
         "description": "Eye of Ra unleashes a storm of light pillars at the last target.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "skill_duration": 0 },
-          "perRank": { "of_total_damage": 30, "skill_duration": 20 }
+          "base": {"of_total_damage": 0, "skill_duration": 0},
+          "perRank": {"of_total_damage": 30, "skill_duration": 20}
         }
       }
     ]
@@ -1568,6 +1675,8 @@
   {
     "id": "flying_scimitar",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 2.0, "confidence": "C", "note": "Per attack: 1 Flying_Scimitar_obj (9 px/frame, returnTimer 0.575 s = ~310 px out, then retrn = 1 with singleHitListClear = 1 and back to the player over destroyTimer 2 s) on the aim line over the dummy: hit on the way out + hit on the way back after the map clear = 2 hits of damage[0] = floor(floor(W*(1 + V1%))*(1+LSSD)) (card: kukla on the throw line I, within 23 + 12 px of the track). perExtraProjectile = 2.0 is a best reading (I): the script makes 1 + RSS391 (+p11.s10, +p14.s11) scimitars and, for more than one, spreads them (L1130-1131, spread value not read by the card); a scimitar that passes through the dummy gives 2 hits. p1 Afterslice, p11 Flying Swarm (x(0.6 + 0.4r) per blade), p12 Sticking Blade, p14 Orbital Blade Strike (2 s cooldown) are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Flying Scimitar",
@@ -1585,7 +1694,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 93, "perLevel": 26 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 190, "perLevel": 26 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 12, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1606,6 +1717,7 @@
       {
         "id": "afterslice",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "note": "afterslice: +1 scimitar (2 hits) with chance 6%*r per cast; fractional projectile = expected count"}], "confidence": "I", "note": "card row p1", "plannerFix": "planner gives only the proc chance (no extra projectile); card: +1 scimitar per proc"},
         "name": "Afterslice",
         "description": "Chance on attack to cast another scimitar.",
         "maxRank": 5,
@@ -1614,39 +1726,43 @@
       {
         "id": "sharpened_blade",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60], "note": "LSSD += 12%/r"}], "confidence": "C", "note": "card row p2"},
         "name": "Sharpened Blade",
         "description": "Increases the damage dealt by flying scimitar.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "slice_and_flight",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile speed +7%/r, returnTimer shorter: 2 hits unchanged"}], "confidence": "C", "note": "card row p3"},
         "name": "Slice and Flight",
         "description": "Increases the projectile speed of flying scimitar.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 7 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 7}
         }
       },
       {
         "id": "widened_blade",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile size +10%/r (not read in script)"}], "confidence": "I", "note": "card row p4"},
         "name": "Widened Blade",
         "description": "Increases the size of the scimitars.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 10 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 10}
         }
       },
       {
         "id": "blades_vengeance",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "slow 2 s on chance 20%*r"}], "confidence": "C", "note": "card row p5"},
         "name": "Blade´s Vengeance",
         "description": "Returning scimitars pull enemies towards you with a chance to slow them.",
         "maxRank": 5,
@@ -1659,12 +1775,13 @@
       {
         "id": "rupturing_flyby",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [70, 140], "note": "bleed = floor(d0*70%*r) on chance 12.5%*r per cast (2 applications per cast)"}], "confidence": "C", "note": "card row p6"},
         "name": "Rupturing Flyby",
         "description": "Chance on attack for flying scimitar to inflict bleeding on hit.",
         "maxRank": 2,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 70 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 70}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1677,97 +1794,97 @@
       {
         "id": "scimitars_edge",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "crit chance +5 points per rank"}], "confidence": "C", "note": "card row p7"},
         "name": "Scimitar´s Edge",
         "description": "Increases critical strike chance when using flying scimitar.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0 },
-          "perRank": { "crit_chance": 5 }
+          "base": {"crit_chance": 0},
+          "perRank": {"crit_chance": 5}
         }
       },
       {
         "id": "maiming_scimitar",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [20, 40, 60, 80, 100], "note": "crit damage +20%/r (value is crit damage %)"}], "confidence": "C", "note": "card row p8"},
         "name": "Maiming Scimitar",
         "description": "Increases critical strike damage dealt by flying scimitar.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "last_wish",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute (last wish), no effect on dummy"}], "confidence": "I", "note": "card row p9"},
         "name": "Last Wish",
         "description": "Flying scimitar now executes targets below a certain percentage of life.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 2 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 2}
         }
       },
       {
         "id": "salted_blade",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30], "note": "+% vs bleeding (p6 bleed)"}], "confidence": "C", "note": "card row p10"},
         "name": "Salted Blade",
         "description": "Increases damage to bleeding targets.",
         "maxRank": 2,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "flying_swarm",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0, 1.4, 1.8], "note": "damage per scimitar x(0.6+0.4r)"}, {"kind": "projectiles", "byRank": [3, 6, 9], "note": "+3r scimitars (n = 1 + 3r = 4/7/10) in an 8 deg fan around the aim line (RV_setInt(8)); engine would convert them at perExtraProjectile 2.0 (upper bound) - replaced by the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [6, 6, 8], "per": "use", "replacesProjectileHits": true, "note": "deterministic rectangle-circle simulation (fs3.py, spin 80 -> 20 deg/frame, mask 46x72 rotated, dummy on the aim line, rule 38): total hits per cast n = 4/7/10 -> 8/8/10 (Resztki D; 8/10/10 in Resztki B, 7.9/9.9/10.4 in PoR4, 7.0/9.6/10.3 with cursor (x, y-24)); extra over the base 2 hits = 6/6/8. n = 7: scimitars at -13.9..10.1 deg hit (4 x 2), +18.1 and -21.9 miss; n = 10: 5 scimitars (-17.9..14.1). Sensitivity +-1 frame of activation/spin: n = 7: 8-10, n = 10: 9-11. Each hit x(0.6 + 0.4r) (damage_mult above)."}], "confidence": "C", "note": "Resztki D (8/8/10) over Resztki B and PoR4 (a); card row p11 marked C", "plannerFix": "planner converts +3r projectiles at perExtraProjectile 2.0 (8/14/20 total hits); card: 8/8/10 hits per cast because the outer scimitars of the 8 deg fan miss the dummy"},
         "name": "Flying Swarm",
         "description": "Throw multiple smaller scimitars with decreased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 60, "projectile_count": 0 },
-          "perRank": { "splash_of_total_damage": 40, "projectile_count": 3 }
+          "base": {"splash_of_total_damage": 60, "projectile_count": 0},
+          "perRank": {"splash_of_total_damage": 40, "projectile_count": 3}
         }
       },
       {
         "id": "sticking_blade",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50%/r"}, {"kind": "extra_hits", "byRank": [1, 1.5, 4.5], "per": "use", "note": "returnTimer keeps counting while attached (R4 87#1): contact after ~11-16 frames leaves 18-23 frames, ticks every 15*(1 - 0.25r) frames: attached hits 2 / 2-3 / 4-5 plus the return pass 1 / 1 / 2 = total 3 / 3-4 / 6-7 hits per cast instead of 2 in the base; extra over base 2 = +1 / +1.5 / +4.5 (midpoints of 3, 3-4, 6-7); I: moment of contact and overlap with the return flight"}], "confidence": "I", "note": "R4 87#1 (card row p12, C/I): flow C, contact time I", "plannerFix": "planner gives faster_cast_rate 25r (wrong stat); card: sticking ticks add hits, the 25%*r is the tick reduction"},
         "name": "Sticking Blade",
         "description": "Scimitars now attach to the first target for a short period dealing damage over time and returning back to the nomad.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "physical_skill_damage": 50, "faster_cast_rate": 25 }
+          "base": {"faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 25, "subtree_damage": 50}
         }
       },
       {
         "id": "league_of_nomad",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "league of nomad: only in the augment path"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives physical_skill_damage 7r; card: unused in the normal throw"},
         "name": "League of Nomad",
         "description": "Scimitars now return to their spawning location. Successfully catching the returning scimitars increases your damage for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 7 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 7}
         }
       },
       {
         "id": "orbital_blade_strike",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.5, 1.0, 1.5], "note": "transformation: damage x0.5r on all scimitars"}, {"kind": "projectiles", "byRank": [4, 8, 12], "note": "+4r scimitars (n = 1 + 4r = 5/9/13) in a ring 360/n*i; engine would convert them at perExtraProjectile 2.0 (8/16/24 extra hits) - replaced by the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "ring: only scimitar i = 0 flies at the dummy (out and back = the base 2 hits), the neighbours are >= 27.7 deg off the axis and miss: total 2.0 / 2.0 / 2.0 hits per cast (r1/2/3), so +0 over the base (PoR4 (a), rule 38, dummy on the aim line; with cursor (x, y-24) r3 would be 3.4). Each hit x0.5r (damage_mult above)."}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "cooldown 2 s on the attack"}], "confidence": "I", "note": "card row p14 + Transformacje; R4 87#0 / PoR4 (a) / Resztki B (2/2/2 confirmed); card row marked C/I", "plannerFix": "planner has of_total_damage 50r, projectile_count 4r (engine would add 8/16/24 hits) and speed 10r but no cooldown 2 s; card: ring, only 1 scimitar reaches the dummy (2.0 hits), cooldown 2 s"},
         "name": "Orbital Blade Strike",
         "description": "Scimitars are now spawned in a circle around the nomad with increased projectile speed and pulled back dealing increased damage. Scimitar Throw now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "of_total_damage": 0,
-            "projectile_speed": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "of_total_damage": 50,
-            "projectile_speed": 10,
-            "projectile_count": 4
-          }
+          "base": {"of_total_damage": 0, "projectile_speed": 0, "projectile_count": 0, "cooldown_added": 2},
+          "perRank": {"of_total_damage": 50, "projectile_speed": 10, "projectile_count": 4, "cooldown_added": 0}
         }
       }
     ]
@@ -1793,6 +1910,8 @@
   {
     "id": "chainslice",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack skill, dummy within the weapon reach): 1 weapon strike = 1 hit + the Chainslice_obj chain created by hitboxCollisionChainSlice at the struck dummy (T0: projTravel 1, chainType 89, damage[0] = d0 of the strike, max_bounces n = [1058] = 4 + 4*p1.s9 = 4): targetList = n copies of the lone dummy (rule 17), a jump every frame that clears the hit map, checks at frames 2, 5, 8, ... -> H(n) = 1 + floor((n+1)/3) = 2 chain hits (n = 4 / 8 / 12 / 16 -> 2 / 4 / 5 / 6; rule 23, not tick_hits: the chain clears at jumps, no tick_frequency) -> 1 + 2 = 3.0 main hits (chain: full modifiers minus 1058, ratio 1). p1 Slice and Dice raises n (5 / 6 / 7 totals), p11 Bloodburn (+1 + H hits at 0.75r*d0), p14 Chainception (cascade E = 3.7-13.4), p12/p13 are subskill effects. perExtraProjectile = 0."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Chainslice",
@@ -1809,7 +1928,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 133, "perLevel": 25 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 225, "perLevel": 25 },
       "flatPhysicalMin": { "base": 5, "perLevel": 0 },
       "flatPhysicalMax": { "base": 14, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1830,34 +1951,37 @@
       {
         "id": "slice_and_dice",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 3, 4], "per": "use", "note": "Slice and Dice: n = 4+4*r1 chain jumps, hits 1+floor((n+1)/3): 2/4/5/6 chain hits vs 2 at r0, so +2/+3/+4 over base 3 (I shown as C in card)"}], "confidence": "C", "note": "card row p1 + R2c/R3 chain model", "plannerFix": "planner gives projectile_bounces 4r with perExtraProjectile 0 (0 hits); card: H(n) grows with bounces"},
         "name": "Slice and Dice",
         "description": "Increases the amount of bounces for chainslice.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 4 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 4}
         }
       },
       {
         "id": "slicing_accuracy",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating +15%*r"}], "confidence": "C", "note": "card row p2"},
         "name": "Slicing Accuracy",
         "description": "Increases attack rating when using chainslice.",
         "maxRank": 3,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 15 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 15}
         }
       },
       {
         "id": "penetrating_flesh",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "physical break 20%*r for 5 s on strike and chain (copied, ~100% uptime)"}], "confidence": "C", "note": "card row p3"},
         "name": "Penetrating Flesh",
         "description": "Inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 20 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1870,45 +1994,49 @@
       {
         "id": "field_cover",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "chain range 220*(1+0.15r): start on dummy, no hit change"}], "confidence": "C", "note": "card row p4"},
         "name": "Field Cover",
         "description": "Increases the range of chainslice.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "vagabond_quickblades",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "chain speed: start on dummy, no hit change"}], "confidence": "C", "note": "card row p5"},
         "name": "Vagabond Quickblades",
         "description": "Increases the projectile speed of chainslice.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "extended_blade",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile size: no hit change"}], "confidence": "C", "note": "card row p6"},
         "name": "Extended Blade",
         "description": "Increases the size of chainslice.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 20 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 20}
         }
       },
       {
         "id": "poisoned_shiv",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [25, 50, 75, 100, 125], "note": "poison = floor(hit*25%*r) with chance 4%*r per cast"}], "confidence": "C", "note": "card row p7"},
         "name": "Poisoned Shiv",
         "description": "Chance on hit to inflict poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 25 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1921,72 +2049,83 @@
       {
         "id": "master_slicer",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10%/r"}], "confidence": "C", "note": "card row p8"},
         "name": "Master Slicer",
         "description": "Increases damage dealt by chainslice.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "agile_footwork",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish: no read"}], "confidence": "C", "note": "card row p9"},
         "name": "Agile Footwork",
         "description": "Decreases movement diminish when using chainslice.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 15 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 15}
         }
       },
       {
         "id": "infected_wounds",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [14, 28, 42, 56, 70], "note": "+% vs poisoned (applies to p7 poison)"}], "confidence": "C", "note": "card row p10"},
         "name": "Infected Wounds",
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 14 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 14}
         }
       },
       {
         "id": "bloodburn",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.25, 4.5, 6.75], "per": "use", "note": "Bloodburn per hit of strike and of each chain hit (1+H = 3 at r1=0): 3*0.75r; at r1>0 H grows (I)"}], "confidence": "I", "note": "card row p11"},
         "name": "Bloodburn",
         "description": "Unleash small blood novas on hit dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 75, "area_of_effect": 25 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 75, "area_of_effect": 25}
         }
       },
       {
         "id": "ghost_blade",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5], "per": "use", "note": "Ghost Blade: one extra hit with damage 0.5r*d0 (lands on the target)"}], "confidence": "I", "note": "card row p12", "plannerFix": "planner gives of_total_damage 50r of the whole total (1.5r at 3 hits); card: one extra hit of 0.5r*d0"},
         "name": "Ghost Blade",
         "description": "Each chainslice hit scatters a flying blade spawning a phantom blade when landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 50 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 50}
         }
       },
       {
         "id": "critical_shred",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.8, 3.2, 7.2], "per": "use", "note": "Critical Shred: on crit, 2r scimitars with d0*0.4r each: 2r*0.4r = 0.8r^2 per use; value is for 100% crit, multiply by P(crit)"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives of_total_damage 40r and projectile_count 2r (0 hits); card: 2r scimitars with damage 0.4r on crit"},
         "name": "Critical Shred",
         "description": "When chainslice critically strikes it sends out additional scimitars in all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 40, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 40, "projectile_count": 2}
         }
       },
       {
         "id": "chainception",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25%/r (unconditional)"}, {"kind": "extra_hits", "byRank": [0.7, 1.4, 2.2], "per": "use", "note": "Chainception cascade: expected total hits E = 3.7/4.4/5.2 at r1=0 (R2c model, 3-generation cap) minus base 3.0; grows with r1 (see note)"}], "confidence": "I", "note": "card row p14 + Runda 2c (model I on B/A2/C)", "plannerFix": "planner gives LSSD as a 12% proc on the strike; card: LSSD is 25%/r unconditional and the 12%*r chance spawns extra chains (cascade)"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 25}
+        },
         "name": "Chainception",
         "description": "Chance on hit to release an additional chainslice.",
         "maxRank": 3,
@@ -2004,6 +2143,8 @@
   {
     "id": "rupture",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack, [70] = 1 area): the script sets NO projEffect[1020], so the strike is plain W (100 % weapon) = 1 hit. V1 = 77.5 + 22.5*L is the BLEED tick value (projEffect[22] = floor(W*V1%), buff 3, 5 s, tick every 1 s), which is a DoT and is excluded here (the engine models ailments). No subskills, no extra-projectile mechanism (perExtraProjectile = 0). The strike hit itself is I (no skill object)."},
     "weaponRequirement": "melee",
     "classId": "nomad",
     "name": "Rupture",
@@ -2034,6 +2175,9 @@
   {
     "id": "scimitar_charge",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per use (melee charge skill): the player charges to the cursor (24 px from the dummy) at playerEffect[12] = 12 px/frame start, [13] = 20 px/frame, passes through the dummy (rule 31(d): the stop-flag [22] <= 0 for tid 84, the charge does not stop on an enemy) and on arrival skillsCharge L885-904 creates 1 + [438] Scimitar_Charge_obj around the player (mask ~200 px, scale [71] = 1, deadlyFrames 0.25 s, no tick) = 1 hit of damage[0] = floor(floor(W*(1 + V1%))*(1+LSSD)). p8 Doubleslash (+1 at 4 %*r), p11 Scimitar Storm, p13 Static Blade Vortex (+6 hits), p14 Phantom Charge (+6 hits) are subskill effects; perExtraProjectile = 0."},
+    "usePeriod": {"kind": "charge", "extraFrames": 12, "trigger": false, "note": "No playerEffect[142] is set by the charge (rule 28/30), so a re-cast is allowed during the run and the run does not add trigger frames: period = max(attack-path floor ceil(45/S) frames, T_c). T_c = run time over 160 px at rank 20, no subskills = 12 frames (step 12 px/frame growing 2.5 %/frame to 20, [22] -= step, 165.5 px covered; with p6 r1..5: 11/10/9/9/8). T_c binds only for S > 3.75. The Movement tag lets the SAME talent bypass the rule-37 animation lock (CheckTalentUse L97-L100), so the floor is 0.75/S s (S = 1/1.5/2/2.5/3 -> 45/30/23/18/15 frames) instead of ceil(72/S)+1. C code, I game effect (cooldown tick order +-1 frame, in-game acceptance of a re-cast during the sequence). Source: Resztki po R4 (B/klasowe, Scimitar Charge) and Okresy table."},
     "classId": "nomad",
     "name": "Scimitar Charge",
     "kind": "active",
@@ -2049,7 +2193,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 8, "perLevel": 23.5 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 100, "perLevel": 23.5 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 5, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -2070,83 +2216,91 @@
       {
         "id": "sharpened_dash",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r"}], "confidence": "C", "note": "card row p1"},
         "name": "Sharpened Dash",
         "description": "Increases damage dealt by scimitar charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "whirling_radius",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "cut scale 1+0.15r: dummy already inside"}], "confidence": "C", "note": "card row p2"},
         "name": "Whirling Radius",
         "description": "Increases the area of effect radius of scimitar charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "lethal_reach",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "range: no read in script"}], "confidence": "C", "note": "card row p3"},
         "name": "Lethal Reach",
         "description": "Increases the traveling distance of scimitar charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 10 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 10}
         }
       },
       {
         "id": "dashing_reflexes",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating +10%*r"}], "confidence": "C", "note": "card row p4"},
         "name": "Dashing Reflexes",
         "description": "Increases attack rating when using scimitar charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "keep_the_distance",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [5, 10, 15, 20, 25], "note": "LSSD += 5%/r"}], "confidence": "C", "note": "card row p5"},
         "name": "Keep the Distance",
         "description": "Knock monsters back dealing increased damage on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 5 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 5}
         }
       },
       {
         "id": "deadly_rush",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "period_frames", "byRank": [-1, -2, -3, -3, -4], "note": "run time over 160 px (T_c) = 12/11/10/9/9/8 frames at p6 r0..5 (charge_sim.py, steps 12*(1+0.12r) growing 2.5 %/frame to 20*(1+0.12r)); applies to the charge extraFrames. Binds the period only for S > 3.75 (otherwise the attack-path floor ceil(45/S) dominates)."}], "confidence": "C", "note": "Resztki po R4 (B/klasowe Scimitar Charge) + Okresy table; code constants C, simulation of the run"},
         "name": "Deadly Rush",
         "description": "Increases travel speed when using scimitar charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 12 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 12}
         }
       },
       {
         "id": "mind_over_matter",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card row p7"},
         "name": "Mind Over Matter",
         "description": "Decreases the mana cost of scimitar charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "doubleslash",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Doubleslash: chance 4%*r for 2 scimitar objects (+1 hit)"}], "confidence": "I", "note": "card row p8"},
         "name": "Doubleslash",
         "description": "Chance to swirl an additional time on hit.",
         "maxRank": 5,
@@ -2162,6 +2316,7 @@
       {
         "id": "debilitating_swirl",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s on chance 3%*r (CC; no damage itself)"}], "confidence": "I", "note": "card row p9"},
         "name": "Debilitating Swirl",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -2174,34 +2329,37 @@
       {
         "id": "unhinged_slash",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "debilitating_swirl", "note": "+10%*r vs stunned; upper bound (stun uptime small)"}], "confidence": "C", "note": "card row p10"},
         "name": "Unhinged Slash",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "scimitar_storm",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "note": "Scimitar Storm: on hit, 4r flying scimitars (no return) from the target, each d0"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner gives projectile_count 4r with perExtraProjectile 0 (no hits); card: 4r extra scimitar hits from the target"},
         "name": "Scimitar Storm",
         "description": "Throw multiple scimitars in a circle around you on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 4 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 4}
         }
       },
       {
         "id": "slow_painful_death",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [75, 150, 225], "note": "bleed = floor(d0*75%*r) on hit (chance 100)"}], "confidence": "C", "note": "card row p12"},
         "name": "Slow Painful Death",
         "description": "Deal a portion of your damage as bleeding with increased effectiveness.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 75 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2214,23 +2372,25 @@
       {
         "id": "static_blade_vortex",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [6, 7, 8], "per": "use", "note": "Static Blade Vortex: vortex 1.5 s*(1+0.25r), tick 0.33 s: 1+floor((T-2)/19.8) = 6/7/8 hits of d0 per use"}], "confidence": "C", "note": "card row p13 (I on hit count)", "plannerFix": "planner gives skill_duration 25r; card: vortex hits (6/7/8) with duration 1.5 s*(1+0.25r)"},
         "name": "Static Blade Vortex",
         "description": "Scimitar charge now slows enemies on hit leaving behind a pulsating whirl for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 25 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 25}
         }
       },
       {
         "id": "phantom_charge",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [6, 8, 12], "per": "use", "note": "Phantom Charge: 1+floor([441]/[442]) = 6/8/12 phantom slashes of d0 (controller max 15)"}], "confidence": "I", "note": "card row p14", "plannerFix": "planner gives skill_duration 25r and faster_cast_rate 15r; card: phantom slashes with d0 each"},
         "name": "Phantom Charge",
         "description": "Mark the point of impact sending phantom nomads from random directions towards the mark casting scimitar charge for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0, "faster_cast_rate": 0 },
-          "perRank": { "skill_duration": 25, "faster_cast_rate": 15 }
+          "base": {"skill_duration": 0, "faster_cast_rate": 0},
+          "perRank": {"skill_duration": 25, "faster_cast_rate": 15}
         }
       }
     ]
@@ -2256,6 +2416,8 @@
   {
     "id": "phantom_blade",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per entity action (one attack test of one Phantom_Blade_obj sentry that finds the dummy in range). Blades: N0 = ReturnSentryAmount(90) = 3 + p1.s9 + RSS362 (base 3, not 1; R4 90#0), life 5 s*(1 + p6), the oldest is destroyed at the limit. WITHOUT p11 the blade does NOT orbit: it is created at (x, y) + lengthdir(tupm[6], tupm[7]) = the cursor point (6 px above the cursor, ~30 px from the dummy centre) and the attack condition distance_to_object(nearest enemy) < attackRange (96*(1 + p4), bbox gap) is always true there, so every attack test hits: 1 hit per entity action = one Hitbox_Obj (scale 1.5*(1 + p7)) carrying physical damage[0] = floor(floor(W*(1 + V2%))*(1+LSSD)) and arcane damage[1] in the SAME hit (rule 22: cursor on the visible dummy centre). Cadence (Resztki po R4, C): the range test runs every ceil(60*sF)+1 frames (91 at sF = 1.5 s, sF = max(1.5 - 0.004*sAS, 0.2)), first test at frame 16, independent of the attack; with continuous casting every T_okres(c) = 40 frames (c = 1.85) the attack rate per frame is A(L)/40, A(L) = floor((L - 16)/(ceil(60*sF) + 1)) + 1, L = min(300, N0*40): N0 = 3..8 -> 0.050/0.050/0.075/0.075/0.075/0.100 per frame (was N/91; engine side; continuous casting and kill order are I). p11 orbit (r 64 px, +4 deg/frame) puts the 160 px dummy out of range for p4 <= 2 (see p11/p4 subskill entries). p8 Twice The Price (+0.03r), p12 Terrorized Mind, p14 scimitars (2(r + 1) hits replacing the hitbox hit) are subskill effects; perExtraProjectile = 0."},
     "classId": "nomad",
     "name": "Phantom Blade",
     "kind": "active",
@@ -2271,10 +2433,12 @@
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "damageFormula": { "base": 0, "perLevel": 33 },
+    "damageFormula": { "base": 0, "perLevel": 22 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 10, "perLevel": 20 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 100, "perLevel": 20 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 5, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -2296,83 +2460,91 @@
       {
         "id": "paranormal_activity",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3, 4, 5], "note": "MORE ENTITIES, not more hits per action: ReturnSentryAmount(90) = 3 + p1.s9 + RSS362, so N0 = 4/5/6/7/8 blades at r1..5 (base 3, R4 90#0); the oldest is destroyed at the limit. Encode through the sentry count, not extra_hits. With continuous casting every 40 frames the attack rate per frame is A(L)/40, L = min(300, N0*40): N0 = 3 -> 0.050, 4 -> 0.050, 5 -> 0.075, 6 -> 0.075, 7 -> 0.075, 8 -> 0.100 (p2 = 0; was N/91: 0.033/0.044/0.055/0.066/0.077/0.088; I: continuous casting, kill order)."}], "confidence": "I", "note": "R4 90#0 + Resztki po R4 (A(L) rate); mapping to p1 C, continuous casting I", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0; card: +1 blade per rank on a base of 3 blades (sentry count), attack rate A(L)/40"},
         "name": "Paranormal Activity",
         "description": "Increases the maximum amount of phantom blades.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "phantom_agility",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [2.2, 4.6, 8.3, 11.0, 15.2], "note": "sentry range-test cadence ceil(60*sF) + 1 frames, sF = 1.5 - 0.04r s (RSS366 = 0): 89/87/84/82/79 frames vs 91 at r0 -> +2.2/+4.6/+8.3/+11.0/+15.2 % (ceil and the +1 frame; r5 uses 1.3*60 = 78 exactly, +-1 frame if float rounding differs). With the A(L)/40 attack count the real gain is stepwise (integer A(L))."}], "confidence": "C", "note": "Resztki po R4 (card row p2: cadence ceil(60*sF)+1 frames in A(L)); was 1.5/(1.5 - 0.04r) - 1"},
         "name": "Phantom Agility",
         "description": "Increases the attack speed of phantom blades.",
         "maxRank": 5,
         "effects": {
-          "base": { "sentry_attack_speed": 0 },
-          "perRank": { "sentry_attack_speed": 10 }
+          "base": {"sentry_attack_speed": 0},
+          "perRank": {"sentry_attack_speed": 10}
         }
       },
       {
         "id": "dimensional_intellect",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card row p3"},
         "name": "Dimensional Intellect",
         "description": "Decreases the mana cost of phantom blade.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "ghostly_reach",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0, 0, 0.5, 1, 1], "requires": "spirit_blades", "note": "Only matters together with p11 (orbiting blade). With p11 the range test uses the bbox gap < 96*(1 + 0.1r4); the 160 px dummy is hit only in a window around the player-dummy axis: -42.6..+39.1 deg (r0), -53.5..49.1 (r1), -62.9..58.2 (r2), -71.8..66.9 (r3), -80.4..75.5 (r4), -89.0..84.2 (r5); tests at frames 16/107/198/289 see the blade at 62.15/66.15/70.15/74.15 deg -> attacks per blade in 5 s = 0/0/0/2/4/4 for p4 = 0..5. Values = fraction of the no-orbit attack count (4 per 5 s) at r1..5: 0/0/0.5/1/1 (p4 = 0 -> 0). With continuous casting L = N0*40 < 289 the tests at 16 and 107 both hit already at p4 = 3 (fraction 1 instead of 0.5). Margins: p4 = 3 66.15 vs 66.9 deg (0.75), p4 = 4 74.15 vs 75.5 (1.35); opposite offset sign would give 3 attacks at p4 = 3. Without p11 (blade at the cursor) p4 has no effect."}], "confidence": "I", "note": "Resztki po R4 (rule 42 bbox window, D/E offsets, pb_win.py/pb_sim.py); times C, blade position offset and +-1 frame phase I"},
         "name": "Ghostly Reach",
         "description": "Increases the attack range of phantom blades.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 10 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 10}
         }
       },
       {
         "id": "malicious_essence",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r (both physical and arcane)"}], "confidence": "C", "note": "card row p5"},
         "name": "Malicious Essence",
         "description": "Increases the damage dealt by phantom blades.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "essence_of_time",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [10, 20, 30, 40, 50], "note": "blade life 5 s*(1+0.1r): more attack actions"}], "confidence": "C", "note": "card row p6"},
         "name": "Essence of Time",
         "description": "Increases the duration of phantom blade.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "malevolent_pulse",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "hitbox size x(1+0.15r): reach only"}], "confidence": "C", "note": "card row p7"},
         "name": "Malevolent Pulse",
         "description": "Increases the area of effect radius of phantom blades attacks.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "twice_the_price",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "Twice The Price: second hit with chance 3%*r per attack"}], "confidence": "I", "note": "card row p8"},
         "name": "Twice The Price",
         "description": "Chance for phantomblades to swing an additional time on hit.",
         "maxRank": 5,
@@ -2388,12 +2560,13 @@
       {
         "id": "ghost_dimension",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "arcane break 10%*r applies to the arcane d1 part only; upper bound (d1 share < 100%)"}], "confidence": "C", "note": "card row p9"},
         "name": "Ghost Dimension",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 10 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2406,12 +2579,13 @@
       {
         "id": "psychosis",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "bleed = floor((d0+d1)*15%*r) on hit (chance 100)"}], "confidence": "C", "note": "card row p10"},
         "name": "Psychosis",
         "description": "Inflicts bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2424,45 +2598,49 @@
       {
         "id": "spirit_blades",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100%/r"}, {"kind": "hits_mult", "byRank": [0, 0, 0], "note": "orbit (r 64 px, +4 deg/frame, start at the aim direction + 2.15 deg): with p4 = 0 the orbiting blade never gets the 160 px dummy into its bbox range window (-42.6..+39.1 deg; tests see 62.15 deg and up) -> 0 attacks in 5 s. Valid for p4 = 0..2; for p4 >= 3 use the p4 entry (fraction 0.5 / 1 / 1 of the no-orbit attack count) instead of this 0. A dummy <= 120 px from the player gives 4 attacks per blade (fraction 1)."}], "confidence": "I", "note": "Resztki po R4 (rule 42 + L45 cadence, pb_sim.py; replaces 'about 96 frames'); times C, blade position offset, +-1 frame, continuous casting I", "plannerFix": "planner gives only subtree_damage 100r; card: p11 makes the blade orbit, which with the dummy at 160 px removes its attacks unless p4 >= 3"},
         "name": "Spirit Blades",
         "description": "Phantom blades now orbit you and attack the closest monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 100 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 100}
         }
       },
       {
         "id": "terrorized_mind",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "note": "Terrorized Mind: consumes the bleed on the target and hits once with floor(B3*0.6r); B3 value not readable in the card"}], "confidence": "C", "note": "card row p12", "plannerFix": "planner gives arcane +60r and area 25r; card: one-off hit of bleed value * 0.6r and bleed removal (replaces p10 DoT)"},
         "name": "Terrorized Mind",
         "description": "When a phantom blade strikes a bleeding target the bleeding is consumed unleashing a vorpal pulse dealing increased damage based on the bleeding value.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 60, "area_of_effect": 25 }
+          "base": {"arcane_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"arcane_skill_damage": 60, "area_of_effect": 25}
         }
       },
       {
         "id": "spectral_ghostblade",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [4, 8, 12], "note": "LSSD += energy%*4%/r (value shown per 100% energy)"}], "confidence": "C", "note": "card row p13"},
         "name": "Spectral Ghostblade",
         "description": "Phantom blades deal increased damage based on your energy.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_energy": 0 },
-          "perRank": { "conversion_energy": 4 }
+          "base": {"conversion_energy": 0, "subtree_damage": 0},
+          "perRank": {"conversion_energy": 4, "subtree_damage": 4}
         }
       },
       {
         "id": "dimensional_ghostblade",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}, {"kind": "extra_hits", "byRank": [3, 5, 7], "per": "use", "note": "ghostBlade = r: the attack loop runs j < ghostBlade + b, b = 1 (+1 with extraProjectileChance), i.e. r + 1 Flying_Scimitar_obj (fan 10 deg, isSentry, return to the blade, scale hitboxSize*0.625) that REPLACE the Hitbox_Obj; each passes through the dummy out and back = 2(r + 1) hits (4/6/8) instead of the base 1 hitbox hit: extra = 2r + 1 = 3/5/7 per entity action (was 2r: r scimitars, base hit kept). Assumes scimitar damage = hitbox damage (I)."}], "confidence": "I", "note": "R4 90#2 (card row p14, C/I): loop and angle C, second hit on the return and start distance <= 32 px I", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0; card: r + 1 scimitars replace the hitbox, 2 hits each (out and back)"},
         "name": "Dimensional Ghostblade",
         "description": "Phantom blades no longer attack but throw flying scimitars with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 20, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 20}
         }
       }
     ]

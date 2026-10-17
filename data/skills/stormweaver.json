@@ -3,6 +3,8 @@
     "id": "charged_bolts",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 3, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cast path, period P = (ceil(72/c) + 1)/60 s, 43 frames at c = 1.75 - the engine handles it), dummy on the aim line at 160 px: n = ExtraSpellProj(3 + p1.s9) = 3 Stormweaver_Charged_Bolts_obj in a fan of spread = max(22 - n, 5) = 19 deg; all bolts of one cast share singleHitPackId = owner.singleHitPackId (L143, incremented after the loop), and the dummy's pack list is permanent (rule 36), so the dummy takes at most ONE hit per cast no matter how many bolts hit; for odd n the middle bolt flies exactly at the dummy (speed 2.5 px/frame, range ~300-340 px, contact 12 + 9.4 px) = 1 hit of damage[4] = D = the main hit. baseProjectiles = 3; perExtraProjectile = 0.0: extra bolts add no hits (shared pack) and, with the dummy horizontal from the player (main result), they no longer change the result by parity either. Resztki po R4 D (bolts start at the player y, the aim origin is 6 px below it): for even n the two nearest bolts at +-9.5 deg pass the dummy at 160*sin(9.5 -+ 2.15 deg) = 20.5 / 32.3 px and the nearer one touches it (20.5 < 12 + 9.2 = 21.2 px, margin 0.7 px, I) = 1 hit, so H = 1 for every n (n = 3, 4, 5, 6 -> 1, 1, 1, 1; p1 Bigger Outlet n = 6, 9, 12 -> 1, 1, 1; slope 0). With the dummy vertical the even-n neighbours still miss (H = 1, 0, 1, 0, ...). The earlier reading (26.4 px, 0 hits for even n, least-squares slope ~ -0.09) is superseded for the horizontal main result; odd n (middle bolt on the dummy) is unchanged and C, the even-n hit is I. Passive procs (Pulsing Charge 15 % pulse of max(D*LTD(382)%, 1)) are not included. p11 Electric Field (ring, second hit only with a gap >= 60 frames, 1 hit per cast in continuous casting), p12 World Ender (1 big bolt D_WE; +1 shard ceil(D_WE/n_WE) only for a dummy at ~340 px), p13 Loaded Thunder (+0.08r*2 hits of 0.75r D), p14 Railgun (no shared pack: ceil(n/5) hits, +3 s cooldown) are subskill effects."},
     "classId": "stormweaver",
     "name": "Charged Bolts",
     "kind": "active",
@@ -19,7 +21,7 @@
     "ranks": [
       { "rank": 1, "manaCost": 4 }
     ],
-    "damageFormula": { "base": 4.5, "perLevel": 9.25 },
+    "damageFormula": { "base": 6.75, "perLevel": 9.25 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "bonusSources": [
       {
@@ -58,45 +60,49 @@
       {
         "id": "bigger_outlet",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "n = 3+3r bolts"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "Resztki po R4 D (dummy horizontal from the player): H(n,160px) = 1 for n = 6, 9, 12 (even n: the nearer neighbour bolt passes at 20.5 px < 12 + 9.2 = 21.2 px, margin 0.7 px, I); deltas vs base 1 = 0. Vertical dummy: n = 6 -> 0, 12 -> 0, i.e. byRank [-1, 0, -1] (the previous values)"}], "confidence": "I", "note": "card table p1 + Resztki po R4 D (parity result for a horizontal dummy; geometry I, margin 0.7 px)"},
         "name": "Bigger Outlet",
         "description": "Increases the amount of charged bolts.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 3 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 3}
         }
       },
       {
         "id": "electric_vains",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Electric Vains",
         "description": "Increases the damage dealt by charged bolts.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "flash_bolt",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile speed +40%/r only changes range; no change to dummy hits"}], "confidence": "C", "note": "card table p3"},
         "name": "Flash Bolt",
         "description": "Increases the projectile speed of charged bolts.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 40 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 40}
         }
       },
       {
         "id": "halting_storm",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "use", "note": "proc chance 3r% per hit x damage floor(d4*0.15r) (Universal_Damage_Return); value = c*m; slow 3 s; per card '+0,03r*0,15r*D na rzut'"}], "confidence": "C", "note": "card table p4"},
         "name": "Halting Storm",
         "description": "Chance to deal increased damage slowing targets on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_lightning_dmg_slow": 0 },
-          "perRank": { "extra_lightning_dmg_slow": 15 }
+          "base": {"extra_lightning_dmg_slow": 0},
+          "perRank": {"extra_lightning_dmg_slow": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -107,12 +113,13 @@
       {
         "id": "weakening_charge",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0574, 1.2104, 1.4339, 1.7081, 2.0173], "note": "lightning break 30r% for 5 s, applied with chance 3r% per hit; expected multiplier 1+0.3r*u, u = 1-(1-0.03r)^(5 s/P), P=0.717 s (~7 casts per 5 s)"}], "confidence": "C", "note": "card table p5 (uptime formula, R4 period)"},
         "name": "Weakening Charge",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 30 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -128,39 +135,43 @@
       {
         "id": "efficient_wiring",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -10%/r"}], "confidence": "C", "note": "card table p6"},
         "name": "Efficient Wiring",
         "description": "Decreases the mana cost of charged bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 10 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 10}
         }
       },
       {
         "id": "non_conductive_boots",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish during cast; no script readout in card"}], "confidence": "I", "note": "card table p7 (no dummy effect; card has no script readout)"},
         "name": "Non-conductive Boots",
         "description": "Decreases movement diminish when using charged bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "static_buildup",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bolt size +10%/r: contact 12+9.4*(1+0.1r) px; at 160 px still 0 extra hits (even n misses by 26.4 px, odd n already 1)"}], "confidence": "I", "note": "card table p8 (C/I)"},
         "name": "Static Buildup",
         "description": "Increases the size of charged bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 10 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 10}
         }
       },
       {
         "id": "additive_voltage",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15], "note": "on cast, chance 5r%, adds 3r bolts (card '/r' read as x r, matching p1 n=3+3r)"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "expected change = chance 5r% x (H(3+3r) - H(3)); with the dummy horizontal H = 1 for every n (even n 6, 12, 18 hit through the nearer neighbour bolt, Resztki po R4 D, I) -> 0. Vertical dummy: [-0.05, 0, -0.15, 0, -0.25] (H(6) = H(12) = H(18) = 0, the previous values)"}], "confidence": "I", "note": "card table p9 (shared pack, parity) + Resztki po R4 D (horizontal dummy: no parity loss)"},
         "name": "Additive Voltage",
         "description": "Chance on cast to increase the amount of charged bolts.",
         "maxRank": 5,
@@ -176,12 +187,13 @@
       {
         "id": "electrocharged_therapy",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "Stasis DoT (buff 61) floor(d4*0.15r) per proc; proc chance 3r% per hit; DoT formula in reports/dot_debuffs.md case 26"}], "confidence": "C", "note": "card table p10"},
         "name": "Electrocharged Therapy",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 15 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -194,28 +206,31 @@
       {
         "id": "electric_field",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [4, 8, 12], "note": "n += 4r, ring around player; aim-line bolt hits once in flight"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "continuous casting (P=43 < 60 frames): return hit blocked by pack rule 36 -> 1 hit; the extra return hit exists only for the first cast of a series or P>=60 frames (not modelled)"}], "confidence": "I", "note": "card table p11 (C/I, +-3 frames)"},
         "name": "Electric Field",
         "description": "Unleash charged bolts in a circle around you causing them to return after a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "lightning_skill_damage": 0 },
-          "perRank": { "projectile_count": 4, "lightning_skill_damage": 15 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "subtree_damage": 15}
         }
       },
       {
         "id": "world_ender",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: one big bolt per cast; 1 hit at 160 px"}, {"kind": "damage_mult", "byRank": [1.5, 3.0, 4.5], "note": "D_WE = floor(LTD*n_WE*0.5r*(1+LSSD)) -> ratio n_WE*0.5r; assumes n_WE=3 (p1,p9,p11 at 0); with p1/p9/p11 the ratio grows"}], "confidence": "I", "note": "card table p12 + rule 24 (C/I); shard only at S~340 px", "plannerFix": "of_total_damage is applied as 50%/r of a single bolt times n_WE (card: n_WE*50%/r of one bolt), not as of_total_damage over n bolts; at 160 px the shard is absent (shard appears only when the dummy stands near the break point ~340 px)"},
         "name": "World Ender",
         "description": "Conjure a single large charged bolt scaling from projectile amount and unleashing charged bolts into all directions after exploding.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_size": 0 },
-          "perRank": { "of_total_damage": 50, "projectile_size": 20 }
+          "base": {"of_total_damage": 0, "projectile_size": 0},
+          "perRank": {"of_total_damage": 50, "projectile_size": 20}
         }
       },
       {
         "id": "loaded_thunder",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.48, 1.08], "per": "use", "note": "proc chance 8r% per hit; Symphony_Storm at target (0.75r*D) + Thunder_Shockwave with same damage (2 objects): value = 0.08r*2*0.75r = 0.12r^2 per use"}], "confidence": "C", "note": "card table p13 + 380#2 (wave hits dummy, C)", "plannerFix": "proc models one object; the game spawns a Symphony storm and a shockwave of equal damage 0.75r*D (2 hits per proc)"},
         "name": "Loaded Thunder",
         "description": "Chance to unleash a large pulsating thunder bolt on hit dealing increased damage.",
         "maxRank": 3,
@@ -231,12 +246,13 @@
       {
         "id": "railgun",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD +100%/r"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown 3 s (absolute period 3 s); no per-bolt pack; hits per use = ceil(n/5) = 1 at n=3"}], "confidence": "I", "note": "card table p14 (C/I); series bolts off 0,12,24 each own map", "plannerFix": "cooldown 3 s from railgun is missing in the planner effects"},
         "name": "Railgun",
         "description": "Unleash charged bolts as a barrage dealing increased damage. Charged bolts now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_speed": 0 },
-          "perRank": { "lightning_skill_damage": 100, "projectile_speed": 40 }
+          "base": {"projectile_speed": 0, "cooldown_added": 3, "subtree_damage": 0},
+          "perRank": {"projectile_speed": 40, "cooldown_added": 0, "subtree_damage": 100}
         }
       }
     ]
@@ -261,6 +277,9 @@
     "id": "lightning_surge",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.5, "confidence": "I", "note": "Per cast (period P = (ceil(72/S) + 1)/60 s with S = 1.75 + FCR/100 + 0.08 r_p7, engine side), dummy on the aim line at 160 px: one Stormweaver_Lightning_Surge_obj ray (Player_Damage_Parent, singleHit, no tick, no map clear) spawned 8 px from the player grows to image_xscale 1.0325 by frame 22 (front 324 px ahead of its origin, reach ~490 px from the player, width 30-35 px; R4 383#1 after the coordinator's correction) and hits the dummy once, in frame 10 for d = 160 px (hits for d <= 494 px) = 1 hit of damage[4] = D = the main hit. baseProjectiles = 1; perExtraProjectile = 0.5 (I; Resztki po R4 D, dummy horizontal from the player, the aim origin is 6 px below the launch point): extra rays in a 12 deg fan (angles -6n + 12i + 6, gear extras, yScaling 0.145) hit the dummy at 160 px as H(1..3) = 1, 2, 2 (n = 2 -> 2 hits up to 260 px unchanged; n = 3 -> 2 instead of 1 at 160 px; the old \"1 from 150 px\" border is +-10 px, I), slope (H(3) - H(1)) / 2 = 0.5 over the first two extras. Beyond n = 3 without p12 the card has no table; the p12 Supercharged table with the narrower ray gives 2 / 2 / 2 for n = 4 / 5 / 6 horizontally (2 / 1 / 2 vertically; the old values were 2 / 1 / 2), so the slope is taken from n <= 3 (I). A vertical dummy keeps the old table (n = 5 -> 1). The passive Chain Lightning (385: +0.18 hits of d4*(1 + 4L %) per ray hit, N0 chain) is not included. p10 (+0.04r*r hits of 0.35r D), p11 (return ray: 0 at 160 px, it only reaches d <= 145 px), p13 Tether (tick 0.4 s, summed damage), p14 tornado (1 hit, disables p11/p13), p12 fan with 0.5r damage are subskill effects."},
+    "damageFormula": { "base": 0, "perLevel": 9.25 },
     "classId": "stormweaver",
     "name": "Lightning Surge",
     "kind": "active",
@@ -318,34 +337,37 @@
       {
         "id": "amplified_storm",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [9, 18, 27, 36, 45, 54, 63], "note": "LSSD +9%/r"}], "confidence": "C", "note": "card table p1"},
         "name": "Amplified Storm",
         "description": "Increases the damage dealt by lightning surge.",
         "maxRank": 7,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 9 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 9}
         }
       },
       {
         "id": "storms_prophet",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Storm´s Prophet",
         "description": "Decreases the mana cost of lightning surge.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "shocked_to_the_core",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [4.5, 9, 13.5, 18, 22.5], "note": "LSSD +4.5%/r (s10); shocked buff 16 has no reader in exe, no damage effect"}], "confidence": "C", "note": "card table p3 + dummy_debuffs 0.4"},
         "name": "Shocked to the Core",
         "description": "Chance to lower target attack rating on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 4.5 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 4.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -358,12 +380,13 @@
       {
         "id": "heated_lightning",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.35, 0.7, 1.05, 1.4, 1.75], "note": "burning floor(D*0.35r) per proc, proc chance 3r% once per cast (cpr_irandom); DoT per reports DoT case 18; value = damage ratio per tick/proc"}], "confidence": "C", "note": "card table p4"},
         "name": "Heated Lightning",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 35 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -376,12 +399,13 @@
       {
         "id": "piercing_bolt",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0574, 1.2104, 1.4339, 1.7081, 2.0173], "note": "lightning break 30r% for 5 s, chance 3r% once per cast; expected multiplier 1+0.3r*u, u = 1-(1-0.03r)^(5 s/P), P=0.717 s"}], "confidence": "C", "note": "card table p5"},
         "name": "Piercing Bolt",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 30 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -397,6 +421,7 @@
       {
         "id": "restoring_surge",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana restore 1%/r of max mana on hit, chance 3r% per cast"}], "confidence": "C", "note": "card table p6"},
         "name": "Restoring Surge",
         "description": "Chance to restore portion of your maximum mana on hit.",
         "maxRank": 5,
@@ -412,17 +437,19 @@
       {
         "id": "voltaic_pressure",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [8, 16, 24], "note": "castRate +8%/r for skill 383 only; S=1.75+FCR/100+0.08r, P=(ceil(72/S)+1)/60 s"}], "confidence": "C", "note": "card table p7; period 43/41/39/38 frames"},
         "name": "Voltaic Pressure",
         "description": "Increases cast rate when using lightning surge.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 8 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 8}
         }
       },
       {
         "id": "storm_summoner",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "use", "note": "already modelled by planner proc target Storm Cloud; chance r% per ray x ~3 hits of small Storm Cloud (tick 0.5 s, 1 s life) x damage floor(D*0.15r): value = 0.01r*3*0.15r"}], "confidence": "I", "note": "card table p8 (C/I; cloud tick count ~3 is I)"},
         "name": "Storm Summoner",
         "description": "Chance to summon a small storm cloud on hit.",
         "maxRank": 5,
@@ -439,6 +466,7 @@
       {
         "id": "lightning_strikes_twice",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "already modelled by planner proc target Lightning Surge; chance 4r% per cast (cpr_irandom) adds a second ray at +0.15 s: x(1+0.04r) hits (ratio 1)"}], "confidence": "C", "note": "card table p9"},
         "name": "Lightning Strikes Twice!",
         "description": "Chance on cast to unleash an additional lightning surge.",
         "maxRank": 5,
@@ -451,6 +479,7 @@
       {
         "id": "grounding_surge",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "on first ray hit, chance 4r%, N=r child rays"}, {"kind": "extra_hits", "byRank": [0.014, 0.112, 0.378, 0.896, 1.75], "per": "use", "replacesProjectileHits": true, "note": "expected = chance 0.04r x N=r children x damage 0.35r*D = 0.014r^3 per hit; children hit dummy once at ~frame 2; r4/r5 extrapolated from the same formula"}], "confidence": "C", "note": "card table p10 (R4 383#0, asm 0x1452955f1)", "plannerFix": "projectile_count of the proc adds no dummy hits in the engine (perExtraProjectile 0); card: 0.014*r^3*D extra per use"},
         "name": "Grounding Surge",
         "description": "Chance for lightning surge to explode into multiple smaller surges on hit.",
         "maxRank": 5,
@@ -466,45 +495,49 @@
       {
         "id": "surging_comeback",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "note": "return ray hit D*(1+0.5r) only when dummy is nearer than ~145 px; at 160 px 0 extra hits (card says previous model +1 is wrong). If d<=145 px: +(1+0.5r) per use"}], "confidence": "I", "note": "card table p11 (C/I), R4 correction", "plannerFix": "planner models +50%/r as LSSD; game gives an extra return hit of D*(1+0.5r) only at distance <= ~145 px, 0 at 160 px"},
         "name": "Surging Comeback",
         "description": "Lightning surge returns after a short duration dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 50 }
+          "base": {"lightning_skill_damage": 0},
+          "perRank": {"lightning_skill_damage": 50}
         }
       },
       {
         "id": "supercharged",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 4, 5], "note": "rays n=3+r (base 1 + 2+r)"}, {"kind": "extra_hits", "byRank": [0, 1.0, 2.0], "per": "use", "replacesProjectileHits": true, "note": "total = H(n,160px)*0.5r*D with H(4/5/6) = 2/2/2 for the horizontal dummy (Resztki po R4 D; ls2.py, margin 0.6 px at n = 5, I) -> 1.0/2.0/3.0 D; minus base 1 hit -> 0/+1.0/+2.0; ranks 4,5 not in card (maxRank 3). Ray damage 0.5r*D each. Vertical dummy: H = 2/1/2 -> [0, 0, 2.0] (the previous values)"}], "confidence": "I", "note": "card table p12 (C/I) + R4 H(n,d) table + Resztki po R4 D (horizontal dummy: n = 5 -> 2 hits)", "plannerFix": "planner counts rays as projectile hits (perExtraProjectile gives n*0.5r); at 160 px a horizontal dummy takes H = 2/2/2 rays with 0.5r*D each (1.0/2.0/3.0 D per use), not n*0.5r"},
         "name": "Supercharged",
         "description": "Unleash multiple narrower surges in an arc dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 2 },
-          "perRank": { "of_total_damage": 50, "projectile_count": 1 }
+          "base": {"of_total_damage": 0, "projectile_count": 2},
+          "perRank": {"of_total_damage": 50, "projectile_count": 1}
         }
       },
       {
         "id": "concurrent_current",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.3, 0.6, 0.9], "note": "tether only from p13 (not base): per tick floor(D*0.3r), tick 0.4 s, 2 s life (6 ticks), repeated casts add damage to same tether (stacking); targets count 2r irrelevant on one dummy; cycle approx T*ceil(2 s/T)"}], "confidence": "I", "note": "card table p13 (C/I)", "plannerFix": "planner treats tether (0.4 s, 2 s) as base hit model; in game tether exists only with p13, it is a DoT-like tick with stacking, not a base hit"},
         "name": "Concurrent Current",
         "description": "Lightning surge attaches a tether to multiple targets dealing damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "chain_lightning_targets": 0 },
-          "perRank": { "of_total_damage": 30, "chain_lightning_targets": 2 }
+          "base": {"of_total_damage": 0, "chain_lightning_targets": 0},
+          "perRank": {"of_total_damage": 30, "chain_lightning_targets": 2}
         }
       },
       {
         "id": "surging_tornado",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}, {"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: tornado replaces ray, 1 hit with D, no tick; disables p11 and p13"}], "confidence": "C", "note": "card table p14"},
         "name": "Surging Tornado",
         "description": "Unleash a tornado of surging lightning dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 25 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 25}
         }
       }
     ]
@@ -532,6 +565,8 @@
   {
     "id": "gateway",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "usePeriod": {"kind": "charge", "extraFrames": 60, "trigger": false, "note": "Gateway (tag Movement/Blink, tags 6/7) sets only playerEffect[128..131] and never writes [142] (skillsBlink 0x14606a980, Talents384 and TalentsStormWeaver have no store to index 0x8e), so the [142] loop gate and CheckTalentUse do not block it and the Movement tag bypasses the [204] animation lock (rule 37): no floor(24/S)+1 trigger frames. Period = charges: abilityMaxStacks 6, abilityStackCooldown 1 s = 60 frames per recharged stack, so up to 6 casts in a burst (no waiting for the animation), then on average 1 cast per 60/(1 + 0.005*h_eff) frames (haste scaling of the stack cooldown is I). extraFrames = 60 = the stack recharge time at no haste. DPS 0 (no damage objects), so the period only matters for utility uptime. Source: Resztki po R4 C (Gateway) + JSON period."},
     "classId": "stormweaver",
     "name": "Gateway",
     "kind": "active",
@@ -551,6 +586,8 @@
   {
     "id": "static_shock",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "0 direct hits in the base. The skill (cooldown 3*(1 - 0.07 r_p2) s, period = cooldown, engine side) creates curses at the cursor point (buff 43 with D_ss = floor(V1*(1 + LSSD)), V1 = 23.5L, 5 s*(1 + p8 + p11), tick every 1 - 0.08 r_p7 s as Universal_Player_Damage_obj with damage[4]; buff 42 = break value) and a Stormweaver_Static_Shock_Zap_obj that has no damage[4] unless p4 Initial Zap is learned; the whole base damage is the DoT of buff 43 at 100 % uptime (5 s > 3 s cooldown), which the engine models as an ailment (D_ss per tick; if it does not know buff 43, treat it as D_ss per tick, 1/(1 - 0.08 r7) ticks per second, with ailment resistance and ailment crit). The zero-damage zap does register a hit (R4 386#0 C): the lightning break (p10) and Stasis (p13) it carries reach the dummy. At the strict 160 px identical (the curse is placed at the cursor). baseProjectiles = 1, perExtraProjectile = 0. p4 Initial Zap (+1 hit of floor(D_ss*(1 + 0.1r)) per cast), p5 second set, p14 (a Lightning Surge ray at ultimateDamage per tick, +0.1r*0.4r tick), p11 aura are subskill effects."},
     "classId": "stormweaver",
     "name": "Static Shock",
     "kind": "active",
@@ -569,7 +606,7 @@
     "ranks": [
       { "rank": 1 }
     ],
-    "damageFormula": { "base": 0, "perLevel": 28 },
+    "damageFormula": { "base": 0, "perLevel": 23.5 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "passiveStats": {
       "base": { "lightning_break": 1 },
@@ -592,50 +629,55 @@
       {
         "id": "high_voltage_shock",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r on the DoT damage D_ss"}], "confidence": "C", "note": "card table p1"},
         "name": "High Voltage Shock",
         "description": "Increases the damage dealt by static shock.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "uprising_charge",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 3*(1-0.07r) s; DoT uptime already 100%, so no DoT change; matters only with p4 zaps"}], "confidence": "C", "note": "card table p2"},
         "name": "Uprising Charge",
         "description": "Decreases the cooldown of static shock.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "field_of_shock",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "curse/zap radius +15%/r; kukla in the middle, no DPS change"}], "confidence": "C", "note": "card table p3"},
         "name": "Field of Shock",
         "description": "Increases the area of effect radius of static shock.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "initial_zap",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "per": "use", "note": "one zap hit per cast with damage floor(D_ss*(1+0.1r)); base has 0 hits, so the unit here is D_ss (the DoT damage), not a main hit. Engine must read value in D_ss units"}], "confidence": "C", "note": "card table p4 (zap damage R4 386#0)", "plannerFix": "planner models initial zap as lightning_skill_damage (LSSD); game gives one extra zap hit with damage D_ss*(1+0.1r) per cast"},
         "name": "Initial Zap",
         "description": "Static shock shocks monsters with an initial hit dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 10 }
+          "base": {"lightning_skill_damage": 0},
+          "perRank": {"lightning_skill_damage": 10}
         }
       },
       {
         "id": "multishock",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "chance 3r% per cast for a second set; the DoT buff only refreshes (no stacking); extra value is only the zap hit 0.03r, which exists only with p4 ranks (zap damage 0 without p4); unit D_ss"}], "confidence": "C", "note": "card table p5", "plannerFix": "planner adds a full extra static shock (of_total_damage 100); in game the DoT buff does not stack (refresh only), only the zap hit adds 0.03r with p4"},
         "name": "Multishock",
         "description": "Chance on cast to unleash an additional static shock.",
         "maxRank": 5,
@@ -651,39 +693,43 @@
       {
         "id": "storms_reach",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "cast range +15%/r; no readout in card for dummy DPS"}], "confidence": "I", "note": "card table p6 (no script readout)"},
         "name": "Storms Reach",
         "description": "Increases the maximum cast range of static shock.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "storm_infused_vains",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.087, 1.1905, 1.3158, 1.4706, 1.6667], "note": "buffFrequency 8%/r -> ticks per second x1/(1-0.08r); DPS = D_ss*mult/(1-0.08r). NOT faster cast rate"}], "confidence": "C", "note": "card table p7", "plannerFix": "planner models p7 as faster_cast_rate (castRate); the card says it is the DoT tick frequency (buffTimerReduce), x1/(1-0.08r) ticks per second"},
         "name": "Storm Infused Vains",
         "description": "Increases the tick frequency of static shock.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 8 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 8}
         }
       },
       {
         "id": "lingering_electricity",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff and zap duration +15%/r; DoT uptime already 100% at cooldown 3 s, no DPS change"}], "confidence": "C", "note": "card table p8"},
         "name": "Lingering Electricity",
         "description": "Increases the duration of static shock.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "charged_shock",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0045, 1.018, 1.0405, 1.072, 1.1125], "note": "chance 3r% per cast: LSSD +15r% for that cast -> average 1+0.03r*0.15r/(1+LSSD); values with LSSD=0 (the card's denominator makes it LSSD-dependent)"}], "confidence": "C", "note": "card table p9"},
         "name": "Charged Shock",
         "description": "Chance on cast to increase the damage dealt by static shock.",
         "maxRank": 5,
@@ -699,12 +745,13 @@
       {
         "id": "weakening_strike",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.1, 0.2, 0.3, 0.4, 0.5], "note": "zap applies lightning break 10r% for 5 s (buff 11) to the dummy; the zap itself has 0 damage; the break multiplies OTHER lightning hits (1+0.1r*uptime), not this skill's DoT"}], "confidence": "C", "note": "card table p10 (zap registers hit, R4 386#0)"},
         "name": "Weakening Strike",
         "description": "Inflicts lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 10 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -720,17 +767,19 @@
       {
         "id": "self_ionization",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0, 0, 0], "note": "transformation: curses follow the player; aura radius 64*(1+0.3r+p3+p13) must reach ~148 px to touch dummy at 160 px; with p11 alone 0 at 160 px (radius 83/102/122 px)"}], "confidence": "I", "note": "card table p11 (C/I, R4)", "plannerFix": "planner gives area and duration only; in game the aura follows the player, so the dummy at 160 px is out of range unless the radius reaches ~148 px (0 DPS for p11 alone)"},
         "name": "Self Ionization",
         "description": "Static shock follows you with increased duration inflicting statick shock to nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "skill_duration": 0 },
-          "perRank": { "area_of_effect": 30, "skill_duration": 25 }
+          "base": {"area_of_effect": 0, "skill_duration": 0},
+          "perRank": {"area_of_effect": 30, "skill_duration": 25}
         }
       },
       {
         "id": "leeching_shock",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.035, 1.14, 1.315], "note": "tick x(1+0.35r) with chance 10r% per tick; average 1+0.035r^2; stun 3 s (vs-stunned bonuses)"}], "confidence": "C", "note": "card table p12 (Draw_Enemy_Buff_obj L104, DrawEnemyBuffDotBuffs L30)", "plannerFix": "planner adds 35r% LSSD on every tick; the card says it is a chance-based tick multiplier with average 1+0.035r^2"},
         "name": "Leeching Shock",
         "description": "Chance on tick to restore a portion of your maximum mana dealing increased damage and stunning the target.",
         "maxRank": 3,
@@ -750,12 +799,13 @@
       {
         "id": "thunders_embrace",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "utility", "note": "curse/zap radius +25%/r (no DPS change on a centred dummy)"}, {"kind": "dot", "byRank": [0.55, 1.1, 1.65], "note": "zap [26] = floor(D_ss*55%/r) Stasis DoT (buff 61) per zap; zap registers the hit"}], "confidence": "C", "note": "card table p13 (raport DoT case 26)", "plannerFix": "planner models p13 as increased_stasis_damage 55r on a state; the card says it is a Stasis DoT of floor(D_ss*0.55r) from the zap"},
         "name": "Thunders Embrace",
         "description": "Increases the area of effect radius inflicting stasis on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "increased_stasis_damage": 0 },
-          "perRank": { "area_of_effect": 25, "increased_stasis_damage": 55 }
+          "base": {"area_of_effect": 0, "increased_stasis_damage": 0},
+          "perRank": {"area_of_effect": 25, "increased_stasis_damage": 55}
         },
         "proc": {
           "trigger": "on_hit",
@@ -768,6 +818,7 @@
       {
         "id": "ultimate_static_current",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.04, 0.16, 0.36], "note": "per tick: chance 10r% x lightning surge object at player position with damage 0.4r*tick (no modifiers, class 'brak'); value = 0.1r*0.4r = 0.04r^2 of tick damage; reaches dummy at 160 px in ~frame 10"}], "confidence": "C", "note": "card table p14 (R4 386#1, class brak)"},
         "name": "Ultimate Static Current",
         "description": "Chance on tick to unleash a lightning surge towards the target.",
         "maxRank": 3,
@@ -785,6 +836,8 @@
   {
     "id": "storm_cloud",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 16.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 3 s, cloud lasts 8 s, so clouds of consecutive casts overlap on the dummy without a limit and each has its own hit map; engine side), placed at T = (x, y-30) (Resztki po R4 E: P + lengthdir(tupm[6], tupm[7]) from the player y, i.e. 6 px above the cursor (x, y-24)), 30 px from the dummy centre, cloud radius ~128 px (covers the dummy with margin; hits unchanged) (scale 2 on Aura_Hitbox_spr 128x128; the 160 px convention is the same): Stormweaver_Storm_Cloud_obj (Player_Damage_Parent, tick_frequency 30 frames, destroyTimer 8 s = 480 frames + up to 20 fade frames) - tools/tick_hits.py (rule 20): tick_hits(498 active frames, T = 30) = 16 hits of damage[4] = D = the main hit = 16.0 per cast (the old 1 + floor(498/30) = 17 is superseded). baseProjectiles = 1; perExtraProjectile = 0: no projectile count for gear (p9 is a 3 %/r chance of a second cloud, p11 Orbiting Tempest makes 1 + r clouds orbiting at 140 px, each ~31 % of the time over the dummy = ~5 hits per cloud - a different model, not 16 per cloud). p1 (tick 24/18/12 frames -> 20 / 27 / 39 hits), p7 (duration -> 20 / 24 / 28), p13 Aftershock (a second weaker cloud: +20 hits of 0.3r D), p4/p5/p8/p12/p14 procs are subskill effects."},
     "classId": "stormweaver",
     "name": "Storm Cloud",
     "kind": "active",
@@ -804,7 +857,7 @@
     "ranks": [
       { "rank": 1 }
     ],
-    "damageFormula": { "base": 0, "perLevel": 24 },
+    "damageFormula": { "base": 0, "perLevel": 17.75 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "passiveStats": {
       "base": { "area_of_effect": 1.25 },
@@ -827,45 +880,49 @@
       {
         "id": "rapid_and_intense_glaciation",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 11, 23], "per": "use", "note": "tick 30*(1-0.2r) frames (min 6): hits per cloud 20/27/39 (tick 24/18/12) vs base 16 at tick 30; tick_hits.py"}], "confidence": "C", "note": "card table p1 (reguła 20)", "plannerFix": "planner models p1 as faster_cast_rate 20r; in game it is the tick frequency of the cloud (30*(1-0.2r) frames): 20/27/39 hits per cloud"},
         "name": "Rapid and Intense Glaciation",
         "description": "Increases the tick frequency of storm cloud.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 20 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 20}
         }
       },
       {
         "id": "demolishing_discharge",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Demolishing Discharge",
         "description": "Increases the damage dealt by storm cloud.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "storm_conjurer",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card table p3"},
         "name": "Storm Conjurer",
         "description": "Decreases the mana cost of storm cloud.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "shocking_thunder",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "Stasis floor(D*0.15r) (buff 61) per proc; chance 3r% per cloud tick hit (16 per cloud); value = damage ratio per proc; DoT per reports DoT case 26"}], "confidence": "C", "note": "card table p4"},
         "name": "Shocking Thunder",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 15 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -878,6 +935,7 @@
       {
         "id": "destructive_cloudburst",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "chance 3r% per cloud tick hit: r Charged_Bolts_obj spawned at dummy position (no pack)"}, {"kind": "extra_hits", "byRank": [0.48, 1.92, 4.32, 7.68, 12.0], "per": "use", "replacesProjectileHits": true, "note": "expected per cloud = 16 ticks x 0.03r chance x r bolts x D = 0.48r^2 D per use; bolt hit count per bolt = 1 (I)"}], "confidence": "I", "note": "card table p5 (C mechanics, hit count I)", "plannerFix": "projectile_count on proc adds no dummy hits (perExtraProjectile 0); game: 16*0.03r*r extra bolt hits per cloud at the dummy"},
         "name": "Destructive Cloudburst",
         "description": "Chance to unleash multiple charged bolts on hit.",
         "maxRank": 5,
@@ -893,28 +951,31 @@
       {
         "id": "maelstorm",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "cloud scale +15%/r radius; all 16 ticks already on a centred dummy, no hit change"}], "confidence": "C", "note": "card table p6"},
         "name": "Maelstorm",
         "description": "Increases the area of effect radius of storm cloud.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "supercell_storm",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "note": "duration 8 s*(1+0.25r): active frames 480*(1+0.25r)+18 at tick 30 -> 20/24/28 hits per cloud"}], "confidence": "C", "note": "card table p7 (reguła 20)"},
         "name": "Supercell Storm",
         "description": "Increases the duration of storm cloud.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 25 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 25}
         }
       },
       {
         "id": "heatcharged_lightning",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25], "note": "flames (Storm_Cloud_Flames 3 s, tick 0.5 s, ~6 ticks) floor(D*0.25r) per proc; chance 3r% per cloud tick hit (16 per cloud)"}], "confidence": "I", "note": "card table p8 (C/I, ~6 flame ticks)"},
         "name": "Heatcharged Lightning",
         "description": "Chance to leave the ground on flames on hit dealing damage over time.",
         "maxRank": 5,
@@ -930,6 +991,7 @@
       {
         "id": "thunders_roar",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.48, 0.96, 1.44, 1.92, 2.4], "per": "use", "note": "chance 3r% per cast -> second cloud (16 hits): x(1+0.03r) on 16 hits = +0.48r hits per use"}], "confidence": "C", "note": "card table p9"},
         "name": "Thunder´s Roar",
         "description": "Chance on cast to unleash an additional storm cloud.",
         "maxRank": 5,
@@ -945,28 +1007,31 @@
       {
         "id": "homing_tempest",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "cloud moves to nearest monster; dummy already under the cloud at cursor, no change"}], "confidence": "C", "note": "card table p10"},
         "name": "Homing Tempest",
         "description": "Storm cloud now slowly moves towards the closest nearby monster.",
         "maxRank": 2,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 35 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 35}
         }
       },
       {
         "id": "orbiting_tempest",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10, 15, 20], "note": "transformation: 1+r clouds orbit player (card '1+1/r' read as 1+r, planner projectile_count 1r); dummy under cloud ~31% of time -> ~5 hits per cloud; total per use (1+r)*5; replaces the static 16"}], "confidence": "I", "note": "card table p11 (C/I, angular geometry I)", "plannerFix": "projectile_count of orbit clouds adds no hits (perExtraProjectile 0); game: orbiting clouds replace the static cloud, about (1+r)*5 hits per cast on the dummy"},
         "name": "Orbiting Tempest",
         "description": "Conjure multiple storm clouds orbitting around you.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "storm_front",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.992, 14.848, 29.568], "per": "use", "note": "chance 8r% per cloud tick hit (16/cloud) x 2 hits of Apocalyptic_Thunder object with damage floor(D*(1+0.95r)): 16*0.08r*2*(1+0.95r)"}], "confidence": "I", "note": "card table p12 (C/I, 2 hits I)", "plannerFix": "planner adds 95r% to LSSD on all hits; game spawns a separate Apocalyptic Thunder with damage D*(1+0.95r), 2 hits per proc, chance 8r% per tick"},
         "name": "Storm Front",
         "description": "Unleash a large storm cloud with a chance of striking monsters with lightning bolts dealing heavy damage.",
         "maxRank": 3,
@@ -982,17 +1047,19 @@
       {
         "id": "aftershock",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [6, 12, 18], "per": "use", "note": "second cloud (Storm_Cloud_obj, 20 ticks at 30 frames) each floor(D*0.3r): 20*0.3r = 6r hits per use; radius x(1+0.4r), slow 3 s"}], "confidence": "C", "note": "card table p13 (tick_hits 596/30 = 20)"},
         "name": "Aftershock",
         "description": "Increases the area of effect radius of storm cloud leaving the ground below charged with electricity dealing damage over time and slowing monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "of_total_damage": 0 },
-          "perRank": { "area_of_effect": 40, "of_total_damage": 30 }
+          "base": {"area_of_effect": 0, "of_total_damage": 0},
+          "perRank": {"area_of_effect": 40, "of_total_damage": 30}
         }
       },
       {
         "id": "apocalyptic_event",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.6, 3.2, 4.8], "per": "use", "note": "chance 5r% per cloud tick hit (16/cloud) -> Apocalyptic_Thunder with damage ~D (add, not multiply) and 2 hits: 16*0.05r*2 = 1.6r per use; execute 2.5r% no hit change; enemyType<2 satisfied (dummy enemyType 0)"}], "confidence": "C", "note": "card table p14 (R4 387#1)", "plannerFix": "planner models LSSD +75r% with chance 5r%; game adds an Apocalyptic Thunder of ~D (2 hits per proc) per tick proc; no 0.75r multiplier"},
         "name": "Apocalyptic Event",
         "description": "Chance to unleash apocalyptic thunder on hit dealing additional damage executing targets with life below a threshold.",
         "maxRank": 3,
@@ -1010,6 +1077,7 @@
   {
     "id": "symphony_of_thunder",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "stormweaver",
     "name": "Symphony of Thunder",
     "kind": "active",
@@ -1028,6 +1096,7 @@
       { "rank": 1 }
     ],
     "manaCostFormula": { "base": 4, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": { "lightning_skill_damage": 5 },
       "perRank": { "lightning_skill_damage": 2.25 }
@@ -1144,6 +1213,8 @@
   {
     "id": "apocalyptic_thunder",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (period P = (ceil(72/c) + 1)/60 s; p12 +2 s cooldown, engine side), placed at T = (x, y-30) (Resztki po R4 E: P + lengthdir(tupm[6], tupm[7]) from the player y, i.e. 6 px above the cursor (x, y-24); asm 0x1468481c4 / 0x1468491b1), 30 px from the dummy centre (the bitmap mask 107x93 at the base covers it, checked for 30 px; hits unchanged): one Stormweaver_Apocalyptic_Thunder_obj (Player_Damage_Parent, singleHit = 0, tick_frequency 0.25 s = 15 frames, alarm[11] = 2, life = 8 frames at 17 fps ~ 28-29 frames, default sprite) -> tools/tick_hits.py (rule 20): tick_hits(27 active frames, T = 15) = 2 hits of damage[4] = D = the main hit = 2.0 (hits at frames 2 and 18; a 3rd needs >= 34 active frames; the cosmetic Maid/Succubus skins at 12 fps live 40 frames and give 3, I). baseProjectiles = 1; perExtraProjectile = 0 (no projectile count for gear; the planner's symphony_of_the_storm projectile_count +3/r are the p12 echoes). p11 Lightning Rod (waves at 52 px, only wave 1 reaches the dummy when aiming down +-45 deg), p12 Symphony of the Storm (E = 3r echoes of 2 hits x 0.8^k D, always on the dummy, +2 s cooldown), p14 Superstorm (+1 shockwave hit D*(1 + 0.85r)), p5/p8/p9 procs are subskill effects. The passive Aftershock (kill proc) is 0 on the dummy."},
     "classId": "stormweaver",
     "name": "Apocalyptic Thunder",
     "kind": "active",
@@ -1160,7 +1231,7 @@
     "ranks": [
       { "rank": 1 }
     ],
-    "damageFormula": { "base": 0, "perLevel": 22 },
+    "damageFormula": { "base": 0, "perLevel": 14.5 },
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "bonusSources": [
       { "source": "Storm Bolt", "stat": "lightning_skill_damage", "value": 12, "per": "skill_level" },
@@ -1179,28 +1250,31 @@
       {
         "id": "voltage_amplification",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}], "confidence": "C", "note": "card table p1"},
         "name": "Voltage Amplification",
         "description": "Increases the damage dealt by apocalyptic thunder.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "center_of_the_storm",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -15%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Center of the Storm",
         "description": "Decreases the mana cost of apocalyptic thunder.",
         "maxRank": 3,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 15 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 15}
         }
       },
       {
         "id": "immobilizing_thunderstrike",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.008, 1.032, 1.072, 1.128, 1.2], "note": "chance 4r% once per CAST: LSSD +20r% for that cast -> average 1+0.008r^2 (LSSD=0 denominator); stun 3 s (enables p10 vs stunned)"}], "confidence": "C", "note": "card table p3", "plannerFix": "planner triggers the LSSD proc on_hit; card: once per cast (cpr_irandom at L794)"},
         "name": "Immobilizing Thunderstrike",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -1217,17 +1291,19 @@
       {
         "id": "speed_of_sound",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "thunder scale 0.7*(1+17%/r); no hit change on centred dummy"}], "confidence": "C", "note": "card table p4"},
         "name": "Speed of Sound",
         "description": "Increases the area of effect radius of apocalyptic thunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 17 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 17}
         }
       },
       {
         "id": "spontanious_rupture",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.016, 0.064, 0.144, 0.256, 0.4], "per": "use", "note": "chance 4r% per thunder hit (2 per cast) -> new Apocalyptic_Thunder on dummy with floor(D*0.1r), 2 hits each: 2*0.04r*2*0.1r = 0.016r^2 per use"}], "confidence": "I", "note": "card table p5 (C/I)", "plannerFix": "planner models the extra thunder with one hit; the copy has 2 hits (tick 0.25 s) and the trigger happens on each of the 2 thunder hits"},
         "name": "Spontanious Rupture",
         "description": "Chance to unleash an additional apocalyptic thunder on hit.",
         "maxRank": 5,
@@ -1243,34 +1319,37 @@
       {
         "id": "conjurers_skill",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish during cast"}], "confidence": "I", "note": "card table p6 (no dummy effect)"},
         "name": "Conjurers Skill",
         "description": "Decreases movement diminish when using apocalyptic thunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "horizontal_travel",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "cast range +15%/r; no dummy DPS"}], "confidence": "I", "note": "card table p7 (range only, I)"},
         "name": "Horizontal Travel",
         "description": "Increases the maximum cast range of apocalyptic thunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "shocking_lightningstrike",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0574, 1.2104, 1.4339, 1.7081, 2.0173], "note": "chance 3r% once per cast -> lightning break 30r% (+p13) for 5 s on dummy; expected multiplier on later thunder hits 1+0.3r*u, u=1-(1-0.03r)^(5 s/P), P=0.717 s"}], "confidence": "C", "note": "card table p8"},
         "name": "Shocking Lightningstrike",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 30 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1286,12 +1365,13 @@
       {
         "id": "30000_degrees",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.35, 0.7, 1.05, 1.4, 1.75], "note": "chance 3r% per cast -> burning floor(D*0.35r) (DoT, reports DoT case 18); enables p10 vs burning"}], "confidence": "C", "note": "card table p9"},
         "name": "30000 Degrees",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 35 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1304,17 +1384,19 @@
       {
         "id": "fracturing_thunder",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "bonus multiplier 1+0.15r applied to this skill's hits ONLY while the dummy is stunned (p3) or burning (p9); conditional, value = bonus fraction; zero without p3/p9 uptime"}], "confidence": "C", "note": "card table p10"},
         "name": "Fracturing Thunder",
         "description": "Increases damage dealt to stunned and burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0, "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_stunned": 15, "extra_damage_burning": 15 }
+          "base": {"extra_damage_stunned": 0, "extra_damage_burning": 0},
+          "perRank": {"extra_damage_stunned": 15, "extra_damage_burning": 15}
         }
       },
       {
         "id": "lightning_rod",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [9, 36, 81], "note": "expected LSSD for proc casts: chance 15r% x 60r% = 9r^2 %"}, {"kind": "extra_hits", "byRank": [0.0624, 0.1248, 0.1872], "per": "use", "note": "chance 15r% per cast -> waves 3+r; wave 1 hits dummy only for aim 45-135 deg (26% of directions), 2 hits of 0.8*D: 0.15r*2*0.8*0.26 = 0.0624r per use"}], "confidence": "I", "note": "card table p11 (C/I, bitmap sim, aim assumption)", "plannerFix": "planner converts the 3+r waves into projectile hits; on a lone dummy only wave 1 hits and only for aim 45-135 deg (~26%), 2 hits of 0.8*D each"},
         "name": "Lightning Rod",
         "description": "Chance on cast to unleash a chain of shrinking apocalyptic thunders on hit.",
         "maxRank": 3,
@@ -1330,23 +1412,25 @@
       {
         "id": "symphony_of_the_storm",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [60, 120, 180], "note": "LSSD +60%/r"}, {"kind": "extra_hits", "byRank": [3.79, 5.73, 6.72], "per": "use", "note": "echoes E=3r, one spawned every 9 frames at (xSpawn,ySpawn)+-32 px, each echo 2 hits of floor(parent*0.8) with scale copied (no 0.8 scale): 2*P_echo*sum_{k=1..E} 0.8^k D with P_echo = 0.97 (Resztki po R4 E: thunder at T = (x, y-30), mask bitmap sim at.py; was 1.00) = 3.79/5.73/6.72 D per use (E = 3/6/9; the card states 3.79 for E = 3, the other two follow from the same formula); with a p11 Lightning Rod proc (scale 0.7) P_echo = 0.73 (was 0.82): 2.85/4.31/5.06 D, not encoded; cursor on (x, y): 1.00 unchanged"}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "cooldown +2 s (period becomes 2 s)"}], "confidence": "I", "note": "card table p12 (C/I, R4 396#2) + Resztki po R4 E (P_echo 0.97 / 0.73)", "plannerFix": "planner counts echoes as projectile_count x D; game: echoes are 2 hits each with damage 0.8^k*D (geometric), and the cooldown +2 s is missing"},
         "name": "Symphony of the Storm",
         "description": "Apocalyptic thunder strikes multiple times dealing less damage with every strike. Apocalyptic thunder now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "lightning_skill_damage": 60, "projectile_count": 3 }
+          "base": {"projectile_count": 0, "cooldown_added": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "cooldown_added": 0, "subtree_damage": 60}
         }
       },
       {
         "id": "lethal_voltage",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.6, 2.2, 2.8], "note": "lightning break 60r% applied on every cast (cast period 0.717 s < 5 s, uptime 100%)"}, {"kind": "dot", "byRank": [0.75, 1.5, 2.25], "note": "Stasis floor(D*0.75r) (buff 61) on every cast, no chance (card [26])"}], "confidence": "C", "note": "card table p13"},
         "name": "Lethal Voltage",
         "description": "Inflicts stasis and lightning break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_break": 0, "increased_stasis_damage": 0 },
-          "perRank": { "lightning_break": 60, "increased_stasis_damage": 75 }
+          "base": {"lightning_break": 0, "increased_stasis_damage": 0},
+          "perRank": {"lightning_break": 60, "increased_stasis_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1363,12 +1447,13 @@
       {
         "id": "superstorm",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.85, 2.7, 3.55], "per": "use", "note": "one Thunder_Shockwave_New per cast at thunder (x,y), damage D*(1+0.85r), dummy 24 px from centre covered from frame 2: +1 hit (knockback 0 on dummy)"}], "confidence": "C", "note": "card table p14 (R4 396#1)", "plannerFix": "planner adds 85r% to LSSD for every hit; game adds one shockwave hit D*(1+0.85r) per cast"},
         "name": "Superstorm",
         "description": "Unleash a nova of lightning knocking enemies back with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 85 }
+          "base": {"lightning_skill_damage": 0},
+          "perRank": {"lightning_skill_damage": 85}
         }
       }
     ]
@@ -1422,6 +1507,8 @@
     "id": "storm_bolt",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.25, "confidence": "I", "note": "Per cast (period P = (ceil(72/c) + 1)/60 s, engine side), dummy on the aim line at 160 px: one Stormweaver_Storm_Bolt_obj (projType 1, 8 px/frame, mask 54x37 x 0.75) hits the dummy by mask contact = hit 1 of damage[4] = D = the main hit; when its origin enters the dummy's mask (rule 33, StepDamageParentCheckCollisions) it snaps to the dummy and 3 frames later Destroy_0 creates an Explosion_Item_obj (r 24 px, active after 4 frames, damage[4] = the bolt's damage[4], full modifiers) = hit 2 -> 2.0 per bolt (R3 390#0 C). The passive Loaded Pulse (392: a 3rd hit D*(1 + 0.03L) when the bolt vanishes early) is not included. baseProjectiles = 1; perExtraProjectile = 0.25 (I, derived from the card's geometry; Resztki po R4 D, dummy horizontal from the player, the aim origin is 6 px below the launch point): n = ExtraSpellProj(1 [+ p5]) bolts are fired in series 0.1 s apart; for n <= 2 all fly on the axis (2 hits each), for n > 2 they fan out 0, +8, +16, -16, -8 deg: the 0 deg bolt gives 2 hits; the +-8 deg bolts pass the dummy centre at 16.3 / 28.2 px (was 22.3 px on both sides), both miss the origin-in-mask test (rule 33) and keep flying, but the bitmap mask 54x37 x 0.75 (lateral reach <= 25.9 px) touches only the nearer one = 1 hit for the pair instead of 2 (I: bitmap shape); a +-16 deg bolt 0 -> H(n) = 2, 4, 2.5, 2.5, 3 for n = 1..5 (n = 3, 4 contain only the +8 bolt and the card does not say which side is the nearer one, so the midpoint of 2 / 3 is taken; the old H was 2, 4, 3, 3, 4), slope 0.25 per extra bolt over the first 2-4 extras (was 0.5); the 0 deg bolt of n = 6 repeats (H(6) = 5, I). p11 Pulsating Bolt (pierces: 1 hit + pulses), p12 Bouncing Charge (pierces: 1 hit, no explosion), p13 Storm Claw (+0.48r^2 D per bolt), p14 Magnetize (+2 hits of D*(1 + 0.4r)), p8/p9 procs are subskill effects."},
     "classId": "stormweaver",
     "name": "Storm Bolt",
     "kind": "active",
@@ -1458,50 +1545,55 @@
       {
         "id": "bolts_of_devastation",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r for bolt and explosion"}], "confidence": "C", "note": "card table p1"},
         "name": "Bolts of Devastation",
         "description": "Increases the damage dealt by storm bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "beaming_cast",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile speed +15%/r only; no hit change"}], "confidence": "C", "note": "card table p2"},
         "name": "Beaming Cast",
         "description": "Increases the projectile speed of storm bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "expanding_storm",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bolt size 0.75*(1+18%/r): bigger explosion, no hit change"}], "confidence": "C", "note": "card table p3"},
         "name": "Expanding Storm",
         "description": "Increases the projectile size of storm bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 18 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 18}
         }
       },
       {
         "id": "static_explosion",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "explosion AOE +15%/r; hit count unchanged"}], "confidence": "C", "note": "card table p4"},
         "name": "Static Explosion",
         "description": "Increases the area of effect radius of storm bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "tiny_storms",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "chance 5r% per cast -> n = 1+r bolts (card '1+1/r' read as 1+r); extra count per proc"}, {"kind": "other", "byRank": [0.1, 0.05, 0.075, 0.2, 0.75], "per": "use", "replacesProjectileHits": true, "note": "already modelled by planner expected_additional_projectiles; expected extra = 0.05r * (H(1+r) - H(1)) with H(n) = 2, 4, 2.5, 2.5, 3, 5 for n = 1..6 (Resztki po R4 D: +-8 deg pair = 1 hit instead of 2, n = 3, 4 midpoint of the unknown side; 0 deg bolt of n = 6 repeats, I): r1 n=2 +2 -> 0.1; r2 n=3 +0.5 -> 0.05; r3 n=4 +0.5 -> 0.075; r4 n=5 +1 -> 0.2; r5 n=6 +3 -> 0.75. The previous values assumed 2 hits for every extra bolt (0.1r^2 = 0.1/0.4/0.9/1.6/2.5), contradicting the card's fan (+-8 deg 1 hit, +-16 deg 0)"}], "confidence": "I", "note": "card table p5 + Resztki po R4 D (Storm Bolt +-8 deg pair) + R4 fan geometry (C/I, hits per fan bolt I)", "plannerFix": "planner gives expected_additional_projectiles = r without the 5r% chance; expected extra is 0.05r * (H(1+r) - 2) hits, with the extra bolts fanning out (+-8 deg 1 hit, +-16 deg 0), not 2 hits per bolt"},
         "name": "Tiny Storms",
         "description": "Chance on cast to unleash multiple smaller storm bolts in a barrage.",
         "maxRank": 5,
@@ -1517,17 +1609,19 @@
       {
         "id": "surging_colossus",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "damage vs bosses only; dummy is not a boss (enemyNetId 318 rule, scale 1)"}], "confidence": "I", "note": "card table p6 (I)"},
         "name": "Surging Colossus",
         "description": "Increases damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 22.5 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 22.5}
         }
       },
       {
         "id": "quantity_of_power",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4], "per": "use", "note": "already modelled by planner expected_additional_projectiles; chance 4r% per cast adds an extra bolt (1+p5) -> hits x(1+0.04r) of 2 base hits = +0.08r per use"}], "confidence": "C", "note": "card table p7", "plannerFix": "planner adds 1 projectile at chance 4r% converted at 0.5 hits; game: x(1+0.04r) on the 2 base hits = +0.08r per use"},
         "name": "Quantity of Power",
         "description": "Chance on cast to fire an additional storm bolt.",
         "maxRank": 5,
@@ -1543,12 +1637,13 @@
       {
         "id": "unleash_discharge",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "chance 3r% once per bolt -> Apocalyptic_Thunder with damage floor(D+0.3r) ~ D (added, not multiplied), 2 hits: 0.03r*2*D"}, {"kind": "damage_mult", "byRank": [1.0479, 1.1753, 1.3616, 1.5901, 1.8478], "note": "lightning break 25r% for 5 s, applied with chance 3r% per bolt; expected multiplier on later storm bolt hits 1+0.25r*u, u=1-(1-0.03r)^(5 s/P), P=0.717 s"}], "confidence": "I", "note": "card table p8 (C/I)", "plannerFix": "planner multiplies discharge damage by 1+0.3r; game adds 0.3r (about D, 2 hits per proc)"},
         "name": "Unleash Discharge",
         "description": "Chance to pull nearby monsters towards the target on hit dealing increased damage inflicting the target with lightning break.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 25 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1568,6 +1663,7 @@
       {
         "id": "storm_breeds_storm",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.4, 0.8, 1.2, 1.6, 2.0], "note": "chance 3r% per bolt -> small Storm Cloud 1 s, tick 0.5 s (~3 ticks) floor(D*0.4r); expected extra = 0.03r*3*0.4r = 0.036r^2 per use (value here: per-proc ratio, see note)"}], "confidence": "I", "note": "card table p9 (C/I, tick count I)"},
         "name": "Storm Breeds Storm",
         "description": "Chance to summon a small storm cloud for a short duration at target location on hit.",
         "maxRank": 5,
@@ -1583,39 +1679,43 @@
       {
         "id": "bouncing_bolts",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "terrain bounces refresh lifetime; no bounce on a lone dummy"}], "confidence": "C", "note": "card table p10"},
         "name": "Bouncing Bolts",
         "description": "Storm bolts can bounce off of terrain multiple times refreshing its lifetime.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "pulsating_bolt",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD +45%/r"}, {"kind": "set_hits", "byRank": [1, 1, 2.5], "note": "transformation: projType 0 (pierces, no stop/explosion at dummy) plus Loaded_Pulse impulses every 0.25 s with full damage; total hits per use r1~1, r2~1, r3 2-3 (midpoint 2.5)"}], "confidence": "I", "note": "card table p11 (C/I)", "plannerFix": "planner lacks the transformation: piercing bolt with no explosion and Loaded_Pulse impulses every 0.25 s (about 1 hit at r1-2, 2-3 at r3)"},
         "name": "Pulsating Bolt",
         "description": "Unleash a piercing and pulsating storm bolt with increased area of effect radius and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "area_of_effect": 0 },
-          "perRank": { "subtree_damage": 45, "area_of_effect": 20 }
+          "base": {"subtree_damage": 0, "area_of_effect": 0},
+          "perRank": {"subtree_damage": 45, "area_of_effect": 20}
         }
       },
       {
         "id": "bouncing_charge",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: piercing bolt bounces to nearest monster (instance_nth_nearest 2 = dummy); on a lone dummy 1 hit, explosion lost (base 2)"}, {"kind": "damage_mult", "byRank": [1.25, 1.5, 1.75], "note": "damage[4] x(1+0.25r) on each bounce; the one dummy hit carries it"}], "confidence": "C", "note": "card table p12 (R3 reguła 17/33)", "plannerFix": "planner counts bounces as extra hits; on a lone dummy the bolt pierces, hits once and loses the explosion (1 hit with x(1+0.25r))"},
         "name": "Bouncing Charge",
         "description": "Unleash a piercing storm bolt bouncing between nearby monsters on hit increasing the damage dealt with each bounce.",
         "maxRank": 3,
         "effects": {
-          "base": { "bounce_damage_increased": 0, "projectile_bounces": 0 },
-          "perRank": { "bounce_damage_increased": 25, "projectile_bounces": 2 }
+          "base": {"bounce_damage_increased": 0, "projectile_bounces": 0},
+          "perRank": {"bounce_damage_increased": 25, "projectile_bounces": 2}
         }
       },
       {
         "id": "storm_claw",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "3r surges per trigger"}, {"kind": "extra_hits", "byRank": [0.48, 1.92, 4.32], "per": "use", "replacesProjectileHits": true, "note": "chance 8r% on EACH hit of bolt and explosion ([737] not zeroed) x 3r surges x D each: 2*0.08r*3r = 0.48r^2 D per use; surge damage is full D ([737][0]=60r% unused)"}], "confidence": "C", "note": "card table p13 (R4 390#2)", "plannerFix": "planner uses surge_damage 60r% per surge; game surges hit with full D (the 60r% value is not read), chance applies to both hits of the bolt"},
         "name": "Storm Claw",
         "description": "Chance to unleash multiple surges of lightning in an arc towards target on hit.",
         "maxRank": 3,
@@ -1631,20 +1731,13 @@
       {
         "id": "magnetize",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.8, 3.6, 4.4], "per": "use", "note": "no chance: each bolt -> Magnetize (1 hit at dummy centre, frame 1) + explosion after 120 frames, both floor(D*(1+0.4r)): 2*(1+0.4r) per use"}], "confidence": "I", "note": "card table p14 (R4 390#3, explosion scale I)", "plannerFix": "planner models +40r% secondary damage as a single modifier; game adds two objects of floor(D*(1+0.4r)) per bolt (Magnetize + explosion)"},
         "name": "Magnetize",
         "description": "Pull all nearby monsters towards the target on hit causing a large electromagnetic explosion slowing and dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "secondary_damage_increased": 0,
-            "area_of_effect": 0,
-            "skill_range": 0
-          },
-          "perRank": {
-            "secondary_damage_increased": 40,
-            "area_of_effect": 10,
-            "skill_range": 20
-          }
+          "base": {"secondary_damage_increased": 0, "area_of_effect": 0, "skill_range": 0},
+          "perRank": {"secondary_damage_increased": 40, "area_of_effect": 10, "skill_range": 20}
         }
       }
     ]

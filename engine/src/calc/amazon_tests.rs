@@ -109,8 +109,23 @@ fn amazon_death_waves_are_separate_from_projectiles_and_rehit_interval() {
         &[],
     );
     assert_eq!(waves.damage.as_ref().unwrap().projectile_count, 1);
-    assert_eq!(waves.hits_per_cast, Some((9.0, 9.0)));
-    assert!((waves.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - 9.0).abs() < 1e-9);
+    // The rain lands 4 hits on the dummy (dps_cards, rule 20); each of the
+    // 1 + 8 waves repeats it.
+    assert_eq!(waves.hits_per_cast, Some((36.0, 36.0)));
+    // Storm of Spears adds a 4 s cooldown (dps_cards p14, GetTalentCooldown),
+    // so the 9x hits come at one use per 4 s instead of the attack rate.
+    let rate = |p: &BuildPerformance| {
+        p.calculation()
+            .iter()
+            .rev()
+            .find(|s| s.label() == "Actions per second")
+            .unwrap()
+            .value()
+            .1
+    };
+    assert!((rate(&waves) - 0.25).abs() < 1e-9);
+    let expected = 9.0 * rate(&waves) / rate(&base);
+    assert!((waves.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9);
 }
 
 #[test]
@@ -209,3 +224,5 @@ fn amazon_third_strike_bonus_changes_average_but_not_every_hit() {
     assert!(b.poison_avg_max > a.poison_avg_max);
     assert_eq!(a.projectile_count, b.projectile_count);
 }
+
+

@@ -2,6 +2,9 @@
   {
     "id": "blazing_trail",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "baseCooldown": 10,
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 10 s, duration 5 s): 0 hits for a STANDING player. The Blazing_Trail_Controller_obj (Step_0 0x1496ce5b0) makes a patch only when point_distance(host.x, host.y+6, xSpot, ySpot) > floor(42*skillScale) and then moves xSpot/ySpot to the player; xSpot/ySpot start at the player, the controller does not move on its own (deltaSpeed 0; 5 px/frame only with p12 Circle of Fire), so a player who stands still leaves no patch, and patches stay where the player walked, not at the dummy 160 px away. For a walking player (not the scenario): one patch per 42*(1 + p3)/v frames for 5 s, the dummy is hit only by patches laid on it, ~1-2 patches * a patch life of 2.5 s with tick 0.5 s = tools/tick_hits.py 148 30 = 5 hits each (the card's older 1 + floor(150/30) = 6 is superseded) of d3 = floor(LTD(V1)*(1+LSSD)), V1 = 4.5 + 9.5*L (fire). The planner needs a 'player moving' switch or the p12 model (rays every 360/n deg from 0 deg, patch every 9 frames/45 px; at 160 px a ray covers the dummy with +-11.5 deg, coverage min(1, n*23/360)). perExtraProjectile 0: no projectile mechanism."},
     "classId": "pyromancer",
     "name": "Blazing Trail",
     "kind": "active",
@@ -16,7 +19,7 @@
     "position": { "row": 0, "col": 0 },
     "hitModel": { "object": "Pyromancer_Blazing_Trail_Create", "tickFrequency": 0.5, "lifetime": 2.5 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 4.5, "perLevel": 10.5 },
+    "damageFormula": { "base": 4.5, "perLevel": 9.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Breath of Fire", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -35,67 +38,73 @@
       {
         "id": "timed_fire",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [10, 20, 30, 40, 50], "note": "skillTimer x(1+10%/r) (L109); matters only for moving player / p12"}], "confidence": "C", "note": "card table p1, Transformacje L109"},
         "name": "Timed Fire",
         "description": "Increases the duration of blazing trail.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "scorch",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Scorch",
         "description": "Increased the damage dealt by blazing trail.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "expanded_flames",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "note": "skillScale = 1+15%/r: patch size and spacing threshold 42*s px; fewer and larger patches, only for moving player; 0 on standing dummy"}], "confidence": "C", "note": "card table p3 (planner area_of_effect 15/r matches the scale)"},
         "name": "Expanded Flames",
         "description": "Increases the area of effect radius of blazing trail.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "flaming_steps",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 307 player movement +12%/r for 5 s (L60)"}], "confidence": "C", "note": "card table p4"},
         "name": "Flaming Steps",
         "description": "Increases your movement speed while blazing trail is active.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 12 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 12}
         }
       },
       {
         "id": "agonizing_heat",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.06, 1.12, 1.18, 1.24, 1.3], "note": "[180] = 6%/r extra damage vs burning target; applies to patch hits on a burning dummy only (0 on standing player)"}], "confidence": "C", "note": "card table p5"},
         "name": "Agonizing Heat",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 6 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 6}
         }
       },
       {
         "id": "combusting_flames",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [24, 48, 72, 96, 120], "note": "burning source [18] = floor(D * 24%/r) per patch hit (value in % of D); DoT modelled separately; 0 on standing player"}], "confidence": "C", "note": "card table p6, Transformacje L71", "plannerFix": "planner models p6 as increased_burning_damage stat and a 100% on_hit burning proc; in game it is a separate burning source floor(D*24%*r) per patch"},
         "name": "Combusting Flames",
         "description": "Trails inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 24 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 24}
         },
         "proc": {
           "trigger": "on_hit",
@@ -108,12 +117,13 @@
       {
         "id": "burning_veins",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "fire break [970] = 15%/r for 5 s (buff 9 on target); read as multiplier on hits to a broken target (I reading); 0 on standing player"}], "confidence": "I", "note": "card table p7; break effect value C, its damage use I"},
         "name": "Burning Veins",
         "description": "Trails inflict fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 15 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -126,17 +136,19 @@
       {
         "id": "paralyzing_fire",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "slow [53]=1 s/r, [54]=15%/r; no damage"}], "confidence": "C", "note": "card table p8"},
         "name": "Paralyzing Fire",
         "description": "Trails inflict slow on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "slow_duration": 0, "slow_target": 0 },
-          "perRank": { "slow_duration": 1, "slow_target": 15 }
+          "base": {"slow_duration": 0, "slow_target": 0},
+          "perRank": {"slow_duration": 1, "slow_target": 15}
         }
       },
       {
         "id": "crackling_heat",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.3, 1.6, 1.9, 2.2, 2.5], "requires": "circle_of_fire", "note": "pulse object = Pyromancer_Firenova_obj (maxScale 1, reach 112 + 12 = 124 px) at the patch with the patch's d3; chance 0.07r once per patch (Alarm_0 L27); pulseTimer starts at 60 frames: pulses at frames 60 and 120 of the 150-frame life (no third one in the fade) = 2 hits per patch with cracklingHeat if the patch centre is <= 124 px from the dummy (the patch's own mask reaches only ~20 + 12 px). R4 simulation (p12 r1/r2/r3, 5/10/15 rays from 0 deg, averaged aim, averaged fork direction): patches overlapping the dummy 0.48 / 0.96 / 1.47 per use, patches within 124 px 6.1 / 12.3 / 18.4 -> multiplier on the p12 result x1.9 (r9 = 3) and x2.5 (r9 = 5) WITHOUT p11 (card values); r9 = 1, 2, 4 are my linear fit 1 + 0.297 r9 through the two card points (I). With p11 the pulses of every forked child add up: combined x27-35 (r11 = 3, r9 = 3-5) ... x60-80 (r11 = 5, r9 = 3-5) relative to p12 alone, NOT the product of the two single multipliers. 0 on a standing player without p12."}], "confidence": "I", "note": "Runda 4 20#1 (p9 impulse object and count) + table p9 R4 note; simulation trail_mc3.py (C: object, timers, chance; I: rectangle mask 41x34, 6 hits per patch at tick 0.5 s, averaged angles)", "plannerFix": "planner uses an on_hit proc with chance 7r%; in game the chance is rolled once per patch and creates periodic impulses (about 2 hits per patch)"},
         "name": "Crackling Heat",
         "description": "Chance of trails to pulsate every second.",
         "maxRank": 5,
@@ -145,17 +157,19 @@
       {
         "id": "fueled_flames",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0, 1.1667, 1.3333, 1.5, 1.8333], "note": "tick rate 0.5 s*(1-10%/r) -> hits per patch 1+floor(150/tick) = 6/7/8/9/11 for r=1..5; relative to 6 hits per patch; per patch, not per standing-player use"}], "confidence": "C", "note": "card table p10", "plannerFix": "planner models p10 as faster_cast_rate 10/r; in game it changes the patch tick frequency (more hits per patch)"},
         "name": "Fueled Flames",
         "description": "Increases the tick rate of blazing trail.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "forking_flames",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [3.5, 7.7, 13.5], "requires": "circle_of_fire", "note": "fork: chance 0.18r per patch (Alarm_0 L5-L10, irandom(99) < pe[313]); the forking patch spawns up to 10 children (numb < 10), one every 15 frames (forkTimer 0.25 s) at 48*scale px along ONE direction drawn once per forking patch: direction = irandom(180) + (point_direction(patch -> player) - 90) (constant 90.0f at 0x14f189908, asm 0x1496d29ff-0x1496d2a57), i.e. a random line in the half-plane pointing back towards the player; children inherit damage x(1 + 0.45r) and pe[313] = pe[314] = 0 (no re-fork), full InheritModifiers. Patch masks are NOT rotated (41x34). Simulation (p12 rays): a forking patch yields 4.5 / 9.1 / 13.6 extra overlapping children for p12 r1/r2/r3 (x9.5 per patch) -> multiplier on the p12 result x3.5 (r11 = 1), x13.5 (r11 = 3), x30 (r11 = 5) at chance 0.18r and damage x(1+0.45r); r11 = 2 is my interpolation 1 + 0.36*1.9*9.75 = 7.7 (I). Without p12 and without a moving player the base is 0, so the multiplier only exists together with p12. Combined with p9 see the p9 entry."}], "confidence": "I", "note": "Runda 4 20#1 (p11 fork direction and children), simulation trail_mc3.py; C: direction formula, constant, timers, numb < 10; I: rectangle mask, 6 hits per patch, averaged angles; r11 = 2 interpolated", "plannerFix": "planner models a proc (18r% chance) adding 45r% fire damage; in game it branches patches (more patches, damage x(1+0.45r))"},
         "name": "Forking Flames",
         "description": "Trails have a chance to fork.",
         "maxRank": 3,
@@ -171,34 +185,37 @@
       {
         "id": "circle_of_fire",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.88, 5.76, 8.82], "note": "transformation: 5r controllers (rays) from 0 deg in steps of 360/n (no aiming), deltaSpeed 5 px/frame, patch every 9 frames (45 px), skillTimer 2 s*(1+p1%). R4 simulation (trail_mc3.py: averaged aim angle, rectangle mask 41x34 as an upper bound): patches overlapping the dummy at 160 px 0.48 / 0.96 / 1.47 per use for r12 = 1 / 2 / 3 (5 / 10 / 15 rays) x 6 hits per patch (tick 0.5 s, life 2.5 s) = 2.88 / 5.76 / 8.82 hits of D (was 0.319/0.639/0.958 coverage x 9 = 2.87 / 5.75 / 8.62 with an assumed 1.5 patches per covered ray). p9 pulses and p11 forks multiply this (see their entries)."}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30%/r"}], "confidence": "I", "note": "card table p12 + Runda 4 20#1 simulation (0.48 / 0.96 / 1.47 patches per use); geometry and timers C, mask shape and 6 hits per patch I", "plannerFix": "planner has no ray/transformation model: dummy hits base 0 and trail_count 5r is not converted to dummy hits; trail_count must give expected coverage of the 160 px dummy"},
         "name": "Circle of Fire",
         "description": "You now send trails of fire outwards to all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "trail_count": 0 },
-          "perRank": { "fire_skill_damage": 30, "trail_count": 5 }
+          "base": {"trail_count": 0, "subtree_damage": 0},
+          "perRank": {"trail_count": 5, "subtree_damage": 30}
         }
       },
       {
         "id": "trail_of_comets",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 75%/r"}, {"kind": "other", "note": "[315]=1: patch replaced by Trail_of_Comets_obj: comet from 320 px, on destroy explosion d3 + shrapnel + patch; only with moving player / p12; 0 on standing dummy"}], "confidence": "I", "note": "card table p13 (C/I)", "plannerFix": "planner adds fire_skill_damage 75r only; the comet impact (explosion per point) is missing"},
         "name": "Trail of Comets",
         "description": "Now drops comets that explode into flames.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 75 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 75}
         }
       },
       {
         "id": "detonation_field",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r"}, {"kind": "other", "note": "[316]=1: Blazing_Detonation_Field mine (10 s); searches enemy <48 px every 0.25 s, then after 2 s explodes x3 scale + shrapnel; 1 explosion per mine if the dummy is within 48 px; mine placement needs player movement (I)"}], "confidence": "I", "note": "card table p14 (C/I)", "plannerFix": "planner has fire_skill_damage 35r only; the mine explosion (x3 scale, 48 px trigger) is missing"},
         "name": "Detonation Field",
         "description": "Instead of flames now leaves behind fiery mines exploding into flaming fissures.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 35 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 35}
         }
       }
     ]
@@ -236,6 +253,9 @@
   {
     "id": "phoenix_flight",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per use, IN-ZONE (charge toward the cursor, nova at the landing point): the cast starts a charge (playerEffect[5] = 1, [20] = 22, speed 4 px/frame growing x1.025 to 14, direction = cursor); without p5/p7/p10/p12/p13 the charge ENDS on contact with the standing dummy (skillsCharge L208, case 22 -> flag v380 = false, asm 0x14608d82e-0x14608dcb2), after ~129-133 px in 24 frames, and the end block makes 1 Pyromancer_Firenova_obj at the player's position with d3 = D = floor(LTD(V1)*(1+LSSD)), V1 = 25*L (fire), maxScale 1.25*(1 + [71]) = 2.5 (reach ~379 px incl. window deadlyFrames) which stands ~27-31 px from the dummy -> 1 hit (R3 22#0, C). No other base object (the Phoenix_Flight_obj hitbox exists only with p5/p7/p10/p12/p13, which also make the charge fly THROUGH the dummy). perExtraProjectile 0: no projectile mechanism (p3 split balls, p13 fireballs are subskills). p8 second nova (8 %*r per cast), p14 attached patch (6 hits), p5 chain (+0.25*r5), p12 seed, p11 rebirth are subskill effects."},
+    "usePeriod": {"kind": "charge", "extraFrames": 25, "note": "Charge WITHOUT playerEffect[142] in the base (skillsCharge writes [142] only in L717 = talent 22 with p11 [321] > 0, asm 0x1460a7df1, and L1106 = talent 292, 0x1460ccc8f), and the tags {15, 18, 3, 6, 22} contain the Movement tag 6 (class_talent_tag_arrays.json), so CheckTalentUse reads only [204]/[207] (0x14042d376, 0x14042d62e) and the 43-frame animation lock does NOT apply. Card (Resztki po R4 C): period = max(35 frames [cast-path cooldown ceil(60/c) = 35 at c = 1.75, 0x146a680c2], t_wyw + T_dash + 1) = max(35, 14 + 24 + 1) = 39 frames = 0.65 s (was 43; I, +-1 frame; the assumption that the next cast waits for the end of the charge is the coordinator's, as for Scimitar Charge). Because the card counts the trigger frames t_wyw = floor(24/S)+1 = 14 INTO this charge period, trigger is omitted (engine adds the 14 trigger frames) and extraFrames = T_dash 24 frames (to the dummy at 160 px, p2 r1/r2/r3: 22 / 20-21 / 19) + the card's 1 = 25. Without p5/p7/p10/p12/p13 the charge ends on contact with the standing dummy (R3 22#0, C); with them it flies through and its length is player-dependent (R4 22#0, no number). With p11 the period is a leap (see the p11 subskill entry: +65 frames, [142] = 1)."},
     "classId": "pyromancer",
     "name": "Phoenix Flight",
     "kind": "active",
@@ -249,7 +269,7 @@
     "tree": "Flame Diviner",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 14 }],
-    "damageFormula": { "base": -0.5, "perLevel": 31 },
+    "damageFormula": { "base": 0, "perLevel": 25 },
     "manaCostFormula": { "base": 12, "perLevel": 1.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Blazing Trail", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -268,50 +288,55 @@
       {
         "id": "flaming_pecker",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r"}], "confidence": "C", "note": "card table p1"},
         "name": "Flaming Pecker",
         "description": "Increases the damage dealt by phoenix flight.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "swift_flight",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "period_frames", "byRank": [-2, -3.5, -4, -4, -4], "note": "charge speed x(1+12%/r) shortens the dash: 24 frames base -> 22 / 20-21 / 19 for r = 1..3 (midpoints), r4-r5 extrapolated (I). The card's periods (Resztki po R4 C): 37 / 35 / 35 frames for r = 1..3 = max(35, 14 + T_dash + 1) -> the cast-path floor ceil(60/c) = 35 frames (0x146a680c2) binds from r = 2 (14 + 20.5 + 1 = 35.5, r3 = 34 -> 35), so the deltas are floored at -4 vs the 39-frame base; the raw dash deltas are -2 / -3.5 / -5 / -6.5 / -8. The floor depends on c = 1.75 + FCR (35 frames at 1.75)."}], "confidence": "C", "note": "Resztki po R4 C (Phoenix Flight: z p2 37 / 35 / 35 kl.); dash frames I (+-1 frame)"},
         "name": "Swift Flight",
         "description": "Increases flight speed of phoenix flight.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 12 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 12}
         }
       },
       {
         "id": "scorching_fury",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25], "per": "use", "note": "[317]=[25%/r, 3/r]: 3r fire-ball splits with D*0.25r at the landing point; assumes one split lands on the dummy (expected 0.25r D-hits); direction spread geometry I"}], "confidence": "I", "note": "card table p3 (branch, C/I)", "plannerFix": "planner converts 3r projectiles at full damage (projectile_count 3/r); card gives splits of D*25%*r each"},
         "name": "Scorching Fury",
         "description": "Unleash fireballs in a circle around you when landing.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 25, "projectile_count": 3 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 25, "projectile_count": 3}
         }
       },
       {
         "id": "infused_flames",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 16 (10r) on player for 3 s has no reader in the game: no effect on dummy (rule 27)"}], "confidence": "C", "note": "card 2026-10-08 correction, reg. 27", "plannerFix": "planner gives fire_skill_damage 10/r; the game has no effect from Infused Flames"},
         "name": "Infused Flames",
         "description": "Gain increased fire skill damage for a short period when crashing into monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 10}
         }
       },
       {
         "id": "searing_touch",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.25, 0.5], "per": "use", "note": "Phoenix_Flight_obj hitbox object with 25r% chain chance on its hit; chain = 1 hit at dummy, damage floor(D*(0.25r5 + 0.20r7)); expected extra 0.25*r5 hits (card value); damage ratio taken as the object damage (r7 part from p7); chain starts on the dummy; charge passes through dummy (dash timing I)"}], "confidence": "C", "note": "card round 2c (p5 replaces card row), reg. 23/15; geometry I", "plannerFix": "planner proc (25r% chance) adds 25r% of total damage; in game the chance creates a separate chain hit at the dummy of damage D*(25r5% + p7 part)"},
         "name": "Searing Touch",
         "description": "Chance to unleash searing chains when flying through monsters.",
         "maxRank": 2,
@@ -327,28 +352,31 @@
       {
         "id": "burning_screech",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "nova scale maxScale 1.25*(2+0.15r): radius only; dummy at 160 px already inside base 379 px nova; no extra hit"}], "confidence": "C", "note": "card table p6, [71]"},
         "name": "Burning Screech",
         "description": "Increases landing nova area of effect.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "collateral_burning",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6, 0.8, 1.0], "per": "use", "note": "branch: Phoenix_Flight_obj with D*20%*r damage; charge passes the dummy and the object hits it once (1 hit, damage ratio 0.2r); linear in r (0.2r) for r=1..5"}], "confidence": "C", "note": "card table p7; passing-through I", "plannerFix": "planner scales LSSD by 20r% and adds area 15r; in game it is a separate object hit of D*20%*r when the charge passes the dummy"},
         "name": "Collateral Burning",
         "description": "Deal additional fire damage to nearby monsters while phoenix flight is active.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 20, "area_of_effect": 15 }
+          "base": {"fire_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"fire_skill_damage": 20, "area_of_effect": 15}
         }
       },
       {
         "id": "afterburn",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4], "per": "use", "note": "afterburn chance 8%/r rolled once per cast -> second Firenova at the end (1 hit): expected 0.08r extra hits"}], "confidence": "C", "note": "card table p8 (planner on_hit proc with of_total_damage 100 gives the same expectation for 1 hit/use)"},
         "name": "Afterburn",
         "description": "Chance on landing to unleash an additional nova.",
         "maxRank": 5,
@@ -364,67 +392,73 @@
       {
         "id": "molten_feathers",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 15 = 15%/r damage reduction for 5 s"}], "confidence": "C", "note": "card table p9"},
         "name": "Molten Feathers",
         "description": "Increases damage reduction while phoenix flight is active.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 15 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 15}
         }
       },
       {
         "id": "mental_heat",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Phoenix_Flight_obj with [320]=2 s/r taunt, no damage; charge passes the dummy (I)"}], "confidence": "C", "note": "card table p10", "plannerFix": "planner models skill_duration 2/r; in game it is a 2 s/r taunt (no duration change)"},
         "name": "Mental Heat",
         "description": "Taunt enemies you fly through.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 2 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 2}
         }
       },
       {
         "id": "rise_from_the_ashes",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [120, 240, 360], "note": "LSSD += 120%/r"}, {"kind": "extra_hits", "byRank": [1, 1.5, 2], "per": "use", "note": "end of charge (skillsCharge L716-L726, pe[321] > 0): pe[142] = 1, [143] = 22, [152] = d3 (= D with LSSD +120%*r11), [153] = r11, [154] = direction, [150..151] = player x, y, [144] = [146] = 64, [155] = 0.425 -> an in-place leap handled by skillsLeap (0x1460e9110); the landing (case tid 22, L493-L504, asm 0x146104686-0x146105514) spawns a Firenova at the PLAYER with damage[3] = pe[152], maxScale ~1 (reach 112 + 12 >= the 27-31 px to the dummy) and pe[157] = 0.25 s. Count: at least 1 nova for sure, up to r11 (pe[153] = r11, one per 15 frames); whether the r11 loop continues after the first landing is not settled (state-2 control flow unread) -> midpoint of 1..r11 = 1 / 1.5 / 2 (I); each nova hits the dummy once with d3 = D."}, {"kind": "period_frames", "byRank": [65, 65, 65], "note": "the leap sets playerEffect[142] = 1, so the next cast waits for the landing: period = 14 + 24 + 65 + 1 ~ 104 frames (card, I +-1) instead of 39; leap length pe[146] + 1 ~ 65 frames (rule 28, I); up to +15*(r11 - 1) more frames if the nova loop runs (R4). Leap form: engine adds trigger frames."}], "confidence": "I", "note": "Runda 4 22#1 (zawezone) + Resztki po R4 C (Phoenix Flight p11); C: end block, landing with nova and pe[152]/[153]; I: loop, leap length, maxScale", "plannerFix": "planner projectile_count 1/r is not the mechanic: p11 is an in-place leap (playerEffect[142]) after the charge and 1..r11 novae at the landing, plus ~65 frames of blocked casting"},
         "name": "Rise from the Ashes",
         "description": "At the end of your flight you launch into the air unleashing multiple fire novas beneath you and then land and smash the ground stunning and dealing additional damage to nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 120, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 120}
         }
       },
       {
         "id": "seed_of_fulmination",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r"}, {"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45], "per": "use", "note": "seed of fulmination: [322] = floor(D*15%*r) explosion 0.75 s after seed on target (dummy hit by charge once)"}], "confidence": "C", "note": "card table p12, handler L63", "plannerFix": "planner has fire_skill_damage 35/r and area 15/r only; the seed explosion of 15%*r*D is missing"},
         "name": "Seed of Fulmination",
         "description": "Plant a seed of fulmination on monsters you fly through that explodes after a short delay.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 35, "area_of_effect": 15 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 15, "subtree_damage": 35}
         }
       },
       {
         "id": "wings_of_the_phoenix",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30], "note": "LSSD += 10%/r"}, {"kind": "extra_hits", "byRank": [8, 11, 15], "per": "use", "note": "fan of 3r Fire_Ball_obj (d3 = D) every 48 px of PATH (pe[27] = 48, distance gate skillsCharge L340, not every 0.05 s), 3r balls 15 deg apart centred on the charge direction (angles pe[154] - 7.5n + 7.5 + 15i); balls 10 px/frame, oriented rectangle 72x32 origin [60, 16] (lateral reach 16 + 12 = 28 px, tail 60 px), destroyEnemy (explosion one step before contact) = 1 hit each. The charge flies through the 160 px dummy (v380 = true); fans from 48 / 96 / 144 px lie 112 / 64 / 16 px before the dummy. Resztki D (aim from (x, y+6): base angle 2.15 deg over the dummy, whole fan rotates with it): r13 = 1 / 2 / 3 -> 8 / 11 / 15 hits (R4 axis 0 deg gave 7 / 12 / 13; own pixel simulation reproduces 7 / 12 / 13 at 0 deg; I +-1 on the edge angles). Cursor (x, y-24) variant (note only): 3 / 8 / 9. Conditional extra (I): a 4th fan at 192 px lies 32 px BEHIND the dummy and the ball tail (60 px) reaches it: +3 / +6 / +8 hits if the charge gets to 192 px (T_dash of p13 is player-dependent, unsettled)."}], "confidence": "I", "note": "Resztki po R4 D (Phoenix Flight p13 Wings of the Phoenix) + Runda 4 22#2; C: path gate, 48 px, angles, image_angle; I: geometry, +-1 on edge angles", "plannerFix": "planner models projectile_count 3/r at full damage; the game fires 3r fireballs during the charge in a fan, geometry needed"},
         "name": "Wings of the Phoenix",
         "description": "When flying you rapidly shoot searing bolts behind you in a cone.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 10, "projectile_count": 3 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 10}
         }
       },
       {
         "id": "burning_wings",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r"}, {"kind": "extra_hits", "byRank": [6, 6, 6], "per": "use", "note": "branch: nova gets [324] and stun 2 s; Blazing_Trail_obj patch stuck to the dummy with d3 = D: 1 + floor(150/30) = 6 hits (2.5 s, tick 0.5 s); not rank dependent (I for the per-rank [324] use)"}, {"kind": "utility", "note": "controlled flight (playerEffect 22=180), stun 2 s and slow 0.5 s on novas"}], "confidence": "C", "note": "card table p14 (C/I)", "plannerFix": "planner has fire_skill_damage 35/r only; the 6-hit blazing-trail patch on the target and the 2 s stun are missing"},
         "name": "Burning Wings",
         "description": "Flight distance is now short. Upon landing you knock back all monsters around scorching the land below them dealing fire damage and stunning them.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 35, "area_of_effect": 10 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 10, "subtree_damage": 35}
         }
       }
     ]
@@ -432,6 +466,8 @@
   {
     "id": "inferno_slash",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, melee attack skill counted IN-ZONE (dummy inside the weapon-strike reach; reach is item data); at the strict 160 px the strike does not reach: 0. 1 weapon strike (rule 6, [117] = 0 -> 1 salvo): physical W*(1 + [1020]/100) with [1020] = LTD(V2)*(1+LSSD), V2 = 72 + 28*L, plus flat fire [993] = floor(LTD(V1)*(1+LSSD)), V1 = 14*L -> 1.0 main hit. No other base object (the [18] burn is 0 in the base; p3 patch 7 %*r, p14 flies of agony, p11 eight cuts at /8 damage each, p12 fork are subskill effects). perExtraProjectile 0: no projectile mechanism."},
     "weaponRequirement": "melee",
     "classId": "pyromancer",
     "name": "Inferno Slash",
@@ -446,10 +482,12 @@
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "damageFormula": { "base": -0.5, "perLevel": 18 },
+    "damageFormula": { "base": 0, "perLevel": 14 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 72, "perLevel": 28 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 172, "perLevel": 28 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11.5, "perLevel": 0.5 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -471,28 +509,31 @@
       {
         "id": "infernal_reach",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack range [197] = 1+15%/r; dummy at 160 px is in reach at base, no extra hit"}], "confidence": "C", "note": "card table p1"},
         "name": "Infernal Reach",
         "description": "Increases the attack range of inferno slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "scattering_flame",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.05, 1.1, 1.15, 1.2, 1.25], "note": "attack rating [1022] = V3*(2+0.1r) vs base V3*2: multiplier 1+0.05r on attack rating (hit chance); value = multiplier"}], "confidence": "C", "note": "card table p2", "plannerFix": "planner attack_rating_pct 10/r; the card gives 0.1r on a base of 2*V3, i.e. 5%/r of the base rating"},
         "name": "Scattering Flame",
         "description": "Increases attack rating when using inferno slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "molten_ground",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.084, 0.336, 0.756, 1.344, 2.1], "per": "hit", "note": "molten ground: chance 7r% per attack (once per cast) -> patch on the dummy with 6 hits of 0.2r*D1; expected extra = 0.07r*6*0.2r = 0.084 r^2 D1 per attack; patch 2.5 s, tick 0.5 s"}], "confidence": "C", "note": "card table p3 (C)", "plannerFix": "planner models an on_hit proc (7r%) adding 20r% fire damage once; in game the proc is a Blazing_Trail patch (6 hits of 20r% D1) on the target"},
         "name": "Molten Ground",
         "description": "Chance on striking to set the ground on fire.",
         "maxRank": 5,
@@ -508,12 +549,13 @@
       {
         "id": "piercing_flame",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.05, 1.1, 1.15, 1.2, 1.25], "note": "fire break [970] = 5%/r for 5 s; read as multiplier on hits to broken target (I reading, same as blazing trail p7)"}], "confidence": "I", "note": "card table p4"},
         "name": "Piercing Flame",
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 5 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -526,6 +568,7 @@
       {
         "id": "stacked_burn",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "stacked burn: chance 4r% per attack -> buff 17 = +3r per stack, max 8 stacks, 5 s; stack count depends on attack rate (expected stacks min(8, 0.04r * APS * 5)); stat buff on player, value not fixed"}], "confidence": "I", "note": "card table p5 (C/I)", "plannerFix": "planner gives a static fire_skill_damage 3/r; the game builds up stacks (max 8) over 5 s from a per-attack chance"},
         "name": "Stacked Burn",
         "description": "Chance on hit to gain a stacking fire skill damage buff.",
         "maxRank": 5,
@@ -541,17 +584,19 @@
       {
         "id": "scorching_slash",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r: applies to V2 (physical bonus) and V1 (fire)"}], "confidence": "C", "note": "card table p6"},
         "name": "Scorching Slash",
         "description": "Increases the damage dealt by inferno slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "nerve_damage",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun [51] = 1 s per rank, chance 3r% per attack; damage only via extra vs stunned, no direct damage"}], "confidence": "C", "note": "card table p7", "plannerFix": "planner stun_duration_pct 1/r; the card gives stun duration [51] = 1 second per rank with a 3r% chance per attack"},
         "name": "Nerve Damage",
         "description": "Chance to stun on hit.",
         "maxRank": 5,
@@ -568,6 +613,7 @@
       {
         "id": "accelerated_fumes",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [8, 16, 24, 32, 40], "note": "buff 308 = attack speed +8%/r for 2 s, chance 1r% per attack; nominal value, uptime depends on attack rate (I)"}], "confidence": "C", "note": "card table p8"},
         "name": "Accelerated Fumes",
         "description": "Chance on attack to gain increased attack speed.",
         "maxRank": 5,
@@ -583,6 +629,7 @@
       {
         "id": "igniting_wind",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "igniting wind: chance 3r% per attack -> [117] += 1 -> second salvo (1 extra hit): expected 0.03r extra hits per attack"}], "confidence": "I", "note": "card table p9 (salvo pack I)"},
         "name": "Igniting Wind",
         "description": "Chance on attack to perform an additional attack.",
         "maxRank": 5,
@@ -598,48 +645,49 @@
       {
         "id": "third_degree_burns",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4], "note": "[180] = 8%/r extra damage vs burning target; applies only while the dummy burns"}], "confidence": "C", "note": "card table p10"},
         "name": "Third Degree Burns",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 8 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 8}
         }
       },
       {
         "id": "infernal_cleave",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.1625, 0.2, 0.2375], "note": "infernal cleave: 8 cuts 45 deg apart; only one cut hits the dummy; the V2 and fire bonus parts are divided by 8*(1+0.3r); value = factor on those bonus parts (weapon base W unchanged); [130] = 15%/r meaning unknown (I)"}], "confidence": "I", "note": "card table p11 (C/I)", "plannerFix": "planner gives fire_skill_damage 30/r and area 15/r; the game divides the bonus parts by 8 (x(1+0.3r)) and hits the single target with one cut"},
         "name": "Infernal Cleave",
         "description": "Inferno slash is now a 360 degree area of effect attack.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 30, "area_of_effect": 15 }
+          "base": {"fire_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"fire_skill_damage": 30, "area_of_effect": 15}
         }
       },
       {
         "id": "searing_fork",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "searing fork: [76] = 1/r, 12 deg spacing, n = 1 + r projectiles (angles (i - (n-1)/2)*12 deg)"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "all n projectiles of one salvo share the player's singleHitPackId (attackClasses L435-L436, pe[78] = 0; asm 0x1402c2e2f-0x1402c2e84) and the dummy's hit map is persistent (rule 36) -> the dummy takes AT MOST 1 hit per salvo (single_target_hit_cap = 1, not 2); the hit is certain when a projectile touches the dummy: odd n has one on the axis; even n (r12 = 1: n = 2, +-6 deg = 16.7 px lateral at 160 px) vs dummy 12 px + half the projectile mask (I: mask size of the Pyromancer Projectile_Player_obj not checked, >= 5 px half-width suffices). So extra projectiles add 0 hits (this entry replaces the default projectile conversion)."}, {"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r (the only p12 contribution to dummy DPS); with p9 each of the two salvos has its own pack (23#1)"}], "confidence": "I", "note": "Runda 4 23#2 (Inferno Slash p12 single_target_hit_cap); C: pack sharing; I: on-axis hit for even n", "plannerFix": "planner single_target_hit_cap base 2 should be 1 (one salvo = one pack) and projectile_count 1/r adds no hits on a lone target; only subtree_damage 35/r matters"},
         "name": "Searing Fork",
         "description": "Inferno slash sends multiple smaller waves that split on the first hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0, "single_target_hit_cap": 2 },
-          "perRank": { "fire_skill_damage": 35, "projectile_count": 1, "single_target_hit_cap": 0 }
+          "base": {"projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "single_target_hit_cap": 0, "subtree_damage": 35}
         }
       },
       {
         "id": "fearful_flames",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [100, 200, 300], "note": "fearful flames: burning source floor(D1*100%*r) per tick (value in % of D1); slow 0.5 s and fear 0.25; DoT modelled separately"}, {"kind": "damage_pct", "byRank": [60, 120, 180], "note": "LSSD += 60%/r"}], "confidence": "C", "note": "card table p13", "plannerFix": "planner models increased_burning_damage 100/r and a 100% burning proc; in game it is a burning source D1*r per tick"},
         "name": "Fearful Flames",
         "description": "Inferno slash now knocks back monsters inflicting Burning and dealing increased Damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "increased_burning_damage": 0 },
-          "perRank": {
-            "fire_skill_damage": 60,
-            "increased_burning_damage": 100
-          }
+          "base": {"increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_burning_damage": 100, "subtree_damage": 60}
         },
         "proc": {
           "trigger": "on_hit",
@@ -652,12 +700,13 @@
       {
         "id": "flies_of_agony",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.05, 4.2, 9.45], "per": "hit", "note": "flies of agony: 3r fireflies per hit, each d3 = floor(d3*0.35r) and hit the nearest enemy (the dummy); expected extra = 3r * 0.35r per hit = 1.05 r^2 D1 (I: all fireflies pick the dummy)"}], "confidence": "C", "note": "card table p14 (C/I)", "plannerFix": "planner gives fire_skill_damage 35/r and projectile_count 3/r at full damage; the game makes 3r fireflies per hit with 35r% of the attack damage each"},
         "name": "Flies of Agony",
         "description": "Inferno slash now sends burning fireflies towards monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 35, "projectile_count": 3 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 35, "projectile_count": 3}
         }
       }
     ]
@@ -665,6 +714,8 @@
   {
     "id": "searing_chains",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.93, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, melee attack skill counted IN-ZONE (dummy inside the weapon-strike reach; reach is item data); at the strict 160 px the strike does not reach and no chain is created: 0. 1 weapon strike (rule 6: W*(1 + V2/100) + flat fire V1, V2 = 28*L WITHOUT LSSD, V1 = 18*L) + 1 Pyromancer_Searing_Chains_obj chain (ProjectileCollision00Skills L2407-L2417, N0 on a lone dummy, rule 23: exactly 1 hit; InheritModifiers all-but-trigger, so the same modifier package) with damage[3] = [246] = V1 = 18*L fire only (no weapon part). Conversion to main-hit units at rank 20 with the planner's unarmed W = 4: strike = 4*(1 + 28*20/100) + 360 = 386.4, chain = 360 -> ratio 0.932 (= 360/(6.6*W + 360), 1.0 only at W = 0), so base = 1 + 0.932 = 1.93. Also stuns for 1 s ([51]). perExtraProjectile 0: no projectile mechanism. The skill has no subskill tree."},
     "weaponRequirement": "melee",
     "classId": "pyromancer",
     "name": "Searing Chains",
@@ -680,10 +731,12 @@
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "damageFormula": { "base": -0.5, "perLevel": 20 },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 6, "perLevel": 28 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 28 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 7, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -784,6 +837,7 @@
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 9 }],
     "manaCostFormula": { "base": 9, "perLevel": 1 },
+    "buffUptime": { "duration": 40, "cooldown": 60 },
     "passiveStats": {
       "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "crit_chance": 20 },
       "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "crit_chance": 0 }
@@ -792,6 +846,8 @@
   {
     "id": "breath_of_fire",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.5, "confidence": "C", "note": "Per cast, dummy on the aim line at 160 px: 1 Pyromancer_Breath_of_Fire_obj (the Molten_Orb only with p14): cone at host + lengthdir(16, angle), mask 118x57 (origin [3, 28]), image_xscale 0.25 + 0.1/frame to 1.25 (10 frames), yscale 1.25; tip at 16 + 115*1.25 = 159.75 px >= 148 px (dummy's near edge) with an overlap of 11.75 px (dummy reachable up to ~171.75 px); first contact at frame 9-10 (R3 30#0, the dummy at 160 px is hit in the base); singleHit, no tick -> 1 hit of d3 = floor(LTD(V1)*(1+LSSD)), V1 = 7.5 + 12.5*L (fire) = 1.0. The base burn [18] = 0.35*D (V2 = 35) is a DoT and not counted. perExtraProjectile = 0.5 (I): extra breaths (1 + p11.s10, the planner's projectile_count) fan 15 deg apart, their axes pass 21 px (+-7.5 deg) and 41 px (+-15 deg) from the dummy, the cone half-width ~35.6 px + dummy 12 = 47.6 px: n = 1..5 gives 1, 2, 3, 2, 3 (+-22.5 deg misses), slope (H(5) - H(1))/4 = 0.5; the card's own p11 estimate is only 'about 2 (r1) / 2-3 (r >= 2)' for the dummy at 100-140 px. p3/p8/p13 procs, p12 chain (+3r), p14 orb are subskill effects."},
     "classId": "pyromancer",
     "name": "Breath of Fire",
     "kind": "active",
@@ -806,7 +862,7 @@
     "tree": "Arsonist",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 8, "perLevel": 13.5 },
+    "damageFormula": { "base": 7.5, "perLevel": 12.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "passiveStats": {
       "base": { "burning_damage": 35 },
@@ -829,28 +885,31 @@
       {
         "id": "expanding_heat",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "growthSize/Max and breathLength x(1+35%/r): reach only; dummy at 160 px already hit at base; 0 extra hits"}], "confidence": "C", "note": "card table p1, R3 reach"},
         "name": "Expanding Heat",
         "description": "Increases the size of breath of fire.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 35 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 35}
         }
       },
       {
         "id": "burning_haze",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36], "note": "LSSD += 12%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Burning Haze",
         "description": "Increases the damage dealt by breath of fire.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "heat_combustion",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.018, 0.072, 0.162, 0.288, 0.45], "per": "use", "note": "heat combustion: chance 3%/r once per cast -> 5 objects with d3 = floor(D*12%*r): expected 0.03r*5*0.12r = 0.018 r^2 D-hits per cast; objects start at the hit point (I for geometry)"}], "confidence": "C", "note": "card table p3 (L699, L120)", "plannerFix": "planner models a 3r% proc adding 12r% fire damage once; in game the proc spawns 5 combustion objects of 12%*r*D each"},
         "name": "Heat Combustion",
         "description": "Chance on hit to unleash burning fragments from the target dealing damage to other nearby targets.",
         "maxRank": 5,
@@ -867,6 +926,7 @@
       {
         "id": "double_breeze",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "double breeze: chance 6%/r on cast -> second breath (createSecond); expected 0.06r extra hits"}], "confidence": "C", "note": "card table p4 (Step L28-L38)"},
         "name": "Double Breeze",
         "description": "Chance on cast to unleash an additional breath of fire.",
         "maxRank": 5,
@@ -882,23 +942,25 @@
       {
         "id": "scorching_exhale",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "growthSize/Max x(1+20%/r): reach only; dummy at 160 px already hit at base; 0 extra hits"}], "confidence": "C", "note": "card table p5"},
         "name": "Scorching Exhale",
         "description": "Increased the length of breath of fire.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "burning_lungs",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [45, 90, 135, 180, 225, 270, 315, 360], "note": "burning lungs: burning source D*(35% + 45%*r); the 45%/r is ADDED to the 35% base source (value = added percent of D); DoT modelled separately"}], "confidence": "C", "note": "card table p6, R3 note", "plannerFix": "planner treats p6 as increased_burning_damage 45/r (a % increase); in game it adds 45%/r to the burning source base 35% of D"},
         "name": "Burning Lungs",
         "description": "Inflicts burning on hit.",
         "maxRank": 8,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 45 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 45}
         },
         "proc": {
           "trigger": "on_hit",
@@ -911,12 +973,13 @@
       {
         "id": "collateral_ignition",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 2%/r per cast moves burning (10%/r value) to ANOTHER enemy; no hit on a single dummy"}], "confidence": "C", "note": "card table p7, handler L166", "plannerFix": "planner gives increased_burning_damage 10/r; in game it is a transfer of burning to a different enemy (0 on the single dummy)"},
         "name": "Collateral Ignition",
         "description": "Chance on hit to spread burning to monsters around the target.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 10 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -929,6 +992,7 @@
       {
         "id": "burst_of_heat",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "per": "use", "note": "burst of heat: chance 5%/r -> Firenova d3 = floor(D*15%*r) on the burning dummy (burning from 2nd cast on); expected 0.05r*0.15r = 0.0075 r^2 D-hits per cast"}], "confidence": "C", "note": "card table p8 (L145)"},
         "name": "Burst of Heat",
         "description": "Chance on hit to unleash a small fire nova if target is burning.",
         "maxRank": 5,
@@ -945,12 +1009,13 @@
       {
         "id": "breaking_point",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0024, 1.0096, 1.0216, 1.0384, 1.06], "note": "breaking point: chance 3%/r -> fire break [970] = 8%*r for 5 s; expected multiplier 1 + 0.03r*0.08r; break read as multiplier (I)"}], "confidence": "I", "note": "card table p9 (break value C, multiplier I)"},
         "name": "Breaking Point",
         "description": "Chance to inflict fire break on burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 8 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 8}
         },
         "proc": {
           "trigger": "on_hit",
@@ -964,56 +1029,61 @@
       {
         "id": "reverse_hypothermia",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4], "note": "[180] = 8%/r extra damage vs burning target; applies while the dummy burns (from 2nd cast)"}], "confidence": "C", "note": "card table p10"},
         "name": "Reverse Hypothermia",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 8 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 8}
         }
       },
       {
         "id": "hydras_breeze",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "n = 1 + r breaths, 15 deg apart (dirGap L768, fan centred on the aim), each a Pyromancer_Breath_of_Fire_obj with its own hit map"}, {"kind": "extra_hits", "byRank": [1, 2, 1], "per": "use", "replacesProjectileHits": true, "note": "hits on the dummy at 160 px for n = 2 / 3 / 4: 2 / 3 / 2 (full series r11 = 1..5: 2 / 3 / 2 / 3 / 2) minus the 1 base hit = +1 / +2 / +1. Oriented rectangle 118x57*1.25, origin [3, 28], start host + lengthdir(16, angle) (0x14f18986c = 16.0f), final scale 1.25 (0x1496e9371-0x1496e9584), pixel test against the dummy mask (0x14b5a9310): breath axis +-7.5 deg passes 21 px, +-15 deg 41 px from the dummy, cone half-width ~35.6 + 12 = 47.6 px; +-22.5 deg (61 px) misses. Main result (aim through the dummy centre, rule 38) 2 / 3 / 2 / 3 / 2 confirmed by the own simulation (Resztki B); r11 = 2 (n = 3) sits 0.15 deg / ~0.4 px inside the +-17.3 deg limit when the aim comes from (x, y+6) (Resztki D, I). Cursor (x, y-24) variant (note only): 2 / 2 / 3 / 2 / 3 (C, Resztki B); aim from (x, y+6) with cursor (x, y-24): 1 / 2 / 2 / 2 / 2 (C)."}, {"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35%/r"}], "confidence": "I", "note": "Runda 4 'Regula 26' paragraph + Po R4 (a) + Resztki po R4 B/D (Breath of Fire p11); C: geometry and simulation for r11 = 1 and 3; I: r11 = 2 margin 0.15 deg", "plannerFix": "planner projectile_count 1/r with single_target_hit_cap 2 gives at most 2 hits; the game gives 2 / 3 / 2 hits for n = 2 / 3 / 4 (cone geometry) - use the explicit extra_hits"},
         "name": "Hydra´s Breeze",
         "description": "Unleash additional breaths in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0, "single_target_hit_cap": 2 },
-          "perRank": { "fire_skill_damage": 35, "projectile_count": 1, "single_target_hit_cap": 0 }
+          "base": {"projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "single_target_hit_cap": 0, "subtree_damage": 35}
         }
       },
       {
         "id": "chain_of_fire",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3, 6, 9], "per": "use", "note": "chain of fire: 3r chain jumps, each a new Breath_of_Fire_obj to nth nearest = the dummy (rule 17), 1 hit each"}, {"kind": "damage_pct", "byRank": [70, 140, 210], "note": "LSSD += 70%/r"}], "confidence": "C", "note": "card table p12 (L190-L214); I/C per card"},
         "name": "Chain of Fire",
         "description": "Breath of fire now chains multiple times.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "chain_count": 0 },
-          "perRank": { "fire_skill_damage": 70, "chain_count": 3 }
+          "base": {"chain_count": 0, "subtree_damage": 0},
+          "perRank": {"chain_count": 3, "subtree_damage": 70}
         }
       },
       {
         "id": "scorching_hellflame",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.925, 1.75, 2.575], "per": "hit", "note": "every hit adds a stack of player buff 18 (BuffAdd [150r, 175r], 5 s, max 10 stacks, L246-L248); at 10 stacks (GetBuffStack(18) >= 10, L228) an Explosion_Item_obj on the target with damage[3] = floor(d3_hit * (1 + 0.01*A*B)) (L236) + hasPulse = 1 (extra pulse children every 0.15 s, no modifiers; not counted) and the stacks reset (L250). A and B are two reads of buff 18 (L229-L230) that the lifter drops: bounds 1 + 1.5r (A = 150r, B = 1) ... 1 + 15r (B = 10 stacks). Per breath hit: one explosion per 10 hits of (1 + 1.5r ... 1 + 15r) D = (1 + 1.5r ... 1 + 15r)/10: r1 0.25-1.6, r2 0.4-3.1, r3 0.55-4.6 (card r = 1: 0.25 ... 1.6); values = midpoints 0.925 / 1.75 / 2.575 (I). The old 0.1 per hit ignored the damage premium."}], "confidence": "I", "note": "Runda 4 30#1 (zawezone) + table p13 R4 note; C: structure, stacks, 10-stack gate; I: A and B", "plannerFix": "planner gives fire_skill_damage 150/r and area 175/r; the card gives stack value [334]=150/r and [335]=175/r of a buff stack that fires one explosion at 10 stacks"},
         "name": "Scorching Hellflame",
         "description": "Breath of fire now applies stacks of Hellflame which will unleash a fiery pulse of area of effect damage when reaching max stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 150, "area_of_effect": 175 }
+          "base": {"fire_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"fire_skill_damage": 150, "area_of_effect": 175}
         }
       },
       {
         "id": "molten_orb",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [4.5, 5.5, 6.5], "note": "transformation: Breath_Molten_Orb (3 px/frame along the aim line, 3 s = 180 frames) breathes at the nearest enemy every hitFrequency = 30*(1 - 0.15r) frames; the dummy at 160 px is in reach from t = 0 until the orb is ~160 px past it: s = 3t <= 320 px -> t ~ 107 frames = 1.8 s (was 1.7 s); breaths = ceil(107/(30*(1 - 0.15r))) +-1 (cone growth 10 frames, first breath after hitFrequency) = 4-5 / 5-6 / 6-7 (r14 = 1..3; r4 = 9, r5 = 14 beyond the planner's maxRank 3), each a new Breath_of_Fire_obj with its own map = 1 hit D; midpoints 4.5 / 5.5 / 6.5. Oriented cone on the axis: same result. Resztki A: distance_to_object(nearest) <= 400 holds for the whole orb life (<= 540 px), no change (C)."}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50%/r"}], "confidence": "I", "note": "Runda 4 30#2 (Breath of Fire p14, orb time in range 107 frames); I: orb direction = aim axis, speed not re-verified; C: hitFrequency formula", "plannerFix": "planner models faster_cast_rate 15/r; in game the orb breathes every hitFrequency = 0.5 s*(1-15%*r) while in range, replacing the base breath"},
         "name": "Molten Orb",
         "description": "Breath of fire now summons a molten orb traveling forwards breathing fire towards the closest target.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "fire_skill_damage": 50, "faster_cast_rate": 15 }
+          "base": {"faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 15, "subtree_damage": 50}
         }
       }
     ]
@@ -1021,6 +1091,8 @@
   {
     "id": "fireball",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast, dummy on the aim line at 160 px: 1 Pyromancer_Fire_Ball_obj (Player_Ability_Parent, does not hit itself; 10 px/frame, 2 s, destroyEnemy = 1: it is destroyed on contact with the dummy) whose Destroy_0 makes 1 Explosion_Item_obj at the contact point (active after 4 frames, scale 1 + explosionSize) with d3 = D*m = floor(LTD(V1)*(1+LSSD)), V1 = 4 + 18*L (fire), m = 1 = 1 hit (the base object is Fire_Ball_obj, not Orbital/Split: those need p13/p12, METODA rule 19). perExtraProjectile = 1.0 (I, best reading): the card only gives a second ball through p1 Multicast ('same direction/fan, I: it hits'), not through gear; assumed that every extra ball explodes on the dummy. p13 orbitals (1 + 4r), p12 trail, p11 splits, p9/p14 procs are subskill effects."},
     "classId": "pyromancer",
     "name": "Fireball",
     "kind": "active",
@@ -1055,45 +1127,49 @@
       {
         "id": "multicast",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.1, 0.2, 0.3, 0.4, 0.5], "per": "use", "note": "already modelled by planner multicast_chance; multicast chance 10%/r once per cast -> second ball, assumed to hit the dummy too (I); expected 0.1r extra hits"}], "confidence": "I", "note": "card table p1 (L592-L594)"},
         "name": "Multicast",
         "description": "Chance on cast to unleash an additional fireball.",
         "maxRank": 5,
         "effects": {
-          "base": { "multicast_chance": 0 },
-          "perRank": { "multicast_chance": 10 }
+          "base": {"multicast_chance": 0},
+          "perRank": {"multicast_chance": 10}
         }
       },
       {
         "id": "ignition_radius",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "explosionSize = 1+20%/r: radius only; 0 extra hits on a single dummy"}], "confidence": "C", "note": "card table p2"},
         "name": "Ignition Radius",
         "description": "Increases the area of effect radius of fireball.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "inferno_ball",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15%/r"}], "confidence": "C", "note": "card table p3", "plannerFix": "planner uses subtree_damage 15/r; the card gives LSSD (fire_skill_damage style) on the explosion"},
         "name": "Inferno Ball",
         "description": "Increases the damage dealt by fireball.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "gas_fumes",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1.5, 6, 13.5, 24, 37.5], "note": "gas fumes: chance 5%/r per cast -> burning source floor(D*30%*r); value = expected % of D per cast (0.05r*30r); nominal 30r% when it procs"}], "confidence": "C", "note": "card table p4 (L533)"},
         "name": "Gas Fumes",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 30 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1106,17 +1182,19 @@
       {
         "id": "searing_speed",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "projectile speed x(1+15%/r) (L625): shorter flight, 0 extra hits at 160 px"}, {"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "TalentUseSetSpeed (0x146a57270, cast-path switch 0x150cd0330, case tid 29 at 0x146a6606f) adds LoadSubTalentDamage(p5, s10) * 0.01 to mod (0x146a66145-0x146a66179): S = 1.75 + FCR/100 + 0.06r, ADDITIVE (value = FCR points, not x(1 + 0.06r) on 1.75). Cast period (rule 37) = max(cd, (ceil(72/S)+1)/60 s) = 43 / 41 / 40 / 39 / 38 / 37 frames for r5 = 0..5 (0.717 -> 0.617 s, +16 % cadence at r5), t_wyw = floor(24/S)+1 = 14 / 14 / 13 / 13 / 12 / 12."}], "confidence": "C", "note": "Runda 4 29#2 (Fireball: p5.s10 wchodzi do castRate) + Runda 4 'Okresy po regulach 31(k) i 37'"},
         "name": "Searing Speed",
         "description": "Increases the projectile speed and cast rate of fireball.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0, "faster_cast_rate": 0 },
-          "perRank": { "projectile_speed": 15, "faster_cast_rate": 6 }
+          "base": {"projectile_speed": 0, "faster_cast_rate": 0},
+          "perRank": {"projectile_speed": 15, "faster_cast_rate": 6}
         }
       },
       {
         "id": "paralyzing_impact",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10.5, 42, 94.5, 168, 262.5], "note": "chance 3%/r per cast -> LSSD += 35%/r and slow; expected LSSD add = 0.03r*35r = 1.05 r^2 % per cast"}, {"kind": "zero_on_dummy", "note": "slow part, no damage"}], "confidence": "C", "note": "card table p6 (L527)", "plannerFix": "planner models subtree_damage_on_proc 35/r with chance 3r%; card: chance adds LSSD 35%/r to the cast (expected 1.05 r^2 %)"},
         "name": "Paralyzing Impact",
         "description": "Chance on hit to knockback monsters dealing increased damage.",
         "maxRank": 5,
@@ -1132,12 +1210,13 @@
       {
         "id": "soulburn",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "fire break [970] = 15%/r for 5 s; multiplier reading as in blazing trail p7 (I)"}], "confidence": "I", "note": "card table p7 (break value C)"},
         "name": "Soulburn",
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 15 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1150,18 +1229,20 @@
       {
         "id": "critical_burn",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "already modelled by planner double_damage_chance; critical burn: chance 6%/r per cast -> m = 2 (second explosion scale x2 damage); expected 0.06r extra"}], "confidence": "C", "note": "card table p8 (L537-L538)"},
         "name": "Critical Burn",
         "description": "Chance on hit to deal double damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "double_damage_chance": 0 },
-          "perRank": { "double_damage_chance": 6 }
+          "base": {"double_damage_chance": 0},
+          "perRank": {"double_damage_chance": 6}
         },
         "proc": { "trigger": "on_hit", "chance": { "base": 0, "perRank": 6 } }
       },
       {
         "id": "mark_of_doom",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.5, 2, 4.5, 8, 12.5], "note": "mark of doom: chance 1%/r per cast -> LSSD += 50%/r; expected 0.5 r^2 %"}, {"kind": "extra_hits", "byRank": [0.01, 0.02, 0.03, 0.04, 0.05], "per": "use", "note": "same proc places Armageddon on the dummy: one d3 hit, expected 0.01r"}], "confidence": "C", "note": "card table p9 (L545, L257)", "plannerFix": "planner subtree_damage_on_proc 50/r; card: LSSD 50%/r plus one Armageddon hit, both with chance 1%/r"},
         "name": "Mark of Doom",
         "description": "Chance on hit to rain down flaming meteors from the sky.",
         "maxRank": 5,
@@ -1177,58 +1258,55 @@
       {
         "id": "burn_baby_burn",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "[180] = 15%/r extra damage vs burning target; only while the dummy burns"}], "confidence": "C", "note": "card table p10"},
         "name": "Burn baby burn!",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 15 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 15}
         }
       },
       {
         "id": "splitfire",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40%/r"}, {"kind": "extra_hits", "byRank": [1.3, 2.5, 3.8], "per": "use", "note": "splitfire: 3r Fire_Ball_Split_obj (PDP, singleHit, 10 px/frame, 3 s life, oriented rectangle 72x32 origin [60, 16]) start at the explosion point (the ball stops a step before contact, ~23-33 px from the dummy centre), active after 2 frames (~20 px further); the dummy lies in the rectangle area x in [-60, +11], y in [-16, +15] (+12 px circle): splits flying towards the dummy (+-~45 deg about the axis) hit at once, those flying away while the tail still covers it (+-~30 deg) -> ~150/360 = ~42 % of the splits: 1.3 / 2.5 / 3.8 (/ 5.0 / 6.3 for r11 = 4, 5) hits of D instead of 3r. Missing: the start angle of the fan 360/(4 + [337]) (Destroy_0 L48-L67), +-1-2 splits. Variant (x, y-24) for the splits was not recomputed (Resztki D: shift of the burst point <= 6 px changes the ~42 % by a few %; I)."}], "confidence": "I", "note": "Runda 4 29#0 (zawezone) + Po R4 (a) + Resztki po R4 D (Fireball p11 Splitfire); I: geometry, fan phase", "plannerFix": "planner models secondary_projectile_count 3/r and subtree_damage 40/r; card: 3r full-damage splits start at the dummy (each one hit) and LSSD 40%/r"},
         "name": "Splitfire",
         "description": "Fireball now splits to multiple smaller fireballs on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_projectile_count": 0, "subtree_damage": 0 },
-          "perRank": { "secondary_projectile_count": 3, "subtree_damage": 40 }
+          "base": {"secondary_projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"secondary_projectile_count": 3, "subtree_damage": 40}
         }
       },
       {
         "id": "path_of_destruction",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5.4, 10.8, 16.2], "per": "use", "note": "path of destruction: ball becomes piercing split; blazing patch every 32 px with d3 = D*60%*r, 6 hits each; 1-2 patches on the dummy (1.5 midpoint): 1.5*6*0.6r = 5.4r D-hits"}], "confidence": "I", "note": "card table p12 (C/I)", "plannerFix": "planner has trail_damage_percent 60/r and area 30/r but no patch hit model (6 hits per patch on the dummy)"},
         "name": "Path of Destruction",
         "description": "Fireball now has piercing and leaves a trail of fire on its’ path.",
         "maxRank": 3,
         "effects": {
-          "base": { "trail_damage_percent": 0, "area_of_effect": 0 },
-          "perRank": { "trail_damage_percent": 60, "area_of_effect": 30 }
+          "base": {"trail_damage_percent": 0, "area_of_effect": 0},
+          "perRank": {"trail_damage_percent": 60, "area_of_effect": 30}
         }
       },
       {
         "id": "orbital_fire",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 1, 6.5], "per": "use", "note": "transformation: 1 + 4r orbiting balls (Fire_Ball_Orbital_obj: orbitRadius 8 + (1 + 0.3r) px/frame, orbit_speed 10*(1 + p5%) deg/frame with -0.015/frame slowdown (until 2), orbitAngle = aim + 360/(1 + 4r)*i, destroyTimer 54*(1 + 0.18r) frames, mask 72x32 origin [60, 16] rotated by orbitAngle + 40). R4 simulation (orb.py): the dummy 160 px on the aim line is touched by 0 / 0 / 6 balls (r13 = 1 / 2 / 3; reached in frames 67-82, end radius 91 / 125 / 166 px) plus the end-of-life explosion (r 64 + 12 px) hits it in 0 / 1 / 1 cases -> 0 / 1 / 6-7 hits of D (midpoint 6.5 at r3). Whether a ball that hits also explodes in Destroy_0 is unsettled: 1 hit per ball assumed (I). Variant (x, y-24) not recomputed (I)."}], "confidence": "I", "note": "Runda 4 29#1 (Fireball p13 spirala, orb.py) + Po R4 (a)", "plannerFix": "planner models primary_projectile_count 4/r as plain projectiles; the game makes 1+4r orbiting balls whose explosions hit only if the dummy is inside the spiral"},
         "name": "Orbital Fire",
         "description": "Fireball casts now orbit around you for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "skill_duration": 0,
-            "area_of_effect": 0,
-            "primary_projectile_count": 0
-          },
-          "perRank": {
-            "skill_duration": 18,
-            "area_of_effect": 30,
-            "primary_projectile_count": 4
-          }
+          "base": {"skill_duration": 0, "area_of_effect": 0, "primary_projectile_count": 0},
+          "perRank": {"skill_duration": 18, "area_of_effect": 30, "primary_projectile_count": 4}
         }
       },
       {
         "id": "fireflies",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 48, 108], "note": "chance 20%/r per cast -> LSSD += 60%/r; expected 0.2r*60r = 12 r^2 %"}, {"kind": "extra_hits", "byRank": [0.8, 3.2, 7.2], "per": "use", "note": "firefly branch: chance 0.2r * 4r fireflies d3 each, all hit the dummy (I); expected 0.8 r^2 extra hits"}], "confidence": "C", "note": "card table p14 (L566, L279)", "plannerFix": "planner models a proc with secondary_projectile_count and subtree_damage_on_proc; card: chance 20r% per cast adds LSSD 60r% and 4r fireflies"},
         "name": "Fireflies!",
         "description": "Chance on spellhit to spawn a firefly around you that seek out nearby targets exploding into a fireball.",
         "maxRank": 3,
@@ -1279,8 +1357,8 @@
         "description": "Increases the area of effect radius of scorching aura.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
@@ -1290,8 +1368,8 @@
         "description": "Increases the damage dealt by scorching aura.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 8}
         }
       },
       {
@@ -1301,8 +1379,8 @@
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 12.5 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 12.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1334,8 +1412,8 @@
         "description": "Increases the tick rate of scorching aura.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 15 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 15}
         }
       },
       {
@@ -1345,8 +1423,8 @@
         "description": "Increases your movement speed while scorching aura is active.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
@@ -1356,8 +1434,8 @@
         "description": "Damaging monsters now builds up flaming ignition stacks unleashing a fiery pulse at max stacks.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 1 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 1}
         }
       },
       {
@@ -1383,8 +1461,8 @@
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 20 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 20}
         }
       },
       {
@@ -1394,8 +1472,8 @@
         "description": "Inflicts burning for a portion of scorching auras damage on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 10 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1412,8 +1490,8 @@
         "description": "Frequently unleash small bursts of fire dealing additional damage stunning monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 10, "projectile_count": 4 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 10, "projectile_count": 4}
         }
       },
       {
@@ -1423,8 +1501,8 @@
         "description": "Increases the damage of scorching aura based on your maximum life.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_max_life": 0 },
-          "perRank": { "conversion_max_life": 6 }
+          "base": {"conversion_max_life": 0},
+          "perRank": {"conversion_max_life": 6}
         }
       },
       {
@@ -1434,8 +1512,8 @@
         "description": "Frequently send out fiery souls dealing damage replenishing a portion of your maximum life.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "life_steal": 0 },
-          "perRank": { "fire_skill_damage": 20, "life_steal": 1.5 }
+          "base": {"fire_skill_damage": 0, "life_steal": 0},
+          "perRank": {"fire_skill_damage": 20, "life_steal": 1.5}
         }
       },
       {
@@ -1445,8 +1523,8 @@
         "description": "Ignite the flames now additionally unleashes piercing fireballs spiraling outwards dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 40, "projectile_count": 3 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 40, "projectile_count": 3}
         }
       }
     ]
@@ -1454,6 +1532,8 @@
   {
     "id": "hydra",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one shot of one Pyromancer_Hydra_obj sentry, N = 1 + p5.s9 + RSS362 hydras at once, 8 s life): at shootCooldown <= 0 with an enemy within attackRange 320 px and line of sight (the dummy at 160 px qualifies) the hydra plays the shot animation and at image_index >= 3 launches a Pyromancer_Hydra_Fire_Ball_obj (Player_Ability_Parent, hits nothing itself) which on contact makes 1 Explosion_Item_obj with d3 = floor(LTD(V1)*(1+LSSD)), V1 = 15*L (fire) = 1 hit = 1.0 main hit. Action interval T = ceil(60*max(1.5 - 0.4*sAS, 0.2)) frames, the animation does not add time (R3 33#2, C; engine side). perExtraProjectile 0: no projectile mechanism (p8 burstfire = separate actions). p4 nova (4 %*r), p11 comets (+r hits per shot), p9 aura, p13 kraken breath are subskill effects."},
     "classId": "pyromancer",
     "name": "Hydra",
     "kind": "active",
@@ -1468,7 +1548,7 @@
     "tree": "Arsonist",
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 8 }],
-    "damageFormula": { "base": -0.5, "perLevel": 20 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 8, "perLevel": 1 },
     "bonusSources": [
       { "source": "Fireball", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
@@ -1487,39 +1567,43 @@
       {
         "id": "lasting_fire",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [8, 16, 24, 32, 40], "note": "hydra lifetime 8 s x(1+8%/r); fewer recasts, DPS unchanged while N kept"}], "confidence": "C", "note": "card table p1"},
         "name": "Lasting Fire",
         "description": "Increases the duration of hydra.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 8 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 8}
         }
       },
       {
         "id": "fiery_snakebite",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60], "note": "LSSD += 12%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Fiery Snakebite",
         "description": "Increases the damage dealt by hydra.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "flaming_reach",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "note": "attackRange 320*(1+10%/r): reach only; dummy at 160 px already in range; 0 extra hits"}], "confidence": "C", "note": "card table p3"},
         "name": "Flaming Reach",
         "description": "Increases the range of hydra attacks.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 10 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 10}
         }
       },
       {
         "id": "scorching_blast",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "scorching blast: chance 4%/r per shot -> Firenova (maxScale 0.75) on the dummy with d3 = D: expected 0.04r extra hits per shot"}], "confidence": "C", "note": "card table p4 (L388)", "plannerFix": "planner proc has chance 4r but no effect; the card gives a nova with d3 = D on the dummy"},
         "name": "Scorching Blast",
         "description": "Hydras have a chance to cast a small fire nova at the target on hit.",
         "maxRank": 5,
@@ -1528,28 +1612,31 @@
       {
         "id": "more_heads_more_fire",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 5, 7, 9, 11], "note": "already modelled by planner sentry_max_amount; N = 1 + 2r hydras (ReturnSentryAmount case 33 -> SUB[p5 s9], asm-confirmed), each shooting at the same period; relative to base 1 hydra"}], "confidence": "C", "note": "N = 1 + SUB[p5 s9] + RSS362 = 1 + 2r5 (+ gear), up to 11 hydras: ReturnSentryAmount (0x145898340) case table 0x150ca0f38 holds tids 47 / 50 / 53 / 55 / 33 / 90 / 227 / 229 / 232 / 235; tid 33 = index 4 -> body 0x145898d76, LoadSubTalentDamage 0x145898f22 with int64 5 and 9 (0x150690230 / 0x150690240) added by RV_add 0x145898f2e (C, R4 33#0). The multiplier relative to the base of 1 hydra = 1 + 2r. A new cast every >= 0.717 s keeps N <= 11 up (N * 0.717 s <= 8 s)."},
         "name": "More Heads More Fire!",
         "description": "Increases the amount of hydras you can spawn.",
         "maxRank": 5,
         "effects": {
-          "base": { "sentry_max_amount": 0 },
-          "perRank": { "sentry_max_amount": 2 }
+          "base": {"sentry_max_amount": 0},
+          "perRank": {"sentry_max_amount": 2}
         }
       },
       {
         "id": "flaming_reflexes",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "period_frames", "byRank": [-3, -7, -10, -14, -18], "note": "extraAttackSpeed 15%/r -> T = max(1.5 - 0.4*sAS, 0.2) s: T = 1.44/1.38/1.32/1.26/1.20 s; ceil(60*T) = 87/83/80/76/72 frames vs base 90; no animation time added (R3)"}], "confidence": "C", "note": "card table p6, R3 hydra cadence", "plannerFix": "planner applies sentry_attack_speed 15%/r as a rate multiplier; the game subtracts 0.06r s from the shoot period (T = 1.5 - 0.4*0.15r s)"},
         "name": "Flaming Reflexes",
         "description": "Increases the attack speed of summoned hydra.",
         "maxRank": 5,
         "effects": {
-          "base": { "sentry_attack_speed": 0 },
-          "perRank": { "sentry_attack_speed": 15 }
+          "base": {"sentry_attack_speed": 0},
+          "perRank": {"sentry_attack_speed": 15}
         }
       },
       {
         "id": "cloning_combustion",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0267, 0.0533, 0.08, 0.1067, 0.1333], "per": "use", "note": "cloning combustion: chance 2%/r per shot -> hydra clone for 2 s (no further cloning): extra shots 0.02r * (2/T), T = 1.5 s base -> 0.0267r per shot"}], "confidence": "C", "note": "card table p7 (Step L97, Alarm_4)", "plannerFix": "planner proc has chance 2r but no effect; the game spawns a 2 s hydra clone that shoots about 2/T times"},
         "name": "Cloning Combustion",
         "description": "Chance on attack for hydra to create a temporary clone of itself for a short period of time.",
         "maxRank": 5,
@@ -1558,6 +1645,7 @@
       {
         "id": "burstfire",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "burstfire: chance 3%/r per shot -> extra shot after 0.15 s (10 deg spread, 1+extraProjectileChance projectiles); expected 0.03r extra hits"}], "confidence": "C", "note": "card table p8 (Alarm_3, pack I)", "plannerFix": "planner proc has chance 3r but no effect; the game fires an extra burst shot after 0.15 s"},
         "name": "Burstfire",
         "description": "Hydras have a chance on attack to fire an additional projectile.",
         "maxRank": 5,
@@ -1573,75 +1661,73 @@
       {
         "id": "burning_essence",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "burning essence objects (every 0.33 s, d3 = floor(D*0.25r), scale 1+0.125r) hit only targets close to the hydra (hydra within 128 px of player, dummy at 160 px): 0 on dummy in the typical case (I)"}], "confidence": "I", "note": "card table p9 (Step L38-L57)", "plannerFix": "planner applies of_total_damage 25/r to the target unconditionally; the game hits only targets near the hydra (0 for the 160 px dummy typically)"},
         "name": "Burning Essence",
         "description": "Hydras deal damage in a small radius around them.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 25, "area_of_effect": 12.5 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 25, "area_of_effect": 12.5}
         }
       },
       {
         "id": "slitherin_army",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "[180] = 10%/r extra damage vs burning target; only while the dummy burns"}], "confidence": "C", "note": "card table p10"},
         "name": "Slitherin Army",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "chaotic_calamity",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "chaotic calamity: r Comet_Hydra objects fall from 320 px on the hit target with d3 = D; each hits the dummy once per shot"}], "confidence": "C", "note": "card table p11 (handler L407)"},
         "name": "Chaotic Calamity",
         "description": "Hydras now unleash small comets with every attack.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "hydra_herder",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [0.5, 0.5, 0.5], "note": "hydra herder: limit floor(N*0.5) hydras -> half the hydra count (x0.5 of N); assumes the limit halves the base count (I for the rounding at N=1)"}, {"kind": "damage_pct", "byRank": [12.5, 25, 37.5], "note": "LSSD += 12.5%/r"}], "confidence": "C", "note": "card table p12 (L844, Step L20-L32)", "plannerFix": "planner does not halve the hydra count (limit floor(N*0.5)); the card gives x0.5 hydras with LSSD 12.5%/r"},
         "name": "Hydra Herder",
         "description": "Hydras now follow the player but the amount of hydras are capped.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "summon_movement_speed": 0 },
-          "perRank": { "fire_skill_damage": 12.5, "summon_movement_speed": 25 }
+          "base": {"summon_movement_speed": 0, "subtree_damage": 0},
+          "perRank": {"summon_movement_speed": 25, "subtree_damage": 12.5}
         }
       },
       {
         "id": "scorching_kraken",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [21, 54, 99], "note": "transformation: 1 hydra limit, breath instead of ball (scorchingKraken=1), maxScale 2.25, range x(1+25%/r); LSSD += N*15%/r*(1+40%/r) with N = 1 (base, p5=0): 15r(1+0.4r)"}, {"kind": "other", "note": "breath hit is 1 per shot (I: breath scale 2.25 hit count assumed 1)"}], "confidence": "I", "note": "card table p13 (C/I)", "plannerFix": "planner adds fire_skill_damage 40/r, skill_range 25/r and conversion_summon_count 15/r; the game LSSD = N*15%*r*(1+0.4r) with a breath instead of the ball"},
         "name": "Scorching Kraken",
         "description": "Now summon one massive hydra that breathes fire to nearby monsters with increased damage and range. Additionally scales the damage based on maximum amount of hydras.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "skill_range": 0,
-            "conversion_summon_count": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 40,
-            "skill_range": 25,
-            "conversion_summon_count": 15
-          }
+          "base": {"skill_range": 0, "conversion_summon_count": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "conversion_summon_count": 15, "subtree_damage": 40}
         }
       },
       {
         "id": "searing_snakes",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [10, 20, 30], "note": "searing snakes: all N hydras at once; burning [18] = floor(D*10%*r) per explosion; DoT modelled separately"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}], "confidence": "C", "note": "card table p14 (L842)"},
         "name": "Searing Snakes",
         "description": "Now summon all hydras with one cast dealing increased damage and inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "increased_burning_damage": 0 },
-          "perRank": { "fire_skill_damage": 15, "increased_burning_damage": 10 }
+          "base": {"increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_burning_damage": 10, "subtree_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1656,6 +1742,9 @@
   {
     "id": "volcano",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "baseCooldown": 4,
+    "dummyHits": {"base": 9.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cooldown 4 s = duration 4 s), IN-ZONE (the volcano is created at the cursor point gracz + lengthdir(tupm[6], tupm[7]) = cursor - 6 px, i.e. (x, y-30), 30 px from the dummy centre [Resztki E, asm 0x1462776fe-0x146277790], inside its 74x38 mask once the scale is >= 0.85): one Pyromancer_Volcano_obj (PDP, singleHit 0), destroyTimer = 4 s = 240 frames, tick_frequency 0.5 s = 30 frames. Resztki E: the mask reaches the dummy only at scale >= 0.85 (cursor 24 px: 0.57), fadeIn +0.05/frame from 0.1 -> about frame 15, before the first map clearing (frame 30): the card keeps 9 hits = 1 + floor(240/30) (I, +-1 at the fade-out: the scale drops below 0.85 about 3 frames after the destroyTimer). The old model took 8.5 (tools/tick_hits.py 240-2 = 238 active frames -> 8, 258 with the fade -> 9); now the card's 9 is used with range 8-10. Each hit d3 = floor(D*(1 + p9.s9%)), D = floor(LTD(V1)*(1+LSSD)), V1 = 24*L (fire) = 1.0 main hit. The fragments (1 + p1.s9 per 0.25 s, Volcano_Fragment_obj: 2 px/frame, first landing ~120 px from the volcano, 3 bounces with explosions x0.5, final x1.5) leave the dummy and never reach it: counted 0 (R4 36#1, direction-independent). A skill-duration bonus (p2 +10 %/r) scales the tick count in the engine. perExtraProjectile 0: no projectile mechanism (p14 Trail of Volcanoes = 4r more volcanoes, a subskill). p13 puts the volcano at the player (m_iAmVolcano: x = host.x, y = host.y + 6 every frame; 0 for a dummy at 160 px)."},
     "classId": "pyromancer",
     "name": "Volcano",
     "kind": "active",
@@ -1671,7 +1760,7 @@
     "position": { "row": 2, "col": 0 },
     "hitModel": { "object": "Pyromancer_Volcano_Create", "tickFrequency": 0.5 },
     "ranks": [{ "rank": 1, "manaCost": 9 }],
-    "damageFormula": { "base": 0, "perLevel": 29.5 },
+    "damageFormula": { "base": 0, "perLevel": 24 },
     "manaCostFormula": { "base": 9, "perLevel": 1 },
     "bonusSources": [
       { "source": "Hydra", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
@@ -1690,56 +1779,61 @@
       {
         "id": "eruption",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "volcanoFragments = 1 + 1/r per cast; fragments land ~120 px from the volcano, 0 extra hits on the dummy at the cursor (I)"}], "confidence": "I", "note": "card table p1", "plannerFix": "planner counts projectile_count 1/r as hits; the fragments land ~120 px away and miss the dummy"},
         "name": "Eruption",
         "description": "Increases the amount of volcano fragments.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "extended_lava",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0, 1.1111, 1.2222, 1.3333, 1.4444], "note": "duration 4 s x(1+10%/r): hits per volcano 1+floor(240*(1+0.1r)/30) = 9/9/10/11/12/13 for r=0..5, relative to 9"}], "confidence": "C", "note": "card table p2 (formula; list in card inconsistent)"},
         "name": "Extended Lava",
         "description": "Increases the duration of volcano.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "danger_zone",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "note": "fragment speed x(1+15%/r): fragments land farther away; 0 extra on dummy"}], "confidence": "C", "note": "card table p3 (Fragment Alarm_0 L14)", "plannerFix": "planner models area_of_effect 15/r; the game changes fragment speed (fragments land farther from the volcano)"},
         "name": "Danger Zone",
         "description": "Increases the range of volcano.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "searing_mountain",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "maxScale 1+20%/r: volcano mask 74x38 grows; dummy under cursor already inside; 0 extra hits"}], "confidence": "C", "note": "card table p4"},
         "name": "Searing Mountain",
         "description": "Increases the size of volcano.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 20 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 20}
         }
       },
       {
         "id": "colossal_fragment",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "[348] = [7%*r chance, 35%*r]: extra fragments (outside), 0 on dummy (I)"}], "confidence": "I", "note": "card table p5 (C/I)", "plannerFix": "planner proc (7r%) adds increased burning 35r on the target; the game's colossal fragment is a fragment branch that lands outside the dummy"},
         "name": "Colossal Fragment",
         "description": "Chance to shoot out a colossal fragment instead knocking monsters into the air and inflicting burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 35 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1752,28 +1846,31 @@
       {
         "id": "crackling_earth",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 1.7, 1.9, 2.4, 3.2], "per": "use", "note": "m_cracklingEarth (0x14976c650): every 0.75 s*(1 - 0.12r) a Pyromancer_Scorching_Searing_Burst_obj (object 3872, singleHit, mask Exo_Solar_Burst_Mask_spr 128x128 precise, start scale 0.4 -> r ~26 px) at volcano + lengthdir(irandom(128), irandom(360)) (polar density ~1/rho); 6 / 7 / 8 / 10 / 13 bursts in the 4 s. P(burst centre within 26 + 12 px of the dummy) = 0.243 with the volcano 30 px above the dummy (Resztki E; 0.27 at 24 px) -> 1.5 / 1.7 / 1.9 / 2.4 / 3.2 hits per volcano for r6 = 1..5 (earlier 1.6 / 1.9 / 2.1 / 2.7 / 3.5). Burst damage assumed equal to the volcano's d3 (unread, I); burst scale growth I."}], "confidence": "I", "note": "Runda 4 36#0 (Volcano cracklingEarth) + Resztki po R4 E (P 0.27 -> 0.243); C: method, addresses, constants; I: burst scale growth, burst damage, mask", "plannerFix": "planner models faster_cast_rate 12/r; the game adds periodic impulses around the volcano (not a cast rate)"},
         "name": "Crackling Earth",
         "description": "Release flaming fissures around the volcano.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 12 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 12}
         }
       },
       {
         "id": "scorching_lava",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [6, 12, 18, 24, 30], "note": "LSSD += 6%/r"}], "confidence": "C", "note": "card table p7"},
         "name": "Scorching Lava",
         "description": "Increases the damage dealt by volcano.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 6 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 6}
         }
       },
       {
         "id": "crushing_fragment",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "note": "crushing fragment [349] = 3/r: fragment modifier, 0 on dummy (I)"}], "confidence": "I", "note": "card table p8 (Fragment Step L18)", "plannerFix": "planner proc has chance 3r but no effect; the game changes fragments only"},
         "name": "Crushing Fragment",
         "description": "Fragments have a chance to bounce and deal area of effect damage when hitting the ground.",
         "maxRank": 5,
@@ -1782,45 +1879,49 @@
       {
         "id": "too_hot_to_touch",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.4, 1.8, 2.2, 2.6, 3.0], "note": "volcano d3 x(1+40%*r) (not fragments) as a separate multiplier; 2 s stun and slow 0.35 on hit"}], "confidence": "C", "note": "card table p9", "plannerFix": "planner adds fire_skill_damage 40/r into the LSSD sum; the card gives a separate x(1+0.4r) multiplier on the volcano hits only"},
         "name": "Too Hot to Touch",
         "description": "Monsters touching the volcano get knocked back and stunned taking additional damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 40 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 40}
         }
       },
       {
         "id": "lava_dipping",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "[180] = 10%/r extra damage vs burning target; only while the dummy burns (needs p12 burning source)"}], "confidence": "C", "note": "card table p10"},
         "name": "Lava Dipping",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "yellowstone",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "note": "yellowstone 25%*r: main volcano smaller (Alarm_0 L3-L4); fragments on destruction make mini-volcanoes ~120 px from the dummy (0 on dummy, I)"}], "confidence": "C", "note": "card table p11 (C/I)", "plannerFix": "planner models faster_cast_rate 25/r; the game shrinks the main volcano and creates mini-volcanoes from fragments"},
         "name": "Yellowstone",
         "description": "Now spawns a massive volcano shooting out fragments that spawn smaller volcanoes around it.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 25 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 25}
         }
       },
       {
         "id": "lava_trail",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [18, 36, 54], "per": "use", "note": "m_lavaTrail (0x14976b150): every 60 frames 3*r12 Blazing_Trail_Controller_obj (object 3847) at the volcano with direction = irandom(360), deltaSpeed 5, skillTimer 2 s, circleOfFire (patch every 9 frames, first after > 42 px = 45 px), lavaTrailBurning -> [18]. The volcano stands 30 px above the dummy: the first patch (45 px from the volcano, mask 41x34) overlaps the dummy for ~43 deg around the downward direction -> P ~ 0.25 per controller (Resztki E 0.24 -> 0.25), later patches (>= 90 px) do not; the volcano lives 4 s = 4 series: 4 * 3r * 0.25 = 3r patches x 6 hits (tick 0.5 s, life 2.5 s) = 18 / 36 / 54 hits (17.3r at P 0.24; the card: ~2.9r patches). Patch damage = the controller's damage[3] (unread, assumed D; I). p2 duration scales the series count."}, {"kind": "dot", "byRank": [80, 160, 240], "note": "lava trail: burning source 0.8r*D per patch hit (value % of D); DoT modelled separately"}, {"kind": "damage_pct", "byRank": [3, 6, 9], "note": "LSSD += 3%/r"}], "confidence": "I", "note": "Runda 4 36#0 (Volcano lavaTrail) + Resztki po R4 E (P 0.25); C: method, constants, irandom(360); I: patch damage, mask rectangle, 6 hits per patch", "plannerFix": "planner models increased_burning_damage 80/r (an increase) with proc chance 100; the game's burning source is 0.8r*D per streak hit; LSSD 3%/r is not in planner"},
         "name": "Lava Trail",
         "description": "Volcano now sends out trails of molten lava inflicting a portion of its damage as burning.",
         "maxRank": 3,
         "effects": {
-          "base": { "trail_count": 0, "increased_burning_damage": 0 },
-          "perRank": { "trail_count": 3, "increased_burning_damage": 80 }
+          "base": {"trail_count": 0, "increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"trail_count": 3, "increased_burning_damage": 80, "subtree_damage": 3}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1833,23 +1934,25 @@
       {
         "id": "i_am_the_volcano_now",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "transformation: iAmVolcano places the volcano at the player (I); no hit on the dummy at 160 px"}, {"kind": "damage_pct", "byRank": [110, 220, 330], "note": "LSSD += 110%/r"}], "confidence": "I", "note": "card table p13 (C/I)", "plannerFix": "planner adds fire_skill_damage 110/r and keeps the volcano on the cursor; the game places the volcano at the player (dummy at 160 px missed)"},
         "name": "I Am The Volcano Now!",
         "description": "The volcano is now stuck on you with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 110 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 110}
         }
       },
       {
         "id": "trail_of_volcanoes",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [13.5, 27, 40.5], "per": "use", "note": "trail of volcanoes: 4r chained volcanoes, offset -40 deg; 1-2 near the dummy each with 9 hits (I: 1.5*9 per rank)"}, {"kind": "damage_pct", "byRank": [55, 110, 165], "note": "LSSD += 55%/r"}], "confidence": "I", "note": "card table p14 (C/I)", "plannerFix": "planner models projectile_count 4/r as projectiles; the game chains 4r volcanoes, 1-2 near the dummy each with 9 hits"},
         "name": "Trail of Volcanoes",
         "description": "Spawn multiple volcanoes trailing into a random direction.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0, "single_target_hit_cap": 2 },
-          "perRank": { "fire_skill_damage": 55, "projectile_count": 4, "single_target_hit_cap": 0 }
+          "base": {"projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "single_target_hit_cap": 0, "subtree_damage": 55}
         }
       }
     ]
@@ -1857,6 +1960,8 @@
   {
     "id": "meteor",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "I", "note": "Per cast, IN-ZONE per rule 24 (the meteor flies a fixed ~225-230 px independent of the cursor: start 10 px ahead of the player, 4 px/frame, yy0 12, zSpeed 4, g 0.15, lands after 56 frames, over an enemy at yy <= 32 it 'jumps' (zSpeed +3, speed x0.75) and lands 251-266 px away): for a dummy standing in the 2-hit zone (D ~218-262 px from the player, midpoint ~240 px) each meteor hits twice: the flying Pyromancer_Meteor_obj touches the dummy (collision ignores yy, rule 29/R3, mask ~43x42 px, singleHit) = 1 hit and the Explosion_Item_obj of its Destroy_0 (r 32 px, within <= 44 px of the dummy) = 1 hit, both d3 = LTD(V1) = 22*L (no LSSD, no floor) = 1.0 main hit each. At the strict 160 px: 1 hit (contact only; the meteor is at height ~52 px there and lands ~225 px away); D <= ~216 px: 1, D ~264-274: 1, D > 276: 0 (card R3 31#1, zone limits +-4 px and the mask shape I). The 5 shards of Destroy_0 are Player_Projectile_Shred_obj (no damage). perExtraProjectile = 1.0 (I, best reading): n = 1 + RSS311 meteors; the card does not say how the extra meteors are spread (L805), assumed half of the 2 hits per extra meteor reach the dummy. No subskill tree."},
     "classId": "pyromancer",
     "name": "Meteor",
     "kind": "active",
@@ -1871,7 +1976,7 @@
     "tree": "Arsonist",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.5, "perLevel": 26 },
+    "damageFormula": { "base": 0, "perLevel": 22 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -1883,6 +1988,8 @@
   {
     "id": "fire_nova",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, area around the player counted IN-ZONE (rule 24): 1 Pyromancer_Firenova_obj on the player (follows the player; deadlyFrames = 15 frames, singleHit, no tick) with d3 = D = floor(LTD(V1)*(1+LSSD)), V1 = 16.35*L (fire) = 1 hit if the dummy is within R(m) + 12 px, R(m) = 160*s(14) with s growing lerp(s, m, 0.075*m) from 0.1: m = 1 (base) gives R = 112 px, i.e. the dummy must stand within ~124 px of the player; at the strict 160 px the value is 0 (m = 1.3, i.e. p1 r >= 2 (m = 1 + 0.15r), gives R = 162 px and hits 160 px; reach 112 / 137 / 162 / 189 / 216 / 243 px for p1 r = 0..5). Count C, radius I (deadlyFrames counted from creation). perExtraProjectile 0: no projectile mechanism in the base (p11 bolts, p13 travelling novas are subskill effects). p2 burn source, p7 double cast (6 %*r), p8 armageddon bolts, p10 trail are subskill effects."},
     "classId": "pyromancer",
     "name": "Fire Nova",
     "kind": "active",
@@ -1897,7 +2004,7 @@
     "tree": "Arsonist",
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 19.5 },
+    "damageFormula": { "base": 0, "perLevel": 16.35 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Scorching Aura", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1916,23 +2023,25 @@
       {
         "id": "extended_flames",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "maxScale 1+15%/r: zone radius R = 112/137/162/189/216/243 px for r=0..5 (dummy at 160 px needs R+12 >= 160: r>=2 for the 160 px scenario); in-zone convention: range only, 0 extra hits"}], "confidence": "C", "note": "card table p1, rule 24, deadlyFrames window (I)"},
         "name": "Extended Flames",
         "description": "Increases the area of effect radius of fire nova.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "boiling_point",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90, 120, 150, 180, 210, 240], "note": "[18] = floor(D*30%*r) burning from nova, missiles and trail; DoT modelled separately"}], "confidence": "C", "note": "card table p2"},
         "name": "Boiling Point",
         "description": "Inflicts burning on hit.",
         "maxRank": 8,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 30 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1945,23 +2054,25 @@
       {
         "id": "heat_haze",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r"}], "confidence": "C", "note": "card table p3"},
         "name": "Heat Haze",
         "description": "Increases the damage dealt by fire nova.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "burning_agony",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4], "note": "fire break [970] = 8%/r for 5 s (nova and missiles); multiplier reading (I)"}], "confidence": "I", "note": "card table p4"},
         "name": "Burning Agony",
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 8 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 8}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1974,28 +2085,31 @@
       {
         "id": "crushing_flames",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15%/r; slow 0.35 s/0.35 is zero-damage"}], "confidence": "C", "note": "card table p5"},
         "name": "Crushing Flames",
         "description": "Fire nova knocks monsters back dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "rapid_flames",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "TalentUseSetSpeed cast-path case tid 35 (switch 0x150cd0330, 0x146a6617e): S += SUB(p6, s9)*0.01 = 0.06r, ADDITIVE with FCR/100 (value = FCR points, not x(1 + 0.06r) on 1.75); cast period (rule 37) (ceil(72/S)+1)/60 s = 43 / 41 / 40 / 39 / 38 / 37 frames for r = 0..5."}], "confidence": "C", "note": "Runda 4 'Okresy po regulach 31(k) i 37' (Fire Nova p6 s9 6 %/r -> C)"},
         "name": "Rapid Flames",
         "description": "Increases your cast rate when casting fire nova.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "mirror_flames",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "mirror flames: chance 6%/r per cast -> Universal_Double_Cast repeats the cast: expected 0.06r extra novas"}], "confidence": "I", "note": "card table p7 (L1137)"},
         "name": "Mirror Flames",
         "description": "Chance on cast to unleash an additional fire nova.",
         "maxRank": 5,
@@ -2011,6 +2125,7 @@
       {
         "id": "armageddon_bolts",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "armageddon bolts: chance 1%/r per cast -> up to 4 Armageddon falls on the target (d3 = D each) when the nova hits; expected 0.01r*4 = 0.04r"}], "confidence": "C", "note": "card table p8 (L1141, handler L368-L378)", "plannerFix": "planner proc on_hit with chance 1r but no effect; the game adds up to 4 Armageddon hits on the target"},
         "name": "Armageddon Bolts",
         "description": "Chance on hit to drop armageddon bolts down from the sky.",
         "maxRank": 5,
@@ -2019,17 +2134,19 @@
       {
         "id": "agonizing_flames",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.06, 1.12, 1.18, 1.24, 1.3], "note": "[180] = 6%/r extra damage vs burning target; only while the dummy burns"}], "confidence": "C", "note": "card table p9"},
         "name": "Agonizing Flames",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 6 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 6}
         }
       },
       {
         "id": "molten_trail",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.6, 7.2], "per": "use", "note": "chance 0.30r per cast (L1145) -> Pyromancer_Blazing_Trail_Controller_obj at the player (L1264-L1273) with circleOfFire 1, deltaSpeed 4 (0x146274b0c), 2 s, d3 = D (no floor); direction = the aiming angle (L1267 stores the local at [rbp+0x250], the same variable as the cursor lengthdir angle in L1040-L1041; I: deduction): the controller walks 4 px/frame along the aim line through the dummy and lays a patch every 11 frames at 44 / 88 / 132 / 176 px; the patches at 132 px (right mask edge 151 >= 148) and 176 px (left edge 155 <= 172) overlap the dummy at 160 px: 2 patches x 6 hits (tick 0.5 s, life 2.5 s) = 12 hits of D per procced cast -> 12 * 0.30r = 3.6r. (r10 maxRank 2 in the planner; chance capped at 100 %, r10 = 5 would give 12.) Patch masks unrotated 41x34; positions +-1 frame."}], "confidence": "I", "note": "Runda 4 35#1 (Fire Nova p10 kierunek kontrolera)", "plannerFix": "planner proc on_cast with chance 30r and no effect; the game makes a 2 s blazing patch track that hits the dummy with 6 hits per patch when it passes"},
         "name": "Molten Trail",
         "description": "Chance on cast to send a trail of molten lava forward.",
         "maxRank": 2,
@@ -2038,63 +2155,49 @@
       {
         "id": "scorching_bolts",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15], "note": "scorching bolts: 5r split fireballs (d3 = D) every 360/n deg, speed 7*(1+25%*r)"}, {"kind": "extra_hits", "byRank": [0.278, 0.556, 0.833], "per": "use", "replacesProjectileHits": true, "note": "a ball hits the dummy at 160 px when its deviation is <= ~28 px (+-10 deg): coverage n*20/360 with n = 5r = 0.278/0.556/0.833 D-hits; replaces the engine's projectile conversion"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}], "confidence": "I", "note": "card table p11 (L1237, L1246; n = 5r assumption from planner perRank)", "plannerFix": "planner converts all 5r projectiles into full-damage hits; at 160 px only n*20/360 of the balls reach the dummy"},
         "name": "Scorching Bolts",
         "description": "Now unleash piercing fireballs in all directions instead of a nova.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "projectile_speed": 0,
-            "projectile_count": 0,
-            "single_target_hit_cap": 2
-          },
-          "perRank": {
-            "fire_skill_damage": 15,
-            "projectile_speed": 25,
-            "projectile_count": 5,
-            "single_target_hit_cap": 0
-          }
+          "base": {"projectile_speed": 0, "projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"projectile_speed": 25, "projectile_count": 5, "single_target_hit_cap": 0, "subtree_damage": 15}
         }
       },
       {
         "id": "searing_tornado",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5, 10, 15], "per": "use", "note": "searing tornado: the p11 balls orb around the player (radius 48 + 2/frame, 12 deg/frame, singleHit); the spiral crosses the dummy radius: 1 hit per ball; assumes p11 rank 1 (5 balls) (I)"}], "confidence": "I", "note": "card table p12 (C/I)", "plannerFix": "planner adds projectile_count 2/r; the card says p12 makes the existing p11 balls orbit, each hitting once"},
         "name": "Searing Tornado",
         "description": "Summon piercing fireballs orbiting you. Fire nova now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0, "projectile_count": 0 },
-          "perRank": { "skill_duration": 10, "projectile_count": 2 }
+          "base": {"skill_duration": 0, "projectile_count": 0},
+          "perRank": {"skill_duration": 10, "projectile_count": 2}
         }
       },
       {
         "id": "traveling_flames",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "traveling flames: r extra novas, each moved ~80 px toward the aim (disableHost), so the dummy is in reach; I"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25%/r"}, {"kind": "other", "note": "maxScale += 15%/r (radius only)"}], "confidence": "I", "note": "card table p13 (Step L23-L41)", "plannerFix": "planner models fire 25/r, area 15/r and projectile_count 1/r; the game makes r moving novas (travel ~80 px) that each hit once"},
         "name": "Traveling Flames",
         "description": "Send a traveling nova forward unleashing additional novas with increased damage and area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "area_of_effect": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 25,
-            "area_of_effect": 15,
-            "projectile_count": 1
-          }
+          "base": {"area_of_effect": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 15, "projectile_count": 1, "subtree_damage": 25}
         }
       },
       {
         "id": "vacuum_flames",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}, {"kind": "other", "note": "NOT 'no other field change': TalentsPyromancer L1179-L1182 (asm 0x1462731b7-0x146273648) runs collision_circle_list(player + lengthdir(48, aim) [48.0f at 0x14f1898e8], floor(320*(1 + p1.s9 + p13.s10)*0.5) = 160*(1 + p1%) radius, Enemy_Parent_obj, prec = false, notme = false), then collision_line to the wall and TalentPullMonster (0x1461e6ac0) on every enemy in the list (enemy type != 2) = a pull. The dummy at 160 px is ~112 px from the circle centre, inside the circle for every p1 rank. TalentPullMonster sets enemyModifier[183] = 1 and a pull point; whether the dummy (enemyNoStepEvent = 1, rule 16) can be pulled is unread (I). If it is pulled, the nova (reach 112-243 px) could hit it also at p1 r <= 1 (H = 1 instead of 0 at the strict 160 px); numbers unchanged here (the base is counted in-zone)."}], "confidence": "I", "note": "Resztki po R4 F (regula 43, Fire Nova p14 Vacuum Flames); C: call, arguments, circle; I: pull effect on the dummy"},
         "name": "Vacuum Flames",
         "description": "Fire nova now vacuums monsters inside stunning and dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       }
     ]
@@ -2103,6 +2206,8 @@
     "id": "comet",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.63, "confidence": "C", "note": "Per cast, IN-ZONE (the comet target point is gracz + lengthdir(tupm[6], tupm[7]) = cursor - 6 px, i.e. 30 px from the dummy centre for the cursor (x, y-24) [Resztki E, asm 0x14626a1e9-0x14626a290]; 24 px in the older reading, base unchanged): n = ReturnExtraSpellProjectiles(1) Pyromancer_Comet_obj (Player_Ability_Parent, yy 320, g 0.25, lands after ~51 frames, hits nothing itself) whose Destroy_0 makes 1 Explosion_Item_obj with scale image_xscale*2.2 (r ~70 px + 12 px dummy) and d3 = D = floor(LTD(V1)*(1+LSSD)), V1 = 20*L (fire) = 1 hit = 1.0 main hit (decay shrapnel is visual, I). perExtraProjectile = 0.63 (I): the extra comets (gear XSP and p11's 2r) are placed by the L1040-L1061 loop around the cursor point; reading R4 34#0 + Resztki E: uniform in a disc of the AoE-indicator radius R_s = 100 px (200*(1+p1%) wide), explosion reach 70 + 12 = 82 px, dummy 30 px from the point -> 63 % of the extra comets hit (R_s >= 115 would give (82/R_s)^2; the earlier 66 % and the older 'about half' = 0.5 are superseded); the scatter offsets (L1042, L1049-L1061) are not read. p11 Fiery Shower (1 + 2r comets), p12 starfall ring (0), p13 bouncing comets (2r comets, ~1 hit each), p4/p5/p9/p10 procs are subskill effects."},
     "classId": "pyromancer",
     "name": "Comet",
     "kind": "active",
@@ -2117,7 +2222,7 @@
     "tree": "Arsonist",
     "position": { "row": 3, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 27.5 },
+    "damageFormula": { "base": 0, "perLevel": 20 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Fireball", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -2136,39 +2241,43 @@
       {
         "id": "blast_radius",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.806, 0.632, 0.508, 0.417, 0.349], "note": "AoE indicator 200*(1 + 15%/r): no hit for the first comet (cursor point on the dummy). It also sets the scatter radius R_s = 100*(1 + 0.15r) of the EXTRA comets (R4 34#0), so the fraction of extra comets (gear XSP, p11) that reach the dummy falls as (82/R_s)^2: 0.63 (r = 0, offset case) -> 0.508 / 0.398 / 0.320 / 0.263 / 0.220 for r1 = 1..5; value = multiplier on the dummy's perExtraProjectile 0.63 (0.806 / 0.632 / 0.508 / 0.417 / 0.349). Derived from the card's (70 + 12)^2/R_s^2 formula (valid for R_s >= 115), scatter distribution I."}], "confidence": "I", "note": "Runda 4 34#0 (zawezone; rozrzut komet w kole wskaznika R_s) + Resztki po R4 E; derived numbers"},
         "name": "Blast Radius",
         "description": "Increases the area of effect radius of comet.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "molten_rock",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Molten Rock",
         "description": "Increases the damage dealt by comet.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "skycaller",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "TalentUseSetSpeed cast-path case tid 34 (0x146a6628d): S += SUB(p3, s9)*0.01 = 0.06r, ADDITIVE with FCR/100 (value = FCR points, not x(1 + 0.06r) on 1.75); cast period (rule 37) (ceil(72/S)+1)/60 s = 43 / 41 / 40 / 39 / 38 / 37 frames for r = 0..5."}], "confidence": "C", "note": "Runda 4 'Okresy po regulach 31(k) i 37' (Comet p3 s9 6 %/r -> C)"},
         "name": "Skycaller",
         "description": "Increases your cast rate when using comet.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "comet_fragments",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "comet fragments: chance 4%/r per cast -> 3 small comets of d3/3 at landing: expected 0.04r * 3 * (1/3) = 0.04r D-hits; geometry of landing spread I"}], "confidence": "C", "note": "card table p4 (L979, Step L26-L35)", "plannerFix": "planner proc has chance 4r but no effect; the game adds 3 small comets (d3/3 each) on landing"},
         "name": "Comet Fragments",
         "description": "Chance when comet hits the ground to rain down smaller comets.",
         "maxRank": 5,
@@ -2177,6 +2286,7 @@
       {
         "id": "molten_aftershock",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [1.05, 4.2, 9.45, 16.8, 26.25], "note": "chance 3%/r -> LSSD += 35%/r; expected 1.05 r^2 %"}, {"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "same proc: Firenova (maxScale 0.9, slow) with d3 at landing; expected 0.03r extra hits"}], "confidence": "C", "note": "card table p5 (L983)", "plannerFix": "planner proc (3r%) adds 35r% fire damage at nominal value; the card gives an extra Firenova hit at the landing point with the same chance"},
         "name": "Molten Aftershock",
         "description": "Chance when hitting the ground to unleash a fiery pulse dealing additional damage knocking monsters back.",
         "maxRank": 5,
@@ -2192,12 +2302,13 @@
       {
         "id": "shattering_impact",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "fire break [970] = 10%/r for 5 s; multiplier reading (I)"}], "confidence": "I", "note": "card table p6"},
         "name": "Shattering Impact",
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 10 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2210,6 +2321,7 @@
       {
         "id": "stunning_hit",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 5%/r per cast -> stun [51] = 3 s; no direct damage; enables p8"}], "confidence": "C", "note": "card table p7", "plannerFix": "planner stun proc has chance 5r but no 3 s duration"},
         "name": "Stunning Hit",
         "description": "Chance on hit to stun monsters.",
         "maxRank": 5,
@@ -2222,17 +2334,19 @@
       {
         "id": "cracked_terrain",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "[179] = 20%/r extra damage vs stunned target; applies while the dummy is stunned (from p7)"}], "confidence": "C", "note": "card table p8"},
         "name": "Cracked Terrain",
         "description": "Increased damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "searing_shrapnel",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.021, 0.084, 0.189, 0.336, 0.525], "per": "use", "note": "searing shrapnel: chance 7%/r per cast -> shrapnel floor(d3*0.3r) from the explosion point; assumes one shrapnel hits the dummy: expected 0.07r * 0.3r = 0.021 r^2 D-hits (I)"}], "confidence": "I", "note": "card table p9 (Destroy L28-L50)", "plannerFix": "planner proc applies fire_skill_damage 30/r at nominal value; the game spawns shrapnel of 30%*r*D from the impact point with chance 7r%"},
         "name": "Searing Shrapnel",
         "description": "Comet shrapnel flies farther dealing a portion of comets damage.",
         "maxRank": 5,
@@ -2248,6 +2362,7 @@
       {
         "id": "flaming_terrain",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.063, 0.252, 0.567, 1.008, 1.575], "per": "use", "note": "flaming terrain: chance 3%/r per cast -> Blazing_Trail patch d3 = 0.35r*D with 6 hits: expected 0.03r*6*0.35r = 0.063 r^2 D-hits"}], "confidence": "C", "note": "card table p10", "plannerFix": "planner proc (3r%) adds 35r% fire damage at nominal value; the game creates a 6-hit blazing patch on the target (0.35r*D each)"},
         "name": "Flaming Terrain",
         "description": "Chance when hitting the ground to create flames dealing a portion of comets damage over time.",
         "maxRank": 5,
@@ -2263,45 +2378,49 @@
       {
         "id": "fiery_shower",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "fiery shower: ReturnExtraSpellProjectiles(1+2/r): 2r extra comets scattered around the cursor (default conversion; hits on dummy partial, I)"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}], "confidence": "I", "note": "card table p11 (L1040-L1041)"},
         "name": "Fiery Shower",
         "description": "Drop additional comets dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 15, "projectile_count": 2 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 15}
         }
       },
       {
         "id": "molten_starfall",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "transformation: 4r small comets on a ring (area x0.33) around the cursor; dummy at the centre is outside the ring: 0 hits (I)"}], "confidence": "I", "note": "card table p12 (L1045-L1050)", "plannerFix": "planner projectile_count 4/r as extra comets; the game replaces the comet with a ring of small explosions around the cursor (dummy at the centre is missed)"},
         "name": "Molten Starfall",
         "description": "Drop multiple comets simultaneously. Comet now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 4 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 4}
         }
       },
       {
         "id": "bouncing_comets",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 4, 6], "note": "transformation: 2r comets, bounces = 3, indicator x0.5, explosions scale x0.5 (r ~35 + 12 px). Each bounce (Step L41-L78) makes an Explosion_Item_obj at the current point and the comet drifts 4 px/frame in `direction` (default 0 = +x, set at creation in L1066, unread) for a hop of 32-64 frames = 128-256 px, so the later explosions lie >= ~128 px from the first and miss the dummy: ~1 hit per comet (its first landing), bounces ~ 0 (the planner's cap 2 / the old 1.5 per comet overstated). Hits = 2r*1 = 2 / 4 / 6, assuming every comet's first landing is within reach (the spread offsets L1042-L1061 are unread, so this is an upper bound; I)."}, {"kind": "damage_pct", "byRank": [60, 120, 180], "note": "LSSD += 60%/r"}], "confidence": "I", "note": "Runda 4 34#1 (Comet p13 odbicia); C: bounce Step; I: direction and distances", "plannerFix": "planner models projectile_count 2/r with single_target_hit_cap 2; the game bounces each comet 3 times with an explosion per bounce (1-2 hits per comet on the dummy)"},
         "name": "Bouncing Comets",
         "description": "Drop multiple small comets bouncing forwards when landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "fire_skill_damage": 0, "single_target_hit_cap": 2 },
-          "perRank": { "projectile_count": 2, "fire_skill_damage": 60, "single_target_hit_cap": 0 }
+          "base": {"projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "single_target_hit_cap": 0, "subtree_damage": 60}
         }
       },
       {
         "id": "crushing_comet",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [140, 280, 420], "note": "LSSD += 140%/r"}, {"kind": "zero_on_dummy", "note": "knockback [110] = 60 (lift, no damage on landing without buff 47, R3)"}, {"kind": "utility", "note": "gravity 0.5 (faster fall), range +30%/r"}], "confidence": "C", "note": "card table p14 (R3 rule 22)"},
         "name": "Crushing Comet",
         "description": "Comet now smashes the ground with force sending monsters airborne with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "fire_skill_damage": 140, "projectile_size": 30 }
+          "base": {"projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 30, "subtree_damage": 140}
         }
       }
     ]
@@ -2310,6 +2429,9 @@
     "id": "armageddon",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "baseCooldown": 8,
+    "dummyHits": {"base": 4.52, "baseProjectiles": 40, "perExtraProjectile": 0.113, "confidence": "I", "note": "Per cast (cooldown 8 s, p6 -6 %/r; p13 probably x0.5 = 4 s, I), IN-ZONE with the cursor at (x, y-24): the controller stands at gracz + lengthdir(tupm[6], tupm[7]) = cursor - 6 px = (x, y-30), i.e. 30 px from the dummy centre [Resztki E, asm 0x14627dd9f-0x14627de47] (the earlier 24 px gave 0.119). Pyromancer_Armageddon_Controller_obj (0xf01, the Warped controller only with p14) spawns skillAmount = ReturnExtraSpellProjectiles(40) = 40 meteors (skillProjectiles = 1 + p1.s9 per spawn every 4.5 frames, the rain lasts ~3.7 s); each meteor lands at C + lengthdir(random(R), random(360)), R = skillRadius = 340 (a disc distribution with density ~1/rho, NOT a line) and makes an Explosion_Item_obj of radius 32*skillSize = 32 px (+12 px dummy = 44 px) with d3 = LTD(V1)*(1+LSSD), V1 = 30*L (fire, no floor) = 1.0 main hit. P(a meteor hits the dummy 30 px from the centre) = 0.113 (Resztki E, C for the formula and own script that reproduces the old values at d = 24; I for explosion scale = skillSize and the explosion mask) -> 40 * 0.113 = 4.52 ~ 4.5 hits (card: ~4.5, ~0.56*d3/s; was 4.8 / 0.60). With the cursor exactly on the dummy centre (x, y) the object is 6 px from the centre: the card's 0.129 (5.2 hits) predates Resztki E and was not recomputed. baseProjectiles = 40 (native meteor count); perExtraProjectile = 0.113 (one more meteor = one more draw with P = 0.113). p1 (x(1 + r)), p2 (radius up: 3.9 / 3.5 / 3.1 / 2.8 / 2.6 hits), p3 (size: 5.4 / 6.2 / 7.0 / 7.8 / 8.6), p11 (radius down: 6.0 / 9.0 / 18.0), p12 (rain follows the player: 0.72, unchanged), p13 (+1 sure hit), p14 (line model 0.26, unchanged) are subskill effects."},
     "classId": "pyromancer",
     "name": "Armageddon",
     "kind": "active",
@@ -2324,7 +2446,7 @@
     "tree": "Arsonist",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 8 }],
-    "damageFormula": { "base": -0.5, "perLevel": 33 },
+    "damageFormula": { "base": 0, "perLevel": 30 },
     "manaCostFormula": { "base": 8, "perLevel": 1 },
     "bonusSources": [
       { "source": "Comet", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -2343,45 +2465,49 @@
       {
         "id": "falling_wrath",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [2, 3, 4, 5, 6, 7, 8, 9], "note": "falling wrath: skillProjectiles = 1 + p1.s9 per spawn (x(1+r) as the card states)"}], "confidence": "C", "note": "card table p1 (R3 DPS 40*(1+p1)*P)"},
         "name": "Falling Wrath",
         "description": "Increases the amount of armageddon projectiles.",
         "maxRank": 8,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "storm_of_fire",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [0.8673, 0.7699, 0.6903, 0.6195, 0.5664], "note": "storm of fire: skillRadius = 340*(1 + 0.15r); P (dummy 30 px from the centre, Resztki E) = 0.098 / 0.087 / 0.078 / 0.070 / 0.064 -> 3.9 / 3.5 / 3.1 / 2.8 / 2.6 hits per cast [hits_mult = 40P / 4.52 (new base), so it combines with other subskills]; was P 0.104 ... 0.068 (4.1 ... 2.7)."}], "confidence": "C", "note": "Resztki po R4 E (Armageddon p2)", "plannerFix": "planner area_of_effect 15/r does not change the dummy hit count; the rain radius reduces P(hit) (4.1 -> 2.7 hits per cast)"},
         "name": "Storm of Fire",
         "description": "Increases the area of effect radius of armageddon.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "colossal_chunks",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.1858, 1.3717, 1.5487, 1.7257, 1.9027], "note": "colossal chunks: skillSize = 1 + 0.2r, explosion radius 32*skillSize + 12 px (assumes skillSize scales the explosion, I); P (dummy 30 px from the centre, Resztki E) = 0.134 / 0.155 / 0.175 / 0.195 / 0.215 -> 5.4 / 6.2 / 7.0 / 7.8 / 8.6 hits per cast [hits_mult = 40P / 4.52]; was P 0.139 ... 0.218."}], "confidence": "I", "note": "Resztki po R4 E (Armageddon p3); C formula, I skillSize -> explosion scale", "plannerFix": "planner projectile_size 20/r; the game's explosion radius (32*skillSize) raises P(hit) to 5.6-8.7 hits per cast"},
         "name": "Colossal Chunks",
         "description": "Increases projectile size and explosion radius.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 20 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 20}
         }
       },
       {
         "id": "searing_meteor",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [50, 100, 150, 200, 250], "note": "searing meteor: burning [18] = floor(d3*0.5r) with chance 12%*r per meteor (nominal value shown, chance in note); block assignment I"}], "confidence": "I", "note": "card table p4 (Alarm_0 L18-L20)"},
         "name": "Searing Meteor",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 50 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2394,6 +2520,7 @@
       {
         "id": "pyrokinetic_madness",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.15, 1.3], "note": "pyrokinetic madness: chance 15%*r per cast -> second rain (Universal_Double_Cast); expected multiplier 1+0.15r"}], "confidence": "I", "note": "card table p5"},
         "name": "Pyrokinetic Madness",
         "description": "Chance on cast to unleash an additional armageddon.",
         "maxRank": 2,
@@ -2409,28 +2536,31 @@
       {
         "id": "doomsday_clock",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-6, -12, -18, -24, -30], "note": "cooldown -6%/r via GetTalentCooldown; cadence x1/(1-0.06r)"}], "confidence": "C", "note": "card table p6"},
         "name": "Doomsday Clock",
         "description": "Decreases the cooldown of armageddon.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 6 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 6}
         }
       },
       {
         "id": "blisters",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4], "note": "[180] = 8%/r extra damage vs burning target; only while the dummy burns"}], "confidence": "C", "note": "card table p7"},
         "name": "Blisters",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 8 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 8}
         }
       },
       {
         "id": "ball_of_fire",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.006, 1.024, 1.054, 1.096, 1.15], "note": "ball of fire: chance 4%*r per meteor -> meteor x(1+0.15r) damage and size (block assignment I); expected multiplier 1 + 0.04r*0.15r"}], "confidence": "I", "note": "card table p8 (Alarm_0 L10-L14)"},
         "name": "Ball of Fire",
         "description": "Chance for a meteor to turn into a ball of fire with increased size and damage.",
         "maxRank": 5,
@@ -2446,17 +2576,19 @@
       {
         "id": "doom_fire",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r (only LSSD term of the skill)"}], "confidence": "C", "note": "card table p9"},
         "name": "Doom Fire",
         "description": "Increased the damage dealt by armageddon.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "blazing_pulse",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "per": "use", "note": "blazing pulse: chance 3%*r per meteor landing within ~86 px of the dummy -> Firenova (maxScale 0.75) d3*(1+0.16r); about 10% of meteors land that close (I): 40*0.10*0.03r = 0.12r per cast"}], "confidence": "I", "note": "card table p10 (Step L29-L38)", "plannerFix": "planner applies the proc per hit; the game makes a nova only for meteors landing within ~86 px of the dummy (about 0.12r per cast)"},
         "name": "Blazing Pulse",
         "description": "Chance on hit to unleash a fiery pulse dealing additional damage.",
         "maxRank": 5,
@@ -2472,45 +2604,49 @@
       {
         "id": "searing_concentration",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.3274, 1.9912, 3.9912], "note": "searing concentration: skillRadius = 340*(1 - 0.25r) = 255 / 170 / 85 px; P (dummy 30 px from the centre, Resztki E) = 0.150 / 0.225 / 0.451 -> 6.0 / 9.0 / 18.0 hits per cast [hits_mult = 40P / 4.52]; was P 0.159 / 0.238 / 0.477."}], "confidence": "C", "note": "Resztki po R4 E (Armageddon p11)", "plannerFix": "planner area_of_effect -25/r without a hit recount; the smaller rain radius raises P(hit) to 6.4/9.5/19.1 hits per cast"},
         "name": "Searing Concentration",
         "description": "Armageddon area of effect is now drastically smaller for more concentrated damage output.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": -25 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": -25}
         }
       },
       {
         "id": "warm_shower",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.72, 0.72, 0.72], "note": "warm shower: skillFollow = 1, rain centred on the player, dummy 160 px away: P = 0.018 -> 40*0.018 = 0.72 hits per cast (no rank change)"}], "confidence": "C", "note": "card table p12 (L1499, L1541)", "plannerFix": "planner adds fire_skill_damage 20/r; the game's warm shower moves the rain to the player (0.72 hits per cast) and adds no LSSD"},
         "name": "Warm Shower",
         "description": "Armageddon now follows the player dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 20 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 20}
         }
       },
       {
         "id": "blistering_bolt",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0885, 0.9912, 0.9115], "note": "blistering bolt: skillRadius x(1 + 0.15r) (P as p2: 0.098 / 0.087 / 0.078) plus one extra guaranteed Armageddon meteor on every enemy within floor(340*(1 + p2 + p13)*0.5) >= 170 px of the cast point (L1462-L1483; collision_circle_list prec = false: the dummy, 24-30 px from the point and 160 px from the player, is always inside, Resztki F) -> 40P + 1 hits per cast [hits_mult = (40P + 1)/4.52]."}, {"kind": "cooldown_pct", "byRank": [-50, -50, -50], "note": "GetTalentCooldown (0x143ce0e20, tid 37 -> 0x143ce22fa, L25): RANK(p13) > 0 sets the locals [rbp+0x30] = 0, [rbp+0x40] = 0, [rbp+0x20] = 0.5 and jumps to the shared tail 0x143ce1f06 computing (base - [0x40])*[0x20] -> probably cooldown x0.5 (8 s -> 4 s; for Volcano p14/p12 the analogous factors are 1.5 / 2.5 / 3). UNCONFIRMED (I): the factor may be another term; period 4 s or 8 s. The rain lasts ~3.7 s, so a 4 s cooldown is still above the rain duration."}], "confidence": "I", "note": "Runda 4 37#2 (zawezone) + Resztki po R4 E/F (Armageddon p13); hits_mult C, cooldown I", "plannerFix": "planner models fire_skill_damage 20/r; the game adds a guaranteed extra meteor on enemies in range and changes the rain radius; the cooldown factor of p13 is not modelled in the planner (probably x0.5, unconfirmed)"},
         "name": "Blistering Bolt",
         "description": "Armageddon now drops a meteor on every monster around you on a large radius. Armageddon no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "fire_skill_damage": 0 },
-          "perRank": { "area_of_effect": 15, "fire_skill_damage": 20 }
+          "base": {"area_of_effect": 0, "fire_skill_damage": 0},
+          "perRank": {"area_of_effect": 15, "fire_skill_damage": 20}
         }
       },
       {
         "id": "warped_doom",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10.4, 10.4, 10.4], "note": "warped doom: horizontal meteor line perpendicular to aim (Armageddon_Horizontal, 0xf02); P = 2*r_w/R = 0.26 -> 40*0.26 = 10.4 hits per cast; path model not read (I)"}], "confidence": "I", "note": "card table p14 (R3, I)", "plannerFix": "planner models projectile_speed 20/r and fire 70/r; the game switches to a horizontal meteor line (about 10.4 hits per cast at the dummy)"},
         "name": "Warped Doom",
         "description": "Armageddon projectiles now fly horizontally through terrain exploding on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_speed": 0 },
-          "perRank": { "fire_skill_damage": 70, "projectile_speed": 20 }
+          "base": {"fire_skill_damage": 0, "projectile_speed": 0},
+          "perRank": {"fire_skill_damage": 70, "projectile_speed": 20}
         }
       }
     ]

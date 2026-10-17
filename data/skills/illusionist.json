@@ -2,6 +2,8 @@
   {
     "id": "sand_guardians",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of one Illusionist_Sand_Guardian_obj). The guardian spawns AT THE AIM POINT (CreateInFreePos at owner + lengthdir(tupm[6], tupm[7]); the dummy does not block it), i.e. on the dummy with the cursor on its visible body (x, y-24), and strikes without a charge (distance_to_object 0 < attackRange 58). Each attack makes one Hitbox_obj (70x36 rotated rectangle shifted 32 px up, deadly from frame 2, own map, no tick) = 1 hit; the guardian is created 6 px ABOVE the cursor (owner + lengthdir(tupm[6], tupm[7]), asm 0x1466e9259-0x1466e934e, C), i.e. at (x, y-30) for the cursor (x, y-24); with the cursor exactly on the dummy's (x, y) it stands at (x, y-6) and also hits (h_g 0 -> 1, Resztki E; the pre-Resztki E 1 px miss no longer applies), so h_g = 1 in both cursor variants. Not counted (separate passives / item procs / subskills): Dissipation explosion on guardian death (312, only a guardian <= 44 px from the dummy), Cheapshot 22 % and Combat Order 15 % procs per attack (314/316), Piercing Sand arcane break (309), Sand Beam / Desert Ripple items, p6/RSS371 extra guardians (j = 1, 2 stand 80/160 px behind the dummy on the aim line and hit in ~24 %/29 % of aim directions at the cursor (x, y-24), 37 %/38 % at the cursor (x, y), Resztki E sim, I; planner mean h_bar = (h_g + 0.27*(k-1))/k, was 0.36), p8 dash strike, p12 mage, p13 sacrifice blast, p14 orbit (0.92 strike hit per guardian per cast at 102 px, 0.84 at 160 px, 2.32 attacks per guardian per cast, Dissipation 0.03 per guardian). Guardian cadence T_g = 0.5 s animation + max(1.35 - 0.7*(IAS+GAS)/100, 0.15) s (engine side); first attack 0.667 s after the cast. Cast period (engine side, PoR4 e): max(cooldown_eff, (ceil(72/S)+1)/60 s) = 43 frames = 0.717 s at S = castRate 1.75, t_wyw = floor(24/S)+1 = 14 frames, so N = min(15 + RSS374, k*T_life/period) = 9.77 guardians at T_life 7 s, k = 1 (was 12.25 with 1/castRate)."},
     "classId": "illusionist",
     "name": "Sand Guardians",
     "kind": "active",
@@ -16,7 +18,7 @@
     "tree": "Sand Manipulator",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 15, "perLevel": 11 },
+    "damageFormula": { "base": 15, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Call For War", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -35,28 +37,35 @@
       {
         "id": "hardened_sandstone",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10 %/r: separate multiplier x(1+LSSD) on D"}], "confidence": "C", "note": "card 308 table p1; LSSD = p1.s9+p10.s9+LTD(315,V1)*0.01+p11.s9+p12.s9+p13.s9+p14.s9", "plannerFix": "planner maps the 10 %/r to additive arcane_skill_damage; card: it is an LSSD term, multiplying D separately (x(1+LSSD))"},
         "name": "Hardened Sandstone",
         "description": "Increases the damage dealt by sand guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "durable_sand",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30, 45, 60, 75], "note": "destroyTimer x(1+15 %/r); more guardians alive up to the cap 15+RSS374"}], "confidence": "C", "note": "card 308 table p2"},
         "name": "Durable Sand",
         "description": "Increases the duration of sand guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "deserts_gladiators",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-4, -8, -12, -16, -20], "entity": true, "note": "chance 4 %/r that the attack animation repeats with no cooldown: cooldown part of T_g x(1-q3) (T_anim unchanged); no extra damage"}], "confidence": "C", "note": "card 308 table p3; Other_7 0x1482be370", "plannerFix": "planner models an on_hit proc with 100 % extra damage; card: no extra damage, it repeats the attack without cooldown (cadence)"},
+        "effects": {
+          "base": {},
+          "perRank": {}
+        },
         "name": "Deserts Gladiators",
         "description": "Chance to unleash an additional attack.",
         "maxRank": 5,
@@ -72,28 +81,31 @@
       {
         "id": "sand_frenzy",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [-0.12, -0.24, -0.36, -0.48, -0.6], "entity": true, "note": "baseCooldown = 1.35 - 0.12*r s (guardian attack cooldown, before IAS/GAS subtraction)"}], "confidence": "C", "note": "card 308 table p4; cooldownAmount = 1.35 - p4.s9 s", "plannerFix": "planner gives summon_attack_speed +12 %/r; card: the guardian cooldown drops by 0.12 s per rank (seconds, not a percent of speed)"},
         "name": "Sand Frenzy",
         "description": "Increases the attack speed of sand guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 12 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 12}
         }
       },
       {
         "id": "battle_iq",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "battleIq only makes out-of-combat charges every 1 s; the guardian on the dummy stands in place and attacks"}], "confidence": "I", "note": "card 308 table p5 (dummy effect marked C/I)", "plannerFix": "planner adds skill_range +20 %/r; the card gives no range effect for p5 (only out-of-combat charge)"},
         "name": "Battle IQ",
         "description": "Sand guardians periodically dash a short distance towards the closest monster if not in combat.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "reserve_army",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "note": "extra guardian entity per cast with chance 4 %/r (expected extra entities per cast). Extra guardian stands 80 px behind the dummy on the aim line, hits in ~24 % (j = 1, 80 px) / ~29 % (j = 2, 160 px) of aim directions at the cursor (x, y-24) (37 % / 38 % at (x, y); was 38 % / 34 %), planner mean h_bar = (h_g + 0.27*(k-1))/k (was 0.36); its Dissipation does not reach the dummy; not extra_hits (entity count)"}], "confidence": "I", "note": "card 308 table p6 (C/I) + Resztki E (extra.py frame sim of the charge, I: the earlier gsim.py is not in the repo)", "plannerFix": "planner models an on_cast proc with 100 % extra damage; card: an extra guardian entity (k = 1 + p6 %), no extra damage"},
         "name": "Reserve Army",
         "description": "Chance to summon an additional sand guardian on cast.",
         "maxRank": 5,
@@ -109,17 +121,23 @@
       {
         "id": "lunge_attack",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "attackRange = floor(58*(1+12.5 %/r)); the guardian on the dummy is already in range, no hit change (card)"}], "confidence": "C", "note": "card 308 table p7"},
         "name": "Lunge Attack",
         "description": "Increases the attack range of sand guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 12.5 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 12.5}
         }
       },
       {
         "id": "dashing_sandstrike",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0135, 0.054, 0.1215, 0.216, 0.3375], "per": "hit", "note": "per attack chance c = 3 %/r times dash damage m = 0.45*r of D: extra per attack = c*m = 0.0135*r^2 (dash hitbox: no crit, no multipliers, no arcane break/stun: card rule 32 'brak')"}, {"kind": "cooldown_pct", "byRank": [-3, -6, -9, -12, -15], "entity": true, "note": "the dash end zeroes attackCooldown with chance c = 3 %/r: cooldown x(1-c)"}], "confidence": "I", "note": "card 308 table p8 (C/I); reading m = 0.45 r of D_hit", "plannerFix": "planner has a proc with 45 %/r of total damage; card: the dash is an unmodified Hitbox (no crit/mult), plus cooldown reset missing in planner"},
+        "effects": {
+          "base": {},
+          "perRank": {}
+        },
         "name": "Dashing Sandstrike",
         "description": "Chance on attack to dash through the target monster dealing area of effect damage.",
         "maxRank": 5,
@@ -135,64 +153,61 @@
       {
         "id": "sands_edge",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "spell crit chance 4 %/r (value = chance %); crit damage +30 %/r on guardian hits ([1003] = p9.s10)"}], "confidence": "C", "note": "card 308 table p9"},
         "name": "Sand´s Edge",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 30}
         }
       },
       {
         "id": "deadly_guardians",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15 %/r"}, {"kind": "duration_pct", "byRank": [-10, -20, -30, -40, -50], "note": "T_life = 7 s*(1 + p2 + p10.s11 %)*(1+RSS373 %): p10.s11 = -10 %/r"}, {"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "guardian size +10 %/r (v_s5d0); the card gives no dummy-hit effect for it (I)"}], "confidence": "C", "note": "card 308 table p10 (size part I)", "plannerFix": "planner maps the 15 %/r LSSD to additive arcane_skill_damage; the duration -10 %/r and size +10 %/r match the card"},
         "name": "Deadly Guardians",
         "description": "Increases the size and damage dealt by sand guardians, decreasing the duration.",
         "maxRank": 5,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "projectile_size": 0,
-            "skill_duration": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 15,
-            "projectile_size": 10,
-            "skill_duration": -10
-          }
+          "base": {"projectile_size": 0, "skill_duration": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 10, "skill_duration": -10, "subtree_damage": 15}
         }
       },
       {
         "id": "guardian_nevermore",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40 %/r"}, {"kind": "zero_on_dummy", "note": "guardianNeverMore 15 %/r: guardian teleports to the player only when out of attack range and detect range; the guardian on the dummy attacks in place"}], "confidence": "C", "note": "card 308 table p11; maxRank 3", "plannerFix": "planner maps the 40 %/r LSSD to additive arcane_skill_damage and gives movement_speed +15 %/r, which the card does not use on the dummy"},
         "name": "Guardian Nevermore",
         "description": "Sand guardians now move around with you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "movement_speed": 0 },
-          "perRank": { "arcane_skill_damage": 40, "movement_speed": 15 }
+          "base": {"movement_speed": 0, "subtree_damage": 0},
+          "perRank": {"movement_speed": 15, "subtree_damage": 40}
         }
       },
       {
         "id": "sand_mages",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [32.5, 65, 97.5], "note": "LSSD += 32.5 %/r"}, {"kind": "hits_mult", "byRank": [1, 1, 1], "note": "transformation: guardian becomes a mage (no charge), Mage_Surge beam to the target, 1 hit from any position except exactly on the dummy's centre; base already assumes h=1 (cursor on body), so no change in hits; attackRange 145*(1+p7+p12.s10 %) (17.5 %/r)"}], "confidence": "C", "note": "card 308 table p12 + R4 rule 14", "plannerFix": "planner maps the 32.5 %/r LSSD to additive arcane_skill_damage; mage range 17.5 %/r matches"},
         "name": "Sand Mages",
         "description": "Summon sand mages zapping monsters from afar with arcane surges.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "arcane_skill_damage": 32.5, "skill_range": 17.5 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 17.5, "subtree_damage": 32.5}
         }
       },
       {
         "id": "sacrifice_for_the_throne",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 75 %/r"}, {"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: sacrifice=1, guardian runs to the target and dies within 4 px: one explosion hit per guardian (no attacks). Explosion damage floor(LTD(312,V1)+D_g) is 1 hit of (1 + LTD312/D_g) in D units; LTD(312,V1) value is not in the card, so the extra part is missing"}, {"kind": "other", "note": "explosion damage LTD(312,V1)+D_g per guardian, i.e. D-ratio 1 + LTD(312,V1)/D_g: value missing in card (I)"}], "confidence": "C", "note": "card 308 table p13; the arcane break part (guardianArcaneBreak += 30 %/r) is planner state (not duplicated here)", "plannerFix": "planner maps the 75 %/r LSSD to additive arcane_skill_damage; sacrifice should be one explosion per guardian (LTD312+D_g), not normal attacks. The arcane break +30 %/r already matches the planner's appliesStates"},
         "name": "Sacrifice for the Throne",
         "description": "Sand guardians immediately seek the nearest monster, charging towards it, exploding, and dealing increased damage, inflicting arcane break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "arcane_break": 0 },
-          "perRank": { "arcane_skill_damage": 75, "arcane_break": 30 }
+          "base": {"arcane_break": 0, "subtree_damage": 0},
+          "perRank": {"arcane_break": 30, "subtree_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -205,18 +220,13 @@
       {
         "id": "guardians_of_the_orbital_sand",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50 %/r"}, {"kind": "other", "byRank": [6, 11, 16], "note": "orbital transformation: n = 1 + 5r guardians per cast (entity count, not extra_hits); they orbit at 102 px and attack 2.32 times per guardian per cast"}, {"kind": "other", "byRank": [0.92, 0.92, 0.92], "note": "per guardian per cast, not per entity action; not applied. transformation: hits per guardian per cast at 102 px life 7 s (0.84 at 160 px; H ~ 0.0021*L_kl + 0.04). Value is per guardian per cast, not per attack: engine per-entity convention must be checked (I) R4/Resztki B: mean over the aim direction, the distribution is all-or-almost-nothing: 2.2 hits per guardian when the dummy is on the player's right side (aim angle about -45..+90 deg at 102 px, -12..+120 deg at 160 px, 38 % of directions), about 0.15 (102 px) / 0.05 (160 px) otherwise; 2.32 attacks per guardian per cast in every direction (range 2.17-2.33; feeds Cheapshot 0.22 and Combat Order 0.15 x 0.52 per attack). Resztki B independent sim: 0.82 (102 px) / 0.94 (160 px), mean over 60-180 px 0.87 vs 0.88: card numbers kept, I (guardian start phases, cooldown decrement order vs movement)."}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "GetTalentCooldown +8 s: T_cd = max(8 s/(1+0.005*h_eff), cast period) with cast period (ceil(72/S)+1)/60 s = 43 frames = 0.717 s at S = 1.75 (PoR4 e, rule 37; was 1/castRate); L_eff = min(T_life, T_cd) because the next cast pushes out the previous batch (ds_list_size >= n, p14.gml L121-L126); the cast interval replaces the cast-period cadence"}, {"kind": "other", "note": "Dissipation: 0.03 explosion per orbital guardian per cast (0.03*n per cast); explosion damage LTD(312) missing in card"}], "confidence": "I", "note": "card 308 table p14 + Runda 4 (308#3) + PoR4 e (period wording) + Resztki B: orbit hit ratio C geometry, I averaging over aim direction", "plannerFix": "planner maps the 50 %/r LSSD to additive arcane_skill_damage; planner gives summon_max_amount +5 %/r without the 8 s cooldown and orbit model"},
         "name": "Guardians of the Orbital Sand",
         "description": "Sand guardians now orbit around you, striking nearby monsters. Sand guardians now have a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "summon_max_amount": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 50,
-            "summon_max_amount": 5
-          }
+          "base": {"summon_max_amount": 0, "cooldown_added": 8, "subtree_damage": 0},
+          "perRank": {"summon_max_amount": 5, "cooldown_added": 0, "subtree_damage": 50}
         }
       }
     ]
@@ -224,6 +234,7 @@
   {
     "id": "call_for_war",
     "activationKind": "cast",
+    "speedPath": "attack",
     "classId": "illusionist",
     "name": "Call For War",
     "kind": "active",
@@ -262,6 +273,9 @@
   {
     "id": "link_of_sand",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast. The cast spawns 1 Illusionist_Sand_Guardian_obj at the aim point (on the dummy, cursor on its body, same geometry as Sand Guardians: Hitbox_obj strip shifted 32 px up, attackRange 174) with destroyTimer max(LTD(308,V2), 2)*60 = 120 frames (2 s). Appear animation 0.667 s, first strike ~0.19 s later (frame ~53), 0.5 s attack animation + 0.66 s cooldown (minus 0.7*(IAS+GAS)/100 s): a second strike would land at frame ~124 > 120 life, so 1 hit per cast in the base (2 hits only from IAS+GAS >~ 6 %, threshold 2-11 % I; the guardian is created 6 px above the cursor (asm 0x1466fb543-0x1466fb649, Resztki E), so for the cursor exactly on the dummy's (x, y) it stands at (x, y-6) and should hit as the Sand Guardians one (h 0 -> 1; the Link body text was not updated, I). Not counted: Dissipation explosion at the guardian's death (separate passive 312, 1 hit if the guardian stands <= 44 px from the dummy), Cheapshot/Combat Order procs, arcane break. The planner has no damageFormula for this skill, so the main hit is the guardian strike given in damageNote."},
+    "usePeriod": {"kind": "leap", "extraFrames": 43, "note": "Link of Sand is a leap (playerEffect[142] = 1, [143] = 311, [144] = 16, [150]/[151] = guardian position) on EVERY use; [155] unset so g = pSt[42] = 0.35. Flight: v_z = sqrt(2*0.35*(64+16)) = 7.483, z_n = n*v - g*n*(n+1)/2: z_41 = +5.4, z_42 = -1.7 -> landing at step 42 (C; continuous 42.8) + 1 frame for the [142] 1->2 transition (convention viking/10#0, I; skillsLeap does not decompile, +-1 frame = +-1.8 % DPS) = extraFrames 43. Casting is blocked in flight (rule 30), no in-flight effects. Period = t_wyw + 43 with t_wyw = floor(24/S)+1 = 14 frames at S = 1.75 (C, was 'sequence frame 7 or 14') = 57 frames = 0.95 s (was 0.87-1.03 s), instead of 1/castRate = 34.3 frames; the animation lock (43 frames) < 57, so the leap binds (PoR4 e, Resztki B)."},
     "classId": "illusionist",
     "name": "Link of Sand",
     "kind": "active",
@@ -283,6 +297,8 @@
   {
     "id": "circle_of_guardians",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.47, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one attack of one guardian), IN-ZONE per rule 24: Circle spawns N = 3 guardians on a 64 px ring around the PLAYER (fixed world angles 360/N*i, not around the cursor), so the main result puts the dummy on the ring (64 px from the player): 100 % of guardians active (inside detectRange 186 px), 0.47 of them hit the dummy with every attack (strip shifted 32 px up hits only a guardian above/below the dummy; N = 3/5/8: 0.469/0.473/0.461, mean over 360 aim directions, sd 0.24-0.27; Resztki A: an independent frame simulation with bbox gaps (guardian mask 25x22, dummy 24x24, stop point 65-94 px, reach 185 px) reproduces 0.81 active / 0.32 hit at 160 px (card 0.81 / 0.31) and 0.49 at 64 px (card 0.47): confirmed C, the card values are kept) -> 0.47 hit per action. At the strict 160 px convention: 81 % of guardians charge, 31 % of all guardians hit (= 0.31/0.81 = 0.38 per attack, Dissipation 0, Combat Order 0.59). Not counted: Dissipation (312, 0.23 guardian per cast on the ring), Cheapshot/Combat Order procs, Piercing Sand arcane break, p13 tether (0.29 guardians), p11 wall (22.4 / 25.8 / 26.7 hits per cast for M = 3 / 6 / 9 objects, aimed through the dummy centre at 160 px, Resztki D/B, C; p11 itself gives M >= 9), p12 goliath (1.00 per attack on the ring), p8 range. Guardian interval T_g = 0.5 + max(1.35 - 0.7*(IAS+GAS)/100, 0.15) s; cooldown 10 s, life 7 s."},
     "classId": "illusionist",
     "name": "Circle of Guardians",
     "kind": "active",
@@ -311,39 +327,43 @@
       {
         "id": "rapid_deployment",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-8, -16, -24, -32, -40], "note": "T_cd = 10*(1 - p1 %) s (cooldown x(1-8 %/r)); haste applied separately"}], "confidence": "C", "note": "card 315 table p1 (base cooldown 10 s)"},
         "name": "Rapid Deployment",
         "description": "Decreases the cooldown of circle of guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 8 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 8}
         }
       },
       {
         "id": "peer_pressure",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r (separate multiplier on D_c)"}], "confidence": "C", "note": "card 315 table p2", "plannerFix": "planner maps the 8 %/r to additive magic_skill_damage; card: LSSD term (multiplicative, arcane Sand Guardians hit)"},
         "name": "Peer Pressure",
         "description": "Increases the damage dealt by circle of guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "magic_skill_damage": 0 },
-          "perRank": { "magic_skill_damage": 8 }
+          "base": {"magic_skill_damage": 0, "subtree_damage": 0},
+          "perRank": {"magic_skill_damage": 8, "subtree_damage": 8}
         }
       },
       {
         "id": "battalion_of_guardians",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 4, 5, 6, 7], "note": "ReturnGuardianAmount += 2 + r extra guardians on the ring per cast (entity count). Hits per guardian stay ~0.47 for N >= 3 (card: 0.469/0.473/0.461 for N=3/5/8), so the base 0.47 per guardian is kept"}], "confidence": "C", "note": "card 315 table p3; planner summon_max_amount base 2 + 1/r matches 2 + r"},
         "name": "Battalion of Guardians",
         "description": "Increases the amount of sand guardians summoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_max_amount": 2 },
-          "perRank": { "summon_max_amount": 1 }
+          "base": {"summon_max_amount": 2},
+          "perRank": {"summon_max_amount": 1}
         }
       },
       {
         "id": "devastating_lunge",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun chance 4 %/r on guardian hit (stun 3 s, buff 18): no damage"}], "confidence": "C", "note": "card 315 table p4; planner stun chance 4/r matches stunChance = p4.s9"},
         "name": "Devastating Lunge",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -356,34 +376,37 @@
       {
         "id": "lasting_sand_kingdom",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30, 45, 60, 75], "note": "destroyTimer x(1 + 15 %/r) for guardians, army, tether (more attacks per cast up to T_cd)"}], "confidence": "C", "note": "card 315 table p5"},
         "name": "Lasting Sand Kingdom",
         "description": "Increases the duration of circle of guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "well_trained_troops",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [-0.1, -0.2, -0.3, -0.4, -0.5], "entity": true, "note": "guardian baseCooldown = 1.35 - p6 s; army tick 0.25 s*(1 - p6 %) is not in the base"}], "confidence": "C", "note": "card 315 table p6", "plannerFix": "planner gives summon_attack_speed +10 %/r; card: guardian cooldown -0.1 s per rank (seconds, not speed); army tick is a separate object"},
         "name": "Well Trained Troops",
         "description": "Increases the attack speed of circle of guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 10 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 10}
         }
       },
       {
         "id": "magic_infused_blade",
         "positionIndex": 7,
+        "dummy": {"effects": [], "confidence": "C", "note": "card 315 table p7: arcane break chance 3 %/r, break LTD(309)+25 %/r for 5 s; planner appliesStates arcane_break matches (state, no typed effect here)"},
         "name": "Magic Infused Blade",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 25 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -396,90 +419,85 @@
       {
         "id": "far_reaching_spears",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.043, 1.085, 1.128, 1.191, 1.234], "note": "in-zone 64 px ring (planner base 0.47 hits per guardian attack): hits 0.49/0.51/0.53/0.56/0.58 for r1..r5 divided by 0.47. At 160 px the card gives 0.37/0.37/0.38/0.42/0.51 vs base 0.31 (not used)"}], "confidence": "I", "note": "card 315 table p8 + R3 rule 24 (I averaging over aim direction; C geometry)"},
         "name": "Far Reaching Spears",
         "description": "Increases the attack range of circle of guardians.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "everflowing_sands",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 6, 9, 12, 15], "note": "destroyTimer x(1 + p5 % + RSS(20) % * p9.s9): the p9 part is 3 %/r per 1 % of RSS(20) (energy), so the duration gain is 0 unless RSS(20) > 0; value is per 1 % RSS(20)"}], "confidence": "I", "note": "card 315 table p9 (C for the formula, RSS20 value not known)", "plannerFix": "planner gives flat skill_duration +3 %/r; card: the gain scales with the player stat RSS(20), not a flat percent"},
         "name": "Everflowing Sands",
         "description": "Sand guardians gain increased duration based on your energy.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 3 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 3}
         }
       },
       {
         "id": "manipulation",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [1, 2, 3, 4, 5], "note": "LSSD += 1 %/r"}, {"kind": "utility", "note": "manaDrain = 0.5 %/r of max mana per second on guardians (mana cost, no dummy DPS)"}], "confidence": "C", "note": "card 315 table p10", "plannerFix": "planner maps the 1 %/r LSSD to additive magic_skill_damage; mana drain 0.5 %/r matches"},
         "name": "Manipulation",
         "description": "Increases the damage dealt by circle of guardians but each active guardian drains your mana when attacking.",
         "maxRank": 5,
         "effects": {
-          "base": { "magic_skill_damage": 0, "mana_drain_pct": 0 },
-          "perRank": { "magic_skill_damage": 1, "mana_drain_pct": 0.5 }
+          "base": {"magic_skill_damage": 0, "mana_drain_pct": 0, "subtree_damage": 0},
+          "perRank": {"magic_skill_damage": 1, "mana_drain_pct": 0.5, "subtree_damage": 1}
         }
       },
       {
         "id": "deserts_army",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 75 %/r"}, {"kind": "set_hits", "byRank": [26.7, 26.7, 26.7], "note": "transformation: the guardians are replaced by a marching wall of M = N + p11.s10 Army objects (M = 3 + 6r with p3 = p14 = 0: 9 / 15 / 21; p11.s10 is counted twice, in ReturnGuardianAmount and in the loop), tick 15 frames = 0.25 s*(1 - p6 %), life 180 frames*(1 + p5 %), 0.75 px/frame from 64 px in front of the player, 32 px spacing perpendicular to the aim, masks = charge sprites 44x98..109x56 (unrotated). HITS PER CAST (per use, in D_c units), NOT per entity action: Resztki D/B wall.py (360 directions, tick engine tick_hits.py), wall created at the player (x, y) and aimed from (x, y+6) through the dummy centre at 160 px (main result, rule 38): 2.70 / 3.59 / 3.44 objects overlap it and 22.4 / 25.8 / 26.7 hits per cast for M = 3 / 6 / 9 (before the Resztki D correction 23.2 / 26.1 / 26.2; Resztki B reproduced the old sim 23.4 / 26.6 / 26.5, C). Only M = 9 (p11 r1) is tabulated; r2/r3 (M = 15 / 21) use the same 26.7 (odd M, ~3.4 objects overlapping, I). Cursor (x, y-24) variant (note only): 2.44 / 3.42 / 3.38 objects, 19.1 / 26.9 / 25.6 hits. The 160 px convention is used because the wall marches 64 -> 199 px; the 64 px ring convention of the guardian base is not simulated for the wall (R3: more contact there, I). Not counted: wall Dissipation (1-2 centre objects at 199 px from the player when p5 = 0, none for p5 >= 1)"}, {"kind": "other", "note": "wall damage = D_c (floor(LTD(308,V1)*(1+LSSD_315)), LSSD includes p11 75 %/r); the wall objects get SetAllModifiersNew/InheritModifiers (full modifier class, rule 32)"}], "confidence": "I", "note": "card 315 table p11 + Transformacja p11 + Resztki D (aim through the centre) + Resztki B (I -> C for M = 3/6/9; r2/r3 extrapolated, hence I)", "plannerFix": "planner maps the 75 %/r LSSD to additive magic_skill_damage; army wall (tick 0.25 s, 3 s life, ~24-27 hits per cast at 160 px) is not modelled"},
         "name": "Desert´s Army",
         "description": "Summon a wall of guardians marching forward dealing increased damage, knocking monsters back on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "magic_skill_damage": 0,
-            "summon_max_amount": 0
-          },
-          "perRank": {
-            "magic_skill_damage": 75,
-            "summon_max_amount": 3
-          }
+          "base": {"magic_skill_damage": 0, "summon_max_amount": 0, "subtree_damage": 0},
+          "perRank": {"magic_skill_damage": 75, "summon_max_amount": 3, "subtree_damage": 75}
         }
       },
       {
         "id": "ancient_sand_goliath",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [120, 240, 360], "note": "goliath damage floor(LTD308*(1 + LSSD + 40 %/r * N)) with N = 3 guardians (base); the +40 %/r per guardian term is added to the LSSD sum; 40 %/r * 3 shown. Scales with the number of guardians N it replaces"}, {"kind": "hits_mult", "byRank": [2.128, 2.128, 2.128], "note": "transformation: one goliath (N replaced by 1, no ring, starts at the player, no charge). Ring-64 px hit 1.00 per attack (base 0.47 per guardian attack): 1.00/0.47 = 2.128 per entity action. Scale 1.5*(1+25 %/r) = 1.875/2.25/2.625 (no effect on the strike; it scales the goliath's Dissipation radius, see the next effect)"}, {"kind": "other", "byRank": [1, 1, 1], "note": "goliath Dissipation (passive 312): Explosion_Item_obj copies the guardian's image_xscale/yscale (Destroy_0, 0x148297da4-0x148297ec4), radius 32*s with s = 1.875 / 2.25 / 2.625 (reach >= 72 px), so on the 64 px ring the death explosion hits the dummy 1.00 time per cast (R4 315#1, C geometry; ring guardians without p12 give 0.23 explosion per cast in total). Damage floor(LTD(312,V1)) is a separate passive hit whose ratio to D_c is not in the card, so not converted; at 160 px (auxiliary) the goliath charges and Dissipation gives 0. Also: strike hits 1.00 per attack on the ring for every p12 rank and every p8; Combat Order 1.00 (I: whether its scale follows the guardian scale was not checked)"}], "confidence": "C", "note": "card 315 table p12 + Runda 4 (315#1) + R4 rule 32 (goliath Dissipation scale); in-zone 64 px convention", "plannerFix": "planner maps the 40 %/r to of_total_damage with no N scaling and no 1-goliath transformation; the goliath scale (projectile_size +25 %/r) matches but is 1.5 x (1+25 %/r)"},
         "name": "Ancient Sand Goliath",
         "description": "Summon an ancient sand goliath with increased size and damage based on summon amount for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_size": 0 },
-          "perRank": { "of_total_damage": 40, "projectile_size": 25 }
+          "base": {"of_total_damage": 0, "projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"of_total_damage": 40, "projectile_size": 25, "subtree_damage": 120}
         }
       },
       {
         "id": "arcanic_sand_tether",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "note": "tether object: own damage floor(D_c*(1 + 35 %/r)) (damage ratio 1 + 0.35*r, not magic damage) per tick; ~0.29 of guardians on the ring (64 px) are on the tether line per tick; tick count = life / (0.75 s * f(p13.s10)) with f unknown (I). 0 hits at 160 px. Value not determined"}], "confidence": "I", "note": "card 315 table p13 + R3 rule 24 (tether 0.29 guardians, I) + R4 (rule 32: tether has no InheritModifiers, no crit/mult)", "plannerFix": "planner maps the 35 %/r to magic_skill_damage and the 15 %/r tick speed to summon_attack_speed; card: tether damage is its own object (1 + 35 %/r) and hit count needs the tick frequency"},
         "name": "Arcanic Sand Tether",
         "description": "Create an arcanic sand tether between you and the circle of guardians dealing damage over time to monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "magic_skill_damage": 0, "summon_attack_speed": 0 },
-          "perRank": { "magic_skill_damage": 35, "summon_attack_speed": 15 }
+          "base": {"magic_skill_damage": 0, "summon_attack_speed": 0},
+          "perRank": {"magic_skill_damage": 35, "summon_attack_speed": 15}
         }
       },
       {
         "id": "seven_nation_army",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45 %/r"}, {"kind": "other", "byRank": [4, 8, 12], "note": "ReturnGuardianAmount adds SUB[p14 s10] (2/r) and the guardian loop adds it a second time: N += 4r extra guardians (entity count, double counted per card)"}], "confidence": "C", "note": "card 315 table p14 (C lift/decompilation)", "plannerFix": "planner maps the 45 %/r LSSD to additive magic_skill_damage and gives summon_max_amount 2/r once; card: entity count +4r (counted twice in code)"},
         "name": "Seven Nation Army",
         "description": "Increases the amount and damage of circle of guardians.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "magic_skill_damage": 0,
-            "summon_max_amount": 0
-          },
-          "perRank": {
-            "magic_skill_damage": 45,
-            "summon_max_amount": 2
-          }
+          "base": {"magic_skill_damage": 0, "summon_max_amount": 0, "subtree_damage": 0},
+          "perRank": {"magic_skill_damage": 45, "summon_max_amount": 2, "subtree_damage": 45}
         }
       }
     ]
@@ -564,6 +582,8 @@
   {
     "id": "age_proliferation",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 7.0, "baseProjectiles": 1, "perExtraProjectile": 7.0, "confidence": "C", "note": "Per cast: 1 Illusionist_Age_Proliferation_obj beam (Player_Ability_Parent, no damage itself) from the player to the nearest enemy in range (256 px > 160) for destroyTimer 2.5 s; at the target it makes one Illusionist_Age_Proliferation_Hitbox_obj pulse (AABB 150x150 on lockedTarget, deadly from frame 2, own map) at 0.25 s and then every hitTimer = max(0.35, 0.2) = 0.35 s: n_p = 1 + floor((2.5 - 0.25)/0.35) = 7 pulses = 7 hits of D_a (each pulse object is separate: no tick_hits needed). Beams of consecutive casts are NOT removed (no destroy in script 317, R3), so under spam several beams run at once - that is a use-rate effect, 7 hits per cast stays. perExtraProjectile = 7: an extra beam (p7 chance, p12 n = 1 + p12.s10) retargets instance_nth_nearest(.., i+1) = the lone dummy (rule 17) and also lands n_p = 7 pulses (with p12 each beam's damage is divided by n); whether a gear 'extra projectile' stat adds beams is not stated by the card (only p7/p12 raise the beam counter; ReturnExtraSpellProjectiles feeds only the p14 fire balls) - I for the slope. p14 fire balls (+0.24*r^2 hits per pulse), p11 growing pulses, p13 echo sentry, p10 shorter hitTimer are subskills."},
     "classId": "illusionist",
     "name": "Age Proliferation",
     "kind": "active",
@@ -578,7 +598,7 @@
     "tree": "Chronomancer",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 16, "perLevel": 7.5 },
+    "damageFormula": { "base": 6.5, "perLevel": 7.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       {
@@ -617,39 +637,43 @@
       {
         "id": "ancient_magic",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36], "note": "LSSD += 12 %/r (separate multiplier on D_a)"}], "confidence": "C", "note": "card 317 table p1", "plannerFix": "planner maps the 12 %/r to additive arcane_skill_damage; card: LSSD multiplier"},
         "name": "Ancient Magic",
         "description": "Increases the damage dealt by age proliferation.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "eons_ago",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [20, 40, 60], "note": "beam destroyTimer and echo ageTimer x(1 + 20 %/r); more impulses n_p = 1 + floor((T - 0.25)/hitTimer)"}], "confidence": "C", "note": "card 317 table p2; planner skill_duration 20/r"},
         "name": "Eons Ago",
         "description": "Increases the duration of age proliferation.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 20 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 20}
         }
       },
       {
         "id": "bridge_between_reality",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "range +30 %/r (abilityRange 24*(1+p3)); the dummy at 160 px is already in range 256 px"}], "confidence": "C", "note": "card 317 table p3"},
         "name": "Bridge Between Reality",
         "description": "Increases the range of age proliferation.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 30 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 30}
         }
       },
       {
         "id": "restoring_proliferation",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "on impulse hit chance 3 %/r: mana restore floor(maxMana*1 %/r)"}], "confidence": "C", "note": "card 317 table p4; planner on_hit chance 3/r, mana_replenish 1/r"},
         "name": "Restoring Proliferation",
         "description": "Chance to restore a portion of your maximum mana on hit.",
         "maxRank": 5,
@@ -665,12 +689,13 @@
       {
         "id": "breaking_the_cycle",
         "positionIndex": 5,
+        "dummy": {"effects": [], "confidence": "C", "note": "card 317 table p5: arcane break 20 %/r for 5 s with chance 4 %/r per impulse; planner appliesStates arcane_break matches (state, no typed effect)"},
         "name": "Breaking The Cycle",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 20 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -683,17 +708,19 @@
       {
         "id": "effortless_path",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "smaller movement slow while casting (reduced_movement_diminish 10 %/r): no dummy DPS"}], "confidence": "I", "note": "card 317 table p6 (I)"},
         "name": "Effortless Path",
         "description": "Decreases movement diminish with age proliferation.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "additional_faith",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.125, 0.25], "note": "chance 12.5 %/r per cast for +1 beam (expected extra beams per cast = 0.125*r). The extra beam retargets nth_nearest(2), which returns the same dummy, and lands 7 pulses at full damage (no division without p12). Engine converts via perExtraProjectile = 7"}], "confidence": "C", "note": "card 317 table p7; Runda 3 (317#0) and rule 17", "plannerFix": "planner has an on_cast proc chance 12.5 %/r with no effect; card: extra beam with 7 full-damage pulses (projectile count)"},
         "name": "Additional Faith",
         "description": "Chance on cast to unleash an additional beam on a nearby monster.",
         "maxRank": 2,
@@ -705,23 +732,25 @@
       {
         "id": "rapid_aging",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "spell crit chance 4 %/r; crit damage +25 %/r ([1003] = p8.s10)"}], "confidence": "C", "note": "card 317 table p8"},
         "name": "Rapid Aging",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 25 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 25}
         }
       },
       {
         "id": "burning_aging",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.5, 1.0, 1.5, 2.0, 2.5], "note": "shadow burn DoT (buff 62, 1 tick/s, 5 s) per impulse with chance 10 %/r per cast; tick = floor(D_a*50 %/r) (value = tick as multiple of D_a, = 0.5*r). Engine models DoT separately; not a hit on the dummy"}], "confidence": "C", "note": "card 317 table p9; reports/dot_debuffs.md; prob. of activity from chance 10 %/r", "plannerFix": "planner appliesStates also lists 'burning', the card shows only the shadow burn DoT (buff 62)"},
         "name": "Burning Aging",
         "description": "Chance to inflict shadow burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_shadow_burning_damage": 0 },
-          "perRank": { "increased_shadow_burning_damage": 50 }
+          "base": {"increased_shadow_burning_damage": 0},
+          "perRank": {"increased_shadow_burning_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -735,56 +764,61 @@
       {
         "id": "centuries_within_seconds",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0, 1.1429, 1.2857], "note": "hitTimer = max(0.35*(1 - 8 %/r), 0.2) s; impulses n_p = 1 + floor(2.25/hitTimer) = 7, 8, 9, 10 for r0..r3 (base 7 at r0); value = n_p/7 (floor steps). Card gives r4-r5 values too (10, 11) but planner maxRank is 3"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15 %/r"}], "confidence": "C", "note": "card 317 table p10; hits counted at base T = 2.5 s (p2 = 0)", "plannerFix": "planner gives faster_cast_rate +8 %/r and arcane_skill_damage +15 %/r; card: impulse interval -8 %/r (more impulses) and LSSD +15 %/r"},
         "name": "Centuries Within Seconds",
         "description": "Increases the tick frequency of age proliferation.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
-          "perRank": { "faster_cast_rate": 8, "arcane_skill_damage": 15 }
+          "base": {"faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 8, "subtree_damage": 15}
         }
       },
       {
         "id": "growing_old",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.12, 1.24, 1.36], "note": "impulse k deals D_a*(1 + k*4 %/r): mean over 7 impulses = 1 + 0.04*r*(7-1)/2 = 1 + 0.12*r; size +2.5 %/r does not change hits on the dummy (1 hit per impulse)"}], "confidence": "C", "note": "card 317 table p11 (C/I for the mean; r3 x1.36 in card)", "plannerFix": "planner gives flat arcane_skill_damage +4 %/r and area_of_effect +2.5 %/r; card: growing damage per impulse (mean x(1+0.12r) over 7 impulses)"},
         "name": "Growing Old",
         "description": "Age proliferation grows in size and deals increased damage with every pulse.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 4, "area_of_effect": 2.5 }
+          "base": {"arcane_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"arcane_skill_damage": 4, "area_of_effect": 2.5}
         }
       },
       {
         "id": "age_multiliferation",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25 %/r"}, {"kind": "hits_mult", "byRank": [1, 1, 1], "note": "transformation: 1 + r beams (each targets the dummy), each beam damage ceil(LTD/(1+r))*(1+LSSD): total damage unchanged, so hit count in main-hit units stays 7 per cast. Not encoded as projectiles (that would double count the damage split)"}], "confidence": "C", "note": "card 317 table p12 + rule 17 (C)", "plannerFix": "planner maps the 25 %/r to arcane_skill_damage and gives max_targets +1/r; card: LSSD multiplier, beams split the damage (no extra hits), net gain (1+LSSD+0.25r)/(1+LSSD)"},
         "name": "Age Multiliferation",
         "description": "Unleash age proliferation at multiple nearby monsters splitting the damage between beams.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "max_targets": 0 },
-          "perRank": { "arcane_skill_damage": 25, "max_targets": 1 }
+          "base": {"max_targets": 0, "subtree_damage": 0},
+          "perRank": {"max_targets": 1, "subtree_damage": 25}
         }
       },
       {
         "id": "arcane_echo",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45 %/r"}, {"kind": "set_hits", "byRank": [14, 14, 18], "note": "transformation: the beam is replaced by an echo sentry (5 s) releasing beams every SF = 3*(1 - 7.5 %/r) s (sentry AS = 0 assumed): beams = 1 + floor(4.75/SF) = 2/2/3 and impulses per beam = min(7, 1 + floor((SF - 0.25)/0.35)) = 7/7/6: hits per echo = 14/14/18 (per use, main-hit units)"}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "skill cooldown +2 s (echo period = max(2 s/(1 + 0.005*h_eff), cast period (ceil(72/S)+1)/60 s = 0.717 s at S = 1.75); the 2 s cooldown binds, PoR4 e)"}], "confidence": "I", "note": "card 317 table p13 + Transformacja p13 (C structure, I sentry AS and start time) + PoR4 e (rule 37): period wording; beams/impulse counts unchanged", "plannerFix": "planner maps the 45 %/r to arcane_skill_damage and FCR; card: echo sentry with 2 s cooldown and beam count from SF, LSSD multiplier"},
         "name": "Arcane Echo",
         "description": "Summon an arcane echo of your self casting age proliferation at nearby targets. Age proliferation now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "arcane_skill_damage": 45, "faster_cast_rate": 7.5 }
+          "base": {"faster_cast_rate": 0, "cooldown_added": 2, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 7.5, "cooldown_added": 0, "subtree_damage": 45}
         }
       },
       {
         "id": "scorching_magic",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.24, 0.96, 2.16], "per": "hit", "note": "on each impulse with chance 12 %/r a fire ball burst of n = floor(2*r*(1 + RSS394 %)) balls, each hitting once for D_a (R4, 10 px/frame, first hit frame 2): extra per impulse = 0.12*r*2*r = 0.24*r^2. No burning DoT (projEffect[18] not in collisionEffect, [53] dead) Frame order (Resztki B, I -> C): the ball makes at most 1 move before the first collision check (Alarm_11 = 2, no step in the creation frame, deltaTimer = 0 until the first End Step) and its mask tail (60*scale >= 15 px) reaches the dummy centre at 16 and 26 px, so 100 % hits does not depend on frame order; it would fail only with >= 2 moves (36 px), impossible here. Oriented rectangle (rule 26): same 100 %."}], "confidence": "C", "note": "card 317 table p14 + Runda 4 (317#1) + Resztki B (frame order I -> C) (C objects, parameters and frame order)", "plannerFix": "planner gives increased_burning_damage +100 %/r (no effect on the dummy) and projectile_count +2/r on proc; card: fire balls hit once each (extra hits per impulse 0.24 r^2), no burn"},
         "name": "Scorching Magic",
         "description": "Age proliferation now unleashes scorching fire balls towards monsters on hit inflicting burning and slowing them.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 100 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 100}
         },
         "proc": {
           "trigger": "on_hit",
@@ -804,6 +838,8 @@
   {
     "id": "gravitation_slam",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "0 hits on the dummy: Illusionist_Gravitational_Slam_AOE_obj only grabs enemies with enemyModifier[26] == 0 (and enemyType < 2, dekompilacja 0x14828a960) and the dummy has em[26] = 1 (Attack_Dummy_obj Create L14), so it is never lifted, no Illusionist_Gravitational_Slam_obj (the damage object, 1 hit on a normal enemy ~0.55 s later) is created and no p6/p11/p13/p14 procs follow. Rule 22 re-check (R4): the lift [139]/[50]/[110] does work on the dummy but this AOE is one of the grabbing objects, so it stays 0. On a normal enemy: 1 hit per cast (p13 Dimensional Slam x3)."},
     "classId": "illusionist",
     "name": "Gravitation Slam",
     "kind": "active",
@@ -817,7 +853,7 @@
     "tree": "Chronomancer",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 6, "perLevel": 15.5 },
+    "damageFormula": { "base": 5.5, "perLevel": 14.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Age Proliferation", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -836,34 +872,37 @@
       {
         "id": "earths_pull",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "LSSD +8 %/r is a multiplier of the grab hit, 0 hits on the dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p1; skill base 0 hits on dummy (rule 16)", "plannerFix": "planner maps LSSD 8 %/r to additive arcane_skill_damage; card: LSSD term (multiplier), 0 on dummy"},
         "name": "Earth´s Pull",
         "description": "Increases the damage dealt by gravitation slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 8}
         }
       },
       {
         "id": "astral_chaos",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below 2 %/r (ProjectileCollision00Skills L1610): dummy never dies. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p2; skill base 0 hits on dummy (rule 16)"},
         "name": "Astral Chaos",
         "description": "Gravitation slam executes monsters below a threshold.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 2 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 2}
         }
       },
       {
         "id": "shaken_with_magic",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "arcane break chance 15 %/r on the grab hit (no hit on dummy). On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p3; skill base 0 hits on dummy (rule 16)"},
         "name": "Shaken With Magic",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 2,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 25 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -876,28 +915,31 @@
       {
         "id": "gravity_at_will",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "castRate += 6 %/r (cast cadence), but the skill has 0 hits on the dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p4; skill base 0 hits on dummy (rule 16)"},
         "name": "Gravity at Will",
         "description": "Increases cast rate when using gravitation slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "floating_range",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "AOE radius +20 %/r: the grab zone does not catch the dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p5; skill base 0 hits on dummy (rule 16)"},
         "name": "Floating Range",
         "description": "Increases the area of effect radius of gravitation slam.",
         "maxRank": 8,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "self_help",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "knock-up proc floor(D_s*40 %/r) with chance 3 %/r only on a grabbed enemy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p6; skill base 0 hits on dummy (rule 16)", "plannerFix": "planner maps the 40 %/r proc to additive arcane_skill_damage; card: extra knock-up object with chance 3 %/r, 0 on dummy"},
         "name": "Self-help",
         "description": "Chance to knock monsters into air on hit dealing increased damage.",
         "maxRank": 5,
@@ -913,6 +955,7 @@
       {
         "id": "stunned_by_force",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun chance 15 %/r on the grab hit: no grab, no stun. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p7; skill base 0 hits on dummy (rule 16)"},
         "name": "Stunned by Force",
         "description": "Chance to stun targets on hit.",
         "maxRank": 2,
@@ -925,48 +968,49 @@
       {
         "id": "gravitational_radius",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "cast range +20 %/r; no dummy hit (card: no effect). On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "I", "note": "card 318 table p8; skill base 0 hits on dummy (rule 16)"},
         "name": "Gravitational Radius",
         "description": "Increases the maximum cast range of gravitation slam.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "deep_slam",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "crit on the grab hit only; no hit on dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p9; skill base 0 hits on dummy (rule 16)"},
         "name": "Deep Slam",
         "description": "Chance to critically hit dealing increased damage equal to your arcane skill damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 8, "spell_crit_damage": 40 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 8, "spell_crit_damage": 40}
         }
       },
       {
         "id": "force_of_gravity",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "extra damage 20 %/r vs stunned: dummy is not stunned by the grab. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p10; skill base 0 hits on dummy (rule 16)"},
         "name": "Force of Gravity",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "void_slam",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "shadow burn DoT floor(D_s*150 %/r) and radius +40 %/r; cooldown +3 s; no grab on dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p11; skill base 0 hits on dummy (rule 16)", "plannerFix": "planner models increased_shadow_burning_damage +150 %/r; card: a shadow-burn DoT object (not an increase), cooldown +3 s"},
         "name": "Void Slam",
         "description": "Increases the area of effect radius pulling monsters towards the center of mass on hit inflicting shadow burning. Gravitation slam now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_shadow_burning_damage": 0, "area_of_effect": 0 },
-          "perRank": {
-            "increased_shadow_burning_damage": 150,
-            "area_of_effect": 40
-          }
+          "base": {"increased_shadow_burning_damage": 0, "area_of_effect": 0},
+          "perRank": {"increased_shadow_burning_damage": 150, "area_of_effect": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -979,42 +1023,37 @@
       {
         "id": "gravitation_wave",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "waves 3 per rank and LSSD 10 %/r: later waves cannot grab the dummy, so 0 hits on dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "I", "note": "card 318 table p12; skill base 0 hits on dummy (rule 16)", "plannerFix": "planner maps LSSD 10 %/r to additive arcane_skill_damage (projectile_count 3/r and area 25 %/r match the card)"},
         "name": "Gravitation Wave",
         "description": "Unleash a shockwave of gravitation slams towards target direction with increased radius.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "area_of_effect": 0,
-            "projectile_count": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "area_of_effect": 25,
-            "projectile_count": 3,
-            "arcane_skill_damage": 10
-          }
+          "base": {"area_of_effect": 0, "projectile_count": 0, "arcane_skill_damage": 0},
+          "perRank": {"area_of_effect": 25, "projectile_count": 3, "arcane_skill_damage": 10}
         }
       },
       {
         "id": "dimensional_slam",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "LSSD 50 %/r and 2 extra full-damage returns on a grab hit: no grab on dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "C", "note": "card 318 table p13; skill base 0 hits on dummy (rule 16)", "plannerFix": "planner maps LSSD 50 %/r to additive arcane_skill_damage and misses the x3 hit count (card, normal enemy only)"},
         "name": "Dimensional Slam",
         "description": "Smash monsters into a black hole causing them to re-appear from an additional white hole knocked up dealing increased area of effect damage when landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 50 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 50}
         }
       },
       {
         "id": "antigravity_slam",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "knockback 80 %/r and soul object (damage D_s) only after a grab hit: 0 on dummy. On the dummy the grab fails (enemyModifier[26] = 1), so the skill has 0 hits and this subskill adds nothing"}], "confidence": "I", "note": "card 318 table p14; skill base 0 hits on dummy (rule 16)", "plannerFix": "planner maps 80 %/r to additive arcane_skill_damage; card: knockback and a soul object after a grab (0 on dummy)"},
         "name": "Antigravity Slam",
         "description": "Knock monsters back from the center of impact with force unleashing homing void souls seeking nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_speed": 0 },
-          "perRank": { "arcane_skill_damage": 80, "projectile_speed": 25 }
+          "base": {"arcane_skill_damage": 0, "projectile_speed": 0},
+          "perRank": {"arcane_skill_damage": 80, "projectile_speed": 25}
         }
       }
     ]
@@ -1022,6 +1061,9 @@
   {
     "id": "split_reality",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "baseCooldown": 8,
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, in-zone (cursor on the dummy): 1 Illusionist_Split_Reality_obj decoy at the aim point (lifetime 4 s; Step_0 L12 distance_to_object(enemy) <= 16 is a BBOX gap (decoy Mask_Circle_24x_spr 24x24 vs dummy 24x24), i.e. centres <= 40 px, so a decoy within 40 px of the dummy blows after the ~10-frame shrink, otherwise after 4 s; it is created 6 px above the cursor, (x, y-30) for the cursor (x, y-24), asm 0x146724271-0x146724365; Resztki A/E); Destroy_0 creates 1 Illusionist_Age_Proliferation_Hitbox_obj (AABB 150x150, deadly after 2 frames, no tick) with damage[1] = LTD(319,V1) and a stun [51] = (1+0.2L) s: it covers the dummy if the decoy stands <= 87 px from it in each axis = 1 hit. No subskills. Cooldown 8 s sets the period."},
     "classId": "illusionist",
     "name": "Split Reality",
     "kind": "active",
@@ -1034,7 +1076,7 @@
     "tree": "Chronomancer",
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "damageFormula": { "base": 0, "perLevel": 8.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "passiveStats": {
       "base": { "stun_duration": 1.2 },
@@ -1050,6 +1092,8 @@
   {
     "id": "time_deceleration",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast: 1 Illusionist_Time_Deceleration_obj at the player (precise disc r = 55 x image_xscale 5 = 275 px, destroyTimer 3 frames, deadly from frame 2 via event_inherited, singleHit) covers the dummy at 160 px (reach 287 px) = 1 hit; slow [53] (buff 17) adds no hit. No subskills. Cooldown 6 s sets the period."},
     "classId": "illusionist",
     "name": "Time Deceleration",
     "kind": "active",
@@ -1063,7 +1107,7 @@
     "tree": "Chronomancer",
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 15 }],
-    "damageFormula": { "base": 0, "perLevel": 15 },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": { "base": 15, "perLevel": 1 },
     "passiveStats": {
       "base": { "slow_duration": 1.5 },
@@ -1079,6 +1123,7 @@
   {
     "id": "dimensional_displacement",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "illusionist",
     "name": "Dimensional Displacement",
     "kind": "active",
@@ -1100,6 +1145,7 @@
   {
     "id": "sands_of_time",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "illusionist",
     "name": "Sands of Time",
     "kind": "active",
@@ -1114,6 +1160,7 @@
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": { "arcane_skill_damage": 3, "cast_rate": 1.5 },
       "perRank": { "arcane_skill_damage": 3, "cast_rate": 1.5 }
@@ -1158,6 +1205,8 @@
   {
     "id": "temporal_heroes",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.05, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per entity action (one attack of one hero), averaged over the 3 base heroes weighted by their action rates (cooldown cd0 Viking 1.15 s, Marksman 1.0 s, Pyromancer 1.35 s; interval max(cd0, 0.667 s animation)/(1+AS/100)): Viking 3 hits (Viking_Ymirs_Champion_obj axe orbits the hero, hero stands <= 24 px from the dummy's mask: 3 map clears per 2 s life; orbit_speed = +7 deg/frame so the map is cleared every 360 deg, precise mask instead of a r ~ 17 circle confirms 3 hits (viking/14#0, orbit simulation, I); cold damage[2]) + Marksman 2 hits (fan n = 6 Marksman_Turret_Arrow_obj every 8 deg, only the central pair +-4 deg hits the dummy at 160 px, alpha_max(160 px) = asin(20/160) = 7.2 deg (arrows rotate with direction, oriented 16x16 rectangle: SummonAttackScript case 40 writes image_angle @0x1461c82dd; the 7.8 deg AABB variant was dropped, hit counts unchanged); n odd = 1; arrows pierce; arcane damage[1]) + Pyromancer 1 hit (Pyromancer_Comet_obj lands on the dummy, 1 Explosion_Item_obj; fire damage[3]) = (3/1.15 + 2/1.0 + 1/1.35)/(1/1.15 + 1/1.0 + 1/1.35) = 5.35/2.61 = 2.05 (plain mean 2.0). Per-hero hits: 3 / 2 / 1; all with the same D at level 0 (p6) but cold/arcane/fire, i.e. different dummy resistances (main-hit equivalents here are in D units, not after resistance). Not counted: p12 White Mage (+2-3 hits, I), p13 Demonspawn (1 hero, 2 hits), p6 level/p11 augment (extra axes/arrows/comets), p14 buffs. Hero life 25 s, cooldown 40 s, heroes spawn at the player (cursor irrelevant)."},
     "classId": "illusionist",
     "name": "Temporal Heroes",
     "kind": "active",
@@ -1173,7 +1222,7 @@
     "tree": "Chronomancer",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 14 }],
-    "damageFormula": { "base": 1, "perLevel": 11 },
+    "damageFormula": { "base": 0, "perLevel": 10.5 },
     "manaCostFormula": { "base": 14, "perLevel": 1 },
     "bonusSources": [
       { "source": "Expansive Mind", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1192,100 +1241,109 @@
       {
         "id": "mirror_image",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r (multiplier of the summoner damage)"}], "confidence": "C", "note": "card 325 table p1", "plannerFix": "planner maps the 8 %/r to additive arcane_skill_damage; card: LSSD term"},
         "name": "Mirror Image",
         "description": "Increases the damage dealt by temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "summon_carnage",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-15, -30, -45, -60, -75], "entity": true, "note": "hero attackCooldown = max(cd0*(1 - 15 %/r), 0.1) s; interval = max(cooldown/(1+AS), T_anim 0.667 s): the 0.667 s animation floor limits the gain for Marksman r3+, Viking r4+, Pyromancer r5+"}], "confidence": "C", "note": "card 325 table p2; R3 325#0", "plannerFix": "planner gives summon_attack_speed +15 %/r; card: attack cooldown x(1-15 %/r) bounded by the 0.667 s attack animation"},
         "name": "Summon Carnage",
         "description": "Increases the attack speed of temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 15 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 15}
         }
       },
       {
         "id": "larger_than_life",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "hero life +10 %/r: heroes live 25 s and the card gives no dummy effect (C)"}], "confidence": "C", "note": "card 325 table p3; planner summon_life 10 %/r matches"},
         "name": "Larger Than Life",
         "description": "Increases the life of temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 10 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 10}
         }
       },
       {
         "id": "quantum_immortality",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [10, 20, 30, 40, 50], "note": "destroyTimer x(1 + 10 %/r): uptime 25*(1+p4)/T_cd"}], "confidence": "C", "note": "card 325 table p4"},
         "name": "Quantum Immortality",
         "description": "Increases the duration of temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "more_aid",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 40*(1 - 7 %/r) s (skill cooldown, uptime)"}], "confidence": "C", "note": "card 325 table p5"},
         "name": "More Aid",
         "description": "Decreases the cooldown of temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "accurate_clone",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.083, 1.167, 1.25, 1.333, 1.417], "note": "level = r: Viking and Marksman +10 %/level, Pyromancer +5 %/level; mean of the 3 base heroes (0.0833/level). Viking orbit radius and size also grow (no hit change assumed)"}, {"kind": "hits_mult", "byRank": [0.813, 1.0, 0.813, 1.0, 0.813], "note": "Marksman arrows n = 6 + level: odd n gives 1 hit on the dummy at 160 px, even n gives 2; average over the 3 heroes (base 2.049 hits per action)"}], "confidence": "I", "note": "card 325 table p6 (C/I); R3 325#0", "plannerFix": "planner maps the clone level to summon_skill_level +1/r; card: damage multiplier per level per hero and Marksman arrow parity"},
         "name": "Accurate Clone",
         "description": "Increases the skill levels of temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_skill_level": 0 },
-          "perRank": { "summon_skill_level": 1 }
+          "base": {"summon_skill_level": 0},
+          "perRank": {"summon_skill_level": 1}
         }
       },
       {
         "id": "tough_bones",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "resistances +6 %/r: defensive, no dummy DPS"}], "confidence": "C", "note": "card 325 table p7; planner all_resistances 6 %/r matches"},
         "name": "Tough Bones",
         "description": "Increases all resistances for temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_resistances": 0 },
-          "perRank": { "all_resistances": 6 }
+          "base": {"all_resistances": 0},
+          "perRank": {"all_resistances": 6}
         }
       },
       {
         "id": "heroes_of_the_ether",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance 3 %/r; crit damage +20 %/r ([1003] = p8.s10)"}], "confidence": "C", "note": "card 325 table p8"},
         "name": "Heroes of the Ether",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 20}
         }
       },
       {
         "id": "fractured_reality",
         "positionIndex": 9,
+        "dummy": {"effects": [], "confidence": "C", "note": "card 325 table p9: arcane break chance 3 %/r, break 15 %/r (state, planner appliesStates matches; no typed effect)"},
         "name": "Fractured Reality",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1298,64 +1356,61 @@
       {
         "id": "evasive_strategy",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "dodge chance 10 %/r for heroes: defensive"}], "confidence": "C", "note": "card 325 table p10"},
         "name": "Evasive Strategy",
         "description": "Increases the dodge chance of temporal heroes.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_dodge_chance": 0 },
-          "perRank": { "summon_dodge_chance": 10 }
+          "base": {"summon_dodge_chance": 0},
+          "perRank": {"summon_dodge_chance": 10}
         }
       },
       {
         "id": "augmented_heroics",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15 %/r"}, {"kind": "hits_mult", "byRank": [1.626, 2.252, 2.878], "note": "augmentLevel = r: Viking (1+r) axes x 3 hits, Pyromancer (1+r) comets x 1 hit, Marksman 6*(1+r) arrows keep 2 hits (even n); average over the 3 heroes weighted by 1/cd (base 2.049)"}], "confidence": "C", "note": "card 325 table p11 (C counts, I hit geometry)", "plannerFix": "planner maps the 15 %/r LSSD to arcane_skill_damage and gives summon_skill_level +1/r; card: LSSD term and object count (Viking and Pyromancer multiply their hits)"},
         "name": "Augmented Heroics",
         "description": "Temporal heroes gain augmented skills and increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "summon_skill_level": 0 },
-          "perRank": { "arcane_skill_damage": 15, "summon_skill_level": 1 }
+          "base": {"summon_skill_level": 0, "subtree_damage": 0},
+          "perRank": {"summon_skill_level": 1, "subtree_damage": 15}
         }
       },
       {
         "id": "the_four_horsemen",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20 %/r"}, {"kind": "other", "note": "4 heroes instead of 3 (x4/3 entities, White Mage added: cd0 1.1 s, ~2.5 hits per attack (I)); life +25 %/r and move speed +20 %/r: no dummy effect"}, {"kind": "hits_mult", "byRank": [1.057, 1.057, 1.057], "note": "average hits per hero action with White Mage added (2.049 -> 2.166); the 4/3 entity count is in the 'other' effect"}], "confidence": "C", "note": "card 325 table p12; White Mage hits 2-3 (I)", "plannerFix": "planner maps the 20 %/r LSSD to arcane_skill_damage; 4th hero (White Mage) not in the planner's hit average"},
         "name": "The Four Horsemen",
         "description": "Gain an additional temporal hero increasing the damage, life and movement speed of all temporal heroes.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "summon_life": 0,
-            "summon_movement_speed": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 20,
-            "summon_life": 25,
-            "summon_movement_speed": 20
-          }
+          "base": {"summon_life": 0, "summon_movement_speed": 0, "subtree_damage": 0},
+          "perRank": {"summon_life": 25, "summon_movement_speed": 20, "subtree_damage": 20}
         }
       },
       {
         "id": "the_singularity",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100 %/r"}, {"kind": "hits_mult", "byRank": [0.976, 0.976, 0.976], "note": "one Temporal_Demonspawn instead of 3 heroes: 2 hits per attack (I) at cd0 1.1 s vs base average 2.049"}, {"kind": "other", "note": "entity count 1 (Demonspawn) instead of 3-4 heroes; life +100 %/r: no dummy effect"}], "confidence": "C", "note": "card 325 table p13 (C count, I hits)", "plannerFix": "planner maps the 100 %/r LSSD to arcane_skill_damage and gives summon_life +100 %/r; card: 1 Demonspawn replaces the heroes (count 1)"},
         "name": "The Singularity",
         "description": "Summon a temporal demonspawn with increased stats.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "summon_life": 0 },
-          "perRank": { "arcane_skill_damage": 100, "summon_life": 100 }
+          "base": {"summon_life": 0, "subtree_damage": 0},
+          "perRank": {"summon_life": 100, "subtree_damage": 100}
         }
       },
       {
         "id": "summon_support",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "utility", "note": "heroes cast buffs (Combat Orders / Fire Shield / Agility) at level ~20 %/r on summon: player stat buffs, not dummy DPS (I)"}], "confidence": "I", "note": "card 325 table p14", "plannerFix": "planner gives summon_skill_level +20 %/r; card: player buffs (combat orders, fire shield, agility) on summon"},
         "name": "Summon Support",
         "description": "Temporal heroes cast buffs when summoned. Viking casts combat orders, pyromancer casts fire shield and marksman casts agility.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_skill_level": 0 },
-          "perRank": { "summon_skill_level": 20 }
+          "base": {"summon_skill_level": 0},
+          "perRank": {"summon_skill_level": 20}
         }
       }
     ]

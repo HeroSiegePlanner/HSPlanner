@@ -21,6 +21,8 @@
   {
     "id": "trigger_finger",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 0.0, "confidence": "C", "note": "Attack volleys: 1+n volleys with n = 2+RSS391+XPR1+XPR2+p3.s9 = 2 in the base, i.e. 3 volleys at theta_k = (k-n/2)*4 deg (0, +-4), each Projectile_Player_obj with its own pack (attackClasses L398-507). The 12x7 mask rotates with the flight (direction and image_angle are written together, 0x1402c21cf/0x1402c220b) and collides as an ORIENTED rectangle 22x7 (rule 26, not an AABB); the volleys aim through the dummy centre (rule 38, tf_rect.py): origin windows 142-187 px (0 deg), 142-186 (+-2), 145-182 (+-4) overlap the 12 px dummy at 160 px, +-6 deg misses (gap 0.67-1.67 px) and +-8 deg misses: 3 hits of the full hit (R4 182#2, pixel margin I). perExtraProjectile = 0: extras only change the parity of n (even n = 3 hits at 0/+-4 deg, odd n = 2 hits at +-2 deg because +-6 deg misses; R4 replaces the R3 '2 + 2*P6 = 3.1-3.4'), no linear gain at 160 px; bullet speed is irrelevant. baseProjectiles = the 3 volleys. I: the <2 px margin of +-6 deg, the 14x11 shotgun/musket bullet sprites (h = 5.5 could let +-6 deg hit)."},
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Trigger Finger",
@@ -37,7 +39,9 @@
     "manaCostFormula": { "base": 4, "perLevel": 1 },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 50, "perLevel": 15 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 135, "perLevel": 15 },
       "attackRatingPct": { "base": 5, "perLevel": 5 }
     },
     "bonusSources": [
@@ -56,56 +60,61 @@
       {
         "id": "slick_fingers",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating (accuracy) +10%/r via projEffect[1022]; no dummy DPS term in card"}], "confidence": "C", "note": "card table p1; planner attack_rating_pct 10/r matches"},
         "name": "Slick Fingers",
         "description": "Increases attack rating when using trigger finger.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "triggerheavy",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8%/r. Card: this LSSD multiplies only the V1 part of the hit (dmg = W*(1+V1*(1+LSSD)/100)), not the whole hit"}], "confidence": "C", "note": "card table p2 + general note on LSSD scope", "plannerFix": "planner stores physical_skill_damage 8/r, which multiplies the whole hit; in game it scales only the V1 (weapon %) part (weaponBonusScaling)"},
         "name": "Triggerheavy",
         "description": "Increases damage dealt by trigger finger.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "gunslinging_slayer",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "n += 1 per rank (n = 2 + RSS391 + XPR1 + XPR2 + p3.s9)"}, {"kind": "extra_hits", "byRank": [-1, 0, -1, 0, -1], "per": "use", "replacesProjectileHits": true, "note": "relative to base 3 hits (n=2). Odd n (ranks 1,3,5): H = 2 (the +-6 deg volleys miss, oriented rectangle 22x7, rule 26; +-2 deg hits), so -1 hit; even n (ranks 2,4): H = 3, delta 0 (R4 182#2: replaces R3 '2 + 2*P6 ~ +0.24'). Card: at 160 px only the parity of n matters, no linear gain. Pixel margin of +-6 deg (<2 px) is I."}], "confidence": "I", "note": "card table p3 + body 'Trafienia na kukle' (R4 182#2); Runda 3 182#1 (n formula)", "plannerFix": "projectile_count 1/r matches n, but planner perExtraProjectile = 0 and baseProjectiles 3 leave the parity effect on the dummy (H 3 at even n, 2 at odd n) unmodelled"},
         "name": "Gunslinging Slayer",
         "description": "Increases the amount of projectiles fired by trigger finger.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "rapid_gunslinger",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile speed +15%/r ([1085]); no dummy hit change: R4 hit windows are geometric (oriented rectangle), bullet speed does not matter"}], "confidence": "C", "note": "card table p4 (brak); R4 182#2 (speed irrelevant); planner projectile_speed 15/r matches"},
         "name": "Rapid Gunslinger",
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "burning_bullethole",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 75, "note": "burning amount floor(dmg*75r%) per proc, buff 1; proc chance 10%/r rolled ONCE per attack (all salvos), not per hit. Tick formula: reports/dot_debuffs.md"}], "confidence": "C", "note": "card table p5", "plannerFix": "planner rolls the 10%/r proc on_hit (per hit); game rolls it once per attack"},
         "name": "Burning Bullethole",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 2,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 75 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -118,17 +127,19 @@
       {
         "id": "executing_gunshot",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute threshold (projEffect[140] = 1%/r); dummy never dies, 0 on dummy"}], "confidence": "I", "note": "card table p6: 0 on dummy (I)"},
         "name": "Executing Gunshot",
         "description": "Execute low life monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1}
         }
       },
       {
         "id": "bullet_fragmentation",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45], "per": "hit", "note": "Bullet Fragmentation: chance 3%/r per bullet hit and per p13 explosion hit; each proc = 3 fragments of damage[0] (m = 1) at the dummy centre, one hit each. Expected extra = 3*c per base hit = 0.09*r per hit."}], "confidence": "C", "note": "card table p7; Runda 3 / rule 15 (ProjectileCollision11DemonSlayer L14-33)", "plannerFix": "planner has only the on_hit chance 3/r; the +3 fragment hits per proc are not modelled"},
         "name": "Bullet Fragmentation",
         "description": "Chance to fragment bullets on hit causing pieces to ricochet around the target.",
         "maxRank": 5,
@@ -137,12 +148,13 @@
       {
         "id": "brand_new_cavity",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "base": 0, "perRank": 15, "note": "physical break +15%/r (p8.s9 + RSS234), 5 s, buff 7, multiplier in CalculateEndDamage. Applied with chance 3%/r PER ATTACK; uptime on the dummy not quantified in the card, so average multiplier is not determined (I)"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner rolls the 3%/r break chance on_hit; game rolls it per attack (5 s break)"},
         "name": "Brand New Cavity",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 15 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -155,86 +167,73 @@
       {
         "id": "supersonic_bullets",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 0, "note": "crit damage +20%/r (projEffect[1019] = p9.s9); crit chance unchanged"}], "confidence": "C", "note": "card table p9; planner crit_damage 20/r matches"},
         "name": "Supersonic Bullets",
         "description": "Increases critical strike damage when using trigger finger.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "gasoline_covered_ammunition",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "x(1+p10.s9%) = x(1 + 0.10*r) only on hits while the dummy burns (needs p5 burning on the dummy); engine must gate it on p5"}], "confidence": "C", "note": "card table p10 (projEffect[180]); planner extra_damage_burning 10/r matches numbers"},
         "name": "Gasoline Covered Ammunition",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "piercing_mayhem",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 60, "note": "LSSD += 60%/r. Card: LSSD multiplies only the V1 part (TF scope). Piercing (projEffect[56]) gives no second hit (one pack)"}], "confidence": "C", "note": "card table p11", "plannerFix": "planner stores physical_skill_damage 60/r as a full-hit multiplier; game scales only the V1 part"},
         "name": "Piercing Mayhem",
         "description": "Projectiles now pierce and bounce off of terrain dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 60 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 60}
         }
       },
       {
         "id": "fingertapped_killshot",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: one salvo (projEffect[117] = 0) = 1 hit per use instead of 3"}, {"kind": "other", "base": 0, "perRank": 200, "note": "hit damage = W*(1 + V1*n*2r*(1+LSSD)/100): of_total_damage 200%/r of V1*n (n = 2 base, so the term is V1*4r%); relative to D the ratio is (1 + V1*n*2r*(1+LSSD)/100)/(1 + V1*(1+LSSD)/100), V1 depends on level L (not a constant)"}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "talent cooldown 2 s (GetTalentCooldown case 38), period = max(2 s, attack animation); base TF has no cooldown so this is the absolute value"}, {"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += p12.s11% (20/r, matches planner physical 20/r); TF scope: V1 part only"}, {"kind": "utility", "note": "projectile speed +20%/r ([1085] += p12.s10%); no dummy effect at 1 hit"}], "confidence": "C", "note": "card table p12 (s9 = 200/r, LSSD s11)", "plannerFix": "planner has no cooldown (2 s) and no 1-hit transformation, its skill_range 20/r is the speed term [1085] in the card, and the n-dependent of_total_damage is not represented"},
         "name": "Fingertapped Killshot",
         "description": "Fire a single projectile with significantly increased range and power dealing multiplied damage. Trigger Finger now has a small cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "of_total_damage": 0,
-            "skill_range": 0,
-            "physical_skill_damage": 0
-          },
-          "perRank": {
-            "of_total_damage": 200,
-            "skill_range": 20,
-            "physical_skill_damage": 20
-          }
+          "base": {"of_total_damage": 0, "skill_range": 0, "subtree_damage": 0, "cooldown_added": 2},
+          "perRank": {"of_total_damage": 200, "skill_range": 20, "subtree_damage": 20, "cooldown_added": 0}
         }
       },
       {
         "id": "its_raining_bullets",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6, 8, 11], "note": "transformation: attack replaced by N = n + p13.s9 = 2 + 4r = 6/10/14 raining explosions. Explosion scale is the constant 2.0 (Raining_obj Step_0 0x147a8243c/0x147a8248b; p13.s10 is never read), r ~ 64 px: ring R = 32 px (i <= 6) always hits, ring R = 64 px (angle 360/(N-6)*i) hits only for sin(phi) <= 0.36. Cursor on the visible dummy centre (x, y-24), object 6 px above the cursor (Talents L109/110: offset 30 px) and landing ~2 frames of motion short (rule 40, t = 32.3 frames): 6 / 8 / 11 hits for N = 6 / 10 / 14 (Resztki E; PoR4 with offset 24 px gave 6/9/12, R4 headline 6/9/11). Variant cursor exactly at (x, y): 6 / 10 / 14. I: landing distribution +-1 frame."}, {"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD += p13.s11% (30/r assumed from planner physical 30/r); TF scope: V1 part only"}], "confidence": "I", "note": "R4 182#4 + PoR4 (c) rule 40 + Resztki (B/E); C for scale 2.0 and ring geometry, I for landing offset", "plannerFix": "planner models p13 as projectile_count +4/r with no transformation; the attack is replaced by N = 6/10/14 explosions of which 6/8/11 hit the dummy (set_hits); area p13.s10 is NOT read (scale constant 2.0)"},
         "name": "It's Raining Bullets",
         "description": "Fire a burst of projectiles traveling through air and landing on the target location dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "projectile_count": 0,
-            "area_of_effect": 0,
-            "physical_skill_damage": 0
-          },
-          "perRank": {
-            "projectile_count": 4,
-            "area_of_effect": 25,
-            "physical_skill_damage": 30
-          }
+          "base": {"projectile_count": 0, "area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "area_of_effect": 25, "subtree_damage": 30}
         }
       },
       {
         "id": "shredder_slugs",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD += p14.s9% (30/r). TF scope: V1 part only"}, {"kind": "dot", "base": 0, "perRank": 90, "note": "bleeding amount floor(dmg*90r%) on every hit (100% chance), buff 3; also projEffect[56]=1 and slow x0.9 (no DPS)"}], "confidence": "C", "note": "card table p14", "plannerFix": "bleed 90/r and 100% chance match; physical_skill_damage 30/r is a full-hit multiplier in planner but scales only the V1 part in game"},
         "name": "Shredder Slugs",
         "description": "Fire small shredders dealing damage over time and inflicting bleeding. The shredders projectile speed slows down on impact.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "increased_bleeding_damage": 0 },
-          "perRank": {
-            "physical_skill_damage": 30,
-            "increased_bleeding_damage": 90
-          }
+          "base": {"increased_bleeding_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_bleeding_damage": 90, "subtree_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -267,6 +266,8 @@
   {
     "id": "bullet_hell",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 2, "perExtraProjectile": 0.0, "confidence": "C", "note": "Controller fires skillAmount = 2 salvos 0.1 s apart, each of n = 3+RSS391+XPR+p2.s9 pellets in a 8 deg fan; all pellets of a salvo share singleHitPackId (L61, host pack ++ after the salvo) so a salvo hits the dummy once: 2 hits (P = 1: 15 px/frame < 24+8 skipping threshold, rule 18; the centre pellet (odd n) or the +-4 deg pair (even n) always flies at the dummy). perExtraProjectile = 0: extra pellets only widen the fan (one pack per salvo); baseProjectiles = 2 salvos as the card recommends (p3 adds a 3rd salvo with chance)."},
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Bullet Hell",
@@ -283,7 +284,9 @@
     "manaCostFormula": { "base": 7, "perLevel": 1 },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 28.6, "perLevel": 12 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 115, "perLevel": 12 },
       "attackRatingPct": { "base": 3.75, "perLevel": 3.75 }
     },
     "bonusSources": [
@@ -302,28 +305,31 @@
       {
         "id": "hellflame_bullets",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += 10%/r; BH multiplies the whole hit (x(1+LSSD) of the full damage)"}], "confidence": "C", "note": "card table p1"},
         "name": "Hellflame Bullets",
         "description": "Increases damage dealt by bullet hell.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "more_bullets",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "n += 1/r; wider fan, one pack per salvo, 0 extra hits (perExtraProjectile 0)"}], "confidence": "C", "note": "card table p2; Druga runda base 2 salvos"},
         "name": "More Bullets!",
         "description": "Increases the amount of projectiles fired by bullet hell.",
         "maxRank": 8,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "slipping_triggerfinger",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Slipping Triggerfinger: chance 4%/r per use of a 3rd salvo (+1 pack, 1 hit on the dummy); expected +chance*1 hit per use"}], "confidence": "C", "note": "card table p3 (FUN_1401ba3c0 increment of skillAmount)", "plannerFix": "planner models it as on_hit proc with of_total_damage 100; the game rolls the extra salvo once per attack (on_attack), adding one hit"},
         "name": "Slipping Triggerfinger",
         "description": "Chance on attack to fire an additional wave of bullets.",
         "maxRank": 5,
@@ -339,17 +345,19 @@
       {
         "id": "steady_gunhold",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating (projEffect[1022] = LTD(V2)*(1+p4.s9%)); accuracy only"}], "confidence": "C", "note": "card table p4"},
         "name": "Steady Gunhold",
         "description": "Increases attack rating when using bullet hell.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "heavy_bullet_impact",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun [51] = 3 s on chance 4%/r per use (B18). It does nothing to DPS on the dummy but enables p10 (stunned multiplier). Knockback [103] = 0 on dummy (em[171])"}], "confidence": "C", "note": "card table p5 + Runda 3 correction (stun vs knockback swapped in old card)", "plannerFix": "planner rolls the stun proc on_hit; the card rolls it per use (on_attack)"},
         "name": "Heavy Bullet Impact",
         "description": "Chance to knock monsters back on hit stunning them.",
         "maxRank": 5,
@@ -362,116 +370,109 @@
       {
         "id": "barrel_maintenance",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile speed +15%/r; hit count unchanged (P = 1, step 17.25/19.5/21.75 px/frame < 32 px)"}], "confidence": "C", "note": "card table p6 + Druga runda rule 18 (P = 1)"},
         "name": "Barrel Maintenance",
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "higher_caliber",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile size +15%/r; no hit change at P = 1 (I: may widen the off-axis window)"}], "confidence": "I", "note": "card table p7 + Druga runda"},
         "name": "Higher Caliber",
         "description": "Increases the size of bullet hell projectiles.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "blasting_gunshot",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 0, "note": "crit damage +22.5%/r (projEffect[1019] = p8.s9); crit chance unchanged"}], "confidence": "C", "note": "card table p8"},
         "name": "Blasting Gunshot",
         "description": "Increases critical strike damage when using bullet hell.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 22.5 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 22.5}
         }
       },
       {
         "id": "swift_rounds",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "reduced movement diminish 15/r; card: not used in the attack script"}], "confidence": "I", "note": "card table p9 (no use found in script)"},
         "name": "Swift Rounds",
         "description": "Decreased movement diminish when using bullet hell.",
         "maxRank": 3,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 15 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 15}
         }
       },
       {
         "id": "abusive_tactics",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "x(1 + 0.20*r) on hits while the dummy is stunned (p5 or p14 stun). Gated on stun; expected value depends on p5 chance (I)"}], "confidence": "C", "note": "card table p10 (projEffect[179], extra dmg stunned 20/r)"},
         "name": "Abusive Tactics",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "bullet_storm",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.76, 2.44, 2.94], "note": "transformation (bulletStorm): 2 salvos x orbit hits per salvo, n = 3 + 3r (p11.s10 = 3/r) = 6/9/12 orbiting pellets. R4 185#1 full kinematics (bh_p11.py: orbit angle 360/n*i absolute, built-in 16 px move, mask 20x8 rotated, life 36 frames, one pack per 360 deg): n = 3/6/9/12/15/18 -> 0.45/0.88/1.22/1.47/1.63/1.70 hits per salvo (~0.15*n at n <= 6, ~0.09*n at n = 18), so 2 x 0.88 / 1.22 / 1.47 per use. Replaces the base 2 hits. The old 0.3*n upper estimate is withdrawn. Range over aim directions 0..4; +-1 frame of life = -+35 %. With p12 (step 12 deg) fewer (n = 12: 1.14 per salvo)."}, {"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += p11.s9% (10/r from planner physical 10/r)"}], "confidence": "I", "note": "R4 185#1 (bh_p11.py, C mechanics / I pixels and orbit centre); card table p11", "plannerFix": "planner counts projectile_count 3/r as extra hits via perExtraProjectile 0 (= 0 hits); the bullet-storm orbit (~0.15*n hits per salvo for n <= 6, plateau ~1.7 per salvo) and the transformation are not modelled"},
         "name": "Bullet Storm",
         "description": "Fire a circle of orbitting bullets traveling forward.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 10, "projectile_count": 3 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 10}
         }
       },
       {
         "id": "nowhere_to_hide",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 2, "note": "n += 2/r and bulletAOE 20%/r (fan step floor(8*(1+bulletAOE))). Base n = 3 is odd and p12 adds even steps, so the centre pellet keeps hitting: 0 change at base. Even n with rank >= 3 (only if p2 makes n even) loses the +-6 deg pair: 0 hits from that salvo (C, rule 14)"}, {"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p12.s9% (25/r)"}], "confidence": "C", "note": "card table p12; Zmiany section (even-n zeroing)"},
         "name": "Nowhere to Hide",
         "description": "Fire additional projectiles in a wider radius.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "projectile_count": 0,
-            "area_of_effect": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 25,
-            "projectile_count": 2,
-            "area_of_effect": 20
-          }
+          "base": {"projectile_count": 0, "area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "area_of_effect": 20, "subtree_damage": 25}
         }
       },
       {
         "id": "demons_hurricane",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.32, 0.384, 0.448], "note": "transformation (Demon's Hurricane): 2 rings of N = n + p13.s11 whirling pellets; PoR4 rule 39: p13.s11 = 1 + r (base field 8 = 1), so N = 3 + 1 + r = 4 + r = 5/6/7. Each ring hits the dummy with ~0.032*N (random ring orientation, pellet within atan(16/160) = 5.7 deg). Total = 2*0.032*N per use. Replaces the controller's 2 hits"}, {"kind": "cast_speed_pct", "base": 35, "perRank": 15, "note": "skill attack speed more = p13.s10% = 35 + 15r (card: cadence x(1 + p13.s10%))"}, {"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += p13.s9% (15/r)"}], "confidence": "I", "note": "PoR4 (b) rule 39 (185 p13: s11 = 1 + r); card table p13 (C for cadence and orientation, I for hit model)", "plannerFix": "planner keeps the controller's 2 hits and adds projectile_count; the whirl transformation (2 random-orientation rings, ~0.032*N per ring) is not modelled"},
         "name": "Demon´s Hurricane",
         "description": "Spin around firing trails of bullets into random directions.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "skill_attack_speed_more": 35,
-            "projectile_count": 1
-          },
-          "perRank": {
-            "physical_skill_damage": 15,
-            "skill_attack_speed_more": 15,
-            "projectile_count": 1
-          }
+          "base": {"skill_attack_speed_more": 35, "projectile_count": 1, "subtree_damage": 0},
+          "perRank": {"skill_attack_speed_more": 15, "projectile_count": 1, "subtree_damage": 15}
         }
       },
       {
         "id": "gunpowder",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 75, "note": "LSSD += p14.s9% (75/r). Stun [105] = 3 s not determined (I), so no stun effect added"}], "confidence": "C", "note": "card table p14"},
         "name": "Gunpowder",
         "description": "Bullets knock monsters back with increased power dealing increased damage and stunning monsters when they collide with terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 75 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 75}
         }
       }
     ]
@@ -497,6 +498,8 @@
   {
     "id": "possessed_bullet",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 2, "perExtraProjectile": 0.0, "confidence": "C", "note": "2 hits per attack: the bullet (1 hit) + one group of m = 8+RSS391+XPR+p2.s9 ghosts (Demon_Slayer_Possessed_Bullet_obj) created by hitboxCollisionPossessedBullet at 10 px from the dummy centre with singleHitPackId = the player's fresh pack (the pack counter is incremented after the loop), so the group hits the dummy exactly once (overlaps the 12 px dummy at frame 2: 21 px from the centre vs 11 px half length); the ghosts carry damage[0] of the bullet = 1.0 main hit. perExtraProjectile = 0: m ghosts share one pack (extra ghosts give no hits; +1 per ghost only with p12). baseProjectiles = 2 as recommended by the card. Ghost phase of frame 1 is I."},
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Possessed Bullet",
@@ -513,7 +516,9 @@
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 10, "perLevel": 6 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 6 },
       "attackRatingPct": { "base": 3.75, "perLevel": 3.75 }
     },
     "bonusSources": [
@@ -532,6 +537,7 @@
       {
         "id": "secondary_haunting",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6], "per": "use", "note": "Secondary Haunting: chance 10%/r per attack of a 2nd shot ([117] = 1): bullet + its own ghost group = 2 hits. Expected +2*chance per use (Zmiany section: +p1.s9%*2 hits)"}], "confidence": "C", "note": "card table p1; Zmiany section (PB p1)", "plannerFix": "planner models it as on_hit proc with of_total_damage 100; game rolls the chance per attack and adds a full second shot (2 hits)"},
         "name": "Secondary Haunting",
         "description": "Chance on attack to fire an additional bullet.",
         "maxRank": 3,
@@ -547,34 +553,37 @@
       {
         "id": "spirits_within_rounds",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "m += 1/r ghosts per group; the group is ONE hit on the dummy, so 0 extra hits unless p12 is ranked (then each ghost returns and hits, see p12)"}], "confidence": "C", "note": "card table p2; Zmiany (PB p2: 0 extra hits)"},
         "name": "Spirits Within Rounds",
         "description": "Increases the amount of projectiles released by the initial hit.",
         "maxRank": 8,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "exorcism",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8%/r. Card: dmg = W*(1 + V1*(1+LSSD)/100): LSSD multiplies only the V1 part (PB scope)"}], "confidence": "C", "note": "card table p3", "plannerFix": "planner stores physical_skill_damage 8/r as a full-hit multiplier; game scales only the V1 part"},
         "name": "Exorcism",
         "description": "Increases damage dealt by possessed bullet.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "hemorrhaging_possession",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 30, "note": "bleeding amount floor(dmg*30r%) ([22]); chance 4%/r rolled per attack, copied to ghosts so both the bullet and the group hit can bleed the dummy"}], "confidence": "C", "note": "card table p4", "plannerFix": "planner rolls the 4%/r bleed proc on_hit; card rolls it per attack ([22] copied to the ghosts)"},
         "name": "Hemorrhaging Possession",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -587,6 +596,7 @@
       {
         "id": "blood_ripples",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "Blood Ripples: chance 4%/r on each hit (bullet and ghost group) to spawn one AoE hit of dmg (ratio 1); expected extra = chance per base hit"}], "confidence": "C", "note": "card table p5 (ProjectileCollision11DemonSlayer L44-54)", "plannerFix": "planner has the on_hit proc chance but no ripple hit (extra object with damage) in its effects"},
         "name": "Blood Ripples",
         "description": "Chance to unleash blood ripples on hit dealing area of effect damage.",
         "maxRank": 5,
@@ -595,28 +605,31 @@
       {
         "id": "bloodlusted_bullet",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "x(1+20r%) extra damage vs bleeding ([177]); only while the dummy bleeds (needs p4). Engine must gate on bleed"}], "confidence": "C", "note": "card table p6; planner extra_damage_bleeding 20/r"},
         "name": "Bloodlusted Bullet",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 20 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 20}
         }
       },
       {
         "id": "longlasting_barrel",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "bullet speed [1085]; the ghosts read self.projEffect[1085] where self is the hit ENEMY (Enemy_Parent Create_0 L138: projEffect = array_create(1100, 0)), so the ghosts always move 11 px/frame and the group always overlaps the dummy in frame 2: no effect on the ghost group (C, R4 187#0)"}], "confidence": "C", "note": "card table p7; R4 187#0 (self = hit enemy, 0x1450c3333, 0x143d4742c)"},
         "name": "Longlasting Barrel",
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "the_demon_within",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "note": "The Demon Within: chance 4%/r per attack of m += 3/r (expected ghost count = chance*3*r). 0 hits without p12; with p12 each extra ghost returns and hits"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner rolls the 4%/r proc on_hit; card rolls per attack; expected ghost count is 0 extra hits without p12"},
         "name": "The Demon Within",
         "description": "Chance to unleash additional bullets after initial hit.",
         "maxRank": 5,
@@ -632,12 +645,13 @@
       {
         "id": "stop_resisting",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "base": 0, "perRank": 15, "note": "physical break +15%/r (p9.s9 + RSS234) on every attack (100%), 5 s, buff 7; uptime on dummy not quantified (I)"}], "confidence": "C", "note": "card table p9 (100%); planner armor_break 15/r chance 100 matches"},
         "name": "Stop Resisting",
         "description": "Inflicts armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 15 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -650,56 +664,61 @@
       {
         "id": "leeching_demon",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "extra dmg vs bosses ([121] = 17.5%/r): 0 on an ordinary training dummy, applies only to boss-type targets"}], "confidence": "C", "note": "card table p10"},
         "name": "Leeching Demon",
         "description": "Increases possessed bullet damage to bosses.",
         "maxRank": 2,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 17.5 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 17.5}
         }
       },
       {
         "id": "ghostwhirl",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += 25%/r; PB scope: V1 part only"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "note": "Ghostwhirl: ghosts share the group pack, so 0 extra hits (I); ranking p11 keeps destroyTimer reset every frame, so Alarm_10 (p12 return) never fires: p12 contributions are lost when p11 > 0"}], "confidence": "I", "note": "card table p11 (C for mechanism, I for hit count)", "plannerFix": "planner lacks the p11 -> p12 exclusion (Alarm_10 disabled) and treats LSSD as a full-hit multiplier, while the game scales only the V1 part"},
         "name": "Ghostwhirl",
         "description": "Projectiles now swirl around the target on a small radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "physical_skill_damage": 25, "skill_range": 20 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 20, "subtree_damage": 25}
         }
       },
       {
         "id": "seeking_host",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5.6, 11.2, 16.8], "per": "use", "note": "Seeking Host: each of m ghosts (m = 8 at p2 = 0; +1 per p2 rank) returns and hits once with damage floor(dmg*70%*r); expected extra = m*0.7*r hits per use (uses of ghost hits; procs p5/p13/p14 also fire on them). Assumes m = 8 (p2 rank 0)"}], "confidence": "C", "note": "card table p12; Zmiany (PB p12); faza kontroli I", "plannerFix": "planner models of_total_damage 70/r as a one-off +70%*r of total damage; game adds m return hits each at 70%*r of D (m = 8 + p2 + ...)"},
         "name": "Seeking Host",
         "description": "Possessed bullets now return to the target after a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 70 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 70}
         }
       },
       {
         "id": "haunting",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.4, 1.8, 2.2], "per": "hit", "note": "Haunting: on every hit (bullet and ghost group, no chance) Demons_Heart explosion: 1 hit with damage floor(dmg*(1+40%*r)) 0.75 s later; slow [53] = 0 on dummy"}], "confidence": "C", "note": "card table p13 (L311-314, Demons_Heart_obj_Destroy_0)", "plannerFix": "planner models physical_skill_damage 40/r as a multiplier of the bullet; game adds an extra explosion hit of dmg*(1+0.4r) on every base hit"},
         "name": "Haunting",
         "description": "Bullets now haunt monsters, slowing them and exploding after a short duration, dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 40, "area_of_effect": 20 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 40, "area_of_effect": 20}
         }
       },
       {
         "id": "malignance",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 2, "note": "m += p14.s10 (2/r); 0 hits without p12"}, {"kind": "extra_hits", "byRank": [1.3, 1.6, 1.9], "per": "hit", "note": "Malignance: on every hit (bullet and ghost group) one Ghost_obj homing to the target with damage dmg*(1+30%*r): expected +1 hit with ratio (1+0.3r) per base hit"}], "confidence": "C", "note": "card table p14 (Ghost_obj does not copy [630], no recursion)", "plannerFix": "planner has physical_skill_damage 30/r and projectile_count 2/r, but no extra homing ghost hit per base hit"},
         "name": "Malignance",
         "description": "Send multiple homing ghosts towards the target dealing damage to monsters on their path.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 30, "projectile_count": 2 }
+          "base": {"physical_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"physical_skill_damage": 30, "projectile_count": 2}
         }
       }
     ]
@@ -707,6 +726,8 @@
   {
     "id": "shredder_trap",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 10.0, "baseProjectiles": 1, "perExtraProjectile": 6.3, "confidence": "I", "note": "Per use = one Shredder_Trap_obj (N = 1+XPR traps; tick 0.4 s = 24 frames, destroyTimer = abilityDuration 4 s = 240 frames counted from activation in frame 3, not the Create value 1 s). The lobbed trap is over the dummy ~6 frames before landing, so the dummy is under it essentially for the whole life: tools/tick_hits.py 240 24 = 10 hits (clears at 24, 49, ..., 224 after activation; rule 20 correction of the old 11). Each hit = full hit (up to ~4 traps stand at once with cooldown 1 s, each with its own map; per use = 1 trap = 10 hits). perExtraProjectile = 6.3: extra traps fan out 12 deg apart (aim + 12*(i-(N-1)/2)); N_hit with the cursor on the visible dummy centre (x, y-24), the trap object 6 px above the cursor (Talents L452/453, offset 30 px, Resztki E), mask disc r = 51*0.8 + 12 = 52.8 px, averaged over 180 aim directions (st40.py: fan 12 deg, landing 7.4 % short of the point, rule 40, I): N = 1..7 -> 1 / 2 / 2.3 / 2.9 / 2.9 / 2.9 / 2.9 traps reach the dummy; slope over N = 1..4 = 0.633 trap per extra x 10 hits = 6.3 (was 6.0 from R3 1/2/2.3/2.8). Variant cursor at (x, y): 1 / 2 / 3.0 / 3.4 / 3.0 / 3.4 / 3.0 (offset 6 px). Plateau 2-3 traps. Flight timing and mask radius are I."},
     "classId": "demon_slayer",
     "name": "Shredder Trap",
     "kind": "active",
@@ -725,7 +746,9 @@
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 72.5, "perLevel": 22.5 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 150, "perLevel": 22.5 },
       "attackRatingPct": { "base": 5, "perLevel": 5 }
     },
     "bonusSources": [
@@ -744,17 +767,19 @@
       {
         "id": "sharp_edged_shredders",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8%/r; ST multiplies the whole hit (x(1+LSSD))"}], "confidence": "C", "note": "card table p1"},
         "name": "Sharp Edged Shredders",
         "description": "Increases the damage dealt by shredder trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "blood_hungry_blades",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "on hit with chance 3%/r the trap grows by 1%/r of scale ([611]); no dummy hit change for a single trap (I)"}], "confidence": "C", "note": "card table p2; planner proc on_hit 3/r + projectile_size 1/r matches"},
         "name": "Blood Hungry Blades",
         "description": "Chance for shredder trap to grow larger on hit.",
         "maxRank": 5,
@@ -770,6 +795,7 @@
       {
         "id": "bits_and_pieces",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.144, 0.336, 0.576, 0.864, 1.2], "per": "hit", "note": "Bits and Pieces: on each trap hit, chance 4%/r (p3.s10) spawns 3 fragments with damage floor(dmg*(1+20r%)) at the dummy centre (one hit each). Expected extra hits per base hit = 3*c*m, c = 0.04r, m = 1+0.2r"}], "confidence": "C", "note": "card table p3 (rule 15)", "plannerFix": "planner has the proc (4/r) and fragment damage 20/r but no +3 fragment hits per proc"},
         "name": "Bits and Pieces",
         "description": "Chance to unleash smaller flying shredders on hit dealing additional damage.",
         "maxRank": 5,
@@ -785,12 +811,13 @@
       {
         "id": "ripping_shredderblade",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 40, "note": "bleeding amount floor(dmg*40r%) on every hit of the trap, buff 3; applied with chance 4%/r ROLLED PER THROW (not per hit)"}], "confidence": "C", "note": "card table p4 ([22] = dmg*p4.s9%)", "plannerFix": "planner rolls the 4%/r bleed proc on_hit; game rolls it once per throw and then bleeds every hit of that trap"},
         "name": "Ripping Shredderblade",
         "description": "Inflicts bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 40 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -803,45 +830,49 @@
       {
         "id": "slayers_adrenaline",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish 10/r; no read in the throw script (card)"}], "confidence": "I", "note": "card table p5 (brak odczytu)"},
         "name": "Slayer´s Adrenaline",
         "description": "Decreases movement diminish when using shredder trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "less_is_more",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost reduction 8/r; no dummy DPS"}], "confidence": "I", "note": "card table p6 (LoadManaCost)"},
         "name": "Less is More",
         "description": "Decreases mana cost when using shredder trap.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 8 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 8}
         }
       },
       {
         "id": "forging_hands",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 3, "note": "crit chance +3%/r (attack crit chance [1018]); crit damage +20%/r ([1019]) also from p7"}], "confidence": "C", "note": "card table p7; planner crit_chance 3/r and crit_damage 20/r match"},
         "name": "Forging Hands",
         "description": "Gain increased critical strike chance and critical chance damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 3, "crit_damage": 20}
         }
       },
       {
         "id": "cutting_power",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "base": 0, "perRank": 20, "note": "physical break +20%/r (p8.s9 + RSS234), 5 s, buff 7; applied with chance 4%/r ROLLED PER THROW; uptime on dummy not quantified (I)"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner rolls the 4%/r break on_hit; game rolls it per throw"},
         "name": "Cutting Power",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 20 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -854,67 +885,73 @@
       {
         "id": "slay_the_wounded",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "x(1+15r%) extra damage vs bleeding; only while the dummy bleeds (needs p4). Engine must gate on bleed"}], "confidence": "C", "note": "card table p9 ([177]); planner extra_damage_bleeding 15/r"},
         "name": "Slay the Wounded",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "bigger_and_sharper_blades",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "maxScale x(1+15r%): trap area only; no dummy effect for a single trap"}], "confidence": "C", "note": "card table p10 (area); planner projectile_size 15/r"},
         "name": "Bigger and Sharper Blades",
         "description": "Increases the size of shredders.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "comeback_with_a_cut",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [5.85, 6.7, 7.55], "note": "Comeback with a Cut (R4 186#3): Alarm_10 (0x147a6db80) at ~frame 121 after activation (destroyTimer set to abilityDuration*60*0.5 = 120): comeBack = 1, deltaSpeed 5, damage[0] = floor(damage[0]*comeBackCut), comeBackCut = p11.s9 % = 85 %*r (value I, from the planner, not read from the exe). Map clears at frames 24, 49, 74, 99 and 124: 5 hits at dmg + 1 hit of floor(dmg*0.85r) at frame 124 (the trap moved <= 15 px from the dummy centre, reach ~48 px); afterwards the distance is > 48 px. Main-hit equivalents: 5 + 0.85r = 5.85 / 6.7 / 7.55 replacing the base 10, i.e. p11 lowers the trap's hits by 41 / 33 / 25 %. The old separate 'other 85 %' return-damage effect is folded in here."}], "confidence": "I", "note": "R4 186#3 (tick_hits.py + st_p11.py); C formula and order, I abilityDuration = 4 from the card and comeBackCut 85 %/r from the planner", "plannerFix": "planner has of_total_damage 85/r (matches comeBackCut) but no 2 s ground life + return trip: the hit count is the base 10 instead of 5 hits at dmg + 1 hit at 0.85r*dmg (5.85/6.7/7.55 equivalents)"},
         "name": "Comeback with a Cut",
         "description": "Shredders now home back to you after a short period dealing damage on the way.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 85 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 85}
         }
       },
       {
         "id": "woodshop",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [11, 11, 11], "note": "Woodshop transformation: N = 1 + 2r + XPR = 3/5/7 traps (smaller: maxScale 0.36, reach 51*0.36 + 12 = 30.4 px). With the cursor on the visible dummy centre (x, y-24), trap object 6 px above the cursor (offset 30 px) N_hit = 0.5 / 0.9 / 1.1 / 1.2 / 1.1 / 1.2 / 1.1 for N = 1..7 (Resztki E, st40.py, I): N = 3/5/7 -> 1.1 traps x ~10 hits = 11 (same 240-frame life and 24-frame tick as the base trap). Variant cursor at (x, y): p12 1.0 / 2.0 / 1.5 / 2.0 / 1.5 / 2.0 / 1.5 -> 15 / 15 / 15. Replaces the old 1.5-2 traps (range 10-20)."}, {"kind": "damage_mult", "byRank": [0.5, 1.0, 1.5], "note": "per-trap damage = W*(1+V1%)*p12.s9%*(1+LSSD) = 50%/r of the full trap hit"}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "cooldown +2 s (trap cooldown 1 s -> 3 s)"}], "confidence": "I", "note": "card table p12 + Resztki (B/E) (N_hit at R = 30.4: 0.5/0.9/1.1/1.2/1.1/1.2/1.1; PoR4 had 1.4/1.3); C for damage/cooldown, I for geometry", "plannerFix": "planner has of_total_damage 50/r and projectile_count 2/r but no +2 s cooldown and no reach limit (only 1-2 of the traps hit the dummy)"},
         "name": "Woodshop",
         "description": "Throw multiple smaller shredders at once. Shredder trap now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 50, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0, "cooldown_added": 2},
+          "perRank": {"of_total_damage": 50, "projectile_count": 2, "cooldown_added": 0}
         }
       },
       {
         "id": "circular_cutting",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "Circular Cutting transformation: 2 + r + XPR orbiting blades (orbit 64-104 px, maxScale 0.4), each ~5 hits per cast. Orbit does not reach a dummy at 160 px (116 px max with dummy radius), so 0 hits at 160 px; if the dummy were 64-104 px away it would be (2+r)*5 hits (C/I)"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "cooldown +4 s (1 s -> 5 s)"}, {"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += p13.s10% (15/r)"}], "confidence": "I", "note": "card table p13 (C/I)", "plannerFix": "planner counts projectile_count base 1 + 1/r (not 2 + r blades), gives no 0-hit orbit transformation at 160 px and no +4 s cooldown"},
         "name": "Circular Cutting",
         "description": "Unleash multiple orbiting shredders around you.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 1, "physical_skill_damage": 0 },
-          "perRank": { "projectile_count": 1, "physical_skill_damage": 15 }
+          "base": {"projectile_count": 1, "subtree_damage": 0, "cooldown_added": 4},
+          "perRank": {"projectile_count": 1, "subtree_damage": 15, "cooldown_added": 0}
         }
       },
       {
         "id": "gigashredder",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [9, 9, 9], "note": "Gigashredder transformation: after landing the trap moves 3 px/frame to the nearest enemy within 260 px and ticks ~9 times per 9 s cast; no overlapping traps"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "cooldown +8 s (1 s -> 9 s)"}, {"kind": "damage_pct", "base": 0, "perRank": 125, "note": "LSSD += p14.s9% (125/r); ST whole-hit scaling"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner has no cooldown +8 s and no 9 s cycle; the damage term matches (physical 125/r)"},
         "name": "Gigashredder",
         "description": "Unleash a big shredder that slowly homes towards the closest monster on range. You can now only spawn one shredder.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 125, "area_of_effect": 45 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0, "cooldown_added": 8},
+          "perRank": {"area_of_effect": 45, "subtree_damage": 125, "cooldown_added": 0}
         }
       }
     ]
@@ -938,6 +975,7 @@
     "effectDuration": 25,
     "movementDuringUse": 85,
     "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 60 },
     "passiveStats": {
       "base": { "increased_attack_speed": 20, "attack_damage": 20 },
       "perRank": { "increased_attack_speed": 1, "attack_damage": 3 }
@@ -946,6 +984,8 @@
   {
     "id": "absolute_mayhem",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 1.0, "confidence": "C", "note": "Controller fires skillAmount = 3+RSS391+XPR+p1.s9 = 3 shots 0.25 s apart; each shot throws projectileTrails = 1+XPR Demon_Slayer_Absolute_Mayhem_obj sharing one singleHitPackId (L25, pack++ after the shot): 1 hit per shot on the dummy (14 px/frame vs 71 px mask, no skipping) = 3 full hits per use (series lasts 0.75 s < cooldown 8 s). perExtraProjectile = 1.0: each extra projectile (RSS391/XPR) adds one shot; the extra trails per shot add 0 (same pack). baseProjectiles = skillAmount 3. p7 explosion/fragments, p11 shards, p13 vacuum are subskills."},
     "weaponRequirement": "ranged",
     "classId": "demon_slayer",
     "name": "Absolute Mayhem",
@@ -963,7 +1003,9 @@
     "manaCostFormula": { "base": 8, "perLevel": 1 },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 42.5, "perLevel": 35 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 100, "perLevel": 35 },
       "attackRatingPct": { "base": 5, "perLevel": 5 }
     },
     "bonusSources": [
@@ -982,50 +1024,55 @@
       {
         "id": "mayhem_up",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "skillAmount += 1/r: one more shot (1 hit each); engine converts via perExtraProjectile = 1.0"}], "confidence": "C", "note": "card table p1"},
         "name": "Mayhem Up!",
         "description": "Increases the amount of bullets fired with absolute mayhem.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "absolute_carnage",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8%/r; AM multiplies the whole hit"}], "confidence": "C", "note": "card table p2; planner physical 8/r"},
         "name": "Absolute Carnage",
         "description": "Increases damage dealt by absolute mayhem.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "colossal_barrel",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "projectile speed +15%/r (14*(1+p3.s9%)); no hit change, pocket 71 px mask never skipped"}], "confidence": "C", "note": "card table p3"},
         "name": "Colossal Barrel",
         "description": "Increases the projectile speed of absolute mayhem bullets.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "stocked_capacity",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "base": 0, "perRank": -8, "note": "cooldown reduction 8%/r (GetTalentCooldown case 41): period = 8 s * (1 - 0.08r); max -40% at r=5"}], "confidence": "C", "note": "card table p4; planner cooldown_reduction_pct 8/r"},
         "name": "Stocked Capacity",
         "description": "Decreases the cooldown of absolute mayhem.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 8 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 8}
         }
       },
       {
         "id": "hypothermic_rounds",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "hypothermic rounds: the roll irandom(zrm) < p5.s9 is made PER PROJECTILE (not per shot): on success the projectile gets projEffect[47] = 180 frames (chill B21, 3 s), otherwise [47] = 0 (Controller_Step_0 0x147a2e66e-0x147a2ef99, R4 190#0). Chance q = p5.s9 % = 8 %/r. Chill does no DPS by itself, it enables p10 on the dummy (see p10 for the uptime formula)"}], "confidence": "C", "note": "R4 190#0 (per-projectile roll; the earlier note 'per shot' is superseded); card table p5"},
         "name": "Hypothermic Rounds",
         "description": "Chance to inflict freeze on hit.",
         "maxRank": 5,
@@ -1038,6 +1085,7 @@
       {
         "id": "bonehit",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.45, 1.8, 4.05, 7.2, 11.25], "note": "expected LSSD: chance 3%/r per shot x 15%/r bonus when it procs (LSSD += p6.s9%, knockback [103] = 0 on dummy). Expected value, E[1+LSSD] = 1 + E[LSSD]"}], "confidence": "C", "note": "card table p6 (chance per roll = per shot)"},
         "name": "Bonehit",
         "description": "Chance to knock monsters back dealing increased damage.",
         "maxRank": 5,
@@ -1053,6 +1101,7 @@
       {
         "id": "explosive_empowered_rounds",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "per": "hit", "note": "Explosive Empowered Rounds: chance 3%/r per hit spawns an explosion (dmg of the shot) + 3 fragments of damage[0] = +4 hits per proc, expected 4*0.03r per hit"}], "confidence": "C", "note": "card table p7; rule 15 (ProjectileCollision11DemonSlayer L119-148)", "plannerFix": "planner has on_hit proc chance 3/r with no effects; the +4 hits per proc (explosion + 3 fragments) are not modelled"},
         "name": "Explosive Empowered Rounds",
         "description": "Chance for bullets to explode and fragment on hit unleashing shrapnel around the target.",
         "maxRank": 5,
@@ -1061,86 +1110,85 @@
       {
         "id": "fear_the_gun",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 0, "note": "crit damage +15%/r ([1019] = p8.s9); crit chance unchanged"}], "confidence": "C", "note": "card table p8; planner crit_damage 15/r"},
         "name": "Fear the Gun",
         "description": "Increases critical strike damage dealt by absolute mayhem.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 15 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 15}
         }
       },
       {
         "id": "bicep_curls",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish 10/r; no read in the script"}], "confidence": "I", "note": "card table p9 (brak odczytu)"},
         "name": "Bicep Curls",
         "description": "Decreases movement diminish when using absolute mayhem.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "frostbiting_bullets",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0608, 1.1216, 1.1824, 1.2432, 1.304], "requires": "hypothermic_rounds", "note": "x(1+10r%) extra damage vs frozen ([178]) only while the dummy is chilled by p5 (B21, 3 s, refreshed; cooldown 8 s > 3 s so no carry-over between series). R4 190#0: ProjectileCollision (buffs) runs before CalculateEndDamage, so the chilling hit already profits. Average multiplier over a series of S shots 0.25 s apart: 1 + p10 * (1/S) * sum_{j=1..S} (1 - (1-q)^j), q = p5.s9/100 = 0.08*r5. byRank values are at the REFERENCE p5 r5 (q = 0.4) and S = 3 (no p1/items): (1/3)*(0.4 + 0.64 + 0.784) = 0.608 -> 1 + 0.1*r*0.608 (r5 = +30 % instead of +50 %). For other p5 ranks / S the engine must evaluate the formula (p5 r1: q = 0.08 -> factor 0.152 at S = 3). I: which projectile of a multi-track shot carries the chill."}], "confidence": "C", "note": "R4 190#0 (formula C, chill order I); card table p10", "plannerFix": "planner extra_damage_frozen 10/r is a flat gate; in game the uptime in a series is 1/S*sum(1-(1-q)^j) with q = 0.08*r(p5) (no uptime at p5 r0)"},
         "name": "Frostbiting Bullets",
         "description": "Increases damage to freezing targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 10 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 10}
         }
       },
       {
         "id": "impact_shrapnel",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "hit", "note": "Impact Shrapnel: on every shot hit, 2r fragments (p11.s9 = 2/r) of damage floor(0.5*dmg) at the dummy centre: expected +2r*0.5 = +r hits per base hit. Fragments copy [613] so p7 chain (4 hits at 3%/r each) adds ~0.24 r^2 more when p7 is ranked (I, not included)"}, {"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD += p11.s10% (35/r)"}], "confidence": "C", "note": "card table p11 (rule 15)", "plannerFix": "planner counts projectile_count 2/r as full hits (perExtraProjectile 1.0); the game fragments are 2r hits at 0.5 damage each, i.e. +r hits per base hit"},
         "name": "Impact Shrapnel",
         "description": "Bullets now break into fragments traveling in an arc behind the target dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "physical_skill_damage": 0 },
-          "perRank": { "projectile_count": 2, "physical_skill_damage": 35 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 35}
         }
       },
       {
         "id": "line_of_fire",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += p12.s10% (20/r); extra trails (projectileTrails += 1/r) share the shot's pack, so 0 extra hits"}], "confidence": "C", "note": "card table p12; planner physical 20/r, trail_count gives no hits"},
         "name": "Line of Fire",
         "description": "Fire additional trail of bullets in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "trail_count": 0, "physical_skill_damage": 0 },
-          "perRank": { "trail_count": 1, "physical_skill_damage": 20 }
+          "base": {"trail_count": 0, "subtree_damage": 0},
+          "perRank": {"trail_count": 1, "subtree_damage": 20}
         }
       },
       {
         "id": "explosion_vacuum",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2], "note": "Explosion Vacuum transformation: skillAmount = 1 shot (1 hit) + 1 explosion after the vacuum (1.15 s), explosion dmg = shot dmg. Vacuum itself does not hit"}, {"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD += p13.s9% (50/r)"}], "confidence": "C", "note": "card table p13 (rule 15)", "plannerFix": "planner models p13 as physical 50 + skill_range 25 + area 20 with 3 shots; the game uses 1 shot + 1 explosion (2 hits per use)"},
         "name": "Explosion Vacuum",
         "description": "Fire a single bullet which vacuums all nearby monsters and unleashes a big explosion.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "skill_range": 0,
-            "area_of_effect": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 50,
-            "skill_range": 25,
-            "area_of_effect": 20
-          }
+          "base": {"skill_range": 0, "area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "area_of_effect": 20, "subtree_damage": 50}
         }
       },
       {
         "id": "maniac_mayhem",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6, 9, 12], "note": "Maniac Mayhem transformation: skillAmount = floor(n*(1+p14.s9%)) = 3*(1+r) at n = 3 (100%/r), interval 0.125 s, projectileSize -0.5"}, {"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += p14.s10% (40/r)"}], "confidence": "C", "note": "card table p14; planner of_total_damage 100/r equals x(1+r) hits at n = 3 (exact)"},
         "name": "Maniac Mayhem",
         "description": "The Demonslayer changes his weapon into a demonic minigun which uncontrollably fires bullets for a short duration before breaking.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "physical_skill_damage": 0 },
-          "perRank": { "of_total_damage": 100, "physical_skill_damage": 40 }
+          "base": {"of_total_damage": 0, "subtree_damage": 0},
+          "perRank": {"of_total_damage": 100, "subtree_damage": 40}
         }
       }
     ]
@@ -1148,6 +1196,9 @@
   {
     "id": "fast_slices",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.67, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Combo averaged over the 3-use cycle (playerEffect[83]): use 1 = charge + player strike via attackClasses (1 hit), use 2 = charge + strike + 2x Fast_Slices_02_obj (3 hits), use 3 = leap + landing Fast_Slices_03_obj ring (1 hit) = 5 hits per 3 uses = 1.67 per use, all with the same damage[0] (R3 191#2). Only 4/3 = 1.33 if the use-1 strike falls outside weapon reach (after the leap the player lands ~100 px behind the dummy and the 64 px charge stops ~40 px short; weapon reach playerProj[3] not determined, I). No extra projectiles. R4 191#3: in the steady state uses 0/1/2 start ~98/34/30 px from the dummy (first cycle 160/96/32); the base hit count is unchanged, only p11/p13 depend on it."},
+    "usePeriod": {"kind": "leap", "extraFrames": 45.33, "note": "Averaged over the 3-use combo cycle (Resztki C + PoR4 (e) + R4 191#0): [142] is written by TalentsDemonSlayer (L~744, mov r8d,0x8e @0x1464e4241) and the animation lock [204] stays until the end of the top sequence (skillsCharge never writes [204]; skillsLeap clears it only for tid 428), so the charges do not end the lock. S = 1*(1+acc) (TalentUseSetSpeed base = 1, NOT the player APS), t_wyw = floor(24/S) + 1 = 25 frames at S = 1. Stages 0 and 1 (charge + strike): ceil(72/S) + 1 = 73 frames each; stage 2 (leap, Jump_*/Land_*): t_wyw + 19 flight + 20 Land_* + 1 = 65 frames. Cycle 73 + 73 + 65 = 211 frames (3.52 s) for 5 hits = ~1.42 hits/s. extraFrames = 211/3 - 25 = 45.33 per use at S = 1 (engine adds the 25 trigger frames); general S: extraFrames = (2*(ceil(72/S)+1) + 40 - 2*t_wyw)/3 (S = 2: 29.3). The 123-frame lower bound (lock ended by the charge) was rejected in PoR4. I: playerSequences (not decompilable) might swap the top sequence during a charge."},
     "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Fast Slices",
@@ -1164,7 +1215,9 @@
     "manaCostFormula": { "base": 3.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 100, "perLevel": 25 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 175, "perLevel": 25 },
       "attackRatingPct": { "base": 4.25, "perLevel": 4.25 }
     },
     "bonusSources": [
@@ -1183,39 +1236,43 @@
       {
         "id": "wide_slice",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "[71] = 1 + p1.s9%: slash/ring radius (area) only; no dummy hit change at 160 px"}], "confidence": "C", "note": "card table p1; planner area_of_effect 15/r"},
         "name": "Wide Slice",
         "description": "Increases the area of effect radius of fast slices.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "slashing_strike",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += 10%/r. FS scope: dmg = W*(1+V1*(1+LSSD)/100), LSSD multiplies only the V1 part"}], "confidence": "C", "note": "card table p2", "plannerFix": "planner stores physical_skill_damage 10/r as a full-hit multiplier; game scales only the V1 part (weaponBonusScaling)"},
         "name": "Slashing Strike",
         "description": "Increases damage dealt by fast slices.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "expert_slayer",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating +10%/r ([1022]); accuracy only"}, {"kind": "crit", "base": 0, "perRank": 4, "note": "crit chance +4%/r ([1018] = p3.s10); crit damage unchanged"}], "confidence": "C", "note": "card table p3; planner attack_rating 10/r and crit_chance 4/r match"},
         "name": "Expert Slayer",
         "description": "Increases attack rating when using fast slices.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0, "crit_chance": 0 },
-          "perRank": { "attack_rating_pct": 10, "crit_chance": 4 }
+          "base": {"attack_rating_pct": 0, "crit_chance": 0},
+          "perRank": {"attack_rating_pct": 10, "crit_chance": 4}
         }
       },
       {
         "id": "demons_heart",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.016, 0.064, 0.144, 0.256, 0.4], "per": "hit", "note": "Demon's Heart: chance 4%/r per hit x explosion damage floor(dmg*40%*r) = 0.4r ratio, 1 hit 0.75 s later; expected 0.04r*0.4r per hit"}], "confidence": "C", "note": "card table p4 (ProjectileCollision11DemonSlayer L167-176)"},
         "name": "Demon's Heart",
         "description": "Chance to heat target souls causing them to explode after a brief moment dealing area of effect damage.",
         "maxRank": 5,
@@ -1231,6 +1288,7 @@
       {
         "id": "ferocious_slice",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0133, 0.0267, 0.04, 0.0533, 0.0667], "per": "use", "note": "Ferocious Slice: chance 4%/r on the stage-3 use only (1 use in 3), sets buff 47 = dmg*40%*r and lifts the target; assumes one landing hit of full D (I); expected 0.04r/3 per use. The buff's own damage and knock-up not quantified (I)"}], "confidence": "I", "note": "card table p5; Runda 3 rule 22 (buff 47 on the dummy)", "plannerFix": "planner rolls on_hit with of_total 40/r every hit; game rolls only on the stage-3 use and works via buff 47 and a landing hit"},
         "name": "Ferocious Slice",
         "description": "Chance to knock monsters airborne causing them to deal area of effect damage upon landing on the third hit.",
         "maxRank": 5,
@@ -1246,12 +1304,13 @@
       {
         "id": "burning_blade",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 30, "note": "burning [18] = dmg*30%*r; chance 4%/r rolled PER USE (not per hit); tick formula reports/dot_debuffs.md"}], "confidence": "C", "note": "card table p6", "plannerFix": "planner rolls the burn proc on_hit; game rolls it per use"},
         "name": "Burning Blade",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 30 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1264,56 +1323,61 @@
       {
         "id": "molten_steel",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "x(1+20%*r) extra damage vs burning ([180]); only while the dummy burns (needs p6 or p11)"}], "confidence": "C", "note": "card table p7; planner extra_damage_burning 20/r"},
         "name": "Molten Steel",
         "description": "Increases damage to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 20 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 20}
         }
       },
       {
         "id": "slayers_intellect",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana only; no read in script"}], "confidence": "I", "note": "card table p8 (brak odczytu)"},
         "name": "Slayer's Intellect",
         "description": "Decreases mana cost when using fast slices.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 8 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 8}
         }
       },
       {
         "id": "swift_deadstrike",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 0, "note": "crit damage +22.5%/r ([1019] = p9.s9); crit chance unchanged"}], "confidence": "C", "note": "card table p9; planner crit_damage 22.5/r"},
         "name": "Swift Deadstrike",
         "description": "Increases critical strike damage when using fast slices.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 22.5 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 22.5}
         }
       },
       {
         "id": "demon_slaying",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute threshold [140] = 1.25%/r: dummy never dies, 0 on the dummy (I)"}], "confidence": "I", "note": "card table p10"},
         "name": "Demon Slaying",
         "description": "Execute low life monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1.25 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1.25}
         }
       },
       {
         "id": "flaming_blades",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 75, "note": "burning [18] = dmg*75%*r on the controller (independent of the wave), applied on the attack"}, {"kind": "extra_hits", "byRank": [0.4667, 0.9333, 1.4], "per": "use", "note": "Flaming Blades wave (4 px/frame, singleHit, damage = dmg*70%*r, reach ~141 px from the player, wave created only at the charge stages at the player's position). R4 191#3 steady state (I): use 0 (~98 px) and use 1 (~34 px) hit, stage 2 (leap) creates no wave: +2 hits per 3-use cycle at ratio 0.7r = 2/3 * 0.7r = 0.4667r extra hits (main-hit equivalents) per use; first cycle only +1 per cycle (distances 160/96/32 px), 0 at constant 160 px. Replaces the old 0 hits."}], "confidence": "I", "note": "R4 191#3 (steady-state distances I, mechanism C); PoR4 (d) wave at the player position without offset", "plannerFix": "planner counts the wave's of_total 70/r as always-on; the game wave reaches ~141 px and hits only on the two charge uses of a cycle in the steady state (+2 hits per 3 uses at 0.7r)"},
         "name": "Flaming Blades",
         "description": "Every slice additionally unleashes a wave of fire inflicting burning for a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "of_total_damage": 0 },
-          "perRank": { "increased_burning_damage": 75, "of_total_damage": 70 }
+          "base": {"increased_burning_damage": 0, "of_total_damage": 0},
+          "perRank": {"increased_burning_damage": 75, "of_total_damage": 70}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1326,34 +1390,37 @@
       {
         "id": "detonation_slice",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.433, 0.533, 0.633], "per": "use", "note": "Detonation Slice: stage-3 use (1 in 3) adds one explosion of dmg*(1+30%*r) (p12.s9); expected (1+0.3r)/3 per use"}, {"kind": "utility", "note": "area (detonation radius 25%/r)"}], "confidence": "C", "note": "card table p12 (L259-271)", "plannerFix": "planner models physical 30/r as a full-hit multiplier on every use; the game adds one explosion of dmg*(1+0.3r) every third use"},
         "name": "Detonation Slice",
         "description": "Your third attack now causes monsters to unleash an explosion dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 30, "area_of_effect": 25 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 30, "area_of_effect": 25}
         }
       },
       {
         "id": "shadow_daggers",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.0, 3.6667, 3.6667], "per": "use", "note": "Shadow Daggers: N = 3 + 2r = 5/7/9 daggers (p13.s10), damage = dmg, start 8 px from the player along the dagger direction (L820, 8.0f), fan 8 deg for stages 0/1, ring 360/N from the target at stage 2. R4 191#3 steady state (I): use 0 (~98 px) -> 3 daggers (0, +-8 deg; +-16 deg is 27 px > 16), use 1 (~34 px) -> min(N, 7) (theta <= 28 deg), use 2 (ring from the target) -> 1: 3 + min(N,7) + 1 = 9 / 11 / 11 hits per cycle = 3.0 / 3.667 / 3.667 per use (first cycle: 1 per use at 160 px, i.e. 1.0). Daggers rotate 18 deg/frame so the lateral reach 4-9.4 px makes 16 px the lower bound (I)."}, {"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += p13.s9% (40/r); FS scope: V1 part only"}], "confidence": "I", "note": "R4 191#3 + PoR4 (d) (asm 0x1464e63df, 0x1464e65cc, L820); C for angles, I for positions after landing/contact", "plannerFix": "planner counts projectile_count 3+2r as hits via perExtraProjectile 0 (no hits); the game gives 3 + min(N,7) + 1 dagger hits per 3-use cycle in the steady state (9/11/11)"},
         "name": "Shadow Daggers",
         "description": "Throw multiple piercing daggers with each slash.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 3 },
-          "perRank": { "physical_skill_damage": 40, "projectile_count": 2 }
+          "base": {"projectile_count": 3, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 40}
         }
       },
       {
         "id": "high_strike",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.333, 0.667, 1.0], "per": "use", "note": "High Strike: stage 3 (1 use in 3) sets buff 47 = dmg*100%*r on the lifted target, acting as one extra hit of ratio r (assumed, I); expected r/3 per use. Works on the dummy (rule 22)"}], "confidence": "I", "note": "card table p14 (R3, I for hit form)", "plannerFix": "planner has of_total_damage on every use; game ties it to the stage-3 use via buff 47 (once per 3 uses)"},
         "name": "High Strike",
         "description": "Your third attack sends enemies high in the air causing them to deal area of effect damage upon landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 100 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 100}
         }
       }
     ]
@@ -1380,6 +1447,8 @@
   {
     "id": "demons_calling",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Demons_Calling_obj (pentagram, singleHit, deadlyFrames 0.25 s, precise mask 128x128 x 1.75 -> radius <= 112 px) is created by skillsBasic at the PLAYER's position after the 'calling' move (pSt[40] = 30 frames at 4 px, player moves ~120 px, I): a fixed zone around the player, dummy counted in-zone (rule 24; at 160 px it is 40 px from the centre, still inside; with no player movement 160 > 112+12 would give 0). 1 hit per cast; pulses (p11/p14) and the 5 Shadow Anomalies (passive 194) are separate. The movement consumer pSt[39]/pSt[40] was not identified (card: zawezone). Cooldown 2 s sets the period."},
     "classId": "demon_slayer",
     "name": "Demon's Calling",
     "kind": "active",
@@ -1395,7 +1464,7 @@
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "baseCastRate": 1.75,
-    "damageFormula": { "base": 0.5, "perLevel": 10.5 },
+    "damageFormula": { "base": 0, "perLevel": 9.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Soul Leech", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -1414,28 +1483,31 @@
       {
         "id": "pentagram_radius",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "pentagram radius [71] = 1.75*(1+p1.s9%) (area 15%/r); no dummy hit change for a dummy standing in the zone (rule 24). R4 192#1 shows the old p14 formula floor((64s+12)/42) is wrong (shift is 42*maxScale px), so s no longer sets any pulse count"}], "confidence": "C", "note": "card table p1; R4 192#1 (p14 formula corrected); planner area_of_effect 15/r"},
         "name": "Pentagram Radius",
         "description": "Increases the area of effect radius of demon's calling.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "demons_embrace",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8%/r; spell damage, multiplies the whole damage[1]"}], "confidence": "C", "note": "card table p2; planner arcane_skill_damage 8/r"},
         "name": "Demon's Embrace",
         "description": "Increases damage dealt by demon's calling.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "hellflame_burst",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.006, 0.024, 0.054, 0.096, 0.15], "per": "use", "note": "Hellflame Burst: chance 3%/r (p3.s10) per use of a landing hit with damage dmg*20%*r (buff 47, knock-up); expected 0.03r*0.2r per use. Landing hit form and trigger timing I"}], "confidence": "I", "note": "card table p3 (C/I, rule 22)", "plannerFix": "planner rolls the proc on_hit with of_total 20/r; card rolls once per use and adds one landing hit"},
         "name": "Hellflame Burst",
         "description": "Chance to send monsters airborne on hit causing them to deal area of effect damage when landing.",
         "maxRank": 5,
@@ -1451,12 +1523,13 @@
       {
         "id": "dark_essence",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "base": 0, "perRank": 15, "note": "arcane break +15%/r (p4.s9), 5 s, buff 8; applied with chance 3%/r (p4.s10); uptime on dummy not quantified (I)"}], "confidence": "C", "note": "card table p4 ([979])"},
         "name": "Dark Essence",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1469,6 +1542,7 @@
       {
         "id": "dark_meteors",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "hit", "note": "Dark Meteors: on each hit chance 3%/r spawns a meteor with damage floor(dmg*15%*r) that explodes ~0.9 s later: +1 hit of ratio 0.15r. Expected 0.03r*0.15r per hit"}], "confidence": "C", "note": "card table p5; Zmiany section (DC p5: +1 hit, C)", "plannerFix": "planner adds the meteor damage as arcane_skill_damage 15/r on the proc instead of an extra explosion hit of ratio 0.15r"},
         "name": "Dark Meteors",
         "description": "Chance to drop chaos meteors on hit dealing increased damage.",
         "maxRank": 5,
@@ -1484,12 +1558,13 @@
       {
         "id": "the_fiery_layer_of_hell",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 15, "note": "burning [18] = dmg*15%*r; chance 3%/r (p6.s10)"}], "confidence": "C", "note": "card table p6; planner burning 15/r"},
         "name": "The Fiery Layer of Hell",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1502,17 +1577,19 @@
       {
         "id": "hellish_scorching",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "x(1+10%*r) extra damage vs burning ([180]); only while the dummy burns (needs p6)"}], "confidence": "C", "note": "card table p7; planner extra_damage_burning 10/r"},
         "name": "Hellish Scorching",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "demons_mind",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.3, 1.2, 2.7, 4.8, 7.5], "note": "expected LSSD: chance 3%/r per cast x 10%/r LSSD bonus (p8.s9); area +10%/r and move speed 4->8 not counted (I)"}], "confidence": "C", "note": "card table p8 (on cast); planner proc on_cast 3/r"},
         "name": "Demon's Mind",
         "description": "Chance on cast to jump higher and smash the ground dealing increased damage with increased area of effect radius.",
         "maxRank": 5,
@@ -1528,17 +1605,19 @@
       {
         "id": "devil_in_the_detail",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost reduction 8/r; no dummy DPS"}], "confidence": "I", "note": "card table p9 (brak odczytu)"},
         "name": "Devil in the Detail",
         "description": "Decreases mana cost when using demon's calling.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 8 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 8}
         }
       },
       {
         "id": "hell_infused_aftershock",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "Hell Infused Aftershock: chance 3%/r on each hit to increment the pulse counter: one extra hit at full D per proc (C mechanism, which counter I)"}], "confidence": "C", "note": "card table p10; planner of_total 100 with proc 3/r equals one extra hit per proc"},
         "name": "Hell Infused Aftershock",
         "description": "Chance to shock the ground an additional time.",
         "maxRank": 5,
@@ -1554,45 +1633,49 @@
       {
         "id": "unholy_aftershock",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "Unholy Aftershock: p11.s9 = 1/r pulses (pulses = [619] + [617]), each a new hit (singleHitListClear). Unshifted without p14 ([620] = 0), so all pulses land in the pentagram (dummy in the zone, rule 24). R4 192#1: unholyAfterShock = p11.s10 % = 0.2*r is ADDED TO THE PENTAGRAM SCALE (maxScale += 0.2*r at every pulse), NOT to the damage: pulse damage is unchanged (the old 'growing pulse damage 10 %/r' is wrong). Valid only without p14: with p14 the pulses are shifted away from the dummy (see p14)."}], "confidence": "I", "note": "card table p11; R4 192#1 (Step_0 0x147a47b60 L12-13: scale, not damage); C mechanism, I dummy position (rule 24)", "plannerFix": "planner's projectile_count 1/r gives 0 hits (perExtraProjectile 0); each pulse is one extra hit"},
         "name": "Unholy Aftershock",
         "description": "Demon's Calling now echoes additional times increasing its size.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "area_of_effect": 0 },
-          "perRank": { "projectile_count": 1, "area_of_effect": 15 }
+          "base": {"projectile_count": 0, "area_of_effect": 0},
+          "perRank": {"projectile_count": 1, "area_of_effect": 15}
         }
       },
       {
         "id": "shadow_flames",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "base": 0, "perRank": 20, "note": "flame damage multiplier [621] = 20%/r (p12.s9) applied to the flames of p5 meteors only; per meteor proc 1-2 flame hits: expected extra per use = p5 chance * ~1.5 * meteor dmg * (1+0.2r). 0 without p5 (I)"}], "confidence": "C", "note": "card table p12; Zmiany section (DC p12: 1-2 flames per p5 proc, I)", "plannerFix": "planner applies arcane_skill_damage 20/r to all DC damage; game uses it only on p5 meteor flames"},
         "name": "Shadow Flames",
         "description": "Dark meteors now unleash a trail of shadow flames outwards dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 20 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 20}
         }
       },
       {
         "id": "appearing_from_shadows",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 45, "note": "LSSD += 45%/r (p13.s9); teleport to target has no DPS term"}, {"kind": "utility", "note": "teleport to target (playerEffect[128]); no dummy effect"}], "confidence": "C", "note": "card table p13; planner arcane 45/r"},
         "name": "Appearing from Shadows",
         "description": "Blink towards target location before unleashing demons calling with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 45 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 45}
         }
       },
       {
         "id": "pentagram_shockwave",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "Pentagram Shockwave: pulses = p11.s9 + p14.s9 (2/r) and [620] = 1 shifts every pulse by 42*maxScale px (73.5 px at s = 1.75) in direction pulsesDir = 1 deg (lengthdir, about east, independent of the aim), cumulative; precise mask 128x128 (r = 64*s_k). Dummy in the middle of the pentagram (rule 24): pulse 1 stands 73.5 px away (<= 64*1.75 + 12 = 124) and hits, pulse 2 stands 147 px away (> 124 + growth, p11 gives u <= 0.6) and misses: hits = 1 (cast) + 1 (pulse 1) + 0, +1 extra hit for any rank of p14 and any number of pulses (R4 192#1 replaces the old '+2 for k <= 2'). Not additive with p11: when p14 is ranked the extra pulses of p11 are shifted away too."}], "confidence": "C", "note": "card table p14 + R4 192#1 (formula C from Step_0, dummy position I)", "plannerFix": "planner counts projectile_count 2/r with perExtraProjectile 0 (no hits); the game gives only ONE extra hit (pulse 1) because pulses are shifted by 42*maxScale px each"},
         "name": "Pentagram Shockwave",
         "description": "Unleash a shockwave of pentagrams dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       }
     ]
@@ -1618,6 +1701,8 @@
   {
     "id": "slice_of_shadows",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Dummy in melee/weapon reach (scenario 'enemy in attack range'): the wave Demon_Slayer_Slice_of_Shadows_obj (8 px/frame, 0.5 s animation, 240 px, mask 139x163, singleHit, no pack) hits once and the weapon swing (attackClasses Projectile_Player_obj with the same projEffect[1020]) hits once: both = floor(W*(1+V1(1+LSSD)/100)) -> 2.0. At a strict 160 px only the wave reaches (1.0); the weapon reach playerProj[3] is not determined (I). count = 1 wave (p3/p12 add waves), no extra projectiles."},
     "weaponRequirement": "melee",
     "classId": "demon_slayer",
     "name": "Slice of Shadows",
@@ -1634,7 +1719,9 @@
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 24, "perLevel": 18 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 18 },
       "attackRatingPct": { "base": 5, "perLevel": 5 }
     },
     "bonusSources": [
@@ -1653,28 +1740,31 @@
       {
         "id": "floating_shadow",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "wave speed x(1+p1.s9%) (15%/r); no hit change for a wave that reaches 160 px anyway"}], "confidence": "C", "note": "card table p1; planner projectile_speed 15/r"},
         "name": "Floating Shadow",
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "strenghtened_veil",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 2.5, "note": "LSSD = STR/100 * p2.s9% = 2.5%/r at STR 100 (scales linearly with the player's STR, engine must multiply by STR/100). LSSD scales only the V1 part of the wave/swing damage"}], "confidence": "C", "note": "card table p2", "plannerFix": "stored as conversion_strength 2.5/r rather than LSSD scaled by STR/100; LSSD multiplies only the V1 part (weaponBonusScaling), not the whole hit"},
         "name": "Strenghtened Veil",
         "description": "Increases damage dealt by slice of shadows based on your strength.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_strength": 0 },
-          "perRank": { "conversion_strength": 2.5 }
+          "base": {"conversion_strength": 0, "subtree_damage": 0},
+          "perRank": {"conversion_strength": 2.5, "subtree_damage": 2.5}
         }
       },
       {
         "id": "shadow_duality",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3], "per": "use", "note": "Shadow Duality: chance 10%/r per attack of a 2nd wave (+1 hit, own pack); expected chance per use"}], "confidence": "C", "note": "card table p3; Zmiany section (SoS p3 increment)", "plannerFix": "planner rolls the 10%/r proc on_hit with of_total 100; game rolls it per attack and adds one wave hit"},
         "name": "Shadow Duality",
         "description": "Chance to unleash an additional slice of shadows on attack.",
         "maxRank": 3,
@@ -1690,34 +1780,37 @@
       {
         "id": "mist_of_darkness",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating +10%/r; accuracy only"}], "confidence": "C", "note": "card table p4"},
         "name": "Mist of Darkness",
         "description": "Increases attack rating when using slice of shadows.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "stacking_shadow",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "byRank": [15, 30, 45, 60, 75], "note": "Stacking Shadow: BuffAdd(player, 79, p5.s9 = 1/r per stack, 3 s, max 15 stacks) on each hit. Assumes the dummy is hit within 3 s so 15 stacks are held; buff 79 is a player damage buff, its exact stat type not confirmed (I). Value in % of the player's buff stat"}], "confidence": "I", "note": "card table p5 (C mechanism, I for stacks on dummy)", "plannerFix": "planner stores physical_skill_damage 1/r as a flat damage term; game stacks a player buff (max 15 stacks, 3 s)"},
         "name": "Stacking Shadow",
         "description": "Gain a stacking damage buff for a short period on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 1 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 1}
         }
       },
       {
         "id": "crushing_veil",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "base": 0, "perRank": 25, "note": "armor break +25%/r ([969] = p6.s9 + RSS234, 5 s), applied with chance 4%/r (p6.s10); uptime not quantified (I)"}], "confidence": "C", "note": "card table p6; planner armor_break 25/r chance 4/r"},
         "name": "Crushing Veil",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 25 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1730,6 +1823,7 @@
       {
         "id": "cold_shadow",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "cold [47] = 3 s on chance 20%/r (buff 21 slow 0.15); no damage. Counts as frozen (B21) for p8 on the dummy (rule 27)"}], "confidence": "C", "note": "card table p7; planner proc on_hit chance 20/r applies frozen"},
         "name": "Cold Shadow",
         "description": "Chance on hit to freeze enemies.",
         "maxRank": 3,
@@ -1742,78 +1836,85 @@
       {
         "id": "frostbitten_mist",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.12, 1.24, 1.36, 1.48, 1.6], "note": "x(1+12%*r) extra damage vs frozen ([178]); only while the dummy is chilled by p7. Engine must gate on p7"}], "confidence": "C", "note": "card table p8; planner extra_damage_frozen 12/r"},
         "name": "Frostbitten Mist",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 12 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 12}
         }
       },
       {
         "id": "bitter_smoke",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "base": 0, "perRank": 0, "note": "crit damage +10%/r ([1019] = p9.s9); crit chance unchanged"}], "confidence": "C", "note": "card table p9; planner crit_damage 10/r"},
         "name": "Bitter Smoke",
         "description": "Increases critical strike damage when using slice of shadows.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 10 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 10}
         }
       },
       {
         "id": "looming_mist",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "wave size scalingMult x(1+15%*r) (area); no DPS change at 160 px"}], "confidence": "C", "note": "card table p10; planner projectile_size 15/r"},
         "name": "Looming Mist",
         "description": "Increases the size of slice of shadows.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "shadow_extraction",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.9, 3.6, 8.1], "per": "use", "note": "Shadow Extraction: on a hit (once per trigger) p11.s10 = 2r small waves of damage 60%*r (p11.s9) from the dummy centre, total 1.2*r^2 D per trigger; trigger cadence max(1 s, attack animation). Per use assumes T_atk = 0.75 s, so factor 0.75 (I). Values are 1.2 r^2 * 0.75"}], "confidence": "I", "note": "card table p11 (C mechanism, I cadence); Zmiany section (SoS p11, C spawn at centre)", "plannerFix": "planner has projectile_count 2/r (0 hits with perExtraProjectile 0) and of_total 60/r once; game fires 2r small waves at 0.6r each, once per max(1 s, animation)"},
         "name": "Shadow Extraction",
         "description": "Perform an empowered attack unleashing small shadows from the target on hit. Slice of shadows now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 60, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 60, "projectile_count": 2}
         }
       },
       {
         "id": "shadows_arc",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "count = 1 + p12.s9: +1 wave per rank in an arc, each its own pack"}, {"kind": "extra_hits", "byRank": [1, 2, 1], "per": "use", "replacesProjectileHits": true, "note": "count = N = 1 + p12.s9 waves in an arc, direction aim + 24*(j - N/2 + 1/2) deg, waves rotate with their direction and the 139x163 mask is an oriented rectangle (rule 26); wave start 8 px from the player (8.0f). Simulation sos_arc.py through the dummy centre (rule 38): hits 1/2/3/2/3/2 for N = 1..6 (+-12 and +-24 deg hit, +-36 deg misses by 0.04 px (pixel margin I), +-48 deg misses), i.e. +1 / +2 / +1 hits at r = 1 / 2 / 3 (N = 2 / 3 / 4), NOT +r. With p10 >= r2 (scale >= 1.1) +-36 deg also hits (N = 4 -> 4 hits)."}], "confidence": "I", "note": "R4 198#1 + 'korekta 2026-10-16' (8 px start, hits unchanged); C direction/step, I pixel margin", "plannerFix": "planner projectile_count 1/r gives 0 hits (perExtraProjectile 0); the arc (24 deg step) gives +1/+2/+1 hits at r = 1/2/3"},
         "name": "Shadow's Arc",
         "description": "Unleash additional shadows in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "lingering_shadows",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.75, 1.5, 2.25], "note": "Lingering Shadows: buff 78 stacks per hit (max 20, 3 s); at full stacks the cast gets LSSD +15%/r (planner physical 15/r, stack value not confirmed, I) and the buff is removed. Once per 20 hits, so per-use average = 15r/20 (I)"}], "confidence": "I", "note": "card table p13 (C/I, buff values I)", "plannerFix": "planner applies physical_skill_damage 15/r on every use; game only at full stacks (every 20th hit) with a bigger wave"},
         "name": "Lingering Shadows",
         "description": "Gain stacks of lingering shadows on hit. At maximum stacks your next slice of shadows deals increased damage with increased size.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "physical_skill_damage": 15, "projectile_size": 10 }
+          "base": {"projectile_size": 0, "subtree_damage": 0.0},
+          "perRank": {"projectile_size": 10, "subtree_damage": 0.75}
         }
       },
       {
         "id": "scorching_shadow",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 3, 2], "note": "Scorching Shadow transformation: count = 1 + p14.s10 = r + 2 balls (3/4/5; p14.s10 = r + 1, rule 39), fan aim + 24*(j - N/2 + 1/2) deg, speed 8*(1+p1.s9) (L1069 overwrites the 18 of Create_0), life 0.6 s, 8 px start, mask 83x77 oriented rectangle. ball.py through the dummy centre (rule 38): tracks 0 and +-12 deg hit, +-24 deg miss by >= 13 px -> 1 / 2 / 1 ball hits for r = 1 / 2 / 3 (C, simulation, Resztki B; variant cursor 24 px above the centre: 2 / 1 / 2). Each ball is its own object (no shared pack). The weapon swing (attackClasses, same projEffect[1020]) is NOT replaced by the transformation, so it stays as 1 hit like in the base 2.0 (wave + swing): set_hits = 1 + 1 / 2 / 1 = 2 / 3 / 2. The old [1,1,1] counted a single ball hit and no swing."}, {"kind": "dot", "base": 0, "perRank": 90, "note": "burning [18] = dmg*90%*r on the ball hit (100%, no chance stated)"}], "confidence": "C", "note": "PoR4 (e) + Resztki (B) (ball.py, C by simulation); the weapon swing is kept as in the base convention", "plannerFix": "planner counts projectile_count 1+r as extra hits (perExtraProjectile 0 gives 0); the game has r + 2 balls (planner base 1 + 1/r gives r + 1), of which 1/2/1 hit the dummy, plus burning 90%*r"},
         "name": "Scorching Shadow",
         "description": "Unleash a shadow ball of fire bouncing from terrain and inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "projectile_count": 1 },
-          "perRank": { "increased_burning_damage": 90, "projectile_count": 1 }
+          "base": {"increased_burning_damage": 0, "projectile_count": 1},
+          "perRank": {"increased_burning_damage": 90, "projectile_count": 1}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1846,6 +1947,8 @@
   {
     "id": "soul_leech",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Demon_Slayer_Soul_Leech_obj created at the target point (cursor on the dummy, in-zone, rule 24): r = 48 px, singleHit, 6 frames of life, active in frame 2 = 1 hit per cast. The life orb ([217]) deals no damage. No cooldown. R4 rule 37: the cast-path period is (ceil(72/c)+1)/60 s with c = 1.75 + FCR/100 (43 frames = 0.717 s at c = 1.75; DPS x0.80), not 1/castRate (34.3 frames); the engine computes it centrally."},
     "classId": "demon_slayer",
     "name": "Soul Leech",
     "kind": "active",
@@ -1859,7 +1962,7 @@
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "baseCastRate": 1.75,
-    "damageFormula": { "base": 0.5, "perLevel": 11.5 },
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Slice of Shadows", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -1905,6 +2008,7 @@
     "effectDuration": 25,
     "movementDuringUse": 85,
     "manaCostFormula": { "base": 5, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 40 },
     "passiveStats": {
       "base": { "attack_damage": 30, "increased_attack_speed": 10 },
       "perRank": { "attack_damage": 6, "increased_attack_speed": 2 }

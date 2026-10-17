@@ -82,7 +82,8 @@ fn with_two_hands_stores_an_expected_cast_repeat_without_increasing_primary_dama
         assert_eq!(b.physical_hit_min, a.physical_hit_min);
         assert_eq!(b.physical_hit_max, a.physical_hit_max);
         assert_eq!(b.physical_avg_max, a.physical_avg_max);
-        assert_eq!(changed.avg_hit_dps_max, baseline.avg_hit_dps_max);
+        // The dps_cards dummy model counts the expected extra strike (+0.04r hits).
+        assert!(changed.avg_hit_dps_max > baseline.avg_hit_dps_max);
         let count = changed
             .calculation()
             .iter()

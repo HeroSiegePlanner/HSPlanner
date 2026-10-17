@@ -373,6 +373,27 @@ pub struct WeaponDamageBreakdown {
 
 #[inline]
 /// StatAttackSpeedMainHand: IAS adds to the weapon rate, scaled by at most 0.75 APS.
+/// Uses per second allowed by the use animation. CheckTalentUse refuses a new
+/// skill while playerEffect[204] is set, and playerSequences clears it only when
+/// the 18-frame / 15 fps top sequence ends: ceil(72 / S) + 1 frames at sequence
+/// speed S (castRate or weapon rate). Movement/Blink skills recast themselves
+/// past the gate, so callers skip the lock for them.
+pub fn animation_lock_rate(speed: f64) -> f64 {
+    if speed <= 0.0 {
+        return 0.0;
+    }
+    60.0 / ((72.0 / speed - 1e-9).ceil() + 1.0)
+}
+
+/// Frames from use to the effect: the top sequence (15 fps) passes headpos 6 at
+/// speed S (Player_obj_Step_0 L611; reports/cast_timing.md), floor(24 / S) + 1.
+pub fn trigger_frames(speed: f64) -> f64 {
+    if speed <= 0.0 {
+        return 0.0;
+    }
+    (24.0 / speed + 1e-9).floor() + 1.0
+}
+
 pub fn attack_rate(base_aps: f64, ias_pct: f64) -> f64 {
     base_aps + base_aps.min(0.75) * ias_pct / 100.0
 }

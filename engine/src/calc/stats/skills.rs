@@ -131,6 +131,16 @@ pub fn apply_skill_ranks(
             }
         }
 
+        let mut uptime_label = String::new();
+        if let Some(buff) = skill.buff_uptime.as_ref() {
+            let haste = sum_ranged_from_map(stat_sources, "skill_haste");
+            let uptime = (buff.uptime(eff_min, haste.0), buff.uptime(eff_max, haste.1));
+            for value in combined.values_mut() {
+                *value = (value.0 * uptime.0, value.1 * uptime.1);
+            }
+            uptime_label = format!(", uptime {:.0}%", uptime.1 * 100.0);
+        }
+
         if skill.kind == SkillKind::Aura {
             apply_aura_effectiveness(&mut combined, stat_sources);
         }
@@ -145,7 +155,7 @@ pub fn apply_skill_ranks(
             }
             // JS Math.round semantics (.5 ties round up).
             let rounded = (round3(value.0), round3(value.1));
-            let label = format!("{} (rank {})", skill.name, rank_label);
+            let label = format!("{} (rank {}{})", skill.name, rank_label, uptime_label);
             let contrib = SourceContribution {
                 label,
                 source_type: SourceType::Skill,

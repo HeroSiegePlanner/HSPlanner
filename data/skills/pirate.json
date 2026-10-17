@@ -2,6 +2,8 @@
   {
     "id": "buckshot",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.75, "confidence": "I", "note": "Per attack (ranged weapon skill, dummy on the aim line at 160 px): n = n0 + XPR Pirate_Buckshot_obj, n0 = 1 + RSS391 + p2.s9 = 1 in the base. Pellets pierce (projType 0), range R = 288 px, each hits at most once (no tick, no pack); fan theta_i = dir + (s/2)*(i + 1 - n/2) with s = 6 + n0 = 7 deg, a pellet hits when |theta| <= asin((12 + 4.5*scale)/160) = 5.92 deg. n = 1: theta = 1.75 deg -> 1 hit. The end-of-range explosion (Destroy_0, Explosion_Item_obj with d3 + d0) reaches the dummy only when |R - D| <= 44 px: 0 at 160 px (it would add 1 per pellet at D ~250-330 px). Each pellet hit = d0 phys + d3 fire = the main hit. perExtraProjectile = average slope over the first 4 extras of H(n) = 1, 2, 3, 3, 4, 3, 4, 3, 4 for n = 1..9 (computed from the card's fan formula with s fixed by n0, I: the card gives the formula and the p2 r5 case only; if gear extras also raise n0 the fan widens and the slope falls to ~0.5). p13 Circle of Slugs (cooldown 5 s), p14 chain + explosion (1 + r hits per chain), p12 single big pellet are subskill effects."},
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Buckshot",
@@ -31,15 +33,11 @@
     "attackKind": "attack",
     "baseCooldown": 0.25,
     "movementDuringUse": 65,
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 8
-    },
+    "damageFormula": { "base": 0, "perLevel": 7.5 },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 32,
-        "perLevel": 18
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 132, "perLevel": 18 },
       "flatPhysicalMin": {
         "base": 3,
         "perLevel": 0
@@ -94,34 +92,37 @@
       {
         "id": "black_powder",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60]}], "confidence": "C", "note": "card Buckshot p1: LSSD +12%/r on V1 (phys d0) and V2 (fire d3)"},
         "name": "Black Powder",
         "description": "Increases damage dealt by buckshot.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "stack_of_slugs",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5]}, {"kind": "extra_hits", "byRank": [1, 1, 2, 1, 0], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card Buckshot p2 + Planer; n0 = 1+r; hit if |theta| <= 5.92 deg (theta_i = (s/2)(i+1-n/2), s = 6+n0); computed from the card formula; r5 card says 1-3 hits (phase-dependent)", "plannerFix": "trail_count is right, but the planner converts it with the generic 0.75 per extra projectile; the card's wedge gives hits 1,1,2,1,0 for n0=1+r (I)"},
         "name": "Stack of Slugs",
         "description": "Increases the amount of buckshot trails.",
         "maxRank": 5,
         "effects": {
-          "base": { "trail_count": 0 },
-          "perRank": { "trail_count": 1 }
+          "base": {"trail_count": 0},
+          "perRank": {"trail_count": 1}
         }
       },
       {
         "id": "spiced_up",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90, 120, 150]}], "confidence": "C", "note": "card p3: 4%/r chance per shot (1 roll); burn [18] = floor((V1'+V2')*30%/r); units mixed in card (V1' percent added to V2') - taken as written"},
         "name": "Spiced Up",
         "description": "Inflicts burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 30 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -134,6 +135,7 @@
       {
         "id": "eye_patch",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p4: stun [51] 3 s with chance 3%/r; CC on a lone dummy, no hit change"},
         "name": "Eye Patch",
         "description": "Chance to stun on hit.",
         "maxRank": 5,
@@ -146,129 +148,121 @@
       {
         "id": "scorched_slugshot",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0]}], "confidence": "C", "note": "card p5: [180] = 20%/r extra damage vs burning; conditional on the dummy burning (needs p3 or another burn source)"},
         "name": "Scorched Slugshot",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 20 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 20}
         }
       },
       {
         "id": "longshot",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p6: range/speed +18%/r; end explosion of the pellet is out of reach of a 160 px dummy"},
         "name": "Longshot",
         "description": "Increases the range of buckshot.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 18 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 18}
         }
       },
       {
         "id": "colossus_slugs",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 1, 2, 2, 2], "note": "extra pellet hits ONLY together with p2 at rank 5 (n0 = 6, angles -12, -6, 0, 6, 12, 18 deg): scale 1 + 0.1r makes the pixel-mask window wider: scale 1.1-1.2 (r1-r2) -> 2 hits (+1), from 1.3 (r3-r5) -> 3 hits (+2) instead of 1; for every other p2 rank/n0 there is no change at scale <= 1.5 except n0 = 3 which gets its third pellet only from scale 2.0 (never reached)"}], "confidence": "I", "note": "R4 56#0 + body p7 row: pixel-exact rotated pellet mask (bitmap 40x9, image_angle = direction): limit +5.52 / -5.88 deg at scale 1.0, 5.70/6.09 (1.1), 5.84/6.27 (1.2), 6.02/6.49 (1.3), 6.17/6.67 (1.4), 6.31/6.85 (1.5) (I: rasterisation +-0.3 deg; the +6 deg pellet of n0 = 6 misses 6.02 deg by only 0.02 deg). Old entry: 'other', no change. The values are conditional on p2 rank 5 - the engine cannot express a rank-conditional requires, see engine."},
         "name": "Colossus Slugs",
         "description": "Buckshot projectile size increased.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 10 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 10}
         }
       },
       {
         "id": "targeted_slugs",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "C", "note": "card p8: attack rating +10%/r (hit chance); dummy hit chance not modelled"},
         "name": "Targeted Slugs",
         "description": "Increases the attack rating when using buckshot.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "firearm_expert",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p9: skill attack speed more +6%/r"},
         "name": "Firearm Expert",
         "description": "Increases the attack speed of buckshot while wielding a gun.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_speed_more": 0 },
-          "perRank": { "skill_attack_speed_more": 6 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 6}
         }
       },
       {
         "id": "sluglust",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p10: [381] buff 51 on target, player buff 27 on kill", "plannerFix": "planner gives fire_skill_damage +15%/r; in game it is a buff granted only when the target dies (buff 27), so 0 on a dummy that never dies"},
         "name": "Sluglust",
         "description": "Killing an enemy with buckshot increases your fire damage for a short period of time.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 15 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 15}
         }
       },
       {
         "id": "big_slugs",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [85, 170, 255]}], "confidence": "C", "note": "card p11: LSSD +85%/r; scale and range changes give no change on the single dummy hit"},
         "name": "Big Slugs",
         "description": "Projectiles are now bigger and travel farther also knocking monsters back.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "projectile_size": 0,
-            "skill_range": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 85,
-            "projectile_size": 50,
-            "skill_range": 35
-          }
+          "base": {"projectile_size": 0, "skill_range": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 50, "skill_range": 35, "subtree_damage": 85}
         }
       },
       {
         "id": "one_slug_to_end_them_all",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.85, 1.7, 2.55]}], "confidence": "C", "note": "card p12: literal reading of W*(1+V1*n0*0.85r*(1+LSSD)/100) and V2*n0*0.85r; applied to whole D as upper bound (W part not scaled)", "plannerFix": "card: V1 and V2 multiplied by n0*0.85r (n0=1), a transformation to one pellet; planner names it of_total_damage (splash-like) instead"},
         "name": "One Slug to End Them All",
         "description": "Fire a single slug scaling a portion of its damage from the amount of total projectiles.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_size": 0 },
-          "perRank": { "of_total_damage": 85, "projectile_size": 40 }
+          "base": {"of_total_damage": 0, "projectile_size": 0},
+          "perRank": {"of_total_damage": 85, "projectile_size": 40}
         }
       },
       {
         "id": "circle_of_slugs",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.59, 1.8, 3.67]}, {"kind": "cooldown_s", "byRank": [5, 5, 5]}, {"kind": "damage_pct", "byRank": [15, 30, 45]}], "confidence": "I", "note": "card p13: set_hits = average of (1+2r)*n*11.8/360 with n=6,11,16 (p2=0, XPR=0); card exact values r1 0, r2 1 (phase-dependent); cooldown 5 s; LSSD +15%/r", "plannerFix": "transformation into a full ring of pellets plus waves, not a projectile count; the 5 s cooldown is right"},
         "name": "Circle of Slugs",
         "description": "Fire multiple waves of slugs in every direction. Buckshot now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "projectile_count": 0,
-            "wave_count": 0,
-            "cooldown_added": 5,
-            "fire_skill_damage": 0
-          },
-          "perRank": {
-            "projectile_count": 5,
-            "wave_count": 2,
-            "cooldown_added": 0,
-            "fire_skill_damage": 15
-          }
+          "base": {"projectile_count": 0, "wave_count": 0, "cooldown_added": 5, "subtree_damage": 0},
+          "perRank": {"projectile_count": 5, "wave_count": 2, "cooldown_added": 0, "subtree_damage": 15}
         }
       },
       {
         "id": "slick_slugs",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.3, 4.9, 8.8], "per": "hit"}], "confidence": "I", "note": "card p14: per pellet hit: explosion +1 and chain 1+r hits at 0.65r (1.3/3.9/7.8 units); r1..3 (planner max 3); card table gives r up to 5", "plannerFix": "planner has splash 65%/r and bounces 3/r but no extra hits: chain 1+r hits at 0.65r each plus the explosion at the dummy (+1) per pellet"},
         "name": "Slick Slugs",
         "description": "Projectiles now chain off of the target with decreased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "splash_of_total_damage": 65, "projectile_bounces": 3 }
+          "base": {"splash_of_total_damage": 0, "projectile_bounces": 0},
+          "perRank": {"splash_of_total_damage": 65, "projectile_bounces": 3}
         }
       }
     ]
@@ -276,6 +270,9 @@
   {
     "id": "grenade_jump",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast: 0 hits at 160 px. Pirate_Grenado_obj (Player_Ability_Parent, no damage itself) lands ~8 px from the player after ~8.6 frames (yy 20, zSpeed 2, g 1) and Destroy_0 makes 1 Explosion_Item_obj (r 32 px, damage[3] = V1 = 6.25 + 12*L, no LSSD) + 6 Player_Projectile_Shred_obj every 60 deg (full damage[3], their explosions x0.65 size, r ~21 px, 25-75 px from the grenade, manual-pe class so f_shard < 1 with gear); all of it is within ~75 px of the player, so a dummy at 160 px gets nothing. Alternative reading (not used, rule 24 does not apply to a mobility skill): with the dummy right next to the player (D <= ~40 px) 1 explosion + k shard hits, k in [0, 6] (placement not determined by the card, I) - but the explosion throws the player away on every use (see period), so later uses do not start from the same place. Card: DPS ~ 0 for the dummy scenario. No subskills."},
+    "usePeriod": {"kind": "leap", "extraFrames": 54, "note": "Mobility skill: on EVERY use the landing grenade (Pirate_Grenado_obj_Step_0 @0x148fed56f) throws the player and sets playerEffect[142] = 1 ([144] = 24, tag 7 bypasses the [204] block); casting is blocked in flight (rule 30). Resztki po R4 (C): period ~63 frames (1.05 s) = t_wyw 9 (floor(24/3) + 1, the trigger frames added by the engine) + grenade fall 9 (yy 20, zSpeed 2, g 1; 8.6 exact) + jump ~45 (g 0.35, [144] = 24, v_z = sqrt(2*0.35*88); 44.9 exact). extraFrames = 9 + 45 = 54 from the cast release (t_wyw excluded); the old model had 53.5 (8.6 + 44.9) = the same within rounding, now aligned to the card's integers (I: length of fall/jump +-2 frames). The grenade fall overlaps the animation lock, so the period is max(animation lock, t_wyw + 54 frames) instead of 1/castRate. No in-flight effects found for [143] = 57 (I)."},
     "classId": "pirate",
     "name": "Grenade Jump",
     "kind": "active",
@@ -304,10 +301,7 @@
     "damageType": "fire",
     "movementDuringUse": 85,
     "baseCastRate": 3,
-    "damageFormula": {
-      "base": 6.5,
-      "perLevel": 9.5
-    },
+    "damageFormula": { "base": 6.25, "perLevel": 12 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -421,8 +415,8 @@
         "description": "Increases the amount of spawned barrels.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
@@ -432,8 +426,8 @@
         "description": "Increases explosion area of effect radius of explosive barrel.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
@@ -443,8 +437,8 @@
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 20 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 20}
         }
       },
       {
@@ -484,8 +478,8 @@
         "description": "Increases the damage dealt by barrels.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 8}
         }
       },
       {
@@ -503,8 +497,8 @@
         "description": "Inflicts burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 22.5 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 22.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -521,8 +515,8 @@
         "description": "Dealing cold damage with explosive barrel freezes enemies and inflicts permafrost.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_permafrost_damage": 0 },
-          "perRank": { "increased_permafrost_damage": 16 }
+          "base": {"increased_permafrost_damage": 0},
+          "perRank": {"increased_permafrost_damage": 16}
         },
         "proc": {
           "trigger": "on_hit",
@@ -539,8 +533,8 @@
         "description": "Barrels now explode in a frigid blast converting damage dealt to cold inflicting cold break.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 20 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -557,8 +551,8 @@
         "description": "Barrels are now big and leave the ground burning with increased blast radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 100, "area_of_effect": 25 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 100, "area_of_effect": 25}
         }
       },
       {
@@ -568,8 +562,8 @@
         "description": "Create multiple trails of smaller barrels.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "trail_count": 0 },
-          "perRank": { "fire_skill_damage": 20, "trail_count": 2 }
+          "base": {"fire_skill_damage": 0, "trail_count": 0},
+          "perRank": {"fire_skill_damage": 20, "trail_count": 2}
         }
       },
       {
@@ -579,8 +573,8 @@
         "description": "Now throw a barrel bouncing and exploding multiple times.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "fire_skill_damage": 150, "projectile_bounces": 3 }
+          "base": {"fire_skill_damage": 0, "projectile_bounces": 0},
+          "perRank": {"fire_skill_damage": 150, "projectile_bounces": 3}
         }
       },
       {
@@ -590,8 +584,8 @@
         "description": "Now creates a circle of barrels around the target.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 35, "projectile_count": 4 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 35, "projectile_count": 4}
         }
       }
     ]
@@ -599,6 +593,8 @@
   {
     "id": "cannonball",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 5.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per attack (ranged weapon skill, dummy on the aim line at 160 px): 1 Pirate_Cannonball_obj (projType 1, 10 px/frame, ballistic but rule 29 = hits in flight) hits the dummy and stops on it (rule 33, alarm[10] = 3) = 1 hit of d0 (phys, W*(1+V2/100)) + d3 (fire V1); the chain Pirate_Cannonball_Chain_obj created at the dummy (T0, [138] = 1 + p1.s9 = 1 bounce, rule 23: 1 + floor((n+1)/3) = 1 hit of the ball's d0 + d3); Destroy_0 at the dummy makes [1048] = 3 + p2.s9 = 3 Player_Projectile_Shred_obj with deltaSpeed [1050] = 0 (fall straight down at the dummy, R3 59#0) whose x0.65-size explosions (r ~20.5 + 12 px) all hit with damage[3] = floor((d3 + d0)*[1049]) = 1.0 each (manual-pe class, rule 32: the ratio f_shard = 1 with no gear, < 1 with crit damage/penetration gear). Total 1 + 1 + 3 = 5.0 (card: 'bazowo 5 trafien na kule'; the chain start exactly on the dummy is I). perExtraProjectile: n = 1 + RSS391 + XPR balls in a 12 deg fan: a ball hits when |theta| <= asin((14 + 12)/160) = 9.35 deg, so H(n) = 1, 2, 1, 2, 1, 2 for n = 1..6 (n odd: only the centre ball, n even: the +-6 deg pair) and every hitting ball gives the full 5 hits: average over n = 2..6 gives 0.2 extra balls per extra projectile = 1.0 hits (I: parity effect, not linear; card gives the 12 deg spacing and the 1/2 rule). p1 (longer chain 1, 2, 3, 3, 4, 5 hits), p2 (+2 shards/r), p10/p11/p13 (no shards / no chain / mega balls) are subskill effects."},
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Cannonball",
@@ -628,12 +624,11 @@
     "damageType": "fire",
     "attackKind": "attack",
     "movementDuringUse": 65,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 10
-    },
+    "damageFormula": { "base": 0, "perLevel": 7.75 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 16, "perLevel": 20 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 20 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6.5, "perLevel": 0.5 },
       "attackRatingPct": { "base": 0, "perLevel": 3.5 }
@@ -680,171 +675,169 @@
       {
         "id": "cannon_scatter",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 2, 3, 4], "per": "use"}], "confidence": "C", "note": "card p1 + reguly 23: chain T0 starts on the dummy (I); extra over base chain 1 = 1,2,2,3,4; one hitting ball at odd n", "plannerFix": "chain hits are 1+floor((n+1)/3) with n = 1+2r (1,2,3,3,4,5 hits), not linear in bounces"},
         "name": "Cannon Scatter",
         "description": "Increases the amount of chain bounces.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 2 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 2}
         }
       },
       {
         "id": "shrapnel_count",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 4, 6, 8, 10], "per": "hit"}], "confidence": "I", "note": "card p2: shrapnel 3+2r, each hits the dummy at full (d0+d3) (f=1 without gear); planner counts 2/r extra projectiles, equal here at 1 hit each"},
         "name": "Shrapnel Count",
         "description": "Increases the amount of shrapnel from cannonball explosion.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "cannon_accuracy",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "C", "note": "card p3: attack rating +10%/r"},
         "name": "Cannon Accuracy",
         "description": "Increases the attack rating when using cannonball.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "steel_balls",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p4: LSSD +8%/r"},
         "name": "Steel Balls",
         "description": "Increases the damage dealt by cannonball.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "slowmode",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5], "per": "hit"}], "confidence": "C", "note": "card p5: [1049] = 1+10%/r on shrapnel only; 3 shrapnel x 0.1r = 0.3r units per hit", "plannerFix": "only the shrapnel explosions are multiplied (3 base shrapnel x 0.1r); planner applies fire_skill_damage 10/r to the whole skill"},
         "name": "Slowmode",
         "description": "Increases the damage dealt by cannonball shrapnel.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 10}
         }
       },
       {
         "id": "artillery_farshot",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p6: range +12%/r; no change on dummy"},
         "name": "Artillery Farshot",
         "description": "Increases the range of cannonball.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 12 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 12}
         }
       },
       {
         "id": "empowered_blasting_powder",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p7: shrapnel horizontal speed 0.15r px/frame; lands within 23 px, all still hit (hit radius 32.5 px)"},
         "name": "Empowered Blasting Powder",
         "description": "Increases the projectile speed of cannonball shrapnel.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "mayday",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p8: ball scale +15%/r; ball stops on dummy either way"},
         "name": "Mayday",
         "description": "Increases the size and explosion area of effect radius of cannonball.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "slay_the_weak",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5]}], "confidence": "C", "note": "card p9: [180] = 10%/r vs burning; conditional on dummy burning (no burn source in base; p14 rolling ball burns)"},
         "name": "Slay the Weak!",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "blasting_balls",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [6, 12, 18, 24, 30]}, {"kind": "extra_hits", "byRank": [-3, -3, -3, -3, -3], "per": "hit"}], "confidence": "C", "note": "card p10: [1048] = 0 removes shrapnel; LSSD += 2%/r*(3+p2) = 6%/r with p2=0", "plannerFix": "planner gives of_total_damage 2/r; in game LSSD gets +2%/r*(3+p2) and the 3 shrapnel are removed (-3 units per hit)"},
         "name": "Blasting Balls",
         "description": "Cannonball no longer explodes on hit but instead knocks monsters back with increased damage according to the amount of shrapnel.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 2 }
+          "base": {"of_total_damage": 0, "subtree_damage": 0},
+          "perRank": {"of_total_damage": 2, "subtree_damage": 6}
         }
       },
       {
         "id": "bomb_trail",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120]}, {"kind": "extra_hits", "byRank": [-3, -3, -3], "per": "hit", "note": "ball 1 (pierces) + bomb 1 (+ d0 more damage than a main hit) = 2 instead of 5: chain -1, shrapnel -3, bomb +1"}], "confidence": "I", "note": "card p11 row + R4 59#1: [138] = 0 (no chain), projType 0 (ball pierces, 1 hit), [384] = 1: PC04Pirate creates the bomb at the dummy (self = hit enemy), zSpeed 12, vertical fall ~63 frames, Destroy_0 (C) makes Explosion_Item_obj at the ball's scale with damage[3] = d3 + d0, damage[0] = d0 (physical d0 PLUS fire d3 + d0), no shrapnel (createShred only sets handler/controller; Destroy_0 reads only shrapnelAmount/bombSharpScatter = 0 with p11). The bomb hit is worth main hit + d0 (ratio 1 + d0/(d0+d3), between 1 and 2) - counted as +1 main-hit unit (I); the ball's own shrapnel landing ~400 px away stays I (earlier open item 'bomb shrapnel unread' is closed: none).", "plannerFix": "planner has fire 40/r only; card: ball chain lost (-1) and its shrapnel land ~400 px away (-3); a Pirate_Bomb_Rain_obj falls on the dummy and explodes once (+1, no shrapnel); net -3"},
         "name": "Bomb Trail",
         "description": "Cannonball no longer chains but is now piercing and unleashes bombs on every monster hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 40 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
         }
       },
       {
         "id": "blast_the_horizon",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9]}, {"kind": "extra_hits", "byRank": [5, 0, 5], "per": "use", "replacesProjectileHits": true}, {"kind": "damage_pct", "byRank": [35, 70, 105]}], "confidence": "I", "note": "card p12: hitting balls 2,1,2 (r1..3, threshold 9.35 deg); per ball 1 + 3 shrapnel + 1 chain (n_l = ceil((1+p1)/2) = 1 at p1=0) = 5 units; 'V x35%/r' read as LSSD-like +35%/r (I)", "plannerFix": "planner splash 35/r and projectile count 3/r; card: n=1+3r balls at 12 deg hit 2,1,2 times (r1..3), each hitting ball = 5 units"},
         "name": "Blast the Horizon",
         "description": "Fire multiple cannonballs in an arc with decreased damage and bounces.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "splash_of_total_damage": 35, "projectile_count": 3 }
+          "base": {"splash_of_total_damage": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"splash_of_total_damage": 35, "projectile_count": 3, "subtree_damage": 35}
         }
       },
       {
         "id": "mega_shot",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150]}, {"kind": "extra_hits", "byRank": [1.3, 3.3, 5.4], "per": "hit", "note": "0.53 * 4r mega balls hit (2.3 / 4.3 / 6.4) minus the lost chain hit (-1)"}], "confidence": "I", "note": "card p13 row + R4 59#2: [1051] = 4r mega balls (same object_index, absolute directions 360/N*i, position = hitting ball + lengthdir(8, dir), deltaSpeed max(0, 0.5*deltaSpeed, 0.5*baseSpeed), projType 0, not copied -> no recursion) are deadly from f0+2 and do not return, so they hit only if still overlapping the dummy in that step: pixel simulation over aim angle and phase gives 0.53*N hits (N = 4r: 2.3 / 4.3 / 6.4 / 8.5 / 10.6 for r = 1..5 at scale 1.0, p6 = 0; p6 r5: 0.40*N; scale 1.75 (p8 r5): 0.87*N; +-1 frame of event order: 0.65*N / 0.45*N), I. Old model: 4r (too high ~2x). The mega balls' own shrapnel lands ~200 px away (0); the original ball's shrapnel is kept; [1051] > 0 replaces the chain (-1).", "plannerFix": "planner projectile_count 4/r is wedge balls; card: 4r mega balls start 8 px from the hitting ball, absolute directions 360/(4r)*i, ~0.53 of them reach the dummy, each a full hit; they replace the chain (-1)"},
         "name": "Mega Shot",
         "description": "Fire a mega cannon ball with increased damage unleashing additional cannonballs around the impact location.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "projectile_size": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 50,
-            "projectile_size": 50,
-            "projectile_count": 4
-          }
+          "base": {"projectile_size": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 50, "projectile_count": 4, "subtree_damage": 50}
         }
       },
       {
         "id": "rolling_balls",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1]}, {"kind": "damage_pct", "byRank": [75, 150, 225]}, {"kind": "dot", "byRank": [100, 200, 300]}], "confidence": "I", "note": "card p14: Pirate_Cannonball_Rolling_obj: 1 hit, end explosion 0 at 270 px; burn [18] = V1'*100%/r per hit", "plannerFix": "transformation into one rolling ball (1 hit, no chain, no shrapnel) with burn; planner treats it as a normal ball plus DoT"},
         "name": "Rolling Balls",
         "description": "Fire rolling cannon balls traveling forward on the ground exploding with increased radius and inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "projectile_size": 0,
-            "increased_burning_damage": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 75,
-            "projectile_size": 45,
-            "increased_burning_damage": 100
-          }
+          "base": {"projectile_size": 0, "increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 45, "increased_burning_damage": 100, "subtree_damage": 75}
         },
         "proc": {
           "trigger": "on_hit",
@@ -859,6 +852,8 @@
   {
     "id": "explosive_bullets",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (ranged weapon skill, dummy on the aim line at 160 px): 1 weapon shot (rule 6: W*(1 + V2'/100) phys + flat fire [993] = V1') + 1 charge: [90] = 1 makes the hit create Pirate_Exploding_Shot_obj attached to the dummy (ProjectileCollision00Skills L2018-2036), which after 0.75 s explodes in Destroy_0 as Explosion_Item_obj with the same d0 and d3 as the shot (pulses = [387] = 0 in the base) = 1 hit of the same size -> 2.0 per attack (the charge hit lands 0.75 s later, still one per attack). perExtraProjectile = 0: extra attack projectiles ([76] = XPR) fan out and the card only says that they hit in a narrow fan; the card does not say whether the salvo shares one singleHitPackId ([78], rule 8) - best reading 0 (Marksman-style shared pack), I for the slope. p4 second charge (4 %*r), p6/p11 pulses (+1 explosion per r), p12 shotwave, p1 are subskill effects."},
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Explosive Bullets",
@@ -888,15 +883,11 @@
     "damageType": "fire",
     "attackKind": "attack",
     "movementDuringUse": 65,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 13.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 0,
-        "perLevel": 20
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 20 },
       "flatPhysicalMin": {
         "base": 2,
         "perLevel": 0
@@ -952,6 +943,7 @@
       {
         "id": "grouping_up",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p1 + R4 60#2 (C): PC00Skills L2046 (asm 0x14512edc1) compares nth_nearest(..., i) != id of the hit target (setne 0x140189fe6, je to skip 0x14512edcb); instance_nth_nearest returns the dummy itself when it is the only target (rule 17), so the condition is false: 0 on a lone dummy (confirmed, was I)."},
         "name": "Grouping Up",
         "description": "Chance to attach an additional explosive to a nearby target on hit.",
         "maxRank": 5,
@@ -967,23 +959,25 @@
       {
         "id": "gunners_glory",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p2: LSSD +10%/r"},
         "name": "Gunner's Glory",
         "description": "Increases the damage dealt by explosive bullets when wielding a gun.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "shattering_blast",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75]}], "confidence": "C", "note": "card p3: physical break [969] = 15r% (+RSS234); applied to whole D as upper bound (only phys share in reality)"},
         "name": "Shattering Blast",
         "description": "Inflicts armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 15 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -996,6 +990,7 @@
       {
         "id": "sudden_scatter",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use"}], "confidence": "I", "note": "card p4: 4%/r chance per shot to add a second charge on nth nearest (= dummy); charge = 1 unit"},
         "name": "Sudden Scatter",
         "description": "Chance on attack to fire an additional explosive bullet.",
         "maxRank": 5,
@@ -1011,17 +1006,19 @@
       {
         "id": "boss_killer",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p5: [121] boss bonus; dummy is not a boss (I)"},
         "name": "Boss Killer",
         "description": "Increases the damage dealt by explosive bullets against bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 20 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 20}
         }
       },
       {
         "id": "multiplosion",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use"}], "confidence": "I", "note": "card p6: 3%/r chance per shot of one extra pulse explosion (full unit)", "plannerFix": "pulse explosion is a full unit in card; planner uses of_total_damage 50 per proc"},
         "name": "Multiplosion",
         "description": "Chance on hit to unleash additional explosions.",
         "maxRank": 5,
@@ -1037,34 +1034,37 @@
       {
         "id": "explosion_site",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p7: explosion size only; the charge explosion is on the dummy anyway"},
         "name": "Explosion Site",
         "description": "Increases the explosion area of effect radius for explosive bullet.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "target_locked",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "C", "note": "card p8: attack rating +10%/r"},
         "name": "Target Locked",
         "description": "Increases attack rating when using explosive bullets.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "napalm_infusion",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90, 120, 150]}], "confidence": "C", "note": "card p9: 4%/r chance per shot, burn [18] = floor((W(1+V2'/100)+V1')*30%/r); the charge copies [18]"},
         "name": "Napalm Infusion",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 30 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1077,64 +1077,61 @@
       {
         "id": "gasoline",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0]}], "confidence": "C", "note": "card p10: [180] = 20%/r vs burning; conditional"},
         "name": "Gasoline",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 20 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 20}
         }
       },
       {
         "id": "chain_reaction",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45]}, {"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "+1 pulse explosion per rank, 0.15 s apart, RAW value d0 + d3 without crit/ED/multipliers (modifier class 'none')"}], "confidence": "C", "note": "card p11 row + R4 60#0 (C): pulseDamage is set only by Viking, 0 for the pirate (Explosion_Item_obj_Create_0 L36); the child pulse gets damage[t] = floor(parent damage[t]*(1 + pulseDamage)) for t < 6 (0x147ea7ac0) = the full explosion value (d0, d3 and the rest) with no multiplier; pulses of the child = pulses - 1, spacing pulseTimer 0.15 s. Modifier class of the pulse = NONE (Step_0 copies only damage[], playerNumber, skillId, host, pe[1022]; no InheritModifiers), so each pulse is the raw value (f_none < 1 with crit damage/penetration gear), the first explosion from Pirate_Exploding_Shot_obj Destroy_0 has the full class. Counted as 1 main-hit unit per pulse (ratio 1 without gear).", "plannerFix": "planner projectile_count 1/r is converted with perExtraProjectile 0 (gives 0); card: +1 pulse explosion per rank, each the full explosion value but with no modifier class"},
         "name": "Chain Reaction",
         "description": "Explosive bullet now explodes multiple times.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "area_of_effect": 0,
-            "projectile_count": 0,
-            "fire_skill_damage": 0
-          },
-          "perRank": {
-            "area_of_effect": 15,
-            "projectile_count": 1,
-            "fire_skill_damage": 15
-          }
+          "base": {"area_of_effect": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 15, "projectile_count": 1, "subtree_damage": 15}
         }
       },
       {
         "id": "shotwave",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120]}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "Shotwave wave 0 only: +1 hit per charge explosion (not 1 + 2r)"}], "confidence": "C", "note": "card p12 row + R4 60#1: the wave is a chain of numb = 1 + 2r Viking_Shockwave_Mask objects 60 px apart along dir (Step_0 0x148fd07e0); wave 0 is created in Destroy_0 of the charge (0x148fca9e0) 12 px from the charge in the charge's direction (default 0 deg), mask 64x64 x1.25 -> r ~ 40 px: only wave 0 (12 px from the dummy) reaches it, wave 1 is 72 px away (> 40 + 12) whatever the direction; singleHit = 1, InheritModifiers (full minus trigger), damage[3]/[0] as the explosion (d3 + d0 fire + d0 phys), plus pe[110] = 8 (toss without landing, [139] = 0). The +1 is per charge explosion = once per use in the base. C: formula/path; I residual: no other writes of dir.", "plannerFix": "planner counts projectiles only; card: the shotwave chain (numb = 1 + 2r objects every 60 px) adds exactly one hit on the dummy per charge explosion"},
         "name": "Shotwave",
         "description": "On hit create a shockwave of explosions towards the target dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 40, "projectile_count": 2 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 40}
         }
       },
       {
         "id": "blast_pulse",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300]}], "confidence": "C", "note": "card p13: LSSD +100%/r; knockback zero"},
         "name": "Blast Pulse",
         "description": "Explosive bullet now deals increased damage and knocks nearby monsters back with massive force.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 100 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 100}
         }
       },
       {
         "id": "penetrating_trail",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p14: [56]=1 pierce, [130]=40/r; no effect on a single dummy", "plannerFix": "piercing and [130] add nothing on a lone target; planner adds fire_skill_damage 40/r and size 40/r"},
         "name": "Penetrating Trail",
         "description": "Explosive bullet now pierces and sticks explosives to all monsters hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "fire_skill_damage": 40, "projectile_size": 40 }
+          "base": {"fire_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"fire_skill_damage": 40, "projectile_size": 40}
         }
       }
     ]
@@ -1142,6 +1139,8 @@
   {
     "id": "powder_trail",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cooldown 2.5 s), dummy on the aim line (through the dummy centre) at 160 px, which is on the barrel's 270 px track: 1 Pirate_Powder_Barrel_obj (rolls 3 px/frame for 1.5 s = 270 px, projType 0 pierces) hits the dummy once = d3 = floor(V1*(1+LSSD)(1+p4)), V1 = 18.5*L (fire) = 1.0; the powder puddles (Pirate_Powder_Trail_obj) ignite on contact with an Explosion_Item_obj (the barrel's end explosion at 270 px) and blow up one after another 0.125 s apart back along the track with explosionDamage = floor(V1'(1+p3)) = the same value (ratio 1); each puddle explosion (r 24 px) hits the dummy when the puddle is within 24 + 12 = 36 px, i.e. a 71-72 px window. PoR4 (e) + Resztki A (rule 42, C): the puddle spacing is NOT 16 px - distance_to_point(xPowder, yPowder) > 16 (Step_0 L21) measures from the barrel's bbox (F_DistanceToPoint 0x14b508870): horizontal sprite 26x37, origin (13,18) -> a new puddle after > 16 + 13 = 29 px (10 frames x 3 px = 30 px); vertical sprite 33x29, origin (18,15) -> 36 px; the 6 px axis offset shortens the window 72 -> 71 px without changing the count. So ~2 puddle explosions (2-3, puddles at ~150 and ~180 px) reach the dummy instead of 4.5: total 1 + 2 = 3.0 (old: 1 + 4.5 = 5.5; the card's own 'about 1 + 2'); the barrel's end explosion at 270 px = 0 at 160 px. I: sprite choice per direction (29-38 px), ignition chain at 36 px spacing (neighbour edge 25 > 24 px: the chain runs backwards only). The whole chain (~0.9 s after the 1.5 s roll) fits in the cooldown. perExtraProjectile = 0: extra barrels (1 + RSS311, p14) scatter (L657 unread by the card, I) - not determined. p10/p13 shorten the track below 160 px, p11/p12 change where the barrel stops, p14 Blaze flames, p8 second pass are subskill effects."},
     "classId": "pirate",
     "name": "Powder Trail",
     "kind": "active",
@@ -1169,10 +1168,7 @@
     "movementDuringUse": 85,
     "baseCastRate": 1.3,
     "baseCooldown": 2.5,
-    "damageFormula": {
-      "base": 0.5,
-      "perLevel": 24.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 18.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1214,12 +1210,13 @@
       {
         "id": "napalm_powder",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [20, 40, 60, 80, 100]}], "confidence": "C", "note": "card p1: 4%/r chance per cast, burn [18] = V1'*20%/r on puddles and explosions"},
         "name": "Napalm Powder",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 20 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1232,61 +1229,67 @@
       {
         "id": "spinning_barrel",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p2: barrel speed +10%/r; track longer, same puddles near the dummy"},
         "name": "Spinning Barrel",
         "description": "Increases the projectile speed of powder trail.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "blowing_up",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6, 0.8, 1.0], "per": "use"}], "confidence": "I", "note": "card p3: explosionDamage x(1 + 0.1r) on the puddle explosions only; 2 puddles x 0.1r (PoR4 / Resztki A spacing 29-36 px; was 4.5 x 0.1r)", "plannerFix": "card: only puddle explosions (~2 of 3.0 units) are multiplied; planner applies fire_skill_damage 10/r to the whole skill"},
         "name": "Blowing Up",
         "description": "Increases the damage dealt by barrel explosions.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 10}
         }
       },
       {
         "id": "colliding_barrel",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "per": "use"}], "confidence": "C", "note": "card p4: d3 x(1+0.12r) on the barrel hit", "plannerFix": "card: only the barrel contact hit (1 unit) is multiplied; end explosion is 0 on dummy; planner applies to the whole skill"},
         "name": "Colliding Barrel",
         "description": "Increases the damage dealt by powder trail barrels.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 12 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 12}
         }
       },
       {
         "id": "heated_powder",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75]}], "confidence": "C", "note": "card p5: [180] = 15%/r vs burning; conditional on burn (p1 or other)"},
         "name": "Heated Powder",
         "description": "Increases damage to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 15 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 15}
         }
       },
       {
         "id": "stacked_fumes",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p6: [389] = 3/r: buff 25 per barrel hit; stacks derived from cast 2.5 s and buff 5 s", "plannerFix": "buff 25 is a stack stat (3%/r per stack, max 10, 5 s): steady state ~2 stacks = 6%/r (derived, I); planner has a flat 3%/r"},
         "name": "Stacked Fumes",
         "description": "Every time the barrel hits an enemy it gives you a stacking buff increasing fire skill damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 3 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 6}
         }
       },
       {
         "id": "powder_detonation",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.012, 0.048, 0.108, 0.192, 0.3], "per": "use"}], "confidence": "I", "note": "card p7: per puddle 3%/r chance of a Pirate_Powder_Trail_Detonation_obj with floor(d*0.2r); 2 puddles x 0.03r x 0.2r = 0.012 r^2 units per use (PoR4: 2 puddles in the 72 px window; was 4.5 -> 0.027 r^2); AOE +10%/r ignored (I)", "plannerFix": "separate detonation object with 0.2r of explosion damage on 3%/r chance per puddle; planner has flat fire 20/r and chance 3/r"},
         "name": "Powder Detonation",
         "description": "Chance to unleash a fiery pulse dealing additional damage on hit.",
         "maxRank": 5,
@@ -1302,6 +1305,7 @@
       {
         "id": "dual_barrel",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2]}], "confidence": "I", "note": "card p8 + R4 61#1: local counter [rbp+0xf88] = 1 (0x1462ee38d), p8: if irandom(99) < SUB(p8 s9) (4r) then +1 (0x1462eee44); the outer loop 0 < [rbp+0xf88] (0x1462f02f1) repeats the whole block L654-L690 incl. Pirate_Powder_Barrel_obj; the second set is created at the same place, so barrel, puddles and explosions are all doubled in separate objects/maps: x(1 + 0.04r) on everything from the barrels (r5: +20 %). C structure, I identical position of both sets. Old entry: one extra barrel hit (1 unit) per 4%/r, its puddles not counted.", "plannerFix": "planner of_total_damage 100 on chance 4/r = a full extra copy; card: 4r% chance per cast of one extra complete pass of the barrel-creation block (all barrel-derived objects doubled)"},
         "name": "Dual Barrel",
         "description": "Chance on cast to unleash an additional barrel.",
         "maxRank": 5,
@@ -1317,75 +1321,73 @@
       {
         "id": "mage_of_the_trails",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p9: castRate only; abilityCooldown 2.5 s dominates", "plannerFix": "cooldown 2.5 s sets the period; cast rate does nothing; planner gives faster_cast_rate 5/r"},
         "name": "Mage of the Trails",
         "description": "Increases cast rate when using powder trail.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 5 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 5}
         }
       },
       {
         "id": "shortened_fuse",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 0.5, 0.5, 0.5, 0.5], "per": "use"}], "confidence": "I", "note": "card p10 row: destroyTimer x0.55 (148 px), explosionAOE +20%/r: barrel contact lost (-1), end explosion r = 32*(1 + 0.2r) reaches the dummy (+1), puddles near the dummy '~2-3' (midpoint 2.5). Re-based to the new puddle count of the base (2): -1 + 1 + (2.5 - 2) = +0.5. The row's '~2-3 puddles' was written for the 16 px spacing - with 29-36 px spacing and a 148 px track the real count is likely lower (see rea_questions/cardIssues). Old entry: -2 (relative to base 5.5: 4.5 -> 2.5 puddles).", "plannerFix": "barrel stops ~148 px (before dummy at 160): -1 barrel hit, end explosion reaches it (+1), ~2.5 puddles near the dummy (card row) instead of the new base 2: net +0.5; the row predates the 29-36 px puddle spacing"},
         "name": "Shortened Fuse",
         "description": "Increases explosion area of effect but decreases traveling time.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "barrel_of_barrels",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15]}, {"kind": "extra_hits", "byRank": [6, 11, 16], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p11: projType 1 (stops on dummy), barrelOfBarrels = 5r small barrels from the dummy point; explosionAOE 0 (I)", "plannerFix": "barrel stops on dummy: end explosion +1 and 5r small barrels start on the dummy; planner projectile_count 5/r converts to 0"},
         "name": "Barrel of Barrels",
         "description": "Send forward a big barrel exploding on hit dealing damage and sending smaller barrels to all directions.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "projectile_size": 0,
-            "projectile_count": 0,
-            "fire_skill_damage": 0
-          },
-          "perRank": {
-            "projectile_size": 45,
-            "projectile_count": 5,
-            "fire_skill_damage": 15
-          }
+          "base": {"projectile_size": 0, "projectile_count": 0, "fire_skill_damage": 0},
+          "perRank": {"projectile_size": 45, "projectile_count": 5, "fire_skill_damage": 15}
         }
       },
       {
         "id": "fragmenting_barrel",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [80, 160, 240]}, {"kind": "projectiles", "byRank": [6, 12, 18]}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p12: projType 1, fragmentingBarrel = 6r Bomb_Rain objects toward 64+24i px ahead; LSSD +80%/r", "plannerFix": "barrel stops on dummy (+1 end explosion); 6r bombs land 64+ px beyond it (0 on dummy, I); planner projectile_count 6/r converts to 0"},
         "name": "Fragmenting Barrel",
         "description": "The barrel stops into terrain or on monster hit releasing flying bombs in an arc forward after exploding.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 80, "projectile_count": 6 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 6, "subtree_damage": 80}
         }
       },
       {
         "id": "heavy_barrel",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [150, 300, 450]}, {"kind": "extra_hits", "byRank": [0.0, 0.0, 0.0], "per": "use"}], "confidence": "I", "note": "card p13 row: speed x0.25, time x2 (travel 135 px), explosionAOE +40%/r, LSSD +150%/r: contact lost (-1), end explosion r = 32*(1 + 0.4r) hits (+1); old entry assumed 4.5 -> 2 puddles remain (-2.5 relative to 5.5, absolute total 3.0); re-based to the new base 3.0: absolute total unchanged -> 0 (the card row gives no puddle count for p13, I). Old: -2.5.", "plannerFix": "barrel ends ~25 px short of the dummy (contact hit lost, -1), end explosion reaches it (+1), puddles near it ~2 as in the base: net 0 (relative to base 3.0)"},
         "name": "Heavy Barrel",
         "description": "Send forward a slowly rolling barrel that knocks monsters back dealing increased damage and stunning them.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "fire_skill_damage": 150, "projectile_size": 40 }
+          "base": {"projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 40, "subtree_damage": 150}
         }
       },
       {
         "id": "flaming_barrels",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6]}, {"kind": "extra_hits", "byRank": [7.2, 14.4, 21.6], "per": "use", "note": "Blaze: 6 ticks per puddle explosion that hits the dummy x ~2 puddles x floor(explosionDamage*0.6r)"}], "confidence": "I", "note": "card p14 + R4 61#2 + PoR4: explosionFlames 60%/r -> pe[393] on the puddle explosion -> AddCollisionList -> Pirate_Barrel_Blaze_obj created at the dummy (PC04Pirate L72, 0x145189c31/0x145189c72), damage[3] = floor(explosionDamage*0.6r), full class minus trigger, destroyTimer 150 frames + ~20 fade, tick 30 frames, singleHit 0 -> 6 hits per Blaze (I +-1), different hits share no pack: ~2 puddles per cast (PoR4) -> ~12 hits of 0.6r*explosionDamage per cast (r5: ~36*explosionDamage; R4 had ~27 / ~81); successive Blazes overlap in time. n = 1 + 2r barrels (scatter unread, I). Old entry: 4.5 puddles x 1 hit x 0.6r = 2.7r.", "plannerFix": "planner of_total_damage 60/r as one copy; card: every puddle explosion that hits the dummy creates a Pirate_Barrel_Blaze_obj with 6 ticks of floor(explosionDamage*0.6r); extra barrels scatter unread"},
         "name": "Flaming Barrels",
         "description": "Send forward multiple barrels. Explosions now sets the ground on fire slowing and dealing damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 60, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 60, "projectile_count": 2}
         }
       }
     ]
@@ -1393,6 +1395,8 @@
   {
     "id": "bomb_barrage",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 6.1, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cooldown 8 s, instant-cast), IN-ZONE per rule 24: the bombs fall at a FIXED zone 330 +- 32 px from the player (not at the cursor): target_k = controller (x, y+6) + lengthdir(330 + bombLen_k, aim + bombDir_k), bombLen in {0, 8, 16, 24, 32, -32, ..} (period 9), bombDir in {0, 8, 16, -16, -8} deg (period 5); 25 bombs (bombAmount = 25 + p1.s9), each makes Explosion_Item_obj (r = 31.5*bombAOE + 12 = 43.5 px) with damage[3] = d3 (V1 = 20*L, bombs are the main hit, ratio 1). PoR4 (rule 40): the bombs land at 308.2 px for the 330 px target (zSpeed 4, yy 32, g 0.4, alarm[1] = 1, discrete flight), i.e. the real zone centre is ~308 px; the dummy stands at the centre of that real zone (rule 24), direction through the dummy centre. Resztki D (rule 38): the controller stands at (x, y+6) (Step_0 L5-6) and the aim direction tupm[7] is measured from (x, y+6); PoR4 swept the direction from (x, y), which gave 7.7 (the simulation bb2.py reproduces exactly 7.7 under the old geometry); with the corrected geometry 6.1 of 25 bombs reach the dummy (5-9 depending on the aim angle; R3 was 6.3 at 330 px with the 4 % shortfall). I (frame-1 event order Begin Step/Alarm, bomb-flight simulation). At the strict 160 px the value is 0 (outside the zone). perExtraProjectile = 0: the base has no extra-projectile mechanism (bombMultiShot only via p12 Bomb Shower: r4 -> 15.3, r5 -> 16.1; r1-3 stay 6.1); whether gear extras apply is not stated. p1 (+5 bombs/r: 7.7 / 9.1 / 10.9 / 12.5 / 13.5), p2/p13 (bigger blast radius: 10.3 / 12.7 / 14.1 / 14.8 / 15 for bombAOE 1.1..1.5), p11 (0), p14 (marker model) are subskill effects."},
     "classId": "pirate",
     "name": "Bomb Barrage",
     "kind": "active",
@@ -1421,10 +1425,7 @@
     "baseCastRate": 1.75,
     "baseCooldown": 8,
     "range": 330,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 27
-    },
+    "damageFormula": { "base": 0, "perLevel": 20 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1466,56 +1467,61 @@
       {
         "id": "bombardation",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15, 20, 25]}, {"kind": "extra_hits", "byRank": [1.6, 3.0, 4.8, 6.4, 7.4], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p1 + Resztki D: bombAmount +5/r (30..50 bombs from the same sequence); H = 7.7 / 9.1 / 10.9 / 12.5 / 13.5 minus base 6.1 (was 7.8 / 9.0 / 10.4 / 11.8 / 13.1 minus 6.3; PoR4 9.5 / 11.0 / 12.5 / 14.0 / 15.4 with the old direction geometry)", "plannerFix": "planner projectile_count 5/r converts to 0 hits; card gives in-zone hit counts 7.7 / 9.1 / 10.9 / 12.5 / 13.5 (base 6.1, real zone centre ~308 px)"},
         "name": "Bombardation",
         "description": "Increases the amount of bombs thrown.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 5 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 5}
         }
       },
       {
         "id": "barrage_blasting_radius",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.2, 6.6, 8.0, 8.7, 8.9], "per": "use"}], "confidence": "I", "note": "card p2 + Resztki D: bombAOE +10%/r -> hit radius 31.5*bombAOE + 12; H = 10.3 / 12.7 / 14.1 / 14.8 / 15 minus base 6.1 (was 7.9 / 9.8 / 12.2 / 13.7 / 14.5 minus 6.3; PoR4 9.6 / 11.8 / 13.7 / 14.5 / 14.8)", "plannerFix": "planner area 10/r has no hit model; card: radius 32*bombAOE+12 gives 10.3 / 12.7 / 14.1 / 14.8 / 15 (in-zone, zone centre ~308 px)"},
         "name": "Barrage Blasting Radius",
         "description": "Increases explosion area of effect of bomb barrage.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 10 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 10}
         }
       },
       {
         "id": "bombination",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p3: bomb frequency only", "plannerFix": "cooldown 8 s is the period and all 25 bombs end before it; cast frequency gives no DPS change; planner faster_cast_rate 8/r"},
         "name": "Bombination",
         "description": "Increases the frequency of bombs.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 8 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 8}
         }
       },
       {
         "id": "explosive_barrage",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [16, 32, 48, 64, 80]}], "confidence": "C", "note": "card p4: LSSD +16%/r"},
         "name": "Explosive Barrage",
         "description": "Increases the damage dealt by bomb barrage.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 16 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 16}
         }
       },
       {
         "id": "piercing_blastwave",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5]}], "confidence": "C", "note": "card p5: fire break [970] = 10%/r on bomb damage (all fire)"},
         "name": "Piercing Blastwave",
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 10 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1528,17 +1534,19 @@
       {
         "id": "scaled_blastradius",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "C", "note": "card p6: RSS191 not read; value is 0 without gear", "plannerFix": "LSSD += RSS191% x 15%/r (gear area %); 0 without area gear; planner conversion_explosion_aoe 15/r"},
         "name": "Scaled Blastradius",
         "description": "Increases damage dealt based on your explosion area of effect stat.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_explosion_aoe": 0 },
-          "perRank": { "conversion_explosion_aoe": 15 }
+          "base": {"conversion_explosion_aoe": 0},
+          "perRank": {"conversion_explosion_aoe": 15}
         }
       },
       {
         "id": "molten_heat_bombs",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0315, 0.066, 0.1035, 0.144, 0.1875], "per": "hit"}], "confidence": "I", "note": "card p7: extra per bomb hit = 0.03r*(1+0.05r) units (object hit assumed, I)", "plannerFix": "planner: proc chance 3/r with fire 5/r as a flat bonus; card: per bomb hit a separate object of d*(1+5%/r) with chance 3%/r"},
         "name": "Molten Heat Bombs",
         "description": "Bombs have a chance to scorch the ground dealing additional damage.",
         "maxRank": 5,
@@ -1554,12 +1562,13 @@
       {
         "id": "sharp_scatter",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [25, 50, 75, 100, 125]}], "confidence": "I", "note": "card p8: bleed 25%/r with chance 4%/r per bomb; 6 shrapnel hits not counted (I)"},
         "name": "Sharp Scatter",
         "description": "Chance for bombs to shatter into fragments inflicting bleeding when exploding.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 25 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1572,67 +1581,73 @@
       {
         "id": "quick_barrage",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p9: bomb speed only"},
         "name": "Quick Barrage",
         "description": "Increases the projectile speed of bomb barrage.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "critical_explosion",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p10: spell crit chance 6%/r; crit damage +20%/r"},
         "name": "Critical Explosion",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 6, "spell_crit_damage": 20 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 6, "spell_crit_damage": 20}
         }
       },
       {
         "id": "crossed_spot",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p11: xTarget = bombX (player pos)", "plannerFix": "bombs land on the player position (bombX/bombY): 0 on dummy 160 px away; planner of_total_damage 60/r"},
         "name": "Crossed Spot",
         "description": "Mark a location where to fire all bombs.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 60 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 60}
         }
       },
       {
         "id": "bomb_shower",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12]}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p12: bombMultiShot n=1+4r rings around the player; dummy only hit by ring bombs on its side", "plannerFix": "card: r1-3 no change at dummy (6.3); planner projectile_count 4/r converts to 0; card r4/r5 values (14.3, 16.3) are beyond planner max rank 3"},
         "name": "Bomb Shower",
         "description": "Fire multiple bombs in all directions from you.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 4 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 4}
         }
       },
       {
         "id": "rapid_barrage",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [8.35, 8.9, 8.9], "per": "use"}], "confidence": "I", "note": "card p13 + Resztki D: bombAOE = 1.35 / 1.70 / 2.05 for r13 = 1..3 (r2 = 0); card table H(bombAOE) = 6.1 / 10.3 / 12.7 / 14.1 / 14.8 / 15 / 15 / 15 for 1.0 / 1.1 / 1.2 / 1.3 / 1.4 / 1.5 / 1.6 / 1.7-2.0: 1.35 interpolated (14.1 + 14.8)/2 = 14.45, 1.70 and 2.05 = 15; minus base 6.1 (old: 6.65 / 8.5 / 8.7)", "plannerFix": "frequency gives no DPS (cooldown-limited); bombAOE = 1 + 0.1 r2 + 0.35 r13 grows the hit radius; planner faster_cast_rate 40/r"},
         "name": "Rapid Barrage",
         "description": "Rapidly fire bombs with increased speed dealing area of effect damage and knocking monsters back on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "area_of_effect": 0 },
-          "perRank": { "faster_cast_rate": 40, "area_of_effect": 35 }
+          "base": {"faster_cast_rate": 0, "area_of_effect": 0},
+          "perRank": {"faster_cast_rate": 40, "area_of_effect": 35}
         }
       },
       {
         "id": "rain_of_bombs",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "cursor on the dummy: only the marker explosion hits; the rain bombs fall on a 224 px ring (210.8 px real) around the landing point -> 0 on the dummy at the centre"}], "confidence": "I", "note": "card p14 + R4 63#1 + PoR4: TalentsPirate 63 creates ONE marker bomb (bombAmount = floor((25 + p1)*(1 + 0.35 r14)) = 33/42/51 for r1..3 at p1 = 0) at owner + lengthdir(min(cursor distance, 330), aim); its Destroy_0 (0x148fa6c60) makes a marker explosion (scale 0.75 (+bombAOE bonus), r = 35.6 px) and a rain controller that fires bombs at point + lengthdir(224, irandom(360)) (real ring ~210.8 px with the 6.6 % short flight). Dummy at the cursor point (marker lands ~8-13 px before the cursor, 27 px from the dummy, blast 35.6 px): 1 hit (marker) and 0 from the rain. Variant (not used, rule 38 main result keeps the cursor on the dummy): dummy on the ring r = 210.8 px, 6.6 % per bomb -> 2.2 / 2.8 / 3.4 hits (r14 = 1..3; 4.0 / 4.5 for r4-5) and the marker 0. The salvo lasts N*0.175 s (<= 12 s), longer than the 8 s cooldown from r14 >= 5.", "plannerFix": "transformation (Rain marker bomb): one Pirate_Bomb_Barrage_Rain_obj marker at the cursor point + a bomb rain on a ring of ~224 px (floor((25 + p1)*(1 + 0.35r)) bombs); planner of_total_damage 35/r unsupported"},
         "name": "Rain of Bombs",
         "description": "Now throw a single bomb marking the target location and dropping multiple bombs from the sky.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 35 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 35}
         }
       }
     ]
@@ -1703,6 +1718,7 @@
       "base": 5,
       "perLevel": 1
     },
+    "buffUptime": { "duration": 25, "cooldown": 60 },
     "passiveStats": {
       "base": {
         "increased_attack_speed": 30,
@@ -1718,6 +1734,8 @@
     "id": "torrent",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 2.0, "confidence": "C", "note": "Per cast, IN-ZONE (cursor (x, y-24) = target point, 24 px from the dummy centre, explosion reach 32 + 12 = 44 px; same with the cursor exactly on (x, y)): XSP(1) Pirate_Torrent_obj markers at the target point, each a chain of 1 + torrents explosions, torrents = 1 + p4.s9 = 1 -> 2 explosions 30 frames apart at the same place (Step_0 0x149027060, torrentsLength = 0, R3 65#0, C); every explosion is an Explosion_Item_obj with damage[2] = floor(V1*(1+LSSD)), V1 = 11.75 + 8.25*L (cold) = 1.0 main hit, no tick and no map reuse -> 2.0 per marker. Each explosion also launches the dummy ([110] = 20) but the landing deals nothing in the base ([139] = 0). perExtraProjectile = 2.0: every extra marker (XSP) stands at the same target point and repeats both explosions (best reading, I: the card puts the base markers 'at the target point' and only p11 'around' it). The planner hitModel (Pirate_Torrent_Vortex_Create, tick 0.25 s, 3 s) is the p13 Whirlpool model, not the base. p1 second marker (4 %*r), p2/p14 launch landing hits, p6 chain (4 hits per explosion, 4 %*r), p4 (+1 explosion/r), p8, p11-p13 are subskill effects."},
     "classId": "pirate",
     "name": "Torrent",
     "kind": "active",
@@ -1746,10 +1764,7 @@
     "movementDuringUse": 85,
     "baseCastRate": 1.75,
     "range": 240,
-    "damageFormula": {
-      "base": 12,
-      "perLevel": 9
-    },
+    "damageFormula": { "base": 11.75, "perLevel": 8.25 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1791,6 +1806,7 @@
       {
         "id": "splash_impact",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4], "per": "use"}], "confidence": "C", "note": "card p1 + reguly 17: nth nearest 2 = dummy; 4%/r per cast x 2 explosions", "plannerFix": "planner on_cast chance 4/r without effect; card: 2nd marker on nearest enemy (= dummy) gives 2+p4 explosions"},
         "name": "Splash Impact",
         "description": "Chance when casting to summon an additional torrent at the closest monster.",
         "maxRank": 5,
@@ -1799,6 +1815,7 @@
       {
         "id": "watery_fissure",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.012, 0.048, 0.108, 0.192, 0.3], "per": "use"}], "confidence": "I", "note": "card p2 (reguly 22/27): 1 landing per cast; B47 = floor(sum damage*[139]*0.01); extra = 0.04r*0.30r units per use", "plannerFix": "landing explosion damage 0.3r*d2 (buff 47 via [139]=30r) on a 4%/r cast chance: quadratic 0.012r^2 units, not 30%/r of total"},
         "name": "Watery Fissure",
         "description": "Chance on hit to knock enemies into the air dealing area of effect damage upon landing.",
         "maxRank": 5,
@@ -1814,12 +1831,13 @@
       {
         "id": "subzero_liquid",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.3, 1.6, 1.9, 2.2, 2.5]}], "confidence": "C", "note": "card p3: cold break [973] = 30%/r for 5 s, chance 4%/r per hit; multiplier applied when active (uptime not modelled)"},
         "name": "Subzero Liquid",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 30 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1832,28 +1850,31 @@
       {
         "id": "torrenting_current",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5], "per": "use"}], "confidence": "I", "note": "card p4: torrents = 1+p4; each extra explosion 30 frames apart at the same place", "plannerFix": "torrents +1 per rank = +1 explosion per marker (1 unit); planner projectile_count 1/r is converted at perExtraProjectile 2 (x2 per marker)"},
         "name": "Torrenting Current",
         "description": "Torrents now burst additional times.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "waterwalk",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p5: movement while casting"},
         "name": "Waterwalk",
         "description": "Decreases the movement diminish when using torrent.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "collateral_splash",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.16, 0.32, 0.48, 0.64, 0.8], "per": "hit"}], "confidence": "I", "note": "card p6 + reguly 23: chain 1+floor(9/3) = 4 hits d2 per explosion; per base hit (2 explosions) = 0.16r", "plannerFix": "planner proc chance 4/r without effect; card: each explosion that hits the dummy spawns a 4-hit cold chain (T0, max_bounces 8), 0.16r per explosion"},
         "name": "Collateral Splash",
         "description": "Torrents have a chance on hit to chain their damage dealt to multiple nearby monsters.",
         "maxRank": 5,
@@ -1862,17 +1883,23 @@
       {
         "id": "water_mass",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75]}], "confidence": "C", "note": "card p7: cold skill damage LSSD +15%/r"},
         "name": "Water Mass",
         "description": "Increases the damage dealt by torrent.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "pillar_of_water",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}, {"kind": "extra_hits", "byRank": [0.18, 0.42, 0.72, 1.08, 1.5], "per": "use"}], "confidence": "I", "note": "card p8: Pirate_Torrent_Tornado 0.5 s tick, destroyTimer 3 s*(1+15%/r); net 6,7,8,9,10 units x 0.03r; LSSD +8%/r; freeze 5 s", "plannerFix": "tornado replaces the torrent with chance 3r%: 1+floor(180(1+0.15r)/30) ticks + 1 end explosion minus the 2 replaced hits; planner has only the stats"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
+        },
         "name": "Pillar of Water",
         "description": "Chance on cast to replace torrent with a watery tornado dealing damage, freezing and lasting for an increased duration.",
         "maxRank": 5,
@@ -1888,67 +1915,73 @@
       {
         "id": "oceans_might",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p9: AOE +30%/r; explosions already hit the dummy near the centre, no added hits"},
         "name": "Ocean´s Might",
         "description": "Increases the size and area of effect of torrent.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 30 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 30}
         }
       },
       {
         "id": "hypothermic_liquid",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75]}], "confidence": "C", "note": "card p10: [178] = 15%/r vs frozen (chill B21); conditional on dummy frozen (pillar p8 or Freezing Chain Shot)"},
         "name": "Hypothermic Liquid",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 15 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 15}
         }
       },
       {
         "id": "ocean_storm",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "N = 1 + 3r > 1 puts ALL torrents (also the first) on a 70 px ring: 0 hits on a dummy at the target point, the base explosions are lost too"}], "confidence": "I", "note": "card p11 row + R4 65#2: ring r = floor(40*(1 + X)) = 70 px (X = 0.75 = torrent scale, [rbp+0x1808], asm 0x146307bc8-0x146307bf7, floor 0x1506f0608), torrents every 360/N with N = ReturnExtraSpellProjectiles(.., 1 + 3r), all of them shifted to the ring when N > 1 (L1127); explosion radius 31.5*X + 12 = 35.6 px (Torrent_obj Destroy_0 copies image_xscale to the Explosion_Item_obj, asm 0x149022ca9-0x149022d27); hit condition 70 - c <= 31.5X + 12 never holds for c = 24 or 0 (Resztki E: c = 30 -> 40 > 35.6): 0 hits and the base explosion is lost. Dummy ON the ring (c = 70): 16 % per torrent (rises with p9/p12/p13), ring hits of the p4/p6 variants not recomputed (I). C: code; I: semantics of X as the torrent scale. Old: projectiles 3r with the engine default of 2 hits per extra marker.", "plannerFix": "planner projectile_count 3/r adds markers; in game N > 1 moves every torrent onto a ring r = floor(40*(1 + X)) = 70 px around the target point, out of reach (blast 35.6 px) of a dummy at the cursor"},
         "name": "Ocean Storm",
         "description": "Unleash multiple torrents around target location.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 3 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 3}
         }
       },
       {
         "id": "chaotic_wave",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 3, 3]}, {"kind": "damage_pct", "byRank": [70, 140, 210]}, {"kind": "cooldown_s", "byRank": [5, 5, 5]}], "confidence": "I", "note": "card p12: 1 wave hit + 2 torrent explosions per cast; cooldown 5 s; LSSD +70%/r", "plannerFix": "transformation into a tsunami wave with 1+(1+torrents) hits on a 5 s cooldown; planner has no transformation or cooldown"},
         "name": "Chaotic Wave",
         "description": "Send forward a tsunami unleashing torrents on hit. Torrent now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 70, "area_of_effect": 25 }
+          "base": {"area_of_effect": 0, "cooldown_added": 5, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 25, "cooldown_added": 0, "subtree_damage": 70}
         }
       },
       {
         "id": "whirlpool",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [16, 16, 16]}, {"kind": "damage_pct", "byRank": [80, 160, 240]}, {"kind": "cooldown_s", "byRank": [5, 5, 5]}], "confidence": "I", "note": "card p13: 1+floor((180+20-2)/15) = 14 vortex hits + 2 explosions = 16 per use; cooldown 5 s; LSSD +80%/r", "plannerFix": "transformation into a vortex (tick 0.25 s, 3 s) + 2 explosions, 5 s cooldown; planner uses this vortex as the base hit model"},
         "name": "Whirlpool",
         "description": "Create a whirlpool sucking in monsters on a large radius eventually collapsing into torrents. Torrent now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 80, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "cooldown_added": 5, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 30, "cooldown_added": 0, "subtree_damage": 80}
         }
       },
       {
         "id": "storm_pillar",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.875, 1.75, 2.625], "per": "use"}], "confidence": "I", "note": "card p14: [139] = 175r, [110] = 60 (flight ~62 frames > 30 frame gap): 0.5 landing per cast -> 0.875r units per use", "plannerFix": "planner cold 175/r as cold skill damage; in game a jump landing (B47 = 1.75r*d2) per 0.5 landing per cast"},
         "name": "Storm Pillar",
         "description": "Unleash a big torrent knocking monsters back and airborne with force causing them to take increased damage when hitting the ground.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 175 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 175}
         }
       }
     ]
@@ -1956,6 +1989,8 @@
   {
     "id": "freezing_chain_shot",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per attack (ranged weapon skill, dummy on the aim line at 160 px): n = 1 + RSS391 + XPR Pirate_Freezing_Chain_Shot_obj, 8 px/frame, mask 72x72 (r 36 px), projType 0 (pierces), singleHit, no tick -> exactly 1 hit per projectile = d0 (W*(1 + V2(1+LSSD)/100) phys) + d2 (cold V1) = the main hit; applies the freeze [47] = 4 s in the same hit. perExtraProjectile = 1.0 (I): with n > 1 the projectiles scatter (L967) but the mask is wide, so those within |deviation| <= 48 px at 160 px hit - 'usually all' (the card does not give the scatter angle). p11 chain (3, 4, 6, 8, 9 cold hits), p13 (+4r hits), p12 (x(2 + 0.75r), vacuum grab = 0 on the dummy, rule 22), p10 are subskill effects."},
     "weaponRequirement": "ranged",
     "classId": "pirate",
     "name": "Freezing Chain Shot",
@@ -1984,12 +2019,11 @@
     "damageType": "cold",
     "attackKind": "attack",
     "movementDuringUse": 65,
-    "damageFormula": {
-      "base": 5,
-      "perLevel": 8.5
-    },
+    "damageFormula": { "base": 5.25, "perLevel": 7.75 },
     "attackScaling": {
-      "weaponDamagePct": { "base": -0.5, "perLevel": 18 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 18 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 5.5, "perLevel": 0.5 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -2036,12 +2070,13 @@
       {
         "id": "poseidons_fist",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5]}], "confidence": "C", "note": "card p1: cold break [973] = 10%/r, 5 s, on every hit"},
         "name": "Poseidon's Fist",
         "description": "Breaks cold resistances on striking.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 10 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2054,56 +2089,61 @@
       {
         "id": "precision_chain",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "C", "note": "card p2: attack rating +10%/r"},
         "name": "Precision Chain",
         "description": "Increased hit rating.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "good_ol_ways",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p3: attack speed more +6%/r"},
         "name": "Good Ol' Ways",
         "description": "Gain additional attacks per second while wielding a bow.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_speed_more": 0 },
-          "perRank": { "skill_attack_speed_more": 6 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 6}
         }
       },
       {
         "id": "pack_a_punch",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p4: projectile speed +10%/r; pellet hits the dummy anyway"},
         "name": "Pack a Punch",
         "description": "Increases the projectile speed of freezing chain shot.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "shatter",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5]}], "confidence": "C", "note": "card p5: [178] = 10%/r vs frozen; the pellet's own chill [47] = 4 s applies in the same hit, so active from the first hit"},
         "name": "Shatter",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 10 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 10}
         }
       },
       {
         "id": "ice_age",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75]}], "confidence": "C", "note": "card p6: frostbite [35] = V1'*15%/r per hit"},
         "name": "Ice Age",
         "description": "Freezes enemies with a chance on striking to deepfreeze them.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_permafrost_damage": 0 },
-          "perRank": { "increased_permafrost_damage": 15 }
+          "base": {"increased_permafrost_damage": 0},
+          "perRank": {"increased_permafrost_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2116,17 +2156,19 @@
       {
         "id": "ice_healing",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p7: life and mana regeneration"},
         "name": "Ice Healing",
         "description": "Restores a flat amount of health and mana on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1, "mana_replenish_pct": 0.75 }
+          "base": {"life_replenish_pct": 0, "mana_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1, "mana_replenish_pct": 0.75}
         }
       },
       {
         "id": "gulf_stream",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [8, 16, 24, 32, 40]}], "confidence": "I", "note": "card p8: 15%/r chance per cast of buff 28 (+8%/r attack speed, 4 s); values are buff size, uptime not in card"},
         "name": "Gulf Stream",
         "description": "Chance on hit to increase your attackspeed for a short duration.",
         "maxRank": 5,
@@ -2142,67 +2184,73 @@
       {
         "id": "grip_boots",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p9: movement"},
         "name": "Grip Boots",
         "description": "Decreases the movement diminish when using freezing chain shot.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "coldspot",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "per": "hit"}], "confidence": "C", "note": "card p10: [398] explosion on the dummy with floor((d2+d0)*12%/r) per hit"},
         "name": "Coldspot",
         "description": "Freezing chain shot deals damage in a small area around the targets hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "splash_of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "splash_of_total_damage": 12, "area_of_effect": 15 }
+          "base": {"splash_of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"splash_of_total_damage": 12, "area_of_effect": 15}
         }
       },
       {
         "id": "frozen_chain_rip",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 4, 6]}], "confidence": "I", "note": "card p11: values 3,4,6 hits (r1..3, planner max 3); damage d2 only", "plannerFix": "chain 1+floor((5r+1)/3) pellets hits per hitting pellet, damage d2 only (cold share; ratio d2/(d0+d2) not in card); planner bounces 5/r"},
         "name": "Frozen Chain Rip",
         "description": "Freezing chain shot now chains and pulls chained monsters towards the first target.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 5 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 5}
         }
       },
       {
         "id": "coldsnap_vacuum",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [175, 250, 325]}, {"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p12: LSSD = 1+0.75r (base 100%), scale +50%/r; V parts only (upper bound applied to D)", "plannerFix": "card: LSSD = 1+0.75r, so V parts x(2+0.75r); planner cold 75/r is wrong; pull and stun give 0 on dummy"},
         "name": "Coldsnap Vacuum",
         "description": "Fire a huge chainshot catching monsters on its way and dealing increased damage and stunning caught monsters when hitting terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 75, "area_of_effect": 50 }
+          "base": {"area_of_effect": 0, "subtree_damage": 100},
+          "perRank": {"area_of_effect": 50, "subtree_damage": 75}
         }
       },
       {
         "id": "catch_of_the_day",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 8, 12], "per": "hit"}], "confidence": "C", "note": "card p13 + R4 66#0 (C): PC04Pirate 0x14518dbd5-0x14518de47: 4r new Pirate_Freezing_Chain_Shot_obj are created at the dummy position (mov rdx,r13 0x14518dd10/0x14518dd53, self = hit enemy) + lengthdir(8, dir) (8.0 @0x14f189528), directions hit_dir + 360/[400]*i, InheritModifiers (0x14518e779), deltaSpeed 8, mask 72x72 (r ~ 36 px): after 2 frames ~24 px from the dummy centre (<= 36 + 12), so all 4r overlap and hit (each singleHit), d2 and d0 copied; the original pellet hits once. Was I."},
         "name": "Catch of the Day",
         "description": "On hit release additional chain shots in all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 4 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 4}
         }
       },
       {
         "id": "freezing_whiplash",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p14: [401] whirl at landing point", "plannerFix": "whirl at ground lands beyond the dummy (~374 px), 0 on dummy; planner cold 135/r"},
         "name": "Freezing Whiplash",
         "description": "When hitting terrain the chainshot spins and grows in size rapidly sending monsters into the air dealing increased damage and stunning them.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 135 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 135}
         }
       }
     ]
@@ -2241,6 +2289,8 @@
   {
     "id": "parrot",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one melee attack of one Parrot_obj): the attack makes a Hitbox_Summon_obj = 1 hit of damage[2] = floor(B*M) (B = floor(V1) with V1 = 9*L, cold; M = 1 + summon bonuses) = 1.0 main hit; the parrots fly to the dummy (minionType 6, attackRangeMin 24, no cooldown reset). N = 3 + p3.s9 + RSS360 parrots (a new parrot per cast, the oldest is destroyed once N are alive; they never expire, so after N casts the flock is permanent). Action interval attackCooldown 1.75 s/(1 + x) / (1 + AS/100) (engine side; the divisor x at Alarm_0 L98 is I). No splash on the main target ([58] = 0.75 does not apply to it). p14 Pecking Order extra object (trigger rate unread, I), p12/p13 are subskill effects."},
     "classId": "pirate",
     "name": "Parrot",
     "kind": "active",
@@ -2312,72 +2362,79 @@
       {
         "id": "peck_peck",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [15, 30, 45, 60, 75], "note": "additive inside the divisor with the Remiges term: interval = 1.75 s / (1 + 0.01*(5 + 0.75*L70) + 0.15r) / (1 + AS/100)"}], "confidence": "C", "note": "card p1 + R4 68#0 (C): Parrot_obj Alarm_0 L98 attackCooldown /= (1 + [rbp+0x5e8] + [rbp+0x5c8]) (asm 0x148ef35f2-0x148ef362c), [rbp+0x5c8] = p1.s9*0.01 (0x148ef0828), [rbp+0x5e8] = LTD(talent 70 Remiges, V2)*0.01 (0x148ef021b): Remiges attack-speed bonus 5 + 0.75*L70 % applies to every Parrot_obj regardless of minionType (see baseFixes). Was I."},
         "name": "Peck Peck",
         "description": "Increases parrot attack speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 15 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 15}
         }
       },
       {
         "id": "birdstrike",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p2: movement speed"},
         "name": "Birdstrike",
         "description": "Increases parrot movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 8 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 8}
         }
       },
       {
         "id": "flock_gathering",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.6667, 2.3333, 3.0, 3.6667], "note": "already modelled by planner summon_max_amount; "}], "confidence": "C", "note": "card p3: N += 2r parrots; hits_mult = (3+2r)/3 vs base N0=3"},
         "name": "Flock Gathering",
         "description": "Increases the maximum amount of parrots.",
         "maxRank": 4,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 2 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 2}
         }
       },
       {
         "id": "gm_crops",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p4: LSSD +8%/r"},
         "name": "GM Crops",
         "description": "Increases the life and damage dealt by parrots.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0, "summon_life": 0 },
-          "perRank": { "cold_skill_damage": 8, "summon_life": 15 }
+          "base": {"summon_life": 0, "subtree_damage": 0},
+          "perRank": {"summon_life": 15, "subtree_damage": 8}
         }
       },
       {
         "id": "birdflu_vax",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p5: resistances"},
         "name": "Birdflu Vax",
         "description": "Increases the resistances of parrots.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_all_resist": 0 },
-          "perRank": { "summon_all_resist": 10 }
+          "base": {"summon_all_resist": 0},
+          "perRank": {"summon_all_resist": 10}
         }
       },
       {
         "id": "target_practise",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p6: boss bonus; dummy is not a boss (I)"},
         "name": "Target Practise",
         "description": "Increases the damage dealt by parrots against bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 10 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 10}
         }
       },
       {
         "id": "pirates_best_friend",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p7: damage taken reduction proc on player"},
         "name": "Pirate's Best Friend",
         "description": "Chance on hit to reduce target's damage dealt.",
         "maxRank": 5,
@@ -2393,28 +2450,31 @@
       {
         "id": "upper_wing",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5]}], "confidence": "C", "note": "card p8: [179] = 10%/r vs stunned (stun from p11 Screech or other); conditional"},
         "name": "Upper Wing",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "beak_of_steel",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [9, 18, 27, 36, 45]}], "confidence": "C", "note": "card p9: LSSD +9%/r", "plannerFix": "card: LSSD += 9%/r; planner cold_skill_damage 8/r"},
         "name": "Beak of Steel",
         "description": "Increases the damage dealt by parrot.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 9}
         }
       },
       {
         "id": "killing_command",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "I", "note": "card p10: [404] = 1/r chance; values unread", "plannerFix": "planner lists proc chance 1/r with no effect; card: killCommand AS/damage bonus values not read"},
         "name": "Killing Command",
         "description": "Parrots have a chance on hit to enrage, significantly increasing their attack speed and damage for a short duration before dying.",
         "maxRank": 5,
@@ -2423,45 +2483,49 @@
       {
         "id": "screech",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [65, 130, 195]}], "confidence": "C", "note": "card p11: LSSD +65%/r; range +20%/r; stun 2 s (0 extra)"},
         "name": "Screech",
         "description": "Parrots now send a traveling screeching wave on attack knocking monsters back dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "cold_skill_damage": 65, "skill_range": 20 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 20, "subtree_damage": 65}
         }
       },
       {
         "id": "pecking_pack",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [30, 60, 90]}, {"kind": "cooldown_s", "byRank": [8, 8, 8]}], "confidence": "C", "note": "card p12: killCommandAS += 30/r; cooldown +8 s", "plannerFix": "card: parrot attack speed +30%/r and cooldown +8 s (whole flock cast); planner has AS only, no cooldown"},
         "name": "Pecking Pack",
         "description": "Summon all parrots with one cast empowering the parrots with increased attack speed. Parrot now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 30 }
+          "base": {"summon_attack_speed": 0, "cooldown_added": 8},
+          "perRank": {"summon_attack_speed": 30, "cooldown_added": 0}
         }
       },
       {
         "id": "captains_parrot",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.6333, 0.9333, 1.2333], "note": "relative to the 3-parrot flock, not per entity action (engine multiplies by N); not applied. "}], "confidence": "C", "note": "card p13: limit 1 parrot, scale 2.5, [71] = 25%/r not counted", "plannerFix": "transformation into one parrot: B x(1+0.3r*N0) (N0=3); hits_mult = (1+0.9r)/3 vs base 3 parrots; planner of_total_damage 30/r plus area 25/r"},
         "name": "Captain's Parrot",
         "description": "Now only summon one big parrot scaling with the amount of total parrots attacking with increased radius and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 30, "area_of_effect": 25 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 30, "area_of_effect": 25}
         }
       },
       {
         "id": "pecking_order",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.29, 0.38, 0.47], "per": "use", "note": "per entity action: every 5th attack of each parrot adds one Pecking Order hit of floor(d2*(1 + 0.45r)) -> 0.2*(1 + 0.45r) extra hits per action"}], "confidence": "C", "note": "card p14 + R4 68#1 (C): SummonAttackScript 0x1461ab115-0x1461ab22e: if peckingOrder > 0 the counter peckingOrderAttack rises on EVERY attack and at >= 5 (14018dba0) the hit gets pe[405] = peckingOrder, pe[406] = radius and the counter is zeroed -> every 5th attack of each parrot; PC04Pirate L122 (0x14518b5c3) creates Pirate_Parrot_Pecking_Order_obj on the dummy (self = hit enemy, InheritModifiers 0x14518bc5e, singleHit) = 1 hit floor(damage[2]*(1 + 0.45r)) cold, mask 230x230 x0.75 covers the dummy. Factor 1 + 0.2*(1 + 0.45r) on the parrots' damage (r5: x1.65; r1..3: x1.29 / 1.38 / 1.47). Old entry: other, value per trigger, trigger rate unread (I).", "plannerFix": "planner cold 45/r as flat bonus; card: every 5th attack of each parrot spawns a Pirate_Parrot_Pecking_Order_obj on the target (1 hit of d2*(1 + 0.45r)) -> x(1 + 0.2*(1 + 0.45r)) on the parrots' damage"},
         "name": "Pecking Order",
         "description": "Parrots now unleash a frozen nova every five attacks with increased radius and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 45, "area_of_effect": 25 }
+          "base": {"cold_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"cold_skill_damage": 45, "area_of_effect": 25}
         }
       }
     ]
@@ -2499,6 +2563,7 @@
       "base": 5,
       "perLevel": 1
     },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": {
         "cold_skill_damage": 2.5,
@@ -2546,6 +2611,8 @@
   {
     "id": "anchor_swing",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.65, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast (cooldown 2 s), dummy on the aim line at 160 px. The anchor Pirate_Anchor_obj orbits the player (8 deg/frame from aim-90 deg, radius 1 + 1.5*t px for 2.5 s then back at -8 px/frame), rectangular mask x -6..61, y -32..33 around the anchor point (image_angle never set, R3 71#0), the hit map is cleared every 350 deg (frames 44, 88, 132); frame simulation of the card (R3, C for the mask and motion, I for the rectangle-circle collision +-0.5 px), averaged over the aim direction: the ANCHOR hits 1.65 times (2 for aim angles phi in [12, 50] u [102, 255] u [316, 356] deg, else 1; passes at frames ~101 and ~146) and the CHAIN (anchorChain, damage floor(d2*0.5), radius-long 20 px wide rectangle) hits twice (frames 102 and 147) at half the anchor damage each -> 1.65 + 2*0.5 = 2.65 anchor hits d2 per cast (the card's 'zamiast 2*d2, +32 %'). Units: d2 = the anchor hit = 2*V1' (the script doubles it), so the planner's V1-based main hit is half of it - converted here in anchor-hit units, see damageNote. perExtraProjectile 0: no projectile mechanism (p5 baby anchor 0.39 hits at 4 %*r, p6 iAnchor second anchor 1.84 + 2 chain hits at 3 %*r, p12 satellites are subskill effects). p11 (orbit around the cast point), p13 (+5 s cooldown), p14 (torrent waves, +2 s) change the model."},
     "classId": "pirate",
     "name": "Anchor Swing",
     "kind": "active",
@@ -2616,23 +2683,25 @@
       {
         "id": "on_the_deck",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p1: movement while casting"},
         "name": "On The Deck",
         "description": "Decreases movement diminish when using anchor swing.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "rusted_chain",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75]}], "confidence": "C", "note": "card p2: cold break [973] = 15%/r, 5 s, on hit"},
         "name": "Rusted Chain",
         "description": "Inflicts cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 15 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2645,28 +2714,31 @@
       {
         "id": "spin_to_win",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0.5, 0.5, 1, 1], "per": "use"}], "confidence": "I", "note": "card p3 (simulation R3): extra units = 0.5 x extra chain hits -> 0,0.5,0.5,1,1; anchor 1.65 unchanged", "plannerFix": "duration matches planner; card: longer spiral gives chain hits 2,2,3,3,4,4 (r0..5) at 0.5 d2 each; planner has no hit model"},
         "name": "Spin to Win",
         "description": "Increases the duration of anchor swing.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 12.5 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 12.5}
         }
       },
       {
         "id": "sharpened_bill",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p4: LSSD +10%/r"},
         "name": "Sharpened Bill",
         "description": "Increases damage dealt by anchor.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "baby_anchor",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0156, 0.0312, 0.0468, 0.0624, 0.078], "per": "use"}], "confidence": "I", "note": "card p5: 4%/r x 0.39 anchor hits = 0.0156r units per use", "plannerFix": "planner on_cast chance 4/r with no effect; card: small anchor 0.39 hits per proc"},
         "name": "Baby Anchor",
         "description": "Chance on cast to summon a small anchor spinning close to the pirate.",
         "maxRank": 5,
@@ -2675,6 +2747,7 @@
       {
         "id": "ianchor",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0852, 0.1704, 0.2556, 0.3408, 0.426], "per": "use"}], "confidence": "I", "note": "card p6 (simulation R3): 3%/r x 2.84 units = 0.0852r per use", "plannerFix": "planner +100% of total per proc; card: second anchor 1.84 hits + 2 chains at 0.5 = 2.84 units per 3%/r"},
         "name": "iAnchor",
         "description": "Chance on cast to unleash an additional anchor.",
         "maxRank": 5,
@@ -2690,89 +2763,97 @@
       {
         "id": "frozen_tip",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [5, 10, 15, 20, 25]}], "confidence": "C", "note": "card p7: LSSD +5%/r; freeze [47] = 1 s/r (enables p8)"},
         "name": "Frozen Tip",
         "description": "Increases damage dealt by anchor and freezes monsters on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0, "freeze_duration": 0 },
-          "perRank": { "cold_skill_damage": 5, "freeze_duration": 1 }
+          "base": {"freeze_duration": 0, "subtree_damage": 0},
+          "perRank": {"freeze_duration": 1, "subtree_damage": 5}
         }
       },
       {
         "id": "cold_smash",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.175, 1.35, 1.525, 1.7, 1.875]}], "confidence": "C", "note": "card p8: [178] = 17.5%/r vs frozen (from p7); conditional on the freeze"},
         "name": "Cold Smash",
         "description": "Increases damage to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 17.5 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 17.5}
         }
       },
       {
         "id": "man_of_war",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.23, 0.28, 0.41, 0.52], "per": "use"}], "confidence": "I", "note": "card p9 (simulation R3): extra anchor hits over 1.65 = 0.15/0.23/0.28/0.41/0.52", "plannerFix": "planner projectile_size 15/r has no hit model; card: anchor hits 1.80/1.88/1.93/2.06/2.17 (scale x(1+0.15r))"},
         "name": "Man of War",
         "description": "Increases anchor size and area of effect radius.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "aerodynamic_chain",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.09, 0.36, 0.94, 2.39, 1.7], "per": "use"}], "confidence": "I", "note": "card p10 (simulation R3): anchor 2.74/2.01/2.59/3.54/3.35 and chain 2/2/2/3/2 hits; extra units over base 2.65 = 1.09/0.36/0.94/2.39/1.70", "plannerFix": "planner projectile_speed 20/r; card: angular speed changes anchor and chain hit counts (phase-dependent)"},
         "name": "Aerodynamic Chain",
         "description": "Increases the spinning speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 20 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 20}
         }
       },
       {
         "id": "anchoring_the_anchor",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [5.5, 5.5, 5.5]}, {"kind": "damage_pct", "byRank": [50, 100, 150]}], "confidence": "I", "note": "card p11: ~5.5 units per use (landing 1 + anchor ~2 + chain ~1-2 at 50%) (I); LSSD +50%/r", "plannerFix": "transformation: augment lands at the cursor and anchor orbits the landing point for 4 s; planner has cold 50/r and range 35/r without the orbit"},
         "name": "Anchoring the Anchor",
         "description": "Throw the anchor on target location unleashing another anchor swinging around that one with increased radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "cold_skill_damage": 50, "skill_range": 35 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 35, "subtree_damage": 50}
         }
       },
       {
         "id": "extended_weight",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90]}, {"kind": "extra_hits", "byRank": [1.33, 2.32, 3.46], "per": "use", "note": "satellites 0.83 / 1.32 / 1.96 anchor hits (d2) + r satellite chains of 0.5*d2 (r*0.5); units = base anchor hit d2"}], "confidence": "I", "note": "card p12 + R4 71#1: Alarm_1 of the anchor (0x148f79a70 L24-L35): extendedWeight = r satellites that are normal Pirate_Anchor_obj (0xd6d) orbiting the anchor in the opposite direction (-16 deg/frame, radius +1.5 px/frame), damage[2] = d2 of the anchor, the hit map is never cleared (resetAngle grows by a negative orbit_speed) -> ONE hit per satellite, and each satellite makes its own chain (floor(d2*0.5), 1 hit). Frame-by-frame simulation averaged over the aim direction: satellites 0.83 / 1.32 / 1.96 / 2.58 / 3.26 d2 hits (r = 1..5) + r chains of 0.5*d2 (r5: +3.26 + 2.5 = +5.8*d2 vs base 2.65*d2). I: rectangle/segment collision +-1 px; C: structure and parameters. Old entry: other, hit count unread.", "plannerFix": "satellite hit count was unread; card: r satellites = ordinary Pirate_Anchor_obj orbiting the anchor (+0.83 / 1.32 / 1.96 d2 hits) each with its own chain (0.5*d2); planner projectile_count 1/r converts to 0"},
         "name": "Extended Weight",
         "description": "Anchor now has an additional spinning anchor attached to it.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "cold_skill_damage": 30, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 30}
         }
       },
       {
         "id": "colossal_anchor",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [135, 270, 405]}, {"kind": "cooldown_s", "byRank": [5, 5, 5]}], "confidence": "I", "note": "card p13: LSSD +135%/r; cooldown +5 s", "plannerFix": "cooldown +5 s (2 to 7 s) missing in planner; card: orbit radius x(1+0.2r) (hit change unread)"},
         "name": "Colossal Anchor",
         "description": "Unleash a massive anchor covering a wide radius with increased damage. Anchor swing now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "cold_skill_damage": 135, "skill_range": 20 }
+          "base": {"skill_range": 0, "cooldown_added": 5, "subtree_damage": 0},
+          "perRank": {"skill_range": 20, "cooldown_added": 0, "subtree_damage": 135}
         }
       },
       {
         "id": "trembling_smash",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.87, 13.74, 20.61], "note": "5r torrent rays: dummy at the cursor (x, y-24) = 29.6 px from the landing point: ray k = 0 always (5r) + k = 1 (98 px) with P = 0.374 -> 6.87r; the cursor exactly on the dummy (x, y) gives 6.14r (P = 0.227)"}, {"kind": "damage_pct", "byRank": [35, 70, 105]}, {"kind": "cooldown_s", "byRank": [2, 2, 2]}], "confidence": "I", "note": "card p14 + R4 71#2 + PoR4 (rule 40) + Resztki E (rule 22): Pirate_Anchor_Augment_obj lands (zSpeed 4, yy 12, g 0.3, deltaSpeed 5, alarm[1] = 1) 154.6 / 152.1 px from the player (cursor 6 px higher than the dummy centre: target = tupm[1] + lengthdir(tupm[6], tupm[7])), then 5r Pirate_Torrent_obj (torrents 8, torrentsLength 50, torrentTimerMax 0.2 s) at landing point + lengthdir(48, dir_i), dir_i = Augment direction + 360/(5r)*i, each making the next every 12 frames +50 px along the same direction (rays at 48 + 50k px); the torrents keep scale 2.5 (blast r = 31.5*2.5 + 12 = 90.8 px), InheritModifiers; each explosion a separate object (no shared pack). Dummy 29.6 px from the landing point: k = 0 always hits (48 < 90.8), k = 1 (98 px) only at angles <= ~67 deg from the dummy direction (P = 0.374) -> 6.87r; cursor on (x, y): dummy 9.8 px from landing -> 6.14r (P = 0.227); R4 had 6.83r / 5.7r, PoR4 first 6.83r / 5.7r then Resztki E 6.87r / 6.14r. Unit of the torrent explosion damage (Augment's damage vs d2) not stated - taken as the anchor hit d2 (I); cooldown 4 s. Replaces the whole anchor pattern (set_hits). Old entry: other (torrent rays, 9 explosions each, spread, I).", "plannerFix": "transformation into torrent rays on landing (5r rays of Pirate_Torrent_obj, 8 torrents each, 12 frames apart, 50 px steps); cooldown +2 s missing in planner"},
         "name": "Trembling Smash",
         "description": "Send the anchor forward unleashing a shockwave of torrents to all directions when hitting terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "cold_skill_damage": 35, "projectile_count": 5 }
+          "base": {"projectile_count": 0, "cooldown_added": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 5, "cooldown_added": 0, "subtree_damage": 35}
         }
       }
     ]
@@ -2780,6 +2861,7 @@
   {
     "id": "treasure_hunter",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "pirate",
     "name": "Treasure Hunter",
     "kind": "active",
@@ -2820,6 +2902,8 @@
   {
     "id": "land_ahoy",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 5.39, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 6 s, p2 shortens it), IN-ZONE (rings around the target point, rule 22/24; cursor on the visible centre (x, y-24)): floor((15 + p1.s9)*(1 + p13.s10)) = 15 rings of 3, 4, 5, 6, 7 balls (rho = 32, 72, 112, 152, 192 px, reset at rho >= 200) = 75 Pirate_Land_Ahoy_obj per cast at uniformly random angles (irandom(360) per ball); each landing makes Explosion_Item_obj (reach 31.5*AOE + 12 = 43.5 px) with damage[3] (FIRE, not cold, = floor(V1') with V1 = 22.5*L, MOAB x1.5 only with p9) = 1.0 main hit. Resztki E (rule 22, asm TalentsPirate T0 0x14631e8fe, 0x1462d3161/0x1462d31c6): the target point is tupm[1] + lengthdir(tupm[6], tupm[7]) = 6 px ABOVE the cursor, so with the cursor on (x, y-24) the ring centre is delta = 30 px from the dummy collision centre (R3/R4 used delta = 24). At delta = 30 the rho = 32 ring hits with P = 0.495 (3 balls x 3 cycles) and the rho = 72 ring now just reaches (72 - 30 = 42 <= 43.5 px; P = 0.078, 4 balls x 3 cycles): 9*0.495 + 12*0.078 = 5.39 (R3: 5.05 at delta = 24, R = 43.5; 5.13 at R = 44). Cursor exactly on (x, y): 9.0 hits (delta = 6 gives the same as delta = 0). perExtraProjectile 0: no projectile mechanism (p1 Armada +15 rings (+75 balls)/r gives x(1 + r), p4 radius, p11 shorter ring cycle, p12 3x larger balls, p13 ring centre 96 px from the player, p6 airstrike balls are subskill effects). Rain order and fall time (random height up to 750 px) do not change the count."},
     "classId": "pirate",
     "name": "Land Ahoy!",
     "kind": "active",
@@ -2847,10 +2931,7 @@
     "movementDuringUse": 85,
     "baseCastRate": 1.75,
     "baseCooldown": 6,
-    "damageFormula": {
-      "base": 0.5,
-      "perLevel": 30.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 22.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2892,28 +2973,31 @@
       {
         "id": "armada",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [75, 150, 225, 300, 375]}, {"kind": "extra_hits", "byRank": [5.39, 10.78, 16.17, 21.56, 26.95], "per": "use", "replacesProjectileHits": true}], "confidence": "C", "note": "card p1 + Resztki E: 15 rings x (3..7 balls) per rank; E = 5.39 x (1 + r) = 10.8 / 16.2 / 21.5 / 26.9 / 32.3 (cursor (x, y-24), ring centre 6 px above the cursor, delta = 30); extra = 5.39*r (was 5.05*r at delta = 24)", "plannerFix": "15 rings (75 balls) per rank: E x(1+r); planner of_total_damage 15/r"},
         "name": "Armada",
         "description": "Increases the amount of bombs fired.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 15 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 15}
         }
       },
       {
         "id": "fire_all",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-5, -10, -15, -20, -25]}], "confidence": "C", "note": "card p2: cooldown -5%/r (planner stores reduction as positive)"},
         "name": "Fire All!",
         "description": "Decreases the cooldown of land ahoy.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 5 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 5}
         }
       },
       {
         "id": "rum_infused_ammo",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1617, 0.3234, 0.4851, 0.6468, 0.8085], "per": "use", "note": "pulses have modifier class 'none' (raw value, rule 32)"}], "confidence": "I", "note": "card p3: 3%/r chance per ball hit to add a pulse explosion (full value, modifier class none: Explosion_Item_obj pulses copy only damage[], pe[1022], skillId - R4 rule 32); extra = 0.03r * E with E = 5.39 (was 0.03r * 5.05); counted as 1 main-hit unit per pulse (f_none <= 1 with gear)"},
         "name": "Rum Infused Ammo",
         "description": "Bombs have a chance to explode an additional time.",
         "maxRank": 5,
@@ -2929,28 +3013,31 @@
       {
         "id": "blunder_bombs",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.91, 1.71, 2.41, 5.41, 6.71], "per": "use"}], "confidence": "I", "note": "card p4 + Resztki E: explosionAOE +10%/r (hit radius 32*AOE + 12, ring step 40*AOE, cycle shortens at AOE >= 1.1 and >= 1.4); E = 7.3 / 7.1 / 7.8 / 10.8 / 12.1 (cursor (x, y-24), delta = 30) minus 5.39 (old 7.6 / 8.5 / 9.7 / 15.0 / 15.0 minus 5.05)", "plannerFix": "card: E (15 rings) = 7.3 / 7.1 / 7.8 / 10.8 / 12.1 (AOE 1.1..1.5; ring cycle changes); planner area 10/r has no E model"},
         "name": "Blunder Bombs",
         "description": "Increases explosion area of effect radius of land ahoy.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 10 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 10}
         }
       },
       {
         "id": "warheads",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p5: LSSD +8%/r applies to the fire explosion", "plannerFix": "Land Ahoy damage is fire (damage[3]); planner names it cold_skill_damage"},
         "name": "Warheads",
         "description": "Increases the damage dealt by land ahoy.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "strategic_airstrikes",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.48, 1.08, 1.92, 3.0], "per": "use"}], "confidence": "C", "note": "card p6: 4%/r chance per cast of 3r balls on the nth-nearest (= dummy), each a full unit: 0.12 r^2"},
         "name": "Strategic Airstrikes",
         "description": "Chance on cast to fire additional bombs towards nearby monsters.",
         "maxRank": 5,
@@ -2966,17 +3053,19 @@
       {
         "id": "food_for_cannon",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5]}], "confidence": "C", "note": "card p7: [179] = 10%/r vs stunned (stun from p8); conditional"},
         "name": "Food for Cannon",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "sonic_impact",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p8: stun 3 s per ball (3%/r); CC, no DPS"},
         "name": "Sonic Impact",
         "description": "Chance on hit to stun.",
         "maxRank": 5,
@@ -2989,6 +3078,7 @@
       {
         "id": "moab",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.015, 1.03, 1.045, 1.06, 1.075]}], "confidence": "C", "note": "card p9: average 1+0.015r", "plannerFix": "planner on_cast chance 3/r without effect; card: per ball x1.5 on fire damage with chance 3%/r"},
         "name": "MOAB",
         "description": "Chance on cast to fire larger bombs knocking monsters airborne on hit dealing increased damage.",
         "maxRank": 5,
@@ -2997,56 +3087,61 @@
       {
         "id": "fuel_to_the_fire",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other"}], "confidence": "C", "note": "card p10: LSSD += 20%/r * RSS191", "plannerFix": "LSSD scaled by area % from gear (RSS191); 0 without area gear; planner conversion_explosion_aoe 20/r"},
         "name": "Fuel to the Fire",
         "description": "Increases bomb damage based on explosion area of effect stat.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_explosion_aoe": 0 },
-          "perRank": { "conversion_explosion_aoe": 20 }
+          "base": {"conversion_explosion_aoe": 0},
+          "perRank": {"conversion_explosion_aoe": 20}
         }
       },
       {
         "id": "concentrated_blast_radius",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [10.81, 14.01, 16.11], "per": "use"}], "confidence": "I", "note": "card p11 + R4 73#1 + PoR4 (asm 0x1463228a3-0x146322ab8, 0x146325827) + Resztki E: rings floor(15*(1 + 0.2 r11)) = 18 / 21 / 24 / 27 / 30 in cycles of two (rho = 32 and 72); only rho = 32 reaches the dummy: E (p1 = 0, cursor (x, y-24), delta = 30) = 16.2 / 19.4 / 21.5 (r11 = 1..3; 24.8 / 26.9 for r4-5; cursor on (x, y): 27 / 33 / 36 / 42 / 45) minus 5.39. C: block and threshold; I: random angles. Old entry: other, not read (the R4 first reading 6.73 / 8.41 / 8.41 used a wrong 5-ring cycle; PoR4 15.2 / 18.5 / 20.2 at delta = 24).", "plannerFix": "rings x(1 + 0.2r) AND the ring cycle shortens to (32, 3), (72, 4) (reset threshold 200 -> 100); planner of_total_damage 20/r unsupported"},
         "name": "Concentrated Blast Radius",
         "description": "Significantly decreases the area of effect radius of land ahoy! and increasing the amount of cannon balls.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 20 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 20}
         }
       },
       {
         "id": "land_annihilation",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.0, 3.0, 3.0], "note": "p1 = 0: 1 ring (rho = 32) of 3 balls, all hit the dummy (blast r ~ 106 px); with p1 = 1..5: r12 = 1: 6 / 6 / 9 / 12 / 15, r12 = 2-3: 3 / 6 / 6 / 9 / 9, r12 = 5: 3 / 3 / 6 / 6 / 9"}, {"kind": "damage_pct", "byRank": [100, 200, 300]}], "confidence": "I", "note": "card p12 + R4 73#1 (outside the question list) + PoR4: block RANK(12) (asm 0x146322b6b, 0x146322d52-0x146322d9d) sets rings = (15 + p1)*0.1*(1 + ...), adds 2 to the AOE variable (explosionAOE = 3 + 0.1*r4, blast r = 31.5*(3 + 0.1*r4) + 12 >= 106.5 px), reset threshold floor(200*(1 + p12.s10))/2 (cycle X*(1 + 0.3*r12)); la.py cycle simulation: E = 3.0 at p1 = 0 for every r12 = 1..5 and both cursors (Resztki E: unchanged by the 6 px shift). I: random angles, mean values. Old entry: only damage_pct 100r.", "plannerFix": "planner cold 100/r and area 30/r; card: transformation - rings x0.1 and balls 3x larger (AOE +2), LSSD +100%/r on the fire explosion"},
         "name": "Land Annihilation",
         "description": "Drop a reduced amount of big bombs on a significantly larger radius. Land Ahoy! now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 100, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 30, "subtree_damage": 100}
         }
       },
       {
         "id": "traveling_bombardment",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135]}, {"kind": "projectiles", "byRank": [7.5, 15, 22.5]}, {"kind": "extra_hits", "byRank": [-0.79, 0.01, 0.01], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p13 + R4 73#2: ring centre = owner + lengthdir(96, tupm[7]) (const 96.0 @0x14f18990c, asm 0x146323563-0x1463235f5) instead of the cursor; the dummy at 160 px is 64 px (cursor on (x, y)) / 66.6 px (cursor (x, y-24), aim turned 8.5 deg) from the centre: P(rho = 32) = 0.185 / 0.211, P(rho = 72) = 0.203 / 0.205, rho >= 112: 0; rings floor(15*(1 + 0.1 r13)) = 16 / 18 / 19 / 21 / 22: E (p1 = p11 = 0, delta = 66.6) = 4.6 / 5.4 / 5.4 (r13 = 1..3; 6.0 / 6.8 for r4-5) minus the new base 5.39 (64 px: 5.0 / 5.8 / 5.8); with p11 12.8 / 15.5 / 19.1 (delta = 66.6). The R4 values were not recomputed for Resztki E's 6 px shift (the ring centre uses tupm[7] only) - see rea_questions. Old entry: x(1 + 0.1r) rings with the base 5.05 (0.505r), ring centre change 'I'.", "plannerFix": "planner cold 45/r with element cold; card: LSSD on fire; ring count x(1 + 0.1r) AND the ring centre is fixed 96 px from the player on the aim line"},
         "name": "Traveling Bombardment",
         "description": "Mark a location and fire bombs landing from your location to target location in a narrow line.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "of_total_damage": 0 },
-          "perRank": { "cold_skill_damage": 45, "of_total_damage": 10 }
+          "base": {"of_total_damage": 0, "subtree_damage": 0},
+          "perRank": {"of_total_damage": 10, "subtree_damage": 45}
         }
       },
       {
         "id": "reign_of_fire",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [100, 200, 300]}], "confidence": "C", "note": "card p14: [18] burn = 100%/r of damage per ball hit (proc 100%)"},
         "name": "Reign of Fire",
         "description": "Damage type is changed to Fire. Explosive Barrels rain from the sky inflicting burning on hit",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 100 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 100}
         },
         "proc": {
           "trigger": "on_hit",

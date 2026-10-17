@@ -278,6 +278,24 @@ pub struct AngelicAugment {
 
 // ---------- item-granted skill ----------
 
+/// Timed buff: `duration` s (+ `duration_per_rank` per rank above 1) every `cooldown` s.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct BuffUptimeSpec {
+    pub duration: f64,
+    #[serde(default)]
+    pub duration_per_rank: f64,
+    pub cooldown: f64,
+}
+
+impl BuffUptimeSpec {
+    // Rule 12/35: instant cast, the cooldown ticks with (1 + 0.005·haste).
+    pub fn uptime(&self, rank: f64, haste: f64) -> f64 {
+        let duration = self.duration + self.duration_per_rank * (rank - 1.0);
+        (duration * (1.0 + 0.005 * haste).max(0.0) / self.cooldown).min(1.0)
+    }
+}
+
 #[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct PassiveStatsSpec {
@@ -555,6 +573,38 @@ pub struct TriggeredBuffSpec {
     pub duration: f64,
 }
 
+/// Hits one use lands on the training dummy (dps_cards analysis, 160 px), in
+/// units of the skill's main hit. Entities: per entity action.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct DummyHitsSpec {
+    pub base: f64,
+    #[serde(default)]
+    pub base_projectiles: Option<u32>,
+    #[serde(default)]
+    pub per_extra_projectile: f64,
+    #[serde(default)]
+    pub confidence: Option<String>,
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
+/// A use whose repeat period is set by a leap, charge or dash: the next use
+/// waits `extra_frames` after the effect trigger (METODA rules 28/30).
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct UsePeriodSpec {
+    #[serde(default)]
+    pub kind: String,
+    pub extra_frames: f64,
+    /// `Some(false)`: a charge without playerEffect[142], the period is the
+    /// charge alone, without the floor(24/S) + 1 trigger frames.
+    #[serde(default)]
+    pub trigger: Option<bool>,
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
 /// Damage object the skill spawns, from the Hero Siege hit model. `lifetime` is
 /// absent when the game kills the object by animation/alarm instead of a timer.
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -648,6 +698,87 @@ pub struct SubskillNodeSpec {
     pub proc: Option<SubskillProcSpec>,
     #[serde(default)]
     pub requires_subskill: Option<String>,
+    /// dps_cards: what this subskill does to the training-dummy hit model.
+    #[serde(default)]
+    pub dummy: Option<SubskillDummySpec>,
+}
+
+impl SubskillNodeSpec {
+    /// This node's own contribution to a planner stat at `rank`, as the
+    /// subtree aggregation adds it (effects + chance-weighted proc effects).
+    pub fn planner_stat(&self, key: &str, rank: u32) -> f64 {
+        if rank == 0 {
+            return 0.0;
+        }
+        let r = rank as f64;
+        let of = |e: &SubskillEffectSpec| {
+            e.base.as_ref().and_then(|m| m.get(key)).copied().unwrap_or(0.0)
+                + e.per_rank.as_ref().and_then(|m| m.get(key)).copied().unwrap_or(0.0) * r
+        };
+        let own = self.effects.as_ref().map(of).unwrap_or(0.0);
+        let proc = self.proc.as_ref().map_or(0.0, |p| {
+            let chance = p.chance.base.unwrap_or(0.0) + p.chance.per_rank.unwrap_or(0.0) * r;
+            p.effects.as_ref().map(of).unwrap_or(0.0) * chance / 100.0
+        });
+        own + proc
+    }
+
+    /// The node's dps_cards dummy data changes the hits per use.
+    pub fn counts_dummy_hits(&self) -> bool {
+        self.dummy.as_ref().is_some_and(|d| {
+            d.effects
+                .iter()
+                .any(|e| matches!(e.kind.as_str(), "set_hits" | "hits_mult" | "extra_hits"))
+        })
+    }
+}
+
+/// Per-subskill dummy effects from the dps_cards analysis
+/// (planner_numbers/subskill_model). Values are per rank 1..maxRank.
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct SubskillDummySpec {
+    #[serde(default)]
+    pub effects: Vec<SubskillDummyEffect>,
+    #[serde(default)]
+    pub confidence: Option<String>,
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct SubskillDummyEffect {
+    #[serde(default)]
+    pub kind: String,
+    #[serde(default)]
+    pub by_rank: Option<Vec<f64>>,
+    #[serde(default)]
+    pub base: Option<f64>,
+    #[serde(default)]
+    pub per_rank: Option<f64>,
+    /// `extra_hits` only: "use" (once per use) or "hit" (per base hit).
+    #[serde(default)]
+    pub per: Option<String>,
+    /// `extra_hits` that already count this subskill's extra projectiles.
+    #[serde(default)]
+    pub replaces_projectile_hits: bool,
+    /// Applies only while this sibling subskill (planner id) is learned.
+    #[serde(default)]
+    pub requires: Option<String>,
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
+impl SubskillDummyEffect {
+    /// Value at `rank` (1-based); ranks past the table keep its last value.
+    pub fn value_at(&self, rank: u32) -> f64 {
+        if let Some(table) = self.by_rank.as_ref().filter(|t| !t.is_empty()) {
+            let i = (rank.max(1) as usize - 1).min(table.len() - 1);
+            return table[i];
+        }
+        self.base.unwrap_or(0.0) + self.per_rank.unwrap_or(0.0) * rank as f64
+    }
 }
 
 #[derive(Debug, Clone, Copy, Deserialize, Default, PartialEq, Eq)]
@@ -703,6 +834,10 @@ pub struct SkillSpec {
     /// The skill's projectile count goes through ReturnExtraSpellProjectiles.
     #[serde(default)]
     pub uses_extra_spell_projectiles: bool,
+    /// Which speed drives the use animation in TalentUseSetSpeed: "attack"
+    /// (abilityAttackSpeed set, weapon rate) or "cast" (castRate).
+    #[serde(default)]
+    pub speed_path: Option<String>,
     #[serde(default)]
     pub base_cooldown: Option<f64>,
     #[serde(default)]
@@ -720,11 +855,17 @@ pub struct SkillSpec {
     #[serde(default)]
     pub passive_stats: Option<PassiveStatsSpec>,
     #[serde(default)]
+    pub buff_uptime: Option<BuffUptimeSpec>,
+    #[serde(default)]
     pub triggered_buff: Option<TriggeredBuffSpec>,
     #[serde(default)]
     pub proc: Option<SkillProcSpec>,
     #[serde(default)]
     pub hit_model: Option<HitModelSpec>,
+    #[serde(default)]
+    pub dummy_hits: Option<DummyHitsSpec>,
+    #[serde(default)]
+    pub use_period: Option<UsePeriodSpec>,
     #[serde(default)]
     pub subskills: Option<Vec<SubskillNodeSpec>>,
     #[serde(default)]

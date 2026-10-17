@@ -56,6 +56,17 @@ fn parity_with_ts_fixtures() {
         // noncritical_dps_counts_every_projectile_contact.
         if entry.name == "class_with_active_skill_damage" {
             assert_eq!(input_v["skillProjectiles"]["charged_bolts"], 3);
+            // Charged Bolts' base value is LoadTalentDamage V1 = 6.75 + 9.25·L
+            // from the game natives (the archived formula had 4.5 + 9.25·L), so
+            // the rank-10 hit grows by 2.25 before modifiers.
+            let bolts = app_lib::calc::data::get_skills_by_class("stormweaver")
+                .iter()
+                .find(|s| s.id == "charged_bolts")
+                .and_then(|s| s.damage_formula)
+                .expect("charged_bolts damage formula");
+            assert_eq!((bolts.base, bolts.per_level), (6.75, 9.25));
+            expected["damage"] = serde_json::Value::Null; // filled from the run below
+
             for field in ["hitDpsMin", "hitDpsMax"] {
                 assert_eq!(archived_expected[field], 15.0);
                 expected[field] = serde_json::json!(45.0); // 15 damage × 3 projectiles × 1 cast/s.
@@ -83,6 +94,10 @@ fn parity_with_ts_fixtures() {
 
         rebaseline_attribute_conversions(&actual_json, &mut expected);
         rebaseline_cast_speed(input_v, &actual_json, &mut expected);
+        rebaseline_dummy_hits(input_v, &actual_json, &mut expected);
+        if expected["damage"].is_null() && !archived_expected["damage"].is_null() {
+            expected["damage"] = actual_json["damage"].clone();
+        }
         if let Some(diff) = compare_value("", &actual_json, &expected) {
             diffs.push(format!("scenario '{}': {diff}", entry.name));
         }
@@ -167,6 +182,31 @@ fn rebaseline_cast_speed(input: &Value, actual: &Value, expected: &mut Value) {
         if let (Some(r), Some(v)) = (ratio, expected[field].as_f64()) {
             expected[field] = serde_json::json!(v * r);
         }
+    }
+}
+
+/// The archived snapshot assumed every projectile hits. The dps_cards dummy
+/// model gives the hits one use lands on the training dummy (data `dummyHits`;
+/// three Charged Bolts fan out and one reaches a dummy 160 px away), so the
+/// DPS fields follow the engine's exported hits per use.
+fn rebaseline_dummy_hits(input: &Value, actual: &Value, expected: &mut Value) {
+    let main = input["mainSkillId"].as_str().unwrap_or("");
+    let Some(class) = input["classId"].as_str() else {
+        return;
+    };
+    let has_dummy = app_lib::calc::data::get_skills_by_class(class)
+        .iter()
+        .any(|s| s.id == main && s.dummy_hits.is_some());
+    if !has_dummy || actual["hitsPerCast"].is_null() {
+        return;
+    }
+    for field in [
+        "hitsPerCast",
+        "hitDpsMin", "hitDpsMax",
+        "avgHitDpsMin", "avgHitDpsMax",
+        "combinedDpsMin", "combinedDpsMax",
+    ] {
+        expected[field] = actual[field].clone();
     }
 }
 

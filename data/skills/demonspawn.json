@@ -3,6 +3,8 @@
     "id": "bone_fragments",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 0.0, "confidence": "I", "note": "n = XSP(3+p1.s9) = 3 Demonspawn_Bone_Fragment_obj in an 8 deg fan (cast, 1 volley), each with its own hit map (no pack), projType 1 (stops on the dummy, no Destroy_0), arcing flight (rule 29: hits in flight). Fragments are created at (x_g, y_g) + lengthdir(8, dir) WITHOUT the +6 px (TalentsDemonSpawn L114, C) while dir is computed from (x_g, y_g+6), so the fan lines run parallel to the aim line, 6 px off it (Resztki D, rule 38; main result keeps the cursor on the visible dummy centre). Dummy at 160 px: a fragment hits when its lateral distance <= 31 px (12 px dummy + ~19 px mask): +-4 and +-8 deg hit, +-12 deg misses on the axis, but with the 6 px offset one +-12 deg arm of an EVEN fan (n = 4, 6, ...) also fits (160*sin12 - 6 = 27.3 px) -> H(n) = 1 (n = 1), 2 (n = 2), 3 (every n >= 3, odd or even); earlier card said 2 for even n. Base n = 3 -> 3 hits of the full hit (unchanged). Fan geometry from fan_sim.py (bitmap mask, 36 frames, discrete 8 deg fan): I; the missing +6 px: C. perExtraProjectile = 0: extras (gear XSP, p1, p3) never add hits at 160 px for n >= 3 (parity no longer matters). baseProjectiles = 3 fragments. Bone Altar (p13) and the other subskills excluded."},
     "classId": "demonspawn",
     "name": "Bone Fragments",
     "kind": "active",
@@ -18,7 +20,7 @@
     "tree": "Bone Conjurer",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 14.1, "perLevel": 6.73 },
+    "damageFormula": { "base": 13.75, "perLevel": 6.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Impale", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -37,28 +39,31 @@
       {
         "id": "heterotopic_ossification",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4], "note": "+2 fragments/rank (XSP s9 2/r)"}, {"kind": "extra_hits", "byRank": [0, 0], "per": "use", "replacesProjectileHits": true, "note": "H(n) parity at 160 px: n=5,7 odd -> H=3, no change vs base 3"}], "confidence": "C", "note": "card Runda 2/Zmiany p1 + table row 1; base n=3 H=3; baseline hits 3 (dummyHits.base). Extras only change parity; 0 extra at 160 px"},
         "name": "Heterotopic Ossification",
         "description": "Increases the amount of fragments.",
         "maxRank": 2,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "high_demon",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "table row 2 (LoadManaCost), no dummy DPS"},
         "name": "High Demon",
         "description": "Lowers the mana cost of bone fragments.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "bone_frenzy",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "proc chance 4r% of +2 fragments (XSP s9 2/r); parity unchanged -> H stays 3 at 160 px"}], "confidence": "C", "note": "Zmiany p3 + table row 3; proc chance matches planner (4/r, +2/r projectiles)"},
         "name": "Bone Frenzy",
         "description": "Chance on cast to increase the amount of fragments.",
         "maxRank": 5,
@@ -74,6 +79,7 @@
       {
         "id": "bone_cannonade",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45], "per": "use", "note": "proc chance 3r% per cast, second identical volley of H(3)=3 hits -> expected 0.03r*3"}], "confidence": "C", "note": "table row 4 (volleys += 1, asm 0x1465039ce); Planer note (3)", "plannerFix": "planner models of_total_damage 50 (half a hit) on a 3%/r proc; game = second full volley (x1 damage, same H(n))"},
         "name": "Bone Cannonade",
         "description": "Chance on cast to unleash additional bone fragments.",
         "maxRank": 5,
@@ -89,23 +95,25 @@
       {
         "id": "demons_fury",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile speed +10%/r only extends range; flight time fixed by gravity; 160 px still hit"}], "confidence": "C", "note": "table row 5; planner projectile_speed 10/r matches s9"},
         "name": "Demon's Fury",
         "description": "Increases the projectile speed of fragments.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "blood_dipped_fragments",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "bleed (buff 3) on every hit of the volley, applied with chance 3r% per cast, bleed amount floor(dmg*35r%); tick/duration from reports/dot_debuffs.md (not in this card)"}], "confidence": "C", "note": "table row 6; Zmiany p6 not present; DoT modelling must follow dot_debuffs", "plannerFix": "planner has an extra static increased_bleeding_damage +35%/r effect the card does not describe; the proc (3r% chance, bleed 35r%) matches"},
         "name": "Blood Dipped Fragments",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 35 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -118,6 +126,7 @@
       {
         "id": "exoskeletal",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.009, 0.036, 0.081, 0.144, 0.225], "per": "hit", "note": "per fragment hit: chance 3r% x extra Impale_Hitbox damage 30r% (value = c*m = 0.009*r^2); hitbox r=48 px at the dummy (ProjectileCollision12DemonSpawn L132-144); copies [22],[177]"}], "confidence": "C", "note": "table row 7; Zmiany p7 / reguła 15", "plannerFix": "planner models exoskeletal as arcane_skill_damage +30%/r on a 3%/r proc; the game adds a separate hitbox hit (extra hit x 30r% dmg)"},
         "name": "Exoskeletal",
         "description": "Chance to impale targets on hit sending them airborne dealing increased damage.",
         "maxRank": 5,
@@ -133,78 +142,85 @@
       {
         "id": "bloodshed",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4, 1.48, 1.56], "per": "hit", "requires": "blood_dipped_fragments", "note": "one extra object per fragment hit while the dummy bleeds (no proc roll), damage floor(dmg*(1+8r%)); value = 1*(1+8r%) assumes bleeding on every hit (upper bound; bleed uptime from DoT model, not in card); [640][1] scale unclear (I)"}], "confidence": "C", "note": "table row 8 (Bone_Fragment_Bloodshed_obj, singleHit 0.25 s, map 100x99 at the dummy)", "plannerFix": "planner models arcane_skill_damage +8%/r and area_of_effect +8%/r; game adds a bleeding-gated extra hit object (x(1+8r%)) that requires p6"},
         "name": "Bloodshed",
         "description": "Unleash a nova of blood on hit if the target is bleeding.",
         "maxRank": 7,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 8, "area_of_effect": 8 }
+          "base": {"arcane_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"arcane_skill_damage": 8, "area_of_effect": 8}
         }
       },
       {
         "id": "witchcraft_essentials",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "table row 9"},
         "name": "Witchcraft Essentials",
         "description": "Increases the damage dealt by bone fragments.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "carved_fragments",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "x(1+10r%) on fragment damage only while the dummy bleeds (projEffect[177]); upper bound, uptime from DoT model (not in card)"}], "confidence": "C", "note": "table row 10; planner extra_damage_bleeding 10/r matches s9"},
         "name": "Carved Fragments",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "sharp_bonerangs",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "2nd-nearest target is the same dummy (instance_nth_nearest 2 returns it); hit map not cleared -> no extra hit"}], "confidence": "C", "note": "table row 11 (Zmiany p11, reguła 17); planner bounces 1/r matches card s9"},
         "name": "Sharp Bonerangs",
         "description": "Bone fragments now bounce additional times on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "demons_grip",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD +35%/r"}, {"kind": "zero_on_dummy", "note": "attach/orbit around target; map cleared after 360 deg only after attachRadius >= 41 px, styk <=31 px -> 0 extra hits"}], "confidence": "C", "note": "table row 12 (Zmiany p12); planner skill_duration 35/r = card [642] attach duration (no hit effect)"},
         "name": "Demon's Grip",
         "description": "Bone fragments orbit targets on hit for a short period of time dealing additional damage to nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "arcane_skill_damage": 35, "skill_duration": 35 }
+          "base": {"skill_duration": 0, "subtree_damage": 0},
+          "perRank": {"skill_duration": 35, "subtree_damage": 35}
         }
       },
       {
         "id": "bone_altar",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [21, 27, 30], "note": "transformation: cast becomes a totem (Bone Altar) firing N shots every 8 s, N=7/9/10 (r=1/2/3), each shot m=3 fragments (p1=p3=0, RSS311=RSS365=0): N*m per cast. Single totem entity, no summon multiplier. Interplay with p1 (m grows +2 per rank) not encoded"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "altar cooldown 0 + 8 s (GetTalentCooldown 0x2b)"}], "confidence": "C", "note": "table row 13 + R4 (N = 1+floor((DT-16)/P)); timer, N and m C (asm), altar fire phase I", "plannerFix": "planner only adds cooldown 8 s and LSSD; game replaces the 3-hit cast by an altar (7/9/10 shots x 3 fragments per 8 s = 21/27/30 hits per cast at p1=0)"},
         "name": "Bone Altar",
         "description": "Summon a bone altar at target location casting bone fragments for a short period. Bone fragments now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "skill_duration": 0, "cooldown_added": 8 },
-          "perRank": { "arcane_skill_damage": 25, "skill_duration": 25, "cooldown_added": 0 }
+          "base": {"skill_duration": 0, "cooldown_added": 8, "subtree_damage": 0},
+          "perRank": {"skill_duration": 25, "cooldown_added": 0, "subtree_damage": 25}
         }
       },
       {
         "id": "smart_bone",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [65, 130, 195], "note": "LSSD +65%/r"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "note": "homing: n_hit = n for any realistic fan. homingRate of Smart Bone = 8.0*roomSpd, not 5 (TalentsDemonSpawn L122, 0x14654db60 / 0x14650750d, C): turn radius ~64 px (was ~103); snap to the target when bbox gap <= 16 (StepDamageParentHoming 0x1452d3550). Simulation with the bitmap mask: theta_max >= 66 deg (rate 5, centre threshold) / >= 88 deg (rate 8 or bbox threshold) vs fan +-4 deg*(n-1) <= 64 deg up to n = 17 (was ~51 deg, n <= 13). At p1=0 (n=3) H is already 3 -> 0 extra. With p1 rank k or gear XSP (n > 3) homing lifts H from 3 to n (= +n-3), not encoded (p1 interplay)."}], "confidence": "I", "note": "[hits relative to dummyHits.base 3.0, convention: 160 px, dummy centre on the fan axis] table row 14 + Resztki A (homing): rate 8 is C, theta_max is I; number of extra hits unchanged (0 at base)"},
         "name": "Smart Bone",
         "description": "Fragments seek the nearest monster dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 65 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 65}
         }
       }
     ]
@@ -212,6 +228,8 @@
   {
     "id": "impale",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Demonspawn_Impale_Hitbox_obj at the aim point (cursor on the dummy, in-zone; precise circle 32 px x image_xscale 3 = r 48 px, constant), destroyTimer 0.25 s, no tick: 1 hit per cast; stun [51] (buff 18) applies to the dummy but adds no hit. Chain/recursion (p5), several hitboxes (p11), flames (p8), Via Dolorosa (p13) are subskill effects."},
     "classId": "demonspawn",
     "name": "Impale",
     "kind": "active",
@@ -226,7 +244,7 @@
     "tree": "Bone Conjurer",
     "position": { "row": 0, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 16, "perLevel": 8 },
+    "damageFormula": { "base": 15, "perLevel": 7.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -245,34 +263,37 @@
       {
         "id": "demonic_effect",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "maxScale +25%/r changes only the AoE indicator; hitbox stays r=48 px"}], "confidence": "C", "note": "table row 1; planner area_of_effect 25/r is the indicator only"},
         "name": "Demonic Effect",
         "description": "Increases impale area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "warlocks_power",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "table row 2"},
         "name": "Warlock's Power",
         "description": "Increases damage dealt by impale.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "sharpened_bones",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90, 120, 150], "note": "bleed (buff 3) with chance 3r% per hit, bleed amount floor(dmg*30r%); tick from reports/dot_debuffs.md (not in this card)"}], "confidence": "C", "note": "table row 3", "plannerFix": "planner has an extra static increased_bleeding_damage +30%/r effect the card does not describe; the proc (3r% chance, bleed 30r%) matches"},
         "name": "Sharpened Bones",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -285,17 +306,19 @@
       {
         "id": "unseen_strike",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance +3%/r (value = chance %); spell crit damage +30%/r"}], "confidence": "C", "note": "table row 4 ([1004] += 3r, [1003] += 30r); planner spell_crit_chance 3 / spell_crit_damage 30 match"},
         "name": "Unseen Strike",
         "description": "Chance to critically hit with increased critical damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 30}
         }
       },
       {
         "id": "hells_ascension",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.041667, 0.086957, 0.136364, 0.190476, 0.25], "per": "hit", "note": "chain: each hit spawns a same-damage hitbox at the dummy with chance p=4r%; recursive, expected extra = p/(1-p) per base hit (r=5 -> 0.25). Hitbox at dummy, no package (reguła 15)"}], "confidence": "C", "note": "table row 5 (ProjectileCollision12DemonSpawn L203-219)", "plannerFix": "planner models a single extra hit per proc (of_total_damage 100, chance 4r%); game chain gives expected extra p/(1-p) per hit (0.25 at r5 instead of 0.20)"},
         "name": "Hell's Ascension",
         "description": "Chance to unleash an additional impale on hit.",
         "maxRank": 5,
@@ -311,28 +334,31 @@
       {
         "id": "blood_shedding_impale",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "x(1+20r%) on hit damage only while the dummy bleeds ([177]); upper bound, bleed uptime from DoT model (not in card)"}], "confidence": "C", "note": "table row 6; planner extra_damage_bleeding 20/r matches s9"},
         "name": "Blood Shedding Impale",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 20 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 20}
         }
       },
       {
         "id": "bonemagi",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "table row 7"},
         "name": "Bonemagi",
         "description": "Decreases the mana cost of impale.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "impaling_flames",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.072, 0.288, 0.648, 1.152, 1.8], "per": "hit", "note": "proc chance 4r% per hit; flame object (Impale_Flames_obj, 2.5 s, tick 0.5 s) gives 6 ticks of floor(dmg*30r%) (1+floor(150/30)); value = c*N*m = 0.04r*6*0.30r = 0.072r^2; decay ~20 frames (I)"}], "confidence": "C", "note": "table row 8 (Impale_Flames_obj Create_0/Step_0/Alarm_0)", "plannerFix": "planner models one instant of_total_damage 30%/r per proc; game spawns a 2.5 s flame object with 6 ticks of 30r% damage per proc (expected 0.072r^2 hits per hit)"},
         "name": "Impaling Flames",
         "description": "Chance to light the ground on fire on hit.",
         "maxRank": 5,
@@ -348,12 +374,13 @@
       {
         "id": "shattering_impale",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "arcane break +22.5%/r for 5 s applied with chance 3r% per hit ([979]); raises damage of later hits by up to (1+0.225r) while active; mean effect needs the uptime from cast rate (not in card). No hit-count change"}], "confidence": "C", "note": "table row 9; planner arcane_break 22.5/r with proc 3/r matches"},
         "name": "Shattering Impale",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 22.5 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 22.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -369,6 +396,7 @@
       {
         "id": "spiked_fields",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "proc +20%/r AoE size only (indicator); no hit change on the dummy"}], "confidence": "C", "note": "table row 10; planner area_of_effect 20/r with proc 4/r matches"},
         "name": "Spiked Fields",
         "description": "Chance on cast to increase the area of effect radius of impale.",
         "maxRank": 5,
@@ -384,31 +412,25 @@
       {
         "id": "hunger_of_the_demon",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "n = 1 + p11.s9 hitboxes (1 per rank)"}, {"kind": "extra_hits", "byRank": [0.13, 0, 0.13], "per": "use", "replacesProjectileHits": true, "note": "hits on the dummy = 1.13 at even n (r=1,3 -> n=2,4), 1 at odd n (r=2); value = hits - 1 (base 1). Resztki E (B): the hitboxes sit at player + lengthdir(tupm[6], tupm[7]) = 6 px above the cursor; with the cursor on the visible dummy centre (x, y-24) the arc is shifted relative to the dummy and one of the two neighbours falls outside 48+12 = 60 px in about 87% of the dummy directions (1 or 2 hits, mean over 720 directions, impale_sim.py; PoR4 had 1.26). Cursor exactly at (x, y): 2 hits at even n (variant, note only)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}], "confidence": "I", "note": "[hits relative to dummyHits.base 1.0, convention: cursor on the visible dummy centre (x, y-24), rule 22/38] table row 11 + PoR4 (a) + Resztki B/E; positions of the hitboxes C (asm 0x14650d9c8, 0x14650dd15/0x14650dd81), uniform distribution of the dummy direction around the player is the card's assumption (I)", "plannerFix": "planner has projectile_count +1/r but perExtraProjectile 0 gives 1 hit at any count; game gives 1.13 hits at even n (cursor (x, y-24); 2 for cursor (x, y)) and 1 at odd n"},
         "name": "Hunger of the Demon",
         "description": "Unleash multiple smaller impales in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 1, "arcane_skill_damage": 25 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 25}
         }
       },
       {
         "id": "elemental_bone_magister",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90], "note": "no roll: bleed (buff 3, amount floor(dmg*(p3.s9%+30r%)) as card [22]), burning [18] = floor(dmg*30r%), stasis [26] = floor(dmg*30r%) on every hit; DoT modelling per reports/dot_debuffs.md"}], "confidence": "C", "note": "table row 12", "plannerFix": "planner adds increased_bleeding/burning/stasis damage +30%/r stats the card does not describe; the card's DoTs are applied directly (amount 30r% each, chance 100%)"},
         "name": "Elemental Bone Magister",
         "description": "Impale inflicts stasis, bleeding and burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_bleeding_damage": 0,
-            "increased_burning_damage": 0,
-            "increased_stasis_damage": 0
-          },
-          "perRank": {
-            "increased_bleeding_damage": 30,
-            "increased_burning_damage": 30,
-            "increased_stasis_damage": 30
-          }
+          "base": {"increased_bleeding_damage": 0, "increased_burning_damage": 0, "increased_stasis_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30, "increased_burning_damage": 30, "increased_stasis_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -423,31 +445,25 @@
       {
         "id": "via_dolorosa",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5635, 0.637, 0.725], "per": "use", "note": "Via Dolorosa: the original hit always lands; step 1 (centre + 16*xscale_1 in the throw direction, radius 16*xscale_1, damage floor(dmg*(1+15r%))) covers the dummy only when the throw direction does not point 'up' (the object sits 6 px above the cursor at (x, y-30) for cursor (x, y-24)): total 1.49 / 1.49 / 1.50 hits (r = 1..3, mean over directions, impale13_sim.py) -> P(step 1) = 0.49 / 0.49 / 0.50; value = P*(1+0.15r) = 0.5635 / 0.637 / 0.725 (was 1*(1+0.15r) = 1.15 / 1.30 / 1.45 with 2 hits). Step 2 misses (>= 36 px). Cursor exactly at (x, y): 2 hits (old value, variant note only)"}], "confidence": "I", "note": "[hits relative to dummyHits.base 1.0, convention: cursor on the visible dummy centre (x, y-24)] table row 13 + Resztki E; step formulas C (Po R4), distribution of the throw direction relative to the dummy I", "plannerFix": "planner gives arcane_skill_damage +15%/r to all hits and projectile_count 3/r; game is one optional step hit (probability ~0.5 for cursor (x, y-24)) at (1+15r%) damage, not LSSD, and no projectile conversion"},
         "name": "Via Dolorosa",
         "description": "Impale now travels forward in a pathway increasing in size and damage until reaching its end stunning monsters it hits.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "area_of_effect": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 15,
-            "area_of_effect": 5,
-            "projectile_count": 3
-          }
+          "base": {"arcane_skill_damage": 0, "area_of_effect": 0, "projectile_count": 0},
+          "perRank": {"arcane_skill_damage": 15, "area_of_effect": 5, "projectile_count": 3}
         }
       },
       {
         "id": "spear_of_amaymon",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD +75%/r"}, {"kind": "zero_on_dummy", "note": "spear replaces hitbox (still 1 hit); grab/stun do not apply to the dummy (enemyModifier[26])"}], "confidence": "C", "note": "table row 14 (Impale_Spear_obj, reguła 22)"},
         "name": "Spear of Amaymon",
         "description": "Impale becomes a piercing bone projectile you throw. Each enemy it catches is impaled and travels along with the projectile until it hits terrain stunning attached enemies.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 75 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 75}
         }
       }
     ]
@@ -455,6 +471,8 @@
   {
     "id": "bone_storm",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 53.33, "baseProjectiles": 10, "perExtraProjectile": 5.33, "confidence": "C", "note": "Orbital: n = 10+p1.s9 = 10 Demonspawn_Bone_Storm_obj on rings of 48 px (bones 0-4) and 64 px (bones 5-9) around the player (+6 px in y), orbit_speed 4 deg/frame, destroyTimer 480 frames, map cleared once per revolution (orbitAngle > 360). In-zone per rule 24/orbit convention (dummy on the orbit: |D - R| <= 31 px, i.e. D in [33, 79] px covers both rings): every bone hits once per revolution = 480*4/360 = 5.33 hits per bone -> 10 * 5.33 = 53.3 hits per cast (a bone only becomes deadly when its radius is built up, ~14-18 frames, so ~5.15 is the finer figure; card number kept). Cooldown 6 s < lifetime 8 s: storms overlap. perExtraProjectile = 5.33 per extra bone (p1 adds a ring of 5 per 5 ranks; at most 4 rings = 20 bones fit the 62 px window, so valid for the first 10 extras). Lifetime scales with duration bonuses ([1087]/[1088])."},
     "classId": "demonspawn",
     "name": "Bone Storm",
     "kind": "active",
@@ -470,7 +488,7 @@
     "tree": "Bone Conjurer",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 18 }],
-    "damageFormula": { "base": 0.6, "perLevel": 6.7 },
+    "damageFormula": { "base": 0, "perLevel": 5.75 },
     "manaCostFormula": { "base": 15, "perLevel": 2.5, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -489,23 +507,25 @@
       {
         "id": "forming_storm",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 10, 10], "note": "bones 10 -> 15 / 20 / 20 / 20 (n_ring = 5*min(2+r,4)); cap 4 rings"}, {"kind": "extra_hits", "byRank": [26.6667, 53.3333, 53.3333, 53.3333], "per": "use", "replacesProjectileHits": true, "note": "extra bones x 5.333 hits each (480 frames x 4 deg/frame / 360); base 53.33 = 10 bones"}], "confidence": "C", "note": "table row 1 (n_ring cap, reguła 14)", "plannerFix": "planner perExtraProjectile 5.33 adds 5 bones per rank without the cap; game caps at 20 bones (4 rings) from rank 2"},
         "name": "Forming Storm",
         "description": "Increases the amount of bone projectiles.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0, "area_of_effect": 0 },
-          "perRank": { "projectile_count": 5, "area_of_effect": 5 }
+          "base": {"projectile_count": 0, "area_of_effect": 0},
+          "perRank": {"projectile_count": 5, "area_of_effect": 5}
         }
       },
       {
         "id": "razor_sharp",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "bleed (buff 3, 5 s, 1 stack) with chance 3r% per hit, amount floor(dmg*35r%) via EnemyAddBuff; no ailment-damage bonus per card; tick from reports/dot_debuffs.md"}], "confidence": "C", "note": "table row 2 (EnemyAddBuff L286-295); planer note (5)", "plannerFix": "planner adds increased_bleeding_damage +35%/r, the card says the bleed is applied directly without ailment bonuses"},
         "name": "Razor Sharp",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 35 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -518,45 +538,49 @@
       {
         "id": "demonic_winds",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [8.0, 16.0, 24.0, 32.0, 40.0], "per": "use", "note": "orbit_speed x(1+15r%) -> rev per cast x(1+15r%): 53.33 * 0.15r"}], "confidence": "C", "note": "table row 3", "plannerFix": "planner has no orbit hit model (dummy hits fixed); projectile_speed 15/r must scale the 53.33 base hits by (1+0.15r)"},
         "name": "Demonic Winds",
         "description": "Increases the speed of bone projectiles.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "sacrificial_lambs",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "x(1+15r%) bone damage only while the dummy bleeds (p2); upper bound, bleed uptime from DoT model (not in card)"}], "confidence": "C", "note": "table row 4 ([177]); planner extra_damage_bleeding 15/r matches"},
         "name": "Sacrificial Lambs",
         "description": "Increases damage to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "demons_eye_of_storm",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r, but ONLY when neither p12 nor p14 is learned: LoadSubSkillDamage assigns (RV_assign 0x140189e60) instead of adding for Bone Storm: RANK(p12) > 0 -> LSSD = p12.s9*0.01 (0x144b80135 / 0x144b8021e / 0x144b80243), RANK(p14) > 0 -> LSSD = p14.s9*0.01 (0x144b80723 / 0x144b8080c / 0x144b80831), p14 after p12 so p14 wins; otherwise p5.s9*0.01 (PoR4 correction 2026-10-16, C)"}], "confidence": "C", "note": "table row 5 + PoR4 LSSD correction (2026-10-16); a 'requires not p12/p14' condition cannot be expressed per effect, see engine", "plannerFix": "planner adds p5 subtree_damage 8/r on top of p12/p14; game: LSSD = p14.s9 if p14, else p12.s9 if p12, else p5.s9 (p5 is dropped with p12/p14)"},
         "name": "Demon´s Eye of Storm",
         "description": "Increases damage dealt by bone storm.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "infiltrate_their_core",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "arcane break +15%/r for 5 s applied with chance 5r% per hit ([959]); raises later hits by up to (1+0.15r) while active; mean needs uptime (not in card). No hit-count change"}], "confidence": "C", "note": "table row 6; planner arcane_break 15/r with proc 5/r matches"},
         "name": "Infiltrate their Core",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -569,6 +593,7 @@
       {
         "id": "devils_favourite",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.009, 0.036, 0.081, 0.144, 0.225], "per": "hit", "note": "per bone hit: chance 3r% x Universal_Damage_Return_obj hit of floor(dmg*30r%) (1 hit, 0.1 s object at dummy); value c*m = 0.009*r^2"}], "confidence": "C", "note": "table row 7 (Universal_Damage_Return_obj, L321-337)", "plannerFix": "planner models arcane_skill_damage +30%/r on a 3%/r proc (LSSD-like); the game adds a separate damage object hit (extra hit x 30r%)"},
         "name": "Devils Favourite",
         "description": "Chance to knock monsters back on hit dealing increased damage.",
         "maxRank": 5,
@@ -584,6 +609,7 @@
       {
         "id": "spontanious_dislocation",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "per bone hit: chance 4r% of one extra Bone_Fragment with the same damage (m=1) -> value 0.04r"}], "confidence": "C", "note": "table row 8 (L229-235)", "plannerFix": "planner models of_total_damage 50 per proc (half a hit); game gives a full extra fragment hit (x1) per proc"},
         "name": "Spontanious Dislocation",
         "description": "Bone Storm has a chance on hit to summon additional Bone Fragments in random directions.",
         "maxRank": 5,
@@ -599,28 +625,31 @@
       {
         "id": "storm_influx",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-5, -10, -15, -20, -25], "note": "base cooldown 6 s x(1-5r%)"}], "confidence": "C", "note": "table row 9; planner cooldown_reduction_pct 5/r matches"},
         "name": "Storm Influx",
         "description": "Decreases the cooldown of bone storm.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 5 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 5}
         }
       },
       {
         "id": "devils_diversion",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "dodge +15%/r"}], "confidence": "C", "note": "table row 10"},
         "name": "Devils Diversion",
         "description": "Gain increased chance to dodge attacks for a short period when casting bone storm.",
         "maxRank": 5,
         "effects": {
-          "base": { "dodge_chance": 0 },
-          "perRank": { "dodge_chance": 15 }
+          "base": {"dodge_chance": 0},
+          "perRank": {"dodge_chance": 15}
         }
       },
       {
         "id": "cycloning_bones",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5712, 1.4448, 2.6208], "per": "hit", "note": "per bone hit: chance 6r% x controller proc of 7 hits (R4 sim) x damage (1+36r%); value = 0.06r*7*(1+0.36r); no recursion"}], "confidence": "C", "note": "table row 11 (R4 symulacja klatkowa)", "plannerFix": "planner models arcane_skill_damage +36%/r on a 6%/r proc; game spawns a 4-bone controller giving ~7 hits per proc at (1+36r%) damage"},
         "name": "Cycloning Bones",
         "description": "Chance to summon a small cyclone of bones on hit.",
         "maxRank": 3,
@@ -636,34 +665,37 @@
       {
         "id": "bone_tornado",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.48, 12.96, 19.44], "note": "transformation: controller with 8r bones (p12.s10) circling it; hits per cast = rho*bones with rho = 0.81 / 0.80 / 0.78 / 0.77 / 0.77 / 0.76 for p3 = 0..5 (8/16/24 bones at p3=0: 6.48 / 12.96 / 19.44); no cooldown (base 0.5 s), use period T_c = max(cd_eff, (ceil(72/c)+1)/60) s = 43 frames = 0.717 s at c = 1.75: the same instant-cast talent is blocked by its own animation sequence (PoR4 rule 37), not 1/castRate. Controller starts at the player and flies in the aim direction (Resztki A rule 38: orbit centre y+6 now lies on the axis, simplified sim +5% hits, rho not reproduced, I; value kept)"}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "p12.s9 = 50/r IS read by the game: it becomes the skill's LSSD and replaces p5 (assigned, not added). LoadSubSkillDamage assigns (RV_assign 0x140189e60) instead of adding for Bone Storm: RANK(p12) > 0 -> LSSD = p12.s9*0.01 (0x144b80135 / 0x144b8021e / 0x144b80243), RANK(p14) > 0 -> LSSD = p14.s9*0.01 (0x144b80723 / 0x144b8080c / 0x144b80831), p14 after p12 so p14 wins; otherwise p5.s9*0.01 (PoR4 correction 2026-10-16, C)"}, {"kind": "cooldown_s", "byRank": [-5.5, -5.5, -5.5], "note": "base cooldown 6 s replaced by 0.5 s (no cooldown, p12 base 0.5 R=A=0)"}], "confidence": "I", "note": "table row 12 + R4 (rho from simulation, I for phase) + PoR4 LSSD correction (p12.s9 read, p5 dropped) + PoR4 rule 37 period", "plannerFix": "planner keeps the orbit (projectile_count 8/r converted at 5.33) and gives arcane_skill_damage 50/r as a generic additive stat; game replaces the pattern with rho*8r hits and the 50/r is the LSSD of the skill (x(1+0.5r)), replacing p5"},
         "name": "Bone Tornado",
         "description": "Unleash a bone tornado towards target location with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 50, "projectile_count": 8 }
+          "base": {"projectile_count": 0, "cooldown_added": -5.5, "subtree_damage": 0},
+          "perRank": {"projectile_count": 8, "cooldown_added": 0, "subtree_damage": 50}
         }
       },
       {
         "id": "everlasting_storm",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "note": "permanent storm (destroyTimer -1), one cast: n_ring bones x 4*(1+p3)*60/360 = 6.67 hits/s at 10 bones, p3=0 (hits/s, not per cast); each hit floor(LTD*30r%*(1+LSSD)). PoR4: the p13 block and v_sa60 = LTD*p13.s9% run whenever RANK(p13) > 0, before the path choice, so p13 can be combined with p12/p14 in the script: damage[1] = floor(LTD*p13.s9%*(1+LSSD)) with LSSD = p14.s9 (p14, wins over p12), else p12.s9 (p12), else p5.s9 (p13 alone); p5 is lost with p12/p14. A cast during the life of the previous controller/storm destroys it and ends the script (acts as a toggle; with a 0.717 s cast series every second cast only switches off). Whether the UI allows p13 together with p12/p14 is open (I). Re-cast ends it. Not representable per cast"}], "confidence": "C", "note": "table row 13 (L362-394) + PoR4 (e) Bone Storm p13 (LoadSubSkillDamage override)", "plannerFix": "planner gives of_total_damage -30/r per cast; game is a permanent storm with 6.67 hits/s at 30r% damage per hit (no cast cadence), LSSD per the p12/p14/p5 rule above"},
         "name": "Everlasting Storm",
         "description": "Bone storm no longer expires but it only deals a portion of its damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": -30 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": -30}
         }
       },
       {
         "id": "bone_devils",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [16, 16, 16], "note": "transformation: controller at the cursor (object 6 px above the cursor: orbit centre (x, y-24) for cursor (x, y-24)) with 10 + p1.s9 bones circling 32 px, orbit_speed 4 (no p3), life 2 s; value at p1=0 = 16 hits per cast, p1 rank adds 5 bones/rank (card numbers 25/33/41/50/58 at 15..35 bones, ~1.6-1.65 per bone); p14 rank does not change the count. Resztki E: bitmap-mask simulation (storm14b.py) gives 16 / 24 / 32 / 40 / 48 / 56 for 10..35 bones at an orbit-centre distance of 6, 18 and 24 px, card keeps the numbers 'unchanged'. Cursor exactly at the dummy centre (variant, note only): 21 / 32 / 42 / 53 / 63 / 74 (was 18 / 26 / 35 / 46 / 53 / 63; borderline, I). Use period T_c = 0.717 s (own sequence), p1 interplay not encoded"}, {"kind": "damage_pct", "byRank": [45, 90, 135], "note": "p14.s9 = 45/r IS read by the game: it becomes the skill's LSSD and replaces p5 AND p12 (assigned, not added). LoadSubSkillDamage assigns (RV_assign 0x140189e60) instead of adding for Bone Storm: RANK(p12) > 0 -> LSSD = p12.s9*0.01 (0x144b80135 / 0x144b8021e / 0x144b80243), RANK(p14) > 0 -> LSSD = p14.s9*0.01 (0x144b80723 / 0x144b8080c / 0x144b80831), p14 after p12 so p14 wins; otherwise p5.s9*0.01 (PoR4 correction 2026-10-16, C)"}, {"kind": "cooldown_s", "byRank": [-5.5, -5.5, -5.5], "note": "base cooldown 6 s replaced by 0.5 s (no cooldown, p14 base 0.5 R=A=0)"}], "confidence": "I", "note": "table row 14 + R4 (simulation, C/I phase) + PoR4 LSSD correction (p14.s9 read, p5/p12 dropped) + Resztki E (object 6 px above cursor)", "plannerFix": "planner gives of_total_damage 45/r; game replaces the pattern with a 10-bone controller at the target (16 hits per cast at p1=0) and the 45/r is the LSSD of the skill (x(1+0.45r)), replacing p5 and p12"},
         "name": "Bone Devils",
         "description": "Summons small bone devils at target location.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 45 }
+          "base": {"of_total_damage": 0, "cooldown_added": -5.5, "subtree_damage": 0},
+          "perRank": {"of_total_damage": 45, "cooldown_added": 0, "subtree_damage": 45}
         }
       }
     ]
@@ -730,6 +762,8 @@
   {
     "id": "spinal_tap",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Demonspawn_Spinal_Tap_obj at the aim point (cursor on the dummy, in-zone; indicator radius 160 px): destroyTimer 0.1 s, no tick: 1 hit per cast. p4 (second tap), p9 explosion, p13 bone are subskill effects."},
     "classId": "demonspawn",
     "name": "Spinal Tap",
     "kind": "active",
@@ -744,7 +778,7 @@
     "tree": "Bone Conjurer",
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.4, "perLevel": 20.65 },
+    "damageFormula": { "base": 0, "perLevel": 14 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Bone Storm", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -763,39 +797,43 @@
       {
         "id": "inevitable_carnage",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "AoE indicator radius +15%/r only; cast on dummy, no hit change"}], "confidence": "C", "note": "table row 1; planner area_of_effect 15/r matches"},
         "name": "Inevitable Carnage",
         "description": "Increases spinal tap's area of effect radius.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "hells_reach",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "cast range +20/r; dummy at 160 px already in range; no script read in class (I)"}], "confidence": "I", "note": "table row 2; planner skill_range 20/r matches the number, card gives no dummy effect"},
         "name": "Hell's Reach",
         "description": "Increases the maximum cast range of spinal tap.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "vampiric_tendencies",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "x(1+10r%) on hit damage only while the dummy bleeds ([177]); upper bound, bleed uptime from DoT model (not in card)"}], "confidence": "C", "note": "table row 3; planner extra_damage_bleeding 10/r matches"},
         "name": "Vampiric Tendencies",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "bringer_of_pain",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15], "per": "use", "note": "proc chance 5r% per cast: second identical Spinal Tap at the same point (volleys += 1), 1 hit each -> value 0.05r"}], "confidence": "C", "note": "table row 4 (R4 position of 2nd tap identical); planner proc 5/r of_total_damage 100 matches"},
         "name": "Bringer of Pain",
         "description": "Chance to unleash an additional spinal tap.",
         "maxRank": 3,
@@ -811,17 +849,19 @@
       {
         "id": "increase_in_suffering",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "table row 5"},
         "name": "Increase in Suffering",
         "description": "Increases damage dealt by spinal tap.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "restoring_agony",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana replenish on proc (chance r%, [967] = 1r% mana)"}], "confidence": "C", "note": "table row 6; planner mana_replenish_pct 1/r with proc 1/r matches"},
         "name": "Restoring Agony",
         "description": "Chance to replenish a portion of your maximum mana on hit.",
         "maxRank": 5,
@@ -837,23 +877,25 @@
       {
         "id": "additive_curse",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[220] raises Cartilage stack threshold and explosion size; per card the average Cartilage explosion per [219] hit is LTD(205) regardless of [220] -> 0 average change"}], "confidence": "C", "note": "table row 7; planner max_skill_stacks 1/r matches s9"},
         "name": "Additive Curse",
         "description": "Increases the maximum stacks of cartilage build up.",
         "maxRank": 6,
         "effects": {
-          "base": { "max_skill_stacks": 0 },
-          "perRank": { "max_skill_stacks": 1 }
+          "base": {"max_skill_stacks": 0},
+          "perRank": {"max_skill_stacks": 1}
         }
       },
       {
         "id": "demonic_grip",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "note": "arcane break +20%/r for 5 s applied with chance 5r% per hit ([979]); raises later hits while active; mean needs uptime (not in card). No hit-count change"}], "confidence": "C", "note": "table row 8; planner arcane_break 20/r with proc 5/r matches"},
         "name": "Demonic Grip",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 20 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -866,6 +908,7 @@
       {
         "id": "spinal_explosion",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0125, 0.05, 0.1125, 0.2, 0.3125, 0.45, 0.6125, 0.8], "per": "hit", "note": "per hit: chance 5r% x explosion (Explosion_Item_obj, 1 hit) of floor(dmg*25r%); value c*m = 0.0125*r^2"}], "confidence": "C", "note": "table row 9 (L1921-1934, reguła 15)"},
         "name": "Spinal Explosion",
         "description": "Spines ripped from monsters have a chance to explode dealing additional damage.",
         "maxRank": 8,
@@ -881,12 +924,13 @@
       {
         "id": "violent_rip",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "bleed (buff 3) with chance 4r% per hit, amount floor(dmg*15r%); tick from reports/dot_debuffs.md"}], "confidence": "C", "note": "table row 10", "plannerFix": "planner adds increased_bleeding_damage +15%/r, not in the card; the proc (4r% chance, bleed 15r%) matches"},
         "name": "Violent Rip",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -899,29 +943,25 @@
       {
         "id": "blood_and_gore",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below 2.5r% HP; the dummy never dies -> explosion 0"}], "confidence": "I", "note": "table row 11 (L1651-1661); the card marks I", "plannerFix": "planner adds arcane_skill_damage +25%/r (LSSD) that the card does not list; the explosion only fires on execute (0 on the dummy)"},
         "name": "Blood and Gore",
         "description": "Spinal tap executes enemies below a threshold of life causing them to explode with increased area of effect radius dealing increased damage.",
         "maxRank": 4,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "execute_below": 0 },
-          "perRank": { "arcane_skill_damage": 25, "execute_below": 2.5 }
+          "base": {"arcane_skill_damage": 0, "execute_below": 0},
+          "perRank": {"arcane_skill_damage": 25, "execute_below": 2.5}
         }
       },
       {
         "id": "internal_bleeding",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [32, 64, 96], "note": "bleed on every hit (no roll) of floor(dmg*32r%); bleed reduce [23] = 8r% is ~0 on the dummy per card"}], "confidence": "C", "note": "table row 12", "plannerFix": "planner keeps the bleed amount and also adds increased_bleeding_damage +32%/r which the card does not describe; increased_bleeding_frequency has no effect (double x0.01)"},
         "name": "Internal Bleeding",
         "description": "Spinal tap inflicts increased bleeding on hit. If the target is already bleeding, increase the tick frequency of existing bleed until it consumes the bleeding dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_bleeding_damage": 0,
-            "increased_bleeding_frequency": 0
-          },
-          "perRank": {
-            "increased_bleeding_damage": 32,
-            "increased_bleeding_frequency": 8
-          }
+          "base": {"increased_bleeding_damage": 0, "increased_bleeding_frequency": 0},
+          "perRank": {"increased_bleeding_damage": 32, "increased_bleeding_frequency": 8}
         },
         "proc": {
           "trigger": "on_hit",
@@ -934,23 +974,25 @@
       {
         "id": "eternal_suffering",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.55, 2.1, 2.65], "per": "hit", "note": "every hit (no roll): extra Bone_Barrage_obj hit of floor(dmg*(1+55r%)); value 1*(1+0.55r)"}], "confidence": "C", "note": "table row 13 (ProjectileCollision12DemonSpawn L268-277)", "plannerFix": "planner models of_total_damage +55%/r; game adds a full extra bone hit with damage (1+0.55r) on every hit (value 155% at r1)"},
         "name": "Eternal Suffering",
         "description": "Conjure piercing bone spikes flying towards targets on hit dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 55 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 55}
         }
       },
       {
         "id": "healing_torture",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "AoE radius +33%/r only (indicator)"}, {"kind": "utility", "note": "life replenish on hit (1%/r)"}], "confidence": "C", "note": "table row 14; planner area 33/r and life_replenish 1/r match"},
         "name": "Healing Torture",
         "description": "Increases the area of effect radius of spinal tap healing you for a portion of your maximum life per hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "life_replenish_pct": 0 },
-          "perRank": { "area_of_effect": 33, "life_replenish_pct": 1 }
+          "base": {"area_of_effect": 0, "life_replenish_pct": 0},
+          "perRank": {"area_of_effect": 33, "life_replenish_pct": 1}
         }
       }
     ]
@@ -977,6 +1019,8 @@
     "id": "bone_barrage",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 8.6, "baseProjectiles": 20, "perExtraProjectile": 0.43, "confidence": "I", "note": "n = XSP(20+p2.s9) = 20 Demonspawn_Bone_Barrage_obj thrown one per 5 frames (series ~1.7 s) in directions aim + 0 / +6 / +12 deg cyclically (one-sided), 6 px/frame, 1 s, each with its own map. The rotated rectangle mask (sepMasks 0, x in [-14, 52], y in [-33, 1] relative to the origin) is tested against the precise dummy as an ORIENTED rectangle (R4 208#0, rule 26): bone +0 deg hits 1.00, +6 deg 0.29, +12 deg 0.00 -> mean 0.43 of the bones (+-0.02, averaged over 360 aim directions, dummy 160 px on the aim line) = 0.43*20 = 8.6 hits per cast. perExtraProjectile = 0.43 per extra bone (XSP / p2). Fraction from the card's frame simulation (I); the oriented-rectangle model is confirmed in METODA rule 26. Cooldown 6 s sets the period (none with p11/p13)."},
     "classId": "demonspawn",
     "name": "Bone Barrage",
     "kind": "active",
@@ -991,7 +1035,7 @@
     "tree": "Bone Conjurer",
     "position": { "row": 4, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.5, "perLevel": 19.37 },
+    "damageFormula": { "base": 0, "perLevel": 14.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Bone Fragments", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -1010,61 +1054,67 @@
       {
         "id": "bonemarrow",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-5, -10, -15, -20, -25], "note": "cooldown 6 s x(1-5r%)"}], "confidence": "C", "note": "table row 1; planner cooldown_reduction_pct 5/r matches"},
         "name": "Bonemarrow",
         "description": "Decreases the cooldown of bone barrage.",
         "maxRank": 5,
         "effects": {
-          "base": { "cooldown_reduction_pct": 0 },
-          "perRank": { "cooldown_reduction_pct": 5 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 5}
         }
       },
       {
         "id": "skeletal_stock",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "XSP(20+3r) bones; each extra bone 0.43 hits (perExtraProjectile 0.43) -> +1.29 hits/rank"}], "confidence": "C", "note": "table row 2; planner projectile_count 3/r and perExtraProjectile 0.43 give the same"},
         "name": "Skeletal Stock",
         "description": "Increases the amount of bone spikes.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 3 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 3}
         }
       },
       {
         "id": "bone_growth",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0, 1.02, 1.02, 1.02, 1.05], "note": "skillSize 1+15r%: hit fraction 0.43 -> 0.43/0.44/0.44/0.44/0.45 (I, +-0.01); hits_mult = fraction/0.43"}], "confidence": "I", "note": "table row 3 (R4 oriented-rectangle model)", "plannerFix": "planner has projectile_size 15/r but no mask-hit model; size changes the fraction of bones hitting the dummy (0.43 -> 0.45 at r5)"},
         "name": "Bone Growth",
         "description": "Increases the size of bone spikes.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "swift_bone",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bone speed +15%/r only; reach, not hit fraction (the bone crosses once)"}], "confidence": "C", "note": "table row 4; planner projectile_speed 15/r matches s9"},
         "name": "Swift Bone",
         "description": "Increases the projectile speed of bone spikes.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "hard_as_steel",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "table row 5"},
         "name": "Hard as Steel",
         "description": "Increases the damage dealt by bone spikes.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "rib_crack",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s (buff 18) on hit with chance 4r%; no damage; enables Skeletal Impact p10"}], "confidence": "C", "note": "table row 6 (Zmiany: stun buff 18, reguła 27); planner stun proc 4/r matches"},
         "name": "Rib Crack",
         "description": "Chance to inflict stun on hit.",
         "maxRank": 5,
@@ -1077,6 +1127,7 @@
       {
         "id": "explosive_density",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "per": "hit", "note": "per bone hit: chance 3r% x Explosion_Item_obj hit of floor(dmg*25r%) -> c*m = 0.0075*r^2"}], "confidence": "C", "note": "table row 7 (L109-122); planner proc 3/r of_total_damage 25/r matches"},
         "name": "Explosive Density",
         "description": "Chance on hit to unleash a bloody explosion dealing additional damage.",
         "maxRank": 5,
@@ -1092,17 +1143,19 @@
       {
         "id": "flexible_bonestructure",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r; bounce [82] no hit effect"}], "confidence": "C", "note": "table row 8"},
         "name": "Flexible Bonestructure",
         "description": "Bone spikes bounce from terrain dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "bone_pong",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.069, 0.156, 0.3915, 0.768, 1.05], "per": "hit", "note": "per bone hit: chance 3r% -> chain with H = 1+floor((n+1)/3), n = 2r: H = 2,2,3,4,4; each hit floor(dmg*(1+15r%)); value = c*H*(1+0.15r)"}], "confidence": "C", "note": "table row 9 (reguły 15 i 23; T0, start on the dummy)", "plannerFix": "planner gives arcane_skill_damage +15%/r (LSSD-like) and 2 bounces; game chain is H(2r) hits of (1+15r%) damage per proc (2,2,3,4,4 hits) on the same dummy"},
         "name": "Bone Pong",
         "description": "Chance to chain between multiple monsters on hit dealing increased damage.",
         "maxRank": 5,
@@ -1118,56 +1171,61 @@
       {
         "id": "skeletal_impact",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "rib_crack", "note": "x(1+10r%) on hit damage while the dummy is stunned ([179]); upper bound, stun uptime from p6 chance and 3 s duration (not in card)"}], "confidence": "C", "note": "table row 10; planner extra_damage_stunned 10/r matches"},
         "name": "Skeletal Impact",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "nova_of_bones",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.434, 0.868, 1.302], "note": "transformation: all bones in a full circle (360/n), each damage floor(dmg*35r%); hits = 1.24 bones at n=20 x 0.35r (r1 0.434, r2 0.868, r3 1.302). n=23/26/29 gives 1.60/2.00/2.00 bones (x 0.35r) not encoded (p2 interplay)"}, {"kind": "cooldown_s", "byRank": [-5.5, -5.5, -5.5], "note": "base cooldown 6 s replaced by 0.5 s (no cooldown; period 1/castRate)"}], "confidence": "I", "note": "table row 11 + R4 (C/I)", "plannerFix": "planner keeps the fan (projectile_speed 10/r, of_total_damage 35/r) with 6 s cooldown; game is a circle nova of 1.24 bones at n=20 with cooldown removed"},
         "name": "Nova of Bones",
         "description": "Unleash all the projectiles around you in a circle. Bone barrage no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_speed": 0 },
-          "perRank": { "of_total_damage": 35, "projectile_speed": 10 }
+          "base": {"of_total_damage": 0, "projectile_speed": 0, "cooldown_added": -5.5},
+          "perRank": {"of_total_damage": 35, "projectile_speed": 10, "cooldown_added": 0}
         }
       },
       {
         "id": "master_of_boneology",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.1628, 2.3256, 3.4884], "note": "homing: all bones hit (fraction 1.0 instead of 0.43) with damage 0.5r: hits = 20*1.0*0.5r = 10r; hits_mult = 10r/8.6 (at n=20)"}, {"kind": "other", "note": "p12.s9 (50/r) on damage applies only as the damage ratio above (no LSSD). p12.s6 unset = 0 (R4)"}], "confidence": "I", "note": "table row 12 (R4 C: GetSubTalentInfo(208,12) sets field 9 = 50 only, damage 0.5r) + Resztki A: skillHoming (rate from the controller @0x147acb76e), all bones hit even without the bbox snap (deviation <= 33 px, turn >= 5 deg/frame) - simulation, now I", "plannerFix": "planner models only of_total_damage 50/r; game makes every bone hit (homing) with damage 0.5r, i.e. hits 10r per cast at n=20"},
         "name": "Master of Boneology",
         "description": "Bone spikes start homing towards nearest monsters briefly after casting dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 50 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 50}
         }
       },
       {
         "id": "hell_on_earth",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 2, 3, 4], "note": "transformation: rain of bones on the dummy, p13.s9 = 1 bone per rank, each hit once at the dummy (damage ratio 1); per cast"}, {"kind": "cooldown_s", "byRank": [-5.5, -5.5, -5.5, -5.5], "note": "base cooldown 6 s replaced by 0.5 s (no cooldown)"}], "confidence": "C", "note": "table row 13 (Bone_Barrage_Rain_obj)", "plannerFix": "planner treats it as projectile_count 1/r on the fan; game replaces the cast by r bones falling on the dummy, no cooldown"},
         "name": "Hell on Earth",
         "description": "Bone spikes now rain from the sky on enemies around you causing the spikes to fragment when hitting the ground launching small fragments around the point of impact.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0, "cooldown_added": -5.5},
+          "perRank": {"projectile_count": 1, "cooldown_added": 0}
         }
       },
       {
         "id": "barraging_boneswirl",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "+3 bones/rank (p14.s10)"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "the extra bones swirl out to 98 px (radius 32 + 1.1 t px, life 60 frames) and do not reach the dummy at 160 px -> 0 hits. Oriented-rectangle model (image_angle = swirlAngle + 90, mask x -14..52, y -33..1, active from frame 2, map not cleared): ~1 hit per bone for a dummy <= 80 px from the player, 0.64-0.97 at 100 px, 0.17-0.52 at 110 px, 0.02-0.20 at 120 px, 0 from 140 px (swirl_sim.py, omega 8.4/12/18/22.5 deg/frame; was '30-110 px band' under AABB); at the 160 px convention 0 (unchanged)"}, {"kind": "zero_on_dummy", "note": "spiral speed +40%/r; radius reaches at most 98 px at 160 px dummy -> 0"}], "confidence": "C", "note": "table row 14 + PoR4 (e, rule 26) + Resztki B: swirl band confirmed C (inputs @0x147adaabe, Step_0 L13, mask from data.win); value at 160 px is 0", "plannerFix": "planner adds 3 projectiles/rank that convert at 0.43 hits each; at 160 px the swirl bones never reach the dummy (0)"},
         "name": "Barraging Boneswirl",
         "description": "Bone spikes now spiral outwards from you with increased speed.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0, "projectile_count": 0 },
-          "perRank": { "projectile_speed": 40, "projectile_count": 3 }
+          "base": {"projectile_speed": 0, "projectile_count": 0},
+          "perRank": {"projectile_speed": 40, "projectile_count": 3}
         }
       }
     ]
@@ -1176,6 +1234,8 @@
     "id": "blood_bolts",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 1.0, "confidence": "C", "note": "Controller fires skillAmount = XSP(3+p1.s9) = 3 volleys 0.05 s apart, each of 3 Demonspawn_Blood_Bolt_obj at -90 / 0 / +90 deg relative to the aim, straight flight, no homing without p6 (isHoming = skillHoming = 0), projType 1: only the 0 deg bolt reaches the dummy on the aim line (side bolts never come near at 160 px) -> 3 hits per cast, each the full hit. perExtraProjectile = 1.0 (each extra XSP adds a volley = +1 hit; p6 homing would triple the hits, subskill). baseProjectiles = 3 volleys."},
     "classId": "demonspawn",
     "name": "Blood Bolts",
     "kind": "active",
@@ -1190,7 +1250,7 @@
     "tree": "Blood Lord",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 14.1, "perLevel": 6.75 },
+    "damageFormula": { "base": 13.75, "perLevel": 6.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Single Out", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
@@ -1209,34 +1269,37 @@
       {
         "id": "adrenaline_secretion",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bolt speed +15%/r; flight reaches the dummy anyway"}], "confidence": "C", "note": "table row 8; planner projectile_speed 15/r matches"},
         "name": "Adrenaline Secretion",
         "description": "Increases the projectile speed of blood bolts.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "volume_increase",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bolt size +15%/r; side bolts miss at 160 px, centre bolt already hits"}], "confidence": "C", "note": "table row 2; planner projectile_size 15/r matches"},
         "name": "Volume Increase",
         "description": "Increases the size of blood bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "hemophilia",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "bleed (buff 3) with chance 3r% per bolt, amount floor(dmg*35r%); tick from reports/dot_debuffs.md"}], "confidence": "C", "note": "table row 3", "plannerFix": "planner adds increased_bleeding_damage +35%/r not described by the card; the proc (3r% chance, bleed 35r%) matches"},
         "name": "Hemophilia",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 35 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1249,6 +1312,7 @@
       {
         "id": "demonic_formula",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "pierce chance 4r% per volley: no effect on a single target"}], "confidence": "C", "note": "table row 4; planner proc 4/r has no effect, consistent"},
         "name": "Demonic Formula",
         "description": "Chance for blood bolts to become piercing and to continue traveling forward after hitting a monster.",
         "maxRank": 5,
@@ -1257,61 +1321,67 @@
       {
         "id": "leukocytes",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "table row 5"},
         "name": "Leukocytes",
         "description": "Increases damage dealt by blood bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "advanced_metabolism",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [3, 3, 3, 3, 3], "note": "homing: all 3 bolts of each volley hit the dummy (x3 hits); homingRate 5 deg/frame at 5 px/frame; Resztki A: StepDamageParentHoming (0x1452d3550) snaps to the target at bbox gap <= 16 (projType 1 -> isHoming stays); frame simulation bolts_sim.py: the side bolts (+-90 deg, start host + lengthdir(16, .) , y+6) reach the dummy at ~frame 40 (frames 40 / 26 / 40 for -90 / 0 / +90 deg) with both the centre-distance threshold 16 and the bbox threshold -> x3 unchanged"}, {"kind": "damage_pct", "byRank": [4, 8, 12, 16, 20], "note": "LSSD +4%/r"}], "confidence": "I", "note": "table row 6 + Resztki A (homing simulation, I); LSSD +4%/r is in damage_pct", "plannerFix": "planner models only arcane_skill_damage 4/r; the game's homing triples the hits (3 bolts per volley hit), not in planner"},
         "name": "Advanced Metabolism",
         "description": "Blood bolts start homing towards the nearest target briefly after being casted.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 4 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 4}
         }
       },
       {
         "id": "demon_master",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "+15%/r damage applies to passive Blood Demons (216), not to this skill's hits"}], "confidence": "C", "note": "table row 7 (TalentUseClass L461-480)", "plannerFix": "planner adds arcane_skill_damage +15%/r to Blood Bolts; the card says the bonus is for passive Blood Demons (216) only"},
         "name": "Demon Master",
         "description": "Increases the damage of blood demons spawned by blood bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 15}
         }
       },
       {
         "id": "high_hemoglobin",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "XSP(3+2r) volleys, each volley 1 hit on the dummy (perExtraProjectile 1.0)"}], "confidence": "C", "note": "table row 1; planner projectile_count 2/r with perExtraProjectile 1.0 gives +2 hits/rank"},
         "name": "High Hemoglobin",
         "description": "Increases the amount of blood bolts.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "arterial_blood",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "table row 9"},
         "name": "Arterial Blood",
         "description": "Decreases the mana cost of blood bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "thrombus",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0045, 1.018, 1.0405, 1.072, 1.1125], "note": "per volley roll chance 3r% of damage x(1+15r%) (knockback blocked on dummy; multiplier independent of knockback): expected 1 + 0.03r*0.15r"}], "confidence": "C", "note": "table row 10 (Zmiany b: enemyModifier[171] blocks knockback; R4 C/I)", "plannerFix": "planner models a 3%/r proc with arcane_skill_damage +15%/r (LSSD-like); the game multiplies the volley hit damage by (1+15r%) on a 3%/r roll (expected 1+0.0045r^2)"},
         "name": "Thrombus",
         "description": "Chance on hit to knock enemies back with force dealing increased damage.",
         "maxRank": 5,
@@ -1327,53 +1397,49 @@
       {
         "id": "demon_sentry",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [15, 15, 15], "note": "base cooldown 0 + 15 s (GetTalentCooldown 0x2c)"}, {"kind": "other", "note": "count: r+1 demons (p11.s9 = 1/r with base field s6 = 1, rule 39; PoR4: 2 / 3 / 4 for r = 1 / 2 / 3, was r); entity count, NOT extra_hits (engine multiplies by summon_max_amount). Each demon stands at the player (Resztki A: distance_to_object(host) = 0 < 96, never moves, C) and attacks every P = 120*(1-0.3r) frames (84 / 48 / 12, no min/max), first attack after 6 frames, N_d = 1 + floor(595/P) = 8 / 13 / 50 attacks in its 600-frame life; each attack emits XSP(3+p1) = 3 bolts (emitter 1 bolt per 4 frames, cap ~149 bolts per demon at r3), cyclic spread -10 / 0 / +10 deg between attacks; homing (all bolts hit) only with p6, otherwise only the 0 deg bolts hit at 160 px (+-10 deg misses: 27.8 px > 24). Per demon in 10 s (n = 3): 22 / 39 / 148 hits with p6, 7 / 13 / 49 without. All demons together: 44 / 117 / 592 with p6, 14 / 39 / 196 without (PoR4 b, Resztki B, C; was 22/39/148 and 7/13/49). Cooldown 15 s"}], "confidence": "C", "note": "table row 11 + PoR4 (b, rule 39) + Resztki A/B: demon count and attack loop C (asm 0x14652f2a7-0x14652f30e, Step_0 0x147a95e10); only the phase of the last attack (+-1 bolt) stays I. planner summon_max_amount 1+1/r, summon_attack_speed 30/r and cooldown 15 now match the card; per-action hits of the demon (1 of 3 bolts without p6, emitter cap) must come from the engine entity model"},
         "name": "Demon Sentry",
         "description": "Summon a following blood demon unleashing blood bolts to nearby monsters with increased blood bolt amount and attack speed.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_max_amount": 1, "summon_attack_speed": 0 },
-          "perRank": { "summon_max_amount": 1, "summon_attack_speed": 30 }
+          "base": {"summon_max_amount": 1, "summon_attack_speed": 0, "cooldown_added": 15},
+          "perRank": {"summon_max_amount": 1, "summon_attack_speed": 30, "cooldown_added": 0}
         }
       },
       {
         "id": "bloodshed",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: one homing bolt per enemy in 320 px replaces the volleys: 1 hit per cast"}, {"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD +75%/r"}], "confidence": "C", "note": "table row 12 (transformation; life drain p12.s10 not a hit effect)", "plannerFix": "planner keeps all volleys and adds +75%/r; game makes one homing bolt per enemy (1 hit per cast) with LSSD +75%/r"},
         "name": "Bloodshed",
         "description": "Unleash a blood bolt towards each nearby monster draining your life for each target dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "life_drain_pct": 0 },
-          "perRank": { "arcane_skill_damage": 75, "life_drain_pct": 0.5 }
+          "base": {"life_drain_pct": 0, "subtree_damage": 0},
+          "perRank": {"life_drain_pct": 0.5, "subtree_damage": 75}
         }
       },
       {
         "id": "mark_of_the_demon",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10, 10, 10], "note": "transformation: mark object at target (tick 0.5 s, 2 s): 5 hits, plus each mark tick spawns a homing bolt with the same damage: 5 more -> 10 per cast; area +25%/r (indicator)"}], "confidence": "C", "note": "table row 13 (ProjectileCollision12DemonSpawn L53-73)", "plannerFix": "planner gives area_of_effect 25/r only; game is a mark with 5 ticks, each spawning a homing bolt (10 hits per cast)"},
         "name": "Mark of the Demon",
         "description": "Conjure a pool of blood on target location. Unleash blood bolts towards monsters in the blood pool.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "wave_of_blood",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "note": "transformation: one singleHit wave per cast (1 hit)"}, {"kind": "other", "note": "LSSD multiplied by (1 + 0.25*(3 + p1.s9)): x1.75 at p1=0 (x2 at p1 rank 1); applies to the LSSD sum (p5+p6+p12); scaled LSSD, not an extra hit. Trail buff (FCR, movement, arcane) only for the player, 0 on dummy"}], "confidence": "I", "note": "table row 14 (C/I)", "plannerFix": "planner gives faster_cast_rate 6/r, movement_speed 15/r and arcane 15/r as stats; game is 1 hit per cast with LSSD x(1+0.25(3+p1)) and the other buffs apply to the player on the trail only"},
         "name": "Wave of Blood",
         "description": "Unleash a wave of blood leaving a trail of blood behind it. Any player touching the trail gains increased movement speed, faster cast rate and increased arcane skill damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "faster_cast_rate": 0,
-            "movement_speed": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "faster_cast_rate": 6,
-            "movement_speed": 15,
-            "arcane_skill_damage": 15
-          }
+          "base": {"faster_cast_rate": 0, "movement_speed": 0, "arcane_skill_damage": 0},
+          "perRank": {"faster_cast_rate": 6, "movement_speed": 15, "arcane_skill_damage": 15}
         }
       }
     ]
@@ -1457,6 +1523,7 @@
   {
     "id": "mana_devour",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "demonspawn",
     "name": "Mana Devour",
     "kind": "active",
@@ -1478,6 +1545,8 @@
   {
     "id": "blood_surge",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Demonspawn_Blood_Surge_obj (oriented-rectangle ray, x in [10,189]*xscale = 20-378 px in front of the player, follows the aim at <= 3 deg/frame): tick 45 frames (0.75 s), durationTimer 30 frames then shrinks, life ~55 frames: first hit at activation, second after the 45-frame tick (the ray is still ~0.5 yscale, +-7 px, dummy on the aim axis at 160 px is covered) = 2 hits of V1 = 15*L per cast (R3 'Zmiany', R4 215 notes, C). Rays from consecutive casts overlap but have separate maps. p10/p13/p14 are subskills."},
     "classId": "demonspawn",
     "name": "Blood Surge",
     "kind": "active",
@@ -1493,7 +1562,7 @@
     "position": { "row": 3, "col": 0 },
     "hitModel": { "object": "Demonspawn_Blood_Surge_Create", "tickFrequency": 0.75 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.4, "perLevel": 8.4 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Blood Bolts", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1512,56 +1581,61 @@
       {
         "id": "corrosive_blood",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r"}], "confidence": "C", "note": "table row 1"},
         "name": "Corrosive Blood",
         "description": "Increases the damage dealt by blood surge.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "wide_veins",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "maxScale +15%/r widens the ray; the dummy is already on the ray axis, second tick still hits (margin >=1.3 px)"}], "confidence": "C", "note": "table row 2; planner area_of_effect 15/r matches the size stat"},
         "name": "Wide Veins",
         "description": "Increases the area of effect radius of blood surge.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "white_blood_cells",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "duration +10%/r; third hit would need lifetime >90 frames (rank >=12), not reached"}], "confidence": "C", "note": "table row 3; planner skill_duration 10/r matches"},
         "name": "White Blood Cells",
         "description": "Increases the duration of blood surge.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "increased_plasma",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "table row 4"},
         "name": "Increased Plasma",
         "description": "Decreases the mana cost of blood surge.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "blood_fervor",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "burning (buff 1) with chance 3r% per hit, amount floor(dmg*35r%); tick from reports/dot_debuffs.md"}], "confidence": "C", "note": "table row 5", "plannerFix": "planner adds increased_burning_damage +35%/r not described by the card; the proc (3r% chance, burn 35r%) matches"},
         "name": "Blood Fervor",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 35 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1574,23 +1648,25 @@
       {
         "id": "immune_deficiency",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8], "requires": "blood_fervor", "note": "x(1+10r%) on hit damage while the dummy burns ([180]); upper bound, burn uptime from p5 chance (not in card)"}], "confidence": "C", "note": "table row 6; planner extra_damage_burning 10/r matches"},
         "name": "Immune Deficiency",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 8,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "asphyxiating_vessels",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "arcane break +30%/r for 5 s applied with chance 3r% per hit ([979]); raises later hits while active; with p12 a roll every tick; mean needs uptime (not in card). No hit-count change"}], "confidence": "C", "note": "table row 7 (arcaneBreak Step_0 L57-67); planner arcane_break 30/r with proc 3/r matches"},
         "name": "Asphyxiating Vessels",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 30 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1603,28 +1679,31 @@
       {
         "id": "demon_wings",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "smaller movement slow while casting; no dummy DPS"}], "confidence": "I", "note": "table row 8; planner reduced_movement_diminish 10/r matches"},
         "name": "Demon Wings",
         "description": "Decreases movement diminish when using blood surge.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "vein_pressure",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance +3%/r (value = chance %); spell crit damage +25%/r"}], "confidence": "C", "note": "table row 9 ([1004] += 3r, [1003] += 25r); planner matches"},
         "name": "Vein Pressure",
         "description": "Chance to unleash a critical strike with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 25 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 25}
         }
       },
       {
         "id": "rays_of_blood",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "proc spawns child rays (2r per proc, 2x damage) at the enemy; child stands in the dummy with mask from 20 px out and does not hit the same target (0 on a lone dummy)"}], "confidence": "C", "note": "table row 10 (ProjectileCollision12DemonSpawn L14-44); planner projectile_count 2/r with perExtraProjectile 0 gives 0"},
         "name": "Rays of Blood",
         "description": "Chance on hit to unleash additional surges of blood to directions around the target on hit.",
         "maxRank": 2,
@@ -1640,45 +1719,49 @@
       {
         "id": "hematopoiesis",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 1, 2], "per": "use", "note": "tick 45*(1-20r%) frames (36/27/18): hits = 1+floor(55/tick) = 2/3/4 per cast (base 2); value = hits - 2"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}], "confidence": "I", "note": "table row 11 (C/I)", "plannerFix": "planner's faster_cast_rate 20/r is a cast-speed stat; the game lowers the ray tick (20%/r of 45 frames), giving 2/3/4 hits per cast"},
         "name": "Hematopoiesis",
         "description": "Increases the tick frequency of blood surge.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "arcane_skill_damage": 0 },
-          "perRank": { "faster_cast_rate": 20, "arcane_skill_damage": 15 }
+          "base": {"faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 20, "subtree_damage": 15}
         }
       },
       {
         "id": "channeling_surge",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD +40%/r"}, {"kind": "other", "note": "persistent beam (durationTimer -666), tick 15 frames -> 4 hits/s independent of castRate; mana 7r%/s. Per second, not per cast (60/tick hits/s)"}], "confidence": "C", "note": "table row 12 (Step_0 L22-33)", "plannerFix": "planner has no per-second beam model and models increased_mana; game is a persistent beam at 4 hits/s (60/tick), independent of cast rate"},
         "name": "Channeling Surge",
         "description": "Blood surge deals increased damage and no longer expires until you run out of mana or cast blood surge again.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "increased_mana": 0 },
-          "perRank": { "arcane_skill_damage": 40, "increased_mana": 7 }
+          "base": {"increased_mana": 0, "subtree_damage": 0},
+          "perRank": {"increased_mana": 7, "subtree_damage": 40}
         }
       },
       {
         "id": "blood_line",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2], "note": "two rays, each hits the dummy once in the first test (frame 2): 2 hits per cast (same total as base 2 from one ray); p11 adds nothing here. Resztki D (rule 38): the first test follows one rotation step (delta = 3 deg: upper arm 160*tan(2.15+3 deg) = 14.4 px < 17.1, margin 2.7 px, was 8.7 px); worst case delta = 6 deg, +y side: 16.7 <= 18.0 (margin 1.3 px, R4 215#1) -> still 2 hits"}, {"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD +45%/r"}], "confidence": "I", "note": "table row 13 + R4 215#1 + Resztki D: geometry C, pixel rounding of the mask edge I (margin 1.3-2.7 px); planner 2 rays x1 hit matches"},
         "name": "Blood Line",
         "description": "Unleash two surges of blood curving to your sides before expiring.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 45 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 45}
         }
       },
       {
         "id": "unlimited_power",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.0, 1.1, 1.2], "note": "transformation: orb (2 s, 3 px/frame, Player_Ability_Parent: does not hit, burst 0) creates a ray every ceil(45*(1-0.15r)) = 39 / 32 / 25 frames (first at step 6) when an enemy is within 400 px (Resztki A: distance_to_object < 400 always true). Each ray has tick 45 frames, durationTimer 30, and FOLLOWS the orb (myHost = the orb's id, x = orb.x + lengthdir_x(8, image_angle), PoR4 rule 41, setter 0x147ac2158, C): by the second tick the ray base is ~150 px further out and the mask (starts 28-43 px in front of the base) no longer covers the dummy. H = 1.0 / 1.1 / 1.2 hits per cast for r = 1 / 2 / 3 (mean over 120 aim directions: aim ~+-150 deg gives 0, ~0 / +-30 deg gives 2; surge14_sim.py: 1.01 / 1.16 / 1.24, phase +-0.1; 6 px lateral offset changes it by +-0.02). Was 4 (R4, rays assumed to stand still). With p2 (maxScale 1.3 / 1.6): 0.92-1.13 / 0.85-1.07; dummy at 100 px: 0.5-0.6 (not encoded)"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD +30%/r"}, {"kind": "cooldown_s", "byRank": [2.75, 2.75, 2.75], "note": "base cooldown 0 + 2.75 s (GetTalentCooldown)"}], "confidence": "C", "note": "table row 14 + PoR4 (d)(2) + Resztki B (surge14_sim.py, 120 directions): confirmed C (inputs @0x147ac2158, Step_0 L8-L14; only the phase +-0.1 remains)", "plannerFix": "planner gives faster_cast_rate 15/r; game is an orb with 2.75 s cooldown making ~1.0 / 1.1 / 1.2 hits per cast at 160 px (rays follow the orb), not a cast-speed bonus"},
         "name": "Unlimited Power",
         "description": "Conjure an orb of blood unleashing surges of blood towards targets on hit. Blood surge now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "arcane_skill_damage": 30, "faster_cast_rate": 15 }
+          "base": {"faster_cast_rate": 0, "cooldown_added": 2.75, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 15, "cooldown_added": 0, "subtree_damage": 30}
         }
       }
     ]

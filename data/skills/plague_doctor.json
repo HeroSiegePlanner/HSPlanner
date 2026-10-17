@@ -2,6 +2,8 @@
   {
     "id": "miasma",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per attack, melee attack skill counted IN-ZONE (dummy inside the weapon-strike reach; reach is item data); at the strict 160 px the strike does not reach and no cloud is created (value 0). 1 weapon strike (rule 6; d0 = W*(1 + V1'/100), V1' = (52 + 28*L)*(1+LSSD)) + 1 Plague_Doctor_Miasma_obj cloud created at the hit target (ProjectileCollision00Skills L2290-2331, [227] = 1 per strike) with damage[0] = the strike's d0 (copy, ratio 1.0): the cloud starts on the dummy and drifts 1.3 px/frame along the strike direction, scale 0.1 -> 1 at +0.05/frame (r ~22.5*scale), life 75 frames, tick_frequency 0.5 s = 30 frames (active from frame 2). Contact lasts while 1.3*t <= 12 + 22.5*scale, i.e. until frame ~26 (< the first map clear at frame 30), so by tools/tick_hits.py 26 30 = 1 cloud hit (the dummy is out of the cloud when the map clears; the card's 'next tick after 30 frames, cloud ~39 px away' agrees; drift direction I). Total 1 + 1 = 2.0. The planner hitModel (tick 0.5 s, 1.25 s lifetime = 3 hits) is wrong for the base: 3 cloud hits only with p11 Tenacious Stench (cloud sticks, tools/tick_hits.py 73 30 = 3) or p12 Shoulder Fling (cloud stays). perExtraProjectile 0: no projectile mechanism (p13 spawns extra clouds). p2/p7 DoT, p6 extra clouds, p10 meteors are subskill effects."},
     "classId": "plague_doctor",
     "name": "Miasma",
     "kind": "active",
@@ -17,7 +19,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 83.72, "perLevel": 45.08 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 152, "perLevel": 28 },
       "flatPhysicalMin": { "base": 3, "perLevel": 1 },
       "flatPhysicalMax": { "base": 10, "perLevel": 3 },
       "attackRatingPct": { "base": 0, "perLevel": 6 }
@@ -38,23 +42,25 @@
       {
         "id": "dense_haze",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "cloud tick period x(1 - 0.1r) (percent reduction of the 0.5 s = 30-frame tick); no change on the base (1 cloud hit); only matters for a standing cloud (p11 sticks / p12 stays)"}, {"kind": "extra_hits", "byRank": [0, 0, 1, 1, 2], "per": "use", "requires": "tenacious_stench", "note": "standing cloud hits = tools/tick_hits.py 73 T (life 75 frames, no fade phase, R4 276#3) with T = 30*(1-0.1r) = 27, 24, 21, 18, 15 frames -> 3, 3, 4, 4, 5 for r = 1..5 (old formula 1 + floor(75/T) gave 3,4,4,5,6); extra over the 3 hits that p11 (or p12) already gives. Applies equally with p12 shoulder_fling (only one 'requires' id can be stored)"}], "confidence": "C", "note": "card 276 p1 + R4 276#3 (Najwazniejsze zmiany: stojaca chmura 3,3,4,4,5); base hits relative to base 2 (cios + 1 cloud)", "plannerFix": "planner maps it to faster_cast_rate; in game it shortens the cloud tick (matters only with a sticking cloud: 3,3,4,4,5 hits)"},
         "name": "Dense Haze",
         "description": "Increases the tick frequency of miasma.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "contagious_mist",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "poison DoT [0] = floor(d0 * 15r%) from the strike and the cloud, rolled with chance 3r% ONCE per cast (not per hit); value = % of d0"}], "confidence": "C", "note": "card 276 p2", "plannerFix": "chance is rolled once per attack, not on every hit; amount is 15r% of d0 (poison), not an increased-poison-damage stat"},
         "name": "Contagious Mist",
         "description": "Chance to inflict poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 15 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -67,39 +73,43 @@
       {
         "id": "harmful_poluents",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on V1 (strike and therefore cloud d0)"}], "confidence": "C", "note": "card 276 p3"},
         "name": "Harmful Poluents",
         "description": "Increases the damage dealt by miasma.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "eroding_haze",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "extra damage vs poisoned ([181] = p4.s9%, MODS 461): separate multiplier (1 + 0.1r) only while the dummy is poisoned (base: no poison on the dummy unless another source)"}], "confidence": "C", "note": "card 276 p4"},
         "name": "Eroding Haze",
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 10 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 10}
         }
       },
       {
         "id": "hasty_vapors",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "cloud maxScale +15%/r (reach, projectile_size); the cloud still gives 1 hit at the base (card: usually still 1 hit)"}], "confidence": "I", "note": "card 276 p5 (C/I)"},
         "name": "Hasty Vapors",
         "description": "Increases the size of miasma.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "hemoglobin_nova",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.16, 0.36, 0.64, 1.0], "per": "hit", "note": "only while the dummy is poisoned: chance 4r% per hit to spawn r extra clouds on the dummy (copy of d0), each >= 1 hit; value = 0.04r * r * 1 hit (minimum; the 1-hit-per-cloud assumption is I)"}], "confidence": "C", "note": "card 276 p6 (C mechanism; hits per cloud I)", "plannerFix": "extra clouds are conditional on a poisoned target and rolled with chance 4r% per hit; planner projectile_count 1/r has no conversion (perExtraProjectile 0)"},
         "name": "Hemoglobin Nova",
         "description": "Chance to unleash additional miasma clouds from poisoned targets on hit.",
         "maxRank": 5,
@@ -116,12 +126,13 @@
       {
         "id": "incendiary_fumes",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "burning DoT [18] = floor(d0 * 15r%), chance 3r% rolled ONCE per cast; value = % of d0"}], "confidence": "C", "note": "card 276 p7", "plannerFix": "chance is rolled once per attack, not per hit; amount is 15r% of d0 burning"},
         "name": "Incendiary Fumes",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -134,28 +145,31 @@
       {
         "id": "intense_malodor",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "crit chance +3%/r ([1018]); crit damage +15%/r ([1019]); value = chance %"}], "confidence": "C", "note": "card 276 p8"},
         "name": "Intense Malodor",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 3, "crit_damage": 15 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 3, "crit_damage": 15}
         }
       },
       {
         "id": "sweep_scourge",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "attack rating [1022] = LTD(V2)*(1+10%/r) only; no damage"}], "confidence": "C", "note": "card 276 p9"},
         "name": "Sweep Scourge",
         "description": "Increases attack rating when using miasma.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "meteoric_haze",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.02, 0.12, 0.36, 0.8, 1.5], "per": "hit", "note": "only while the dummy burns (p7 or another source): chance 5r% per hit (strike and cloud) -> Miasma_Meteor_obj at the dummy centre after ~51 frames: 1 meteor explosion + r fireball explosions, all certain = (1+r) hits of d3 = d0*0.2r (FIRE type, no floor) per proc; expected per hit = 0.05r*(1+r)*0.2r = 0.01 r^2 (1+r) d0 (card: per proc 0.4, 1.2, 2.4, 4.0, 6.0 d0-equivalents); old model assumed one meteor hit (0.01 r^3)"}], "confidence": "C", "note": "card 276 p10 + R4 276#1 (struktura C, opoznienie ~51 kl. I); meteor falls vertically on the dummy centre (Po R4 rule 40: not applicable)", "plannerFix": "meteors only exist while the dummy burns (p7 or another source); each proc is (1+r) fire hits of d3 = 20r% of d0 after ~51 frames, not a plain projectile count"},
         "name": "Meteoric Haze",
         "description": "Chance to drop a burning meteor at burning targets on hit unleashing multiple fire balls to all directions when exploding.",
         "maxRank": 5,
@@ -172,23 +186,25 @@
       {
         "id": "tenacious_stench",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [70, 140, 210], "note": "LSSD += 70%/r; applies to the strike and the copied cloud d0"}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "note": "[747] = 1: the cloud sticks to the dummy at its first hit (tenaciousStench, deltaSpeed 0): 1 + floor(75/30) = 3 cloud hits instead of 1 -> +2 per attack; rank changes only LSSD and maxScale"}, {"kind": "other", "byRank": [25, 50, 75], "note": "cloud maxScale +25%/r (projectile_size reach); no separate hits"}], "confidence": "C", "note": "card 276 p11 (C; base 2 -> 4 hits)", "plannerFix": "planner hitModel gives 3 hits for the cloud only through the tick model; in game the sticky cloud gives 3 cloud hits plus the strike = 4 hits per attack"},
         "name": "Tenacious Stench",
         "description": "Miasma sticks to the target with increased size and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "physical_skill_damage": 70, "projectile_size": 25 }
+          "base": {"projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 25, "subtree_damage": 70}
         }
       },
       {
         "id": "shoulder_fling",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "note": "[228] = 0: the cloud stays at the dummy's place, 3 cloud hits instead of 1 (same as p11; not additive with p11, which gives the same 3 cloud hits)"}, {"kind": "zero_on_dummy", "note": "stun 3 s ([51]), elemental break buff 13 (30%/r, does not affect physical strike d0), knockback [103]/[110] on the dummy blocked or ineffective (card, no damage); player hop [748]"}], "confidence": "C", "note": "card 276 p12 (C)", "plannerFix": "planner applies elemental_break 30/r as an on-hit proc, but in game the elemental break does not change physical d0 and the sticky cloud hits 3 times"},
         "name": "Shoulder Fling",
         "description": "Fling targets behind you on hit inflicting elemental break and stunning them. Miasma clouds now spawn behind you.",
         "maxRank": 3,
         "effects": {
-          "base": { "elemental_break": 0 },
-          "perRank": { "elemental_break": 30 }
+          "base": {"elemental_break": 0},
+          "perRank": {"elemental_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -204,31 +220,25 @@
       {
         "id": "epidemic_dissemination",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.24, 0.48, 0.72], "note": "transformation: the strike's V1 part is multiplied by 0.24r (V1' = LTD(V1)*0.24r*(1+LSSD)), so d0 = W*(1+V1'/100) is weaker; ratio d0'/D is not a constant (needs W and V1 of the level); value = the V1 multiplier"}, {"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "note": "per attack 2r clouds from the player (12 px start, 12 deg fan, 1.3 px/frame, tick max(0.5*(1-p1), 0.1) s), each ~2 hits on the dummy (contact 69 px / 1.3 = 53 frames): 4r hits; each cloud hit has the weaker d0' (weight d0'/D < 1, not in card) so the value assumes ratio 1 (I, planner should scale)"}], "confidence": "I", "note": "card 276 p13 (C mechanism, I geometry and damage ratio)", "plannerFix": "planner of_total_damage 24/r and projectile_count 2/r do not give the clouds' 2 hits each and the weaker strike; the cloud damage is d0' not D"},
         "name": "Epidemic Dissemination",
         "description": "Unleash multiple miasma clouds in an arc when attacking. Miasma no longer requires you to strike a target.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 24, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 24, "projectile_count": 2}
         }
       },
       {
         "id": "epinephrine_addict",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [20, 40, 60], "note": "buff 99: each strike adds one stack (cloud does not copy [749]), +1%*r IAS per stack (slot 0, C), max 20 stacks (BuffAdd arg6 R(20), C), 3 s; steady state 20 stacks = +20r% IAS (a = APS*(1+acc) -> T_atak' = (ceil(72/a)+1)/60 s); ramp-up 20 attacks (about 13*T_atak at r5), so the steady-state value overstates short fights; slot 1 movement and slot 2 range are I"}], "confidence": "C", "note": "card 276 p14 + R4 276#2 (limit 20 and slot 0 are C from BuffAdd/StatAttackSpeed asm; was I)", "plannerFix": "planner gives a flat 1/r attack speed; in game it is a stacking buff (max 20 stacks, 3 s, +1%*r IAS per stack) so steady state is +20r% IAS after about 20 attacks"},
         "name": "Epinephrine Addict",
         "description": "Striking monsters gives you a stack of epinephrine addict increasing your attack speed, movement speed and attack range. At maximum stacks gain phasing movement.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_attack_speed": 0,
-            "movement_speed": 0,
-            "skill_range": 0
-          },
-          "perRank": {
-            "increased_attack_speed": 1,
-            "movement_speed": 0.5,
-            "skill_range": 0.25
-          }
+          "base": {"increased_attack_speed": 0, "movement_speed": 0, "skill_range": 0},
+          "perRank": {"increased_attack_speed": 1, "movement_speed": 0.5, "skill_range": 0.25}
         }
       }
     ]
@@ -236,6 +246,8 @@
   {
     "id": "surgical_blood_letting",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 5.0, "baseProjectiles": 1, "perExtraProjectile": 1.67, "confidence": "C", "note": "Per attack, dummy on the aim line at 160 px (thrown scalpels fly ~400 px, so the melee-weapon requirement does not cut the range): n = 1 + RSS391 (+p11, +p12) Plague_Doctor_Surgical_Bloodletting_obj in a 10 deg fan (dir_i = aim + 10*(i - (n-1)/2)), projType 1 (stops on the first enemy and dies, 1 hit), mask half-width 13.6 px. Resztki (6 px offset, I): the scalpel spawns at (x, y) + lengthdir(8) while the aim axis runs from (x, y+6), so the track passes ~6 px beside the dummy centre: a scalpel hits when 160*|sin(2.15 deg + 10*(i - (n-1)/2))| <= 25.6 px -> hitting scalpels H(n) for n = 1..6 = 1; 2; 2; 2; 2; 2 (was 1; 2; 1; 2; 1; 2 without the offset). Variant cursor (x, y-24), note only (main result stays through the centre): 0; 1; 1; 2; 1-2; 2 (n = 5 borderline 26.1 vs 25.6 px). n = 1: 1 scalpel hit of d0 = floor(W*(1 + (76 + 24*L)%)*(1+LSSD)); each scalpel hit also creates a Plague_Doctor_Surgical_Bloodletting_Chain_obj (PC00Skills case 163 L312-335, registration 163 verified in asm by the coordinator): T0 chain, n = augmentBounces = 8, start on the dummy -> 1 + floor((8+1)/3) = 4 hits with a copy of the scalpel's damage[0] (ratio 1.0) -> 1 + 4 = 5.0 (base unchanged). perExtraProjectile = 1.67 (I): every hitting scalpel brings its own chain (5 hits); new H(n) = 2 for n = 2..6 gives (2-1)/mean(n-1 = 3) = 0.333 extra hitting scalpels per extra projectile = 1.67 hits (old H = 2,1,2,1,2 gave 0.2 -> 1.0, same averaging method; the gain is front-loaded: +5 at n = 2, +0 afterwards). The bleed (Malpractice, [22]) is a DoT and not counted. p11 orbiting blades, p12 (4 ticks + 1 retreat hit per stuck scalpel, rule 20), p13 shards (4r arcane d1 = d0 hits per hitting scalpel, chain deals 0), p14 are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "plague_doctor",
     "name": "Surgical Blood Letting",
@@ -251,7 +263,9 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 99.2, "perLevel": 24.8 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 176, "perLevel": 24 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 12, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -272,23 +286,25 @@
       {
         "id": "incisive_cuts",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on the scalpel hit"}], "confidence": "C", "note": "card 272 table p1, LSSD = p1 + p11 (8 %/r); base dummyHits 5 = 1 scalpel + 4 chain hits, relative to base"},
         "name": "Incisive Cuts",
         "description": "Increases the damage dealt by surgical blood letting.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "cutting_edge",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "bleed DoT value [22] multiplied by (1 + 0.15r) (Malpractice bleed; 0 without Malpractice points); no hits"}], "confidence": "C", "note": "card 272 p2 (DoT x(1+0.15r)); DoT itself not in hits", "plannerFix": "in game it is a multiplier on the Malpractice bleed value, not an on-hit bleed proc at 100% per hit"},
         "name": "Cutting Edge",
         "description": "Inflict bleeding to targets on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -301,28 +317,31 @@
       {
         "id": "bolting_scalpels",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [15, 30, 45, 60, 75], "note": "orbitSpeed multiplier (1 + 0.15r) only in the p11 orbit (L154); no effect on scalpel flight or on hits without p11; the value is the percent of orbit speed"}], "confidence": "C", "note": "card 272 p3; hit effect only through p11 orbit (see p11 note)", "plannerFix": "planner maps it to projectile_speed; in game it only scales orbit speed of the p11 blades"},
         "name": "Bolting Scalpels",
         "description": "Increases the projectile speed of surgical blood letting.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "expert_surgeon",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "attack rating [1022] = LTD(V1)*(1 + 10%/r) (attack rating / hit chance only, no damage); dummy assumed always hit"}], "confidence": "C", "note": "card 272 p4; planner attack_rating_pct 10/r matches the card number (base AR of the planner still uses 5*L, not V1, a base issue)"},
         "name": "Expert Surgeon",
         "description": "Increases attack rating when using surgical blood letting.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "vitality_devourer",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "life regen floor(RSS123*1%/r) on a 3r% chance per hit; survivability only"}], "confidence": "C", "note": "card 272 p5"},
         "name": "Vitality Devourer",
         "description": "Chance to restore life on hit for a portion of your additive physical damage.",
         "maxRank": 5,
@@ -338,12 +357,13 @@
       {
         "id": "exsanguination",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "bleed DoT multiplier +15r% (added to p2) with chance 3r% rolled ONCE per cast (L63), not per hit; no hits"}], "confidence": "C", "note": "card 272 p6", "plannerFix": "chance is rolled once per use (cast), not on every hit; it is a bleed-value multiplier, not a bleed proc"},
         "name": "Exsanguination",
         "description": "Chance on attack to inflict increased bleed damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -356,17 +376,19 @@
       {
         "id": "plhebotomist",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "separate multiplier (1 + 0.1r) on D while the dummy bleeds ([177] = p7.s9%, MODS 460); 0 extra when the dummy does not bleed (bleed needs Malpractice points or other bleed source)"}], "confidence": "C", "note": "card 272 p7; applies only on a bleeding dummy"},
         "name": "Plhebotomist",
         "description": "Increases damage dealt to bleeding enemies.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "sanguine_eruption",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "per": "hit", "note": "Sanguine_Eruption_obj on the dummy centre with chance 3r% per hit, damage d1 = floor(d0*0.25r) of ARCANE type (damage[1], R4 272#0, C: asm 0x1452443fc-0x1452444f3; damage[0] = 0): expected 0.03r*0.25r = 0.0075 r^2 per hit; physical-damage multipliers do not apply to it, arcane and common modifiers do; arcane resistance of the dummy not read (I); per-hit reading also counts chain hits (I)"}], "confidence": "C", "note": "card 272 p8 + R4 272#0 (type arcane is C now; numbers unchanged)", "plannerFix": "planner applies the proc as of_total_damage of the physical hit; in game the eruption is d1 = floor(d0*0.25r) of ARCANE type"},
         "name": "Sanguine Eruption",
         "description": "Chance to unleash a ripple of blood on hit dealing area of effect damage.",
         "maxRank": 5,
@@ -382,17 +404,19 @@
       {
         "id": "swift_precision",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "movement diminish stat only; the card gives no script read affecting the dummy"}], "confidence": "I", "note": "card 272 p9 (no read in the script)"},
         "name": "Swift Precision",
         "description": "Decreases movement diminish when using surgical blood letting.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "lifeblood_harvest",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 6, 9, 12, 15], "note": "chance % (3r) rolled ONCE per cast that adds LSSD += Vitality%*0.12r (12/r per 100 vit); the LSSD value depends on player Vitality, not a fixed number; byRank = the chance in %"}], "confidence": "C", "note": "card 272 p10 (L67)", "plannerFix": "the roll is once per use (cast), not per hit; the bonus scales with Vitality (planner conversion_vitality 12/r is the same factor only per 100 Vit)"},
         "name": "Lifeblood Harvest",
         "description": "Chance on attack to increase damage dealt according to your vitality.",
         "maxRank": 5,
@@ -408,47 +432,43 @@
       {
         "id": "surgeons_vortex",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}, {"kind": "projectiles", "byRank": [2, 4, 6], "note": "n += 2r orbiting blades (transformation: 1 + 2r scalpels in an orbit, not a fan)"}, {"kind": "extra_hits", "byRank": [7.7, 12.85, 16.7], "per": "use", "replacesProjectileHits": true, "note": "hit count per use = 5*H (5 = scalpel + 4 chain hits per hitting blade), H = min(n, n*(w*dt + 2*asin(25.6/160))/360) with w = max(15*(1+p3+p13) - 0.05*D, 4) deg/frame, dt = 51.2/(1+0.25r) frames, D = 160; H = 2.54, 3.57, 4.34 for r = 1, 2, 3 (r = 2 by the same formula, card gives r = 1 and r = 3); extra = 5*(H-1)"}], "confidence": "I", "note": "card 272 p11: LSSD C; hits I (orbit geometry, the card gives H only for r=1 (2.5) and r=3 (4.3))", "plannerFix": "planner counts 2 extra projectiles/r converted at 1 hit each; in game the orbit gives 5*H hits with H = 2.5/3.6/4.3 (blades per hit come with 4 chain hits)"},
         "name": "Surgeon´s Vortex",
         "description": "Knives now orbit around you slowly going outwards.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "projectile_count": 0,
-            "area_of_effect": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 15,
-            "projectile_count": 2,
-            "area_of_effect": 25
-          }
+          "base": {"projectile_count": 0, "area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "area_of_effect": 25, "subtree_damage": 15}
         }
       },
       {
         "id": "blood_thaumaturgist",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "n += 1r scalpels in the fan (projType 0, no [163] chain)"}, {"kind": "extra_hits", "byRank": [5, 5, 5], "per": "use", "replacesProjectileHits": true, "note": "card H(n) with the 6 px offset (Resztki): n = 2, 3, 4 -> H = 2 hitting scalpels (base n = 1: H = 1), each stuck scalpel = 4 ticks (1.5 s / 0.5 s, rule 2; rule 20 may lower it) + 1 retreat hit = 5 hits, the same 5 as base scalpel + chain -> total 10 vs base 5 -> +5 for r = 1..3; the old default conversion (perExtraProjectile 1.0) gave +1, +2, +3"}, {"kind": "other", "byRank": [0.25, 0.5, 0.75], "note": "retreat hit damage ratio 0.25r per 100 Vitality: d0*(1 + Vit/100*0.25r); stuck scalpel hits = 1 + floor(1.5/0.5) = 4 hits d0 + 1 retreat hit; the number is the Vitality-scaled part of the retreat hit (the planner must multiply by Vit/100)"}], "confidence": "I", "note": "card 272 p12 + base 'Trafienia' paragraph with Resztki 9 (H = 1,2,2,2,2,2); retreat timing +-1 hit I", "plannerFix": "stuck-scalpel model (4 ticks + retreat hit, chain removed) is missing; planner conversion_vitality is the retreat damage, not a hit count; the default projectile conversion misses the explicit H(n)"},
         "name": "Blood Thaumaturgist",
         "description": "Throw multiple knives in an arc. The knives stick to the targets for a short duration before pulling back to you dealing increased damage according to your vitality.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "conversion_vitality": 0 },
-          "perRank": { "projectile_count": 1, "conversion_vitality": 25 }
+          "base": {"projectile_count": 0, "conversion_vitality": 0},
+          "perRank": {"projectile_count": 1, "conversion_vitality": 25}
         }
       },
       {
         "id": "fracturing_knifestack",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12], "note": "[743] = 4r shards per hitting scalpel, created at the dummy centre (self = hit enemy, lengthdir(6, scalpel dir + 360 i/n)); projType 0, deltaSpeed 7, scale 0.68"}, {"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "replacesProjectileHits": true, "note": "R4 272#3: every one of the 4r shards hits the dummy exactly once (active after 2 frames at 13 px from the centre, circle mask r ~10.5 vs dummy r 12, own hit map): +4r hits d1 = d0 (ARCANE type, damage[1] = scalpel's damage[0], R4 272#0) per hitting scalpel (per use for the base n = 1; multiply by the number of hitting scalpels H(n) for n > 1); the shard chain has damage[0] = 0 (no hits, only refreshes the bleed); old model 2r (0.5 hit per shard)"}], "confidence": "C", "note": "card 272 p13 + R4 272#3 (position C, +-1 frame of event order I does not change the count); orbit speed +25%/r only with p11, folded into p11", "plannerFix": "planner projectile_speed 25/r is the orbit speed of p11 (not the shard speed) and the shards are not modeled; use explicit 4r hits of arcane type per hitting scalpel"},
         "name": "Fracturing Knifestack",
         "description": "Throw a knife with increased projectile speed exploding into multiple piercing knives to all directions on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0, "projectile_count": 0 },
-          "perRank": { "projectile_speed": 25, "projectile_count": 4 }
+          "base": {"projectile_speed": 0, "projectile_count": 0},
+          "perRank": {"projectile_speed": 25, "projectile_count": 4}
         }
       },
       {
         "id": "cutting_storm",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 6r% per hit to spawn 3r Surgical_Storm_obj blades orbiting the hit point at r = 54 px (4 deg/frame); contact needs <= 25.6 px, so 0 hits on a lone dummy at 160 px"}], "confidence": "I", "note": "card 272 p14 (C/I)", "plannerFix": "planner adds 3r projectiles with 15r% damage per proc; in game the orbit never touches the dummy"},
         "name": "Cutting Storm",
         "description": "Knives have a chance to conjure a spinning knife tornado on hit dealing increased damage over time.",
         "maxRank": 3,
@@ -591,6 +611,7 @@
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 10 }],
     "manaCostFormula": { "base": 10, "perLevel": 1 },
+    "buffUptime": { "duration": 25, "cooldown": 65 },
     "passiveStats": {
       "base": { "increased_attack_speed": 30, "life_steal": 1, "attack_rating_pct": 2 },
       "perRank": { "increased_attack_speed": 0.5, "life_steal": 1, "attack_rating_pct": 2 }
@@ -600,6 +621,8 @@
     "id": "toxic_flask",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.67, "confidence": "I", "note": "Per cast, IN-ZONE (target point T = cursor - 6 px (Resztki: Alarm_0/tupm[6..7] measure from (x, y+6), object base (x, y)); cursor (x, y-24) -> 30 px from the dummy centre, cursor (x, y) -> 6 px; the explosion r = 32*1.5 = 48 px + 12 reaches it either way): n = XSP(1) Plague_Doctor_Toxic_Flask_obj (Player_Ability_Parent, lands after ~34.3 frames); the 1st landing makes 1 Explosion_Item_obj with d5 = floor(V1*(1+LSSD)), V1 = 7.5 + 8.5*L (poison) = 1 hit. The 2nd landing (bounce, base bounce = 1, frame 56) is 0.543*|T| behind T (Resztki, frame-exact sim, I): cursor (x, y-24): 41.0 px (dummy below the player, hits in the base), 98.4 px (level: hits only with r1 + r10 >= 8, 98.4 = 48*1.8 + 12 exactly on the border, I), 132.8 px (above: never); cursor (x, y): 77.7..96.1 px (87.4 level) always > 60 -> 0. Main result = level dummy with cursor (x, y-24) -> 0 in the base (I). Oops (passive 284, per landing; card body 3 hits, rule 20 / tools/tick_hits.py 58 30 = 2; Oops at the bounce only for 0.543*|T| <= 72, D <~ 132 px) belongs to the passive's own entry and is not counted here. perExtraProjectile = 0.67 (I): from the card's fan table (R4: wachlarz 12 deg around the player, angle = aim + 12*(j - (n-1)/2), distance = cursor distance, cursor (x, y-24), mean over aim directions) explosion hits of the 1st landings for n = 1..6 = 1; 2; 3; 3.1; 3.7; 3.3 -> mean(H-1) = 2.02 over mean(n-1) = 3 (the old 0.5 was a guess; the table is non-monotonic: later bottles at +-24..30 deg land > 60 px from the dummy). p7 second bottle 80 px behind the cursor, p11 clouds (6 hits per r), p13 shards (1.7 per r at cursor (x, y-24), 3.4 per r at (x, y)), p8, p6 are subskill effects. The planner hitModel (Toxic_Flask_Cloud, tick 0.5 s, 1.25 s) is the p11 object, not the base."},
     "classId": "plague_doctor",
     "name": "Toxic Flask",
     "kind": "active",
@@ -614,7 +637,7 @@
     "position": { "row": 0, "col": 1 },
     "hitModel": { "object": "Plague_Doctor_Toxic_Flask_Cloud_Create", "tickFrequency": 0.5, "lifetime": 1.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7, "perLevel": 54.5 },
+    "damageFormula": { "base": 7.5, "perLevel": 8.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Crematus", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
@@ -633,45 +656,49 @@
       {
         "id": "one_with_the_poison",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "explosionAOE x(1 + 0.1r) (explosion r = 48 px base); a second landing hits the level dummy at cursor (x, y-24) only if 48*(1 + 0.1*(r1 + r10)) + 12 >= 98.4 px, i.e. r1 + r10 >= 8 (exact border, I; Resztki 2nd landing 0.543*|T|; was >= 92 px / 91 px in older sections): then +1 explosion hit; the s9 range (15/r) is not read in the script"}], "confidence": "C", "note": "card 282 p1 + Resztki 7 (2nd landing 41.0 / 98.4 / 132.8 px)", "plannerFix": "planner skill_range 15/r is not read in the script; only the explosion area (10/r) matters for the dummy"},
         "name": "One with the Poison",
         "description": "Increases the maximum cast range and area of effect radius of toxic flask.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0, "area_of_effect": 0 },
-          "perRank": { "skill_range": 15, "area_of_effect": 10 }
+          "base": {"skill_range": 0, "area_of_effect": 0},
+          "perRank": {"skill_range": 15, "area_of_effect": 10}
         }
       },
       {
         "id": "harmful_vial",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on d5 of the flask"}], "confidence": "C", "note": "card 282 p2"},
         "name": "Harmful Vial",
         "description": "Increases the damage dealt by toxic flask.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "modest_poison",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r only"}], "confidence": "C", "note": "card 282 p3"},
         "name": "Modest Poison",
         "description": "Decreases the mana cost of toxic flask.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "decomposing_materia",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "on the explosion: poison break buff 12 = 15r% (5 s) with chance 3r% rolled ONCE per cast; multiplies poison damage taken; value = % poison break"}], "confidence": "C", "note": "card 282 p4", "plannerFix": "the break is rolled once per cast (use), not per hit"},
         "name": "Decomposing Materia",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 15 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -685,28 +712,31 @@
       {
         "id": "heatseeking_flask",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "homing 15%/r toward the nearest enemy within 240 px during flight; with the cursor on the dummy the landing is already on it, so no extra hits"}], "confidence": "C", "note": "card 282 p5", "plannerFix": "planner maps it to projectile_speed; in game it is homing (no speed change), with no effect on the dummy at the cursor"},
         "name": "Heatseeking Flask",
         "description": "Toxic flasks home into the nearest monster with increased projectile speed after reaching the highest altitude.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "resistant_crystal",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bounces 1 + 1/r: the extra landings are farther from the dummy at 160 px (0.58*D per bounce), so 0 extra hits in base (I for the cursor (x, y-24) case)"}], "confidence": "I", "note": "card 282 p6 (C/I)"},
         "name": "Resistant Crystal",
         "description": "Increases the amount of ground bounces for toxic flask.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "apothecary",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0081, 0.0162, 0.0243, 0.0324, 0.0405], "per": "use", "note": "chance 3r% once per cast: slot += 1 (R4 282#0) = a second bottle 80 px BEHIND the cursor for each position (not an extra bottle on the same point); its explosion (r 48 + 12) reaches the dummy in ~27% of aim directions (Resztki; Po R4 31%, R4 14%) -> 0.03r*0.27 = 0.0081r explosion hits per cast without Oops (Oops adds 0.03r*0.55*3 = 0.0495r more, total 0.057r, belongs to the passive's entry); (I, direction-averaged sim flask2.py)"}], "confidence": "I", "note": "card 282 p7 + R4 282#0 + Resztki 8 (explosion 27%, Oops 55%); the card JSON recheck still quotes 28%/63% (stale)", "plannerFix": "planner models an on_cast proc of 100% of total damage (a full extra hit); in game the second bottle lands 80 px behind the cursor and its explosion reaches the dummy in only ~27% of directions (Oops ~55%)"},
         "name": "Apothecary",
         "description": "Chance on cast to unleash an additional toxic flask.",
         "maxRank": 5,
@@ -722,6 +752,7 @@
       {
         "id": "fake_throw",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 3r% once per cast to throw an extra flask at the player (xTarget = player, zSpeed 12, bounce 0, AOE +20%/r): its explosion is at the player, 160 px from the dummy, so 0 hits"}], "confidence": "C", "note": "card 282 p8 (C/I)", "plannerFix": "planner area_of_effect 20/r on an on_cast proc counts a hit; the decoy flask explodes at the player and does not reach the dummy at 160 px"},
         "name": "Fake Throw",
         "description": "Chance on cast to throw an additional toxic flask high in the air falling straight down with increased area of effect radius.",
         "maxRank": 5,
@@ -737,34 +768,37 @@
       {
         "id": "agile_tosser",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no read in the card; movement diminish stat only"}], "confidence": "I", "note": "card 282 p9 (no read)"},
         "name": "Agile Tosser",
         "description": "Decreases movement diminish when using toxic flask.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "flask_flip",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "explosionAOE +10%/r (same as p1's area part); flaskFlip also makes the player jump to the flask (utility, no dummy DPS of its own)"}], "confidence": "C", "note": "card 282 p10"},
         "name": "Flask Flip",
         "description": "Teleport into target location when toxic flask hits the ground.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 10 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 10}
         }
       },
       {
         "id": "plague_radiator",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "2r homing Toxic_Flask_Cloud_obj on landing"}, {"kind": "extra_hits", "byRank": [6, 12, 18], "per": "use", "replacesProjectileHits": true, "note": "each cloud sits on the dummy: 1 + floor(75/30) = 3 hits of d5 each -> 6r hits per cast (card; cloud contact I)"}, {"kind": "dot", "byRank": [25, 50, 75], "note": "cloud poison [0] = floor(d5 * 25r%) (value = % of d5), with the clouds on the dummy"}], "confidence": "I", "note": "card 282 p11 (C mechanism, I cloud hits)", "plannerFix": "planner hitModel uses the cloud's tick model for the base; in game the 2r clouds exist only with p11 and each sits on the dummy for 3 hits"},
         "name": "Plague Radiator",
         "description": "Toxic flask emmits toxic clouds towards nearby monsters inflicting poisoned when hitting the ground.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "increased_poisoned_damage": 0 },
-          "perRank": { "projectile_count": 2, "increased_poisoned_damage": 25 }
+          "base": {"projectile_count": 0, "increased_poisoned_damage": 0},
+          "perRank": {"projectile_count": 2, "increased_poisoned_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -777,42 +811,37 @@
       {
         "id": "toxin_vials",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "n = XSP(1 + 1/r): +1r bottles in a fan of 12 deg around the player (angle = aim + 12*(j - (n-1)/2), distance = cursor distance)"}, {"kind": "extra_hits", "byRank": [1, 2, 2.1], "per": "use", "replacesProjectileHits": true, "note": "R4 282#1 explosion hits of the 1st landings (cursor (x, y-24), mean over aim directions E/S/W/N): n = 2, 3, 4 -> 2, 3, 3.1 (card also n = 5, 6 -> 3.7, 3.3, outside planner maxRank 3); extra over the base 1 hit; bottles at +-24..30 deg land > 60 px from the dummy; with Oops (range 83 px, I) 2, 3, 4.0 bottles in reach; the 2nd landings are not counted"}], "confidence": "C", "note": "card 282 p12 + R4 282#1 (fan table, geometry C, mean-over-direction simulation flask_fan.py); old model used the default conversion 0.5 per bottle"},
         "name": "Toxin Vials",
         "description": "Throw multiple small toxic flasks in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "glassblowing_technician",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12], "note": "4r shards at EVERY landing (Toxic_Flask_Glass_obj, projType 0, 8 px/frame, single hit, unrotated Mask_Arrow rectangle x 0..16, y -8..8, active after 2 frames via PDP Alarm_11, first check 16 px from the landing)"}, {"kind": "extra_hits", "byRank": [1.7, 3.4, 5.0], "per": "use", "replacesProjectileHits": true, "note": "Po R4 rule 40 (flask lands ~9.3 px short; glass.py, directions every 5 deg, mean over aim directions), cursor (x, y-24), 1st landing + bounce landing, hits of d0 (physical, same magnitude as d5): 1.7, 3.4, 5.0 for r = 1..3 (card r = 4, 5: 6.8, 8.6); cursor (x, y) is about -15%: 3.4, 6.0, 8.6 for r = 1..3 (was 4.0, 7.1, 10.1; R4 values before rule 40: 2.0, 3.4, 4.9 at (x, y-24)); +-1 first-check step = -13% at (x, y-24), -60% at (x, y) (I)"}], "confidence": "I", "note": "card 282 p13: Po R4 (c) rule 40 recomputation (the card JSON still lists the older R4 list 2.0, 3.4, 4.9); type change C, hit fraction I", "plannerFix": "planner projectile_count 4/r converted at 0.5 hits each; in game 4r shards hit ~0.43 each (~1.7r hits) and the damage type changes to physical"},
         "name": "Glassblowing Technician",
         "description": "Toxic flask breaks into glass shards dealing its damage as physical and ignoring all target defense.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 4 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 4}
         }
       },
       {
         "id": "vial_of_alchemy",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "vialOfAlchemy buff object at the landing point (128 px, 0.1 s), buff applies only if the player is within 64 px of the landing; the dummy at 160 px is out of reach, so no poison/life effect for the dummy"}], "confidence": "I", "note": "card 282 p14 (C/I)", "plannerFix": "planner adds poison damage 10/r as a DPS stat; in game the buff needs the player within 64 px of the landing, which the 160 px dummy setup never meets"},
         "name": "Vial of Alchemy",
         "description": "Throwing toxic flask at yourself or an ally empowers them with toxins granting increased damage, life and damage reduction.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "poison_skill_damage": 0,
-            "increased_life": 0,
-            "all_damage_taken_reduced_pct": 0
-          },
-          "perRank": {
-            "poison_skill_damage": 10,
-            "increased_life": 15,
-            "all_damage_taken_reduced_pct": 5
-          }
+          "base": {"poison_skill_damage": 0, "increased_life": 0, "all_damage_taken_reduced_pct": 0},
+          "perRank": {"poison_skill_damage": 10, "increased_life": 15, "all_damage_taken_reduced_pct": 5}
         }
       }
     ]
@@ -820,6 +849,8 @@
   {
     "id": "crematus",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 12.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 5 s; p13 replaces it by 0.5 s): the Controller emits one Plague_Doctor_Crematus_obj flame every 0.1 s, skillAmount = floor(12*(1 + p1.s9%)) = 12 flames in 1.2 s along the aim direction; the flame is glued to the player (x = host.x + lengthdir(length, dir), length += 4.5 px/frame, y + 6), life 33 frames, scale 0.75 + 0.025/frame, precise mask 35x34*scale: the dummy (159.1 px along the track, 17.8 px sideways) is touched from frame 29 (length 126 px, scale 1.45) to 33 and in the fade -> 1 hit per flame (own hit map, singleHit, no tick; R3 283#0, C; reach D <= ~180 px, D >= 185 px = 0). 12 flames * 1 hit of d5 = floor(V1*(1+LSSD)), V1 = 8.5 + 6*L (poison) = 12.0. perExtraProjectile 0: no projectile mechanism in the base (p5 side flames at +-30 deg miss at 160 px, p1 adds 3 flames per r). p13 (cloud at the player, 0 at 160 px), p14 container, p11 spiral are subskill effects."},
     "classId": "plague_doctor",
     "name": "Crematus",
     "kind": "active",
@@ -834,7 +865,7 @@
     "tree": "Plague Caller",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 9, "perLevel": 62 },
+    "damageFormula": { "base": 8.5, "perLevel": 6 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -853,34 +884,37 @@
       {
         "id": "gas_cilynder",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "skillAmount = floor(12*(1 + 0.25r)) flames: +3r flames"}, {"kind": "extra_hits", "byRank": [3, 6, 9], "per": "use", "replacesProjectileHits": true, "note": "each flame is 1 hit (reach D <= ~180 px, 160 px inside): +3r hits per cast"}], "confidence": "C", "note": "card 283 p1 (C)", "plannerFix": "planner maps it to skill_duration; in game it adds 3r flames, i.e. +3r hits (1 per flame)"},
         "name": "Gas Cilynder",
         "description": "Increases the duration of crematus.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 25 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 25}
         }
       },
       {
         "id": "potent_exhaling",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r on d5"}], "confidence": "C", "note": "card 283 p2"},
         "name": "Potent Exhaling",
         "description": "Increases the damage dealt by crematus.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "corrosive_burning",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "per flame chance 3r% (per hit): poison [0] = floor(d5*35r%) (value = % of d5 per poison proc)"}], "confidence": "C", "note": "card 283 p3"},
         "name": "Corrosive Burning",
         "description": "Chance to inflict poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 35 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -893,12 +927,13 @@
       {
         "id": "corrosive_embers",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [25, 50, 75, 100, 125], "note": "per flame chance 3r%: poison break buff 12 = 25r% for 5 s (value = % poison break); card does not give a poisoned state"}], "confidence": "C", "note": "card 283 p4", "plannerFix": "planner also applies poisoned on the proc; in game only the poison break buff 12 (25r%, 5 s) is applied"},
         "name": "Corrosive Embers",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 25 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -912,6 +947,7 @@
       {
         "id": "trifurcate_blow",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 10r% once per cast: skillTrails = 15r% -> 3 flames per emission 30 deg apart; the middle flame (i = 1) keeps the full d5 (base flame, no change), the side flames (+-30 deg, damage floor(d5*0.15r)) pass 80 px beside the dummy at 160 px (> 12 + 17.3*1.5 = 38 px) and miss -> p5 has no effect on the dummy (R4 283#1)"}], "confidence": "C", "note": "card 283 p5 + R4 283#1 (side multiplier determined: asm 0x149059747-0x1490598c3; was I)", "plannerFix": "planner adds 15r% of total damage on an on_cast proc; in game only the side flames get floor(d5*0.15r) and they miss the dummy at 160 px"},
         "name": "Trifurcate Blow",
         "description": "Chance on cast to unleash two additional trails of crematus dealing a portion of the damage.",
         "maxRank": 5,
@@ -927,39 +963,43 @@
       {
         "id": "toxic_dragonflight",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 307 movement speed 15r% for 4 s on the player"}], "confidence": "C", "note": "card 283 p6"},
         "name": "Toxic Dragonflight",
         "description": "Gain increased movement speed when casting crematus.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "toxiamplified_alveoli",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "flame size x(1 + 0.15r) (reach); the dummy at 160 px is already hit by each flame, so no change in base hits (I: card marks p7 unchanged)"}], "confidence": "I", "note": "card 283 p7"},
         "name": "Toxiamplified Alveoli",
         "description": "Increases the area of effect radius of crematus.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "tachypnea",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no read in the card; movement diminish stat only"}], "confidence": "I", "note": "card 283 p8 (no read)"},
         "name": "Tachypnea",
         "description": "Decreases movement diminish when using crematus.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "engulfing_pyre",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "per": "hit", "note": "only while the dummy burns (from another source; not in base): chance 3r% per flame hit to spawn Crematus_Pyre_obj with d5*25r%; expected 0.03r * 0.25r = 0.0075 r^2 per hit"}], "confidence": "C", "note": "card 283 p9 (conditional on burning)"},
         "name": "Engulfing Pyre",
         "description": "Chance to burst the ground on flames at burning targets location on hit dealing a portion of the damage over time.",
         "maxRank": 5,
@@ -976,72 +1016,61 @@
       {
         "id": "bursting_pustules",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1917, 0.3167, 0.4417, 0.5667, 0.6917], "per": "hit", "note": "each hit adds a stack of buff 74 (5 s, max 15); at 15 stacks a Bursting_Pustules_obj with d5*(1 + 15*0.125r) = d5*(1 + 1.875r) and the buff is removed: expected extra per hit = (1 + 1.875r)/15"}], "confidence": "C", "note": "card 283 p10 (C mechanism; multiplier 1 + (1+1.875r)/15 per card)", "plannerFix": "planner poison_skill_damage 12.5/r is the explosion factor, which in game gives one extra hit of (1+1.875r)*d5 per 15 hits, not a damage bonus on all hits"},
         "name": "Bursting Pustules",
         "description": "Damaging a monster with crematus inflicts a stack of pustules. At full stacks unleash a burst of poison dealing area of effect damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "poison_skill_damage": 12.5, "area_of_effect": 3 }
+          "base": {"poison_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"poison_skill_damage": 12.5, "area_of_effect": 3}
         }
       },
       {
         "id": "spiraling_cremation",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.2, -1.2, -1.2], "per": "use", "note": "flames size x0.5 and orbit a spiral around the player (skillSpiraling = 1/r); the spiral flame hits the dummy ~0.9 times instead of 1, so 12 * (0.9 - 1) = -1.2 per cast (I: the card gives ~0.9 for the spiral pass)"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30%/r"}], "confidence": "I", "note": "card 283 p11 (C/I)", "plannerFix": "planner projectile_count 1/r is not in the card; the spiral flames hit ~0.9 per flame at 160 px (I)"},
         "name": "Spiraling Cremation",
         "description": "Unleash multiple swirling flames around you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "poison_skill_damage": 30, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 30}
         }
       },
       {
         "id": "farflames",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40%/r; flame speed +30%/r and size +25%/r only extend reach (148*(1+0.3r) px), so every flame already hits the dummy: no extra hits"}], "confidence": "I", "note": "card 283 p12 (I: card marks it unchanged)"},
         "name": "Farflames",
         "description": "Increases the projectile speed, size and damage dealt by crematus.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "poison_skill_damage": 0,
-            "projectile_speed": 0,
-            "projectile_size": 0
-          },
-          "perRank": {
-            "poison_skill_damage": 40,
-            "projectile_speed": 30,
-            "projectile_size": 25
-          }
+          "base": {"projectile_speed": 0, "projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed": 30, "projectile_size": 25, "subtree_damage": 40}
         }
       },
       {
         "id": "unstable_contamination",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "note": "transformation (channel): clouds at the player (deltaSpeed 0, tick 0.5 s, 3 s) instead of flames; cloud reach r <= ~45 px, so 0 hits on the dummy at 160 px"}, {"kind": "cooldown_s", "byRank": [-4.5, -4.5, -4.5], "note": "base cooldown 5 s replaced by 0.5 s (GetTalentCooldown L471-474): -4.5 s"}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50%/r (no effect at 160 px; kept for the melee case)"}], "confidence": "C", "note": "card 283 p13 (C 0 on dummy at 160 px; I melee cloud hits)", "plannerFix": "planner adds poison damage and a mana drain but no transformation: in game the cloud channel never reaches a dummy at 160 px and the cooldown is 0.5 s"},
         "name": "Unstable Contamination",
         "description": "Activate/Deactivate to leave behind a trail of poisonous gas dealing damage over time and slowing targets. Drains mana constantly.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "poison_skill_damage": 0,
-            "mana_drain_pct": 0,
-            "projectile_size": 0
-          },
-          "perRank": {
-            "poison_skill_damage": 50,
-            "mana_drain_pct": 3.5,
-            "projectile_size": 30
-          }
+          "base": {"mana_drain_pct": 0, "projectile_size": 0, "subtree_damage": 0, "cooldown_added": -4.5},
+          "perRank": {"mana_drain_pct": 3.5, "projectile_size": 30, "subtree_damage": 50, "cooldown_added": 0}
         }
       },
       {
         "id": "toxin_container",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [9.3, 10.7, 12.2], "note": "transformation: sentry container at the cursor (24 px above the dummy centre; target point 6 px above the cursor), lifetime 3 s*(1 + 0.25r) (RSS258/259 = 0 assumed), salvo every 13 frames (0.2 s floor of the sentry, first shot ~frame 17): V = 17, 20, 23 salvos for r = 1..3; the container does NOT aim: salvo k flies at direction - 45 + 35k deg and only ~49% of the flames hit the dummy at cursor (x, y-24) (check at frame f+2, angle to dummy <= 88 deg; 100% at cursor in the dummy centre): flame hits 8.3, 9.7, 11.2 + 1 container explosion (Destroy_0, stun) = 9.3, 10.7, 12.2 (old model: 5 flames/s * lifetime = 18.75, 22.5, 26.25 + 1.75 = 20.5, 24.25, 28.0); card ranges 6-10 / 9-10 / 10-13; r = 4, 5 (13.1, 14.6) outside maxRank; V(r = 1) = 16 exactly +-1 (I)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25%/r"}], "confidence": "I", "note": "card 283 p14 + R4 283#3 (C geometry, I 88 deg window and RSS terms); the explosion 'x1.75' is read as Explosion_Item scale (1 hit), the old model counted it as x1.75 damage", "plannerFix": "planner has no sentry model; in game the container fires V = 17-23 salvos in a fixed spiral (not at the target), about half hit the dummy, plus one explosion"},
         "name": "Toxin Container",
         "description": "Throw a plague container at target location unleashing crematus into all directions for a short duration. The plague container eventually explodes dealing area of effect damage and stunning nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "poison_skill_damage": 25, "skill_duration": 25 }
+          "base": {"skill_duration": 0, "subtree_damage": 0},
+          "perRank": {"skill_duration": 25, "subtree_damage": 25}
         }
       }
     ]
@@ -1050,6 +1079,8 @@
     "id": "plague_of_rats",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 3, "perExtraProjectile": 0.6, "confidence": "I", "note": "Per cast, dummy on the aim line at 160 px: n = XSP(3 + p1.s9) = 3 rats in the base (native 3; the planner has no baseProjectiles for this skill, default 1 - set 3), offset cycle o = 0, +10, +20, -20, -10 deg; a rat (projType 1: stops on the first enemy and dies, 1 hit of d5 = LTD(V1)*(1+LSSD), V1 = 7.5 + 11*L, poison) hits when 160*|sin o| <= 12 + 15*(|sin psi| + |cos psi|) (mask Mask_Rect_24x*1.25 = axis-aligned square +-15 px, rule 14): o = 0 and +-10 hit (27.8 px <= 29.4 px; misses only for psi < 3.1 deg), +-20 miss. H(n) = 3*floor(n/5) + min(n mod 5, 2); n = 3 -> 2 hits (card R3 'Zmiany po ponownym sprawdzeniu', I for the dependence on the aim angle). The Exploding Mice explosion (+1 hit of d5*LTD(286,V1)/100 per rat that dies on the dummy) belongs to the passive 286 and is not counted. perExtraProjectile = 0.6: 3 of the 5 slots of the offset cycle hit, so H(n+5) = H(n) + 3 (n = 3..8: 2, 2, 3, 4, 5, 5; 0.6 per rat on average). p1 (+3 rats per r), p11 (pierce, no explosion), p12 den (cooldown 6 s), p14 (9 waves), p5/p13 carriers are subskill effects."},
     "classId": "plague_doctor",
     "name": "Plague of Rats",
     "kind": "active",
@@ -1063,7 +1094,7 @@
     "tree": "Plague Caller",
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7.5, "perLevel": 85.5 },
+    "damageFormula": { "base": 7.5, "perLevel": 11 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Toxic Flask", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
@@ -1082,56 +1113,61 @@
       {
         "id": "horde_of_rats",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "n = XSP(3 + 3r) rats"}, {"kind": "extra_hits", "byRank": [2, 3, 6], "per": "use", "replacesProjectileHits": true, "note": "H(n) = 3*floor(n/5) + min(n mod 5, 2): n = 6, 9, 12 -> H = 4, 5, 8; extra over base H(3) = 2 -> +2, +3, +6 (card gives r = 1..5: extra 2, 3, 6, 7, 9; only r = 1..3 are in the planner maxRank)"}], "confidence": "C", "note": "card 281 p1 (H(n) I for the aim-angle dependence; count C)", "plannerFix": "planner projectile_count 3/r is converted at perExtraProjectile 0.6, but in game the 5-slot offset cycle gives H(n) = 3*floor(n/5)+min(n mod 5,2) hits; use the explicit extra_hits table"},
         "name": "Horde of Rats",
         "description": "Increases the projectile amount of plague of rats.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 3 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 3}
         }
       },
       {
         "id": "gnawing_rodents",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}], "confidence": "C", "note": "card 281 p2"},
         "name": "Gnawing Rodents",
         "description": "Increases the damage dealt by plague of rats.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "lab_grown_rats",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no script read in the card (planner projectile_size 15/r); no dummy effect given"}], "confidence": "I", "note": "card 281 p3 (not determined)"},
         "name": "Lab Grown Rats",
         "description": "Increases the size of plague of rats.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "bite_tethering",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r only"}], "confidence": "C", "note": "card 281 p4"},
         "name": "Bite Tethering",
         "description": "Decreases the mana cost of plague of rats.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "plague_carriers",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 0.8, 1.2, 1.6, 2.0], "per": "use", "note": "R4 281#2 + rule 33: on the death of a rat STOPPED on the dummy (origin inside the dummy circle; base n = 3 -> ceil(n/5) = 1 stopped rat, scale by ceil(n/5) for other n; p11/Rat Den rats are projType 0 and never stop) chance 8r%: 5 Carrier objects, each 1 hit of the rat's full d5 (no InheritModifiers: no crit, no vs-ailment, no other modifiers) = 0.08r*5 = 0.4r hits per stopped rat"}, {"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "each of the 5 carriers applies poison [0] = floor(d5*35r%) (value = % of d5 per carrier), 5 applications per proc at 8r% per stopped rat"}], "confidence": "C", "note": "card 281 p5 + R4 281#2 + R4 rule 33 correction (carriers only on stopped rats)", "plannerFix": "the carrier roll happens only on the death of a stopped rat with chance 8r%; planner increased_poisoned_damage is not the carrier hits (5 x d5) or the poison amount"},
         "name": "Plague Carriers",
         "description": "Chance for rats to explode into plagued chunks of meat dealing damage and inflicting poisoned on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 35 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1144,34 +1180,37 @@
       {
         "id": "painful_bite",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance +3%/r ([1004]); spell crit damage +30%/r ([1003])"}], "confidence": "C", "note": "card 281 p6 (crit damage 30/r per card)"},
         "name": "Painful Bite",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 30}
         }
       },
       {
         "id": "rodent_handler",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "TalentUseSetSpeed: S += 0.06r ADDITIVELY (S = 1.75 + FCR/100 + 0.06r; value = FCR points, NOT x(1 + 0.06r) on 1.75); cast period (ceil(72/S) + 1)/60 s = 41, 40, 39, 38, 37 frames for r = 1..5 (43 frames without p7, R4 rule 37); with Rat Den / Ratpocalypse the 6 s / 3 s cooldown binds"}], "confidence": "C", "note": "card 281 p7 + R4 period list ('Plague of Rats p7: 41...37 kl.', asm 0x146a676b2); the p7 table row still says x(1 + 0.06r)"},
         "name": "Rodent Handler",
         "description": "Increases cast rate when using plague of rats.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "leptospirosis",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90, 120, 150], "note": "chance 3r% per rat on the dummy to apply poison break [982] = 30r% (buff 12, 5 s) which multiplies poison damage taken (value = % poison break); rat hits after the break get the multiplier (I)"}], "confidence": "C", "note": "card 281 p8 (chance per rat C; affected-hit timing I)", "plannerFix": "the break is rolled per rat with chance 3r% and multiplies poison damage; planner applies it as an on-hit state"},
         "name": "Leptospirosis",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 30 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1185,56 +1224,61 @@
       {
         "id": "nimble_trainer",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no read in the card; movement diminish stat only"}], "confidence": "I", "note": "card 281 p9 (no read)"},
         "name": "Nimble Trainer",
         "description": "Decreases movement diminish when using plague of rats.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "plaguemausers",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "rat speed +15%/r; the dummy is in range so no hit change"}], "confidence": "C", "note": "card 281 p10 (planner projectile_speed 15/r is the rat speed)"},
         "name": "Plaguemausers",
         "description": "Increases the projectile speed of plague of rats.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "ratsunami",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12], "note": "n += 4r rats (n = 7, 11, 15)"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40%/r"}, {"kind": "extra_hits", "byRank": [3, 5, 7], "per": "use", "replacesProjectileHits": true, "note": "rats pierce (projType 0, [82] = 1) and do not die on the dummy: H(n) = 5, 7, 9 for n = 7, 11, 15 -> extra over base H(3) = 2 is +3, +5, +7; no Exploding Mice explosion on the dummy (the base 2 excludes it)"}], "confidence": "I", "note": "card 281 p11 (C for pierce and n, I for H(n) geometry)", "plannerFix": "planner counts 4 extra rats per rank at a fixed conversion; in game the pierce gives H(n) hits and removes the explosion on the dummy"},
         "name": "Ratsunami",
         "description": "Summon increased amount of piercing rats bouncing off of high terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "poison_skill_damage": 0 },
-          "perRank": { "projectile_count": 4, "poison_skill_damage": 40 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "subtree_damage": 40}
         }
       },
       {
         "id": "rat_den",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40%/r"}, {"kind": "extra_hits", "byRank": [12, 15, 18], "per": "use", "note": "R4 281#1: Rat Den (Shaman_Totem_Parent child, at the cursor - 6 px = 30 px from the dummy, lifetime 180*(1 + 0.4r) frames) fires V = floor((T_den - 17)/67) + 1 = 4, 5, 6 salvos (r = 1..3; card r = 4, 5: 7, 8), every salvo = n rats (n = XSP(3 + p1 + p11 + p14) = 3 here) that all hit the dummy once (point_direction(den, dummy) + cycle 0,10,20,-20,-10 deg, track <= 30*sin 20 = 10.3 px; projType 0 / ignoreHost: they pass through, no Exploding Mice, no carriers) -> V*n = 12, 15, 18 hits per cast, scale by n/3 for other n; the normal player salvo is still made (base 2 hits); old model 6, 8, 12 (floor(T/1.1 s) * H(3) = 2)"}, {"kind": "cooldown_s", "byRank": [6, 6, 6], "note": "cooldown add 6 s (GetTalentCooldown add); planner period becomes max(6 s, cast period) unless p14 (3 s) wins; overlapping dens at r3 (den life 6.6 s > 6 s) each fire their full set"}], "confidence": "C", "note": "card 281 p12 + R4 281#1 (direction, position, projType, V from the totem formula C; +-1 frame of Step_0 start does not change V)", "plannerFix": "planner skill_duration 20/r is not the den lifetime (den uses 40%/r) and the den salvos are not modelled; cooldown is 6 s"},
         "name": "Rat Den",
         "description": "Summon a rat den at target location constantly sending rats towards nearby monsters. Plague of rats now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "poison_skill_damage": 40, "skill_duration": 20 }
+          "base": {"skill_duration": 0, "subtree_damage": 0, "cooldown_added": 6},
+          "perRank": {"skill_duration": 20, "subtree_damage": 40, "cooldown_added": 0}
         }
       },
       {
         "id": "spreading_infestation",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "R4 rule 33: Spreading Infestation spawns r new rats (projType 0, speed x0.4, start inside the dummy, assumed 1 hit each, I) only for a rat STOPPED on the dummy: base n = 3 -> ceil(3/5) = 1 stopped rat per cast -> +r hits per cast (scale by ceil(n/5)); was 'per rat hit on the dummy' (x H(3) = 2 -> +2r); none with p11 / Rat Den (projType 0 rats)"}, {"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5], "per": "use", "note": "plagueCarriers += [50%/r, 10/r]: carrier chance +10r% per stopped rat, 5 carriers x 1 hit of full d5 (R4 281#2) = 0.5r hits per stopped rat (per use at 1 stopped rat; adds to p5's 8r% chance if p5 is also taken)"}, {"kind": "dot", "byRank": [50, 100, 150], "note": "plague carriers poison +50%/r (floor(d5*50r%) per carrier, added to p5's amount) with chance +10r% per stopped-rat death"}], "confidence": "I", "note": "card 281 p13 + R4 rule 33 correction (stopped rats only; new rats' hit count I)", "plannerFix": "planner adds r projectiles on an on_hit chance 10r% per hit; in game only the rat that stops on the dummy spawns r new rats (and carriers at +10r%)"},
         "name": "Spreading Infestation",
         "description": "Increases the proc chance and poisoned damage of plague carriers. Plague carriers now additionally sends multiple piercing rats towards nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 50 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1251,12 +1295,13 @@
       {
         "id": "ratpocalypse",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10, 13, 18], "note": "transformation: 9 waves of n = 3 + 5r rats (p1 = 0) from a 280 px circle through the player (ignoreHost); dummy on the aim line (alpha = 0): 10, 13, 18 hits per cast (average over aim angle 9.7, 14.4, 18.0); the card gives r = 1..5 (25, 30 for r = 4, 5 are outside the planner maxRank)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25%/r"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown add 3 s (planner period becomes max(3 s, T_cast) unless p12 gives 6 s, then 3 s wins)"}], "confidence": "I", "note": "card 281 p14 (C/I, alpha = 0 convention used)", "plannerFix": "planner uses 1/r projectile count; in game 9 waves with a two-sided AABB window give 10, 13, 18 hits per cast at alpha 0 (planner average 9.7/14.4/18.0)"},
         "name": "Ratpocalypse",
         "description": "Summon increased amount of rats in a circle around target location moving towards the center. Plague of rats now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "poison_skill_damage": 0 },
-          "perRank": { "projectile_count": 5, "poison_skill_damage": 25 }
+          "base": {"projectile_count": 0, "subtree_damage": 0, "cooldown_added": 3},
+          "perRank": {"projectile_count": 5, "subtree_damage": 25, "cooldown_added": 0}
         }
       }
     ]
@@ -1303,6 +1348,8 @@
   {
     "id": "plague_master",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per cast, IN-ZONE (area at the cursor, Plague_Spread_obj mask 128x128 = r ~64 px covers the dummy 24 px away): 1 area hit (destroyTimer 0.1 s, single hit) of d5 = floor(V1*(1+LSSD)), V1 = 8.25*L (poison) + the area also applies poison [0] = the same value; on the first contact (procPoison) with an already POISONED dummy Collision_Enemy_Parent_obj creates a Plague_Doctor_Plague_Master_obj (chainType 288, projTravel 0 = N0, rule 23) with the same damage = exactly 1 more hit. In the steady state under spam the poison (5 s*(1+p4) > the cast period) is always present, so 2 hits per cast (the very first cast gives 1; order of collision vs poison application I). Total 1 + 1 = 2.0 (the poison DoT itself is not counted). perExtraProjectile 0: no projectile mechanism. p9 Pathogens, p12 Bulbonic (5 hits of 0.4*r*d5 at 7 %*r, tools/tick_hits.py 133 30 = 5 for life 135 frames), p11, p13 (cooldown 4 s) are subskill effects."},
     "classId": "plague_doctor",
     "name": "Plague Master",
     "kind": "active",
@@ -1316,7 +1363,7 @@
     "tree": "Plague Caller",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 86 },
+    "damageFormula": { "base": 0, "perLevel": 8.25 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Oops", "stat": "poison_skill_damage", "value": 10, "per": "skill_level" },
@@ -1335,34 +1382,37 @@
       {
         "id": "plague_domain",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "area +15%/r (Plague_Spread mask 128 px scale); the dummy is already inside the area, so no change in hits"}], "confidence": "C", "note": "card 288 p1"},
         "name": "Plague Domain",
         "description": "Increases the area of effect radius of plague master.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "toxology",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on d5; also the value of the poison [0] (same d5)"}], "confidence": "C", "note": "card 288 p2"},
         "name": "Toxology",
         "description": "Increases the damage dealt by plague master.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "flesh_melting",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "chance 3r% rolled ONCE per cast: poison break buff 12 = 15r% for 5 s (multiplies poison hits, not ticks); value = % poison break"}], "confidence": "C", "note": "card 288 p3", "plannerFix": "the break is rolled once per cast and is a poison-break buff only (no poisoned state)"},
         "name": "Flesh Melting",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 15 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1376,17 +1426,19 @@
       {
         "id": "neverending_infection",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [20, 40, 60, 80, 100], "note": "poison duration [3] = 20%/r (poison lasts 5 s*(1+p4%)); DoT only, no extra hits; the card's value is the poison duration, not the skill duration"}], "confidence": "C", "note": "card 288 p4", "plannerFix": "planner skill_duration 20/r is the poison duration in game, not the skill duration"},
         "name": "Neverending Infection",
         "description": "Increases the poisoned duration from plague master.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 20 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 20}
         }
       },
       {
         "id": "crippling_poison_vial",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 3r% once per cast: stun 3 s ([51]); a stun is CC (zero DPS), but it enables p10 (concussive) on the dummy"}], "confidence": "C", "note": "card 288 p5 (stun is CC, see p10 for the damage link)"},
         "name": "Crippling Poison Vial",
         "description": "Chance on hit to stun enemies.",
         "maxRank": 5,
@@ -1399,39 +1451,43 @@
       {
         "id": "escalating_illness",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [10, 20, 30, 40, 50], "note": "poison tick frequency [1] = 10%/r: ticks x 1/(1 - 0.1r); DoT only, no direct hits"}], "confidence": "C", "note": "card 288 p6"},
         "name": "Escalating Illness",
         "description": "Increases the tick frequency of poisoned from plague master.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_frequency": 0 },
-          "perRank": { "increased_poisoned_frequency": 10 }
+          "base": {"increased_poisoned_frequency": 0},
+          "perRank": {"increased_poisoned_frequency": 10}
         }
       },
       {
         "id": "anemic_impact",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "slow 3 s ([53]) and slow value 12.5%/r ([54]) on the dummy; slow is CC, no damage"}], "confidence": "C", "note": "card 288 p7 (no roll, always applied)"},
         "name": "Anemic Impact",
         "description": "Inflicts slow on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "slow_target": 0 },
-          "perRank": { "slow_target": 12.5 }
+          "base": {"slow_target": 0},
+          "perRank": {"slow_target": 12.5}
         }
       },
       {
         "id": "boundless_agent",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r only; card gives no read"}], "confidence": "I", "note": "card 288 p8 (no read)"},
         "name": "Boundless Agent",
         "description": "Decreases the mana cost of plague master.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "pathogens",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.02, 0.08, 0.18, 0.32, 0.5], "per": "hit", "note": "chance 4r% per hit to spawn Plague_Master_Pathogens_obj at the dummy centre with d5*25r%; R4 288#1: destroyTimer 60 frames, tick 30 frames -> tools/tick_hits.py 58 30 = 2 hits per proc (not 5, that is Bulbonic); expected per hit = 0.04r * 2 * 0.25r = 0.02 r^2 d5 (x2 area+chain hits per cast = 0.04 r^2 per cast)"}], "confidence": "C", "note": "card 288 p9 + R4 288#1 (destroyTimer asm 0x149094288-0x149094293)", "plannerFix": "planner models one hit of 25r% of total damage on an on_hit proc; in game Pathogens ticks twice (life 60 frames, tick 30 frames)"},
         "name": "Pathogens",
         "description": "Chance to summon a pool of bacteria and viruses on hit dealing damage over time.",
         "maxRank": 5,
@@ -1447,28 +1503,31 @@
       {
         "id": "concussive_effect",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "damage vs stunned ([179] = 10%/r): multiplier (1 + 0.1r) only while the dummy is stunned (needs p5 or another stun)"}], "confidence": "C", "note": "card 288 p10 (conditional on stun)"},
         "name": "Concussive Effect",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "stacked_bacteria",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.3, 0.6, 0.9], "note": "d5 = floor(LTD(V1)*30r%*(1+LSSD)): hit damage multiplied by 0.3r (a reduction of the hit, not an increase); applies to both the Plague_Spread hit and its chain copy"}, {"kind": "dot", "byRank": [0.9, 3.0, 6.3], "note": "poison stacks up to 1 + 2r, DoT multiplier (1 + 2r)*0.3r relative to the base 1-stack DoT: r1 = 3*0.3, r2 = 5*0.6, r3 = 7*0.9 (card formula; the DoT is not in the hit count)"}], "confidence": "C", "note": "card 288 p11", "plannerFix": "planner of_total_damage 30/r is an increase; in game the hit damage is x0.3r and the poison stacks are 1 + 2r"},
         "name": "Stacked Bacteria",
         "description": "Poisoned from plague master inflicts additional stacks of poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "max_skill_stacks": 0 },
-          "perRank": { "of_total_damage": 30, "max_skill_stacks": 2 }
+          "base": {"of_total_damage": 0, "max_skill_stacks": 0},
+          "perRank": {"of_total_damage": 30, "max_skill_stacks": 2}
         }
       },
       {
         "id": "bulbonic_plague",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.14, 0.56, 1.26], "per": "hit", "note": "chance 7r% per hit to spawn Plague_Master_Bulbonic_obj (myHost = dummy, scale 1.5, destroyTimer 2.25 s = 135 frames, tick 0.5 s = 30 frames, r ~96 px) with d5*40r%: 1 + floor(135/30) = 5 hits per proc; expected 0.07r * 5 * 0.4r = 0.14 r^2 per hit (I: hits per tick and the damage per tick)"}], "confidence": "I", "note": "card 288 p12 (C/I)", "plannerFix": "planner area_of_effect splash on_hit proc; in game each proc is a 5-hit Bulbonic object on the dummy with damage 40r% of d5"},
         "name": "Bulbonic Plague",
         "description": "Chance to inflict plague on hit causing targets to become infected inflicting damage to monsters around them.",
         "maxRank": 3,
@@ -1484,26 +1543,25 @@
       {
         "id": "containment_breakout",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [60, 120, 180], "note": "LSSD += 60%/r"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "cooldown add 4 s (GetTalentCooldown): period max(4 s, T_cast); area +35%/r has no hit change on the dummy in the area"}], "confidence": "C", "note": "card 288 p13", "plannerFix": "planner misses the 4 s cooldown (the period becomes max(4 s, T_cast))"},
         "name": "Containment Breakout",
         "description": "Increases the damage dealt and area of effect radius of plague master significantly. Increases the cooldown of plague master.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "poison_skill_damage": 60, "area_of_effect": 35 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0, "cooldown_added": 4},
+          "perRank": {"area_of_effect": 35, "subtree_damage": 60, "cooldown_added": 0}
         }
       },
       {
         "id": "raise_from_the_pestilence",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 75 on the enemy at its death ([754] = 100%/r, 40%/r; 3 s), the dummy does not die; no LSSD for this subskill in the card"}], "confidence": "I", "note": "card 288 p14 (I)", "plannerFix": "planner adds poison_skill_damage 100/r and on_hit poisoned 40/r, but in game the effect is at enemy death only (no LSSD, no on-hit poison)"},
         "name": "Raise from the Pestilence",
         "description": "Monsters killed by plague master spawn a toxic anomaly. Toxic anomalies seek nearby monsters exploding on hit dealing increased area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "increased_poisoned_damage": 0 },
-          "perRank": {
-            "poison_skill_damage": 100,
-            "increased_poisoned_damage": 40
-          }
+          "base": {"poison_skill_damage": 0, "increased_poisoned_damage": 0},
+          "perRank": {"poison_skill_damage": 100, "increased_poisoned_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1519,6 +1577,8 @@
     "id": "jar_of_leeches",
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 2.0, "confidence": "C", "note": "Per cast, IN-ZONE (cursor (x, y-24) / (x, y) = jar landing point): n = XSP(1) jars, each spawns leechAmount = 1 + p1.s9 = 1 Plague_Doctor_Leech_obj 16 px from the jar (3 px/frame, target = the dummy via instance_nth_nearest); per leech 2 hits of d5 = floor(V1*(1+LSSD)), V1 = 10.75*L (poison): the leech body (PDP, deadly from frame 2; hits once at frame 3 with the cursor (x, y-24), at frame 2 with the cursor (x, y)) and the Explosion_Item_obj x1.5 (r 48 px) made in Destroy_0 when the leech reaches the dummy (position_meeting at frame 7) = same d5 each -> 2.0 per leech (R3 287#0: mechanism C, +-1 frame of the event order I; same for both cursors). perExtraProjectile = 2.0: every extra jar lands on the same cursor point and sends its own leech (XSP(1) jars 'na kursor'). p1 (+1 leech = +2 hits per r), p14 (attached leech: tick 0.33 s, rule 20 via tools/tick_hits.py), p13 sucker, p11 (n = 1 + r jars at 25 %*r damage) are subskill effects."},
     "classId": "plague_doctor",
     "name": "Jar of Leeches",
     "kind": "active",
@@ -1532,7 +1592,7 @@
     "tree": "Plague Caller",
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 1, "perLevel": 70 },
+    "damageFormula": { "base": 0, "perLevel": 10.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Plague of Rats", "stat": "poison_skill_damage", "value": 15, "per": "skill_level" },
@@ -1551,50 +1611,55 @@
       {
         "id": "leech_swarm",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 4, 6, 8, 10], "per": "use", "note": "leechAmount = 1 + r: +1 leech per rank, each leech = 2 hits (body + explosion x1.5) -> +2r per jar. The card table row says +1r (explosion only) but the newest base text and DPS line use XSP(1)*(1+p1)*2, so 2r is used"}], "confidence": "C", "note": "card 287 p1 (C count; table/text conflict noted)", "plannerFix": "a leech is 2 hits (body + explosion), so +1 leech per rank is +2 hits per rank per jar; planner projectile_count 1/r is not a jar count"},
         "name": "Leech Swarm",
         "description": "Increases the amount of leeches spawned.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "power_sucktion",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r on d5"}], "confidence": "C", "note": "card 287 p2"},
         "name": "Power Sucktion",
         "description": "Increases the damage dealt by jar of leeches.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "nimble_creepers",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "leech speed and jar gravity +15%/r; the leech still reaches the dummy, no hit change"}], "confidence": "C", "note": "card 287 p3"},
         "name": "Nimble Creepers",
         "description": "Increases the projectile speed of jar of leeches.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "draining_the_demons",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "extra damage vs bosses ([121] = 10%/r); the training dummy is not a boss, so 0"}], "confidence": "I", "note": "card 287 p4 (I)"},
         "name": "Draining the Demons",
         "description": "Increases the damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 10 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 10}
         }
       },
       {
         "id": "bloody_surprise",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "chance 3r% once per cast to add +1 jar to the counter (probable): one extra jar = 2 hits; expected 0.03r * 2 = 0.06r per cast (I)"}], "confidence": "I", "note": "card 287 p5 (I)", "plannerFix": "an extra jar makes 2 hits (body + explosion), not 1; the roll is once per cast"},
         "name": "Bloody Surprise",
         "description": "Chance on cast to unleash an additional jar of leeches.",
         "maxRank": 5,
@@ -1610,34 +1675,37 @@
       {
         "id": "overfed",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [15, 30, 45, 60, 75], "note": "p6 value 15%/r is in a local variable never assigned to the lift fields; likely explosion AOE (I), no hit change read; value is the percent"}], "confidence": "I", "note": "card 287 p6 (undetermined)", "plannerFix": "planner area_of_effect 15/r is not confirmed; the card does not assign the value to the explosion"},
         "name": "Overfed",
         "description": "Increases area of effect radius of jar of leeches.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "jar_handler",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no read in the card (planner skill range 15/r); the cursor targets the dummy anyway"}], "confidence": "I", "note": "card 287 p7 (no read)"},
         "name": "Jar Handler",
         "description": "Increases the maximum cast range of jar of leeches.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "leaking_dents",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "chance 3r% rolled ONCE per cast: bleed [22] = floor(d5 * 15r%) (value = % of d5); physical DoT"}], "confidence": "C", "note": "card 287 p8", "plannerFix": "the bleed roll is once per cast, not per hit"},
         "name": "Leaking Dents",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 15 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1650,67 +1718,73 @@
       {
         "id": "call_to_ascend",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "corpses within 150*(1 + 0.2r) px add leeches; the dummy does not die so no corpse, 0"}], "confidence": "C", "note": "card 287 p9 (planner range 20/r is not a DPS source here)"},
         "name": "Call to Ascend",
         "description": "Consume nearby corpses adding additional leeches into the jar.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "blood_sharing",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "life on hit [966] = 0.5%/r; no dummy DPS"}], "confidence": "C", "note": "card 287 p10"},
         "name": "Blood Sharing",
         "description": "Restore a portion of your maximum life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 0.5 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 0.5}
         }
       },
       {
         "id": "jug_juggler",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "n = XSP(1 + 1/r) jars: (1 + r) jars in total"}, {"kind": "extra_hits", "byRank": [-1, 1, 4], "per": "use", "replacesProjectileHits": true, "note": "each jug jar deals d5 * 0.25r (weaker): total relative to the base jar = 0.25r*(1+r) = 0.5, 1.5, 3.0 jars-worth; base = 2 hits per jar -> 2*(f(r) - 1) = -1, +1, +4 extra hits"}], "confidence": "C", "note": "card 287 p11", "plannerFix": "planner of_total_damage 25/r with projectile_count 1/r; in game the jugs are (1 + r) jars at 25r% damage each, which gives 0.25r(1+r) times the base damage"},
         "name": "Jug Juggler",
         "description": "Throw multiple jars in an arc dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 25, "projectile_count": 1 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 25, "projectile_count": 1}
         }
       },
       {
         "id": "blood_infused_leeches",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3], "note": "LSSD += 1%/r * Vitality/100 (scales with player Vitality; value = per-rank factor, multiply by Vit/100); life cost floor(HP*3r%) per cast is not DPS"}], "confidence": "C", "note": "card 287 p12"},
         "name": "Blood-infused Leeches",
         "description": "Increases leech damage, size and area of effect radius based on your vitality. Jar of leeches consumes a portion of your maximum life per cast.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_vitality": 0, "life_drain_pct": 0 },
-          "perRank": { "conversion_vitality": 1, "life_drain_pct": 3 }
+          "base": {"conversion_vitality": 0, "life_drain_pct": 0},
+          "perRank": {"conversion_vitality": 1, "life_drain_pct": 3}
         }
       },
       {
         "id": "toxicophile_bloodsucker",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100%/r"}, {"kind": "extra_hits", "byRank": [8, 8, 8], "per": "use", "note": "R4 287#1: Leech_Sucker_obj spawns at the cursor point (24 px above the dummy centre at cursor (x, y-24); lives 240 frames); Leech_Toxicophile_obj is created at the sucker's position at frame 6 and every 30 frames -> 8 per cast (frames 6, 36, ..., 216), each a disc r ~146 px, singleHit, d5 of the sucker with full modifiers, hits the dummy exactly once; the sucker body (9x16 x1.5 rectangle, tick 19.8 frames) adds 0 hits at cursor (x, y-24) (edge touches the dummy circle, +-1 px I) and 12 hits (tick_hits 238 19.8) at cursor (x, y); [755] pull does nothing at < 64 px (I); sucker and cooldown 5 s do not overlap"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "cooldown 5 s (GetTalentCooldown add 5 s at p13), so the period is max(5 s, cast period)"}], "confidence": "C", "note": "card 287 p13 + R4 287#1 (position and count C, 1 px border of the body I)", "plannerFix": "planner poison_skill_damage 100/r and area 30/r do not model the 4 s sucker object; in game the LSSD is +100%/r and the sucker gives 8 Toxicophile hits; cooldown 5 s"},
         "name": "Toxicophile Bloodsucker",
         "description": "Spawn a static leech at target location. The leech pulsates dealing damage and slowly pulling monsters towards it on hit. Jar of leeches now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "poison_skill_damage": 100, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0, "cooldown_added": 5},
+          "perRank": {"area_of_effect": 30, "subtree_damage": 100, "cooldown_added": 0}
         }
       },
       {
         "id": "lasting_hunger",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 5, 6], "per": "use", "note": "leech attaches (lastingHunger 1 s*(1+0.25r), tick 0.33 s) instead of dying: per leech 1 + floor(60*(1+0.25r)/20) body ticks + 1 body hit before attaching + 1 explosion on removal = 6, 7, 8 vs base 2 -> +4, +5, +6 per leech (1 leech per jar at p1 = 0)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25%/r"}], "confidence": "I", "note": "card 287 p14 (C/I; tick count by rule 2 with 0.33 s)", "plannerFix": "planner models a 0.33 s tick on the leech only; in game the attached leech gets 1 + floor(60(1+0.25r)/20) ticks plus a pre-attach body hit and the explosion at removal"},
         "name": "Lasting Hunger",
         "description": "Leeches now stick on targets for a short duration dealing increased damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "poison_skill_damage": 25, "skill_duration": 25 }
+          "base": {"skill_duration": 0, "subtree_damage": 0},
+          "perRank": {"skill_duration": 25, "subtree_damage": 25}
         }
       }
     ]
@@ -1737,6 +1811,8 @@
   {
     "id": "randy_the_rancid_rat",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action (one melee attack of Randy_The_Rancid_Rat_obj, a permanent summon, cooldown 15 s only for re-summoning; ReturnSummonAmount(289) = 1): Alarm_0 makes a Hitbox_Summon_obj = 1 hit of d5 = floor(LTD(289,V1)*M) + floor(RSS357%*life), V1 = 15.75*L (poison), M = 1 + summon stats + LSSD = 1.0 main hit. Action interval attackCooldown/(1 + AS/100), attackCooldown = 1.25 s*(1 - p4.s9%) (engine side). The attack poison [0] = floor(d5*(V3% + p6 + p5)) is 0 in the base (V3 = 0, R3 289#1, C) and is a DoT anyway. p5 aura, p12 dragorat, p13 specimens, p3 rats are subskill effects."},
     "classId": "plague_doctor",
     "name": "Randy the Rancid Rat",
     "kind": "active",
@@ -1768,28 +1844,31 @@
       {
         "id": "vigorous_leader",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Randy's life +10%/r; it adds to the hit only through RSS357% * life, which is 0 unless RSS357 > 0 (card), so 0 in the base"}], "confidence": "C", "note": "card 289 p1"},
         "name": "Vigorous Leader",
         "description": "Increases the life of randy the rancid rat.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_life": 0 },
-          "perRank": { "summon_life": 10 }
+          "base": {"summon_life": 0},
+          "perRank": {"summon_life": 10}
         }
       },
       {
         "id": "enhanced_jaws",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8%/r inside M = 1 + summon stats + LSSD (the multiplier on the hit)"}], "confidence": "C", "note": "card 289 p2"},
         "name": "Enhanced Jaws",
         "description": "Increases the damage of randy the rancid rat.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "rat_invoker",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.12, 0.27, 0.48, 0.75], "per": "use", "note": "R4 289#0 (SummonAttackScript L562-L579, read on every attack, C): chance 3r% per attack -> r Plague_of_Rats_obj rats (projType 0, ignoreHost, start at Randy, aimed at the dummy via instance_nth_nearest) with the attack's damage[5] = d5: 0.03r * r = 0.03 r^2 hits of d5 per entity action; rats reaching the dummy assumed (Randy stands adjacent, I)"}], "confidence": "C", "note": "card 289 p3 row (C) + R4 289#0; the Pewnosc line still lists p3 as I", "plannerFix": "planner adds projectile_count 1/r on an on_hit proc; in game each attack has a 3r% chance to throw r rats of d5 at the target"},
         "name": "Rat Invoker",
         "description": "Chance on hit to unleash piercing plague rats towards the target.",
         "maxRank": 5,
@@ -1805,23 +1884,25 @@
       {
         "id": "speed_chomps",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [11.1, 25.0, 42.9, 66.7, 100.0], "note": "attackCooldown x(1 - 0.1r) -> attack rate x 1/(1 - 0.1r): +11.1%, +25%, +42.9%, +66.7%, +100% (multiplicative, not additive); extraMS +15%/r is movement only"}], "confidence": "C", "note": "card 289 p4", "plannerFix": "planner summon_attack_speed 10/r is additive; in game attackCooldown is multiplied by (1 - 0.1r), i.e. attack rate x 1/(1 - 0.1r)"},
         "name": "Speed Chomps",
         "description": "Increases the movement speed and attack speed of randy the rancid rat.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0, "movement_speed": 0 },
-          "perRank": { "summon_attack_speed": 10, "movement_speed": 15 }
+          "base": {"summon_attack_speed": 0, "movement_speed": 0},
+          "perRank": {"summon_attack_speed": 10, "movement_speed": 15}
         }
       },
       {
         "id": "expansive_plague_mind",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [10, 20, 30, 40, 50], "note": "attack poison [0] + 10%/r of d5 (chance 100% per attack hit; V3 = 0 so this is the only attack poison from p5); refreshed every 1 s by the Expansive Plague aura (scale 1 + 0.15r), which pulses on enemies within 96 px bbox gap: Randy walks to the dummy and attacks at gap <= 16 (Resztki A, Randy_Step_0 0x1498fbd98, SummonStepSeekTarget), so the aura DOES reach the dummy (old model: out of range at 160 px); no direct aura hits are stated by the card (DoT only, I)"}], "confidence": "C", "note": "card 289 p5 + Resztki A (Randy approaches the dummy; aura in range)", "plannerFix": "planner applies increased_poisoned_damage/area on hit, but in game the poison is [0] = 10r% of d5 per attack plus an aura refresh every 1 s while the target is within 96 px"},
         "name": "Expansive Plague Mind",
         "description": "Randy the rancid rat gains an aura inflicting monsters with poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0, "area_of_effect": 0 },
-          "perRank": { "increased_poisoned_damage": 10, "area_of_effect": 15 }
+          "base": {"increased_poisoned_damage": 0, "area_of_effect": 0},
+          "perRank": {"increased_poisoned_damage": 10, "area_of_effect": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1834,12 +1915,13 @@
       {
         "id": "disease_hoarder",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "attack poison [0] + 15%/r of d5 as poison on every attack hit (chance 100%); value = % of d5 (adds to p5's amount)"}], "confidence": "C", "note": "card 289 p6"},
         "name": "Disease Hoarder",
         "description": "Increases the poisoned inflicted by randy the rancid rat.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 15 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1852,28 +1934,31 @@
       {
         "id": "blood_transfusion",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[756] = 1%/r (% of target HP handler): life/HP effect, no damage on the dummy (card)"}], "confidence": "I", "note": "card 289 p7 (I)"},
         "name": "Blood Transfusion",
         "description": "Randy the rancid rat recovers a portion of its maximum life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1}
         }
       },
       {
         "id": "armored_fur",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "resistances +5/r and damage reduction 5%/r on Randy; defensive only"}], "confidence": "C", "note": "card 289 p8"},
         "name": "Armored Fur",
         "description": "Increases all resistances and damage reduction for randy the rancid rat.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_resistances": 0, "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_resistances": 5, "all_damage_taken_reduced_pct": 5 }
+          "base": {"all_resistances": 0, "all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_resistances": 5, "all_damage_taken_reduced_pct": 5}
         }
       },
       {
         "id": "rage_sequence",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.03, 1.11, 1.25, 1.45, 1.7], "note": "R4 289#0: rageSequence [15r%, 15r%, 3r%] read on every attack: chance 3r% per attack (only when rageTimer <= 0) starts 4 s of rage = DMG +15r% and AS +15r% (SummonBuffs); uptime 8.9, 16.5, 23, 29, 34% (tau0 = 1.25 s) -> average DPS multiplier 1 + u*((1 + 0.15r)^2 - 1) = 1.03, 1.11, 1.25, 1.45, 1.70 (includes the attack-speed factor; additive to M is I)"}], "confidence": "I", "note": "card 289 p9 + R4 289#0 (uptime and multiplier computed in the card; additivity to M I)", "plannerFix": "rage is a timed buff started by a 3r% chance per attack (4 s, +15r% damage and attack speed), not a permanent +15r%"},
         "name": "Rage Sequence",
         "description": "Chance to become enraged on hit increasing damage dealt and attack speed.",
         "maxRank": 5,
@@ -1889,28 +1974,31 @@
       {
         "id": "vital_division",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [6, 12, 18, 24, 30], "note": "host.playerEffect[274] = 6%/r: damage/life division with the player (not read in the card); value = the percent; no dummy damage value determined"}], "confidence": "I", "note": "card 289 p10 (I)", "plannerFix": "planner models it as poison_skill_damage 6/r; in game it is a division of damage/life with the player (playerEffect 274), not poison damage"},
         "name": "Vital Division",
         "description": "Redirect a portion of incoming damage to randy the rancid rat.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_skill_damage": 0 },
-          "perRank": { "poison_skill_damage": 6 }
+          "base": {"poison_skill_damage": 0},
+          "perRank": {"poison_skill_damage": 6}
         }
       },
       {
         "id": "randy_rider",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "utility", "note": "player rides Randy (Randy_Dummy_obj, a mount decoy that follows the host and creates no damage objects), playerEffect[249] = 4 has no reader, movement buff 101 +35%/r for 30 s; Randy_The_Rancid_Rat_obj is created and attacks exactly as in the base (L1177-L1193 not gated by p11); Crematus can be cast from Randy (skillRandy). Contribution to dummy DPS: 0 (R4 289#2)"}], "confidence": "C", "note": "card 289 p11 + R4 289#2 (Randy's damage while ridden is unchanged; no reader of playerEffect[249] found, I)"},
         "name": "Randy Rider",
         "description": "Mount randy the rancid rat gaining increased movement speed, jumping power and the ability to jump through high terrain. Taking damage will unmount you. Randy the rancid rat now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 35 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 35}
         }
       },
       {
         "id": "dragorat",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.6, 1.35], "per": "use", "note": "R4 289#0 (SummonAttackScript L542-L559, read on every attack, C): dragoRat = [25r%, 15r%, 10r]: chance 10r% per attack -> a Crematus controller at Randy (6 flames, 6 frames apart, aim direction with 8 deg fan, ignoreHost) with damage[5] = floor(d5*25r%) per flame: 0.1r * 6 * 0.25r = 0.15 r^2 hits of d5 per entity action (card: 0.15, 0.6, 1.35, 2.4, 3.75 for r = 1..5); flames reaching the dummy assumed (Randy in strike range, I)"}], "confidence": "I", "note": "card 289 p12 + R4 289#0", "plannerFix": "planner area 15/r and poison 25/r on the on_hit proc; in game a 10r% chance per attack of 6 flames of 25r% d5"},
         "name": "Dragorat",
         "description": "Randy the rancid rat unleashes a breath of fire when attacking.",
         "maxRank": 3,
@@ -1926,29 +2014,25 @@
       {
         "id": "qa3_modified_specimen",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.4, 0.8, 1.2], "note": "qA3Specimen = [40%/r, 1/r]: every 20 s, 1r QA3_Specimen_obj for 15 s (uptime 0.75) with floor(d5*40r%) per hit; value = damage ratio per specimen hit; the specimen attack cadence is in reports/summons.md (not read here), so the hits per second are not determined (I)"}], "confidence": "I", "note": "card 289 p13 (C spawn rule, I cadence)", "plannerFix": "planner summon_max_amount 1/r and of_total_damage 40/r with no uptime; in game the specimens live 15 of every 20 s"},
         "name": "QA3-Modified Specimen",
         "description": "Randy the rancid rat summons additional tiny rats armed with blunderbusses dealing a portion of the damage on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "of_total_damage": 0,
-            "summon_max_amount": 0
-          },
-          "perRank": {
-            "of_total_damage": 40,
-            "summon_max_amount": 1
-          }
+          "base": {"of_total_damage": 0, "summon_max_amount": 0},
+          "perRank": {"of_total_damage": 40, "summon_max_amount": 1}
         }
       },
       {
         "id": "gluttony",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "feastOfGluttony = 6r% with a growing feastStack: pe[1086] += 0.06r*stack on the attack object is a SIZE bonus (PDP Alarm_11 L56-L60 maxScale/image_xscale), so the attack still lands exactly 1 hit: no damage effect on the dummy (R4 289#0)"}], "confidence": "C", "note": "card 289 p14 + R4 289#0", "plannerFix": "planner area 6/r and duration -20/r are not what the code does; pe[1086] only enlarges the attack object"},
         "name": "Gluttony",
         "description": "Increases the attack area of effect radius of randy the rancid rat whenever striking a monster stacking infinitely. Decreases the duration of randy the rancid rat.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "skill_duration": 0 },
-          "perRank": { "area_of_effect": 6, "skill_duration": -20 }
+          "base": {"area_of_effect": 0, "skill_duration": 0},
+          "perRank": {"area_of_effect": 6, "skill_duration": -20}
         }
       }
     ]
