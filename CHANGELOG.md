@@ -1,5 +1,7 @@
 ## Feature
 
+- Incarnation tree nodes can be excluded from Suggest Nodes: Alt-click a node to mark it with a red ring, and the optimizer will neither allocate it nor path through it. Alt-click again to allow it. Exclusions are saved with the build (#164).
+
 - Equipping a relic whose proc grants a buff (e.g. Skull Axe, Shiv) turns that buff on in Config. Editing the same relic keeps your own setting (#157).
 
 - Buffs cast by relic procs appear under Item Blessings in Config and apply when toggled. Shiv's Live by the Sword adds 28% + 1% per level Attack Speed and Movement Speed, and Skull Axe's Demon Form can now be toggled too (#158).

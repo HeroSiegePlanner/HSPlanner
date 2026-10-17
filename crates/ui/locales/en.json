@@ -1878,7 +1878,7 @@
   "tree.optimizer.failure": "Could not suggest nodes: {detail}",
   "tree.optimizer.final_dps": "FINAL DPS",
   "tree.optimizer.gain": "GAIN",
-  "tree.optimizer.help": "Choose the maximum number of nodes to add. The optimizer compares paths and alternative allocations using your build’s DPS, including travel nodes and skill synergies. Existing nodes stay allocated. Results are estimates; the search may leave points unused when no improvement is found.",
+  "tree.optimizer.help": "Choose the maximum number of nodes to add. The optimizer compares paths and alternative allocations using your build’s DPS, including travel nodes and skill synergies. Existing nodes stay allocated. Results are estimates; the search may leave points unused when no improvement is found. Alt-click a node to exclude it from suggestions (red ring); Alt-click it again to allow it.",
   "tree.optimizer.idle": "Path and synergy search",
   "tree.optimizer.invalid_dps": "Cannot suggest nodes: calculated DPS is not finite.",
   "tree.optimizer.minor": "MINOR",

@@ -273,6 +273,7 @@ impl NodePreview {
                                 matches: &HashSet::new(),
                                 searching: false,
                                 socketed: &socketed,
+                                excluded: &HashSet::new(),
                                 progression_marker: Some(index),
                             },
                             TreeTheme::incarnation(),

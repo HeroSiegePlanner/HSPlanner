@@ -21,6 +21,9 @@ pub struct BuildSnapshot {
     #[serde(deserialize_with = "deserialize_max_subskill_points")]
     pub max_subskill_points: u32,
     pub allocated_tree_nodes: Vec<u32>,
+    /// Incarnation nodes the tree suggester must not allocate or path through.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub suggest_excluded_nodes: Vec<u32>,
     pub tree_socketed: HashMap<u32, TreeSocketContent>,
     pub active_skill_ids: Vec<String>,
     pub active_aura_id: Option<String>,
@@ -55,6 +58,7 @@ impl Default for BuildSnapshot {
             subskill_ranks: HashMap::new(),
             max_subskill_points: 20,
             allocated_tree_nodes: Vec::new(),
+            suggest_excluded_nodes: Vec::new(),
             tree_socketed: HashMap::new(),
             active_skill_ids: Vec::new(),
             active_aura_id: None,

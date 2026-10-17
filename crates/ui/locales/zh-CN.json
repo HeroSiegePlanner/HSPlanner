@@ -1878,7 +1878,7 @@
   "tree.optimizer.failure": "无法推荐节点：{detail}",
   "tree.optimizer.final_dps": "最终DPS",
   "tree.optimizer.gain": "提升",
-  "tree.optimizer.help": "选择最多添加多少个节点。优化器根据构筑DPS比较不同路径和分配方式，同时考虑过渡节点与技能协同。已分配的节点会保留。结果为估算值；若未找到提升，部分点数可能不会使用。",
+  "tree.optimizer.help": "选择最多添加多少个节点。优化器根据构筑DPS比较不同路径和分配方式，同时考虑过渡节点与技能协同。已分配的节点会保留。结果为估算值；若未找到提升，部分点数可能不会使用。 按住 Alt 点击节点可将其排除在建议之外（红色圆环）；再次 Alt 点击即可恢复。",
   "tree.optimizer.idle": "路径与协同搜索",
   "tree.optimizer.invalid_dps": "无法推荐节点：计算出的DPS不是有限数值。",
   "tree.optimizer.minor": "小节点",

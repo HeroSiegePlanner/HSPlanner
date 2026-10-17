@@ -22,6 +22,7 @@ pub struct TreeTheme {
     allocated_stroke: Hsla,
     accent: Hsla,
     socket: Hsla,
+    excluded: Hsla,
     edge: Hsla,
     allocated_edge: Hsla,
     preview_edge: Hsla,
@@ -86,6 +87,10 @@ impl TreeTheme {
         self.socket
     }
 
+    pub fn excluded(self) -> Hsla {
+        self.excluded
+    }
+
     pub fn edge(self) -> Hsla {
         self.edge
     }
@@ -137,6 +142,7 @@ impl TreeTheme {
             allocated_stroke: rgb(0xd4cfbf).into(),
             accent: rgb(0xe0b864).into(),
             socket: rgb(0xffd66b).opacity(0.85).into(),
+            excluded: rgb(0xe05c5c).into(),
             edge: rgb(0x2a2f3a).into(),
             allocated_edge: rgb(0xc48a3a).into(),
             preview_edge: rgb(0x8a6a2a).into(),

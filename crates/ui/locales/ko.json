@@ -1878,7 +1878,7 @@
   "tree.optimizer.failure": "노드를 추천할 수 없습니다: {detail}",
   "tree.optimizer.final_dps": "최종 DPS",
   "tree.optimizer.gain": "증가량",
-  "tree.optimizer.help": "추가할 노드의 최대 수를 선택하세요. 최적화 도구는 연결 노드와 스킬 시너지를 포함한 빌드의 DPS를 바탕으로 경로와 할당 조합을 비교합니다. 기존 노드는 유지됩니다. 결과는 추정치이며 개선점을 찾지 못하면 일부 포인트가 남을 수 있습니다.",
+  "tree.optimizer.help": "추가할 노드의 최대 수를 선택하세요. 최적화 도구는 연결 노드와 스킬 시너지를 포함한 빌드의 DPS를 바탕으로 경로와 할당 조합을 비교합니다. 기존 노드는 유지됩니다. 결과는 추정치이며 개선점을 찾지 못하면 일부 포인트가 남을 수 있습니다. 노드를 Alt+클릭하면 추천에서 제외됩니다(빨간 테두리). 다시 Alt+클릭하면 허용됩니다.",
   "tree.optimizer.idle": "경로 및 시너지 검색",
   "tree.optimizer.invalid_dps": "노드를 추천할 수 없습니다. 계산된 DPS가 유한한 값이 아닙니다.",
   "tree.optimizer.minor": "소형 노드",
