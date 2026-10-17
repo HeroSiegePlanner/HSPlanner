@@ -2301,7 +2301,18 @@
   {
     "id": "live_by_the_sword",
     "name": "Live by the Sword",
-    "description": "Temporarily increases your attack speed and movement speed."
+    "description": "Temporarily increases your attack speed and movement speed.",
+    "condition": "live_by_the_sword_buff",
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 28,
+        "movement_speed": 28
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "movement_speed": 1
+      }
+    }
   },
   {
     "id": "snowball_throw",

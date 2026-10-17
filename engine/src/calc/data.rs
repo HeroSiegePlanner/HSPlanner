@@ -490,6 +490,14 @@ pub fn skill_bonus_entries<'a>(
         .chain(runeword.into_iter().flatten())
 }
 
+/// Skills an item's procs cast. Display metadata, except for conditional buffs.
+pub fn proc_skill_grants(base: &ItemBase) -> impl Iterator<Item = &super::types::ItemSkillGrant> {
+    base.procs
+        .iter()
+        .flatten()
+        .filter_map(|proc| proc.granted_skill.as_ref())
+}
+
 pub fn get_item_granted_skill_by_name(name: &str) -> Option<&'static ItemGrantedSkill> {
     let needle = name.trim().to_lowercase();
     data()

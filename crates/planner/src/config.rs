@@ -1505,7 +1505,10 @@ impl ConfigView {
             let Some(base) = data::get_item(&item.base_id) else {
                 continue;
             };
-            for (name, _) in data::skill_bonus_entries(base, item) {
+            let names = data::skill_bonus_entries(base, item)
+                .map(|(name, _)| name)
+                .chain(data::proc_skill_grants(base).map(|grant| &grant.name));
+            for name in names {
                 if let Some(skill) = data::get_item_granted_skill_by_name(name)
                     && let Some(condition) = &skill.condition
                 {

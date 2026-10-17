@@ -1215,6 +1215,48 @@ fn set_sail_blessing_adds_cold_skill_damage_when_toggled() {
     );
 }
 
+// #158: a relic proc buff (Shiv casts Live by the Sword 3-30) is a Config toggle.
+#[test]
+fn shiv_live_by_the_sword_buff_applies_when_toggled() {
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    inventory.insert(
+        "relic_1".to_string(),
+        crate::calc::types::EquippedItem {
+            base_id: "relic_relic_shiv".to_string(),
+            ..Default::default()
+        },
+    );
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let speed = |toggled: bool| {
+        let conditions = HashMap::from([("live_by_the_sword_buff".to_string(), toggled)]);
+        let out = compute_build_stats(&empty_input(
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &conditions,
+            &subskill_ranks,
+            &enemy_conditions,
+        ));
+        out.stats
+            .get("movement_speed")
+            .copied()
+            .unwrap_or((0.0, 0.0))
+    };
+    let (off, on) = (speed(false), speed(true));
+    assert_eq!((on.0 - off.0, on.1 - off.1), (31.0, 58.0));
+}
+
 #[test]
 fn amazon_weapon_gates_allow_only_matching_weapons() {
     for (skill, node, weapon, key, amount) in [
