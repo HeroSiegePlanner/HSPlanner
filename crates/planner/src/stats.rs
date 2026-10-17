@@ -532,12 +532,101 @@ impl StatsView {
                             .child(shown),
                     ),
             );
-        div().child(crate::source_breakdown::trigger(
-            SharedString::from(format!("stat-sources-{key}-{}", self.calculation_revision)),
-            button,
-            breakdown,
-            self.session.clone(),
+        let pinned = self
+            .session
+            .read(cx)
+            .state()
+            .settings
+            .pinned_stats
+            .iter()
+            .any(|pin| pin == key);
+        let owned_key = key.to_owned();
+        let pin = hsplanner_ui::controls::icon_button(
+            SharedString::from(format!("stat-pin-{key}")),
+            "★",
+            false,
+            cx,
+        )
+        .selected(pinned)
+        .accessibility_label(trf(
+            if pinned {
+                "planner.stats.unpin"
+            } else {
+                "planner.stats.pin"
+            },
+            &[("label", label.to_string())],
         ))
+        .on_click(cx.listener(move |this, _, _, cx| this.toggle_pin(&owned_key, cx)));
+        div()
+            .flex()
+            .items_center()
+            .gap_1()
+            .child(
+                div()
+                    .flex_1()
+                    .min_w_0()
+                    .child(crate::source_breakdown::trigger(
+                        SharedString::from(format!(
+                            "stat-sources-{key}-{}",
+                            self.calculation_revision
+                        )),
+                        button,
+                        breakdown,
+                        self.session.clone(),
+                    )),
+            )
+            .child(pin)
+    }
+    fn toggle_pin(&mut self, key: &str, cx: &mut Context<Self>) {
+        self.session.update(cx, |session, cx| {
+            let mut settings = session.state().settings.clone();
+            let pins = &mut settings.pinned_stats;
+            match pins.iter().position(|pin| pin == key) {
+                Some(at) => {
+                    pins.remove(at);
+                }
+                None => pins.push(key.to_owned()),
+            }
+            session.set_settings(settings);
+            cx.notify();
+        });
+    }
+    fn pinned(&self, result: &PlannerPerformance, query: &str, cx: &Context<Self>) -> Option<Div> {
+        let session = self.session.read(cx);
+        let stats = &data::game_config().stats;
+        let pinned: Vec<_> = session
+            .state()
+            .settings
+            .pinned_stats
+            .iter()
+            .filter_map(|key| stats.iter().find(|def| &def.key == key))
+            .filter(|def| {
+                query.is_empty()
+                    || def.name.to_lowercase().contains(query)
+                    || crate::stat_labels::stat_name(&def.key, &def.name)
+                        .to_lowercase()
+                        .contains(query)
+            })
+            .collect();
+        if pinned.is_empty() {
+            return None;
+        }
+        // The same stats also render in All Stats; the id'd wrapper keeps element ids unique.
+        let rows = div()
+            .id("stats-pinned")
+            .grid()
+            .grid_cols(2)
+            .gap_x_8()
+            .children(pinned.into_iter().map(|def| {
+                self.stat(
+                    &def.key,
+                    &def.name,
+                    def.format.as_deref() == Some("percent"),
+                    &result.computed,
+                    cx,
+                )
+            }));
+        Some(panel("pinned-stats-title", tr("planner.stats.pinned"), cx).child(rows))
     }
     fn attributes(
         &self,
@@ -1742,6 +1831,7 @@ impl StatsView {
                     .flex()
                     .flex_col()
                     .gap_3p5()
+                    .children(self.pinned(&result, &query, cx))
                     .children(self.attributes(&result, &query, attribute_columns, cx))
                     .children(self.skills(&result, &query, cx))
                     .children(self.ehp(&result, &query, cx))

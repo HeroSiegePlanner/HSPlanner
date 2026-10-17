@@ -34,6 +34,8 @@ pub struct Settings {
     pub number_scale: String,
     pub extra_charm_slot: bool,
     pub ui_zoom: f32,
+    /// Stat keys shown first on the Stats page, in pin order.
+    pub pinned_stats: Vec<String>,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -43,6 +45,7 @@ impl Default for Settings {
             number_scale: "billions".into(),
             extra_charm_slot: true,
             ui_zoom: 1.,
+            pinned_stats: Vec::new(),
         }
     }
 }

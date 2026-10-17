@@ -1,5 +1,7 @@
 ## Feature
 
+- Stats can be pinned with the star next to each stat. Pinned stats appear in their own panel at the top of the Stats page, follow the search, and are saved in settings for every build (#199).
+
 - Incarnation tree nodes can be excluded from Suggest Nodes: Alt-click a node to mark it with a red ring, and the optimizer will neither allocate it nor path through it. Alt-click again to allow it. Exclusions are saved with the build (#164).
 
 - Equipping a relic whose proc grants a buff (e.g. Skull Axe, Shiv) turns that buff on in Config. Editing the same relic keeps your own setting (#157).
