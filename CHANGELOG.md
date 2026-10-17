@@ -1,5 +1,7 @@
 ## Feature
 
+- Custom Config opens in its own editor ("Edit custom stats"): a text area with one stat per line, validation with line numbers, and a searchable list of every stat that inserts a line on click. Lines starting with // (or the rest of a line after //) are notes, kept with the build and its build code. Changes apply on Save (#193).
+
 - Build actions (…) has "Copy build code with stash": the code then also carries the build's stash items, and importing it restores them. Notes were already included in every build code; the plain Share button still leaves the stash out (#192).
 
 - Stats can be pinned with the star next to each stat. Pinned stats appear in their own panel at the top of the Stats page, follow the search, and are saved in settings for every build (#199).

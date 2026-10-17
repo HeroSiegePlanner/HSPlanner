@@ -38,6 +38,9 @@ pub struct BuildSnapshot {
     pub entity_rates: HashMap<String, f64>,
     pub stack_counts: HashMap<String, u32>,
     pub custom_stats: Vec<CustomStat>,
+    /// The custom config text as typed, with `//` notes; `custom_stats` is parsed from it.
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub custom_stats_text: String,
     pub allocated_ether_nodes: Vec<u32>,
     pub merc_class_id: Option<String>,
     pub merc_skill_ranks: HashMap<String, u32>,
@@ -79,6 +82,7 @@ impl Default for BuildSnapshot {
                 .collect(),
             stack_counts: HashMap::new(),
             custom_stats: Vec::new(),
+            custom_stats_text: String::new(),
             allocated_ether_nodes: Vec::new(),
             merc_class_id: None,
             merc_skill_ranks: HashMap::new(),
