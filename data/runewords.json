@@ -1757,7 +1757,7 @@
       "mana_steal": 7,
       "extra_damage_burning": 60,
       "fire_skill_damage": 50,
-      "ignore_lightning_res": 30,
+      "ignore_fire_res": 30,
       "increased_life": 10,
       "increased_mana": 20,
       "fire_absorption": 5,

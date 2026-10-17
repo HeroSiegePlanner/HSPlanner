@@ -1,5 +1,7 @@
 ## Feature
 
+- Crematorium's Pledge gives -30% to Enemy Fire Resistance, as in the game, instead of Ignore Lightning Resistance (#194).
+
 - Maelstrom of Frost lasts its 30 s duration and ticks every second (Intense Temperature shortens the tick), as in the game, instead of a single 0.5 s tick per cast.
 
 - Black Hole lasts its 4.5 s duration (Mass Density extends it) and ticks every 0.4 s, as in the game, instead of 1 s at 0.5 s ticks. In the game Time != Space shortens that tick (to at least 0.1 s).
