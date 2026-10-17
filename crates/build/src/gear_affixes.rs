@@ -48,6 +48,10 @@ pub fn jewel_affix_allowed(affix: &Affix) -> bool {
             .is_some_and(|types| types.iter().any(|kind| kind == "Socketable"))
 }
 
+pub fn is_unholy_group(group_id: &str) -> bool {
+    group_id.starts_with("random_unholy")
+}
+
 pub fn affix_pool_type(base: &ItemBase) -> Option<&'static str> {
     if base.slot == "weapon" {
         return match base.base_type.as_str() {
@@ -121,6 +125,20 @@ mod tests {
         assert!(item.affixes.is_empty());
         add_affix(&mut item, &own.id).unwrap();
         assert_eq!(item.affixes[0].affix_id, own.id);
+    }
+
+    #[test]
+    fn signet_of_shadows_rolls_its_own_unholy_pool() {
+        let mut item = make_item("ring_heroic_signet_of_shadows_arcane").unwrap();
+        assert!(add_affix(&mut item, "random_unholy_to_strength").is_err());
+        add_affix(
+            &mut item,
+            "random_unholy_signet_of_shadows_intelligence_converted_to_magic_skill_dmg",
+        )
+        .unwrap();
+        assert!(is_unholy_group(
+            &data::get_affix(&item.affixes[0].affix_id).unwrap().group_id
+        ));
     }
 
     #[test]

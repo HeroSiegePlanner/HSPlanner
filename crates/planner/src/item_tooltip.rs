@@ -152,7 +152,6 @@ const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
 const ALL_SKILLS_CLASS_KEY: &str = "all_skills_class";
 const SUBSKILL_BOOST_KEY: &str = "subskill_boost";
 const UNHOLY_EFFECT: &str = "Unholy";
-const UNHOLY_GROUP: &str = "random_unholy";
 const BONUS_SOCKET_MOD_ID: &str = "crystal_add_socket";
 const EQUIPPED_MARK: &str = "✓";
 const NOT_SUPPORTED_FOOTNOTE: &str = "item.unsupported_footnote";
@@ -1185,7 +1184,7 @@ fn affix_lines(
         let Some(affix) = data::get_affix(&eq.affix_id) else {
             continue;
         };
-        let is_unholy = affix.group_id == UNHOLY_GROUP;
+        let is_unholy = hsplanner_build::gear::is_unholy_group(&affix.group_id);
         let style = if is_unholy {
             LineStyle::Unholy
         } else if affix.stat_key.is_some() {

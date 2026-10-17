@@ -498,7 +498,7 @@ impl GearView {
                     };
                     Row::new(&a.id, &a.name, &a.description)
                         .modifier(kind, Some(a.tier), group)
-                        .tone(if a.group_id == "random_unholy" {
+                        .tone(if gear::is_unholy_group(&a.group_id) {
                             theme::rarity_color("unholy", cx)
                         } else {
                             cx.global::<TooltipTheme>().text

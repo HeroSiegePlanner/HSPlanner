@@ -12,8 +12,8 @@ use hsplanner_engine::calc::{
 #[path = "gear_affixes.rs"]
 mod affix_pools;
 pub use affix_pools::{
-    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, jewel_affix_allowed,
-    set_affix_value, set_forge_value,
+    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, is_unholy_group,
+    jewel_affix_allowed, set_affix_value, set_forge_value,
 };
 
 pub fn make_item(base_id: &str) -> Result<EquippedItem, String> {

@@ -708,7 +708,7 @@
       "arcane_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy",
+    "randomAffixGroupId": "random_unholy_signet_of_shadows",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -731,7 +731,7 @@
       "cold_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy",
+    "randomAffixGroupId": "random_unholy_signet_of_shadows",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -754,7 +754,7 @@
       "fire_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy",
+    "randomAffixGroupId": "random_unholy_signet_of_shadows",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -777,7 +777,7 @@
       "lightning_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy",
+    "randomAffixGroupId": "random_unholy_signet_of_shadows",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -800,7 +800,7 @@
       "attack_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy",
+    "randomAffixGroupId": "random_unholy_signet_of_shadows",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -823,7 +823,7 @@
       "poison_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy",
+    "randomAffixGroupId": "random_unholy_signet_of_shadows",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [

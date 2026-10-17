@@ -1,5 +1,7 @@
 ## Feature
 
+- Signet of Shadows rolls its three Unholy stats from its own pool, as in the game: attribute conversions to Magic Skill or Attack Damage, Total Faster Cast Rate, Total Attack Speed, sentry and guardian stats and more, instead of the generic Unholy pool (#195).
+
 - Crematorium's Pledge gives -30% to Enemy Fire Resistance, as in the game, instead of Ignore Lightning Resistance (#194).
 
 - Maelstrom of Frost lasts its 30 s duration and ticks every second (Intense Temperature shortens the tick), as in the game, instead of a single 0.5 s tick per cast.

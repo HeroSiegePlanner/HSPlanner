@@ -1073,7 +1073,11 @@ impl GearView {
         self.card(
             Section::new(
                 "affixes",
-                if base.random_affix_group_id.as_deref() == Some("random_unholy") {
+                if base
+                    .random_affix_group_id
+                    .as_deref()
+                    .is_some_and(hsplanner_build::gear::is_unholy_group)
+                {
                     tr("gear.unholy_affixes")
                 } else {
                     tr("gear.affixes")
@@ -1711,8 +1715,9 @@ impl GearView {
                                             .as_ref()
                                             .and_then(|item| data::get_item(&item.base_id))
                                             .is_some_and(|base| {
-                                                base.random_affix_group_id.as_deref()
-                                                    == Some("random_unholy")
+                                                base.random_affix_group_id.as_deref().is_some_and(
+                                                    hsplanner_build::gear::is_unholy_group,
+                                                )
                                             }) =>
                                         {
                                             tr("gear.pick_unholy_affix")

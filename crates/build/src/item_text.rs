@@ -157,7 +157,7 @@ fn modifier_text(eq: &EquippedAffix, forged: bool) -> String {
     } else {
         def.description.clone()
     };
-    let unholy = if def.group_id == "random_unholy" {
+    let unholy = if gear::is_unholy_group(&def.group_id) {
         "[Unholy] "
     } else {
         ""
@@ -326,7 +326,7 @@ fn parse_modifier(line: &str, forged: bool) -> Result<EquippedAffix, String> {
     };
     let mut matches: Vec<_> = defs
         .values()
-        .filter(|a| a.tier == tier && (a.group_id == "random_unholy") == unholy)
+        .filter(|a| a.tier == tier && gear::is_unholy_group(&a.group_id) == unholy)
         .filter(|a| {
             a.description.eq_ignore_ascii_case(content)
                 || a.name.eq_ignore_ascii_case(content)
