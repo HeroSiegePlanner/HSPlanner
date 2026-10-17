@@ -2775,3 +2775,64 @@ fn extra_spell_projectiles_floor_the_percentage_then_add_flat() {
     assert_eq!(super::effective_projectile_count(3, &no_subtree, Some(&stats(50.0, 1.0))), 5);
     assert_eq!(super::effective_projectile_count(3, &no_subtree, None), 3);
 }
+
+// #163: fire synergies land in Pyro Technician's elemental part, Headbanger in its swing.
+#[test]
+fn pyro_technician_splits_fire_and_attack_synergies() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let skill_ranks: HashMap<String, u32> = [
+        ("pyro_technician", 10),
+        ("crowd_dive", 5),
+        ("headbanger", 5),
+        ("craving_for_another_killing", 5),
+    ]
+    .into_iter()
+    .map(|(id, rank)| (id.to_string(), rank))
+    .collect();
+    let (subskills, buffs, alloc_tree, sockets) =
+        (HashMap::new(), HashMap::new(), HashSet::new(), HashMap::new());
+    let (enemy, player, projectiles, resistances, procs) = (
+        HashMap::new(),
+        HashMap::new(),
+        HashMap::new(),
+        HashMap::new(),
+        HashMap::new(),
+    );
+    let custom_stats = vec![CustomStat {
+        stat_key: "skill_restrictions_removed".into(),
+        value: "100".into(),
+    }];
+    let mut deps = empty_deps(
+        &allocated,
+        &inventory,
+        &skill_ranks,
+        &subskills,
+        &buffs,
+        &custom_stats,
+        &alloc_tree,
+        &sockets,
+        &enemy,
+        &player,
+        &projectiles,
+        &resistances,
+        &procs,
+    );
+    deps.class_id = Some("bard");
+    deps.level = 50;
+    deps.main_skill_id = Some("pyro_technician");
+    let result = compute_build_performance(&deps);
+    let labels = |steps: &[CalculationStep]| -> Vec<String> {
+        steps
+            .iter()
+            .map(|step| step.label().to_string())
+            .filter(|label| label.starts_with("Synergy · "))
+            .collect()
+    };
+    let elemental = labels(result.damage.as_ref().unwrap().calculation());
+    let swing = labels(result.attack_damage.as_ref().unwrap().calculation());
+    for source in ["crowd dive", "craving for another killing", "intelligence"] {
+        assert!(elemental.contains(&format!("Synergy · {source}")), "{elemental:?}");
+    }
+    assert_eq!(swing, ["Synergy · headbanger"]);
+}
