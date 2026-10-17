@@ -1,5 +1,7 @@
 ## Feature
 
+- Build actions (…) has "Copy build code with stash": the code then also carries the build's stash items, and importing it restores them. Notes were already included in every build code; the plain Share button still leaves the stash out (#192).
+
 - Stats can be pinned with the star next to each stat. Pinned stats appear in their own panel at the top of the Stats page, follow the search, and are saved in settings for every build (#199).
 
 - Incarnation tree nodes can be excluded from Suggest Nodes: Alt-click a node to mark it with a red ring, and the optimizer will neither allocate it nor path through it. Alt-click again to allow it. Exclusions are saved with the build (#164).

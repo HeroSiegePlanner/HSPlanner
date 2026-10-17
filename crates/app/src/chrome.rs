@@ -1,4 +1,4 @@
-use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection};
+use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection, ShareWithStash};
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
     Icon, IconName, Sizable, WindowExt,
@@ -437,6 +437,7 @@ impl RenderOnce for TopBar {
                             .dropdown_menu(|menu, _, _| {
                                 menu.menu(tr("shell.save"), Box::new(Save))
                                     .menu(tr("loadouts.save_as"), Box::new(SaveAs))
+                                    .menu(tr("chrome.share_with_stash"), Box::new(ShareWithStash))
                             }),
                     )
                     .child(

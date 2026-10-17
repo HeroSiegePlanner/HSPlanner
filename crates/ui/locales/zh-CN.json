@@ -22,6 +22,7 @@
   "chrome.report_hint": "报告问题，可附上截图和构筑",
   "chrome.share": "分享",
   "chrome.share_hint": "将构筑代码复制到剪贴板",
+  "chrome.share_with_stash": "复制含仓库的构筑代码",
   "chrome.shortcut_escape": "Escape 关闭当前面板",
   "chrome.shortcut_save": "保存：Cmd/Ctrl+S · 撤销：Cmd/Ctrl+Z",
   "chrome.shortcut_search": "搜索：Enter 定位下一个匹配项",

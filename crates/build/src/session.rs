@@ -354,6 +354,14 @@ impl Session {
     }
     pub fn import_code(&mut self, code: &str) -> Result<String, String> {
         let (snapshot, notes, loadouts) = codec::decode_loadouts(code)?;
+        let stash: Vec<StashEntry> = codec::decode_stash(code)?
+            .into_iter()
+            .map(|item| StashEntry {
+                id: crate::library::new_id("stash"),
+                saved_at: chrono::Utc::now().timestamp_millis().max(0) as u64,
+                item,
+            })
+            .collect();
         let name = snapshot
             .class_id
             .as_deref()
@@ -363,7 +371,7 @@ impl Session {
         let id = self
             .state
             .library
-            .create(&name, &snapshot, &notes, &[], None)?;
+            .create(&name, &snapshot, &notes, &stash, None)?;
         self.state.library.build_mut(&id)?.loadouts = loadouts;
         self.open(&id)?;
         Ok(id)

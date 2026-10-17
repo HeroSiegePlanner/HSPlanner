@@ -22,6 +22,7 @@
   "chrome.report_hint": "Сообщить о проблеме, при желании приложив снимки экрана и билд",
   "chrome.share": "Поделиться",
   "chrome.share_hint": "Скопировать код билда в буфер обмена",
+  "chrome.share_with_stash": "Скопировать код билда с хранилищем",
   "chrome.shortcut_escape": "Escape закрывает активную панель",
   "chrome.shortcut_save": "Сохранить: Cmd/Ctrl+S · Отменить: Cmd/Ctrl+Z",
   "chrome.shortcut_search": "Поиск: Enter — перейти к следующему совпадению",

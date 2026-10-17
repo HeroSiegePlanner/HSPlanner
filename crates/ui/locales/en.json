@@ -22,6 +22,7 @@
   "chrome.report_hint": "Report a problem with optional screenshots and build",
   "chrome.share": "Share",
   "chrome.share_hint": "Copy the build code to the clipboard",
+  "chrome.share_with_stash": "Copy build code with stash",
   "chrome.shortcut_escape": "Escape closes the active panel",
   "chrome.shortcut_save": "Save: Cmd/Ctrl+S · Undo: Cmd/Ctrl+Z",
   "chrome.shortcut_search": "Search: Enter to center the next match",

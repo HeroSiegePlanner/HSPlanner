@@ -22,6 +22,7 @@
   "chrome.report_hint": "스크린샷과 빌드를 첨부하여 문제 신고",
   "chrome.share": "공유",
   "chrome.share_hint": "빌드 코드를 클립보드에 복사",
+  "chrome.share_with_stash": "보관함 포함 빌드 코드 복사",
   "chrome.shortcut_escape": "Escape로 활성 패널 닫기",
   "chrome.shortcut_save": "저장: Cmd/Ctrl+S · 실행 취소: Cmd/Ctrl+Z",
   "chrome.shortcut_search": "검색: Enter로 다음 결과로 이동",

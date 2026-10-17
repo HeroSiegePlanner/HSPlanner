@@ -83,6 +83,7 @@ gpui_kit::actions!(
         Quit,
         ToggleAutoSave,
         SaveAs,
+        ShareWithStash,
         ToggleDebugOverlay,
         OpenSettings
     ]
@@ -373,12 +374,14 @@ impl Shell {
             });
         }));
     }
-    fn copy_build_code(&mut self, cx: &mut Context<Self>) {
+    fn copy_build_code(&mut self, include_stash: bool, cx: &mut Context<Self>) {
         let draft = self.session.read(cx).draft();
-        match hsplanner_build::codec::encode_loadouts(
+        let stash = if include_stash { &draft.stash[..] } else { &[] };
+        match hsplanner_build::codec::encode_loadouts_with_stash(
             &draft.snapshot,
             &draft.notes,
             &draft.loadouts,
+            stash,
         ) {
             Ok(code) => {
                 cx.write_to_clipboard(ClipboardItem::new_string(code));
@@ -587,6 +590,9 @@ impl Render for Shell {
                 let _ = (this, cx);
             }))
             .on_action(cx.listener(|this, _: &SaveAs, window, cx| this.save_as_dialog(window, cx)))
+            .on_action(
+                cx.listener(|this, _: &ShareWithStash, _, cx| this.copy_build_code(true, cx)),
+            )
             .on_action(cx.listener(|this, _: &OpenSettings, window, cx| {
                 crate::settings::open(this.session.clone(), window, cx);
             }))
@@ -618,7 +624,7 @@ impl Render for Shell {
                             this.switch(Section::Library, window, cx)
                         }),
                     ),
-                    Box::new(cx.listener(|this, _, _, cx| this.copy_build_code(cx))),
+                    Box::new(cx.listener(|this, _, _, cx| this.copy_build_code(false, cx))),
                 )
                 .document(title, auto_save)
                 .ui_zoom(self.session.read(cx).state().settings.ui_zoom)
