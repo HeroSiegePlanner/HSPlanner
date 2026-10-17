@@ -804,6 +804,7 @@
   "planner.sidebar.net_mana": "순 마나 / 초",
   "planner.sidebar.no_skills": "이 직업에 스킬이 없습니다",
   "planner.sidebar.pick_skills": "스킬 탭에서 활성 스킬을 선택하세요",
+  "planner.sidebar.rank_note": "투자 {base} · 보너스 {bonus}",
   "planner.sidebar.remove_active": "{name} 활성 스킬에서 제거",
   "planner.sidebar.spawn_rate": "생성 빈도",
   "planner.sidebar.uptime": "유지율",

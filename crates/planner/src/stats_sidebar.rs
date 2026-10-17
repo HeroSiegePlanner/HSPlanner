@@ -1,6 +1,5 @@
 //! Persistent character summary matching the reference's left planner panel.
 use crate::TreeView;
-use gpui_kit::component::button::Button;
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
@@ -14,7 +13,6 @@ use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
-    controls::PlannerControl,
     numbers::{compact, compact_range},
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
@@ -67,9 +65,6 @@ fn section(key: &'static str, title: &'static str, content: Div, cx: &App) -> Di
                 .items_center()
                 .gap_2()
                 .mb_2()
-                .pb_1p5()
-                .border_b_1()
-                .border_color(p.accent_deep.opacity(0.2))
                 .text_color(p.accent_hot.opacity(0.7))
                 .font_family(theme::MONO_FONT_FAMILY)
                 .text_size(units(10.))
@@ -77,6 +72,12 @@ fn section(key: &'static str, title: &'static str, content: Div, cx: &App) -> Di
                 .child(TooltipText::new(key, title.to_uppercase(), 0.18)),
         )
         .child(content)
+}
+fn divider(cx: &App) -> Div {
+    div()
+        .my_2()
+        .border_t_1()
+        .border_color(cx.global::<TooltipTheme>().accent_deep.opacity(0.3))
 }
 fn row(label: &str, value: String, label_color: Hsla, value_color: Hsla) -> Div {
     row_with_note(label, value, None, label_color, value_color)
@@ -127,26 +128,32 @@ fn row_with_note(
         )
 }
 
+// Decimals shrink as values grow so ranges fit the narrow value column.
 fn number(value: f64) -> String {
-    let text = format!("{value:.2}");
-    text.trim_end_matches('0').trim_end_matches('.').to_owned()
+    let decimals = match value.abs() {
+        v if v >= 100. => 0,
+        v if v >= 10. => 1,
+        _ => 2,
+    };
+    let text = format!("{value:.decimals$}");
+    if decimals == 0 {
+        text
+    } else {
+        text.trim_end_matches('0').trim_end_matches('.').to_owned()
+    }
 }
 fn precise(value: Ranged) -> String {
-    if (value.1 - value.0).abs() < 0.005 {
-        number(value.0)
+    let (min, max) = (number(value.0), number(value.1));
+    if min == max {
+        min
     } else {
-        format!("{}–{}", number(value.0), number(value.1))
+        format!("{min}–{max}")
     }
 }
 fn signed_stat(value: Ranged, percent: bool) -> String {
     let sign = if value.0 >= 0. { "+" } else { "" };
     let suffix = if percent { "%" } else { "" };
-    let amount = if value.0 == value.1 {
-        number(value.0)
-    } else {
-        format!("[{}-{}]", number(value.0), number(value.1))
-    };
-    format!("{sign}{amount}{suffix}")
+    format!("{sign}{}{suffix}", precise(value))
 }
 fn ehp_rows(ehp: &EhpResult) -> Vec<(String, Option<f64>)> {
     if ehp.entries.is_empty() {
@@ -190,7 +197,6 @@ pub struct StatsSidebar {
     session: Entity<Session>,
     performance: Option<Arc<PlannerPerformance>>,
     scroll: ScrollHandle,
-    has_vertical_scroll: bool,
     _subscriptions: Vec<Subscription>,
 }
 impl StatsSidebar {
@@ -220,7 +226,6 @@ impl StatsSidebar {
             session,
             performance,
             scroll: ScrollHandle::new(),
-            has_vertical_scroll: false,
             _subscriptions: subscriptions,
         }
     }
@@ -284,50 +289,54 @@ impl StatsSidebar {
                 .map(|range| compact_range(range, scale))
                 .unwrap_or_else(|| "—".into());
             let remove = id.clone();
+            let label = trf(
+                "planner.sidebar.remove_active",
+                &[("name", name.to_string())],
+            );
             buttons = buttons.child(
-                Button::new(SharedString::from(format!("sidebar-active-{id}")))
-                    .planner_style(cx)
+                div()
                     .w_full()
-                    .h_auto()
-                    .px_2()
-                    .py_1()
-                    .line_height(relative(1.5))
-                    .font_weight(FontWeight::NORMAL)
-                    .map(|button| Styled::rounded(button, units(3.)))
+                    .min_w_0()
+                    .flex()
+                    .items_center()
+                    .gap_2()
+                    .pl_2()
+                    .rounded(units(3.))
                     .bg(p.panel_secondary)
-                    .accessibility_label(trf(
-                        "planner.sidebar.remove_active",
-                        &[("name", (name).to_string())],
-                    ))
-                    .cursor_tooltip(trf(
-                        "planner.sidebar.remove_active",
-                        &[("name", (name).to_string())],
-                    ))
+                    .text_size(units(11.))
                     .child(
                         div()
-                            .w_full()
-                            .flex()
-                            .items_center()
-                            .gap_2()
-                            .text_size(units(11.))
-                            .child(
-                                div()
-                                    .flex_1()
-                                    .min_w_0()
-                                    .truncate()
-                                    .text_color(p.text)
-                                    .child(name.to_owned()),
-                            )
-                            .child(div().text_color(p.accent_hot).child(dps)),
+                            .flex_1()
+                            .min_w_0()
+                            .truncate()
+                            .text_color(p.text)
+                            .child(name.to_owned()),
                     )
-                    .on_click(cx.listener(move |this, _, _, cx| {
-                        this.session.update(cx, |session, cx| {
-                            session.edit(|draft| {
-                                draft.snapshot.active_skill_ids.retain(|id| id != &remove)
+                    .child(
+                        div()
+                            .flex_shrink_0()
+                            .font_family(theme::MONO_FONT_FAMILY)
+                            .text_color(p.text)
+                            .child(dps),
+                    )
+                    .child(
+                        hsplanner_ui::controls::icon_button(
+                            SharedString::from(format!("sidebar-active-remove-{id}")),
+                            "×",
+                            false,
+                            cx,
+                        )
+                        .accessibility_label(label.clone())
+                        .cursor_tooltip(label)
+                        .on_click(cx.listener(move |this, _, _, cx| {
+                            this.session.update(cx, |session, cx| {
+                                session.edit(|draft| {
+                                    draft.snapshot.active_skill_ids.retain(|id| id != &remove)
+                                });
+                                cx.notify();
                             });
-                            cx.notify();
-                        });
-                    })),
+                        })),
+                    ),
             );
         }
         content = content.child(buttons);
@@ -354,47 +363,25 @@ impl StatsSidebar {
             .and_then(|value| value.rank_bonuses.get(&skill.name.trim().to_lowercase()))
             .copied()
             .unwrap_or_default();
-        let bonus_label = if bonus.0 == bonus.1 {
-            format!(
-                " ({rank}{}{})",
-                if bonus.0 >= 0. { "+" } else { "" },
-                number(bonus.0)
-            )
-        } else {
-            format!(" ({rank} +{}-{})", number(bonus.0), number(bonus.1))
-        };
-        content = content.child(
-            div()
-                .flex()
-                .items_baseline()
-                .justify_between()
-                .gap_2()
-                .py(rems(0.1875))
-                .text_size(units(12.))
-                .child(
-                    div()
-                        .flex_1()
-                        .min_w_0()
-                        .text_color(p.muted)
-                        .child(tr("planner.skills.rank")),
-                )
-                .child(
-                    div()
-                        .flex()
-                        .items_baseline()
-                        .flex_shrink_0()
-                        .font_family(theme::MONO_FONT_FAMILY)
-                        .child(div().text_color(p.text).child(rank_label))
-                        .when(bonus != (0., 0.), |view| {
-                            view.child(div().text_color(p.accent).child(bonus_label))
-                        })
-                        .child(
-                            div()
-                                .text_color(p.muted)
-                                .child(format!("/{}", skill.max_rank)),
-                        ),
+        let rank_note = (bonus != (0., 0.)).then(|| {
+            (
+                trf(
+                    "planner.sidebar.rank_note",
+                    &[
+                        ("base", rank.to_string()),
+                        ("bonus", signed_stat(bonus, false)),
+                    ],
                 ),
-        );
+                p.faint,
+            )
+        });
+        content = content.child(row_with_note(
+            tr("planner.skills.rank"),
+            format!("{rank_label}/{}", skill.max_rank),
+            rank_note,
+            p.muted,
+            p.text,
+        ));
         if let Some(cost) = cost {
             content = content.child(row(
                 tr("planner.sidebar.mana_cast"),
@@ -492,12 +479,7 @@ impl StatsSidebar {
                 ));
             }
         }
-        content = content.child(
-            div()
-                .my_2()
-                .border_t_1()
-                .border_color(p.accent_deep.opacity(0.3)),
-        );
+        content = content.child(divider(cx));
         if let Some(value) = performance {
             let damage = value
                 .attack_damage
@@ -527,7 +509,7 @@ impl StatsSidebar {
                     tr("planner.sidebar.entity_count"),
                     format!("×{}", precise(count)),
                     p.muted,
-                    p.accent_hot,
+                    p.text,
                 ));
             }
             for (label, range, hide_if_missing) in [
@@ -541,11 +523,6 @@ impl StatsSidebar {
                     value.ailment_dps_min.zip(value.ailment_dps_max),
                     true,
                 ),
-                (
-                    tr("planner.sidebar.combined_dps"),
-                    value.combined_dps_min.zip(value.combined_dps_max),
-                    false,
-                ),
             ] {
                 if hide_if_missing && range.is_none() {
                     continue;
@@ -556,9 +533,23 @@ impl StatsSidebar {
                         .map(|value| compact_range(value, scale))
                         .unwrap_or_else(|| "—".into()),
                     p.muted,
-                    p.accent_hot,
+                    p.text,
                 ));
             }
+            content = content.child(
+                row(
+                    tr("planner.sidebar.combined_dps"),
+                    value
+                        .combined_dps_min
+                        .zip(value.combined_dps_max)
+                        .map(|value| compact_range(value, scale))
+                        .unwrap_or_else(|| "—".into()),
+                    p.text,
+                    p.accent_hot,
+                )
+                .mt_1()
+                .font_weight(FontWeight::SEMIBOLD),
+            );
         }
         section(
             "sidebar-active-skills",
@@ -586,16 +577,10 @@ impl StatsSidebar {
             crate::stat_labels::stat_name(key, def.map(|def| def.name.as_str()).unwrap_or(key));
         let percent = def.is_some_and(|def| def.format.as_deref() == Some("percent"));
         let blue = matches!(key, "mana" | "mana_replenish");
-        let gold = matches!(
-            key,
-            "enhanced_damage" | "crit_chance" | "crit_damage" | "life"
-        );
         let color = if zero {
             p.faint
         } else if blue {
             theme::mana_color()
-        } else if gold {
-            p.accent_hot
         } else {
             p.text
         };
@@ -618,9 +603,6 @@ impl StatsSidebar {
 }
 impl Render for StatsSidebar {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let scroll = self.scroll.clone();
-        let had_vertical_scroll = self.has_vertical_scroll;
-        let weak = cx.entity().downgrade();
         let p = cx.global::<TooltipTheme>();
         let snapshot = self.session.read(cx).snapshot();
         let class = snapshot.class_id.as_deref().and_then(data::get_class);
@@ -728,12 +710,6 @@ impl Render for StatsSidebar {
                 ),
                 p.muted,
                 p.text,
-            ))
-            .child(row(
-                tr("planner.common.tree_nodes"),
-                hero.to_string(),
-                p.muted,
-                p.text,
             ));
         let mut attributes = section_body();
         for key in ATTRIBUTES {
@@ -755,7 +731,7 @@ impl Render for StatsSidebar {
                     &crate::stat_labels::attribute_name(&attribute.key, &attribute.name),
                     signed_stat(value, false),
                     color,
-                    color,
+                    p.text,
                 ));
             }
         }
@@ -767,19 +743,21 @@ impl Render for StatsSidebar {
         let mut defense = section_body();
         for key in DEFENSE {
             defense = defense.child(self.stat_line(key, performance, cx));
-            if *key == "mana_replenish"
-                && let Some(result) = performance
-            {
-                for (label, value) in ehp_rows(&result.current.ehp) {
-                    defense = defense.child(row(
-                        &label,
-                        value
-                            .map(|value| compact(value, "none"))
-                            .unwrap_or_else(|| "∞".into()),
-                        p.muted,
-                        p.accent_hot,
-                    ));
-                }
+        }
+        if let Some(result) = performance {
+            let rows = ehp_rows(&result.current.ehp);
+            if !rows.is_empty() {
+                defense = defense.child(divider(cx));
+            }
+            for (label, value) in rows {
+                defense = defense.child(row(
+                    &label,
+                    value
+                        .map(|value| compact(value, "none"))
+                        .unwrap_or_else(|| "∞".into()),
+                    p.muted,
+                    p.text,
+                ));
             }
         }
         let mut resistances = section_body();
@@ -808,11 +786,15 @@ impl Render for StatsSidebar {
                 signed_stat(value, true)
             };
             let color = theme::stat_color(tone, cx);
-            resistances =
-                resistances.child(row(label, shown, color, if zero { p.faint } else { color }));
+            resistances = resistances.child(row(
+                label,
+                shown,
+                color,
+                if zero { p.faint } else { p.text },
+            ));
         }
         div()
-            .w_72()
+            .w_full()
             .h_full()
             .flex_shrink_0()
             .min_h_0()
@@ -827,22 +809,8 @@ impl Render for StatsSidebar {
             .child(
                 div()
                     .size_full()
-                    .on_children_prepainted(move |_, _, cx| {
-                        let has_vertical_scroll = scroll.max_offset().y > px(0.);
-                        if has_vertical_scroll != had_vertical_scroll {
-                            let weak = weak.clone();
-                            cx.defer(move |cx| {
-                                let _ = weak.update(cx, |view, cx| {
-                                    if view.has_vertical_scroll != has_vertical_scroll {
-                                        view.has_vertical_scroll = has_vertical_scroll;
-                                        cx.notify();
-                                    }
-                                });
-                            });
-                        }
-                    })
                     .id("planner-stat-sidebar-scroll")
-                    .scrollbar_width(units(if self.has_vertical_scroll { 10. } else { 0. }))
+                    // No reserved gutter: the scrollbar overlays the rows' trailing padding.
                     .child(header)
                     .child(self.active_skills(snapshot, performance, cx))
                     .child(section(
@@ -885,6 +853,16 @@ impl Render for StatsSidebar {
 mod tests {
     use super::*;
     use hsplanner_engine::calc::defense::EhpEntry;
+    #[::core::prelude::v1::test]
+    fn sidebar_numbers_drop_decimals_as_values_grow() {
+        assert_eq!(signed_stat((270.44, 350.36), true), "+270–350%");
+        assert_eq!(signed_stat((61.1, 85.07), false), "+61.1–85.1");
+        assert_eq!(signed_stat((3.53, 4.), false), "+3.53–4");
+        assert_eq!(signed_stat((66., 66.), true), "+66%");
+        assert_eq!(signed_stat((99.996, 100.), false), "+100");
+        assert_eq!(signed_stat((-12., -4.), true), "-12–-4%");
+    }
+
     #[::core::prelude::v1::test]
     fn equal_ehp_collapses_and_different_elements_expand() {
         let mut ehp = EhpResult {

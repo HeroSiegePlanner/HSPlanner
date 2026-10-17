@@ -804,6 +804,7 @@
   "planner.sidebar.net_mana": "Net mana / sec",
   "planner.sidebar.no_skills": "No skills for this class",
   "planner.sidebar.pick_skills": "Pick active skills in the Skills tab",
+  "planner.sidebar.rank_note": "{base} allocated {bonus} bonus",
   "planner.sidebar.remove_active": "Remove {name} from active skills",
   "planner.sidebar.spawn_rate": "Spawn rate",
   "planner.sidebar.uptime": "Uptime",

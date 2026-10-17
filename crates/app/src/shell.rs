@@ -646,7 +646,7 @@ impl Render for Shell {
                     .when(self.section != Section::Library, |row| {
                         row.child(
                             div()
-                                .w_72()
+                                .w_80()
                                 .h_full()
                                 .flex_shrink_0()
                                 .child(self.sidebar.clone()),

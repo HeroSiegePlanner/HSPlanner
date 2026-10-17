@@ -804,6 +804,7 @@
   "planner.sidebar.net_mana": "净魔力 / 秒",
   "planner.sidebar.no_skills": "此职业没有技能",
   "planner.sidebar.pick_skills": "在技能页选择主动技能",
+  "planner.sidebar.rank_note": "已分配 {base} · 加成 {bonus}",
   "planner.sidebar.remove_active": "将{name}从主动技能中移除",
   "planner.sidebar.spawn_rate": "生成频率",
   "planner.sidebar.uptime": "覆盖率",

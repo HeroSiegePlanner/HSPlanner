@@ -1,5 +1,7 @@
 ## Feature
 
+- The left stat panel is easier to scan: it is slightly wider, values use fewer decimals and no brackets so labels stay on one line, Combined DPS is the only highlighted result, the skill rank shows its allocated and bonus split, eHP sits in its own group under Defense, and removing an active skill uses a dedicated × button instead of clicking the whole row.
+
 - Custom Config opens in its own editor ("Edit custom stats"): a text area with one stat per line, validation with line numbers, and a searchable list of every stat that inserts a line on click. Lines starting with // (or the rest of a line after //) are notes, kept with the build and its build code. Changes apply on Save (#193).
 
 - Build actions (…) has "Copy build code with stash": the code then also carries the build's stash items, and importing it restores them. Notes were already included in every build code; the plain Share button still leaves the stash out (#192).

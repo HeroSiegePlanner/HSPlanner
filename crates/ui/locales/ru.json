@@ -804,6 +804,7 @@
   "planner.sidebar.net_mana": "Баланс маны / сек",
   "planner.sidebar.no_skills": "У этого класса нет навыков",
   "planner.sidebar.pick_skills": "Выберите активные навыки на вкладке навыков",
+  "planner.sidebar.rank_note": "вложено {base} · бонус {bonus}",
   "planner.sidebar.remove_active": "Убрать {name} из активных навыков",
   "planner.sidebar.spawn_rate": "Частота появления",
   "planner.sidebar.uptime": "Время действия",
