@@ -1,5 +1,7 @@
 ## Feature
 
+- Boots can roll the game's "% of Movement Speed Converted to Total Damage Dealt" prefix (Walkers to Dominating, 1-4% up to 9-16%), so items such as Grimwalkers can be rebuilt. The stat is shown on the item but not yet included in damage (#174).
+
 - Signet of Shadows rolls its three Unholy stats from its own pool, as in the game: attribute conversions to Magic Skill or Attack Damage, Total Faster Cast Rate, Total Attack Speed, sentry and guardian stats and more, instead of the generic Unholy pool (#195).
 
 - Crematorium's Pledge gives -30% to Enemy Fire Resistance, as in the game, instead of Ignore Lightning Resistance (#194).

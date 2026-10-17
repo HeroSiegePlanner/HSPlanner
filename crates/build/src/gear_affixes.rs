@@ -128,6 +128,15 @@ mod tests {
     }
 
     #[test]
+    fn movement_speed_to_total_damage_rolls_only_on_boots() {
+        let id = "1_4_of_movement_speed_converted_to_total_damage_dealt_t5_dominating";
+        let mut boots = make_item("boots_normal_boots").unwrap();
+        add_affix(&mut boots, id).unwrap();
+        let mut helmet = make_item("helmet_normal_cap").unwrap();
+        assert!(add_affix(&mut helmet, id).is_err());
+    }
+
+    #[test]
     fn signet_of_shadows_rolls_its_own_unholy_pool() {
         let mut item = make_item("ring_heroic_signet_of_shadows_arcane").unwrap();
         assert!(add_affix(&mut item, "random_unholy_to_strength").is_err());

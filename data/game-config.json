@@ -3149,6 +3149,12 @@
       "format": "percent"
     },
     {
+      "key": "movement_speed_to_total_damage",
+      "name": "Movement Speed Converted to Total Damage Dealt",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "increased_mana_to_magic_skill_damage",
       "name": "Increased Maximum Mana Added as Magic Skill Damage",
       "category": "offense",

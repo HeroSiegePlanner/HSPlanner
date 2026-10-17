@@ -65,6 +65,7 @@
   "mana_costs_decreased_by_1_5": ["Boots", "Helmet", "Weapon:Caster"],
   "damage_taken_reduced_by_1_10": ["Chest"],
   "1_to_summon_skills": ["Boots", "Helmet", "Ring"],
+  "1_4_of_movement_speed_converted_to_total_damage_dealt": ["Boots"],
   "mana_regeneration_increased_by_21": ["Flask"],
   "life_regeneration_increased_by_17_22": ["Flask"],
   "17_faster_regeneration": ["Flask"],

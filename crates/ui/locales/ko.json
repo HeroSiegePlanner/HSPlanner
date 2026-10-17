@@ -1411,6 +1411,7 @@
   "planner.stat.monsters_rest_in_peace": "몬스터가 영원히 안식함",
   "planner.stat.movement_speed": "이동 속도",
   "planner.stat.movement_speed_to_attack_damage": "이동 속도를 공격 피해로 전환",
+  "planner.stat.movement_speed_to_total_damage": "이동 속도를 총 피해로 전환",
   "planner.stat.multicast_chance": "다중 시전 확률",
   "planner.stat.multishot_chance": "다중 사격 확률",
   "planner.stat.negative_resists_to_damage": "음수인 모든 저항을 피해 증가로 추가",

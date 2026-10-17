@@ -1411,6 +1411,7 @@
   "planner.stat.monsters_rest_in_peace": "Монстры покоятся с миром",
   "planner.stat.movement_speed": "Скорость передвижения",
   "planner.stat.movement_speed_to_attack_damage": "Скорость передвижения преобразуется в урон атак",
+  "planner.stat.movement_speed_to_total_damage": "Скорость передвижения преобразуется в общий наносимый урон",
   "planner.stat.multicast_chance": "Шанс многократного применения",
   "planner.stat.multishot_chance": "Шанс множественного выстрела",
   "planner.stat.negative_resists_to_damage": "Отрицательные значения всех сопротивлений добавляются к увеличению урона",

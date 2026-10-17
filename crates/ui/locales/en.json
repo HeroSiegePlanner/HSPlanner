@@ -1411,6 +1411,7 @@
   "planner.stat.monsters_rest_in_peace": "Monsters Rest In Peace",
   "planner.stat.movement_speed": "Movement Speed",
   "planner.stat.movement_speed_to_attack_damage": "Movement Speed Converted to Attack Damage",
+  "planner.stat.movement_speed_to_total_damage": "Movement Speed Converted to Total Damage Dealt",
   "planner.stat.multicast_chance": "Chance to Multicast",
   "planner.stat.multishot_chance": "Multishot Chance",
   "planner.stat.negative_resists_to_damage": "Negative All Resistances Added as Increased Damage",

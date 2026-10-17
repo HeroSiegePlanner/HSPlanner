@@ -1411,6 +1411,7 @@
   "planner.stat.monsters_rest_in_peace": "怪物安息",
   "planner.stat.movement_speed": "移动速度",
   "planner.stat.movement_speed_to_attack_damage": "移动速度转化为攻击伤害",
+  "planner.stat.movement_speed_to_total_damage": "移动速度转化为总伤害",
   "planner.stat.multicast_chance": "多重施放概率",
   "planner.stat.multishot_chance": "多重射击概率",
   "planner.stat.negative_resists_to_damage": "将所有负抗性附加为伤害提高",
