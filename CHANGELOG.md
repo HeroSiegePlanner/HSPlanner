@@ -1,5 +1,7 @@
 ## Feature
 
+- Equipping a relic whose proc grants a buff (e.g. Skull Axe, Shiv) turns that buff on in Config. Editing the same relic keeps your own setting (#157).
+
 - Buffs cast by relic procs appear under Item Blessings in Config and apply when toggled. Shiv's Live by the Sword adds 28% + 1% per level Attack Speed and Movement Speed, and Skull Axe's Demon Form can now be toggled too (#158).
 
 - Boots can roll the game's "% of Movement Speed Converted to Total Damage Dealt" prefix (Walkers to Dominating, 1-4% up to 9-16%), so items such as Grimwalkers can be rebuilt. The stat is shown on the item but not yet included in damage (#174).

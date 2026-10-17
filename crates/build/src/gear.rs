@@ -291,6 +291,19 @@ pub fn commit(
             return Err("This charm will not fit. Free up space first.".into());
         }
     }
+    let newly_equipped = item
+        .as_ref()
+        .filter(|item| {
+            !mercenary
+                && snapshot
+                    .inventory
+                    .get(slot)
+                    .is_none_or(|old| old.base_id != item.base_id)
+        })
+        .and_then(|item| data::get_item(&item.base_id));
+    if let Some(base) = newly_equipped {
+        enable_proc_buffs(snapshot, base);
+    }
     let inventory = if mercenary {
         &mut snapshot.merc_inventory
     } else {
@@ -313,6 +326,17 @@ pub fn commit(
         snapshot.validate_offhand();
     }
     Ok(())
+}
+
+/// A relic's proc buff starts enabled in Config when the relic is equipped.
+fn enable_proc_buffs(snapshot: &mut BuildSnapshot, base: &ItemBase) {
+    for grant in data::proc_skill_grants(base) {
+        if let Some(condition) = data::get_item_granted_skill_by_name(&grant.name)
+            .and_then(|skill| skill.condition.clone())
+        {
+            snapshot.player_conditions.insert(condition, true);
+        }
+    }
 }
 
 pub fn stash(draft: &mut Draft, item: &EquippedItem) {
@@ -523,6 +547,25 @@ pub fn charm_layout(charms: &[(String, u32, u32)], extra: bool) -> CharmLayout {
 #[cfg(test)]
 mod layout_tests {
     use super::*;
+
+    #[test]
+    fn equipping_a_buff_relic_enables_its_blessing_once() {
+        let mut snapshot = BuildSnapshot::default();
+        let shiv = make_item("relic_relic_shiv").unwrap();
+        commit(&mut snapshot, "relic_1", Some(shiv.clone()), false, false).unwrap();
+        assert_eq!(
+            snapshot.player_conditions.get("live_by_the_sword_buff"),
+            Some(&true)
+        );
+        snapshot
+            .player_conditions
+            .insert("live_by_the_sword_buff".into(), false);
+        commit(&mut snapshot, "relic_1", Some(shiv), false, false).unwrap();
+        assert_eq!(
+            snapshot.player_conditions.get("live_by_the_sword_buff"),
+            Some(&false)
+        );
+    }
 
     #[test]
     fn positions_preserve_reference_order_and_blocked_cells() {
