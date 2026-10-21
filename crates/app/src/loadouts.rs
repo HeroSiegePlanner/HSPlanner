@@ -12,6 +12,7 @@ use gpui_kit::{
     *,
 };
 use hsplanner_build::{loadout::LoadoutKind, session::Session};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::{
     controls::{ButtonTone, PlannerControl, planner_button},
     i18n::{tr, trf},
@@ -168,7 +169,7 @@ impl LoadoutBar {
         let owner = cx.entity().downgrade();
         // The menu is transient; return dialog focus to the retained selector.
         window.focus(&self.select.read(cx).focus_handle(cx), cx);
-        window.open_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_dialog(cx, move |dialog, _, cx| {
             let target = owner.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();

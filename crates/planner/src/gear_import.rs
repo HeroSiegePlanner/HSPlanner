@@ -4,6 +4,7 @@ use gpui_kit::base::Disableable;
 use gpui_kit::component::WindowExt;
 use hsplanner_engine::calc::types::ItemBase;
 use hsplanner_engine::tooltip_parse::{self, LineStatus, TooltipParseResult};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_footer, modal_header},
     controls::{ButtonSize, ButtonTone, command_button, modal_button, segment},
@@ -12,7 +13,7 @@ use hsplanner_ui::{
 impl GearView {
     pub(super) fn open_import(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let view = cx.new(|_| ImportView::new(self.session.clone(), self.mercenary));
-        window.open_dialog(cx, move |dialog, window, cx| {
+        window.open_planner_dialog(cx, move |dialog, window, cx| {
             let palette = cx.global::<TooltipTheme>();
             dialog
                 .p_0()

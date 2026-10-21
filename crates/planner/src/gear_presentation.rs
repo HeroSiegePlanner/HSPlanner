@@ -3,6 +3,7 @@ use super::*;
 use crate::gear_stash::{self, StashRow};
 use crate::item_tooltip;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::components::{panel, panel_with_trailing, section_heading};
 use hsplanner_ui::controls::segment;
 use hsplanner_ui::scroll::PageScroll;
@@ -132,7 +133,7 @@ impl GearView {
         });
         let weak = owner.downgrade();
         let mercenary = self.mercenary;
-        window.open_dialog(cx, move |dialog, window, cx| {
+        window.open_planner_dialog(cx, move |dialog, window, cx| {
             let on_close = weak.clone();
             let palette = cx.global::<TooltipTheme>();
             let view = owner.read(cx);

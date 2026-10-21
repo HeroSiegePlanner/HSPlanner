@@ -1,12 +1,13 @@
 use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection, ShareWithStash};
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
-    Icon, IconName, Sizable, WindowExt,
+    Icon, IconName, Sizable,
     button::{Button, ButtonCustomVariant, ButtonVariants},
     link::Link,
     menu::DropdownMenu,
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
@@ -459,7 +460,7 @@ impl RenderOnce for TopBar {
                             .label("?")
                             .cursor_tooltip(tr("chrome.shortcuts"))
                             .on_click(|_, window, cx| {
-                                window.open_dialog(cx, |dialog, _, _| {
+                                window.open_planner_dialog(cx, |dialog, _, _| {
                                     dialog.title(tr("chrome.shortcuts")).child(
                                         div()
                                             .flex()

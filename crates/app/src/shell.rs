@@ -11,6 +11,7 @@ use hsplanner_build::{loadout::LoadoutKind, session::Session, storage::Writer};
 use hsplanner_library::LibraryView;
 use hsplanner_notes::NotesView;
 use hsplanner_planner::TreeView;
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::controls::PlannerControl;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::theme::TooltipTheme;
@@ -408,7 +409,7 @@ impl Shell {
         let owner = cx.entity().downgrade();
         // Shell renders the dialog layer, so its builder must not read Shell.
         let dialog_error = cx.new(|_| None::<String>);
-        window.open_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_dialog(cx, move |dialog, _, cx| {
             let target = owner.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();
@@ -526,7 +527,6 @@ impl Render for Shell {
                 self.review_geometry = Some(geometry);
             }
         }
-        let dialog_layer = Root::render_dialog_layer(window, cx);
         let palette = cx.global::<TooltipTheme>();
         let (panel, text, negative) = (palette.panel, palette.text, palette.negative);
         let session = self.session.read(cx);
@@ -669,7 +669,6 @@ impl Render for Shell {
                     .then(|| SharedString::from(tr(&self.status))),
                 self.updater.clone(),
             ))
-            .children(dialog_layer)
             .map(|root| {
                 #[cfg(debug_assertions)]
                 let root = root.child(self.debug.clone());
@@ -688,6 +687,7 @@ pub fn run(
             gpui_kit::init(cx);
             hsplanner_ui::theme::init(cx);
             hsplanner_ui::scroll::init(cx);
+            hsplanner_ui::tooltip::init(cx);
             cx.set_http_client(std::sync::Arc::new(
                 reqwest_client::ReqwestClient::user_agent(crate::update::USER_AGENT)
                     .expect("http client"),

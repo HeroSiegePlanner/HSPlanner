@@ -9,6 +9,7 @@ use hsplanner_build::session::Session;
 use hsplanner_engine::calc::stats::{
     SourceContribution, SourceType, StatBreakdown, StatTypeSubtotal,
 };
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -701,7 +702,7 @@ fn open(
             _subscription: subscription,
         }
     });
-    window.open_dialog(cx, move |dialog, window, cx| {
+    window.open_planner_dialog(cx, move |dialog, window, cx| {
         let height = view.read(cx).measured_height;
         dialog
             .opacity(if height.is_some() { 1. } else { 0. })

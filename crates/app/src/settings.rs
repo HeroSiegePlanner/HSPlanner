@@ -1,11 +1,7 @@
 //! Application preferences dialog, after the reference SettingsModal.
-use gpui_kit::{
-    base::Link,
-    component::{WindowExt, checkbox::Checkbox},
-    prelude::*,
-    *,
-};
+use gpui_kit::{base::Link, component::checkbox::Checkbox, prelude::*, *};
 use hsplanner_build::session::{Session, Settings};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_header},
     controls::segment,
@@ -32,7 +28,7 @@ const PREVIEW_SAMPLES: [f64; 3] = [45_678., 12_345_678., 2_500_000_000.];
 
 pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) {
     let view = cx.new(|cx| SettingsView::new(session, cx));
-    window.open_dialog(cx, move |dialog, window, cx| {
+    window.open_planner_dialog(cx, move |dialog, window, cx| {
         let palette = cx.global::<TooltipTheme>();
         dialog
             .p_0()

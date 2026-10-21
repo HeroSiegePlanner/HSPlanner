@@ -1,10 +1,11 @@
 use anyhow::Context as _;
 use futures::AsyncReadExt;
-use gpui_kit::component::{WindowExt, button::Button};
+use gpui_kit::component::button::Button;
 use gpui_kit::http_client::{
     AsyncBody, HttpClient, HttpRequestExt, RedirectPolicy, Request, Response,
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{controls::PlannerControl, theme::TooltipTheme};
 use semver::Version;
@@ -320,7 +321,7 @@ fn install(_: &Path) -> anyhow::Result<()> {
 }
 
 pub fn open_dialog(updater: Entity<Updater>, window: &mut Window, cx: &mut App) {
-    window.open_dialog(cx, move |dialog, _, cx| {
+    window.open_planner_dialog(cx, move |dialog, _, cx| {
         let palette = cx.global::<TooltipTheme>();
         let state = updater.read(cx).state.clone();
         let (update, installing) = match &state {

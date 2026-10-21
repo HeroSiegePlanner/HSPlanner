@@ -1,4 +1,5 @@
 //! Class skill trees and their inspector. The document owns ranks; this view owns selection.
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -409,7 +410,7 @@ impl SkillsView {
         };
         let session = self.session.clone();
         let view = cx.new(|cx| SubtreeView::new(session, skill, cx));
-        window.open_dialog(cx, move |dialog, window, _| {
+        window.open_planner_dialog(cx, move |dialog, window, _| {
             let rem = window.rem_size();
             let viewport = window.viewport_size();
             let width = (viewport.width - rem * 3.).min(rem * (680. / 13.));

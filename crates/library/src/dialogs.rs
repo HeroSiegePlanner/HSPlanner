@@ -1,5 +1,6 @@
 use super::*;
-use gpui_kit::component::{WindowExt, dialog::Confirm};
+use gpui_kit::component::dialog::Confirm;
+use hsplanner_ui::components::PlannerDialogExt;
 
 #[derive(Clone, Copy)]
 pub(super) enum EditKind {
@@ -48,7 +49,7 @@ impl LibraryView {
         }
         let focus = input.read(cx).focus_handle(cx);
         let weak = cx.entity().downgrade();
-        window.open_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_dialog(cx, move |dialog, _, cx| {
             let title = tr(title_key);
             let target = weak.clone();
             let input_for_save = input.clone();

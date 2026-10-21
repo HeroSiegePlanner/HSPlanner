@@ -5,6 +5,7 @@ use gpui_kit::component::{
     text::{TextView, TextViewStyle},
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::tr;
 use hsplanner_ui::{
     controls::PlannerControl,
@@ -15,7 +16,7 @@ const NOTES: &str = include_str!("../../../CHANGELOG.md");
 const RELEASES: &str = "https://github.com/zium1337/HSPlanner/releases";
 
 pub fn open(window: &mut Window, cx: &mut App) {
-    window.open_dialog(cx, |dialog, window, cx| {
+    window.open_planner_dialog(cx, |dialog, window, cx| {
         let palette = cx.global::<TooltipTheme>();
         // Dialog's API takes resolved pixels; derive them from zoom and viewport.
         let width = (window.rem_size() * 49.).min(window.bounds().size.width * 0.92);

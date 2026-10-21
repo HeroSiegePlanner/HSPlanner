@@ -14,6 +14,7 @@ use hsplanner_engine::calc::{
     data,
     types::{Affix, AffixSign, EquippedAffix, TreeSocketContent},
 };
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_footer, modal_header, modal_status},
@@ -102,7 +103,7 @@ impl TreeView {
         let session = self.session.clone();
         let editor = cx.new(|cx| JewelryEditor::new(session, node_id, window, cx));
         let focus = self.focus.clone();
-        window.open_dialog(cx, move |dialog, window, cx| {
+        window.open_planner_dialog(cx, move |dialog, window, cx| {
             let focus = focus.clone();
             let palette = cx.global::<theme::TooltipTheme>();
             dialog
