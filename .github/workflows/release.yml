@@ -33,16 +33,28 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-      - uses: actions/setup-python@v7
-        with:
-          python-version: '3.12'
       - name: Prepare version
         id: version
         env:
           RELEASE_TAG: ${{ inputs.tag }}
         run: |
-          test "$GITHUB_REF_TYPE" = branch || { echo 'Run Release from a branch.'; exit 1; }
-          python tools/release.py prepare "$RELEASE_TAG" --output "$GITHUB_OUTPUT"
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          test "$GITHUB_REF_TYPE" = branch || fail 'Run Release from a branch.'
+          version=$(echo "$RELEASE_TAG" | tr -d '[:space:]')
+          version=${version#v}
+          [[ $version =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
+            || fail 'Enter a version such as 1.1.0 or v1.1.0; use the prerelease checkbox for previews.'
+          for part in ${version//./ }; do
+            (( part <= 65535 )) || fail 'Version components must not exceed 65535 (Windows installer limit).'
+          done
+          grep -q '[^[:space:]]' CHANGELOG.md || fail 'CHANGELOG.md is empty.'
+          sed -i "/^\[workspace.package\]/,/^\[/ s/^version = \".*\"/version = \"$version\"/" Cargo.toml
+          # Rewrites only the workspace packages' versions in Cargo.lock.
+          cargo update --workspace
+          actual=$(cargo metadata --locked --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "hsplanner") | .version')
+          test "$actual" = "$version" || fail "Cargo.toml still reports $actual."
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
       - name: Check that the version is unused
         env:
           GH_TOKEN: ${{ github.token }}
@@ -50,8 +62,8 @@ jobs:
         run: |
           existing=$(git ls-remote --tags origin "refs/tags/$TAG")
           test -z "$existing" || { echo "Tag $TAG already exists. Re-run failed jobs to resume a release."; exit 1; }
-          gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[].tag_name' > "$RUNNER_TEMP/release-tags.txt"
-          python -c 'import os, pathlib; assert os.environ["TAG"] not in pathlib.Path(os.environ["RUNNER_TEMP"], "release-tags.txt").read_text().splitlines(), "Release already exists"'
+          tags=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[].tag_name')
+          if grep -qxF "$TAG" <<< "$tags"; then echo "::error::Release $TAG already exists."; exit 1; fi
       - name: Commit version and create tag
         id: commit
         env:
@@ -91,15 +103,39 @@ jobs:
         with:
           ref: ${{ needs.prepare.outputs.sha }}
           persist-credentials: false
-      - uses: actions/setup-python@v7
-        with:
-          python-version: '3.12'
       - uses: actions/download-artifact@v8
         with:
           pattern: hsplanner-*
           path: release-downloads
       - name: Verify packages and combine checksums
-        run: python tools/release.py collect release-downloads release-assets
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          patterns() {
+            case "$1" in
+              hsplanner-Windows-X64) echo '*.exe' ;;
+              hsplanner-Linux-X64) echo '*.deb *.AppImage *.tar.gz PKGBUILD' ;;
+              hsplanner-macOS-ARM64) echo '*.dmg' ;;
+            esac
+          }
+          mkdir release-assets
+          for artifact in hsplanner-Windows-X64 hsplanner-Linux-X64 hsplanner-macOS-ARM64; do
+            directory="release-downloads/$artifact"
+            (cd "$directory" && sha256sum --check --strict SHA256SUMS) || fail "Checksum mismatch in $artifact."
+            expected=""
+            for pattern in $(patterns "$artifact"); do
+              matches=("$directory"/$pattern)
+              [[ ${#matches[@]} -eq 1 && -f ${matches[0]} ]] || fail "Expected one $pattern in $artifact."
+              name=$(basename "${matches[0]}")
+              [[ ! -e release-assets/$name ]] || fail "Duplicate release asset: $name."
+              cp "${matches[0]}" release-assets/
+              [[ $name == PKGBUILD ]] || expected+="$name"$'\n'
+            done
+            listed=$(awk '{print $2}' "$directory/SHA256SUMS" | sort)
+            [[ $listed == "$(printf '%s' "$expected" | sort)" ]] || fail "Unexpected or missing packages in $artifact checksums."
+          done
+          (cd release-assets && sha256sum -- * > "$RUNNER_TEMP/SHA256SUMS" && mv "$RUNNER_TEMP/SHA256SUMS" SHA256SUMS)
+          cat release-assets/SHA256SUMS
       - name: Publish complete release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -107,4 +143,28 @@ jobs:
           RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
           RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
           PRERELEASE: ${{ inputs.prerelease }}
-        run: python tools/release.py publish "$RELEASE_TAG" "$RELEASE_SHA" release-assets --prerelease "$PRERELEASE"
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          version=$(sed -n '/^\[workspace.package\]/,/^\[/ s/^version = "\(.*\)"/\1/p' Cargo.toml)
+          [[ $RELEASE_TAG == "v$version" ]] || fail 'Release tag does not match the application version.'
+          [[ $RELEASE_SHA =~ ^[0-9a-f]{40}$ ]] || fail 'Invalid release commit.'
+          (cd release-assets && sha256sum --check --strict SHA256SUMS) || fail 'Release assets changed after verification.'
+          listed=$(awk '{print $2}' release-assets/SHA256SUMS | sort)
+          [[ $listed == "$(ls release-assets | grep -vx SHA256SUMS | sort)" ]] || fail 'Release checksums do not cover all assets.'
+          ref=$(gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_TAG" --jq '.object.type + " " + .object.sha')
+          [[ $ref == "commit $RELEASE_SHA" ]] || fail 'Release tag does not point to the tested commit.'
+          # Listing must succeed; a network or authentication error must not mean 'absent'.
+          releases=$(gh api --paginate "repos/$GH_REPO/releases" --jq '.[] | "\(.tag_name) \(.draft) \(.target_commitish)"')
+          existing=$(awk -v tag="$RELEASE_TAG" '$1 == tag {print $2 " " $3}' <<< "$releases")
+          if [[ -n $existing ]]; then
+            [[ $existing == "true $RELEASE_SHA" ]] || fail 'Refusing to replace a published release or a draft from another commit.'
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --target "$RELEASE_SHA" --draft \
+              --title "$RELEASE_TAG" --notes-file CHANGELOG.md --prerelease="$PRERELEASE"
+          fi
+          # A failed upload leaves an unpublished draft. Re-running the failed job can resume it.
+          gh release upload "$RELEASE_TAG" release-assets/* --clobber
+          latest=true
+          [[ $PRERELEASE == true ]] && latest=false
+          gh release edit "$RELEASE_TAG" --draft=false --prerelease="$PRERELEASE" --latest="$latest"

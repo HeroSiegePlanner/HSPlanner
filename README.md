@@ -137,7 +137,7 @@ cargo build --release -p hsplanner
 ```
 
 The native executable is `target/release/hsplanner` (`.exe` on Windows).
-Native installer tooling is available via `python3 tools/package-native.py`;
+Native installers are built by `.github/workflows/native-package.yml`;
 the app checks GitHub releases for updates and can install them from the footer.
 See [packaging/README.md](packaging/README.md).
 
@@ -150,7 +150,6 @@ See [packaging/README.md](packaging/README.md).
 | `data/` | Shared game JSON; current base is Season 10 |
 | `assets/` | Shared graphics (skills, items, tree nodes) |
 | `packaging/` | Native installer configuration and icons |
-| `tools/` | Packaging and optional visual comparison tools |
 
 ## FAQ
 

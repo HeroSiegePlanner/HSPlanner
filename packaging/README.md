@@ -7,16 +7,19 @@ and its identifier remains `com.zium.hsplanner.gpui`.
 
 ## Build locally
 
-Use Python 3.11+, the repository's stable Rust toolchain and the platform build
-requirements in `.github/workflows/native.yml`. Node.js/Tauri are not needed.
+Use the repository's stable Rust toolchain, `jq` and the platform build
+requirements in `.github/workflows/native.yml`. Python, Node.js and Tauri are not needed.
 
 ```sh
 cargo install cargo-packager --version 0.11.8 --locked
-python3 tools/package-native.py
 ```
 
-The script builds only `hsplanner`, reads the version from root `Cargo.toml`, and
-writes packages to `target/packages/release/`. Formats are host-specific:
+Packages come from the **Build native installers** step in
+`.github/workflows/native-package.yml`. To package locally, run that step's script
+from the repository root in bash with `RUNNER_OS` set to `macOS`, `Windows` or
+`Linux`. It builds only `hsplanner` in release mode, reads the version from root
+`Cargo.toml`, and writes packages plus `SHA256SUMS` to `target/packages/release/`.
+Formats are host-specific:
 
 | Host | Output |
 |---|---|
@@ -27,10 +30,6 @@ writes packages to `target/packages/release/`. Formats are host-specific:
 Linux requires native Wayland and a working Vulkan driver. Initial DEB dependencies
 target Ubuntu 24.04; other distributions need separate installation verification.
 RPM packaging is not implemented by the pinned packager and remains a follow-up.
-
-For a test package: `python3 tools/package-native.py --debug`. Use `--formats app`
-on macOS for a quick bundle, or `--skip-build` only with a matching already-built
-executable. `HSPLANNER_PACKAGER` can point to a locally installed packager binary.
 
 ## GitHub workflow and signing
 
