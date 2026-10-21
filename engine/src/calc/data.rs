@@ -701,6 +701,27 @@ mod tests {
     }
 
     #[test]
+    fn potion_buffs_match_game_values_and_need_their_toggle() {
+        let at_rank = |name: &str, key: &str, rank: f64| {
+            let skill = get_item_granted_skill_by_name(name).expect(name);
+            assert!(skill.condition.is_some(), "{name} applies without a toggle");
+            let passive = skill.passive_stats.as_ref().expect(name);
+            let get = |map: &Option<crate::calc::types::StatMap>| {
+                map.as_ref()
+                    .and_then(|m| m.get(key).copied())
+                    .unwrap_or(0.)
+            };
+            get(&passive.base) + get(&passive.per_rank) * rank
+        };
+        assert_eq!(at_rank("Berserker's Rage", "damage", 1.), 27.);
+        assert_eq!(at_rank("Berserker's Rage", "damage", 5.), 39.);
+        assert_eq!(at_rank("Berserker's Rage", "life_steal", 5.), 0.);
+        assert_eq!(at_rank("Drunken Infused Wisdom", "all_skills", 1.), 1.);
+        assert_eq!(at_rank("Drunken Infused Wisdom", "all_skills", 5.), 5.);
+        assert_eq!(at_rank("Caffeinated", "movement_speed", 1.), 60.);
+    }
+
+    #[test]
     fn can_star_forge_covers_gear_and_charms_only() {
         assert!(super::can_star_forge("weapon", "heroic"));
         assert!(super::can_star_forge("charm_1", "common"));

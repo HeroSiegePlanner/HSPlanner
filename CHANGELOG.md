@@ -1,5 +1,7 @@
 ## Feature
 
+- Equipped potions now count in the calculations: a potion that is on in Gear applies its buff, with no separate toggle in Config. Elixir of Death gives +27–39% Damage, Empty Bottle of Vodka +1–5 All Skills, and Sarcaster's Coffee Mug +60% Movement Speed, matching the game.
+
 - Weapon choices follow the game's class rules. Viking, Marksman, Nomad, Redneck, Samurai, Amazon, Demon Slayer, Marauder, Shield Lancer and Butcher cannot equip Wands, Books, Spellblades or Flasks; Witch's Wand and The Absence of Constraint (Unbound Power) lift that block. Mercenaries hold only their role's weapons (Knight melee, Archer ranged, Magister spell; Novelty for all). Off-hand weapons follow each class's dual-wield list (Sword, Dagger, Mace, Axe, Claw, Gun), with Hercules Grip and Master of Wands still adding their weapons. Changing class or mercenary removes weapons that no longer fit.
 
 - The left stat panel is easier to scan: it is slightly wider, values use fewer decimals and no brackets so labels stay on one line, Combined DPS is the only highlighted result, the skill rank shows its allocated and bonus split, eHP sits in its own group under Defense, and removing an active skill uses a dedicated × button instead of clicking the whole row.

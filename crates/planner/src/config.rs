@@ -1432,7 +1432,12 @@ impl ConfigView {
     fn blessings(&self, cx: &Context<Self>) -> Option<Div> {
         let snapshot = self.session.read(cx).snapshot();
         let mut granted = std::collections::BTreeMap::new();
-        for item in snapshot.inventory.values() {
+        // Potion buffs follow the potion's own toggle in Gear.
+        for (_, item) in snapshot
+            .inventory
+            .iter()
+            .filter(|(slot, _)| !slot.starts_with("potion_"))
+        {
             let Some(base) = data::get_item(&item.base_id) else {
                 continue;
             };

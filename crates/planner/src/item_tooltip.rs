@@ -201,6 +201,8 @@ pub(crate) enum Line {
         label: String,
         value: String,
     },
+    /// Short (value, label) facts read as one line: "20 s duration · 45 s cooldown".
+    Facts(Vec<(String, String)>),
     Text {
         text: String,
         style: LineStyle,
@@ -411,6 +413,29 @@ fn stat_line(key: &str, value: Ranged) -> String {
     format!("{} {}", format_ranged(value, key), stat_name(key))
 }
 
+/// Potion lines that describe the flask itself: (display order, value, label key).
+fn flask_fact(effect: &str) -> Option<(u8, String, &'static str)> {
+    let lower = effect.trim().to_lowercase();
+    let value = lower
+        .split_whitespace()
+        .find_map(|w| w.parse::<f64>().ok())?;
+    let seconds = || format!("{} s", num(value));
+    if lower.starts_with("potion effect duration") {
+        Some((0, seconds(), "item.potion_duration"))
+    } else if lower.starts_with("flask cooldown") {
+        Some((1, seconds(), "item.flask_cooldown"))
+    } else if lower.ends_with("maximum potion charges") {
+        let label = if value == 1. {
+            "item.potion_charge"
+        } else {
+            "item.potion_charges"
+        };
+        Some((2, num(value), label))
+    } else {
+        None
+    }
+}
+
 pub(crate) fn build_model(
     base: &ItemBase,
     equipped: Option<&EquippedItem>,
@@ -458,6 +483,21 @@ pub(crate) fn build_model(
     }
     if !rows.is_empty() {
         sections.push(Section::plain(rows));
+    }
+    let mut flask: Vec<_> = base
+        .unique_effects
+        .iter()
+        .flatten()
+        .filter_map(|e| flask_fact(e))
+        .collect();
+    flask.sort_by_key(|(order, _, _)| *order);
+    if !flask.is_empty() {
+        sections.push(Section::plain(vec![Line::Facts(
+            flask
+                .into_iter()
+                .map(|(_, value, label)| (value, tr(label).into()))
+                .collect(),
+        )]));
     }
 
     let overrides = equipped.map(|item| &item.implicit_overrides);
@@ -874,7 +914,7 @@ pub(crate) fn build_model(
         .unique_effects
         .iter()
         .flatten()
-        .filter(|e| e.trim() != UNHOLY_EFFECT)
+        .filter(|e| e.trim() != UNHOLY_EFFECT && flask_fact(e).is_none())
         .filter(|effect| {
             base.rarity != "relic"
                 || !effect
@@ -1135,6 +1175,16 @@ fn granted_skill_entries(
                 }
             }
         }
+        for effect in &skill.effects {
+            let value = |rank: f64| effect.base + effect.per_rank * rank;
+            let (a, b) = (value(rank_min), value(rank_max));
+            let shown = if a == b {
+                num(a)
+            } else {
+                format!("{}–{}", num(a), num(b))
+            };
+            lines.push(format!("{shown}{} {}", effect.unit, effect.label));
+        }
         out.push((skill, display_rank, lines));
     }
     for grant in base
@@ -1387,6 +1437,37 @@ fn render_rows(lines: &[Line], cx: &App) -> Div {
         }))
 }
 
+fn render_facts(facts: &[(String, String)], cx: &App) -> Div {
+    let p = cx.global::<TooltipTheme>();
+    div()
+        .flex()
+        .flex_wrap()
+        .items_baseline()
+        .gap_x_1p5()
+        .text_size(units(12.))
+        .text_color(p.muted)
+        .children(facts.iter().enumerate().map(|(ix, (value, label))| {
+            div()
+                .flex()
+                .items_baseline()
+                .gap_1p5()
+                .when(ix > 0, |fact| fact.child("·"))
+                .child(
+                    div()
+                        .flex()
+                        .items_baseline()
+                        .gap_1()
+                        .child(
+                            div()
+                                .font_weight(FontWeight::MEDIUM)
+                                .text_color(p.text)
+                                .child(value.clone()),
+                        )
+                        .child(label.clone()),
+                )
+        }))
+}
+
 fn render_text(text: &str, style: LineStyle, custom: bool, cx: &App) -> Div {
     let p = cx.global::<TooltipTheme>();
     div()
@@ -1559,6 +1640,7 @@ fn render_lines(lines: &[Line], cx: &App) -> Div {
         .gap_0p5()
         .children(lines.iter().map(|line| match line {
             Line::Row { .. } => div(),
+            Line::Facts(facts) => render_facts(facts, cx),
             Line::Text {
                 text,
                 style,
@@ -1944,6 +2026,53 @@ mod tests {
                     && desc.as_ref().is_some_and(|desc| desc.contains("all resistances"))
                     && lines.len() == 3)
         }));
+    }
+
+    #[::core::prelude::v1::test]
+    fn potion_skills_without_stats_show_their_rank_values() {
+        let lines = |id: &str| {
+            let base = data::get_item(id).unwrap();
+            let entries = granted_skill_entries(base, None, None);
+            assert_eq!(entries.len(), 1, "{id}");
+            entries[0].2.clone()
+        };
+        assert_eq!(
+            lines("potion_unholy_amun_ras_demise"),
+            ["7–9% Damage Based on Life", "15–25% Proc Chance"]
+        );
+        assert_eq!(
+            lines("s10_leviathans_blood"),
+            ["1000–1500% Damage Based on Life"]
+        );
+        assert_eq!(lines("potion_satanic_power_of_void"), ["47–59 Comet Level"]);
+    }
+
+    #[::core::prelude::v1::test]
+    fn potion_flask_values_are_item_info_not_unsupported_mods() {
+        let base = data::get_item("potion_unholy_amun_ras_demise").unwrap();
+        let model = build_model(base, None, &[]);
+        let facts: Vec<&(String, String)> = model
+            .sections
+            .iter()
+            .flat_map(|section| &section.lines)
+            .filter_map(|line| match line {
+                Line::Facts(facts) => Some(facts),
+                _ => None,
+            })
+            .flatten()
+            .collect();
+        assert_eq!(
+            facts,
+            [
+                &("15 s".to_owned(), "duration".to_owned()),
+                &("30 s".to_owned(), "cooldown".to_owned()),
+                &("1".to_owned(), "charge".to_owned()),
+            ]
+        );
+        assert!(model.sections.iter().all(|section| section
+            .header
+            .as_ref()
+            .is_none_or(|(title, _, _)| title.to_string() != tr("item.not_supported"))));
     }
 
     #[::core::prelude::v1::test]

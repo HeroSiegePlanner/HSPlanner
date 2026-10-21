@@ -421,6 +421,21 @@ pub struct ItemGrantedSkill {
     // GetDisabledUpgradeStats: a few granted skills never gain rank from stars.
     #[serde(default)]
     pub star_rank_locked: bool,
+    /// Per-rank values shown in tooltips but not modelled by the calculator.
+    #[serde(default)]
+    pub effects: Vec<SkillEffectSpec>,
+}
+
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct SkillEffectSpec {
+    pub label: String,
+    #[serde(default)]
+    pub base: f64,
+    #[serde(default)]
+    pub per_rank: f64,
+    #[serde(default)]
+    pub unit: String,
 }
 
 // ---------- character class ----------
