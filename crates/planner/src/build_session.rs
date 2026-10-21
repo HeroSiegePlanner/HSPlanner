@@ -44,6 +44,10 @@ impl DocumentKey {
             revision: session.calculation_revision(),
         }
     }
+
+    fn same_build(&self, other: &Self) -> bool {
+        self.build == other.build && self.loadouts == other.loadouts
+    }
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -171,7 +175,7 @@ impl BuildSession {
         self.result
             .as_ref()
             .filter(|result| {
-                result.request.document == self.request.document
+                result.request.document.same_build(&self.request.document)
                     && result.request.selected == self.request.selected
             })
             .map(|result| result.current.clone())
@@ -281,6 +285,23 @@ mod tests {
         session.request = CalculationRequest::new(&graph, &HashSet::from([0]), Some(1));
         assert!(session.current().is_none());
         assert!(session.preview().is_none());
+    }
+
+    #[test]
+    fn performance_survives_recalculation_of_the_same_build_only() {
+        let graph = Graph::load();
+        let request = CalculationRequest::new(&graph, &HashSet::new(), None);
+        let result = calculate(&example_input(), request.clone(), None);
+        let mut session = BuildSession {
+            request,
+            result: Some(Rc::new(result)),
+            ..Default::default()
+        };
+        session.request.document.revision += 1;
+        assert!(session.performance().is_some());
+        assert!(!session.is_current());
+        session.request.document.build = Some("other".into());
+        assert!(session.performance().is_none());
     }
 
     #[test]
