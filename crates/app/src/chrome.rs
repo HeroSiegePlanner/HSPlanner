@@ -744,34 +744,32 @@ fn update_button(updater: Entity<crate::update::Updater>, cx: &App) -> Button {
             tr("update.available").to_string(),
             ButtonTone::Primary,
         ),
-        State::Installing(_) => (
-            tr("update.installing").to_string(),
+        State::Downloading { progress, .. } => (
+            progress.percent().map_or_else(
+                || tr("update.downloading").to_string(),
+                |percent| format!("{percent:.0}%"),
+            ),
             tr("update.downloading_hint").to_string(),
             ButtonTone::Primary,
         ),
-        State::Failed(message) => (
+        State::Installing(_) => (
+            tr("update.installing").to_string(),
+            tr("update.installing_hint").to_string(),
+            ButtonTone::Primary,
+        ),
+        State::Failed { failure, .. } => (
             tr("update.failed").to_string(),
-            message.message(),
+            failure.message(),
             ButtonTone::Danger,
         ),
     };
-    let opens_dialog = matches!(
-        state,
-        State::Available(_) | State::Installing(_) | State::Failed(_)
-    );
     hsplanner_ui::controls::planner_button("check-updates", tone, cx)
         .small()
         .gap_1p5()
         .accessibility_label(tr("update.check"))
         .label(label)
         .cursor_tooltip(tooltip)
-        .on_click(move |_, window, cx| {
-            if opens_dialog {
-                crate::update::open_dialog(updater.clone(), window, cx);
-            } else {
-                updater.update(cx, |updater, cx| updater.check(false, cx));
-            }
-        })
+        .on_click(move |_, window, cx| crate::update_dialog::open(updater.clone(), window, cx))
 }
 
 fn chrome_button(id: &'static str, label: &'static str, cx: &App) -> Button {

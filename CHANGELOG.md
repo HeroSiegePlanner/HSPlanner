@@ -1,5 +1,7 @@
 ## Feature
 
+- The update dialog shows your version, the new one and its release notes as a readable list. Downloads show progress, a failed check or install can be retried, and on macOS the app replaces itself and restarts once the old window has closed.
+
 - Equipped potions now count in the calculations: a potion that is on in Gear applies its buff, with no separate toggle in Config. Elixir of Death gives +27–39% Damage, Empty Bottle of Vodka +1–5 All Skills, and Sarcaster's Coffee Mug +60% Movement Speed, matching the game.
 
 - Weapon choices follow the game's class rules. Viking, Marksman, Nomad, Redneck, Samurai, Amazon, Demon Slayer, Marauder, Shield Lancer and Butcher cannot equip Wands, Books, Spellblades or Flasks; Witch's Wand and The Absence of Constraint (Unbound Power) lift that block. Mercenaries hold only their role's weapons (Knight melee, Archer ranged, Magister spell; Novelty for all). Off-hand weapons follow each class's dual-wield list (Sword, Dagger, Mace, Axe, Claw, Gun), with Hercules Grip and Master of Wands still adding their weapons. Changing class or mercenary removes weapons that no longer fit.

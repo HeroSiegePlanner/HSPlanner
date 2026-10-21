@@ -5,10 +5,12 @@ mod bug_report_transport;
 mod changelog;
 mod chrome;
 mod loadouts;
+mod release_notes;
 mod settings;
 mod shell;
 mod startup;
 mod update;
+mod update_dialog;
 
 fn main() {
     #[cfg(target_os = "linux")]

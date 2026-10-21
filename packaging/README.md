@@ -81,8 +81,10 @@ itself is the feed:
 macOS replaces the running `.app` bundle in place and relaunches; if the bundle is not
 writable the DMG is opened in Finder instead. Windows starts the NSIS installer and
 the app quits. Linux users get the release page (deb/AppImage/pacman cannot be told
-apart). Failed checks on startup stay silent; the footer button reports errors when
-pressed by hand.
+apart). Failed checks on startup stay silent; the footer button opens the update
+dialog, which shows the release body as notes, download progress and a retry on errors.
+Debug builds read `HSPLANNER_UPDATE_FEED` (a release JSON URL) instead of GitHub, so a
+local feed and DMG can rehearse the whole update.
 
 Local/CI builds without certificates are test packages, not signed public releases.
 For macOS configure `HSPLANNER_MACOS_SIGNING_IDENTITY`, `APPLE_CERTIFICATE`,
