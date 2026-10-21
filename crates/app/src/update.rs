@@ -265,10 +265,7 @@ fn pick(release: Release, current: &Version, os: &str) -> Option<Update> {
             .assets
             .iter()
             .any(|asset| asset.name == "SHA256SUMS")
-        || !release
-            .assets
-            .iter()
-            .any(|asset| asset.name.starts_with(ASSET_PREFIX))
+        || !release.assets.iter().any(|asset| is_package(&asset.name))
     {
         return None;
     }
@@ -281,7 +278,7 @@ fn pick(release: Release, current: &Version, os: &str) -> Option<Update> {
         release
             .assets
             .into_iter()
-            .find(|asset| asset.name.starts_with(ASSET_PREFIX) && asset.name.ends_with(extension))
+            .find(|asset| is_package(&asset.name) && asset.name.ends_with(extension))
     });
     Some(Update {
         version,
@@ -289,6 +286,12 @@ fn pick(release: Release, current: &Version, os: &str) -> Option<Update> {
         installer,
         notes: release_notes::parse(release.body.as_deref().unwrap_or_default()),
     })
+}
+
+// Linux and Windows packages are published in lowercase (`hsplanner_…`).
+fn is_package(name: &str) -> bool {
+    name.get(..ASSET_PREFIX.len())
+        .is_some_and(|prefix| prefix.eq_ignore_ascii_case(ASSET_PREFIX))
 }
 
 fn feed_url() -> String {
@@ -558,6 +561,30 @@ mod tests {
         let linux = pick(release("v1.2.0", &names), &Version::new(1, 1, 0), "linux").unwrap();
         assert_eq!(linux.installer, None);
         assert_eq!(linux.page, "https://x/release");
+    }
+
+    #[test]
+    fn published_lowercase_package_names_still_match() {
+        let names = [
+            "HSPlanner_1.2.0_aarch64.dmg",
+            "hsplanner_1.2.0_x64-setup.exe",
+            "hsplanner_1.2.0_amd64.deb",
+            "SHA256SUMS",
+        ];
+        let windows = pick(release("v1.2.0", &names), &Version::new(1, 1, 0), "windows").unwrap();
+        assert_eq!(
+            windows.installer.unwrap().name,
+            "hsplanner_1.2.0_x64-setup.exe"
+        );
+        let only_lowercase = ["hsplanner_1.2.0_x64-setup.exe", "SHA256SUMS"];
+        assert!(
+            pick(
+                release("v1.2.0", &only_lowercase),
+                &Version::new(1, 1, 0),
+                "windows"
+            )
+            .is_some()
+        );
     }
 
     #[test]
